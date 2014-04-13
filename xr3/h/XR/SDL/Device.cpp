@@ -55,22 +55,23 @@ static int  FilterEvents(void* pUser, SDL_Event* pEvent)
   case  SDL_APP_WILLENTERBACKGROUND:
     s_deviceImpl.isPauseRequested = true;
     HandleEvent(s_deviceImpl.arCallback[Device::EV_PAUSE], 0);
-    return 1;
+    return 0;
     break;
 
   case  SDL_APP_DIDENTERFOREGROUND:
     s_deviceImpl.isPauseRequested = false;
     HandleEvent(s_deviceImpl.arCallback[Device::EV_RESUME], 0);
-    return 1;
+    return 0;
     break;
 
   case  SDL_APP_TERMINATING:
+    XR_ASSERT(FilterEvents, s_deviceImpl.isQuitRequested != true);
     s_deviceImpl.isQuitRequested = true;
     HandleEvent(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
-    return 1;
+    return 0;
     break;
   }
-  return 0;
+  return 1;
 }
 
 //==============================================================================
@@ -174,26 +175,23 @@ const char* Device::GetConfig(const char* pGroup, const char* pId)
     {
       JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pGroup,
         JSON::Entity::OBJECT));
+      XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a group in root.", pGroup));
       if(pEntity != 0)
       {
         JSON::Object* pGroupData(pEntity->ToObject());
         pEntity = pGroupData->GetChild(pId, JSON::Entity::VALUE);
+        XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in '%s'.", pId, pGroup));
         if(pEntity != 0)
         {
           pResult = pEntity->ToValue()->GetValue();
         }
       }
-#if defined XR_DEBUG
-      else
-      {
-        XR_TRACE(Device, ("Group '%s' doesn't exist in configuration.", pGroup));
-      }
-#endif
     }
     else
     {
       JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pId,
         JSON::Entity::VALUE));
+      XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in root.", pId));
       if(pEntity != 0)
       {
         pResult = pEntity->ToValue()->GetValue();
@@ -255,8 +253,12 @@ void  Device::YieldOS(int32 ms)
     switch(e.type)
     {
     case  SDL_QUIT:
-      s_deviceImpl.isQuitRequested = true;
-      HandleEvent(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
+      if(!s_deviceImpl.isQuitRequested)
+      {
+        s_deviceImpl.isQuitRequested = true;
+        HandleEvent(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
+      }
+      break;
 
     case  SDL_WINDOWEVENT:
       // translate event
