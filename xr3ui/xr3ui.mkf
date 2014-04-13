@@ -1,0 +1,39 @@
+
+includepath h
+
+library
+{
+	".,xr3ui"
+}
+
+files
+{
+	(h)
+  XR/UIAligner.hpp #UIContainer
+  XR/UIBuilder.hpp #UIContainer, Font
+  XR/UIButton.hpp  #UIColoredElement
+  XR/UICascader.hpp  #UIAligner
+  XR/UIColoredElement.hpp  #UIElement
+  XR/UIContainer.hpp #UIElement
+  XR/UIElement.hpp
+  XR/UIEventDispatcher.hpp  #UIElement
+  XR/UIGridLayout.hpp  #UIContainer
+  XR/UIGrowingLayoutBase.hpp #UIContainer
+  XR/UIHorizontalLayout.hpp  #UIGrowingLayoutBase
+  XR/UIHorizontalProgressBar.hpp #UIProgressBarBase
+  XR/UIHorizontalScrollingLayout.hpp #UIScrollingLayoutBase
+  XR/UIHorizontalSlider.hpp  #UISliderBase
+  XR/UIImage.hpp #UIColoredElement, Sprite
+  XR/UIImagePanel.hpp  #UIImage
+  XR/UILabel.hpp #UIColoredElement, Text2D
+  XR/UIProgressBarBase.hpp #UIColoredElement, Sprite
+  XR/UIRadioButton.hpp	#UIButton
+  XR/UIRenderer.hpp
+  XR/UISliderBase.hpp  #UIColoredElement, Sprite
+  XR/UISpacer.hpp  #UIElement
+  XR/UIState.hpp #State, S3eEventDispatcher, UIRadioButton, UIImagePanel, UILabel, UISpacer, UICascader, UIHorizontalScrollingLayout, UIVerticalScrollingLayout, UIGridLayout, UIHorizontalProgressBar, UIVerticalProgressBar, UIHorizontalSlider, UIVerticalSlider
+  XR/UIVerticalLayout.hpp  #UIGrowingLayoutBase
+  XR/UIVerticalProgressBar.hpp #UIGrowingLayoutBase
+  XR/UIVerticalScrollingLayout.hpp
+  XR/UIVerticalSlider.hpp
+}

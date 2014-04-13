@@ -1,0 +1,84 @@
+defines
+{
+  XR_MARMALADE
+}
+
+options
+{
+  lib
+}
+
+subproject
+{
+  xr3
+  xr3ui
+  
+  iwgx
+  iwutil
+
+  tinyxml
+}
+
+files
+{
+  xr3ui.mkf
+  
+  (h/XR)
+  UIAligner.hpp #UIContainer
+  UIBuilder.hpp #UIContainer, Font
+  UIButton.hpp  #UIColoredElement
+  UICascader.hpp  #UIAligner
+  UICheckBox.hpp  #UIButton
+  UIColoredElement.hpp  #UIElement
+  UIContainer.hpp #UIElement
+  UIElement.hpp
+  UIEventDispatcher.hpp  #UIElement
+  UIGridLayout.hpp  #UIContainer
+  UIGrowingLayoutBase.hpp #UIContainer
+  UIHorizontalLayout.hpp  #UIGrowingLayoutBase
+  UIHorizontalProgressBar.hpp #UIProgressBarBase
+  UIHorizontalScrollingLayout.hpp #UIScrollingLayoutBase
+  UIHorizontalSlider.hpp  #UISliderBase
+  UIImage.hpp #UIColoredElement, Sprite
+  UIImagePanel.hpp  #UIImage
+  UILabel.hpp #UIColoredElement, Text2D
+  UIProgressBarBase.hpp #UIColoredElement, Sprite
+  UIRadioButton.hpp	#UICheckBox
+  UIRenderer.hpp
+  UISliderBase.hpp  #UIColoredElement, Sprite
+  UISpacer.hpp  #UIElement
+  UIState.hpp #State, S3eEventDispatcher, UIRadioButton, UIImagePanel, UILabel, UISpacer, UICascader, UIHorizontalScrollingLayout, UIVerticalScrollingLayout, UIGridLayout, UIHorizontalProgressBar, UIVerticalProgressBar, UIHorizontalSlider, UIVerticalSlider
+  UIVerticalLayout.hpp  #UIGrowingLayoutBase
+  UIVerticalProgressBar.hpp #UIGrowingLayoutBase
+  UIVerticalScrollingLayout.hpp
+  UIVerticalSlider.hpp
+  
+  UIAligner.cpp
+  UIBuilder.cpp
+  UIButton.cpp
+  UICascader.cpp
+  UICheckBox.cpp
+  UIColoredElement.cpp
+  UIContainer.cpp
+  UIElement.cpp
+  UIEventDispatcher.cpp
+  UIGridLayout.cpp
+  UIGrowingLayoutBase.cpp
+  UIHorizontalLayout.cpp
+  UIHorizontalProgressBar.cpp
+  UIHorizontalScrollingLayout.cpp
+  UIHorizontalSlider.cpp
+  UIImage.cpp
+  UIImagePanel.cpp
+  UILabel.cpp
+  UIProgressBarBase.cpp
+  UIRadioButton.cpp
+  UIRenderer.cpp
+  UISliderBase.cpp
+  UISpacer.cpp
+  UIState.cpp
+  UIVerticalLayout.cpp
+  UIVerticalProgressBar.cpp
+  UIVerticalScrollingLayout.cpp
+  UIVerticalSlider.cpp
+}

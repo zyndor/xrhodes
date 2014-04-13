@@ -1,0 +1,1268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="90">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="h" projectFiles="true">
+      <itemPath>D:/repos/xr3/xr3/h/XR/AABB.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Actor.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ActorInstance.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ActorReader.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Animation.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AnimationInstance.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AnimationPlayer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AnimationReader.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Application.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Audio.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AutoMatrix.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/BasicMesh.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Callback.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Color.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/CrossObject.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/DelayedCallback.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Device.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Dictionary.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Entity.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/EventDispatcher.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/File.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Font.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Grid.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/HardList.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/HardStack.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/HardString.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Hash.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/HttpClient.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/IndexMesh.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Indexer2d.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Input.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonReader.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonWriter.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/KeyCode.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Log.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Material.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/MersenneTwister.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Module.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/MouseButton.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Named.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Observer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Parse.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Pool.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/PrimType.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Quadtree.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Queue.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Rect.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/RectObject.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/RenderStream.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Renderer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ResManager.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/RingBuffer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Sample.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SampleFormat.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Serialized.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SharedPoolAllocator.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Sprite.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SpriteRenderer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/State.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Surface.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Text.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Texture.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/TexturePack.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Timer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/TweenVar.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/TweenVarPool.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Tweener.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Worker.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/debug.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/functors.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/fundamentals.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/json.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/maths.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/strings.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/types.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/typeutils.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/utils.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/vectypes.hpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="f2" displayName="src" projectFiles="true">
+      <logicalFolder name="f1" displayName="glew" projectFiles="true">
+        <itemPath>C:/glew-1.10.0/src/glew.c</itemPath>
+      </logicalFolder>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AABB.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ActorInstance.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ActorReader.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Animation.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AnimationInstance.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AnimationPlayer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/AnimationReader.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Application.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Audio.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/BasicMesh.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Callback.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Color.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/CrossObject.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/DelayedCallback.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Device.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Entity.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/EventDispatcher.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/File.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Font.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Grid.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Hash.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/IndexMesh.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Indexer2d.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Input.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/InputImpl.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/InputImpl.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonReader.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonWriter.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/KeyCode.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Log.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Material.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/MersenneTwister.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Module.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MouseButton.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Named.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Parse.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Pool.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Quadtree.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/RectObject.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/RenderStream.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Renderer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/RingBuffer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Sample.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Serialized.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SharedPoolAllocator.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Sprite.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SpriteRenderer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/State.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Text.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Texture.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/TextureImpl.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/TextureImpl.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/TexturePack.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Timer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/TweenVar.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/TweenVarPool.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Tweener.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Worker.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/fundamentals.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/json.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/maths.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/utils.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/vectypes.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/xrgl.hpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>D:/repos/xr3/xr3/h</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>C:/tinyxml</pElem>
+            <pElem>C:/glew-1.10.0/src</pElem>
+            <pElem>../h/XR</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>XR_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="C:/glew-1.10.0/src/glew.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AABB.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AABB.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Actor.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorInstance.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorReader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorReader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Animation.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Animation.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationInstance.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationPlayer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationPlayer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationReader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationReader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Application.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Application.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Audio.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AutoMatrix.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/BasicMesh.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/BasicMesh.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Callback.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Callback.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Color.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/CrossObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/CrossObject.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/DelayedCallback.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/DelayedCallback.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Device.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Dictionary.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Entity.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Entity.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/EventDispatcher.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/EventDispatcher.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/File.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Font.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Font.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Grid.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Grid.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HardList.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HardStack.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HardString.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Hash.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Hash.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HttpClient.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/IndexMesh.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/IndexMesh.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Indexer2d.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Indexer2d.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Input.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonReader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonReader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonWriter.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonWriter.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/KeyCode.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Log.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Log.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Material.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MersenneTwister.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MersenneTwister.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Module.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Module.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MouseButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Named.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Named.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Observer.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Parse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Parse.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Pool.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Pool.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/PrimType.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Quadtree.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Quadtree.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Queue.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Rect.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RectObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RectObject.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RenderStream.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Renderer.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ResManager.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RingBuffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RingBuffer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Audio.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Device.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/File.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Input.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/InputImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/InputImpl.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/KeyCode.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Material.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/MouseButton.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/RenderStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Renderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Sample.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Texture.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/TextureImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/TextureImpl.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Timer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Worker.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/xrgl.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Sample.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SampleFormat.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Serialized.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Serialized.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SharedPoolAllocator.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SharedPoolAllocator.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Sprite.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Sprite.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SpriteRenderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SpriteRenderer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/State.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/State.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Surface.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Text.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Text.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Texture.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TexturePack.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TexturePack.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Timer.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVar.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVar.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVarPool.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVarPool.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Tweener.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Tweener.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Worker.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/debug.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/functors.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/fundamentals.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/fundamentals.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/json.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/json.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/maths.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/maths.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/strings.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/types.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/typeutils.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/utils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/utils.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/vectypes.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/vectypes.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="3">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>D:/repos/xr3/xr3/h</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>C:/tinyxml</pElem>
+            <pElem>C:/glew-1.10.0/src</pElem>
+            <pElem>../h/XR</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>GLEW_STATIC</Elem>
+            <Elem>XR_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="C:/glew-1.10.0/src/glew.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AABB.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AABB.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Actor.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorInstance.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorReader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ActorReader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Animation.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Animation.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationInstance.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationPlayer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationPlayer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationReader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AnimationReader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Application.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Application.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Audio.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/AutoMatrix.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/BasicMesh.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/BasicMesh.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Callback.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Callback.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Color.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/CrossObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/CrossObject.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/DelayedCallback.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/DelayedCallback.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Device.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Dictionary.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Entity.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Entity.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/EventDispatcher.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/EventDispatcher.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/File.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Font.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Font.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Grid.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Grid.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HardList.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HardStack.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HardString.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Hash.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Hash.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/HttpClient.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/IndexMesh.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/IndexMesh.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Indexer2d.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Indexer2d.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Input.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonReader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonReader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonWriter.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonWriter.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/KeyCode.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Log.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Log.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Material.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MersenneTwister.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MersenneTwister.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Module.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Module.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MouseButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Named.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Named.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Observer.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Parse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Parse.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Pool.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Pool.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/PrimType.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Quadtree.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Quadtree.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Queue.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Rect.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RectObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RectObject.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RenderStream.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Renderer.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ResManager.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RingBuffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RingBuffer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Audio.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Device.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/File.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Input.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/InputImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/InputImpl.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/KeyCode.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Material.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/MouseButton.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/RenderStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Renderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Sample.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Texture.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/TextureImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/TextureImpl.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Timer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Worker.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/xrgl.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Sample.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SampleFormat.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Serialized.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Serialized.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SharedPoolAllocator.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SharedPoolAllocator.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Sprite.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Sprite.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SpriteRenderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SpriteRenderer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/State.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/State.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Surface.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Text.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Text.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Texture.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TexturePack.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TexturePack.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Timer.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVar.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVar.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVarPool.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/TweenVarPool.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Tweener.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Tweener.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Worker.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/debug.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/functors.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/fundamentals.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/fundamentals.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/json.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/json.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/maths.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/maths.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/strings.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/types.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/typeutils.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/utils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/utils.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/vectypes.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/vectypes.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

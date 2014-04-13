@@ -1,0 +1,45 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// rectobject.cpp
+// @author Gyorgy Straub <gyorgy@nuclearheart.com>
+// @date  28/07/2011
+//
+//==============================================================================
+#include "RectObject.hpp"
+
+namespace XR
+{
+
+//==============================================================================
+RectObject::RectObject(const Vector2& pos)
+: m_position(pos),
+  m_halfWidth(0),
+  m_halfHeight(0)
+{}
+
+//==============================================================================
+RectObject::RectObject(float hw, float hh, const Vector2& pos)
+: m_position(pos),
+  m_halfWidth(hw),
+  m_halfHeight(hh)
+{}
+
+//==============================================================================
+RectObject::~RectObject()
+{}
+
+//==============================================================================
+void  RectObject::SetHalfWidth(float hw)
+{
+  m_halfWidth = hw;
+}
+
+//==============================================================================
+void  RectObject::SetHalfHeight(float hh)
+{
+  m_halfHeight = hh;
+}
+
+} // XR

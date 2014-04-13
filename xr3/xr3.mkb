@@ -1,0 +1,177 @@
+define
+{
+  XR_MARMALADE
+}
+
+includepath h/XR
+
+options
+{
+  lib
+}
+
+subproject
+{
+  xr3
+
+  iwgx
+  iwutil
+  iwresmanager
+  iwhttp
+
+  tinyxml
+}
+
+files
+{
+  xr3.mkf
+
+  [h]
+  (h/XR)
+  AABB.hpp  #maths
+  Actor.hpp #Animation
+  ActorInstance.hpp #Actor, AnimationInstance
+  ActorReader.hpp #Actor, AnimationReader
+  Animation.hpp
+  AnimationInstance.hpp #Animation
+  AnimationPlayer.hpp #Animation
+  AnimationReader.hpp #strings, utils, xmltools, Animation
+  Application.hpp
+  Audio.hpp
+  AutoMatrix.hpp
+  BasicMesh.hpp
+  Callback.hpp
+  Color.hpp
+  CrossObject.hpp
+  DelayedCallback.hpp
+  Device.hpp
+  Dictionary.hpp
+  Entity.hpp
+  EventDispatcher.hpp
+  File.hpp
+  Font.hpp  #Sprite
+  functors.hpp  #typeutils
+  fundamentals.hpp
+  Grid.hpp
+  HardList.hpp  #typeutils
+  HardString.hpp
+  Hash.hpp
+  HttpClient.hpp  #fundamentals
+  Indexer2d.hpp
+  IndexMesh.hpp
+  Input.hpp
+  json.hpp
+  JsonReader.hpp
+  JsonWriter.hpp
+  KeyCode.hpp
+  Log.hpp
+  maths.hpp
+  Material.hpp  #CrossObject, Texture
+  MersenneTwister.hpp
+  Module.hpp
+  MouseButton.hpp
+  Named.hpp
+  Parse.hpp
+  Pool.hpp
+  PrimType.hpp
+  Quadtree.hpp  #Rectobject
+  Queue.hpp
+  RectObject.hpp  #AABB
+  Renderer.hpp
+  RenderStream.hpp
+  ResManager.hpp
+  RingBuffer.hpp
+  Sample.hpp
+  SampleFormat.hpp
+  Serialized.hpp  #Dictionary, utils
+  SharedPoolAllocator.hpp #Pool
+  Sprite.hpp  #AABB
+  SpriteRenderer.hpp
+  State.hpp #HardStack
+  strings.hpp
+  Text.hpp  #Font
+  Texture.hpp #CrossObject
+  TexturePack.hpp #Sprite, Dictionary
+  Timer.hpp
+  Tweener.hpp
+  TweenVar.hpp  #Tweener
+  TweenVarPool.hpp  #TweenVar
+  types.hpp
+  typeutils.hpp
+  utils.hpp
+  vectypes.hpp
+  Worker.hpp  #Queue, fundamentals
+  
+  [src]
+  (h/XR)
+  AABB.cpp
+  ActorInstance.cpp
+  ActorReader.cpp
+  Animation.cpp
+  AnimationInstance.cpp
+  AnimationPlayer.cpp
+  AnimationReader.cpp
+  Application.cpp
+  BasicMesh.cpp
+  Callback.cpp
+  Color.cpp
+  CrossObject.cpp
+  DelayedCallback.cpp
+  Entity.cpp
+  EventDispatcher.cpp
+  Font.cpp
+  fundamentals.cpp
+  Grid.cpp
+  Hash.cpp
+  Indexer2d.cpp
+  IndexMesh.cpp
+  json.cpp
+  JsonReader.cpp
+  JsonWriter.cpp
+  Log.cpp
+  maths.cpp
+  MersenneTwister.cpp
+  Module.cpp
+  Named.cpp
+  Parse.cpp
+  Pool.cpp
+  Quadtree.cpp
+  RectObject.cpp
+  RingBuffer.cpp
+  Serialized.cpp
+  SharedPoolAllocator.cpp
+  Sprite.cpp
+  SpriteRenderer.cpp
+  State.cpp
+  Text.cpp
+  TexturePack.cpp
+  Tweener.cpp
+  TweenVar.cpp
+  TweenVarPool.cpp
+  utils.cpp
+  vectypes.cpp
+
+  (h/XR/Marmalade)
+  Adpcm.cpp
+  Adpcm.hpp
+  Audio.cpp
+  AudioChannelState.cpp
+  AudioChannelState.hpp
+  Device.cpp
+  File.cpp
+  HttpClient.cpp
+  Input.cpp
+  KeyCode.cpp
+  Material.cpp
+  MouseButton.cpp
+  Renderer.cpp
+  RenderStream.cpp
+  #S3eInputDevice.cpp
+  #S3eInputDevice.hpp
+  Sample.cpp
+  SampleData.cpp
+  SampleData.hpp
+  Texture.cpp
+  Timer.cpp
+  Worker.cpp
+}

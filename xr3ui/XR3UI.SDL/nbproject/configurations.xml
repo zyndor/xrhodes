@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="90">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles" displayName="h" projectFiles="true">
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIAligner.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIBuilder.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIButton.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UICascader.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UICheckBox.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIColoredElement.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIContainer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIElement.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIEventDispatcher.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIGridLayout.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIGrowingLayoutBase.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalLayout.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalProgressBar.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalScrollingLayout.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalSlider.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImage.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImagePanel.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UILabel.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRadioButton.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRenderer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UISliderBase.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UISpacer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIState.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalLayout.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalProgressBar.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalScrollingLayout.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalSlider.hpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles" displayName="src" projectFiles="true">
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIAligner.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIBuilder.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIButton.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UICascader.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UICheckBox.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIColoredElement.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIContainer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIElement.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIEventDispatcher.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIGridLayout.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIGrowingLayoutBase.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalLayout.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalProgressBar.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalScrollingLayout.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIHorizontalSlider.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImage.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImagePanel.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UILabel.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRadioButton.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRenderer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UISliderBase.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UISpacer.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIState.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalLayout.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalProgressBar.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalScrollingLayout.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalSlider.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>D:\repos\xr3\xr3ui\h</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>C:/tinyxml/</pElem>
+            <pElem>../../xr3/h/</pElem>
+            <pElem>../h/XR/</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>XR_SDL</Elem>
+          </preprocessorList>
+        </ccTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIAligner.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIAligner.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilder.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilder.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIButton.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICascader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICascader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICheckBox.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICheckBox.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIColoredElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIColoredElement.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIContainer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIElement.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIEventDispatcher.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIEventDispatcher.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGridLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGridLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGrowingLayoutBase.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGrowingLayoutBase.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalProgressBar.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalProgressBar.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalScrollingLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalScrollingLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalSlider.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalSlider.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImage.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImage.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImagePanel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImagePanel.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UILabel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UILabel.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRadioButton.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRadioButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRenderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRenderer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISliderBase.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISliderBase.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISpacer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISpacer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIState.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIState.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalProgressBar.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalProgressBar.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalScrollingLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalScrollingLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalSlider.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalSlider.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="3">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>C:/tinyxml/</pElem>
+            <pElem>../../xr3/h/</pElem>
+            <pElem>../h/XR/</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>XR_SDL</Elem>
+          </preprocessorList>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIAligner.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIAligner.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilder.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilder.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIButton.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICascader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICascader.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICheckBox.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UICheckBox.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIColoredElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIColoredElement.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIContainer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIElement.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIEventDispatcher.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIEventDispatcher.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGridLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGridLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGrowingLayoutBase.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIGrowingLayoutBase.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalProgressBar.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalProgressBar.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalScrollingLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalScrollingLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalSlider.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIHorizontalSlider.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImage.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImage.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImagePanel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIImagePanel.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UILabel.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UILabel.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRadioButton.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRadioButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRenderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIRenderer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISliderBase.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISliderBase.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISpacer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISpacer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIState.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIState.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalProgressBar.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalProgressBar.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalScrollingLayout.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalScrollingLayout.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalSlider.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIVerticalSlider.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

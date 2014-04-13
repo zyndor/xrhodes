@@ -1,0 +1,85 @@
+
+includepath h
+
+library
+{
+  ".,xr3"
+}
+
+files
+{
+  (h)
+  XR/AABB.hpp
+  XR/Actor.hpp
+  XR/ActorInstance.hpp
+  XR/ActorReader.hpp
+  XR/Animation.hpp
+  XR/AnimationInstance.hpp
+  XR/AnimationPlayer.hpp
+  XR/AnimationReader.hpp
+  XR/Application.hpp
+  XR/Audio.hpp
+  XR/AutoMatrix.hpp
+  XR/BasicMesh.hpp
+  XR/Callback.hpp
+  XR/Color.hpp
+  XR/CrossObject.hpp
+  XR/DelayedCallback.hpp
+  XR/Device.hpp
+  XR/Dictionary.hpp
+  XR/Entity.hpp
+  XR/EventDispatcher.hpp
+  XR/File.hpp
+  XR/Font.hpp
+  XR/functors.hpp
+  XR/fundamentals.hpp
+  XR/Grid.hpp
+  XR/HardList.hpp
+  XR/HardString.hpp
+  XR/Hash.hpp
+  XR/HttpClient.hpp
+  XR/Indexer2d.hpp
+  XR/IndexMesh.hpp
+  XR/Input.hpp
+  XR/json.hpp
+  XR/JsonReader.hpp
+  XR/JsonWriter.hpp
+  XR/KeyCode.hpp
+  XR/Log.hpp
+  XR/maths.hpp
+  XR/Material.hpp
+  XR/MersenneTwister.hpp
+  XR/Module.hpp
+  XR/MouseButton.hpp
+  XR/Named.hpp
+  XR/Parse.hpp
+  XR/Pool.hpp
+  XR/PrimType.hpp
+  XR/Quadtree.hpp
+  XR/Queue.hpp
+  XR/RectObject.hpp
+  XR/Renderer.hpp
+  XR/RenderStream.hpp
+  XR/ResManager.hpp
+  XR/RingBuffer.hpp
+  XR/Sample.hpp
+  XR/SampleFormat.hpp
+  XR/Serialized.hpp
+  XR/SharedPoolAllocator.hpp
+  XR/Sprite.hpp
+  XR/SpriteRenderer.hpp
+  XR/State.hpp
+  XR/strings.hpp
+  XR/Text.hpp
+  XR/Texture.hpp
+  XR/TexturePack.hpp
+  XR/Timer.hpp
+  XR/Tweener.hpp
+  XR/TweenVar.hpp
+  XR/TweenVarPool.hpp
+  XR/types.hpp
+  XR/typeutils.hpp
+  XR/utils.hpp
+  XR/vectypes.hpp
+  XR/Worker.hpp
+}
