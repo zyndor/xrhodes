@@ -26,7 +26,7 @@ namespace XR
   
 //==============================================================================
 class SpriteRenderer
-#if defined  XR_SPRITE_RENDERER_PERSISTENT_STREAMS
+#if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
   : protected IndexMesh
 #endif
 {
@@ -89,7 +89,7 @@ protected:
   Color       m_fadeColor;
   bool        m_useFadeColor;
 
-#if !defined  XR_SPRITE_RENDERER_PERSISTENT_STREAMS
+#if !defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
   typedef std::vector<uint16> Uint16Array;
   
   Uint16Array m_indices;

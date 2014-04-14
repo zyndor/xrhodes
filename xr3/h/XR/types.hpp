@@ -32,8 +32,8 @@
   if(!(cond))\
   {\
     XR_TRACE(cnl, msg);\
-  }\
-  SDL_assert(cond) // stub
+    SDL_assert(cond);\
+  } // stub
 #else
 #define XR_ASSERTMSG(chnl, cond, msg)\
   SDL_assert(cond) // stub

@@ -26,7 +26,7 @@ void Log::Exit()
 //==============================================================================
 void  Log::Write(const char* pString )
 {
-#if defined  XR_DEBUG
+#if defined XR_DEBUG
   bool  logSuccess(File::Write(pString, strlen(pString), 1, s_hLogFile) != 0 &&
     File::Write("\n", 1, 1, s_hLogFile) != 0);
   XR_ASSERT(Log, logSuccess);

@@ -4,7 +4,7 @@
 
 #include  "Timer.hpp"
 
-#if defined  MARMALADE
+#if defined MARMALADE
 #include  <IwDebug.h>
 
 #define XR_TRACE(chnl, msg)             IwTrace(chnl, msg)

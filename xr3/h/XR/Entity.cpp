@@ -117,7 +117,7 @@ void  Entity::DetachFromParent()
 void  Entity::AddChild(Entity* p)
 {
   XR_ASSERTMSG(Entity, p != 0, ("Null child is invalid."));
-#if defined  XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   // check for cyclic dependency - p being a parent of this somewhere higher up.
   Entity* pParent(this);
   do
@@ -149,7 +149,7 @@ void  Entity::RemoveChild(Entity* p)
 }
 
 //==============================================================================
-#if defined  XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
 struct  FindEntry
 {
   uint32      hash;
@@ -160,7 +160,7 @@ struct  FindEntry
 Entity* Entity::FindChild(const char* pName) const
 {
   XR_ASSERT(Entity, pName != 0);
-#if defined  XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   std::list<FindEntry> hierarchy;
 #else
   std::list<uint32> hierarchy;
@@ -183,7 +183,7 @@ Entity* Entity::FindChild(const char* pName) const
     int len(pNext - pBegin);
     XR_ASSERT(Entity, len > 0);
     uint32  hash(TransformName(pBegin, len));
-#if defined  XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
     FindEntry  r = { hash, pName };
     hierarchy.push_back(r);
 #else
@@ -195,7 +195,7 @@ Entity* Entity::FindChild(const char* pName) const
   while(pBegin != pEnd);
 
   Entity* pFound(hierarchy.empty() ? 0 : const_cast<Entity*>(this));
-#if defined  XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   for(std::list<FindEntry>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
     pFound != 0 && i0 != i1; ++i0)
   {
@@ -228,7 +228,7 @@ void  Entity::AddComponent(Component* p)
   XR_ASSERT(Entity, p != 0);
   if(p->GetOwner() != this)
   {
-#if defined  XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
     XR_ASSERTMSG(Entity, FindComponent(p->GetType()),
       ("Entity already has a component of type %d.", p->GetType()));
 #endif  //XR_DEBUG

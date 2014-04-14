@@ -50,7 +50,7 @@ void  SpriteRenderer::Init(int numRecords)
   // push frame - flushes shouldn't destroy the list.
   m_pPool->Push();
   
-#if defined  XR_SPRITE_RENDERER_PERSISTENT_STREAMS
+#if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
   InitStreams(numRecords * Sprite::kNumVertices);
   SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices,
     Sprite::kNumVertices, numRecords);
@@ -201,7 +201,7 @@ void  SpriteRenderer::Render()
   
   RenderStream* pCols(Renderer::AllocStream(RenderStream::F_COLOR, numVerts));
   XR_ASSERT(SpriteRenderer, pCols != 0);
-#if defined  XR_SPRITE_RENDERER_PERSISTENT_STREAMS
+#if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
   RenderStream* pUVs(&m_uvs);
   RenderStream* pVerts(&m_vertices);
 #else

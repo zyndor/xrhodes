@@ -13,16 +13,6 @@ namespace XR
 static const char*  kConfigName = "xr.json";
 
 //==============================================================================
-static void HandleEvent(CallbackObject::List& cbos, void* pSystem)
-{
-  for(CallbackObject::List::iterator i0(cbos.begin()), i1(cbos.end());
-    i0 != i1; ++i0)
-  {
-    i0->Call(pSystem);
-  }
-}
-
-//==============================================================================
 static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* pSystem)
 {
   const SDL_Event*  pEvent(static_cast<SDL_Event*>(pSystem));
@@ -33,7 +23,7 @@ static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* pSystem)
     pEvent->window.data2
   };
 
-  HandleEvent(cbos, &e);
+  CallbackObject::CallList(cbos, &e);
 }
 
 //==============================================================================
@@ -54,20 +44,20 @@ static int  FilterEvents(void* pUser, SDL_Event* pEvent)
   {
   case  SDL_APP_WILLENTERBACKGROUND:
     s_deviceImpl.isPauseRequested = true;
-    HandleEvent(s_deviceImpl.arCallback[Device::EV_PAUSE], 0);
+    CallbackObject::CallList(s_deviceImpl.arCallback[Device::EV_PAUSE], 0);
     return 0;
     break;
 
   case  SDL_APP_DIDENTERFOREGROUND:
     s_deviceImpl.isPauseRequested = false;
-    HandleEvent(s_deviceImpl.arCallback[Device::EV_RESUME], 0);
+    CallbackObject::CallList(s_deviceImpl.arCallback[Device::EV_RESUME], 0);
     return 0;
     break;
 
   case  SDL_APP_TERMINATING:
     XR_ASSERT(FilterEvents, s_deviceImpl.isQuitRequested != true);
     s_deviceImpl.isQuitRequested = true;
-    HandleEvent(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
+    CallbackObject::CallList(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
     return 0;
     break;
   }
@@ -256,7 +246,7 @@ void  Device::YieldOS(int32 ms)
       if(!s_deviceImpl.isQuitRequested)
       {
         s_deviceImpl.isQuitRequested = true;
-        HandleEvent(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
+        CallbackObject::CallList(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
       }
       break;
 
@@ -295,7 +285,7 @@ void  Device::YieldOS(int32 ms)
         TranslateKeyCodeNative(e.key.keysym.scancode),
         e.key.state == SDL_PRESSED
       };
-      HandleEvent(InputImpl::s_pInstance->arCallback[Input::EV_KEY], &eKey);
+      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_KEY], &eKey);
       break;
     }
       
@@ -307,7 +297,7 @@ void  Device::YieldOS(int32 ms)
         e.motion.x,
         e.motion.y
       };
-      HandleEvent(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_MOTION], &eMouse);
+      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_MOTION], &eMouse);
       break;
     }
       
@@ -323,7 +313,7 @@ void  Device::YieldOS(int32 ms)
         e.button.y,
         e.button.state == SDL_PRESSED
       };
-      HandleEvent(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_ACTION], &eMouse);
+      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_ACTION], &eMouse);
       break;
     }
       
@@ -341,7 +331,7 @@ void  Device::YieldOS(int32 ms)
         y,
         e.tfinger.type == SDL_FINGERDOWN
       };
-      HandleEvent(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_ACTION], &eTouch);
+      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_ACTION], &eTouch);
       break;
     }
     
@@ -357,7 +347,7 @@ void  Device::YieldOS(int32 ms)
         x,
         y
       };
-      HandleEvent(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_MOTION], &eTouch);
+      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_MOTION], &eTouch);
       break;
     }
       
