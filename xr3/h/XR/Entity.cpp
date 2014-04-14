@@ -22,20 +22,13 @@ Entity::Component::~Component()
 {}
 
 //==============================================================================
-void  Entity::Component::SetOwner(Entity* p)
+void  Entity::Component::SetOwner(Entity* pOwner)
 {
-  if(m_pOwner != p)
-  {
-    if(m_pOwner != 0)
-    {
-      m_pOwner->RemoveComponent(this);
-    }
-    
-    if(p != 0)
-    {
-      p->AddComponent(this);
-    }
-  }
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+  XR_ASSERT(Entity::Component, pOwner == 0 ||
+    pOwner->FindComponent(this->GetTypeId()) == this);
+#endif
+  m_pOwner = pOwner;
 }
 
 //==============================================================================
@@ -123,7 +116,7 @@ void  Entity::AddChild(Entity* p)
   do
   {
     XR_ASSERTMSG(Entity, pParent != p,
-      ("Adding child creates cyclic dependency"));
+      ("Adding child creates cyclic dependency."));
     pParent = pParent->GetParent();
   }
   while(pParent != 0);
@@ -133,7 +126,7 @@ void  Entity::AddChild(Entity* p)
     i0 != i1; ++i0)
   {
     const Entity* p1(*i0);
-    XR_ASSERTMSG(Entity, p1 != p, ("Child already added"));
+    XR_ASSERTMSG(Entity, p1 != p, ("Child already added."));
     XR_ASSERTMSG(Entity, p1->GetName() != p->GetName(),
       ("Child with same name already exists."));
   }
@@ -145,7 +138,9 @@ void  Entity::AddChild(Entity* p)
 //==============================================================================
 void  Entity::RemoveChild(Entity* p)
 {
+  XR_ASSERT(Entity, p != 0);
   m_children.remove(p);
+  p->m_pParent = 0;
 }
 
 //==============================================================================
@@ -226,22 +221,30 @@ Entity* Entity::FindChild(uint32 name) const
 void  Entity::AddComponent(Component* p)
 {
   XR_ASSERT(Entity, p != 0);
-  if(p->GetOwner() != this)
+  Entity* pOwner(p->GetOwner());
+  if(pOwner != this)
   {
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-    XR_ASSERTMSG(Entity, FindComponent(p->GetType()),
-      ("Entity already has a component of type %d.", p->GetType()));
+    XR_ASSERTMSG(Entity, FindComponent(p->GetTypeId()) != 0,
+      ("Entity already has a component of type %d; only one allowed.",
+        p->GetTypeId()));
 #endif  //XR_DEBUG
     
-    p->SetOwner(this);
+    if(pOwner != 0)
+    {
+      pOwner->RemoveComponent(p);
+    }
     m_components.push_back(p);
+    p->SetOwner(this);  // after it has actually been added
   }
 }
 
 //==============================================================================
 void  Entity::RemoveComponent(Component* p)
 {
+  XR_ASSERT(Entity, p != 0);
   m_components.remove(p);
+  p->SetOwner(0);
 }
 
 //==============================================================================
@@ -257,6 +260,8 @@ Entity::Component*  Entity::FindComponent(uint32 typeId) const
 Entity* Entity::Clone(Entity* pParent) const
 {
   Entity* pEntity(new Entity(GetName()));
+  
+  // copy local transformation
   pEntity->translation = translation;
   pEntity->rotation = rotation;
   pEntity->scaling = scaling;
@@ -267,6 +272,7 @@ Entity* Entity::Clone(Entity* pParent) const
     pParent->AddChild(pEntity);
   }
   
+  // clone components
   for(Component::List::const_iterator i0(m_components.begin()), i1(m_components.end());
     i0 != i1; ++i0)
   {
@@ -274,6 +280,7 @@ Entity* Entity::Clone(Entity* pParent) const
     pEntity->m_components.push_back(pComp->Clone());
   }
   
+  // clone children to newly cloned entity - recursive
   for(List::const_iterator i0(m_children.begin()), i1(m_children.end());
     i0 != i1; ++i0)
   {

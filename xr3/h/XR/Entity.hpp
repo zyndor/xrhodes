@@ -52,7 +52,7 @@ public:
       // operators
       bool  operator()(const Component* p) const
       {
-        return p->GetType() == m_typeId;
+        return p->GetTypeId() == m_typeId;
       }
       
     private:
@@ -65,12 +65,12 @@ public:
     virtual ~Component();
     
     // virtual
-    virtual uint32      GetType() const =0;
+    virtual uint32      GetTypeId() const =0;
     virtual Component*  Clone() const =0;
     
     // general
     Entity* GetOwner() const;
-    void    SetOwner(Entity* p);
+    void    SetOwner(Entity* pOwner);
     
   protected:
     // data
