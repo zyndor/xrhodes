@@ -22,8 +22,8 @@ namespace XR
 
 //==============================================================================
 ///@brief Entity has a 3D transformation composed of translation, rotation and
-/// scaling (in this order), a list of Components and a list of child Entities
-/// (both of which it has ownership of).
+/// scaling (applied in this order), a list of Components and a list of child
+/// Entities (both of which it has ownership of).
 class Entity: public Named
 {
   XR_NONCOPY_DECL(Entity)
@@ -66,7 +66,7 @@ public:
     
     // virtual
     virtual uint32      GetTypeId() const =0;
-    virtual Component*  Clone() const =0;
+    virtual Component*  Clone() const =0; // don't bother copying the owner.
     
     // general
     Entity* GetOwner() const;
@@ -166,9 +166,9 @@ Entity::Component*  Entity::FindComponent() const
 } // XR
 
 //==============================================================================
-#define XR_ENTITY_COMPONENT_GETTYPE_DECL(className)\
+#define XR_ENTITY_COMPONENT_GETTYPEID_DECL(className)\
   public:\
-    virtual uint32  GetType() const\
+    virtual uint32  GetTypeId() const\
     {\
       return TypeId<className>();\
     }\

@@ -277,7 +277,7 @@ Entity* Entity::Clone(Entity* pParent) const
     i0 != i1; ++i0)
   {
     const Component* pComp(*i0);
-    pEntity->m_components.push_back(pComp->Clone());
+    pEntity->AddComponent(pComp->Clone());
   }
   
   // clone children to newly cloned entity - recursive
