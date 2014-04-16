@@ -60,6 +60,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/JsonWriter.o \
 	${OBJECTDIR}/_ext/1046665460/Log.o \
 	${OBJECTDIR}/_ext/1046665460/MersenneTwister.o \
+	${OBJECTDIR}/_ext/1046665460/MeshRenderer.o \
 	${OBJECTDIR}/_ext/1046665460/Module.o \
 	${OBJECTDIR}/_ext/1046665460/Named.o \
 	${OBJECTDIR}/_ext/1046665460/Parse.o \
@@ -250,6 +251,11 @@ ${OBJECTDIR}/_ext/1046665460/MersenneTwister.o: /D/repos/xr3/xr3/h/XR/MersenneTw
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/MersenneTwister.o /D/repos/xr3/xr3/h/XR/MersenneTwister.cpp
+
+${OBJECTDIR}/_ext/1046665460/MeshRenderer.o: /D/repos/xr3/xr3/h/XR/MeshRenderer.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/MeshRenderer.o /D/repos/xr3/xr3/h/XR/MeshRenderer.cpp
 
 ${OBJECTDIR}/_ext/1046665460/Module.o: /D/repos/xr3/xr3/h/XR/Module.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460

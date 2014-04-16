@@ -39,6 +39,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Log.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Material.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/MersenneTwister.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/MeshRenderer.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Module.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/MouseButton.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Named.hpp</itemPath>
@@ -119,6 +120,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MaterialImpl.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/MersenneTwister.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/MeshRenderer.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Module.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MouseButton.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Named.cpp</itemPath>
@@ -423,6 +425,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/MersenneTwister.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MeshRenderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MeshRenderer.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -976,6 +988,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/MersenneTwister.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MeshRenderer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MeshRenderer.hpp"
             ex="false"
             tool="3"
             flavor2="0">

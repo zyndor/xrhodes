@@ -49,6 +49,7 @@ files
   XR/maths.hpp
   XR/Material.hpp
   XR/MersenneTwister.hpp
+  XR/MeshRenderer.hpp
   XR/Module.hpp
   XR/MouseButton.hpp
   XR/Named.hpp

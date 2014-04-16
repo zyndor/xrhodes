@@ -68,6 +68,7 @@ files
   maths.hpp
   Material.hpp  #CrossObject, Texture
   MersenneTwister.hpp
+  MeshRenderer.hpp
   Module.hpp
   MouseButton.hpp
   Named.hpp
@@ -131,6 +132,7 @@ files
   Log.cpp
   maths.cpp
   MersenneTwister.cpp
+  MeshRenderer.cpp
   Module.cpp
   Named.cpp
   Parse.cpp
