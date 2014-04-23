@@ -24,9 +24,6 @@ class MeshRenderer:  public Entity::Component
   XR_ENTITY_COMPONENT_GETTYPEID_DECL(MeshRenderer)
   
 public:
-  // types
-  // static
-  // data
   // structors
   MeshRenderer();
   ~MeshRenderer();
@@ -34,8 +31,8 @@ public:
   // general
   virtual Component*  Clone() const;
   
-  BasicMesh*  GetMesh() const;
-  void        SetMesh(BasicMesh* pMesh);
+  BasicMesh*  GetMesh() const;  // no ownership transfer
+  void        SetMesh(BasicMesh* pMesh);  // no ownership transfer
   
   void        Render();
   

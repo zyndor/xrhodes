@@ -73,9 +73,7 @@ protected:
 };
 
 //==============================================================================
-/*
-  implementation
- */
+// implementation
 //==============================================================================
 ///@return  The size of all allocations from the Pool, in bytes.
 inline

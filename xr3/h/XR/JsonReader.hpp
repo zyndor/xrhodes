@@ -252,9 +252,7 @@ Entity* LoadJSON(const char* pFilename,
           int maxDepth = kMaxParseDepthDefault);
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 inline
 Entity::Type Entity::GetType() const

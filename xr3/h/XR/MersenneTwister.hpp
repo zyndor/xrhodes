@@ -42,9 +42,7 @@ private:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 inline
 int MersenneTwister::RandSign()
@@ -54,5 +52,5 @@ int MersenneTwister::RandSign()
 
 } // XR
 
-#endif	/* XR_MERSENNETWISTER_HPP */
+#endif	// XR_MERSENNETWISTER_HPP
 

@@ -23,6 +23,7 @@ void UIAligner::_AlignElement( UIElement* pElem )
 
     switch(m_hAlign)
     {
+    case  AL_NOALIGN: // dodge GCC warning only
     case  AL_LOW:
       // we're good
       break;
@@ -45,6 +46,7 @@ void UIAligner::_AlignElement( UIElement* pElem )
 
     switch(m_vAlign)
     {
+    case  AL_NOALIGN: // dodge GCC warning only
     case  AL_LOW:
       // we're good
       break;

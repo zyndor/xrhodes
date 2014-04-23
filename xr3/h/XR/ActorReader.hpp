@@ -67,9 +67,7 @@ private:
 };
 
 //==============================================================================
-/*
-  implementation
- */
+// implementation
 //==============================================================================
 template  <class Type>
 bool ActorReader<Type>::Read(TiXmlElement* pXml,

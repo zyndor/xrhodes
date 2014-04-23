@@ -86,9 +86,7 @@ protected:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template  <class T>
 void ActorInstance<T>::AnimationFinishedCallback( AnimationInstanceType& inst,

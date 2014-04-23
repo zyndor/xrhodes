@@ -113,9 +113,7 @@ bool operator!=(const SharedPoolAllocator<Type>&,
   const SharedPoolAllocator<OtherType>&) throw();
 
 //==============================================================================
-/*
-  implementation
- */
+// implementation
 //==============================================================================
 template  <typename Type>
 SharedPoolAllocator<Type>::SharedPoolAllocator(Pool& mp) throw()

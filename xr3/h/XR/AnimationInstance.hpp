@@ -87,9 +87,7 @@ protected:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 inline
 float AnimationInstanceCore::GetFrameTime() const

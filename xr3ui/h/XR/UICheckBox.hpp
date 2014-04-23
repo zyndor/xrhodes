@@ -8,6 +8,7 @@
 //
 // copyright (c) 2011 - 2013. All rights reserved.
 //
+//==============================================================================
 #if !defined XR_UICHECKBOX_HPP
 #define XR_UICHECKBOX_HPP
 
@@ -51,10 +52,6 @@ protected:
     MASK_SELECTED = XR_MASK_ID(SF_SELECTED)
   };  
 };
-
-/*
-  implementation
-*/
 
 
 } // XR

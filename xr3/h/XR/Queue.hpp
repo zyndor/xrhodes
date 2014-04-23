@@ -116,9 +116,7 @@ struct  ConstIterator: public std::forward_iterator_tag
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 inline
 NodeCore::NodeCore(NodeCore *p)
@@ -363,9 +361,7 @@ protected:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template  <typename Type, class AllocType>
 Queue<Type, AllocType>::Queue(allocator a)

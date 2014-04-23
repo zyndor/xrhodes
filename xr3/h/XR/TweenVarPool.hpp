@@ -64,9 +64,7 @@ protected:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template  <typename T>
 TweenVarPool<T>::TweenVarPool( int numVars )

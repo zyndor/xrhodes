@@ -506,9 +506,7 @@ protected:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template  <typename Key, typename Value, class Alloc>
 Dictionary<Key, Value, Alloc>::Dictionary(allocator a)

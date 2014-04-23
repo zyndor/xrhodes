@@ -8,6 +8,7 @@
 //
 // copyright (c) 2011 - 2013. All rights reserved.
 //
+//==============================================================================
 #if !defined XR_OBSERVER_HPP
 #define XR_OBSERVER_HPP
 
@@ -52,10 +53,9 @@ protected:
   RecordList  m_records;
 };
 
-
-/*
-  implementation
-  */
+//==============================================================================
+// implementation
+//==============================================================================
 template  <typename T>
 inline
 bool Observer<T>::Record::IsChanged() const

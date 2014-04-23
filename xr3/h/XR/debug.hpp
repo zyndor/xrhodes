@@ -22,8 +22,7 @@ static char arLogBuffer[256];
 
 void xrDebugPrintChannel(const char* pChannel);
 
-/*
-  implementation
+// implementation
 */
 inline
 void __xrDebugPrintChannel(const char* pChannel)

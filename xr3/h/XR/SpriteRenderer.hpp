@@ -53,7 +53,7 @@ public:
   void  Add(Color tint, const XR::Sprite* pSprite, const Vector3& position,
           float sx, float sy, float rz);
 
-  void  Render();
+  virtual void  Render();
 
   void  Clear();
 

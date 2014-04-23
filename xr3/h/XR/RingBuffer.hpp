@@ -92,9 +92,7 @@ private:
 };
 
 //==============================================================================
-/*
-  implementation 
- */
+// implementation 
 //==============================================================================
 ///@return  The number of elements actually added to the RingBuffer.
 inline

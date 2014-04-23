@@ -126,9 +126,7 @@ private:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template <class T>
 bool  Serialized::DeserializeId(T*& pObject, int hFile,

@@ -117,9 +117,7 @@ int32 Align(int32 value, int32 alignment);
 int16 ClipToInt16(int32 val);
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 inline
 int16 ClipToInt16( int32 val )

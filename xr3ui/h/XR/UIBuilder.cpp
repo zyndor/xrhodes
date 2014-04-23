@@ -150,9 +150,10 @@ int GetXmlSizeToContent(TiXmlElement* pXml)
 }
 
 //==============================================================================
-void UIBSetUISprite( const Sprite* pSprite, Sprite* pOutSprite, UIElement* pUIElem ) 
+void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem ) 
 {
-  *pOutSprite = *pSprite;
+  XR_ASSERT(UIBuilder, pSprite != 0);
+  outSprite = *pSprite;
 
   float hw(pSprite->GetHalfWidth());
   if(pUIElem->w == 0)
@@ -161,7 +162,7 @@ void UIBSetUISprite( const Sprite* pSprite, Sprite* pOutSprite, UIElement* pUIEl
   }
   else if(hw > .0f)
   {
-    pOutSprite->ScaleX((pUIElem->w / 2) / hw);
+    outSprite.ScaleX((pUIElem->w / 2) / hw);
   }
 
   float hh(pSprite->GetHalfHeight());
@@ -171,7 +172,7 @@ void UIBSetUISprite( const Sprite* pSprite, Sprite* pOutSprite, UIElement* pUIEl
   }
   else if(pSprite->GetHalfHeight() > .0f)
   {
-    pOutSprite->ScaleY((pUIElem->h / 2) / hh);
+    outSprite.ScaleY((pUIElem->h / 2) / hh);
   }
 }
 
@@ -418,7 +419,7 @@ bool UIBInitUIImage( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     UIImage*  pImage(static_cast<UIImage*>(pUIElem));
 
     // scale
-    int scale(GetXmlScaleAttribute(pXml));
+    float scale(GetXmlScaleAttribute(pXml));
 
     // material
     const char* pValue(0);
@@ -440,7 +441,8 @@ bool UIBInitUIImage( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 
       if(success)
       {
-        UIBSetUISprite(pSprite, &pImage->sprite, pImage);
+        UIBSetUISprite(pSprite, pImage->sprite, pImage);
+        pImage->sprite.Scale(scale);
       }
     }
   }
@@ -549,7 +551,7 @@ bool  UIBInitUISliderBase( TiXmlElement* pXml, UIElement* pUIElem,
     UISliderBase* pSlider(static_cast<UISliderBase*>(pUIElem));
 
     // scale
-    int scale(GetXmlScaleAttribute(pXml));
+    float scale(GetXmlScaleAttribute(pXml));
 
     const char* pValue(0);
     // material
@@ -576,6 +578,7 @@ bool  UIBInitUISliderBase( TiXmlElement* pXml, UIElement* pUIElem,
         if(success)
         {
           pSlider->sliderSprite = *pSprite;
+          pSlider->sprite.Scale(scale); // might suck
         }
       }
     }
@@ -660,8 +663,9 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_UP] = success;
 
-          Sprite* pOutSprite(pButton->arSprite + UIButton::S_UP);
-          UIBSetUISprite(pSprite, pOutSprite, pButton);
+          Sprite& sprOut(pButton->arSprite[UIButton::S_UP]);
+          UIBSetUISprite(pSprite, sprOut, pButton);
+          sprOut.Scale(scale);
         }
       }
     }
@@ -682,8 +686,9 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_DOWN] = success;
 
-          Sprite* pOutSprite(pButton->arSprite + UIButton::S_DOWN);
-          UIBSetUISprite(pSprite, pOutSprite, pButton);
+          Sprite& sprOut(pButton->arSprite[UIButton::UIButton::S_DOWN]);
+          UIBSetUISprite(pSprite, sprOut, pButton);
+          sprOut.Scale(scale);
         }
       }
     }
@@ -704,8 +709,9 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_OFF] = success;
 
-          Sprite* pOutSprite(pButton->arSprite + UIButton::S_OFF);
-          UIBSetUISprite(pSprite, pOutSprite, pButton);
+          Sprite& sprOut(pButton->arSprite[UIButton::UIButton::S_OFF]);
+          UIBSetUISprite(pSprite, sprOut, pButton);
+          sprOut.Scale(scale);
         }
       }
     }
@@ -769,7 +775,7 @@ bool  UIBInitUICheckBox( TiXmlElement* pXml, UIElement* pUIElem,
 
         if(success)
         {
-          UIBSetUISprite(pSprite, &pCheckBox->setSprite, pCheckBox);
+          UIBSetUISprite(pSprite, pCheckBox->setSprite, pCheckBox);
         }
       }
     }
@@ -822,8 +828,6 @@ bool UIBInitUIAligner( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pPar
   if(success)
   {
     UIAligner*  pAligner(static_cast<UIAligner*>(pUIElem));
-
-    const char* pValue(0);
 
     // horizontal alignment
     int value;

@@ -128,9 +128,7 @@ private:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 ///@return The maximum number of subdivisions for quadtrees created with no
 /// minimum node size specified.

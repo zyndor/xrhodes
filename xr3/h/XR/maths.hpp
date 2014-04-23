@@ -90,9 +90,7 @@ float CalcAccelerationPerFrame(float v, float fps);
 float CalcScalingPerFrame(float v, float fps);
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template  <typename T>
 inline

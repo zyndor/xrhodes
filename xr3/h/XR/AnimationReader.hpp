@@ -57,9 +57,7 @@ public:
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template  <class T>
 bool  AnimationReader<T>::Read(TiXmlElement* pXml,

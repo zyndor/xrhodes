@@ -59,9 +59,7 @@ struct  TweenVar: protected  TweenVarCore
 };
 
 //==============================================================================
-/*
-  implementation
-*/
+// implementation
 //==============================================================================
 template  <typename T>
 void TweenVar<T>::OnFrameCallback( void* pData )
