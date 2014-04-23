@@ -18,6 +18,9 @@ namespace XR
 {
 
 //==============================================================================
+///@brief pImpl wrapper class with basic accessors. CrossObject does not know
+/// about the ownership of the object it's pointing to, nor about its type; you
+/// will have to.
 class CrossObject
 {
 protected:  
@@ -35,7 +38,10 @@ protected:
   void*       GetImpl();
   const void* GetImpl() const;
   
-  void*       SwapImpl(void* pImpl);
+  ///@brief   Sets @a pImpl as the implementation.
+  ///@return  The pointer to the previous implementation. This is your chance to
+  ///         catch it.
+  void*       SwapImpl(void* pImpl);  // no ownership transfer
 };
 
 //==============================================================================
