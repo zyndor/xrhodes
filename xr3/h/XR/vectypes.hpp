@@ -645,6 +645,11 @@ struct Matrix
     std::swap(arRot[MYZ], arRot[MZY]);
     return *this;
   }
+  
+  Matrix  Transposed() const
+  {
+    return Matrix(*this).Transpose();
+  }
 
   // operator overloads
   Matrix&  operator*=(const Matrix& rhs)

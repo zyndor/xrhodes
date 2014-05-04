@@ -25,8 +25,10 @@ Entity::Component::~Component()
 void  Entity::Component::SetOwner(Entity* pOwner)
 {
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  XR_ASSERT(Entity::Component, pOwner == 0 ||
-    pOwner->FindComponent(this->GetTypeId()) == this);
+  XR_ASSERTMSG(Entity::Component, pOwner == 0 ||
+    pOwner->FindComponent(this->GetTypeId()) == this,
+    ("Entity (%d) needs to add Component %p before calling SetOwner()",
+      pOwner->GetName(), this));
 #endif
   m_pOwner = pOwner;
 }
@@ -145,7 +147,7 @@ void  Entity::RemoveChild(Entity* p)
 
 //==============================================================================
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-struct  FindEntry
+struct  DebugFindEntry
 {
   uint32      hash;
   const char* pPath;
@@ -156,7 +158,7 @@ Entity* Entity::FindChild(const char* pName) const
 {
   XR_ASSERT(Entity, pName != 0);
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  std::list<FindEntry> hierarchy;
+  std::list<DebugFindEntry> hierarchy;
 #else
   std::list<uint32> hierarchy;
 #endif  //XR_DEBUG
@@ -179,7 +181,7 @@ Entity* Entity::FindChild(const char* pName) const
     XR_ASSERT(Entity, len > 0);
     uint32  hash(TransformName(pBegin, len));
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-    FindEntry  r = { hash, pName };
+    DebugFindEntry  r = { hash, pName };
     hierarchy.push_back(r);
 #else
     hierarchy.push_back(hash);
@@ -191,19 +193,20 @@ Entity* Entity::FindChild(const char* pName) const
 
   Entity* pFound(hierarchy.empty() ? 0 : const_cast<Entity*>(this));
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  for(std::list<FindEntry>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
+  for(std::list<DebugFindEntry>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
     pFound != 0 && i0 != i1; ++i0)
   {
     pFound = pFound->FindChild(i0->hash);
     XR_ASSERTMSG(Entity, pFound != 0, ("FindChild failed at %s.",
       i0->pPath));
+  }
 #else
   for(std::list<uint32>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
     pFound != 0 && i0 != i1; ++i0)
   {
     pFound = pFound->FindChild(*i0);
-#endif  //XR_DEBUG
   }
+#endif  //XR_DEBUG
 
   return pFound;
 }

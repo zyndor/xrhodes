@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <stdlib.h>
+#include <algorithm>
 
 //==============================================================================
 #if !defined M_PI
@@ -62,7 +63,7 @@ int RandSign();
 ///@return  A pseudo-random floating point number in the [.0, 1.0] range.
 float  FlopRand();
 
-///@return  +1 is @a check is true, -1 otherwise.
+///@return  +1 if @a check is true, -1 otherwise.
 template  <typename T>
 T BoolToSign(bool check);
 
@@ -88,6 +89,13 @@ float CalcAccelerationPerFrame(float v, float fps);
 ///@return  Per-frame scaling value based on per second scaling @a v and
 /// @a fps.
 float CalcScalingPerFrame(float v, float fps);
+
+///@brief Calculates the quadratic roots of @a a, @a b, @a c and stores them in
+/// @a x0 and @a x1.
+///@return  Whether the quadratic has a solution.
+///@note If the quadratic doesn't have a solution, the values of @a x0 and @a x1
+/// will not be changed and should be ignored.
+bool  CalcQuadRoots(float a, float b, float c, float& x0, float& x1);
 
 //==============================================================================
 // implementation
