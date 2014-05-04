@@ -49,6 +49,8 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/PrimType.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Quadtree.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Queue.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Ray.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Ray.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Rect.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/RectObject.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/RenderStream.hpp</itemPath>
@@ -61,6 +63,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/SharedPoolAllocator.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Sprite.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SpriteRenderer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Squared.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/State.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Surface.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Text.hpp</itemPath>
@@ -470,6 +473,10 @@
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Queue.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Ray.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Ray.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="D:/repos/xr3/xr3/h/XR/Rect.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/RectObject.cpp"
@@ -638,6 +645,8 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Squared.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/State.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -1033,6 +1042,10 @@
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Queue.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Ray.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Ray.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="D:/repos/xr3/xr3/h/XR/Rect.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/RectObject.cpp"
@@ -1201,6 +1214,8 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Squared.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/State.cpp" ex="false" tool="1" flavor2="0">
       </item>

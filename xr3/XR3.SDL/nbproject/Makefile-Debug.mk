@@ -66,6 +66,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/Parse.o \
 	${OBJECTDIR}/_ext/1046665460/Pool.o \
 	${OBJECTDIR}/_ext/1046665460/Quadtree.o \
+	${OBJECTDIR}/_ext/1046665460/Ray.o \
 	${OBJECTDIR}/_ext/1046665460/RectObject.o \
 	${OBJECTDIR}/_ext/1046665460/RingBuffer.o \
 	${OBJECTDIR}/_ext/784063616/Audio.o \
@@ -281,6 +282,11 @@ ${OBJECTDIR}/_ext/1046665460/Quadtree.o: /D/repos/xr3/xr3/h/XR/Quadtree.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/Quadtree.o /D/repos/xr3/xr3/h/XR/Quadtree.cpp
+
+${OBJECTDIR}/_ext/1046665460/Ray.o: /D/repos/xr3/xr3/h/XR/Ray.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/Ray.o /D/repos/xr3/xr3/h/XR/Ray.cpp
 
 ${OBJECTDIR}/_ext/1046665460/RectObject.o: /D/repos/xr3/xr3/h/XR/RectObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460

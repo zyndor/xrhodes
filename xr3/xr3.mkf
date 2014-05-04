@@ -58,6 +58,7 @@ files
   XR/PrimType.hpp
   XR/Quadtree.hpp
   XR/Queue.hpp
+  XR/Ray.hpp
   XR/RectObject.hpp
   XR/Renderer.hpp
   XR/RenderStream.hpp
@@ -69,6 +70,7 @@ files
   XR/SharedPoolAllocator.hpp
   XR/Sprite.hpp
   XR/SpriteRenderer.hpp
+  XR/Squared.hpp
   XR/State.hpp
   XR/strings.hpp
   XR/Text.hpp

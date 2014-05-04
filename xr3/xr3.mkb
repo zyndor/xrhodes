@@ -77,6 +77,7 @@ files
   PrimType.hpp
   Quadtree.hpp  #Rectobject
   Queue.hpp
+  Ray.hpp
   RectObject.hpp  #AABB
   Renderer.hpp
   RenderStream.hpp
@@ -88,6 +89,7 @@ files
   SharedPoolAllocator.hpp #Pool
   Sprite.hpp  #AABB
   SpriteRenderer.hpp
+  Squared.hpp
   State.hpp #HardStack
   strings.hpp
   Text.hpp  #Font
@@ -138,6 +140,7 @@ files
   Parse.cpp
   Pool.cpp
   Quadtree.cpp
+  Ray.cpp
   RectObject.cpp
   RingBuffer.cpp
   Serialized.cpp
@@ -168,8 +171,6 @@ files
   MouseButton.cpp
   Renderer.cpp
   RenderStream.cpp
-  #S3eInputDevice.cpp
-  #S3eInputDevice.hpp
   Sample.cpp
   SampleData.cpp
   SampleData.hpp
