@@ -686,7 +686,7 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_DOWN] = success;
 
-          Sprite& sprOut(pButton->arSprite[UIButton::UIButton::S_DOWN]);
+          Sprite& sprOut(pButton->arSprite[UIButton::S_DOWN]);
           UIBSetUISprite(pSprite, sprOut, pButton);
           sprOut.Scale(scale);
         }
@@ -709,7 +709,7 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_OFF] = success;
 
-          Sprite& sprOut(pButton->arSprite[UIButton::UIButton::S_OFF]);
+          Sprite& sprOut(pButton->arSprite[UIButton::S_OFF]);
           UIBSetUISprite(pSprite, sprOut, pButton);
           sprOut.Scale(scale);
         }
