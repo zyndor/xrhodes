@@ -49,7 +49,6 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/PrimType.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Quadtree.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Queue.hpp</itemPath>
-      <itemPath>D:/repos/xr3/xr3/h/XR/Ray.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Ray.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Rect.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/RectObject.hpp</itemPath>
@@ -130,6 +129,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Parse.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Pool.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Quadtree.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Ray.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/RectObject.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/RenderStream.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Renderer.cpp</itemPath>
