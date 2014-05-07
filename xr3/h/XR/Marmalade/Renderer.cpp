@@ -11,8 +11,12 @@ struct  RendererImpl
   float           zFar;
   float           zNear;
   float           zView;
+  float           tanVFovHalf;
   Rect            scissorRect;
   int             numVertices;
+  bool            isPerspective;
+  float           rayCastZNear;
+  Matrix          rayCastView;
 };
 
 static RendererImpl* s_pRenderer(0);
@@ -45,6 +49,10 @@ void Renderer::Init()
   s_pRenderer->scissorRect.w = rect.w;
   s_pRenderer->scissorRect.h = rect.h;
   s_pRenderer->numVertices = 0;
+
+  SetPerspective(M_PI * .25f, 10.0f, 1000.0f);
+  GetViewMatrix(s_pRenderer->rayCastView);
+  s_pRenderer->rayCastZNear = s_pRenderer->zNear;
 }
 
 //==============================================================================
@@ -133,6 +141,8 @@ void Renderer::SetOrtho(float left, float right, float bottom, float top,
   s_pRenderer->zView = .0f;
   //IwGxSetFarZNearZ(zFar, zNear);
   IwGxSetPerspectiveMatrix(arPerspMatrix);
+
+  s_pRenderer->isPerspective = false;
 }
 
 //==============================================================================
@@ -143,8 +153,9 @@ void Renderer::SetPerspective(float vFov, float aspect, float zNear,
   //XR_TRACE(Renderer, ("ortho: %d", (flags & IW_GX_ORTHO_PROJ_F) != 0));
   //flags &= ~IW_GX_ORTHO_PROJ_F;
   //IwGxSetFlags(flags);
-  
-  float f(1.0f / tanf(vFov * .5f));
+
+  s_pRenderer->tanVFovHalf = tanf(vFov * .5f);
+  float f(1.0f / s_pRenderer->tanVFovHalf);
   float dz(zNear - zFar);
   
   float arPerspMatrix[16] =
@@ -160,6 +171,9 @@ void Renderer::SetPerspective(float vFov, float aspect, float zNear,
   s_pRenderer->zView = (float)(IwGxGetScreenHeight() / 2) / f;
   IwGxSetFarZNearZ(zFar, zNear);
   IwGxSetPerspectiveMatrix(arPerspMatrix);
+
+  s_pRenderer->isPerspective = true;
+  s_pRenderer->rayCastZNear = zNear;
 }
 
 //==============================================================================
@@ -208,6 +222,11 @@ void Renderer::SetViewMatrix( const Matrix& mView)
 {
   const CIwFMat*  pMat(reinterpret_cast<const CIwFMat*>(&mView));
   IwGxSetViewMatrix(pMat);
+
+  if(s_pRenderer->isPerspective)
+  {
+    s_pRenderer->rayCastView = mView;
+  }
 }
 
 //==============================================================================
@@ -218,6 +237,58 @@ void Renderer::SetModelMatrix( const Matrix& mModel)
 
   const CIwFMat*  pMat(reinterpret_cast<const CIwFMat*>(&m));
   IwGxSetModelMatrix(pMat);
+}
+
+//==============================================================================
+void  Renderer::GetViewMatrix(Matrix& m)
+{
+  memcpy(&m, &IwGxGetViewMatrix(), sizeof(CIwFMat));
+}
+
+//==============================================================================
+void  Renderer::GetModelMatrix(Matrix& m)
+{
+  CIwFMat&  mModel(IwGxGetModelMatrix());
+  memcpy(&m, &mModel, sizeof(CIwFMat));
+  m.Transpose();
+}
+
+//==============================================================================
+Ray Renderer::GetViewRay(int16 x, int16 y)
+{
+  Vector3 vForward(s_pRenderer->rayCastView.arRot + MZX);
+//  vForward.Normalise();
+
+  Vector3 vRight(s_pRenderer->rayCastView.arRot + MXX);
+  vRight.Normalise();
+
+  Vector3 vUp(s_pRenderer->rayCastView.arRot + MYX);
+  vUp.Normalise();
+
+  const int   wScr(GetScreenWidth());
+  const int   hScr(GetScreenHeight());
+  float hProj(s_pRenderer->rayCastZNear * s_pRenderer->tanVFovHalf);
+  float wProj(hProj * ((float)wScr / (float)hScr));
+  
+  vUp *= hProj;
+  vRight *= wProj;
+  
+  int wHalf(wScr / 2);
+  int hHalf(hScr / 2);
+  x -= wHalf;
+  y -= hHalf;
+  float fx((float)x / wHalf);
+  float fy((float)y / hHalf);
+
+  Ray r;
+  r.position = s_pRenderer->rayCastView.t;
+  Vector3 zNearHit(s_pRenderer->rayCastView.t +
+    (vForward * s_pRenderer->rayCastZNear) + (vRight * fx) + (vUp * fy));
+  r.direction = zNearHit - s_pRenderer->rayCastView.t;
+  r.direction.Normalise();
+  r.length = std::numeric_limits<float>::max();
+ 
+  return r;
 }
 
 //==============================================================================

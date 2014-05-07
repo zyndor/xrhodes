@@ -826,6 +826,12 @@ public:
   }
 };
 
-} // XRz
+} // XR
+
+#define XR_TRACE_VECTOR2(name, vector)  XR_TRACE(name, ("%.3f, %.3f, %.3f",\
+  name, vector.x, vector.y))
+#define XR_TRACE_VECTOR3(name, vector)  XR_TRACE(name, ("%.3f, %.3f, %.3f",\
+  name, vector.x, vector.y, vector.z))
+
 
 #endif // XR_VECTYPES_HPP

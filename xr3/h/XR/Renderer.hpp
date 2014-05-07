@@ -17,6 +17,7 @@
 #include "Material.hpp"
 #include "RenderStream.hpp"
 #include "PrimType.hpp"
+#include "Ray.hpp"
 
 namespace XR
 {
@@ -72,6 +73,8 @@ public:
   
   static void           GetViewMatrix(Matrix& m);
   static void           GetModelMatrix(Matrix& m);
+
+  static Ray            GetViewRay(int16 x, int16 y);
   
   static void           SetMaterial(Material* pMat);
 

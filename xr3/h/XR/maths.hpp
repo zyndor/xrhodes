@@ -46,6 +46,9 @@ extern const float kDegreesToRadians;
 ///@brief An angleInRadians * kRadiansToDegrees is the angle in degrees.
 extern const float kRadiansToDegrees;
 
+///@brief Arbitrary small value for floating point difference calculations.
+extern const float kEpsilon;
+
 ///@brief The reciprocal of RAND_MAX.
 extern const float kRecRandMax;
 

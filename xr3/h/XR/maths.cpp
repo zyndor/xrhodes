@@ -27,6 +27,8 @@ const float kDegreesToRadians = kPi / 180.0f;
 
 const float kRadiansToDegrees = 1.0f / kDegreesToRadians;
 
+const float kEpsilon = .000001f;
+
 const float  kRecRandMax = 1.0f / (float)(RAND_MAX);
 
 //==============================================================================
