@@ -12,6 +12,11 @@ namespace XR
 typedef std::map<uint32, std::string> StringMap;
 
 static StringMap  s_stringLookup;
+
+static void  ClearStringLookup()
+{
+  s_stringLookup.clear();
+}
 #endif  //XR_DEBUG
 
 //==============================================================================
@@ -90,6 +95,14 @@ uint32 Hash::Data( const void* pData, int32 size, uint32 hash)
     ++p0;
   }
   return hash;
+}
+
+//==============================================================================
+void   Hash::DebugClearStringLookup()
+{
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+  s_stringLookup.clear();
+#endif
 }
 
 } // XR

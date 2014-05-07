@@ -26,10 +26,11 @@ public:
   // static
   static const uint32 kSeed = 61681;
 
-  static uint32  String(const char* pString, uint32 hash = kSeed);
-  static uint32  String(const char* pString, int32 size, uint32 hash = kSeed);
-  static uint32  Data(const void* pData, int32 size, uint32 hash = kSeed);
+  static uint32 String(const char* pString, uint32 hash = kSeed);
+  static uint32 String(const char* pString, int32 size, uint32 hash = kSeed);
+  static uint32 Data(const void* pData, int32 size, uint32 hash = kSeed);
 
+  static void   DebugClearStringLookup();
 };
 
 } // XR
