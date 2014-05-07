@@ -24,6 +24,8 @@ void  Application::Init()
 //==============================================================================
 void  Application::Exit()
 {
+  Hash::DebugClearStringLookup();
+
   Audio::Exit();
   Input::Exit();
   Renderer::Exit();
