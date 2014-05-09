@@ -9,6 +9,8 @@ library
 files
 {
 	(h)
+  XR/Screen.hpp
+  XR/ScreenManager.hpp
   XR/UIAligner.hpp #UIContainer
   XR/UIBuilder.hpp #UIContainer, Font
   XR/UIButton.hpp  #UIColoredElement

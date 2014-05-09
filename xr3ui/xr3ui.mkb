@@ -23,36 +23,10 @@ files
 {
   xr3ui.mkf
   
-  (h/XR)
-  UIAligner.hpp #UIContainer
-  UIBuilder.hpp #UIContainer, Font
-  UIButton.hpp  #UIColoredElement
-  UICascader.hpp  #UIAligner
-  UICheckBox.hpp  #UIButton
-  UIColoredElement.hpp  #UIElement
-  UIContainer.hpp #UIElement
-  UIElement.hpp
-  UIEventDispatcher.hpp  #UIElement
-  UIGridLayout.hpp  #UIContainer
-  UIGrowingLayoutBase.hpp #UIContainer
-  UIHorizontalLayout.hpp  #UIGrowingLayoutBase
-  UIHorizontalProgressBar.hpp #UIProgressBarBase
-  UIHorizontalScrollingLayout.hpp #UIScrollingLayoutBase
-  UIHorizontalSlider.hpp  #UISliderBase
-  UIImage.hpp #UIColoredElement, Sprite
-  UIImagePanel.hpp  #UIImage
-  UILabel.hpp #UIColoredElement, Text2D
-  UIProgressBarBase.hpp #UIColoredElement, Sprite
-  UIRadioButton.hpp	#UICheckBox
-  UIRenderer.hpp
-  UISliderBase.hpp  #UIColoredElement, Sprite
-  UISpacer.hpp  #UIElement
-  UIState.hpp #State, S3eEventDispatcher, UIRadioButton, UIImagePanel, UILabel, UISpacer, UICascader, UIHorizontalScrollingLayout, UIVerticalScrollingLayout, UIGridLayout, UIHorizontalProgressBar, UIVerticalProgressBar, UIHorizontalSlider, UIVerticalSlider
-  UIVerticalLayout.hpp  #UIGrowingLayoutBase
-  UIVerticalProgressBar.hpp #UIGrowingLayoutBase
-  UIVerticalScrollingLayout.hpp
-  UIVerticalSlider.hpp
-  
+  [src]
+  (h/XR)  
+  Screen.cpp
+  ScreenManager.cpp
   UIAligner.cpp
   UIBuilder.cpp
   UIButton.cpp

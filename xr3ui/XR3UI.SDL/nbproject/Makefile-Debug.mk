@@ -35,6 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/1447016992/Screen.o \
+	${OBJECTDIR}/_ext/1447016992/ScreenManager.o \
 	${OBJECTDIR}/_ext/1447016992/UIAligner.o \
 	${OBJECTDIR}/_ext/1447016992/UIBuilder.o \
 	${OBJECTDIR}/_ext/1447016992/UIButton.o \
@@ -90,6 +92,16 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a: ${OBJECTFILES}
 	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a
+
+${OBJECTDIR}/_ext/1447016992/Screen.o: /D/repos/xr3/xr3ui/h/XR/Screen.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/Screen.o /D/repos/xr3/xr3ui/h/XR/Screen.cpp
+
+${OBJECTDIR}/_ext/1447016992/ScreenManager.o: /D/repos/xr3/xr3ui/h/XR/ScreenManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/ScreenManager.o /D/repos/xr3/xr3ui/h/XR/ScreenManager.cpp
 
 ${OBJECTDIR}/_ext/1447016992/UIAligner.o: /D/repos/xr3/xr3ui/h/XR/UIAligner.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
