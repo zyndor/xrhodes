@@ -49,7 +49,8 @@ static const char*  karAttribs[]=
 };
 
 //==============================================================================
-const char* FindValue(const char* pBuffer, const char* pKey, const char*& pResult)
+static const char* FindValue(const char* pBuffer, const char* pKey,
+    const char*& pResult)
 {
   XR_ASSERT(FindValue, pBuffer != 0);
   XR_ASSERT(FindValue, pKey != 0);
@@ -67,6 +68,9 @@ const char* FindValue(const char* pBuffer, const char* pKey, const char*& pResul
   }
   return pNext;
 }
+
+//==============================================================================
+XR_MANAGED_DEF(Font)
 
 //==============================================================================
 Font::Font()

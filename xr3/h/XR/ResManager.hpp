@@ -213,6 +213,26 @@ public:\
   void ManagedDestruct();\
 
 //==============================================================================
+#define XR_MANAGED_DEF(a) \
+a*  a::CreateManaged(uint32 hash) {\
+  a*  pRes(Manager::Get(hash));\
+  if(pRes == 0)\
+  {\
+    void* pMem(Manager::Allocate(sizeof(a)));\
+    if(pMem != 0)\
+    {\
+      pRes = new (pMem) a;\
+    }\
+  }\
+  return pRes;\
+}\
+\
+void  a::ManagedDestruct()\
+{\
+  this->~a();\
+}\
+
+//==============================================================================
 #define XR_CROSS_MANAGED_DEF(a, aImpl)  \
 a*  a::CreateManaged(uint32 hash) {\
   a*  pRes(Manager::Get(hash));\

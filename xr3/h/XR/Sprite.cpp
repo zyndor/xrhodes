@@ -19,6 +19,9 @@ const AABB Sprite::kWholeTexture = { .0f, .0f, 1.0f, 1.0f };
 const AABB Sprite::kNullTexture =  { .0f, .0f, .0f, .0f };
 
 //==============================================================================
+XR_MANAGED_DEF(Sprite)
+
+//==============================================================================
 void Sprite::Slice( AABB base, int across, int down, int maxSlices,
   Material* pMaterial, Sprite* parSprites )
 {

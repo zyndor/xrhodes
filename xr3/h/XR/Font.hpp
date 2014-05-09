@@ -21,6 +21,8 @@ namespace XR
 //==============================================================================
 class Font
 {
+  XR_MANAGED_DECL(Font)
+
 public:
   // types
   enum 
