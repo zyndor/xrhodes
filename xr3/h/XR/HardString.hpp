@@ -14,6 +14,7 @@
 
 #include  <string.h>
 #include  <ctype.h>
+#include  "types.hpp"
 
 namespace XR
 {
