@@ -229,9 +229,6 @@ void Renderer::SetPerspMatrix( const float arData[kNumPersMatrixElems] )
   XR_ASSERT(Renderer, arData != 0);
   XR_GL_CALL(glMatrixMode(GL_PROJECTION));
   XR_GL_CALL(arData != 0 ? glLoadMatrixf(arData) : glLoadIdentity());
-
-  XR_GL_CALL(glMatrixMode(GL_MODELVIEW));
-  XR_GL_CALL(glLoadIdentity());
 }
 
 //==============================================================================
@@ -251,9 +248,6 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
   
   XR_GL_CALL(glOrtho(left, right, bottom, top, s_rendererImpl.zNear,
     s_rendererImpl.zFar));
-
-  XR_GL_CALL(glMatrixMode(GL_MODELVIEW));
-  XR_GL_CALL(glLoadIdentity());
   
   s_rendererImpl.isPerspective = false;
 }
