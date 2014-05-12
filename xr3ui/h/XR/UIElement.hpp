@@ -37,12 +37,6 @@ public:
     AL_NOALIGN
   };
   
-  enum  Flags
-  {
-    F_CONTAINER,
-    MASK_CONTAINER = XR_MASK_ID(F_CONTAINER),
-  };
-
   // static
   static void  OnChangeCaller(void* pData);
   
