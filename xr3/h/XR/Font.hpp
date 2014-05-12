@@ -94,7 +94,7 @@ inline
 const Font::Glyph*  Font::GetGlyph(int chr) const
 {
   XR_ASSERT(Font, chr >= 0);
-  if(chr < kNumBasicGlyphs)
+  if (chr < kNumBasicGlyphs)
   {
     return m_arGlyphs + chr;
   }

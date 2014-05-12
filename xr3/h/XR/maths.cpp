@@ -56,11 +56,11 @@ float CalcScalingPerFrame(float v, float fps)
 bool  CalcQuadRoots(float a, float b, float c, float& x0, float& x1)
 {
   bool  valid(a != .0f);
-  if(valid)
+  if (valid)
   {
     float root(b * b - 4.0f * a * c);
     valid = root >= .0f;
-    if(valid)
+    if (valid)
     {
       root = sqrtf(root);
       a = 1.0f / (2.0f * a);
@@ -69,7 +69,7 @@ bool  CalcQuadRoots(float a, float b, float c, float& x0, float& x1)
       x0 = (b + root) * a;
       x1 = (b - root) * a;
       
-      if(x0 > x1)
+      if (x0 > x1)
       {
         std::swap(x0, x1);
       }

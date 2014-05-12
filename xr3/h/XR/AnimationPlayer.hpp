@@ -116,7 +116,7 @@ template  <class T>
 void  AnimationPlayer<T>::Update(float tDelta)
 {
   XR_ASSERT(AnimationPlayer, tLife > .0f);
-  if(tLife > .0f)
+  if (tLife > .0f)
   {
     tLife -= tDelta;
     anim.Update(tDelta);

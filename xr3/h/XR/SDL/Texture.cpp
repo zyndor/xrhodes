@@ -1,5 +1,5 @@
-#include  "Texture.hpp"
-#include  "TextureImpl.hpp"
+#include "Texture.hpp"
+#include "TextureImpl.hpp"
 
 #define TO_IMPL()  (static_cast<TextureImpl*>(GetImpl()))
 #define TO_CONST_IMPL()  (static_cast<const TextureImpl*>(GetImpl()))

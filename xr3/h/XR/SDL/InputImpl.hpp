@@ -11,7 +11,7 @@
 #if !defined XR_INPUTIMPL_HPP
 #define XR_INPUTIMPL_HPP
 
-#include  "Input.hpp"
+#include "Input.hpp"
 
 namespace XR {
 

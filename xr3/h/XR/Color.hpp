@@ -12,7 +12,7 @@
 #if !defined XR_COLOR_HPP
 #define XR_COLOR_HPP
 
-#include  "types.hpp"
+#include "types.hpp"
 
 namespace XR
 {

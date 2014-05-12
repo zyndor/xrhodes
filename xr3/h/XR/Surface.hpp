@@ -11,7 +11,7 @@
 #if !defined XR_SURFACE_HPP
 #define XR_SURFACE_HPP
 
-#include  "Texture.hpp"
+#include "Texture.hpp"
 
 namespace XR
 {

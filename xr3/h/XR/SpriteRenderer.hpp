@@ -12,12 +12,12 @@
 #if !defined XR_SPRITERENDERER_HPP
 #define XR_SPRITERENDERER_HPP
 
-#include  <list>
-#include  "fundamentals.hpp"
-#include  "Sprite.hpp"
-#include  "Pool.hpp"
-#include  "SharedPoolAllocator.hpp"
-#include  "IndexMesh.hpp"
+#include <list>
+#include "fundamentals.hpp"
+#include "Sprite.hpp"
+#include "Pool.hpp"
+#include "SharedPoolAllocator.hpp"
+#include "IndexMesh.hpp"
 
 namespace XR
 {

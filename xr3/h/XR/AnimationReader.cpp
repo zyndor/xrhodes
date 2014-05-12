@@ -1,4 +1,4 @@
-#include  "AnimationReader.hpp"
+#include "AnimationReader.hpp"
 
 namespace XR
 {

@@ -4,7 +4,7 @@
 //
 // copyright (c) 2011 - 2014. All rights reserved.
 //
-#include  "InputImpl.hpp"
+#include "InputImpl.hpp"
 
 namespace XR
 {

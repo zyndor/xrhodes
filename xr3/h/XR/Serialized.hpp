@@ -12,10 +12,10 @@
 #if !defined XR_SERIALIZED_HPP
 #define XR_SERIALIZED_HPP
 
-#include  <list>
-#include  "Dictionary.hpp"
-#include  "utils.hpp"
-#include  "File.hpp"
+#include <list>
+#include "Dictionary.hpp"
+#include "utils.hpp"
+#include "File.hpp"
 
 namespace XR
 {
@@ -135,7 +135,7 @@ bool  Serialized::DeserializeId(T*& pObject, int hFile,
   XR_ASSERT(Serialized, hFile != File::INVALID_HANDLE);
   IdType  id;
   bool    success = File::Read(sizeof(IdType), 1, hFile, &id) == 1;
-  if(success)
+  if (success)
   {
     RegisterReference(id, pObject, pOnInflateCb, pOnInflateCbData);
   }
@@ -150,7 +150,7 @@ bool  Serialized::DeserializeId(const T*& pObject, int hFile,
   XR_ASSERT(Serialized, hFile != File::INVALID_HANDLE);
   IdType  id;
   bool    success(File::Read(sizeof(IdType), 1, hFile, &id) == 1);
-  if(success)
+  if (success)
   {
     RegisterReference(id, pObject, pOnInflateCb, pOnInflateCbData);
   }

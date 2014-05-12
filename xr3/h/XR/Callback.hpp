@@ -61,7 +61,7 @@ void  CallbackObject::Call(void* pSystem)
 inline
 void  CallbackObject::CallSafe(void* pSystem)
 {
-  if(pCb != 0)
+  if (pCb != 0)
   {
     (*pCb)(pSystem, pCbData);
   }

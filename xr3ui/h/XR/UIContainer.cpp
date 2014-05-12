@@ -35,10 +35,10 @@ bool  UIContainer::AddElement( UIElement* pElem )
 
   ElementList::iterator i0(std::find(m_lElements.begin(), m_lElements.end(), pElem));
   bool  success(i0 == m_lElements.end());
-  if(success)
+  if (success)
   {
     UIContainer*  pParent(pElem->GetParent());
-    if(pParent != 0)
+    if (pParent != 0)
     {
       pParent->RemoveElement(pElem);
     }
@@ -58,7 +58,7 @@ bool  UIContainer::RemoveElement( UIElement* pElem )
 {
   ElementList::iterator i0(std::find(m_lElements.begin(), m_lElements.end(), pElem));
   bool  success(i0 != m_lElements.end());
-  if(success)
+  if (success)
   {
     (*i0)->SetParent(0);
     _RealignElements(m_lElements.erase(i0));
@@ -76,7 +76,7 @@ void UIContainer::_RealignElements(ElementList::iterator i)
   ElementList el;
   el.splice(el.end(), m_lElements, i, m_lElements.end());
 
-  for(ElementList::iterator i0(el.begin()), i1(el.end()); i0 != i1; ++i0)
+  for (ElementList::iterator i0(el.begin()), i1(el.end()); i0 != i1; ++i0)
   {
     _AddChild(*i0);
   }
@@ -84,7 +84,7 @@ void UIContainer::_RealignElements(ElementList::iterator i)
 
 void UIContainer::RemoveAllElements()
 {
-  for(ElementList::iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (ElementList::iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     (*i0)->SetParent(0);
   }
@@ -124,10 +124,10 @@ void UIContainer::SetSizeToContent()
 void UIContainer::_SetWidthToContent()
 {
   int wNew(0);
-  for(ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     int wElem((*i0)->w);
-    if(wElem > wNew)
+    if (wElem > wNew)
     {
       wNew = wElem;
     }
@@ -139,10 +139,10 @@ void UIContainer::_SetWidthToContent()
 void UIContainer::_SetHeightToContent()
 {
   int hNew(0);
-  for(ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     int hElem((*i0)->h);
-    if(hElem > hNew)
+    if (hElem > hNew)
     {
       hNew = hElem;
     }
@@ -154,7 +154,7 @@ void UIContainer::_SetHeightToContent()
 bool UIContainer::MoveUpElement( UIElement* pElem )
 {
   bool  success(RemoveElement(pElem));
-  if(success)
+  if (success)
   {
     _AddChild(pElem);
   }
@@ -164,11 +164,11 @@ bool UIContainer::MoveUpElement( UIElement* pElem )
 bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e )
 {
   bool  isHandled(false);
-  for(ElementList::iterator i0(m_lElements.begin()), i1(m_lElements.end());
+  for (ElementList::iterator i0(m_lElements.begin()), i1(m_lElements.end());
     i0 != i1; ++i0)
   {
     UIElement*  pElem(*i0);
-    if(pElem->OnMouseAction(e))
+    if (pElem->OnMouseAction(e))
     {
       isHandled = true;
       break;
@@ -180,11 +180,11 @@ bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e )
 bool UIContainer::OnMouseMotion(const Input::MouseMotionEvent& e )
 {
   bool  handled(false);
-  for(ElementList::iterator i0(m_lElements.begin()), i1(m_lElements.end());
+  for (ElementList::iterator i0(m_lElements.begin()), i1(m_lElements.end());
     i0 != i1; ++i0)
   {
     UIElement*  pElem(*i0);
-    if(pElem->OnMouseMotion(e))
+    if (pElem->OnMouseMotion(e))
     {
       handled = true;
       break;

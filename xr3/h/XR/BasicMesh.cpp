@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "BasicMesh.hpp"
+#include "BasicMesh.hpp"
 
 namespace XR {
 
@@ -36,7 +36,7 @@ void  BasicMesh::InitStreams(int numVertices)
 //==============================================================================
 void  BasicMesh::Render()
 {
-  if(m_vertices.GetCapacity() > 0)
+  if (m_vertices.GetCapacity() > 0)
   {
     _PrepareRender();
     Renderer::DrawPrims(PRIM_TRI_STRIP);

@@ -1,6 +1,6 @@
-#include  <XR/maths.hpp>
-#include  "UIImagePanel.hpp"
-#include  "UIRenderer.hpp"
+#include <XR/maths.hpp>
+#include "UIImagePanel.hpp"
+#include "UIRenderer.hpp"
 
 namespace XR
 {
@@ -53,7 +53,7 @@ void UIImagePanel::Render() const
   
   const RenderStream& rsSpriteUVs(sprite.GetUVs());
   float arU[4];
-  if(sprite.IsUVRotated())
+  if (sprite.IsUVRotated())
   {
     arU[0] = rsSpriteUVs.GetX(Sprite::VI_SW);
     arU[3] = rsSpriteUVs.GetX(Sprite::VI_NW);
@@ -68,7 +68,7 @@ void UIImagePanel::Render() const
   arU[2] = arU[1];
   
   float arV[4];
-  if(sprite.IsUVRotated())
+  if (sprite.IsUVRotated())
   {
     arV[0] = rsSpriteUVs.GetY(Sprite::VI_SW);
     arV[3] = rsSpriteUVs.GetY(Sprite::VI_SE);
@@ -84,7 +84,7 @@ void UIImagePanel::Render() const
   
   int ix0(0);
   int ix1(3);
-  if(arXCoords[1] > arXCoords[2]) // ui width is smaller than sprite width
+  if (arXCoords[1] > arXCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(w / wSprite);
@@ -96,14 +96,14 @@ void UIImagePanel::Render() const
   }
   else
   {
-    if(arXCoords[0] > arXCoords[1])
+    if (arXCoords[0] > arXCoords[1])
     {
       // ignore low half
       arU[2] = arU[0];
       ix0 += 2;
     }
 
-    if(arXCoords[3] < arXCoords[2])
+    if (arXCoords[3] < arXCoords[2])
     {
       // ignore high half
       arU[1] = arU[3];
@@ -113,7 +113,7 @@ void UIImagePanel::Render() const
   
   int iy0(0);
   int iy1(3);
-  if(arYCoords[1] > arYCoords[2]) // ui width is smaller than sprite width
+  if (arYCoords[1] > arYCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(h / hSprite);
@@ -125,14 +125,14 @@ void UIImagePanel::Render() const
   }
   else
   {
-    if(arYCoords[0] > arYCoords[1])
+    if (arYCoords[0] > arYCoords[1])
     {
       // ignore low half
       arV[2] = arV[0];
       iy0 += 2;
     }
     
-    if(arYCoords[3] < arYCoords[2])
+    if (arYCoords[3] < arYCoords[2])
     {
       // ignore high half
       arV[1] = arV[3];
@@ -144,7 +144,7 @@ void UIImagePanel::Render() const
   int vQuads(iy1 - iy0);
   
   int numVertices(hQuads * vQuads * Sprite::kNumVertices);
-  if(numVertices > 0)
+  if (numVertices > 0)
   {
     RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3, numVertices));
     RenderStream* pRsUVs(Renderer::AllocStream(RenderStream::F_VECTOR2, numVertices));
@@ -156,9 +156,9 @@ void UIImagePanel::Render() const
     int           iWrite(0);
   
     int cell(0);
-    for(int i = iy0; i < iy1; ++i)
+    for (int i = iy0; i < iy1; ++i)
     {
-      for(int j = ix0; j < ix1; ++j)
+      for (int j = ix0; j < ix1; ++j)
       {
         pRsVerts->Set(iWrite + 0, Vector3(arXCoords[j], arYCoords[i], .0f));
         pRsVerts->Set(iWrite + 1, Vector3(arXCoords[j], arYCoords[i + 1], .0f));
@@ -228,7 +228,7 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
 
   const RenderStream& rsSpriteUVs(sprite.GetUVs());
   float arU[4];
-  if(sprite.IsUVRotated())
+  if (sprite.IsUVRotated())
   {
     arU[0] = rsSpriteUVs.GetX(Sprite::VI_SW);
     arU[3] = rsSpriteUVs.GetX(Sprite::VI_NW);
@@ -243,7 +243,7 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   arU[2] = arU[1];
 
   float arV[4];
-  if(sprite.IsUVRotated())
+  if (sprite.IsUVRotated())
   {
     arV[0] = rsSpriteUVs.GetY(Sprite::VI_SW);
     arV[3] = rsSpriteUVs.GetY(Sprite::VI_SE);
@@ -259,7 +259,7 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
 
   int ix0(0);
   int ix1(3);
-  if(arXCoords[1] > arXCoords[2]) // ui width is smaller than sprite width
+  if (arXCoords[1] > arXCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(w / wSprite);
@@ -271,14 +271,14 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   }
   else
   {
-    if(arXCoords[0] > arXCoords[1])
+    if (arXCoords[0] > arXCoords[1])
     {
       // ignore low half
       arU[2] = arU[0];
       ix0 += 2;
     }
 
-    if(arXCoords[3] < arXCoords[2])
+    if (arXCoords[3] < arXCoords[2])
     {
       // ignore high half
       arU[1] = arU[3];
@@ -288,7 +288,7 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
 
   int iy0(0);
   int iy1(3);
-  if(arYCoords[1] > arYCoords[2]) // ui width is smaller than sprite width
+  if (arYCoords[1] > arYCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(h / hSprite);
@@ -300,14 +300,14 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   }
   else
   {
-    if(arYCoords[0] > arYCoords[1])
+    if (arYCoords[0] > arYCoords[1])
     {
       // ignore low half
       arV[2] = arV[0];
       iy0 += 2;
     }
 
-    if(arYCoords[3] < arYCoords[2])
+    if (arYCoords[3] < arYCoords[2])
     {
       // ignore high half
       arV[1] = arV[3];
@@ -319,12 +319,12 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   int vQuads(iy1 - iy0);
 
   int numVertices(hQuads * vQuads * Sprite::kNumVertices);
-  if(numVertices > 0)
+  if (numVertices > 0)
   {
     RenderStream  rsUVs;
-    for(int i = iy0; i < iy1; ++i)
+    for (int i = iy0; i < iy1; ++i)
     {
-      for(int j = ix0; j < ix1; ++j)
+      for (int j = ix0; j < ix1; ++j)
       {
         RenderStream  rsVerts(pRenderer->NewSprite(sprite.GetMaterial(), color, rsUVs));
 

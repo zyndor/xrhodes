@@ -54,7 +54,7 @@ void Application::Run()
   int32 numUpdates(0);
   int32 numRenders(0);
   
-  while(!Device::IsQuitting())
+  while (!Device::IsQuitting())
   {    
     // render
     m_arCallback[EV_RENDER].Call(0);
@@ -73,7 +73,7 @@ void Application::Run()
     tAccum += tDelta;
     
     // update stats
-    if(tSecond >= 1000)
+    if (tSecond >= 1000)
     {
       m_lastUpdates = numUpdates;
       numUpdates = 0;
@@ -85,11 +85,11 @@ void Application::Run()
     }
     
     // update
-    while(tAccum > 0)
+    while (tAccum > 0)
     {
       // update events and input
       Device::YieldOS(0);
-      if(Device::IsQuitting())
+      if (Device::IsQuitting())
       {
         break;
       }
@@ -97,7 +97,7 @@ void Application::Run()
       {
         Input::Update();
 
-        if(m_breakUpdate)
+        if (m_breakUpdate)
         {
           tAccum = 0;
           m_breakUpdate = false;

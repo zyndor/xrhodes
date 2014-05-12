@@ -32,14 +32,14 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   int yTouch(e.y);
-  if(e.isPressed && e.x >= x && e.x < kRight &&
+  if (e.isPressed && e.x >= x && e.x < kRight &&
     yTouch >= y && yTouch < kBottom)
   {
     // calculate which side we're on
     yTouch -= y;
 
     int value(CalculateValue());
-    if(yTouch < value)
+    if (yTouch < value)
     {
       yTouch -= sliderSprite.GetHalfHeight();
       SetValue(yTouch);
@@ -48,7 +48,7 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
     {
       yTouch -= GetSliderSpriteHeight();
 
-      if(yTouch > value)
+      if (yTouch > value)
       {
         yTouch += sliderSprite.GetHalfHeight();
         SetValue(yTouch);
@@ -60,7 +60,7 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
       }
     }
   }
-  else if(!e.isPressed)
+  else if (!e.isPressed)
   {
     m_isTouched = false;
   }
@@ -71,7 +71,7 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 //==============================================================================
 bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionEvent& e )
 {
-  if(m_isTouched)
+  if (m_isTouched)
   {
     int dy(e.y - m_touchPosition);
     m_touchPosition = e.y;
@@ -84,7 +84,7 @@ bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionEvent& e )
 void UIVerticalSlider::Render() const
 {
   // render the rail
-  if(sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial() != 0)
   {
     UIImage::Render();
   }
@@ -106,7 +106,7 @@ void UIVerticalSlider::Render() const
   pRsVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
   pRsVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
 
-  if(sliderSprite.GetMaterial() != sprite.GetMaterial())
+  if (sliderSprite.GetMaterial() != sprite.GetMaterial())
   {
     Renderer::SetMaterial(sliderSprite.GetMaterial());
   }
@@ -123,7 +123,7 @@ void UIVerticalSlider::Render() const
 void UIVerticalSlider::Render( UIRenderer* pRenderer ) const
 {
   // render the rail
-  if(sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial() != 0)
   {
     UIImage::Render(pRenderer);
   }

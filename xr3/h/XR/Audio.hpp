@@ -12,7 +12,7 @@
 #if !defined XR_AUDIO_HPP
 #define XR_AUDIO_HPP
 
-#include  "Sample.hpp"
+#include "Sample.hpp"
 
 namespace XR
 {

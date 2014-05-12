@@ -1,7 +1,7 @@
-#include  <algorithm>
-#include  <fstream>
-#include  "File.hpp"
-#include  "HardString.hpp"
+#include <algorithm>
+#include <fstream>
+#include "File.hpp"
+#include "HardString.hpp"
 
 namespace XR
 {
@@ -30,7 +30,7 @@ void File::Init()
 //==============================================================================
 void File::Exit()
 {
-  for(int i = 0; i < kMaxFileHandles; ++i)
+  for (int i = 0; i < kMaxFileHandles; ++i)
   {
     Close(i);
   }
@@ -70,7 +70,7 @@ bool File::CheckExists( const char* pName )
 {
   FILE* pFile(fopen(pName, "r"));
   bool  result = pFile != 0;
-  if(result)
+  if (result)
   {
     fclose(pFile);
   }
@@ -81,22 +81,22 @@ bool File::CheckExists( const char* pName )
 int File::Open( const char* pName, const char* pMode )
 {
   int hFile(INVALID_HANDLE);
-  for(int i = 0; i < kMaxFileHandles; ++i)
+  for (int i = 0; i < kMaxFileHandles; ++i)
   {
     int hTemp((s_fileImpl.nextHandle + i) % kMaxFileHandles);
-    if(s_fileImpl.arpFile[hTemp] == 0)
+    if (s_fileImpl.arpFile[hTemp] == 0)
     {
       hFile = hTemp;
       break;
     }
   }
   
-  if(hFile != INVALID_HANDLE)
+  if (hFile != INVALID_HANDLE)
   {
     FILE*&  pFile = s_fileImpl.arpFile[hFile];
     
     pFile = fopen(pName, pMode);
-    if(pFile != 0)
+    if (pFile != 0)
     {
       s_fileImpl.arFilename[hFile] = pName;
       s_fileImpl.nextHandle = hFile + 1;
@@ -118,7 +118,7 @@ uint64 File::GetSize( int hFile )
   
   uint64 offset(ftell(s_fileImpl.arpFile[hFile]));
   uint64 result(0);
-  if(0 == fseek(s_fileImpl.arpFile[hFile], 0, SEEK_END))
+  if (0 == fseek(s_fileImpl.arpFile[hFile], 0, SEEK_END))
   {
     result = ftell(s_fileImpl.arpFile[hFile]);
   }
@@ -152,10 +152,10 @@ char* File::ReadString( int numBytes, int hFile, char* parBuffer )
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
   XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  for(int i = 0; i < numBytes; ++i)
+  for (int i = 0; i < numBytes; ++i)
   {
     int result = fread(parBuffer + i, 1, 1, s_fileImpl.arpFile[hFile]);
-    if(result < 1 || parBuffer[i] == '\r' || parBuffer[i] == '\n')
+    if (result < 1 || parBuffer[i] == '\r' || parBuffer[i] == '\n')
     {
       break;
     }
@@ -179,7 +179,7 @@ void File::Close( int hFile )
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
   FILE*&  pFile = s_fileImpl.arpFile[hFile];
-  if(pFile != 0)
+  if (pFile != 0)
   {
     fclose(pFile);
     pFile = 0;

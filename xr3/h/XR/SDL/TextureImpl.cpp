@@ -1,5 +1,5 @@
-#include  <SDL2/SDL_image.h>
-#include  "TextureImpl.hpp"
+#include <SDL2/SDL_image.h>
+#include "TextureImpl.hpp"
 
 namespace XR
 {
@@ -35,7 +35,7 @@ bool  TextureImpl::LoadFromFile(const char* pFileName)
   m_pSurf = IMG_Load(pFileName);
 
   bool  result(m_pSurf != 0);
-  if(result)
+  if (result)
   {
     m_width = m_pSurf->w;
     m_height = m_pSurf->h;
@@ -120,7 +120,7 @@ void  TextureImpl::Upload()
   
   GLenum  pixelFormat(GL_INVALID_ENUM);
   int     bytesPerPixel(m_pSurf->format->BytesPerPixel);
-  switch(bytesPerPixel)
+  switch (bytesPerPixel)
   {
   case  1:
     pixelFormat = GL_LUMINANCE;
@@ -134,13 +134,13 @@ void  TextureImpl::Upload()
   }
 
   int mipMapLevels(GetMipMapping() ? kNumMipMapLevels : 1);
-  for(int i = 0; i < mipMapLevels; ++i)
+  for (int i = 0; i < mipMapLevels; ++i)
   {
     XR_GL_CALL(glTexImage2D(GL_TEXTURE_2D, i, bytesPerPixel, m_width, m_height,
       0, pixelFormat, GL_UNSIGNED_BYTE, m_pSurf->pixels));
   }
 
-  if(!GetModifiable())
+  if (!GetModifiable())
   {
     FreeSurface();
   }

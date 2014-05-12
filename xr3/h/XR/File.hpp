@@ -12,8 +12,8 @@
 #if !defined XR_FILE_HPP
 #define XR_FILE_HPP
 
-#include  "fundamentals.hpp"
-#include  "types.hpp"
+#include "fundamentals.hpp"
+#include "types.hpp"
 
 namespace XR
 {

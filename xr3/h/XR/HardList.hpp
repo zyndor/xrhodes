@@ -12,8 +12,8 @@
 #if !defined XR_HARDLIST_HPP
 #define XR_HARDLIST_HPP
 
-#include  "types.hpp"
-#include  "typeutils.hpp"
+#include "types.hpp"
+#include "typeutils.hpp"
 
 namespace XR
 {
@@ -151,9 +151,9 @@ int HardList<T>::GetActiveIndices(IsActivePredicate pIsActiveCb, int size,
   XR_ASSERT(HardList, pIsActiveCb != 0);
   XR_ASSERT(HardList, parIndices != 0);
   int iInsert(0);
-  for(int i = 0; i < m_size; ++i)
+  for (int i = 0; i < m_size; ++i)
   {
-    if((*pIsActiveCb)(static_cast<T*>(m_parBuffer)[i]))
+    if ((*pIsActiveCb)(static_cast<T*>(m_parBuffer)[i]))
     {
       XR_ASSERT(HardList, iInsert < size);
       parIndices[iInsert] = i;
@@ -192,10 +192,10 @@ int HardList<T>::GetInsertionIndex(IsActivePredicate pIsActiveCb)
 {
   XR_ASSERT(HardList, pIsActiveCb != 0);
   int i(0);
-  while(i < m_size)
+  while (i < m_size)
   {
     ValueType&  vi(static_cast<T*>(m_parBuffer)[i]);
-    if(!(*pIsActiveCb)(vi))
+    if (!(*pIsActiveCb)(vi))
     {
       break;
     }
@@ -215,12 +215,12 @@ int HardList<T>::Insert(ValueType v, IsActivePredicate pIsActiveCb,
   int       iMin(m_size);
   int       i(0);
   ValueType vMin(v);
-  while(i < m_size)
+  while (i < m_size)
   {
     ValueType&  vi(static_cast<T*>(m_parBuffer)[i]);
-    if((*pIsActiveCb)(vi))
+    if ((*pIsActiveCb)(vi))
     {
-      if((*pIsLeastActiveCb)(vi, vMin))
+      if ((*pIsLeastActiveCb)(vi, vMin))
       {
         vMin = vi;
         iMin = i;
@@ -234,7 +234,7 @@ int HardList<T>::Insert(ValueType v, IsActivePredicate pIsActiveCb,
     ++i;
   }
 
-  if(i == m_size && iMin < m_size)
+  if (i == m_size && iMin < m_size)
   {
     static_cast<T*>(m_parBuffer)[iMin] = v;
     i = iMin;
@@ -246,7 +246,7 @@ int HardList<T>::Insert(ValueType v, IsActivePredicate pIsActiveCb,
 template <class T>
 void  HardList<T>::SetValuesTo(ValueType v)
 {
-  for(int i = 0; i < m_size; ++i)
+  for (int i = 0; i < m_size; ++i)
   {
     static_cast<T*>(m_parBuffer)[i] = v;
   }
@@ -257,10 +257,10 @@ template <class T>
 void  HardList<T>::SetValuesTo(ValueType v, IsActivePredicate pIsActiveCb)
 {
   XR_ASSERT(HardList, pIsActiveCb != 0);
-  for(int i = 0; i < m_size; ++i)
+  for (int i = 0; i < m_size; ++i)
   {
     ValueType&  vi(static_cast<T*>(m_parBuffer)[i]);
-    if((*pIsActiveCb)(vi))
+    if ((*pIsActiveCb)(vi))
     {
       vi = v;
     }

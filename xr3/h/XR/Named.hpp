@@ -12,7 +12,7 @@
 #if !defined XR_NAMED_HPP
 #define XR_NAMED_HPP
 
-#include  "Hash.hpp"
+#include "Hash.hpp"
 
 namespace XR
 {

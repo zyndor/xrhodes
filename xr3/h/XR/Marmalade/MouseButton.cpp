@@ -5,9 +5,9 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  <algorithm>
-#include  <s3ePointer.h>
-#include  "MouseButton.hpp"
+#include <algorithm>
+#include <s3ePointer.h>
+#include "MouseButton.hpp"
 
 namespace XR {
 

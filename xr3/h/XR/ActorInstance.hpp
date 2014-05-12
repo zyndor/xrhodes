@@ -93,9 +93,9 @@ void ActorInstance<T>::AnimationFinishedCallback( AnimationInstanceType& inst,
   void* pData )
 {
   ActorInstance<T>* pInst(static_cast<ActorInstance<T>*>(pData));
-  if(pInst->m_nameHashNextAction != 0)
+  if (pInst->m_nameHashNextAction != 0)
   {
-    if(pInst->pActionFinishedCb != 0)
+    if (pInst->pActionFinishedCb != 0)
     {
       (*pInst->pActionFinishedCb)(*pInst, pInst->pActionFinishedCbData);
     }
@@ -167,7 +167,7 @@ void ActorInstance<T>::RequestChange( uint32 nameHashAction, float timeScale )
 {
   XR_ASSERT(ActorInstance, m_pActor != 0);
   const Animation<T>*  pAction(m_pActor->GetAction(nameHashAction));
-  if(pAction != m_anim.GetAnimation())
+  if (pAction != m_anim.GetAnimation())
   {
     m_anim.SetAnimation(pAction, timeScale);
   }

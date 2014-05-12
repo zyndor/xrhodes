@@ -67,9 +67,9 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy) const
 
   float t0(std::numeric_limits<float>::min());
   float t1(std::numeric_limits<float>::max());
-  for(int i = 0; i < 4; ++i)
+  for (int i = 0; i < 4; ++i)
   {
-    if(p[i] * p[i] > .0f)
+    if (p[i] * p[i] > .0f)
     {
       float t = q[i] / p[i];
       if (p[i] < 0 && t0 < t)
@@ -83,7 +83,7 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy) const
     }
     else
     {
-      if(q[i] < .0f)
+      if (q[i] < .0f)
       {
         return false;
       }
@@ -114,9 +114,9 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy, float& t) const
 
   float t0(std::numeric_limits<float>::min());
   float t1(std::numeric_limits<float>::max());
-  for(int i = 0; i < 4; ++i)
+  for (int i = 0; i < 4; ++i)
   {
-    if(p[i] * p[i] > .0f)
+    if (p[i] * p[i] > .0f)
     {
       float tt = q[i] / p[i];
       if (p[i] < 0 && t0 < tt)
@@ -130,14 +130,14 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy, float& t) const
     }
     else
     {
-      if(q[i] < .0f)
+      if (q[i] < .0f)
       {
         return false;
       }
     }
   }
 
-  if(t0 < t1 && t1 > .0f && t0 < 1.0f)
+  if (t0 < t1 && t1 > .0f && t0 < 1.0f)
   {
     t = t0;
     return true;

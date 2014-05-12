@@ -1,4 +1,4 @@
-#include  "ActorReader.hpp"
+#include "ActorReader.hpp"
 
 namespace XR
 {

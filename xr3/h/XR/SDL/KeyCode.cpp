@@ -5,9 +5,9 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  <algorithm>
-#include  <SDL2/SDL_scancode.h>
-#include  "KeyCode.hpp"
+#include <algorithm>
+#include <SDL2/SDL_scancode.h>
+#include "KeyCode.hpp"
 
 namespace XR
 {

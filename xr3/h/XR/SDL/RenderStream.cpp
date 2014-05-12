@@ -1,6 +1,6 @@
-#include  "RenderStream.hpp"
-#include  <algorithm>
-#include  <SDL2/SDL_opengl.h>
+#include "RenderStream.hpp"
+#include <algorithm>
+#include <SDL2/SDL_opengl.h>
 
 namespace XR
 {
@@ -54,9 +54,9 @@ int RenderStream::CalculateByteSize(Format fmt, int capacity)
 void* RenderStream::AllocateBuffer(Format fmt, int capacity)
 {
   void* pBuffer(0);
-  if(capacity > 0)
+  if (capacity > 0)
   {
-    switch(fmt)
+    switch (fmt)
     {
     case  F_VECTOR2:
       pBuffer = new GLfloat[capacity * 2];
@@ -107,7 +107,7 @@ RenderStream::RenderStream(const RenderStream& rhs)
   m_pData(rhs.GetData()),
   m_isOwner(rhs.m_isOwner)
 {
-  if(m_isOwner)
+  if (m_isOwner)
   {
     m_pData = AllocateBuffer(m_format, m_capacity);
     memcpy(m_pData, rhs.m_pData, CalculateByteSize(m_format, m_capacity));
@@ -126,7 +126,7 @@ void* RenderStream::GetData(int offset) const
   XR_ASSERT(RenderStream, m_format < F_INVALID);
   XR_ASSERT(RenderStream, offset >= 0);
   XR_ASSERT(RenderStream, offset < m_capacity);
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     return static_cast<GLfloat*>(m_pData) + offset * 2;
@@ -171,7 +171,7 @@ Color  RenderStream::GetColor(int i) const
 float RenderStream::GetX(int i) const
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     return *(static_cast<GLfloat*>(m_pData) + i * 2 + VX);
@@ -185,7 +185,7 @@ float RenderStream::GetX(int i) const
 float RenderStream::GetY(int i) const
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     return *(static_cast<GLfloat*>(m_pData) + (i * 2) + VY);
@@ -239,7 +239,7 @@ void  RenderStream::Set(int i, const Color& c)
 void  RenderStream::SetX(int i, float x)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     *(static_cast<GLfloat*>(m_pData) + i * 2 + VX) = x;
@@ -255,7 +255,7 @@ void  RenderStream::SetX(int i, float x)
 void  RenderStream::SetY(int i, float y)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     *(static_cast<GLfloat*>(m_pData) + (i * 2) + VY) = y;
@@ -299,7 +299,7 @@ void  RenderStream::Add(int i, const Vector3& v)
 void  RenderStream::AddX(int i, float x)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     *(static_cast<GLfloat*>(m_pData) + i * 2 + VX) += x;
@@ -315,7 +315,7 @@ void  RenderStream::AddX(int i, float x)
 void  RenderStream::AddY(int i, float y)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     *(static_cast<GLfloat*>(m_pData) + (i * 2) + VY) += y;
@@ -341,7 +341,7 @@ void  RenderStream::Copy(const RenderStream& rhs, int readOffset, int readSize,
   XR_ASSERT(RenderStream, rhs.m_format < F_INVALID);
   XR_ASSERT(RenderStream, m_format == rhs.m_format);
   XR_ASSERT(RenderStream, readOffset >= 0);
-  if(readSize == SIZE_REST)
+  if (readSize == SIZE_REST)
   {
     readSize = rhs.GetCapacity() - readOffset;
   }
@@ -358,7 +358,7 @@ void  RenderStream::Copy(const RenderStream& rhs, int readOffset, int readSize,
 void  RenderStream::Adapt(const RenderStream& rhs, int readOffset,
         int readSize)
 {
-  if(readSize == SIZE_REST)
+  if (readSize == SIZE_REST)
   {
     readSize = rhs.GetCapacity() - readOffset;
   }
@@ -379,7 +379,7 @@ void  RenderStream::Create(Format fmt, int capacity)
   XR_ASSERT(RenderStream, fmt < F_INVALID);
   XR_ASSERT(RenderStream, capacity >= 0);
   Destroy();
-  if(capacity > 0)
+  if (capacity > 0)
   {
     m_isOwner = true;
     m_pData = AllocateBuffer(fmt, capacity);
@@ -391,9 +391,9 @@ void  RenderStream::Create(Format fmt, int capacity)
 //==============================================================================
 void  RenderStream::Destroy()
 {
-  if(m_isOwner)
+  if (m_isOwner)
   {
-    switch(m_format)
+    switch (m_format)
     {
     case  F_VECTOR2:
     case  F_VECTOR3:
@@ -415,12 +415,12 @@ void  RenderStream::Scale(float s, int offset, int size)
   XR_ASSERT(RenderStream, offset < m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
-  if(size == SIZE_REST)
+  if (size == SIZE_REST)
   {
     size = m_capacity - offset;
   }
 
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     std::for_each(static_cast<Vec2gl*>(GetData(offset)),
@@ -442,12 +442,12 @@ void  RenderStream::ScaleX(float sx, int offset, int size)
   XR_ASSERT(RenderStream, offset < m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
-  if(size == SIZE_REST)
+  if (size == SIZE_REST)
   {
     size = m_capacity - offset;
   }
 
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     std::for_each(static_cast<Vec2gl*>(GetData(offset)),
@@ -469,12 +469,12 @@ void  RenderStream::ScaleY(float sy, int offset, int size)
   XR_ASSERT(RenderStream, offset < m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
-  if(size == SIZE_REST)
+  if (size == SIZE_REST)
   {
     size = m_capacity - offset;
   }
 
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR2:
     std::for_each(static_cast<Vec2gl*>(GetData(offset)),
@@ -496,12 +496,12 @@ void  RenderStream::ScaleZ(float sz, int offset, int size)
   XR_ASSERT(RenderStream, offset < m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
-  if(size == SIZE_REST)
+  if (size == SIZE_REST)
   {
     size = m_capacity - offset;
   }
 
-  switch(m_format)
+  switch (m_format)
   {
   case  F_VECTOR3:
     std::for_each(static_cast<Vec3gl*>(GetData(offset)),
@@ -518,14 +518,14 @@ void  RenderStream::Translate(const Vector2& t, int offset, int size)
   XR_ASSERT(RenderStream, offset < m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
-  if(size == SIZE_REST)
+  if (size == SIZE_REST)
   {
     size = m_capacity - offset;
   }
 
   GLfloat*  i0(static_cast<GLfloat*>(m_pData) + offset * 2);
   GLfloat*  i1(static_cast<GLfloat*>(m_pData) + (offset + size) * 2);
-  while(i0 != i1)
+  while (i0 != i1)
   {
     i0[VX] += t.x;
     i0[VY] += t.y;
@@ -541,14 +541,14 @@ void  RenderStream::Translate(const Vector3& t, int offset, int size)
   XR_ASSERT(RenderStream, offset < m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
-  if(size == SIZE_REST)
+  if (size == SIZE_REST)
   {
     size = m_capacity - offset;
   }
 
   GLfloat*  i0(static_cast<GLfloat*>(m_pData) + offset * 3);
   GLfloat*  i1(static_cast<GLfloat*>(m_pData) + (offset + size) * 3);
-  while(i0 != i1)
+  while (i0 != i1)
   {
     i0[VX] += t.x;
     i0[VY] += t.y;

@@ -12,8 +12,8 @@
 #if !defined	XR_ANIMATION_HPP
 #define	XR_ANIMATION_HPP
 
-#include  <vector>
-#include  "types.hpp"
+#include <vector>
+#include "types.hpp"
 
 namespace XR
 {

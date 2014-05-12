@@ -10,7 +10,7 @@ TweenVarPoolCore::TweenVarPoolCore( int numVars )
   XR_ASSERT(TweenVarPoolCore, numVars >= 0);
   m_parVarBuffer = new VarCore[numVars];
 
-  for(int i = 0; i < numVars; ++i)
+  for (int i = 0; i < numVars; ++i)
   {
     m_parVarBuffer[i].Clear();
     m_parVarBuffer[i].offset = i;
@@ -19,9 +19,9 @@ TweenVarPoolCore::TweenVarPoolCore( int numVars )
 
 TweenVarPoolCore::~TweenVarPoolCore()
 {
-  for(int i = 0; i < m_numVars; ++i)
+  for (int i = 0; i < m_numVars; ++i)
   {
-    if(m_parVarBuffer[i].pTweener != 0)
+    if (m_parVarBuffer[i].pTweener != 0)
     {
       m_parVarBuffer[i].pTweener->Remove(m_parVarBuffer[i].fValue, false);
     }

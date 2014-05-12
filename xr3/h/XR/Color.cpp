@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "Color.hpp"
+#include "Color.hpp"
 
 namespace XR
 {

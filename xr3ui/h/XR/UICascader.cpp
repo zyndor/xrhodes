@@ -16,11 +16,11 @@ UICascader::~UICascader()
 
 void UICascader::_AlignElement( UIElement* pElem )
 {
-  if(m_hAlign != AL_NOALIGN)
+  if (m_hAlign != AL_NOALIGN)
   {
     int x1(x + m_horizontalOffset * m_lElements.size());
 
-    switch(m_hAlign)
+    switch (m_hAlign)
     {
     case  AL_LOW:
       break;
@@ -37,11 +37,11 @@ void UICascader::_AlignElement( UIElement* pElem )
     pElem->x = x1;
   }
 
-  if(m_vAlign)
+  if (m_vAlign)
   {
     int y1(y + m_verticalOffset * m_lElements.size());
 
-    switch(m_vAlign)
+    switch (m_vAlign)
     {
     case  AL_LOW:
       break;
@@ -63,7 +63,7 @@ void UICascader::_AlignElement( UIElement* pElem )
 
 void UICascader::SetHorizontalOffset( int16 val )
 {
-  if(val != m_horizontalOffset)
+  if (val != m_horizontalOffset)
   {
     m_horizontalOffset = val;
     OnChange();
@@ -72,7 +72,7 @@ void UICascader::SetHorizontalOffset( int16 val )
 
 void UICascader::SetVerticalOffset( int16 val )
 {
-  if(val != m_verticalOffset)
+  if (val != m_verticalOffset)
   {
     m_verticalOffset = val;
     OnChange();
@@ -83,16 +83,16 @@ void UICascader::_SetWidthToContent()
 {
   int16 xMin(std::numeric_limits<int16>::max());
   int16 xMax(std::numeric_limits<int16>::min());
-  for(ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     const UIElement*  pElem(*i0);
-    if(pElem->x < xMin)
+    if (pElem->x < xMin)
     {
       xMin = pElem->x;
     }
 
     int16 right(pElem->CalculateRight());
-    if(right > xMax)
+    if (right > xMax)
     {
       xMax = right;
     }
@@ -105,16 +105,16 @@ void UICascader::_SetHeightToContent()
 {
   int16 yMin(std::numeric_limits<int16>::max());
   int16 yMax(std::numeric_limits<int16>::min());
-  for(ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     const UIElement*  pElem(*i0);
-    if(pElem->y < yMin)
+    if (pElem->y < yMin)
     {
       yMin = pElem->y;
     }
 
     int16 bottom(pElem->CalculateRight());
-    if(bottom > yMax)
+    if (bottom > yMax)
     {
       yMax = bottom;
     }

@@ -128,7 +128,7 @@ void UIElement::_CenterVertically()
 //==============================================================================
 void UIElement::_AlignHorizontally( int16 x1, Alignment hAlign )
 {
-  switch(hAlign)
+  switch (hAlign)
   {
   case AL_LOW:
     x = x1;
@@ -147,7 +147,7 @@ void UIElement::_AlignHorizontally( int16 x1, Alignment hAlign )
 //==============================================================================
 void UIElement::_AlignVertically( int16 y1, Alignment vAlign )
 {
-  switch(vAlign)
+  switch (vAlign)
   {
   case AL_LOW:
     y = y1;

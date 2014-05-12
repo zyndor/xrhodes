@@ -12,7 +12,7 @@
 #if !defined XR_TEXTUREIMPL_HPP
 #define XR_TEXTUREIMPL_HPP
 
-#include  "xrgl.hpp"
+#include "xrgl.hpp"
 
 namespace XR
 {

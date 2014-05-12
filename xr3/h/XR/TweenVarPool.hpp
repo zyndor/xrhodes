@@ -12,7 +12,7 @@
 #if !defined XR_TWEENVARPOOL_HPP
 #define XR_TWEENVARPOOL_HPP
 
-#include  "TweenVar.hpp"
+#include "TweenVar.hpp"
 
 namespace XR
 {
@@ -81,9 +81,9 @@ template  <typename T>
 void TweenVarPool<T>::Add( float duration, Tweener::Function pFunction, Type target, Type& value, Tweener::Callback pOnFrameCb, Tweener::Callback pOnFinishedCb, void* pCallbackData, Tweener& tweener )
 {
   int iInsert(0);
-  while(iInsert < m_numVars)
+  while (iInsert < m_numVars)
   {
-    if(m_parVarBuffer[iInsert].pValue == 0)
+    if (m_parVarBuffer[iInsert].pValue == 0)
     {
       break;
     }
@@ -107,9 +107,9 @@ template  <typename T>
 bool TweenVarPool<T>::Remove( Type& v, bool finish )
 {
   bool  success(false);
-  for(int i = 0; i < m_numVars; ++i)
+  for (int i = 0; i < m_numVars; ++i)
   {
-    if(m_parVarBuffer[i].pValue == &v)
+    if (m_parVarBuffer[i].pValue == &v)
     {
       success = m_parVarBuffer[i].pTweener->Remove(m_parVarBuffer[i].fValue, true);
       break;
@@ -122,9 +122,9 @@ bool TweenVarPool<T>::Remove( Type& v, bool finish )
 template  <typename T>
 void TweenVarPool<T>::Clear()
 {
-  for(int i = 0; i < m_numVars; ++i)
+  for (int i = 0; i < m_numVars; ++i)
   {
-    if(m_parVarBuffer[i].pValue != 0)
+    if (m_parVarBuffer[i].pValue != 0)
     {
       m_parVarBuffer[i].pTweener->Remove(m_parVarBuffer[i].fValue, false);
       m_parVarBuffer[i].Clear();
@@ -147,7 +147,7 @@ template  <typename T>
 void TweenVarPool<T>::OnFinishedCallback( void* pData )
 {
   TweenVarCore* pVar(static_cast<VarCore*>(pData));
-  if(pVar->pOnFinishedCb != 0)
+  if (pVar->pOnFinishedCb != 0)
   {
     (*pVar->pOnFinishedCb)(pVar->pCallbackData);
   }

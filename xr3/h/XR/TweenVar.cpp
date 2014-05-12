@@ -6,7 +6,7 @@ namespace XR
 void TweenVarCore::OnFrameCallback( void* pData )
 {
   TweenVarCore* pVar(static_cast<TweenVarCore*>(pData));
-  if(pVar->pOnFrameCb != 0)
+  if (pVar->pOnFrameCb != 0)
   {
     (*pVar->pOnFrameCb)(pVar->pCallbackData);
   }
@@ -15,7 +15,7 @@ void TweenVarCore::OnFrameCallback( void* pData )
 void TweenVarCore::OnFinishedCallback( void* pData )
 {
   TweenVarCore* pVar(static_cast<TweenVarCore*>(pData));
-  if(pVar->pOnFinishedCb != 0)
+  if (pVar->pOnFinishedCb != 0)
   {
     (*pVar->pOnFinishedCb)(pVar->pCallbackData);
   }

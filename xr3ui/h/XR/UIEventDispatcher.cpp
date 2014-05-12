@@ -12,7 +12,7 @@ void  UIEventDispatcher::UIPointerActionCallback( void* pSystem, void* pUser )
   bool  zeroHit(!pDispatcher->m_action.Notify(*pEvent) &&
     pDispatcher->m_pZeroHitCb != 0);
   
-  if(zeroHit)
+  if (zeroHit)
   {
     (*pDispatcher->m_pZeroHitCb)(*pEvent, pDispatcher->m_pZeroHitCbData);
   }

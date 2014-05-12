@@ -1,4 +1,4 @@
-#include  "MersenneTwister.hpp"
+#include "MersenneTwister.hpp"
 
 namespace XR
 {
@@ -20,7 +20,7 @@ void  MersenneTwister::Seed(unsigned int seed)
 {
   m_index = 0;
   m_state[0] = seed;
-  for(unsigned int i = 1; i < kSize; ++i)
+  for (unsigned int i = 1; i < kSize; ++i)
   {
     const unsigned int &prev(m_state[i - 1]);
     m_state[i] = (1812433253UL * (prev ^ (prev >> 30)) + 1);
@@ -50,7 +50,7 @@ unsigned int MersenneTwister::Rand()
 //==============================================================================
 void  MersenneTwister::_Generate()
 {
-  for(unsigned int i = 0; i < kSize; ++i)
+  for (unsigned int i = 0; i < kSize; ++i)
   {
     unsigned int y((m_state[m_index] & 0x01) +
       (m_state[(m_index + 1) % kSize] & 0x7fffffff));

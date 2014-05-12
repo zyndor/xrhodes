@@ -35,7 +35,7 @@ Entity* Entity::LinkPrevSibling( Entity* p )
 {
   Entity* pTemp(m_pPrevSibling);
   m_pPrevSibling = p;
-  if(p != 0)
+  if (p != 0)
   {
     XR_ASSERT(Entity, p->GetNextSibling() == 0);
     p->m_pNextSibling = this;
@@ -48,7 +48,7 @@ Entity* Entity::LinkNextSibling( Entity* p )
 {
   Entity* pTemp(m_pNextSibling);
   m_pNextSibling = p;
-  if(p != 0)
+  if (p != 0)
   {
     XR_ASSERT(Entity, p->GetPrevSibling() == 0);
     p->m_pPrevSibling = this;
@@ -134,18 +134,18 @@ void Value::SetValue(const char* pValue, int len)
   delete[] m_parValue;
   m_parValue = 0;
   
-  if(pValue == 0)
+  if (pValue == 0)
   {
     len = 0;
   }
   else
   {
-    if(len == 0)
+    if (len == 0)
     {
       len = strlen(pValue);
     }
     
-    if(len > 0)
+    if (len > 0)
     {
       std::string str(pValue, len);
       SetValue(str);
@@ -187,7 +187,7 @@ Object::Object()
 //==============================================================================
 Object::~Object()
 {
-  while(!m_children.empty())
+  while (!m_children.empty())
   {
     EntityMap::iterator iDelete(m_children.begin());
     delete iDelete->second;
@@ -225,7 +225,7 @@ Entity* Object::GetChild( const char* pKey, Type acceptType ) const
   XR_ASSERT(Object, pKey != 0);
   uint32  hash(Hash::String(pKey));
   EntityMap::const_iterator iFind(m_children.find(hash));
-  if(iFind != m_children.end())
+  if (iFind != m_children.end())
   {
     XR_ASSERT(Object, acceptType == ANY ||
       iFind->second->GetType() == acceptType);
@@ -262,13 +262,13 @@ void  Object::AddChild(uint32 hash, Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
   EntityMap::iterator iFind(m_children.find(hash));
-  if(iFind != m_children.end())
+  if (iFind != m_children.end())
   {
     delete iFind->second;
   }
   m_children[hash] = pEntity;
 
-  if(m_children.size() > 1)
+  if (m_children.size() > 1)
   {
     iFind = m_children.find(hash);
     
@@ -277,13 +277,13 @@ void  Object::AddChild(uint32 hash, Entity* pEntity)
     ++iNext;
     bool  hasPrev(iPrev != m_children.begin());
     bool  hasNext(iNext != m_children.end());
-    if(hasPrev)
+    if (hasPrev)
     {
       --iPrev;
       XR_ASSERT(Object, hasNext || iPrev->second->GetNextSibling() == 0);
       iPrev->second->LinkNextSibling(pEntity);
     }
-    if(hasNext)
+    if (hasNext)
     {
       XR_ASSERT(Object, hasPrev || iPrev->second->GetPrevSibling() == 0);
       iNext->second->LinkPrevSibling(pEntity);      
@@ -360,7 +360,7 @@ void JsonArray::AddElement(Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
   Entity* pPrev(0);
-  if(m_elements.size() > 0)
+  if (m_elements.size() > 0)
   {
     pPrev = *m_elements.rbegin();
   }
@@ -420,7 +420,7 @@ Entity* Reader::Read(const char* parBuffer, int size)
 {
   XR_ASSERT(Reader, parBuffer != 0);
   XR_ASSERT(Reader, size >= 0);
-  if(size == 0)
+  if (size == 0)
   {
     size = strlen(parBuffer);
   }
@@ -434,15 +434,15 @@ Entity* Reader::Read(const char* parBuffer, int size)
   Entity* pEntity(0);
   const char* pChar(_ExpectChar());
   bool        result(pChar != p1);
-  if(result)
+  if (result)
   {
     bool  isObject(*pChar == kObjectBegin);
     bool  isArray(*pChar == kArrayBegin);
     
     result = (isObject || isArray) && (_SkipChar() != p1);
-    if(result)
+    if (result)
     {
-      if(isObject)
+      if (isObject)
       {
         pEntity = new Object();
         result = (++depth < maxDepth) &&  // check exceeding depth (not an error)
@@ -455,7 +455,7 @@ Entity* Reader::Read(const char* parBuffer, int size)
           _ParseArray(pEntity->ToArray());
       }
 
-      if(!result)
+      if (!result)
       {
         delete pEntity;
         pEntity = 0;
@@ -473,9 +473,9 @@ const char* Reader::_ExpectChar()
   int col_(col);
   int row_(row);
   
-  while(p0 != p1 && iswspace(*p0))
+  while (p0 != p1 && iswspace(*p0))
   {
-    if(*p0 == kNewLine)
+    if (*p0 == kNewLine)
     {
       col_ = 1;
       ++row_;
@@ -498,9 +498,9 @@ const char* Reader::_RequireChar(int c)
   int col_(col);
   int row_(row);
   
-  while(p0 != p1 && *p0 != c)
+  while (p0 != p1 && *p0 != c)
   {
-    if(*p0 == kNewLine)
+    if (*p0 == kNewLine)
     {
       col_ = 1;
       ++row_;
@@ -520,9 +520,9 @@ const char* Reader::_RequireChar(int c)
 const char* Reader::_SkipChar()
 {
   XR_ASSERT(Reader, p0 != 0);
-  if(p0 != p1)
+  if (p0 != p1)
   {
-    if(*p0 == kNewLine)
+    if (*p0 == kNewLine)
     {
       col = 1;
       ++row;
@@ -541,19 +541,19 @@ bool  Reader::_ParseArray(JsonArray* pArray)
 {
   const char* pChar(_ExpectChar()); // look for array end or value
   bool result(pChar != p1);
-  if(result)
+  if (result)
   {
-    if(*pChar == kArrayEnd)
+    if (*pChar == kArrayEnd)
     {
       --depth;
       _SkipChar();
     }
-    else while(result)
+    else while (result)
     {
       Entity* pChild(_ParseValue());
 
       result = pChild != 0;
-      if(!result)
+      if (!result)
       {
         break;
       }
@@ -562,13 +562,13 @@ bool  Reader::_ParseArray(JsonArray* pArray)
 
       pChar = _ExpectChar();
       result = pChar != p1 && (*pChar == kComma || *pChar == kArrayEnd);
-      if(!result)
+      if (!result)
       {
         break;
       }
       
       _SkipChar(); // leave character
-      if(*pChar == kArrayEnd)
+      if (*pChar == kArrayEnd)
       {
         --depth;
         break;
@@ -583,58 +583,58 @@ bool  Reader::_ParseObject(Object* pObj)
 {
   const char* pChar(_ExpectChar());
   bool  result(pChar != p1);
-  if(result)
+  if (result)
   {
-    if(*pChar == kObjectEnd)
+    if (*pChar == kObjectEnd)
     {
       --depth;
       _SkipChar();
     }
-    else while(result)
+    else while (result)
     {
       pChar = _ExpectChar();
       result = *pChar == kQuot;
-      if(!result)
+      if (!result)
       {
         break;
       }
 
       const char* pKey(_SkipChar()); // leave the quot
       result = pKey != p1;
-      if(!result)
+      if (!result)
       {
         break;
       }
 
       const char* pKeyEnd(_RequireChar(kQuot)); // get other quot
       result = pKeyEnd != p1;
-      if(!result)
+      if (!result)
       {
         break;
       }
 
       result = _SkipChar() != p1;
-      if(!result)
+      if (!result)
       {
         break;
       }
 
       pChar = _ExpectChar();  // look for colon
       result = pChar != p1 && *pChar == kColon;
-      if(!result)
+      if (!result)
       {
         break;
       }
 
       result = _SkipChar() != p1;
-      if(!result)
+      if (!result)
       {
         break;
       }
 
       Entity* pChild(_ParseValue());
       result = pChild != 0;
-      if(!result)
+      if (!result)
       {
         break;
       }
@@ -644,13 +644,13 @@ bool  Reader::_ParseObject(Object* pObj)
 
       pChar = _ExpectChar();
       result = pChar != p1 && (*pChar == kComma || *pChar == kObjectEnd);
-      if(!result)
+      if (!result)
       {
         break;
       }
 
       _SkipChar();
-      if(*pChar == kObjectEnd)
+      if (*pChar == kObjectEnd)
       {
         --depth;
         break;
@@ -665,47 +665,47 @@ Entity* Reader::_ParseValue()
 {
   Entity* pChild(0);
   const char* pChar = _ExpectChar();
-  if(pChar != p1)
+  if (pChar != p1)
   {
-    if(*pChar == kQuot) // string
+    if (*pChar == kQuot) // string
     {
       pChar = _SkipChar();
-      if(pChar != p1)
+      if (pChar != p1)
       {
         const char* pValueEnd(_RequireChar(kQuot)); // look for quot pair
-        if(pValueEnd != p1)
+        if (pValueEnd != p1)
         {
           pChild = new Value(pChar, pValueEnd - pChar);
           _SkipChar();
         }
       }
     }
-    else if(isalnum(*pChar))
+    else if (isalnum(*pChar))
     {
       int l(0);
-      if(!isalpha(*pChar))
+      if (!isalpha(*pChar))
       {
         pChild = new Value(atof(pChar));
         
         l = pChild->ToValue()->GetValueSize();
       }
-      else if(l = strlen(kTrue), strncmp(pChar, kTrue, l) == 0)
+      else if (l = strlen(kTrue), strncmp(pChar, kTrue, l) == 0)
       {
         pChild = new Value(1);
       }
-      else if(l = strlen(kFalse), strncmp(pChar, kFalse, l) == 0)
+      else if (l = strlen(kFalse), strncmp(pChar, kFalse, l) == 0)
       {
         pChild = new Value(0);
       }
-      else if(l = strlen(kNull), strncmp(pChar, kNull, l) == 0)
+      else if (l = strlen(kNull), strncmp(pChar, kNull, l) == 0)
       {
         pChild = new Value();
       }
       
-      if(l > 0)
+      if (l > 0)
       {
         int left(p1 - p0);
-        if(left < l)
+        if (left < l)
         {
           l = left;
         }
@@ -714,10 +714,10 @@ Entity* Reader::_ParseValue()
         col += l;
       }
     }
-    else if(*pChar == kObjectBegin)
+    else if (*pChar == kObjectBegin)
     {
       pChild = new Object();
-      if(_SkipChar() != p1 &&
+      if (_SkipChar() != p1 &&
         ++depth < maxDepth &&
         !_ParseObject(pChild->ToObject()))
       {
@@ -725,10 +725,10 @@ Entity* Reader::_ParseValue()
         pChild = 0;
       }
     }
-    else if(*pChar == kArrayBegin)
+    else if (*pChar == kArrayBegin)
     {
       pChild = new JsonArray();
-      if(_SkipChar() != p1 &&
+      if (_SkipChar() != p1 &&
         ++depth < maxDepth &&
         !_ParseArray(pChild->ToArray()))
       {
@@ -745,7 +745,7 @@ Entity* LoadJSON( const char* pFilename, int maxDepth )
 {
   XR_ASSERT(LoadJSON, pFilename != 0);
   int hFile(File::Open(pFilename, "rb"));
-  if(hFile == File::INVALID_HANDLE)
+  if (hFile == File::INVALID_HANDLE)
   {
     XR_ERROR(("Failed to open file '%s'", pFilename));
     return 0;
@@ -757,7 +757,7 @@ Entity* LoadJSON( const char* pFilename, int maxDepth )
   bool  result(File::Read(size, 1, hFile, parBuffer) != 0);
   File::Close(hFile);
   
-  if(!result)
+  if (!result)
   {
     XR_ERROR(("Failed to read contents of '%s': %s", pFilename,
       File::GetErrorString()));
@@ -771,7 +771,7 @@ Entity* LoadJSON( const char* pFilename, int maxDepth )
   
   // done, clean up
   delete[] parBuffer;
-  if(pJson == 0)
+  if (pJson == 0)
   {
     XR_ERROR(("Failed to parse '%s': error around row %d char %d",
       pFilename, reader.row, reader.col));

@@ -14,7 +14,7 @@ UILabel::UILabel()
 : UIColoredElement(),
   m_text()
 {
-  if(s_pDefaultFont != 0)
+  if (s_pDefaultFont != 0)
   {
     m_text.SetFont(*s_pDefaultFont);
   }
@@ -43,7 +43,7 @@ void UILabel::Render( UIRenderer* pRenderer ) const
 //==============================================================================
 void UILabel::SetFont( const Font* pFont )
 {
-  if(pFont != 0)
+  if (pFont != 0)
   {
     m_text.SetFont(*pFont);
   }
@@ -52,7 +52,7 @@ void UILabel::SetFont( const Font* pFont )
 //==============================================================================
 void UILabel::SetHorizontalAlignment(Text::HAlign val )
 {
-  if(val != m_text.GetHorizontalAlignment())
+  if (val != m_text.GetHorizontalAlignment())
   {
     m_text.SetHorizontalAlignment(val);
     OnChange();
@@ -62,7 +62,7 @@ void UILabel::SetHorizontalAlignment(Text::HAlign val )
 //==============================================================================
 void UILabel::SetVerticalAlignment(Text::VAlign val )
 {
-  if(val != m_text.GetVerticalAlignment())
+  if (val != m_text.GetVerticalAlignment())
   {
     m_text.SetVerticalAlignment(val);
     OnChange();

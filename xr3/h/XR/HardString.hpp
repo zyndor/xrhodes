@@ -12,9 +12,9 @@
 #if !defined XR_HARDSTRING_HPP
 #define XR_HARDSTRING_HPP
 
-#include  <string.h>
-#include  <ctype.h>
-#include  "types.hpp"
+#include <string.h>
+#include <ctype.h>
+#include "types.hpp"
 
 namespace XR
 {
@@ -158,7 +158,7 @@ template  <int N>
 HardString<N>&  HardString<N>::tolower()
 {
   int n(size());
-  for(int i = 0; i < n; ++i)
+  for (int i = 0; i < n; ++i)
   {
     m_arBuffer[i] = ::tolower(m_arBuffer[i]);
   }
@@ -170,7 +170,7 @@ template  <int N>
 HardString<N>&  HardString<N>::toupper()
 {
   int n(size());
-  for(int i = 0; i < n; ++i)
+  for (int i = 0; i < n; ++i)
   {
     m_arBuffer[i] = ::toupper(m_arBuffer[i]);
   }
@@ -190,7 +190,7 @@ HardString<N>&  HardString<N>::assign(const char* pStr, int size)
 {
   XR_ASSERT(HardString<N>, pStr != 0);
   int max(capacity());
-  if(size > max)
+  if (size > max)
   {
     size = max;
   }

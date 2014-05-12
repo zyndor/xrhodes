@@ -308,21 +308,21 @@ void  RingBuffer<Type>::Clear()
   RingBufferCore::Clear();
 
   const size_t  size(Size());
-  if(m_elems < size)
+  if (m_elems < size)
   {
-    for(size_t i = m_front; i < m_back; ++i)
+    for (size_t i = m_front; i < m_back; ++i)
     {
       m_data[i] = Type();
     }
   }
   else
   {
-    for(size_t i = m_front; i < size; ++i)
+    for (size_t i = m_front; i < size; ++i)
     {
       m_data[i] = Type();
     }
 
-    for(size_t i = 0; i < m_back; ++i)
+    for (size_t i = 0; i < m_back; ++i)
     {
       m_data[i] = Type();
     }

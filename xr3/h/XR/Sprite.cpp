@@ -29,7 +29,7 @@ void Sprite::Slice( AABB base, int across, int down, int maxSlices,
     ("Trying to Slice() NULL material."));
   XR_ASSERT(Sprite, across > 0);
   XR_ASSERT(Sprite, down > 0);   
-  if(maxSlices <= 0)
+  if (maxSlices <= 0)
   {
     maxSlices = down * across;
   }
@@ -38,9 +38,9 @@ void Sprite::Slice( AABB base, int across, int down, int maxSlices,
   const float width(base.right - base.left);
   const float height(base.bottom - base.top);
   int slices(0);
-  for(int i = 0; i < down && slices < maxSlices; ++i)
+  for (int i = 0; i < down && slices < maxSlices; ++i)
   {
-    for(int j = 0; j < across && slices < maxSlices; ++j)
+    for (int j = 0; j < across && slices < maxSlices; ++j)
     {
       parSprites->SetMaterial(pMaterial);
       parSprites->SetUVsProportional(base);
@@ -89,7 +89,7 @@ void Sprite::CopyIndicesTo(uint16* parInds, int offset)
   XR_ASSERT(Sprite, parInds != 0);
   const uint16* i0(karIndices);
   const uint16* i1(i0 + kNumIndices);
-  while(i0 != i1)
+  while (i0 != i1)
   {
     *parInds = *i0 + offset;
     ++i0;
@@ -126,7 +126,7 @@ void Sprite::SetHalfSize( int32 hw, int32 hh, bool calculateVertices)
   m_halfWidth = hw;
   m_halfHeight = hh;
 
-  if(calculateVertices)
+  if (calculateVertices)
   {
     m_vertices.Set(VI_NW, Vector3(-hw, -hh, .0f));
     m_vertices.Set(VI_SW, Vector3(-hw, hh, .0f));
@@ -193,7 +193,7 @@ void Sprite::Scale( float sx, float sy )
   m_halfWidth *= fabsf(sx);
   m_halfHeight *= fabsf(sy);
 
-  for(int i = 0; i < kNumVertices; ++i)
+  for (int i = 0; i < kNumVertices; ++i)
   {
     Vector3 v(m_vertices.GetVector3(i));
     v.x *= sx;
@@ -233,7 +233,7 @@ void Sprite::FlipVerticesX()
 //==============================================================================
 void Sprite::FlipUVsX()
 {
-  if(m_isUVRotated)
+  if (m_isUVRotated)
   {
     Vector3 vLeft(m_uvs.GetVector3(VI_NW));
     Vector3 vRight(m_uvs.GetVector3(VI_NE));
@@ -280,7 +280,7 @@ void Sprite::FlipVerticesY()
 //==============================================================================
 void Sprite::FlipUVsY()
 {
-  if(m_isUVRotated)
+  if (m_isUVRotated)
   {
     Vector3 vLeft(m_uvs.GetVector3(VI_NW));
     Vector3 vRight(m_uvs.GetVector3(VI_NE));

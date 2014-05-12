@@ -12,7 +12,7 @@
 #if !defined XR_INDEXMESH_HPP
 #define XR_INDEXMESH_HPP
 
-#include  "BasicMesh.hpp"
+#include "BasicMesh.hpp"
 
 namespace XR {
 

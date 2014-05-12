@@ -12,7 +12,7 @@
 #if !defined XR_TWEENVAR_HPP
 #define XR_TWEENVAR_HPP
 
-#include  "Tweener.hpp"
+#include "Tweener.hpp"
 
 namespace XR
 {

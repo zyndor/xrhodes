@@ -1,6 +1,6 @@
-#include  "xrgl.hpp"
-#include  "Material.hpp"
-#include  "MaterialImpl.hpp"
+#include "xrgl.hpp"
+#include "Material.hpp"
+#include "MaterialImpl.hpp"
 
 namespace XR
 {
@@ -27,7 +27,7 @@ void  MaterialImpl::Apply()
   XR_ASSERT(MaterialImpl, arpTextures[0] != 0);
   XR_GL_CALL(glColor4f(colAmbient.r, colAmbient.g, colAmbient.b, colAmbient.a));
   XR_GL_CALL(glEnable(GL_DEPTH_TEST));
-  if(arpTextures[0] == 0)
+  if (arpTextures[0] == 0)
   {
     XR_GL_CALL(glDisable(GL_TEXTURE_2D));
   }
@@ -37,14 +37,14 @@ void  MaterialImpl::Apply()
     XR_GL_CALL(glActiveTexture(GL_TEXTURE0));
     arpTextures[0]->Bind(GL_TEXTURE_2D);
 
-    if(alphaMode == Material::ALPHA_NONE)
+    if (alphaMode == Material::ALPHA_NONE)
     {
       XR_GL_CALL(glDisable(GL_BLEND));
     }
     else
     {
       XR_GL_CALL(glEnable(GL_BLEND));
-      switch(alphaMode)
+      switch (alphaMode)
       {
       case  Material::ALPHA_ADD:
         XR_GL_CALL(glBlendFunc(GL_ONE, GL_ONE));
@@ -62,7 +62,7 @@ void  MaterialImpl::Apply()
       }
     }
 
-    if(alphaTestMode == GL_NEVER - 1)
+    if (alphaTestMode == GL_NEVER - 1)
     {
       XR_GL_CALL(glDisable(GL_ALPHA_TEST));
     }
@@ -72,7 +72,7 @@ void  MaterialImpl::Apply()
       XR_GL_CALL(glAlphaFunc(alphaTestMode, alphaTestRefValue));
     }
 
-    if(cullMode != GL_NONE)
+    if (cullMode != GL_NONE)
     {
       XR_GL_CALL(glEnable(GL_CULL_FACE));
       XR_GL_CALL(glCullFace(cullMode));
@@ -84,7 +84,7 @@ void  MaterialImpl::Apply()
 
     XR_GL_CALL(glDepthMask(depthWriteEnabled));
 
-    if(arpTextures[1] != 0)
+    if (arpTextures[1] != 0)
     {
       // todo: secondary texture
       XR_GL_CALL(glActiveTexture(GL_TEXTURE1));

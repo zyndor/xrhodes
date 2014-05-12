@@ -24,7 +24,7 @@ void UIHorizontalProgressBar::Render() const
   float percMin(static_cast<float>(xMin) / w); 
   float percMax(static_cast<float>(xMax) / w);
 
-  if((isFdPositive && m_percentage >= percMin) ||
+  if ((isFdPositive && m_percentage >= percMin) ||
     (!isFdPositive && m_percentage < percMax))
   {
     float perc(Clamp(m_percentage, percMin, percMax));
@@ -36,7 +36,7 @@ void UIHorizontalProgressBar::Render() const
 
     const RenderStream& rsSpriteUVs(sprite.GetUVs());
     float uv1;
-    if(sprite.IsUVRotated())
+    if (sprite.IsUVRotated())
     {
       uv1 = (perc - percMin) * (rsSpriteUVs.GetVector2(Sprite::VI_SE).y -
         rsSpriteUVs.GetVector2(Sprite::VI_SW).y) / sprite.GetQuadWidth() *
@@ -57,11 +57,11 @@ void UIHorizontalProgressBar::Render() const
 
     x1 += x;
 
-    if(isFdPositive)
+    if (isFdPositive)
     {
       int16 left(x + xMin);
 
-      if(sprite.IsUVRotated())
+      if (sprite.IsUVRotated())
       {
         pRsUVs->SetY(Sprite::VI_SE, uv1);
         pRsUVs->SetY(Sprite::VI_NE, uv1);
@@ -81,7 +81,7 @@ void UIHorizontalProgressBar::Render() const
     {
       int16 right(x + xMax);
 
-      if(sprite.IsUVRotated())
+      if (sprite.IsUVRotated())
       {
         pRsUVs->SetY(Sprite::VI_NW, uv1);
         pRsUVs->SetY(Sprite::VI_SW, uv1);
@@ -121,7 +121,7 @@ void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
   float percMin(static_cast<float>(xMin) / w); 
   float percMax(static_cast<float>(xMax) / w);
 
-  if((isFdPositive && m_percentage >= percMin) ||
+  if ((isFdPositive && m_percentage >= percMin) ||
     (!isFdPositive && m_percentage < percMax))
   {
     float perc(Clamp(m_percentage, percMin, percMax));
@@ -133,7 +133,7 @@ void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
 
     const RenderStream& rsSpriteUVs(sprite.GetUVs());
     float uv1;
-    if(sprite.IsUVRotated())
+    if (sprite.IsUVRotated())
     {
       uv1 = (perc - percMin) * (rsSpriteUVs.GetY(Sprite::VI_SE) -
         rsSpriteUVs.GetY(Sprite::VI_SW)) / sprite.GetQuadWidth() *
@@ -152,11 +152,11 @@ void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
 
     x1 += x;
 
-    if(isFdPositive)
+    if (isFdPositive)
     {
       float left(x + xMin);
 
-      if(sprite.IsUVRotated())
+      if (sprite.IsUVRotated())
       {
         rsUVs.SetY(Sprite::VI_SE, uv1);
         rsUVs.SetY(Sprite::VI_NE, uv1);
@@ -176,7 +176,7 @@ void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
     {
       float right(x + xMax);
 
-      if(sprite.IsUVRotated())
+      if (sprite.IsUVRotated())
       {
         rsUVs.SetY(Sprite::VI_NW, uv1);
         rsUVs.SetY(Sprite::VI_SW, uv1);

@@ -85,13 +85,13 @@ void  Pool::SetBuffer(int size, bool isAuto, void* parBuffer)
 {
   XR_ASSERTMSG(XR::Pool, m_parBuffer == m_pNext,
     ("Already allocated from pool; those objects will be invalidated."));
-  if(m_isAuto)
+  if (m_isAuto)
   {
     delete[] m_parBuffer;
   }
 
   XR_ASSERT(Pool, size >= 0);
-  if(parBuffer == 0 && size > 0)
+  if (parBuffer == 0 && size > 0)
   {
     XR_ASSERT(Pool, isAuto);
     parBuffer = new Byte[size];

@@ -34,7 +34,7 @@ void Audio::Init()
   // todo - attempt to read from config
   
   int result(Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, chunkSize));
-  if(result == 0)
+  if (result == 0)
   {
     XR_ERROR(("Error initialising Audio."));
   }
@@ -73,7 +73,7 @@ void Audio::PauseChannel( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
   XR_ASSERT(Audio, channelId < s_audioImpl.numChannels);
-  if(Mix_Paused(channelId) == 0)
+  if (Mix_Paused(channelId) == 0)
   {
     Mix_Pause(channelId);
   }
@@ -83,7 +83,7 @@ void Audio::ResumeChannel( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
   XR_ASSERT(Audio, channelId < s_audioImpl.numChannels);
-  if(Mix_Paused(channelId) != 0)
+  if (Mix_Paused(channelId) != 0)
   {
     Mix_Pause(channelId);
   }

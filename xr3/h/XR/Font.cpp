@@ -55,7 +55,7 @@ static const char* FindValue(const char* pBuffer, const char* pKey,
   XR_ASSERT(FindValue, pBuffer != 0);
   XR_ASSERT(FindValue, pKey != 0);
   const char* pNext = strstr(pBuffer, pKey);
-  if(pNext != 0)
+  if (pNext != 0)
   {
     int keySize(strlen(pKey));
     pResult = pNext + keySize;
@@ -96,7 +96,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
   XR_ASSERT(Font, pName != 0);
   int hFile(File::Open(pName, "rb"));
-  if(hFile == File::INVALID_HANDLE)
+  if (hFile == File::INVALID_HANDLE)
   {
     return false;
   }
@@ -108,7 +108,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
   bool success(File::Read(size, 1, hFile, pBuffer) != 0);
 
   File::Close(hFile);
-  if(success)
+  if (success)
   {
     const char* pRead(pBuffer);
     const char* pTempRead;
@@ -116,7 +116,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
     pTempRead = FindValue(pRead, karAttribs[ATT_SIZE], pValue);
     success = success && (pValue != 0);
-    if(success)
+    if (success)
     {
       m_size = (float)atoi(pValue);
       pRead = pTempRead;
@@ -125,7 +125,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     float fOutline(.0f);
     pTempRead = FindValue(pRead, karAttribs[ATT_OUTLINE], pValue);
     success = success && (pValue != 0);
-    if(success)
+    if (success)
     {
       fOutline = (float)atoi(pValue);
       m_size += fOutline * 2.0f;
@@ -134,7 +134,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     
     pTempRead = FindValue(pRead, karAttribs[ATT_BASE], pValue);
     success = success && (pValue != 0);
-    if(success)
+    if (success)
     {
       m_base = m_size - atoi(pValue);
       pRead = pTempRead;
@@ -143,10 +143,10 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     float fTexWidth(.0f);
     pTempRead = FindValue(pRead, karAttribs[ATT_SCALE_W], pValue);
     success = success && (pValue != 0);
-    if(success)
+    if (success)
     {
       fTexWidth = (float)atoi(pValue);
-      if(fTexWidth > .0f)
+      if (fTexWidth > .0f)
       {
         fTexWidth = 1.0f / fTexWidth;
       }
@@ -156,10 +156,10 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     float fTexHeight(.0f);
     pTempRead = FindValue(pRead, karAttribs[ATT_SCALE_H], pValue);
     success = success && (pValue != 0);
-    if(success)
+    if (success)
     {
       fTexHeight = (float)atoi(pValue);
-      if(fTexHeight > .0f)
+      if (fTexHeight > .0f)
       {
         fTexHeight = 1.0f / fTexHeight;
       }
@@ -168,9 +168,9 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
     pTempRead = FindValue(pRead, karAttribs[ATT_FILE], pValue);
     success = success && (pValue != 0);
-    if(success)
+    if (success)
     {
-      if(pValue[0] == '"')
+      if (pValue[0] == '"')
       {
         ++pValue;
       }
@@ -184,7 +184,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
       success = !(pClosingQuote == 0 || pPeriod == 0) &&
         pPeriod < pClosingQuote &&
         (pPeriod - pValue) < kBufferSize;
-      if(success)
+      if (success)
       {
         int textureNameSize(pPeriod - pValue);
         XR_ASSERT(Font, textureNameSize + 1 < kBufferSize);  // 0-terminated
@@ -196,40 +196,40 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     }
 
     success = success && m_pMaterial != 0;
-    if(!success)
+    if (!success)
     {
       XR_TRACE(Font, ("The value of the file attribute needs to be the name of a valid material in pGroup (the extension is ignored)."));
     }
 
-    if(success)
+    if (success)
     {
       pTempRead = FindValue(pRead, karAttribs[ATT_CHARS_COUNT], pValue);
     }
     
     success = success && pValue != 0;
-    if(!success)
+    if (!success)
     {
       XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_CHARS_COUNT]));
     }
 
     int numChars(0);
     success = success && sscanf(pValue, "%d", &numChars) > 0;
-    if(success)
+    if (success)
     {
       pRead = pTempRead;
     }
 
     int     chr;
     Glyph*  pGlyph;
-    while(success && numChars > 0)
+    while (success && numChars > 0)
     {
       pTempRead = FindValue(pRead, karAttribs[ATT_CHAR_ID], pValue);
 
       success = pValue != 0;
-      if(success)
+      if (success)
       {
         chr = atoi(pValue);
-        if(chr >= 0 && chr < kNumBasicGlyphs)
+        if (chr >= 0 && chr < kNumBasicGlyphs)
         {
           pGlyph = m_arGlyphs + chr;
         }
@@ -242,7 +242,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         float x;
         pTempRead = FindValue(pTempRead, karAttribs[ATT_X], pValue);
         success = pValue != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_X]));
           break;
@@ -252,7 +252,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         float y;
         pTempRead = FindValue(pTempRead, karAttribs[ATT_Y], pValue);
         success = pValue != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_Y]));
           break;
@@ -261,7 +261,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
         pTempRead = FindValue(pTempRead, karAttribs[ATT_WIDTH], pValue);
         success = pValue != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_WIDTH]));
           break;
@@ -270,7 +270,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
         pTempRead = FindValue(pTempRead, karAttribs[ATT_HEIGHT], pValue);
         success = pValue != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_HEIGHT]));
           break;
@@ -279,7 +279,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
         pTempRead = FindValue(pTempRead, karAttribs[ATT_XOFFSET], pValue);
         success = pValue != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_XOFFSET]));
           break;
@@ -288,7 +288,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
         pTempRead = FindValue(pTempRead, karAttribs[ATT_YOFFSET], pValue);
         success = pValue != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_YOFFSET]));
           break;
@@ -297,7 +297,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
         pTempRead = FindValue(pTempRead, karAttribs[ATT_XADVANCE], pValue);
         success = pValue != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_XADVANCE]));
           break;

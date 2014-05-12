@@ -29,20 +29,20 @@ void UISliderBase::SetValue( int value )
 
 void UISliderBase::SetPercentage( float percentage )
 {
-  if(percentage < .0f)
+  if (percentage < .0f)
   {
     percentage = .0f;
   }
-  else if(percentage > 1.0f)
+  else if (percentage > 1.0f)
   {
     percentage = 1.0f;
   }
 
   float diff(m_percentage - percentage);
-  if(diff * diff > std::numeric_limits<float>::epsilon())
+  if (diff * diff > std::numeric_limits<float>::epsilon())
   {
     m_percentage = percentage;
-    if(pOnValueChangeCb != 0)
+    if (pOnValueChangeCb != 0)
     {
       (*pOnValueChangeCb)(this, pOnValueChangeCbData);
     }

@@ -1,8 +1,8 @@
-#include  <algorithm>
-#include  <s3eSecureStorage.h>
-#include  <s3eFile.h>
-#include  "File.hpp"
-#include  "HardString.hpp"
+#include <algorithm>
+#include <s3eSecureStorage.h>
+#include <s3eFile.h>
+#include "File.hpp"
+#include "HardString.hpp"
 
 namespace XR
 {

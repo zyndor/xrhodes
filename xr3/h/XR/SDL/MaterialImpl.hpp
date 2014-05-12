@@ -12,9 +12,9 @@
 #if !defined XR_MATERIALIMPL_HPP
 #define XR_MATERIALIMPL_HPP
 
-#include  "Color.hpp"
-#include  "TextureImpl.hpp"
-#include  "utils.hpp"
+#include "Color.hpp"
+#include "TextureImpl.hpp"
+#include "utils.hpp"
 
 namespace XR
 {

@@ -1,6 +1,6 @@
-#include  <algorithm>
-#include  <IwGx.h>
-#include  "RenderStream.hpp"
+#include <algorithm>
+#include <IwGx.h>
+#include "RenderStream.hpp"
 
 namespace XR
 {

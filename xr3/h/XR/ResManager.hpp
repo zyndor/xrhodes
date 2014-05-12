@@ -81,7 +81,7 @@ void ResManager<T>::Exit()
 {
   XR_ASSERT(ResManager, s_pPool != 0);
 
-  for(typename ObjectMap::iterator i0(s_objects.begin()), i1(s_objects.end());
+  for (typename ObjectMap::iterator i0(s_objects.begin()), i1(s_objects.end());
     i0 != i1; ++i0)
   {
     i0->value->ManagedDestruct();
@@ -99,7 +99,7 @@ bool  ResManager<T>::Manage( uint32 hash, T* pObj)
 {
   typename ObjectMap::iterator iFind(s_objects.find(hash));
   bool  success(iFind == s_objects.end());
-  if(success)
+  if (success)
   {
     s_objects[hash] = pObj;
   }
@@ -120,7 +120,7 @@ T* ResManager<T>::Get( uint32 hash )
 {
   typename ObjectMap::iterator iFind(s_objects.find(hash));
   T*  pObj(0);
-  if(iFind != s_objects.end())
+  if (iFind != s_objects.end())
   {
     pObj = iFind->value;
   }
@@ -178,9 +178,9 @@ template  <class T>
 void ResManager<T>::_DestructFrameObjects() 
 {
   void* pCurrent(s_pPool->Allocate(0));
-  for(typename ObjectMap::iterator i0(s_objects.begin()), i1(s_objects.end()); i0 != i1; ++i0)
+  for (typename ObjectMap::iterator i0(s_objects.begin()), i1(s_objects.end()); i0 != i1; ++i0)
   {
-    if(i0->value >= pCurrent)
+    if (i0->value >= pCurrent)
     {
       i0->value->ManagedDestruct();
       i0->value->~T();
@@ -216,10 +216,10 @@ public:\
 #define XR_MANAGED_DEF(a) \
 a*  a::CreateManaged(uint32 hash) {\
   a*  pRes(Manager::Get(hash));\
-  if(pRes == 0)\
+  if (pRes == 0)\
   {\
     void* pMem(Manager::Allocate(sizeof(a)));\
-    if(pMem != 0)\
+    if (pMem != 0)\
     {\
       pRes = new (pMem) a;\
     }\
@@ -236,9 +236,9 @@ void  a::ManagedDestruct()\
 #define XR_CROSS_MANAGED_DEF(a, aImpl)  \
 a*  a::CreateManaged(uint32 hash) {\
   a*  pRes(Manager::Get(hash));\
-  if(pRes == 0) {\
+  if (pRes == 0) {\
     void* pMem(Manager::Allocate(sizeof(aImpl) + sizeof(a)));\
-    if(pMem != 0) {\
+    if (pMem != 0) {\
       aImpl*  pResImpl(new (pMem) aImpl);\
       pRes = new (pResImpl + 1) a;\
       pRes->SwapImpl(pResImpl);\

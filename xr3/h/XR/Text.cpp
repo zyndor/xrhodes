@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "Text.hpp"
+#include "Text.hpp"
 
 namespace XR {
 
@@ -31,7 +31,7 @@ void Text::SetFont(const Font& f, bool update)
 {
   m_pFont = &f;
   m_pMaterial = f.GetMaterial();
-  if(update)
+  if (update)
   {
     Update();
   }
@@ -41,7 +41,7 @@ void Text::SetFont(const Font& f, bool update)
 void Text::SetHorizontalAlignment(HAlign ha, bool update)
 {
   m_hAlign = ha;
-  if(update)
+  if (update)
   {
     Update();
   }
@@ -51,7 +51,7 @@ void Text::SetHorizontalAlignment(HAlign ha, bool update)
 void Text::SetVerticalAlignment(VAlign va, bool update)
 {
   m_vAlign = va;
-  if(update)
+  if (update)
   {
     Update();
   }
@@ -62,7 +62,7 @@ void Text::SetText(const char* pText, bool update)
 {
   XR_ASSERT(Text, pText != 0);
   m_text = pText;
-  if(update)
+  if (update)
   {
     Update();
   }
@@ -76,7 +76,7 @@ void  Text::SetSize(float boxWidth, float boxHeight, bool update)
   
   m_boxWidth = boxWidth;
   m_boxHeight = boxHeight;
-  if(update)
+  if (update)
   {
     Update();
   }
@@ -97,10 +97,10 @@ void  Text::Update()
   LineList    lines;
   const char* pText(m_text.c_str());
   const char* pTextEnd(pText + m_text.size());
-  while(pText != pTextEnd && vFill + kFontSizeWithBase <= m_boxHeight)
+  while (pText != pTextEnd && vFill + kFontSizeWithBase <= m_boxHeight)
   {
     // look for first non-wspace
-    while(pText != pTextEnd && iswspace(*pText))
+    while (pText != pTextEnd && iswspace(*pText))
     {
       ++pText;
     }
@@ -108,7 +108,7 @@ void  Text::Update()
     int c(*pText);
     
     const Font::Glyph*  pGlyph(m_pFont->GetGlyph(c));
-    if(pGlyph != 0 && pGlyph->xAdvance > m_boxWidth)
+    if (pGlyph != 0 && pGlyph->xAdvance > m_boxWidth)
     {
       // horizontal space is less than width of first glyph; abort
       break;
@@ -124,11 +124,11 @@ void  Text::Update()
     bool  isInSpace(false);
     
     c = *pText;
-    while(c != '\n')
+    while (c != '\n')
     {
-      if(iswspace(c))
+      if (iswspace(c))
       {
-        if(!isInSpace)
+        if (!isInSpace)
         {
           space0 = i;
           isInSpace = true;
@@ -138,17 +138,17 @@ void  Text::Update()
       else
       {
         ++numGlyphsTotal;
-        if(isInSpace)
+        if (isInSpace)
         {
           space1 = i;
           isInSpace = false;
         }
       }
       
-      if(pGlyph != 0)
+      if (pGlyph != 0)
       {
         hFill += pGlyph->xAdvance;
-        if(hFill > m_boxWidth && isInSpace)
+        if (hFill > m_boxWidth && isInSpace)
         {
           break;
         }
@@ -156,7 +156,7 @@ void  Text::Update()
       
       ++i;
       c = pText[i];
-      if(c == 0)
+      if (c == 0)
       {
         break;
       }
@@ -165,7 +165,7 @@ void  Text::Update()
     }
     
     bool  spaceCut(hFill > m_boxWidth && space0 >= 0);
-    if(spaceCut)
+    if (spaceCut)
     {
       i = space0;
       hFill = hFillFirstSpace;
@@ -182,7 +182,7 @@ void  Text::Update()
   
   // transfer lines
   m_lines.reserve(lines.size());
-  for(LineList::const_iterator i0(lines.begin()), i1(lines.end()); i0 != i1;
+  for (LineList::const_iterator i0(lines.begin()), i1(lines.end()); i0 != i1;
     ++i0)
   {
     m_lines.push_back(i0->width);
@@ -200,7 +200,7 @@ void  Text::Update()
   int indexOffset(0);
 
   float vAlignAmount(.0f);
-  switch(m_vAlign)
+  switch (m_vAlign)
   {
   case VA_TOP:
     vAlignAmount = m_boxHeight * -.5f;
@@ -216,12 +216,12 @@ void  Text::Update()
   }
 
   float fillVer(vAlignAmount);
-  for(LineList::const_iterator i0(lines.begin()), i1(lines.end());
+  for (LineList::const_iterator i0(lines.begin()), i1(lines.end());
     i0 != i1; ++i0)
   {
     const std::string&  kTextString(i0->text);
     float hAlignAmount(.0f);
-    switch(m_hAlign)
+    switch (m_hAlign)
     {
     case  HA_LEFT:
       hAlignAmount = m_boxWidth * -.5f;
@@ -240,15 +240,15 @@ void  Text::Update()
 
     // copy uvs, calculate vertices
     const Font::Glyph*  pGlyph;
-    for(std::string::const_iterator j0(kTextString.begin()),
+    for (std::string::const_iterator j0(kTextString.begin()),
       j1(kTextString.end()); j0 != j1; ++j0)
     {
       int c(*j0);
 
       pGlyph = m_pFont->GetGlyph(c);
-      if(pGlyph != 0)
+      if (pGlyph != 0)
       {
-        if(!iswspace(c))
+        if (!iswspace(c))
         {
           // copy uvs
           const AABB& uvs(pGlyph->uvs);
@@ -284,11 +284,11 @@ void  Text::Update()
 float Text::GetMaxLineWidth() const
 {
   float   max(.0f);
-  for(FloatArray::const_iterator i0(m_lines.begin()), i1(m_lines.end());
+  for (FloatArray::const_iterator i0(m_lines.begin()), i1(m_lines.end());
     i0 != i1; ++i0)
   {
     float temp(*i0);
-    if(temp > max)
+    if (temp > max)
     {
       max = temp;
     }

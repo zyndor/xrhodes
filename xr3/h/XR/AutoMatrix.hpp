@@ -12,8 +12,8 @@
 #if !defined XR_AUTOMATRIX_HPP
 #define XR_AUTOMATRIX_HPP
 
-#include  "Renderer.hpp"
-#include  "fundamentals.hpp"
+#include "Renderer.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

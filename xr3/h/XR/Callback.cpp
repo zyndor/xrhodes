@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "Callback.hpp"
+#include "Callback.hpp"
 
 namespace XR
 {
@@ -13,7 +13,7 @@ namespace XR
 //==============================================================================
 void  CallbackObject::CallList(List& l, void* pSystem)
 {
-  for(List::iterator i0(l.begin()), i1(l.end()); i0 != i1; ++i0)
+  for (List::iterator i0(l.begin()), i1(l.end()); i0 != i1; ++i0)
   {
     i0->Call(pSystem);
   }

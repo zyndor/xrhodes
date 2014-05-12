@@ -12,8 +12,8 @@
 #if !defined XR_ACTORREADER_HPP
 #define XR_ACTORREADER_HPP
 
-#include  "AnimationReader.hpp"
-#include  "Actor.hpp"
+#include "AnimationReader.hpp"
+#include "Actor.hpp"
 
 namespace XR
 {
@@ -75,20 +75,20 @@ bool ActorReader<Type>::Read(TiXmlElement* pXml,
   void* pGetFrameDataCbData, bool clearActions, Actor<Type>& actor)
 {
   XR_ASSERT(ActorReader, pXml != 0);
-  if(clearActions)
+  if (clearActions)
   {
     actor.actions.clear();
   }
 
   const char* pName(pXml->Attribute(karActorTag[ActorTag::NAME]));
   bool  success(pName != 0);
-  if(!success)
+  if (!success)
   {
     XR_TRACE(ActorReader, ("Attribute '%s' is required in actor.",
       karActorTag[ActorTag::NAME]));
   }
 
-  if(success)
+  if (success)
   {
     pXml = pXml->FirstChildElement(karActorTag[ActorTag::ACTION]);
 
@@ -97,11 +97,11 @@ bool ActorReader<Type>::Read(TiXmlElement* pXml,
     sd.pGetFrameDataCbData = pGetFrameDataCbData;
     sd.pGetFrameDataCb = pGetFrameDataCb;
 
-    while(pXml != 0)
+    while (pXml != 0)
     {
       const char* pActionName(pXml->Attribute(karAnimationTag[AnimationTag::NAME]));
       success = pActionName != 0;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(ActorReader,
           ("Attribute '%s' is required in action in actor %s.",
@@ -109,9 +109,9 @@ bool ActorReader<Type>::Read(TiXmlElement* pXml,
         break;
       }
 
-      if(success)
+      if (success)
       {
-        if(actor.actions.Get(pActionName) != 0)
+        if (actor.actions.Get(pActionName) != 0)
         {
           XR_TRACE(ActorReader,
             ("Action named '%s' already exists in actor '%s' and will be overwritten.",

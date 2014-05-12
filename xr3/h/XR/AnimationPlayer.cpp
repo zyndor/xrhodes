@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "AnimationPlayer.hpp"
+#include "AnimationPlayer.hpp"
 
 namespace XR
 {

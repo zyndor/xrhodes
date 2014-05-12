@@ -1,5 +1,5 @@
-#include  "UIImage.hpp"
-#include  "UIRenderer.hpp"
+#include "UIImage.hpp"
+#include "UIRenderer.hpp"
 
 namespace XR
 {

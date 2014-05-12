@@ -8,10 +8,10 @@ UIRadioButton::List UIRadioButton::s_lButtons;
 
 void UIRadioButton::GroupClear(uint32 groupHash)
 {
-  for(List::iterator i0(s_lButtons.begin()), i1(s_lButtons.end()); i0 != i1; ++i0)
+  for (List::iterator i0(s_lButtons.begin()), i1(s_lButtons.end()); i0 != i1; ++i0)
   {
     UIRadioButton*  p(*i0);
-    if(p->m_groupHash == groupHash)
+    if (p->m_groupHash == groupHash)
     {
       p->SetSelected(false);
       p->OnSelectedStateChanged();
@@ -21,12 +21,12 @@ void UIRadioButton::GroupClear(uint32 groupHash)
 
 void UIRadioButton::GroupClearExcept(uint32 groupHash, const UIRadioButton* pButton)
 {
-  if(pButton != 0 && pButton->m_groupHash == groupHash)
+  if (pButton != 0 && pButton->m_groupHash == groupHash)
   {
-    for(List::iterator i0(s_lButtons.begin()), i1(s_lButtons.end()); i0 != i1; ++i0)
+    for (List::iterator i0(s_lButtons.begin()), i1(s_lButtons.end()); i0 != i1; ++i0)
     {
       UIRadioButton*  p(*i0);
-      if(p->m_groupHash == groupHash && p != pButton)
+      if (p->m_groupHash == groupHash && p != pButton)
       {
         p->SetSelected(false);
         p->OnSelectedStateChanged();
@@ -56,9 +56,9 @@ void UIRadioButton::SetGroup(const char* pGroupName)
 
 void UIRadioButton::SetGroup(uint32 groupHash)
 {
-  if(m_groupHash != groupHash)
+  if (m_groupHash != groupHash)
   {
-    if(groupHash != NO_GROUP && IsSelected())
+    if (groupHash != NO_GROUP && IsSelected())
     {
       GroupClear(groupHash);
     }
@@ -73,7 +73,7 @@ bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   bool  isHandled(false);
-  if((m_pActiveArea == 0 ||
+  if ((m_pActiveArea == 0 ||
     (e.x >= m_pActiveArea->x &&
     e.y >= m_pActiveArea->y &&
     e.x < m_pActiveArea->x + m_pActiveArea->w &&
@@ -81,25 +81,25 @@ bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
     (e.x >= x && e.x < kRight &&
     e.y >= y && e.y < kBottom))
   {
-    if(e.isPressed)
+    if (e.isPressed)
     {
-      if(!IsPressed())
+      if (!IsPressed())
       {
         m_state |= MASK_PRESSED;  // press
         m_lastTouch.x = e.x;
         m_lastTouch.y = e.y;
-        if(IsEnabled())
+        if (IsEnabled())
         {
           OnPressed();
         }
         isHandled = true;
       }
     }
-    else if(IsPressed())
+    else if (IsPressed())
     {
       m_state &= ~MASK_PRESSED;  // release
 
-      if(IsEnabled() &&
+      if (IsEnabled() &&
         m_lastTouch.x >= x && m_lastTouch.x < kRight &&
         m_lastTouch.y >= y && m_lastTouch.y < kBottom)
       {
@@ -110,7 +110,7 @@ bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
       isHandled = true;
     }
   }
-  else if(IsPressed())
+  else if (IsPressed())
   {
     m_state &= ~MASK_PRESSED; // unpress
   }
@@ -121,7 +121,7 @@ bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
 
 void  UIRadioButton::OnSelectedStateChanged()
 {
-  if(IsSelected() && m_groupHash != NO_GROUP)
+  if (IsSelected() && m_groupHash != NO_GROUP)
   {
     GroupClearExcept(m_groupHash, this);
   }

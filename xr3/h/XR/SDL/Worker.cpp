@@ -11,7 +11,7 @@ int StartRoutine( void* p)
   Worker::JobQueue& jobs(pWorker->jobs);
   SDL_mutex*        pLock(static_cast<SDL_mutex*>(pWorker->pLockImpl));
 
-  while(!isQuitting || !jobs.empty())
+  while (!isQuitting || !jobs.empty())
   {
     SDL_mutexP(pLock);
     Worker::Job j(jobs.front());

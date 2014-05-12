@@ -69,7 +69,7 @@ void  Tweener::Add(float duration, Function pFunction, float target,
     ParamList::iterator iInsert(std::lower_bound(m_params.begin(),
       m_params.end(), p, Param::ComparePredicate()));
 
-    if(iInsert != m_params.end() && iInsert->pValue == p.pValue)
+    if (iInsert != m_params.end() && iInsert->pValue == p.pValue)
     {
       *iInsert = p;
     }
@@ -99,13 +99,13 @@ bool  Tweener::Remove( float& value, bool finish )
   ParamList::iterator iRemove(std::lower_bound(m_params.begin(), m_params.end(), 
     pComp, Param::ComparePredicate()));
   bool  success(iRemove != m_params.end() && iRemove->pValue == pComp.pValue);
-  if(success)
+  if (success)
   {
-    if(finish)
+    if (finish)
     { 
       value = iRemove->target;
       Callback  pOnFinished(iRemove->pOnFinished);
-      if(pOnFinished != 0)
+      if (pOnFinished != 0)
       {
         (*pOnFinished)(iRemove->pCallbackData);
       }

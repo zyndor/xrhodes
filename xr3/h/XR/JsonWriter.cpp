@@ -64,7 +64,7 @@ Writer&  Writer::Start(Type rootType)
   XR_ASSERT(Writer, rootType != INVALID);
   m_stream.str("");
 
-  switch(rootType)
+  switch (rootType)
   {
   case  ARRAY:
     m_stream.put(kArrayBegin);
@@ -83,14 +83,14 @@ Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
 {
   _WriteKey(pKey);
 
-  if(pValue == 0)
+  if (pValue == 0)
   {
     m_stream << kNull;
   }
   else
   {
     m_stream.put(kQuot);
-    if(m_autoEscapeString)
+    if (m_autoEscapeString)
     {
       _ProcessEscaped(pValue);
     }
@@ -219,7 +219,7 @@ Writer&  Writer::CloseScope()
   _AddLinebreak();
   _AddIndent();
 
-  switch(type)
+  switch (type)
   {
   case OBJECT:
     m_stream.put(kObjectEnd);
@@ -235,9 +235,9 @@ Writer&  Writer::CloseScope()
 
 std::string Writer::Finish( bool force )
 {
-  if(force)
+  if (force)
   {
-    while(m_depth > 0)
+    while (m_depth > 0)
     {
       CloseScope();
     }
@@ -259,7 +259,7 @@ void  Writer::_WriteKey( const char* pKey )
   _AddIndent();
 
   m_stream.put(kQuot);
-  if(m_autoEscapeString)
+  if (m_autoEscapeString)
   {
     _ProcessEscaped(pKey);  
   }
@@ -276,7 +276,7 @@ void  Writer::_WriteKey( const char* pKey )
 void  Writer::_WriteComma()
 {
   XR_ASSERT(Writer, m_depth > 0);
-  if(m_parScopes[m_depth].isEmpty)
+  if (m_parScopes[m_depth].isEmpty)
   {
     m_parScopes[m_depth].isEmpty = false;
   }
@@ -296,7 +296,7 @@ void  Writer::_PushScope( int type )
 
 void Writer::_AddLinebreak()
 {
-  if(m_allowLinebreaks)
+  if (m_allowLinebreaks)
   {
     m_stream << '\n';
   }
@@ -308,9 +308,9 @@ void Writer::_AddLinebreak()
 
 void Writer::_AddIndent()
 {
-  if(m_allowIndents)
+  if (m_allowIndents)
   {
-    for(int i = m_depth; i > 0; --i)
+    for (int i = m_depth; i > 0; --i)
     {
       m_stream.put(kIndent);
     }
@@ -319,7 +319,7 @@ void Writer::_AddIndent()
 
 void Writer::_AddSpace()
 {
-  if(m_allowSpace)
+  if (m_allowSpace)
   {
     m_stream.put(' ');
   }
@@ -327,7 +327,7 @@ void Writer::_AddSpace()
 
 void Writer::_WriteStringValue( const char* pValue )
 {
-  if(pValue == 0)
+  if (pValue == 0)
   {
     m_stream << kNull;
   }
@@ -340,26 +340,26 @@ void Writer::_WriteStringValue( const char* pValue )
 void Writer::_ProcessEscaped( const char* pValue )
 {
   const char* pEnd(strchr(pValue, 0));
-  while(pValue != pEnd)
+  while (pValue != pEnd)
   {
     const char* pNextEscape = strpbrk(pValue, kEscapeChars);
     bool  found(pNextEscape != 0);
-    if(!found)
+    if (!found)
     {
       pNextEscape = pEnd;
     }
 
-    while(pValue != pNextEscape)
+    while (pValue != pNextEscape)
     {
       m_stream << *pValue;
       ++pValue;
     }
 
-    if(found)
+    if (found)
     {
       // process escape
       pNextEscape = strchr(kEscapeChars, pValue[0]);
-      if(pNextEscape != 0)
+      if (pNextEscape != 0)
       {
         m_stream << kEscapeSubs[pNextEscape - kEscapeChars];
         ++pValue;

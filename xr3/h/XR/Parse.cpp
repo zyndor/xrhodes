@@ -1,6 +1,6 @@
-#include  <stdio.h>
-#include  "Parse.hpp"
-#include  "maths.hpp"
+#include <stdio.h>
+#include "Parse.hpp"
+#include "maths.hpp"
 
 namespace XR
 {
@@ -42,10 +42,10 @@ bool Parse::BooleanPositive( const char* pValue )
   s_arErrorBuffer[0] = 0;
 
   bool  result(true);
-  if(pValue != 0 && pValue[0] != '\0')
+  if (pValue != 0 && pValue[0] != '\0')
   {
     int dummy;
-    if((sscanf(pValue, "%d", &dummy) > 0 && dummy == 0) || 
+    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy == 0) || 
       pValue[0] == 'n' || pValue[0] == 'N')
     {
       result = false;
@@ -61,10 +61,10 @@ bool Parse::BooleanNegative( const char* pValue )
   s_arErrorBuffer[0] = 0;
 
   bool  result(false);
-  if(pValue != 0 && pValue[0] != '\0')
+  if (pValue != 0 && pValue[0] != '\0')
   {
     int dummy;
-    if((sscanf(pValue, "%d", &dummy) > 0 && dummy > 0) || 
+    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy > 0) || 
       pValue[0] == 'y' || pValue[0] == 'Y')
     {
       result = true;
@@ -80,12 +80,12 @@ XR::Color Parse::Color( const char* pValue )
   s_arErrorBuffer[0] = 0;
 
   XR::Color col(0xffffffff);
-  if(pValue != 0)
+  if (pValue != 0)
   {
     uint32  rgba;
-    if(sscanf(pValue, "%x", &rgba) > 0)
+    if (sscanf(pValue, "%x", &rgba) > 0)
     {
-      if(strlen(pValue) <= 6)
+      if (strlen(pValue) <= 6)
       {
         rgba <<= 8;  
         col.a = 1.0f;
@@ -107,7 +107,7 @@ XR::Color Parse::Color( const char* pValue )
 int   Parse::Int(const char* pValue)
 {
   int v;
-  if(!Int(pValue, v))
+  if (!Int(pValue, v))
   {
     v = 0;
   }
@@ -120,7 +120,7 @@ int   Parse::Int(const char* pValue)
 int   Parse::Int(int base, const char* pValue)
 {
   int v;
-  if(!Int(base, pValue, v))
+  if (!Int(base, pValue, v))
   {
     v = 0;
   }
@@ -133,7 +133,7 @@ int   Parse::Int(int base, const char* pValue)
 float Parse::Float(const char* pValue)
 {
   float v;
-  if(!Float(pValue, v))
+  if (!Float(pValue, v))
   {
     v = .0f;
   }
@@ -150,7 +150,7 @@ bool  Parse::Int( const char* pValue, int& v)
   s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -158,10 +158,10 @@ bool  Parse::Int( const char* pValue, int& v)
   }
 
   int value(0);
-  if(success)
+  if (success)
   {
     success = sscanf(pValue, "%d", &value) == 1;
-    if(!success)
+    if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
       snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -169,7 +169,7 @@ bool  Parse::Int( const char* pValue, int& v)
     }
   }
 
-  if(success)
+  if (success)
   {
     v  = value;
   }
@@ -183,7 +183,7 @@ bool  Parse::Int(int base, const char* pValue, int& v)
   s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -191,58 +191,58 @@ bool  Parse::Int(int base, const char* pValue, int& v)
   }
 
   int value(0);
-  if(success)
+  if (success)
   {
-    if(strchr(pValue, '%') != 0)
+    if (strchr(pValue, '%') != 0)
     {
       double  percent;
       success = sscanf(pValue, "%lf", &percent) == 1;
-      if(!success)
+      if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
         snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
           karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_PERCENT]);
       }
 
-      if(success)
+      if (success)
       {
         value = static_cast<int>(Round((float)(percent * base / 100.0)));
       }
     }
-    else if(strchr(pValue, 'x') != 0)
+    else if (strchr(pValue, 'x') != 0)
     {
       double  multi;
       const char* pTemp(pValue);
-      if(pTemp[0] == 'x')
+      if (pTemp[0] == 'x')
       {
         ++pTemp;
       }
 
       success = sscanf(pTemp, "%lf", &multi) == 1;
-      if(!success)
+      if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
         snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
           karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_MULTIPLIER]);
       }
 
-      if(success)
+      if (success)
       {
         value = static_cast<int>(Round((float)(multi * base)));
       }
     }
-    else if(strchr(pValue, '.') != 0)
+    else if (strchr(pValue, '.') != 0)
     {
       double  scalar;
       success = sscanf(pValue, "%lf", &scalar) == 1;
-      if(!success)
+      if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
         snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
           karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_SCALAR]);
       }
 
-      if(success)
+      if (success)
       {
         value = static_cast<int>(Round((float)(scalar * base)));
       }
@@ -250,7 +250,7 @@ bool  Parse::Int(int base, const char* pValue, int& v)
     else
     {
       success = sscanf(pValue, "%d", &value) == 1;
-      if(!success)
+      if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
         snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -270,7 +270,7 @@ bool  Parse::Float(const char* pValue, float& v)
   s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -278,20 +278,20 @@ bool  Parse::Float(const char* pValue, float& v)
   }
 
   float value(.0f);
-  if(success)
+  if (success)
   {
-    if(strchr(pValue, '%') != 0)
+    if (strchr(pValue, '%') != 0)
     {
       double  percent;
       success = sscanf(pValue, "%lf", &percent) == 1;
-      if(!success)
+      if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
         snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
           karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_PERCENT]);
       }
 
-      if(success)
+      if (success)
       {
         value = (float)(percent / 100.0);
       }
@@ -299,7 +299,7 @@ bool  Parse::Float(const char* pValue, float& v)
     else
     {
       success = sscanf(pValue, "%f", &value) == 1;
-      if(!success)
+      if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
         snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -320,7 +320,7 @@ bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
 
   XR_ASSERT(Parse::FloatSpeedPerSecond, fps > .0f);
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -328,17 +328,17 @@ bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
   }
 
   float value(.0f);
-  if(success)
+  if (success)
   {
     success = sscanf(pValue, "%f", &value) == 1;
-    if(!success)
+    if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
       snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
         karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
-    if(success)
+    if (success)
     {
       value /= fps;
     }
@@ -356,7 +356,7 @@ bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
 
   XR_ASSERT(Parse::FloatAccelerationPerSecond, fps > .0f);
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -364,17 +364,17 @@ bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
   }
 
   float value(.0f);
-  if(success)
+  if (success)
   {
     success = sscanf(pValue, "%f", &value) == 1;
-    if(!success)
+    if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
       snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
         karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
-    if(success)
+    if (success)
     {
       value /= fps * fps;
     }
@@ -392,7 +392,7 @@ bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
 
   XR_ASSERT(Parse::FloatScalingPerSecond, fps > .0f);
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -400,17 +400,17 @@ bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
   }
 
   float value(.0f);
-  if(success)
+  if (success)
   {
     success = sscanf(pValue, "%f", &value) == 1;
-    if(!success)
+    if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
       snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
         karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
-    if(success)
+    if (success)
     {
       value = powf(value, 1.0f / fps);
     }
@@ -427,7 +427,7 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
   s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -435,27 +435,27 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
   }
 
   r0 = r1 = 0;
-  if(success)
+  if (success)
   {
     int   len(strlen(pValue));
     success = len > 0 && sscanf(pValue, "%d", &r0) == 1;
-    if(!success)
+    if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
       snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
         karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
-    if(success)
+    if (success)
     {
       const char* pEnd(pValue + len);
       pValue = strchr(pValue, '-');
-      if(pValue != 0 && r0 < 0)
+      if (pValue != 0 && r0 < 0)
       {
         pValue = strchr(pValue + 1, '-');
       }
 
-      if(pValue == 0)
+      if (pValue == 0)
       {
         r1 = r0;
       }
@@ -476,7 +476,7 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
   s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
-  if(!success)
+  if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
     snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
@@ -484,27 +484,27 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
   }
 
   r0 = r1 = 0;
-  if(success)
+  if (success)
   {
     int   len(strlen(pValue));
     success = len > 0 && sscanf(pValue, "%f", &r0) == 1;
-    if(!success)
+    if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
       snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
         karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
-    if(success)
+    if (success)
     {
       const char* pEnd(pValue + len);
       pValue = strchr(pValue, '-');
-      if(pValue != 0 && r0 < .0f)
+      if (pValue != 0 && r0 < .0f)
       {
         pValue = strchr(pValue + 1, '-');
       }
 
-      if(pValue == 0)
+      if (pValue == 0)
       {
         r1 = r0;
       }

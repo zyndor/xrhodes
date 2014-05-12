@@ -12,11 +12,11 @@
 #if !defined XR_ANIMATIONREADER_HPP
 #define XR_ANIMATIONREADER_HPP
 
-#include  <tinyxml.h>
-#include  "types.hpp"
-#include  "strings.hpp"
-#include  "Parse.hpp"
-#include  "Animation.hpp"
+#include <tinyxml.h>
+#include "types.hpp"
+#include "strings.hpp"
+#include "Parse.hpp"
+#include "Animation.hpp"
 
 namespace XR
 {
@@ -71,7 +71,7 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
   // name
   const char* pName(pXml->Attribute(karAnimationTag[AnimationTag::NAME]));
   success = pName != 0;
-  if(!success)
+  if (!success)
   {
     XR_TRACE(AnimationReader, ("Attribute '%s' is required in animation",
       karAnimationTag[AnimationTag::NAME]));
@@ -79,10 +79,10 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
 
   // resource name
   const char* pResourceName(0);
-  if(success)
+  if (success)
   {
     pResourceName = pXml->Attribute(karAnimationTag[AnimationTag::RESOURCE_NAME]);
-    if(pResourceName == 0)
+    if (pResourceName == 0)
     {
       pResourceName = pName;  // default to name
     }
@@ -94,11 +94,11 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
   }
 
   // frame delay
-  if(success)
+  if (success)
   {
     success = ParseFloat(pXml->Attribute(karAnimationTag[AnimationTag::FRAME_DELAY]),
       anim.frameDelay);
-    if(!success)
+    if (!success)
     {
       XR_TRACE(AnimationReader, ("Failed to parse '%s' for animation",
         karAnimationTag[AnimationTag::FRAME_DELAY]));
@@ -106,17 +106,17 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
   }
 
   // loop frame
-  if(success)
+  if (success)
   {
     int iTemp;
-    if(Parse::Int(pXml->Attribute(karAnimationTag[AnimationTag::LOOP_FRAME]),
+    if (Parse::Int(pXml->Attribute(karAnimationTag[AnimationTag::LOOP_FRAME]),
       iTemp))
     {
       anim.SetLoopFrame(iTemp);
     }
   }
 
-  if(success)
+  if (success)
   {
     SString name(pResourceName);
     name += "_f###";
@@ -133,15 +133,15 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
         
       gotFrame = (*pGetFrameDataCb)(name.c_str(), pGetFrameDataCbData,
         anim.frames[numFrames]);
-      if(gotFrame)
+      if (gotFrame)
       {
         ++numFrames;
       }
-    } while(gotFrame && numFrames < kMaxAnimationFrames);
+    } while (gotFrame && numFrames < kMaxAnimationFrames);
 
     anim.frames.resize_optimised(numFrames);
 
-    if(numFrames == 0)
+    if (numFrames == 0)
     {
       XR_TRACE(AnimationReader,
         ("Animation '%s' has 0 frames (resource name: %s).", pName,

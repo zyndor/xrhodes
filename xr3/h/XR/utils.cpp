@@ -1,7 +1,7 @@
-#include  <cstring>
-#include  <algorithm>
-#include  "utils.hpp"
-#include  "Hash.hpp"
+#include <cstring>
+#include <algorithm>
+#include "utils.hpp"
+#include "Hash.hpp"
 
 namespace XR
 {
@@ -11,7 +11,7 @@ int FindHashedListStringValue( const uint32* parValues, int numValues, const cha
   XR_ASSERT(GetIdFromList, parValues != 0);
   XR_ASSERT(GetIdFromList, numValues >= 0);
   int id(-1);
-  if(pValue != 0)
+  if (pValue != 0)
   {
     const uint32* pFind(std::find(parValues, parValues + numValues,
       Hash::String(pValue)));
@@ -26,7 +26,7 @@ int FindHashedListStringValue( const uint32* parValues, int numValues, const cha
 //  XR_ASSERT(RingBuffer, pGroup != 0);
 //  CIwResList* pList(pGroup->GetListNamed(IW_GX_RESTYPE_TEXTURE));
 //
-//  if(pList != 0)
+//  if (pList != 0)
 //  {
 //    CIwManagedList& lTextures(pList->m_Resources);
 //
@@ -34,7 +34,7 @@ int FindHashedListStringValue( const uint32* parValues, int numValues, const cha
 //    CIwManaged**  i1 = lTextures.GetEnd();
 //
 //    int32 hash(::Hash::String(IW_GX_RESTYPE_MATERIAL));
-//    while(i0 != i1)
+//    while (i0 != i1)
 //    {
 //      CIwTexture*   pTexture(static_cast<CIwTexture*>(*i0));
 //      Material*  pMaterial(new Material);
@@ -67,7 +67,7 @@ std::string UrlEncode( const char* pString )
 {
   std::ostringstream escaped;
   int max = strlen(pString);
-  for(int i=0; i < max; ++i)
+  for (int i=0; i < max; ++i)
   {
     if ( (48 <= pString[i] && pString[i] <= 57) ||  //0-9
       (65 <= pString[i] && pString[i] <= 90) || //abc...xyz

@@ -17,11 +17,11 @@ UIAligner::~UIAligner()
 //==============================================================================
 void UIAligner::_AlignElement( UIElement* pElem )
 {
-  if(m_hAlign != AL_NOALIGN)
+  if (m_hAlign != AL_NOALIGN)
   {
     int x1(x);
 
-    switch(m_hAlign)
+    switch (m_hAlign)
     {
     case  AL_NOALIGN: // dodge GCC warning only
     case  AL_LOW:
@@ -40,11 +40,11 @@ void UIAligner::_AlignElement( UIElement* pElem )
     pElem->x = x1;
   }
 
-  if(m_vAlign != AL_NOALIGN)
+  if (m_vAlign != AL_NOALIGN)
   {
     int y1(y);
 
-    switch(m_vAlign)
+    switch (m_vAlign)
     {
     case  AL_NOALIGN: // dodge GCC warning only
     case  AL_LOW:
@@ -69,7 +69,7 @@ void UIAligner::_AlignElement( UIElement* pElem )
 //==============================================================================
 void UIAligner::SetHorizontalAlignment( Alignment hAlign )
 {
-  if(m_hAlign != hAlign)
+  if (m_hAlign != hAlign)
   {
     m_hAlign = hAlign;
     OnChange();
@@ -79,7 +79,7 @@ void UIAligner::SetHorizontalAlignment( Alignment hAlign )
 //==============================================================================
 void UIAligner::SetVerticalAlignment( Alignment vAlign )
 {
-  if(m_vAlign != vAlign)
+  if (m_vAlign != vAlign)
   {
     m_vAlign = vAlign;
     OnChange();

@@ -78,27 +78,27 @@ protected:
   // internal
   ListenerList::iterator  GetAdded(ListenerBaseBase* p)
   {
-    return std::find_if(m_listeners.begin(), m_listeners.end(),
+    return std::find_if (m_listeners.begin(), m_listeners.end(),
       ListenerBaseBase::Compare(p));
   }
   
   ListenerList::iterator  GetPostponedAdded(ListenerBaseBase* p)
   {
-    return std::find_if(m_postponedAdd.begin(), m_postponedAdd.end(),
+    return std::find_if (m_postponedAdd.begin(), m_postponedAdd.end(),
       ListenerBaseBase::Compare(p));
   }
 
   bool  IsAdded(ListenerBaseBase* p) const
   {
     ListenerList::const_reverse_iterator  iEnd(m_listeners.rend());
-    return std::find_if(m_listeners.rbegin(), m_listeners.rend(),
+    return std::find_if (m_listeners.rbegin(), m_listeners.rend(),
       ListenerBaseBase::Compare(p)) != iEnd;
   }
   
   bool  IsPostPonedAdded(ListenerBaseBase* p) const
   {
     ListenerList::const_reverse_iterator  iEnd(m_postponedAdd.rend());
-    return std::find_if(m_postponedAdd.rbegin(), iEnd,
+    return std::find_if (m_postponedAdd.rbegin(), iEnd,
       ListenerBaseBase::Compare(p)) != iEnd;
   }
   
@@ -174,12 +174,12 @@ public:
     Listener<T>  l(pListener, pCallback);
     
     bool  result(!IsAdded(&l)); // || *iInsert != pListener;
-    if(result)  // if not added
+    if (result)  // if not added
     {
-      if(m_isTraversing)  // traversing
+      if (m_isTraversing)  // traversing
       {
         result = !IsPostPonedAdded(&l);
-        if(result)  // if unique - postpone add
+        if (result)  // if unique - postpone add
         {
           m_postponedAdd.push_back(l.Clone());
         }
@@ -199,10 +199,10 @@ public:
     m_isTraversing = true;
     
     bool  handled(false);
-    for(ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
+    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
-      if(static_cast<ListenerBase*>(*i0)->Handle(ev))
+      if (static_cast<ListenerBase*>(*i0)->Handle(ev))
       {
         handled = true;
         break;
@@ -211,7 +211,7 @@ public:
 
     // finish traversal
     m_isTraversing = false;
-    if(m_postponedClear)
+    if (m_postponedClear)
     {
       Clear();
     }
@@ -220,7 +220,7 @@ public:
     m_listeners.splice(m_listeners.end(), m_postponedAdd);
 
     // do postponed removal
-    while(!m_postponedRemove.empty())
+    while (!m_postponedRemove.empty())
     {
       RemoveListener(m_postponedRemove.back());
       m_postponedRemove.pop_back();
@@ -234,7 +234,7 @@ public:
     // start traversal
     m_isTraversing = true;
     
-    for(ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
+    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
       static_cast<ListenerBase*>(*i0)->Handle(ev);
@@ -247,7 +247,7 @@ public:
     m_listeners.splice(m_listeners.end(), m_postponedAdd);
 
     // do postponed removal
-    while(!m_postponedRemove.empty())
+    while (!m_postponedRemove.empty())
     {
       RemoveListener(m_postponedRemove.back());
       m_postponedRemove.pop_back();
@@ -319,12 +319,12 @@ public:
     Listener<T>  l(pListener, pCallback);
     
     bool  result(!IsAdded(&l)); // || *iInsert != pListener;
-    if(result)  // if not added
+    if (result)  // if not added
     {
-      if(m_isTraversing)  // traversing
+      if (m_isTraversing)  // traversing
       {
         result = !IsPostPonedAdded(&l);
-        if(result)  // if unique - postpone add
+        if (result)  // if unique - postpone add
         {
           m_postponedAdd.push_back(l.Clone());
         }
@@ -344,10 +344,10 @@ public:
     m_isTraversing = true;
     
     bool  handled(false);
-    for(ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
+    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
-      if(static_cast<ListenerBase*>(*i0)->Handle())
+      if (static_cast<ListenerBase*>(*i0)->Handle())
       {
         handled = true;
         break;
@@ -361,7 +361,7 @@ public:
     m_listeners.splice(m_listeners.end(), m_postponedAdd);
 
     // do postponed removal
-    while(!m_postponedRemove.empty())
+    while (!m_postponedRemove.empty())
     {
       RemoveListener(m_postponedRemove.back());
       m_postponedRemove.pop_back();
@@ -375,7 +375,7 @@ public:
     // start traversal
     m_isTraversing = true;
     
-    for(ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
+    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
       static_cast<ListenerBase*>(*i0)->Handle();
@@ -383,7 +383,7 @@ public:
 
     // finish traversal
     m_isTraversing = false;
-    if(m_postponedClear)
+    if (m_postponedClear)
     {
       Clear();
     }
@@ -392,7 +392,7 @@ public:
     m_listeners.splice(m_listeners.end(), m_postponedAdd);
 
     // do postponed removal
-    while(!m_postponedRemove.empty())
+    while (!m_postponedRemove.empty())
     {
       RemoveListener(m_postponedRemove.back());
       m_postponedRemove.pop_back();

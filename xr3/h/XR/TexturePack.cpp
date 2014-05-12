@@ -67,25 +67,25 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   bool  success(doc.LoadFile(pName));
 
   TiXmlElement* pElem(doc.RootElement());
-  if(success)
+  if (success)
   {
     success = pElem != 0;
   }
 
   const char*   pTextureName(0);
-  if(success)
+  if (success)
   {
     pTextureName = pElem->Attribute(karXml[XML_IMAGE_PATH]);
 
     success = pTextureName != 0;
-    if(!success)
+    if (!success)
     {
       XR_TRACE(TexturePack, ("'%s' is a required attribute.",
         karXml[XML_IMAGE_PATH]));
     }
   }
 
-  if(success)
+  if (success)
   {
     XR_ASSERT(TexturePack, static_cast<int>(strlen(pTextureName)) <
       kBufferSize);
@@ -94,7 +94,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
     sprintf(arBuffer, pTextureName);
 
     char* pPeriod(strrchr(arBuffer, '.'));
-    if(pPeriod != 0)
+    if (pPeriod != 0)
     {
       *pPeriod = '\0';
     }
@@ -116,7 +116,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
     //}
 
     success = m_pMaterial != 0;
-    if(!success)
+    if (!success)
     {
       XR_TRACE(TexturePack, ("Failed to find material '%s'.", arBuffer));
     }
@@ -124,15 +124,15 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 
   int texWidth;
   int texHeight;
-  if(success)
+  if (success)
   {
     pElem->Attribute(karXml[XML_WIDTH], &texWidth);
     pElem->Attribute(karXml[XML_HEIGHT], &texHeight);
 
-    if(texWidth != 0)
+    if (texWidth != 0)
     {
       success = success && m_pMaterial->GetTexture(0).GetWidth() == texWidth;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(TexturePack, ("Texture width mismatch (%d vs %d)",
           m_pMaterial->GetTexture(0).GetWidth(), texWidth));  
@@ -143,10 +143,10 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
       texWidth = m_pMaterial->GetTexture(0).GetWidth();
     }
 
-    if(texHeight != 0)
+    if (texHeight != 0)
     {
       success = success && m_pMaterial->GetTexture(0).GetHeight() == texHeight;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(TexturePack, ("Texture height mismatch (%d vs %d)",
           m_pMaterial->GetTexture(0).GetHeight(), texHeight));  
@@ -158,7 +158,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
     }
   }
 
-  if(success)
+  if (success)
   {
     pElem = pElem->FirstChildElement(karXml[XML_SPRITE]);
 
@@ -168,7 +168,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
     int w, h; // size on sprite sheet
     int xOffs, yOffs; // amount of translation left and down
     int wOffs, hOffs; // size of finished sprite, including offset
-    while(success && pElem != 0)
+    while (success && pElem != 0)
     {
       // create sprite
       const char* pSpriteName(pElem->Attribute(karXml[XML_NAME]));
@@ -179,7 +179,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         pElem->Attribute(karXml[XML_X], &x) == 0 ||
         pElem->Attribute(karXml[XML_Y], &y) == 0);
       
-      if(success)
+      if (success)
       {
         XR_ASSERT(TexturePack, static_cast<int>(strlen(pSpriteName)) < kBufferSize);
 
@@ -187,7 +187,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         sprintf(arBuffer, pSpriteName);
 
         char* pPeriod(strrchr(arBuffer, '.'));
-        if(pPeriod != 0)
+        if (pPeriod != 0)
         {
           *pPeriod = '\0';
         }
@@ -202,12 +202,12 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         };
 
         // offset and total size
-        if(pElem->Attribute(karXml[XML_OFFSET_X], &xOffs) == 0)
+        if (pElem->Attribute(karXml[XML_OFFSET_X], &xOffs) == 0)
         {
           xOffs = 0;
         }
 
-        if(pElem->Attribute(karXml[XML_OFFSET_Y], &yOffs) == 0)
+        if (pElem->Attribute(karXml[XML_OFFSET_Y], &yOffs) == 0)
         {
           yOffs = 0;
         }
@@ -216,12 +216,12 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         bool  isRotated(pIsRotated != 0 && strlen(pIsRotated) > 0 &&
           pIsRotated[0] == 'y');
 
-        if(pElem->Attribute(karXml[XML_OFFSET_W], &wOffs) == 0)
+        if (pElem->Attribute(karXml[XML_OFFSET_W], &wOffs) == 0)
         {
           wOffs = isRotated ? h : w;
         }
 
-        if(pElem->Attribute(karXml[XML_OFFSET_H], &hOffs) == 0)
+        if (pElem->Attribute(karXml[XML_OFFSET_H], &hOffs) == 0)
         {
           hOffs = isRotated ? w : h;
         }
@@ -229,7 +229,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         Sprite  sprite;
         sprite.SetMaterial(m_pMaterial);
 
-        if(isRotated)
+        if (isRotated)
         {
           sprite.SetUVsRotatedProportional(uvs);
           sprite.OffsetVertices(xOffs - (wOffs - h) * .5f, yOffs - (hOffs - w) * .5f);
@@ -295,7 +295,7 @@ void  TexturePack::ScaleSprites(float x)
 
 void  TexturePack::ScaleSprites(float x, float y)
 {
-  for(SpriteDictionary::iterator i0(m_sprites.begin()), i1(m_sprites.end()); i0 != i1; ++i0)
+  for (SpriteDictionary::iterator i0(m_sprites.begin()), i1(m_sprites.end()); i0 != i1; ++i0)
   {
     i0->value.Scale(x, y);
   }

@@ -81,7 +81,7 @@ Entity::~Entity()
 Matrix  Entity::GetWorldTransform() const
 {
   Matrix  m(m_xForm);
-  if(m_pParent != 0)
+  if (m_pParent != 0)
   {
     m *= m_pParent->GetWorldTransform();
   }
@@ -101,7 +101,7 @@ void  Entity::UpdateTransform()
 //==============================================================================
 void  Entity::DetachFromParent()
 {
-  if(m_pParent != 0)
+  if (m_pParent != 0)
   {
     m_pParent->RemoveChild(this);
     m_pParent = 0;
@@ -121,10 +121,10 @@ void  Entity::AddChild(Entity* p)
       ("Adding child creates cyclic dependency."));
     pParent = pParent->GetParent();
   }
-  while(pParent != 0);
+  while (pParent != 0);
   
   // check for redundancy or name clash.
-  for(List::const_iterator i0(m_children.begin()), i1(m_children.end());
+  for (List::const_iterator i0(m_children.begin()), i1(m_children.end());
     i0 != i1; ++i0)
   {
     const Entity* p1(*i0);
@@ -168,7 +168,7 @@ Entity* Entity::FindChild(const char* pName) const
   do
   {
     const char* pNext(strchr(pName, SEPARATOR));
-    if(pNext == 0)
+    if (pNext == 0)
     {
       pNext = pEnd;
     }
@@ -189,11 +189,11 @@ Entity* Entity::FindChild(const char* pName) const
 
     pBegin = pNext;
   }
-  while(pBegin != pEnd);
+  while (pBegin != pEnd);
 
   Entity* pFound(hierarchy.empty() ? 0 : const_cast<Entity*>(this));
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  for(std::list<DebugFindEntry>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
+  for (std::list<DebugFindEntry>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
     pFound != 0 && i0 != i1; ++i0)
   {
     pFound = pFound->FindChild(i0->hash);
@@ -201,7 +201,7 @@ Entity* Entity::FindChild(const char* pName) const
       i0->pPath));
   }
 #else
-  for(std::list<uint32>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
+  for (std::list<uint32>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
     pFound != 0 && i0 != i1; ++i0)
   {
     pFound = pFound->FindChild(*i0);
@@ -215,7 +215,7 @@ Entity* Entity::FindChild(const char* pName) const
 Entity* Entity::FindChild(uint32 name) const
 {
   List::const_iterator  iEnd(m_children.end());
-  List::const_iterator  iFind(std::find_if(m_children.begin(), iEnd,
+  List::const_iterator  iFind(std::find_if (m_children.begin(), iEnd,
     FindPredicate(name)));
   return iFind != iEnd ? *iFind : 0;
 }
@@ -225,7 +225,7 @@ void  Entity::AddComponent(Component* p)
 {
   XR_ASSERT(Entity, p != 0);
   Entity* pOwner(p->GetOwner());
-  if(pOwner != this)
+  if (pOwner != this)
   {
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
     XR_ASSERTMSG(Entity, FindComponent(p->GetTypeId()) != 0,
@@ -233,7 +233,7 @@ void  Entity::AddComponent(Component* p)
         p->GetTypeId()));
 #endif  //XR_DEBUG
     
-    if(pOwner != 0)
+    if (pOwner != 0)
     {
       pOwner->RemoveComponent(p);
     }
@@ -254,7 +254,7 @@ void  Entity::RemoveComponent(Component* p)
 
 Entity::Component*  Entity::FindComponent(uint32 typeId) const
 {
-  Component::List::const_iterator iFind(std::find_if(m_components.begin(),
+  Component::List::const_iterator iFind(std::find_if (m_components.begin(),
     m_components.end(), Component::FindPredicate(typeId)));
   return iFind != m_components.end() ? *iFind : 0;
 }
@@ -270,13 +270,13 @@ Entity* Entity::Clone(Entity* pParent) const
   pEntity->scaling = scaling;
   //pEntity->UpdateTransform(); // WATCH
  
-  if(pParent != 0)
+  if (pParent != 0)
   {
     pParent->AddChild(pEntity);
   }
   
   // clone components
-  for(Component::List::const_iterator i0(m_components.begin()), i1(m_components.end());
+  for (Component::List::const_iterator i0(m_components.begin()), i1(m_components.end());
     i0 != i1; ++i0)
   {
     const Component* pComp(*i0);
@@ -284,7 +284,7 @@ Entity* Entity::Clone(Entity* pParent) const
   }
   
   // clone children to newly cloned entity - recursive
-  for(List::const_iterator i0(m_children.begin()), i1(m_children.end());
+  for (List::const_iterator i0(m_children.begin()), i1(m_children.end());
     i0 != i1; ++i0)
   {
     const Entity* pChild(*i0);

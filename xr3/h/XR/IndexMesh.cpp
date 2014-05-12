@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "IndexMesh.hpp"
+#include "IndexMesh.hpp"
 
 namespace XR {
 
@@ -27,9 +27,9 @@ void  IndexMesh::SetIndexPattern(const uint16* pInds, int numInds, int repeat)
   XR_ASSERT(IndexMesh, pInds != 0);
   
   uint16  shift(0);
-  for(int i = 0; i < numInds; ++i)
+  for (int i = 0; i < numInds; ++i)
   {
-    if(pInds[i] > shift)
+    if (pInds[i] > shift)
     {
       shift = pInds[i];
     }
@@ -49,9 +49,9 @@ void  IndexMesh::SetIndexPattern(const uint16* pInds, int numInds, uint16 shift,
   int indexOffset(0);
   int vertexOffset(0);
   m_indices.resize(numInds * repeat);
-  for(int i = 0; i < repeat; ++i)
+  for (int i = 0; i < repeat; ++i)
   {
-    for(int j = 0; j < numInds; ++j)
+    for (int j = 0; j < numInds; ++j)
     {
       m_indices[indexOffset + j] = pInds[j] + vertexOffset;
     }
@@ -63,7 +63,7 @@ void  IndexMesh::SetIndexPattern(const uint16* pInds, int numInds, uint16 shift,
 //==============================================================================
 void  IndexMesh::Render()
 {
-  if(m_vertices.GetCapacity() > 0)
+  if (m_vertices.GetCapacity() > 0)
   {
     _PrepareRender();
     Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], m_indices.size());

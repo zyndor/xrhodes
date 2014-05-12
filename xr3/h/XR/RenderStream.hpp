@@ -12,8 +12,8 @@
 #if !defined XR_RENDERSTREAM_HPP
 #define XR_RENDERSTREAM_HPP
 
-#include  "vectypes.hpp"
-#include  "Color.hpp"
+#include "vectypes.hpp"
+#include "Color.hpp"
 
 namespace XR
 {

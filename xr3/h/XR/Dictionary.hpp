@@ -12,9 +12,9 @@
 #if !defined XR_DICTIONARY_HPP
 #define XR_DICTIONARY_HPP
 
-#include  <algorithm>
-#include  <iterator>
-#include  "types.hpp"
+#include <algorithm>
+#include <iterator>
+#include "types.hpp"
 
 namespace XR
 {
@@ -71,14 +71,14 @@ struct  Node
   template <class Alloc>
   void  Add(key_type k, value_type d, Alloc& a)
   {
-    if(k == key)
+    if (k == key)
     {
       value = d;
     }
     else
     {
       SelfType*&  p = k < key ? pLow : pHigh;
-      if(p == 0)
+      if (p == 0)
       {
         p = a.allocate(1);
         a.construct(p, SelfType(this, k, d));
@@ -96,11 +96,11 @@ struct  Node
     SelfType* pNew(a.allocate(1));
     a.construct(pNew, SelfType(pParent, key, value));
 
-    if(pLow != 0)
+    if (pLow != 0)
     {
       pNew->pLow = pLow->CloneRecursive(pParent, a);
     }
-    if(pHigh != 0)
+    if (pHigh != 0)
     {
       pNew->pHigh = pHigh->CloneRecursive(pParent, a);
     }
@@ -110,7 +110,7 @@ struct  Node
   template <class Alloc>
   void  Destroy(Alloc& a)
   {
-    if(pLow != 0)
+    if (pLow != 0)
     {
       pLow->Destroy(a);
 
@@ -118,7 +118,7 @@ struct  Node
       a.deallocate(pLow, 1);
     }
 
-    if(pHigh != 0)
+    if (pHigh != 0)
     {
       pHigh->Destroy(a);
 
@@ -190,9 +190,9 @@ struct  Iterator
   {
     XR_ASSERT(Dictionary::Iterator, IsValid());
     pointer p(pNode->pHigh);
-    if(p != 0)
+    if (p != 0)
     {
-      while(p->pLow != 0)
+      while (p->pLow != 0)
       {
         p = p->pLow;
       }
@@ -200,9 +200,9 @@ struct  Iterator
     else
     {
       p = static_cast<pointer>(pNode->GetParent());
-      while(p != 0)
+      while (p != 0)
       {
-        if(p->key > pNode->key)
+        if (p->key > pNode->key)
         {
           break;
         }
@@ -225,9 +225,9 @@ struct  Iterator
   {
     XR_ASSERT(Dictionary::Iterator, IsValid());
     pointer p(pNode->pLow);
-    if(p != 0)
+    if (p != 0)
     {
-      while(p->pHigh != 0)
+      while (p->pHigh != 0)
       {
         p = p->pHigh;
       }
@@ -235,9 +235,9 @@ struct  Iterator
     else
     {
       p = pNode->GetParent();
-      while(p != 0)
+      while (p != 0)
       {
-        if(p->key < pNode->key)
+        if (p->key < pNode->key)
         {
           break;
         }
@@ -331,9 +331,9 @@ struct  ConstIterator
   {
     XR_ASSERT(Dictionary::ConstIterator, IsValid());
     pointer p(pNode->pHigh);
-    if(p != 0)
+    if (p != 0)
     {
-      while(p->pLow != 0)
+      while (p->pLow != 0)
       {
         p = p->pLow;
       }
@@ -341,9 +341,9 @@ struct  ConstIterator
     else
     {
       p = pNode->GetParent();
-      while(p != 0)
+      while (p != 0)
       {
-        if(p->key > pNode->key)
+        if (p->key > pNode->key)
         {
           break;
         }
@@ -366,9 +366,9 @@ struct  ConstIterator
   {
     XR_ASSERT(Dictionary::ConstIterator, IsValid());
     pointer p(pNode->pHigh);
-    if(p != 0)
+    if (p != 0)
     {
-      while(p->pLow != 0)
+      while (p->pLow != 0)
       {
         p = p->pLow;
       }
@@ -376,9 +376,9 @@ struct  ConstIterator
     else
     {
       p = pNode->GetParent();
-      while(p != 0)
+      while (p != 0)
       {
-        if(p->key > pNode->key)
+        if (p->key > pNode->key)
         {
           break;
         }
@@ -520,7 +520,7 @@ Dictionary<Key, Value, Alloc>::Dictionary(const Dictionary& rhs)
 : m_allocator(rhs.m_allocator),
   m_pRoot(0)
 {
-  if(rhs.m_pRoot != 0)
+  if (rhs.m_pRoot != 0)
   {
     m_pRoot = rhs.m_pRoot->CloneRecursive(0, m_allocator);
   }
@@ -551,7 +551,7 @@ size_t  Dictionary<Key, Value, Alloc>::size() const
 template  <typename Key, typename Value, class Alloc>
 void  Dictionary<Key, Value, Alloc>::insert(key_type k, value_type d)
 {
-  if(m_pRoot == 0)
+  if (m_pRoot == 0)
   {
     //m_pRoot = new NodeType(0, k, d);
     m_pRoot = m_allocator.allocate(1);
@@ -597,7 +597,7 @@ typename Dictionary<Key, Value, Alloc>::const_iterator Dictionary<Key, Value, Al
 template  <typename Key, typename Value, class Alloc>
 void  Dictionary<Key, Value, Alloc>::clear()
 {
-  if(m_pRoot != 0)
+  if (m_pRoot != 0)
   {
     m_pRoot->Destroy(m_allocator);
 
@@ -613,10 +613,10 @@ typename Dictionary<Key, Value, Alloc>::NodeType**
   Dictionary<Key, Value, Alloc>::_Get(key_type k)
 {
   NodeType**  pp = &m_pRoot;
-  while(*pp != 0)
+  while (*pp != 0)
   {
     NodeType* p(*pp);
-    if(k == p->key)
+    if (k == p->key)
     {
       break;
     }
@@ -635,10 +635,10 @@ typename Dictionary<Key, Value, Alloc>::NodeType*const *
   Dictionary<Key, Value, Alloc>::_Get(key_type k) const
 {
   NodeType*const *  pp = &m_pRoot;
-  while(*pp != 0)
+  while (*pp != 0)
   {
     NodeType* p(*pp);
-    if(k == p->key)
+    if (k == p->key)
     {
       break;
     }
@@ -657,9 +657,9 @@ typename Dictionary<Key, Value, Alloc>::iterator
   Dictionary<Key, Value, Alloc>::begin()
 {
   NodeType* pNode(m_pRoot);
-  if(pNode != 0)
+  if (pNode != 0)
   {
-    while(pNode->pLow != 0)
+    while (pNode->pLow != 0)
     {
       pNode = pNode->pLow;
     }
@@ -673,9 +673,9 @@ typename Dictionary<Key, Value, Alloc>::const_iterator
   Dictionary<Key, Value, Alloc>::begin() const
 {
   NodeType* pNode(m_pRoot);
-  if(pNode != 0)
+  if (pNode != 0)
   {
-    while(pNode->pLow != 0)
+    while (pNode->pLow != 0)
     {
       pNode = pNode->pLow;
     }
@@ -706,7 +706,7 @@ Value&  Dictionary<Key, Value, Alloc>::operator[](key_type k)
   NodeType**  pp = _Get(k);
   NodeType*   p(*pp);
   bool  found(p != 0);
-  if(found)
+  if (found)
   {
     return p->value;
   }

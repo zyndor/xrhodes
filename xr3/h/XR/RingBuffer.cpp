@@ -1,4 +1,4 @@
-#include  "RingBuffer.hpp"
+#include "RingBuffer.hpp"
 
 namespace XR
 {

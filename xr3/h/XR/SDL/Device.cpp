@@ -40,7 +40,7 @@ static struct
 //==============================================================================
 static int  FilterEvents(void* pUser, SDL_Event* pEvent)
 {
-  switch(pEvent->type)
+  switch (pEvent->type)
   {
   case  SDL_APP_WILLENTERBACKGROUND:
     s_deviceImpl.isPauseRequested = true;
@@ -70,7 +70,7 @@ void Device::Init()
   File::Init();
 
   bool  result(SDL_Init(SDL_INIT_EVERYTHING) == 0);
-  if(!result)
+  if (!result)
   {
     XR_TRACE(Device, ("Failed to initialise SDL."));
     //exit(1);
@@ -80,7 +80,7 @@ void Device::Init()
   s_deviceImpl.isQuitRequested = false;
   s_deviceImpl.isYielding = false;
   
-  if(!File::CheckExists(kConfigName))
+  if (!File::CheckExists(kConfigName))
   {
     JSON::Writer  writer;
     writer.SetLinebreaks(true);
@@ -159,19 +159,19 @@ const char* Device::GetConfig(const char* pGroup, const char* pId)
 {
   XR_ASSERT(Device, pId != 0);
   const char* pResult(0);
-  if(s_deviceImpl.pConfig != 0)
+  if (s_deviceImpl.pConfig != 0)
   {
-    if(pGroup != 0)
+    if (pGroup != 0)
     {
       JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pGroup,
         JSON::Entity::OBJECT));
       XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a group in root.", pGroup));
-      if(pEntity != 0)
+      if (pEntity != 0)
       {
         JSON::Object* pGroupData(pEntity->ToObject());
         pEntity = pGroupData->GetChild(pId, JSON::Entity::VALUE);
         XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in '%s'.", pId, pGroup));
-        if(pEntity != 0)
+        if (pEntity != 0)
         {
           pResult = pEntity->ToValue()->GetValue();
         }
@@ -182,7 +182,7 @@ const char* Device::GetConfig(const char* pGroup, const char* pId)
       JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pId,
         JSON::Entity::VALUE));
       XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in root.", pId));
-      if(pEntity != 0)
+      if (pEntity != 0)
       {
         pResult = pEntity->ToValue()->GetValue();
       }
@@ -203,10 +203,10 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
-  for(CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
+  for (CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
     i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
   {
-    if(i0->pCb == pCb)
+    if (i0->pCb == pCb)
     {
       return false;
     }
@@ -221,10 +221,10 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
-  for(CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
+  for (CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
     i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
   {
-    if(i0->pCb == pCb)
+    if (i0->pCb == pCb)
     {
       s_deviceImpl.arCallback[ev].erase(i0);
       return true;
@@ -238,12 +238,12 @@ void  Device::YieldOS(int32 ms)
 {
   s_deviceImpl.isYielding = true;
   SDL_Event e;
-  while(SDL_PollEvent(&e) != 0)
+  while (SDL_PollEvent(&e) != 0)
   {
-    switch(e.type)
+    switch (e.type)
     {
     case  SDL_QUIT:
-      if(!s_deviceImpl.isQuitRequested)
+      if (!s_deviceImpl.isQuitRequested)
       {
         s_deviceImpl.isQuitRequested = true;
         CallbackObject::CallList(s_deviceImpl.arCallback[Device::EV_QUIT], 0);
@@ -252,7 +252,7 @@ void  Device::YieldOS(int32 ms)
 
     case  SDL_WINDOWEVENT:
       // translate event
-      switch(e.window.event)
+      switch (e.window.event)
       {
       //case  SDL_WINDOWEVENT_HIDDEN:
       case  SDL_WINDOWEVENT_LEAVE:

@@ -22,14 +22,14 @@
 
 //==============================================================================
 #if defined XR_SDL
-#include  <SDL2/SDL.h>
+#include <SDL2/SDL.h>
 
 #define XR_TRACE(chnl, msg)            printf msg; printf("\n") // stub
 #define XR_ASSERT(chnl, cond)          SDL_assert(cond)
 
 #if defined XR_DEBUG
 #define XR_ASSERTMSG(chnl, cond, msg)\
-  if(!(cond))\
+  if (!(cond))\
   {\
     XR_TRACE(cnl, msg);\
     SDL_assert(cond);\
@@ -62,7 +62,7 @@ typedef Uint64          uint64;
 #define XR_ERROR(msg)                  IwError(msg);
 
 #elif defined XR_PS_VITA
-#include  <scetypes.h>
+#include <scetypes.h>
 
 typedef SceInt8         int8;
 typedef SceInt16        int16;
@@ -122,7 +122,7 @@ int16 ClipToInt16(int32 val);
 inline
 int16 ClipToInt16( int32 val )
 {
-  if(((val - std::numeric_limits<int16>::min()) &
+  if (((val - std::numeric_limits<int16>::min()) &
     ~std::numeric_limits<int16>::max()) != 0)
   {
     bool  over(val > std::numeric_limits<int16>::max());

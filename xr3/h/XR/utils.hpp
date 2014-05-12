@@ -12,8 +12,8 @@
 #if !defined XR_UTILS_HPP
 #define XR_UTILS_HPP
 
-#include  <sstream>
-#include  "types.hpp"
+#include <sstream>
+#include "types.hpp"
 
 namespace XR
 {
@@ -47,7 +47,7 @@ bool  StringTo(const char* pString, T& to);
 
 // resources
 //==============================================================================
-///@brief For find_if()ing an object based on the pointer to it.
+///@brief For find_if ()ing an object based on the pointer to it.
 template  <typename T>
 struct  PtrFindPredicate
 {
@@ -126,7 +126,7 @@ int CountArrayItems(T* pItems)
   XR_ASSERT(CountArrayItems, pItems != 0);
 
   int count(0);
-  while(*pItems != 0)
+  while (*pItems != 0)
   {
     ++pItems;
     ++count;

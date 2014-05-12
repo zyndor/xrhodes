@@ -24,7 +24,7 @@ UIProgressBarBase::FillDir UIProgressBarBase::GetFillDirection() const
 
 void UIProgressBarBase::SetFillDirection( FillDir fd )
 {
-  if(m_fillDir != fd)
+  if (m_fillDir != fd)
   {
     m_fillDir = fd;
   }
@@ -32,11 +32,11 @@ void UIProgressBarBase::SetFillDirection( FillDir fd )
 
 void UIProgressBarBase::SetPercentage( float perc )
 {
-  if(perc < .0f)
+  if (perc < .0f)
   {
     perc = .0f;
   }
-  else if(perc > 1.0f)
+  else if (perc > 1.0f)
   {
     perc = 1.0f;
   }

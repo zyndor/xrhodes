@@ -12,7 +12,7 @@
 #if !defined XR_AABB_HPP
 #define XR_AABB_HPP
 
-#include  "maths.hpp"
+#include "maths.hpp"
 
 namespace XR
 {

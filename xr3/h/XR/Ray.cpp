@@ -5,8 +5,8 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  <limits>
-#include  "Ray.hpp"
+#include <limits>
+#include "Ray.hpp"
 
 namespace XR
 {
@@ -59,7 +59,7 @@ bool  Ray::IntersectPlane(const Vector3& pos, const Vector3& normal, float& t)
 #endif
   float d(normal.Dot(direction));
   bool  result(d < .0f);
-  if(result)
+  if (result)
   {
     Vector3 rel(pos - position);
     t = rel.Dot(normal) / d;

@@ -12,8 +12,8 @@
 #if !defined XR_BASICMESH_HPP
 #define XR_BASICMESH_HPP
 
-#include  <vector>
-#include  "Renderer.hpp"
+#include <vector>
+#include "Renderer.hpp"
 
 namespace XR {
 

@@ -12,7 +12,7 @@
 #if !defined XR_ANIMATIONINSTANCE_HPP
 #define XR_ANIMATIONINSTANCE_HPP
 
-#include  "Animation.hpp"
+#include "Animation.hpp"
 
 namespace XR
 {
@@ -142,22 +142,22 @@ template <class T>
 void AnimationInstance<T>::Update( float tDelta )
 {
   XR_ASSERT(AnimationInstance, tDelta > .0f);
-  if(m_numLoops < 1 || m_pAnimation->IsLooping())
+  if (m_numLoops < 1 || m_pAnimation->IsLooping())
   {
     XR_ASSERT(AnimationInstance, timeScale >= .0f);
     m_tFrame -= tDelta * timeScale;
 
     int	frameSkip(0);
-    while(m_tFrame <= .0f)
+    while (m_tFrame <= .0f)
     {
       ++frameSkip;
       m_tFrame += m_pAnimation->frameDelay;
     }
 
-    if(frameSkip > 0)
+    if (frameSkip > 0)
     {
       m_frameId += frameSkip;
-      if(m_frameId >= m_pAnimation->frames.size())
+      if (m_frameId >= m_pAnimation->frames.size())
       {
         m_frameId = m_pAnimation->IsLooping() ?
           m_pAnimation->GetLoopFrame() + (m_frameId %
@@ -165,7 +165,7 @@ void AnimationInstance<T>::Update( float tDelta )
           m_pAnimation->frames.size() - 1;
 
         ++m_numLoops;
-        if(pFinishedCb != 0)
+        if (pFinishedCb != 0)
         {
           (*pFinishedCb)(*this, pFinishedCbData);
         }

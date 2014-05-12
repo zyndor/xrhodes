@@ -21,23 +21,23 @@ UIHorizontalScrollingLayout::~UIHorizontalScrollingLayout()
 //==============================================================================
 bool UIHorizontalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e )
 {
-  if(e.x >= x && e.x < (x + w) &&
+  if (e.x >= x && e.x < (x + w) &&
     e.y >= y && e.y < (y + h))
   {
-    if(e.isPressed)
+    if (e.isPressed)
     {
-      if(!m_isTouched)
+      if (!m_isTouched)
       {
         m_isTouched = true;
         m_lastTouchX = e.x;
       }
     }
-    else if(m_isTouched)
+    else if (m_isTouched)
     {
       m_isTouched = false;
     }
   }
-  else if(m_isTouched)
+  else if (m_isTouched)
   {
     m_isTouched = false;
   }
@@ -47,13 +47,13 @@ bool UIHorizontalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e
 //==============================================================================
 bool UIHorizontalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e )
 {
-  if(m_isTouched)
+  if (m_isTouched)
   {
-    if(e.x >= x && e.x < (x + w) &&
+    if (e.x >= x && e.x < (x + w) &&
       e.y >= y && e.y < (y + h))
     {
       int dx(floorf((e.x - m_lastTouchX) * m_sensitivity + .5f));
-      if(dx != 0)
+      if (dx != 0)
       {
         SetXOffset(m_xOffset + dx);
         m_lastTouchX = e.x;
@@ -66,7 +66,7 @@ bool UIHorizontalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e
 //==============================================================================
 void UIHorizontalScrollingLayout::_AlignElement( UIElement* pElem )
 {
-  switch(m_align)
+  switch (m_align)
   {
   case  AL_LOW:
     pElem->y = y;
@@ -81,9 +81,9 @@ void UIHorizontalScrollingLayout::_AlignElement( UIElement* pElem )
     break;
   }
 
-  if(m_lElements.size() > 0)
+  if (m_lElements.size() > 0)
   {
-    if(m_growDir == GD_POSITIVE)
+    if (m_growDir == GD_POSITIVE)
     {
       pElem->x = m_lElements.back()->x + m_lElements.back()->w + m_spacing;
     }
@@ -94,7 +94,7 @@ void UIHorizontalScrollingLayout::_AlignElement( UIElement* pElem )
   }
   else
   {
-    if(m_growDir == GD_POSITIVE)
+    if (m_growDir == GD_POSITIVE)
     {
       pElem->x = x;
     }
@@ -135,26 +135,26 @@ void UIHorizontalScrollingLayout::Render( UIRenderer* pRenderer ) const
 //==============================================================================
 void UIHorizontalScrollingLayout::SetXOffset( int16 xOffs )
 {
-  if(xOffs > 0)
+  if (xOffs > 0)
   {
     xOffs = 0;
   }
   else
   {
     int ew(CalculateElementsExtent());
-    if(ew < w)
+    if (ew < w)
     {
       ew = w;
     }
 
     int minOffs(w - ew);
-    if(xOffs < minOffs)
+    if (xOffs < minOffs)
     {
       xOffs = minOffs;
     }
   }
   
-  if(m_xOffset != xOffs)
+  if (m_xOffset != xOffs)
   {
     m_xOffset = xOffs;
     OnChange();

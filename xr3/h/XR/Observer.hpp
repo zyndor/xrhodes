@@ -67,7 +67,7 @@ bool Observer<T>::Record::IsChanged() const
 template  <typename T>
 void Observer<T>::Record::Process()
 {
-  if(IsChanged())
+  if (IsChanged())
   {
     (pCallback)(*pValue, pData);
     lastValue = *pValue;
@@ -107,7 +107,7 @@ void  Observer<T>::Unregister(const Type& value, Callback pCallback)
 template  <typename T>
 void Observer<T>::Update()
 {
-  for(typename RecordList::iterator i0(m_records.begin()), i1(m_records.end());
+  for (typename RecordList::iterator i0(m_records.begin()), i1(m_records.end());
     i0 != i1; ++i0)
   {
     i0->Process();

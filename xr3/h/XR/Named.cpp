@@ -5,8 +5,8 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  <string.h>
-#include  "Named.hpp"
+#include <string.h>
+#include "Named.hpp"
 
 namespace XR
 {

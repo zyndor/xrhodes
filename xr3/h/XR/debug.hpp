@@ -2,10 +2,10 @@
 #if !defined XR_DEBUG_HPP
 #define XR_DEBUG_HPP
 
-#include  "Timer.hpp"
+#include "Timer.hpp"
 
 #if defined MARMALADE
-#include  <IwDebug.h>
+#include <IwDebug.h>
 
 #define XR_TRACE(chnl, msg)             IwTrace(chnl, msg)
 #define XR_ASSERT(chnl, cond)           XR_ASSERT(chnl, (cond))
@@ -14,7 +14,7 @@
 
 #elif defined
 #else
-#include  <cstring>
+#include <cstring>
 
 namespace XR
 {
@@ -51,7 +51,7 @@ void __xrDebugPrintChannel(const char* pChannel)
 
 #define XR_ASSERT(chnl, cond)\
 #if !defined NDEBUG\
-  if(!cond)\
+  if (!cond)\
   {\
     XR::__DebugPrintChannel(#chnl)\
     printf("Condition '%s' failed.\n", #cond);\
@@ -61,7 +61,7 @@ void __xrDebugPrintChannel(const char* pChannel)
 
 #define XR_ASSERT_MSG(chnl, cond, msg)\
 #if !defined NDEBUG\
-  if(!cond)\
+  if (!cond)\
   {\
     XR::__DebugPrintChannel(#chnl)\
     printf("Condition '%s' failed. ", #cond);\

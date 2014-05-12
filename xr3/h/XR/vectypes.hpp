@@ -445,12 +445,12 @@ struct Matrix
 
   void  SetRotX(float theta, bool resetTrans, bool setZeros)
   {
-    if(resetTrans)
+    if (resetTrans)
     {
       t = Vector3::s_zero;
     }
     
-    if(setZeros)
+    if (setZeros)
     {
       xy = .0f;
       xz = .0f;
@@ -465,12 +465,12 @@ struct Matrix
   
   void  SetRotY(float theta, bool resetTrans, bool setZeros)
   {
-    if(resetTrans)
+    if (resetTrans)
     {
       t = Vector3::s_zero;
     }
 
-    if(setZeros)
+    if (setZeros)
     {
       xy = .0f;
       yz = .0f;
@@ -485,12 +485,12 @@ struct Matrix
 
   void  SetRotZ(float theta, bool resetTrans, bool setZeros)
   {
-    if(resetTrans)
+    if (resetTrans)
     {
       t = Vector3::s_zero;
     }
 
-    if(setZeros)
+    if (setZeros)
     {
       xz = .0f;
       yz = .0f;
@@ -595,7 +595,7 @@ struct Matrix
   {
     Vector3  vz(to - from);
     float dz(vz.Dot(vz));
-    if(dz > .0f)
+    if (dz > .0f)
     {
       dz = 1.0f / sqrtf(dz);
       vz *= dz;

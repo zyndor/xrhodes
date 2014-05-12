@@ -1,6 +1,6 @@
-#include  <XR/utils.hpp>
-#include  "UIHorizontalSlider.hpp"
-#include  "UIRenderer.hpp"
+#include <XR/utils.hpp>
+#include "UIHorizontalSlider.hpp"
+#include "UIRenderer.hpp"
 
 namespace XR
 {
@@ -32,14 +32,14 @@ bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   int xTouch(e.x);
-  if(e.isPressed && e.y >= y && e.y < kBottom &&
+  if (e.isPressed && e.y >= y && e.y < kBottom &&
     xTouch >= x && xTouch < kRight)
   {
     // calculate which side we're on
     xTouch -= x;
 
     int value(CalculateValue());
-    if(xTouch < value)
+    if (xTouch < value)
     {
       xTouch -= sliderSprite.GetHalfWidth();
       SetValue(xTouch);
@@ -48,7 +48,7 @@ bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
     {
       xTouch -= GetSliderSpriteWidth();
 
-      if(xTouch > value)
+      if (xTouch > value)
       {
         xTouch += sliderSprite.GetHalfWidth();
         SetValue(xTouch);
@@ -60,7 +60,7 @@ bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
       }
     }
   }
-  else if(!e.isPressed)
+  else if (!e.isPressed)
   {
     m_isTouched = false;
   }
@@ -71,7 +71,7 @@ bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 //==============================================================================
 bool UIHorizontalSlider::OnMouseMotion(const Input::MouseMotionEvent& e)
 {
-  if(m_isTouched)
+  if (m_isTouched)
   {
     int dx(e.x - m_touchPosition);
     m_touchPosition = e.x;
@@ -84,7 +84,7 @@ bool UIHorizontalSlider::OnMouseMotion(const Input::MouseMotionEvent& e)
 void UIHorizontalSlider::Render() const
 {
   // render the rail
-  if(sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial() != 0)
   {
     UIImage::Render();
   }
@@ -106,7 +106,7 @@ void UIHorizontalSlider::Render() const
   pRsVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
   pRsVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
 
-  if(sliderSprite.GetMaterial() != sprite.GetMaterial())
+  if (sliderSprite.GetMaterial() != sprite.GetMaterial())
   {
     Renderer::SetMaterial(sliderSprite.GetMaterial());
   }
@@ -123,7 +123,7 @@ void UIHorizontalSlider::Render() const
 void UIHorizontalSlider::Render( UIRenderer* pRenderer ) const
 {
   // render the rail
-  if(sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial() != 0)
   {
     UIImage::Render(pRenderer);
   }

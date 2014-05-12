@@ -1,5 +1,5 @@
-#include  <IwGx.h>
-#include  "Renderer.hpp"
+#include <IwGx.h>
+#include "Renderer.hpp"
 
 namespace XR
 {

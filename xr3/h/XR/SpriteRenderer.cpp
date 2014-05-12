@@ -1,5 +1,5 @@
-#include  <algorithm>
-#include  "SpriteRenderer.hpp"
+#include <algorithm>
+#include "SpriteRenderer.hpp"
 
 namespace XR
 {
@@ -59,9 +59,9 @@ void  SpriteRenderer::Init(int numRecords)
   
   int vertexOffset(0);
   int indexOffset(0);
-  for(int i = 0; i < numRecords; ++i)
+  for (int i = 0; i < numRecords; ++i)
   {
-    for(int j = 0; j < Sprite::kNumIndices; ++j)
+    for (int j = 0; j < Sprite::kNumIndices; ++j)
     {
       m_indices[indexOffset + j] = Sprite::karIndices[j] + vertexOffset;
     }
@@ -86,7 +86,7 @@ void  SpriteRenderer::SetView(Matrix mView, float zNear, float zFar)
   m_zFar = zFar;
   
   m_depthRangeRcp = zFar - zNear;
-  if(m_depthRangeRcp > .0f)
+  if (m_depthRangeRcp > .0f)
   {
     m_depthRangeRcp = 1.0f / m_depthRangeRcp;
   }
@@ -111,20 +111,20 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
     pSprite
   };
 
-  if(s != 1.0f)
+  if (s != 1.0f)
   {
     r.xForm.ScaleRot(s);
   }
 
-  if(rz != .0f)
+  if (rz != .0f)
   {
     r.xForm.RotateZ(rz);
   }
   
   float zTemp = (r.xForm.t - m_mView.t).Dot(m_vForward);
-  if(zTemp > m_zNear && zTemp < m_zFar) // if in front of camera
+  if (zTemp > m_zNear && zTemp < m_zFar) // if in front of camera
   {
-    if(m_useFadeColor)
+    if (m_useFadeColor)
     {
       float distScale((zTemp - m_zNear) * m_depthRangeRcp);
       distScale *= distScale;
@@ -153,25 +153,25 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
     pSprite
   };
 
-  if(sx != 1.0f)
+  if (sx != 1.0f)
   {
     r.xForm.ScaleX(sx);
   }
 
-  if(sy != 1.0f)
+  if (sy != 1.0f)
   {
     r.xForm.ScaleY(sx);
   }
 
-  if(rz != .0f)
+  if (rz != .0f)
   {
     r.xForm.RotateZ(rz);
   }
 
   float zTemp = (r.xForm.t - m_mView.t).Dot(m_vForward);
-  if(zTemp > m_zNear && zTemp < m_zFar) // if in front of camera
+  if (zTemp > m_zNear && zTemp < m_zFar) // if in front of camera
   {
-    if(m_useFadeColor)
+    if (m_useFadeColor)
     {
       float distScale((zTemp - m_zNear) * m_depthRangeRcp);
       distScale *= distScale;
@@ -193,7 +193,7 @@ void  SpriteRenderer::Render()
 {
   // allocate colour / uv / vertex streams
   int numVerts(m_pRecords->size());
-  if(numVerts <= 0)
+  if (numVerts <= 0)
   {
     return;
   }
@@ -218,7 +218,7 @@ void  SpriteRenderer::Render()
   RenderStream  uvBatch;
   RenderStream  vertBatch;
 
-  for(RecordList::const_iterator i0(m_pRecords->begin()),
+  for (RecordList::const_iterator i0(m_pRecords->begin()),
     i1(m_pRecords->end()); i0 != i1;)
   {
     Material*  pMaterial(i0->pSprite->GetMaterial());
@@ -227,9 +227,9 @@ void  SpriteRenderer::Render()
     int numSprites(1);
 
     RecordList::const_iterator j0(i0);
-    while(++j0 != i1)
+    while (++j0 != i1)
     {
-      if(j0->pSprite->GetMaterial() != pMaterial)
+      if (j0->pSprite->GetMaterial() != pMaterial)
       {
         break;
       }
@@ -247,7 +247,7 @@ void  SpriteRenderer::Render()
     Renderer::SetMaterial(i0->pSprite->GetMaterial());
 
     // render sprites
-    while(i0 != j0)
+    while (i0 != j0)
     {
       pCols->Set(vertexOffset, i0->tint);
       pCols->Set(vertexOffset + 1, i0->tint);
@@ -256,7 +256,7 @@ void  SpriteRenderer::Render()
 
       i0->pSprite->CopyUVsTo(vertexOffset, *pUVs);
 
-      for(int i = 0; i < XR::Sprite::kNumVertices; ++i)
+      for (int i = 0; i < XR::Sprite::kNumVertices; ++i)
       {
         pVerts->Set(vertexOffset + i,
           i0->xForm.TransformVec(i0->pSprite->GetVertices().GetVector3(i)));

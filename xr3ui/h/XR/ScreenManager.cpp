@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "ScreenManager.hpp"
+#include "ScreenManager.hpp"
 
 namespace XR
 {

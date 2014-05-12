@@ -62,10 +62,10 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
   int column(m_lElements.size() % m_numColumns);
   int row(m_lElements.size() / m_numColumns);
 
-  if(m_hAlign != AL_NOALIGN)
+  if (m_hAlign != AL_NOALIGN)
   {
     int xElem(x + column * m_columnSpacing);
-    switch(m_hAlign)
+    switch (m_hAlign)
     {
     case  AL_LOW:
       break;
@@ -81,10 +81,10 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
     pElem->x = xElem;
   }
 
-  if(m_vAlign != AL_NOALIGN)
+  if (m_vAlign != AL_NOALIGN)
   {
     int yElem(y + row * m_columnSpacing);
-    switch(m_vAlign)
+    switch (m_vAlign)
     {
     case  AL_LOW:
       break;
@@ -106,7 +106,7 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
 //==============================================================================
 void UIGridLayout::SetColumnSpacing(int16 spacing)
 {
-  if(spacing != m_columnSpacing)
+  if (spacing != m_columnSpacing)
   {
     m_columnSpacing = spacing;
     OnChange();
@@ -116,7 +116,7 @@ void UIGridLayout::SetColumnSpacing(int16 spacing)
 //==============================================================================
 void UIGridLayout::SetRowsSpacing(int16 spacing)
 {
-  if(spacing != m_rowSpacing)
+  if (spacing != m_rowSpacing)
   {
     m_rowSpacing = spacing;
     OnChange();
@@ -126,7 +126,7 @@ void UIGridLayout::SetRowsSpacing(int16 spacing)
 //==============================================================================
 void UIGridLayout::SetSpacing(int16 spacing)
 {
-  if(m_columnSpacing != spacing || m_rowSpacing != spacing)
+  if (m_columnSpacing != spacing || m_rowSpacing != spacing)
   {
     m_columnSpacing = spacing;
     m_rowSpacing = spacing;
@@ -138,7 +138,7 @@ void UIGridLayout::SetSpacing(int16 spacing)
 void UIGridLayout::SetNumRows( int16 rows )
 {
   XR_ASSERT(UIGridLayout, rows >= 0);
-  if(m_numRows != rows)
+  if (m_numRows != rows)
   {
     m_numRows = rows;
     OnChange();
@@ -149,7 +149,7 @@ void UIGridLayout::SetNumRows( int16 rows )
 void UIGridLayout::SetNumColumns( int16 cols )
 {
   XR_ASSERT(UIGridLayout, cols >= 0);
-  if(m_numColumns != cols)
+  if (m_numColumns != cols)
   {
     m_numColumns = cols;
     OnChange();
@@ -161,7 +161,7 @@ void UIGridLayout::SetGrid( int16 cols, int16 rows )
 {
   XR_ASSERT(UIGridLayout, rows >= 0);
   XR_ASSERT(UIGridLayout, cols >= 0);
-  if(cols != m_numColumns || rows != m_numRows)
+  if (cols != m_numColumns || rows != m_numRows)
   {
     m_numColumns = cols;
     m_numRows = rows;
@@ -172,7 +172,7 @@ void UIGridLayout::SetGrid( int16 cols, int16 rows )
 //==============================================================================
 void UIGridLayout::SetHorizontalAlignment( Alignment hAlign )
 {
-  if(hAlign != m_hAlign)
+  if (hAlign != m_hAlign)
   {
     m_hAlign = hAlign;
     OnChange();
@@ -182,7 +182,7 @@ void UIGridLayout::SetHorizontalAlignment( Alignment hAlign )
 //==============================================================================
 void UIGridLayout::SetVerticalAlignment( Alignment vAlign )
 {
-  if(vAlign != m_vAlign)
+  if (vAlign != m_vAlign)
   {
     m_vAlign = vAlign;
     OnChange();
@@ -192,7 +192,7 @@ void UIGridLayout::SetVerticalAlignment( Alignment vAlign )
 //==============================================================================
 void UIGridLayout::SetAlignment( Alignment hAlign, Alignment vAlign )
 {
-  if(hAlign != m_hAlign || vAlign != m_vAlign)
+  if (hAlign != m_hAlign || vAlign != m_vAlign)
   {
     m_hAlign = hAlign;
     m_vAlign = vAlign;
@@ -204,10 +204,10 @@ void UIGridLayout::SetAlignment( Alignment hAlign, Alignment vAlign )
 void UIGridLayout::_SetWidthToContent()
 {
   int wNew(0);
-  for(ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     int wElem((*i0)->w);
-    if(wElem > wNew)
+    if (wElem > wNew)
     {
       wNew = wElem;
     }
@@ -221,10 +221,10 @@ void UIGridLayout::_SetWidthToContent()
 void UIGridLayout::_SetHeightToContent()
 {
   int hNew(0);
-  for(ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     int hElem((*i0)->h);
-    if(hElem > hNew)
+    if (hElem > hNew)
     {
       hNew = hElem;
     }

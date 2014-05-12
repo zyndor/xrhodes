@@ -12,7 +12,7 @@
 #if !defined XR_FUNDAMENTALS_HPP
 #define XR_FUNDAMENTALS_HPP
 
-#include  "types.hpp"
+#include "types.hpp"
 
 namespace XR
 {

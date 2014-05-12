@@ -39,7 +39,7 @@ bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   bool  isHandled(false);
-  if((m_pActiveArea == 0 ||
+  if ((m_pActiveArea == 0 ||
       (e.x >= m_pActiveArea->x &&
         e.y >= m_pActiveArea->y &&
         e.x < m_pActiveArea->x + m_pActiveArea->w &&
@@ -47,25 +47,25 @@ bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
     (e.x >= x && e.x < kRight &&
       e.y >= y && e.y < kBottom))
   {
-    if(e.isPressed)
+    if (e.isPressed)
     {
-      if(!IsPressed())
+      if (!IsPressed())
       {
         m_state |= MASK_PRESSED;  // press
         m_lastTouch.x = e.x;
         m_lastTouch.y = e.y;
-        if(IsEnabled())
+        if (IsEnabled())
         {
           OnPressed();
         }
         isHandled = true;
       }
     }
-    else if(IsPressed())
+    else if (IsPressed())
     {
       m_state &= ~MASK_PRESSED;  // release
 
-      if(IsEnabled() &&
+      if (IsEnabled() &&
         m_lastTouch.x >= x && m_lastTouch.x < kRight &&
         m_lastTouch.y >= y && m_lastTouch.y < kBottom)
       {
@@ -74,7 +74,7 @@ bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
       isHandled = true;
     }
   }
-  else if(IsPressed())
+  else if (IsPressed())
   {
     m_state &= ~MASK_PRESSED; // unpress
   }
@@ -84,7 +84,7 @@ bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
 //==============================================================================
 bool  UIButton::OnMouseMotion(const Input::MouseMotionEvent& e )
 {
-  if(IsEnabled() && IsPressed() &&
+  if (IsEnabled() && IsPressed() &&
     (e.x < x || e.x >= (x + w) ||
       e.y < y || e.y >= (y + h)))
   {
@@ -142,7 +142,7 @@ void  UIButton::SetSprites(const Sprite* pSprite, float scale)
 void  UIButton::SetSprites(const Sprite* arpSprite[kNumStates], float scale)
 {
   XR_ASSERT(UIButton, arpSprite != 0);
-  for(int i = 0; i < kNumStates; ++i)
+  for (int i = 0; i < kNumStates; ++i)
   {
     arSprite[i] = *arpSprite[i];
   }
@@ -172,7 +172,7 @@ void UIButton::SetActiveArea( const Rect* pActiveArea )
 //==============================================================================
 void UIButton::OnPressed()
 {
-  if(pOnPressed != 0)
+  if (pOnPressed != 0)
   {
     (*pOnPressed)(this, pCallbackData);
   }
@@ -181,7 +181,7 @@ void UIButton::OnPressed()
 //==============================================================================
 void UIButton::OnReleased()
 {
-  if(pOnReleased != 0)
+  if (pOnReleased != 0)
   {
     (*pOnReleased)(this, pCallbackData);
   }

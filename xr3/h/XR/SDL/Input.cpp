@@ -30,7 +30,7 @@ void Input::Exit()
 //==============================================================================
 void Input::Update()
 {
-  for(int i = 0; i < kKeyCount; ++i)
+  for (int i = 0; i < kKeyCount; ++i)
   {
     // isPressed -> wasPressed
     InputImpl::s_pInstance->arKeyState[i] >>= 1;
@@ -38,7 +38,7 @@ void Input::Update()
   
   int numKeys;
   const uint8*  parKeys(SDL_GetKeyboardState(&numKeys));
-  for(int i = 0; i < kKeyCount; ++i)
+  for (int i = 0; i < kKeyCount; ++i)
   {
     int k(karKeyCodeNative[i]);
     InputImpl::s_pInstance->arKeyState[i] |= (parKeys[k] != 0) << 1;
@@ -46,7 +46,7 @@ void Input::Update()
   
   int32 x, y;
   uint32  mbState(SDL_GetMouseState(&x, &y));
-  for(int i = 0; i < kMouseButtonCount; ++i)
+  for (int i = 0; i < kMouseButtonCount; ++i)
   {
     uint32  state(InputImpl::s_pInstance->arMouseButtonState[i] >> 1);
     InputImpl::s_pInstance->arMouseButtonState[i] = state | 
@@ -81,10 +81,10 @@ bool Input::RegisterCallback( Event ev, Callback pCb, void* pData )
 {
   XR_ASSERT(Input, ev < kMaxEvents);
   XR_ASSERT(Input, pCb != 0);
-  for(CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
+  for (CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
     i1(InputImpl::s_pInstance->arCallback[ev].end()); i0 != i1; ++i0)
   {
-    if(i0->pCb == pCb)
+    if (i0->pCb == pCb)
     {
       return false;
     }
@@ -99,10 +99,10 @@ bool Input::UnregisterCallback( Event ev, Callback pCb )
 {
   XR_ASSERT(Input, ev < kMaxEvents);
   XR_ASSERT(Input, pCb != 0);
-  for(CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
+  for (CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
     i1(InputImpl::s_pInstance->arCallback[ev].end()); i0 != i1; ++i0)
   {
-    if(i0->pCb == pCb)
+    if (i0->pCb == pCb)
     {
       InputImpl::s_pInstance->arCallback[ev].erase(i0);
       return true;

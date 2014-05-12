@@ -21,23 +21,23 @@ UIVerticalScrollingLayout::~UIVerticalScrollingLayout()
 //==============================================================================
 bool UIVerticalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e )
 {
-  if(e.x >= x && e.x < (x + w) &&
+  if (e.x >= x && e.x < (x + w) &&
     e.y >= y && e.y < (y + h))
   {
-    if(e.isPressed)
+    if (e.isPressed)
     {
-      if(!m_isTouched)
+      if (!m_isTouched)
       {
         m_isTouched = true;
         m_lastTouchY = e.y;
       }
     }
-    else if(m_isTouched)
+    else if (m_isTouched)
     {
       m_isTouched = false;
     }
   }
-  else if(m_isTouched)
+  else if (m_isTouched)
   {
     m_isTouched = false;
   }
@@ -47,13 +47,13 @@ bool UIVerticalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e )
 //==============================================================================
 bool UIVerticalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e )
 {
-  if(m_isTouched)
+  if (m_isTouched)
   {
-    if(e.x >= x && e.x < (x + w) &&
+    if (e.x >= x && e.x < (x + w) &&
       e.y >= y && e.y < (y + h))
     {
       int dy(floorf((e.y - m_lastTouchY) * m_sensitivity + .5f));
-      if(dy != 0)
+      if (dy != 0)
       {
         SetYOffset(m_yOffset + dy);
         m_lastTouchY = e.y;
@@ -66,7 +66,7 @@ bool UIVerticalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e )
 //==============================================================================
 void UIVerticalScrollingLayout::_AlignElement( UIElement* pElem )
 {
-  switch(m_align)
+  switch (m_align)
   {
   case  AL_LOW:
     pElem->x = x;
@@ -81,9 +81,9 @@ void UIVerticalScrollingLayout::_AlignElement( UIElement* pElem )
     break;
   }
 
-  if(m_lElements.size() > 0)
+  if (m_lElements.size() > 0)
   {
-    if(m_growDir == GD_POSITIVE)
+    if (m_growDir == GD_POSITIVE)
     {
       pElem->y = m_lElements.back()->y + m_lElements.back()->h + m_spacing;
     }
@@ -94,7 +94,7 @@ void UIVerticalScrollingLayout::_AlignElement( UIElement* pElem )
   }
   else
   {
-    if(m_growDir == GD_POSITIVE)
+    if (m_growDir == GD_POSITIVE)
     {
       pElem->y = y;
     }
@@ -135,26 +135,26 @@ void UIVerticalScrollingLayout::Render( UIRenderer* pRenderer ) const
 //==============================================================================
 void UIVerticalScrollingLayout::SetYOffset( int16 yOffs )
 {
-  if(yOffs > 0)
+  if (yOffs > 0)
   {
     yOffs = 0;
   }
   else
   {
     int eh(CalculateElementsExtent());
-    if(eh < h)
+    if (eh < h)
     {
       eh = h;
     }
 
     int minOffs(h - eh);
-    if(yOffs < minOffs)
+    if (yOffs < minOffs)
     {
       yOffs = minOffs;
     }
   }
   
-  if(m_yOffset != yOffs)
+  if (m_yOffset != yOffs)
   {
     m_yOffset = yOffs;
     OnChange();

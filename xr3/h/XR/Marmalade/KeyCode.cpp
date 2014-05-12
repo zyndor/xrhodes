@@ -4,9 +4,9 @@
 //
 // copyright (c) 2011 - 2014. All rights reserved.
 //
-#include  <algorithm>
-#include  <s3eKeyboard.h>
-#include  "KeyCode.hpp"
+#include <algorithm>
+#include <s3eKeyboard.h>
+#include "KeyCode.hpp"
 
 namespace XR {
 

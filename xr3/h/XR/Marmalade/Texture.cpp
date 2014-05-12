@@ -1,6 +1,6 @@
-#include  "Texture.hpp"
-#include  <IwTexture.h>
-#include  "File.hpp"
+#include "Texture.hpp"
+#include <IwTexture.h>
+#include "File.hpp"
 
 //==============================================================================
 #define TO_IMPL()  (static_cast<CIwTexture*>(GetImpl()))

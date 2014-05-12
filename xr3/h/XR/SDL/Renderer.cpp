@@ -1,8 +1,8 @@
-#include  "xrgl.hpp"
-#include  "Renderer.hpp"
-#include  "Device.hpp"
-#include  "Pool.hpp"
-#include  "MaterialImpl.hpp"
+#include "xrgl.hpp"
+#include "Renderer.hpp"
+#include "Device.hpp"
+#include "Pool.hpp"
+#include "MaterialImpl.hpp"
 
 namespace XR
 {
@@ -59,7 +59,7 @@ void Renderer::Init()
   SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 
   const char* pCaption = Device::GetConfig("GFX", "caption");
-  if(pCaption == 0)
+  if (pCaption == 0)
   {
     pCaption = "XRhodes Application";
   }
@@ -69,7 +69,7 @@ void Renderer::Init()
   int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
   
   uint32 flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-  if(!Device::GetConfigInt("GFX", "windowed", false))
+  if (!Device::GetConfigInt("GFX", "windowed", false))
   {
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
@@ -79,7 +79,7 @@ void Renderer::Init()
     width, height, flags);
 
   flags = 0;
-  if(Device::GetConfigInt("GFX", "vsync", false))
+  if (Device::GetConfigInt("GFX", "vsync", false))
   {
     flags |= SDL_RENDERER_PRESENTVSYNC;
   }
@@ -239,7 +239,7 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
   XR_GL_CALL(glLoadIdentity());
   
   s_rendererImpl.zFar = zFar;
-  if(zNear == .0f)
+  if (zNear == .0f)
   {
     zNear = -zFar;
   }
@@ -333,7 +333,7 @@ void Renderer::SetViewMatrix(const Matrix& m)
   s_rendererImpl.mView.Transpose();
   UpdateModelViewMatrix();
   
-  if(s_rendererImpl.isPerspective)
+  if (s_rendererImpl.isPerspective)
   {
     s_rendererImpl.rayCastView = s_rendererImpl.mView;
   }
@@ -427,7 +427,7 @@ void  Renderer::SetUVStream(RenderStream& rs, int id)
 {
   XR_ASSERT(Renderer::SetUVStream, rs.GetFormat() == RenderStream::F_VECTOR2 ||
     rs.GetCapacity() == 0);
-  if(rs.GetCapacity() > 0)
+  if (rs.GetCapacity() > 0)
   {
     XR_GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
   }
@@ -444,7 +444,7 @@ void  Renderer::SetColStream(RenderStream& rs)
 {
   XR_ASSERT(Renderer::SetColStream, rs.GetFormat() == RenderStream::F_COLOR ||
     rs.GetCapacity() == 0); // stub
-  if(rs.GetCapacity() > 0)
+  if (rs.GetCapacity() > 0)
   {
     XR_GL_CALL(glEnableClientState(GL_COLOR_ARRAY));
   }
@@ -461,7 +461,7 @@ void  Renderer::SetNormStream(RenderStream& rs)
 {
   XR_ASSERT(Renderer::SetNormStream, rs.GetFormat() == RenderStream::F_VECTOR3 ||
     rs.GetCapacity() == 0); // stub
-  if(rs.GetCapacity() > 0)
+  if (rs.GetCapacity() > 0)
   {
     XR_GL_CALL(glEnableClientState(GL_NORMAL_ARRAY));
   }
@@ -563,7 +563,7 @@ void  Renderer::DrawPrims( PrimType pt, const uint16* pInds, int numInds)
     s_rendererImpl.numNormals >= s_rendererImpl.numVertices);
   //glIndexPointer(GL_UNSIGNED_SHORT, 0, pInds);
   //glDrawArrays(arPrimTypeMappings[pt], 0, numInds);
-  if(pInds != 0)
+  if (pInds != 0)
   {
     XR_GL_CALL(glEnableClientState(GL_INDEX_ARRAY));
     XR_GL_CALL(glDrawElements(arPrimTypeMappings[pt], numInds,

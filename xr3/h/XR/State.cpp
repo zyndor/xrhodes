@@ -24,7 +24,7 @@ void  State::Manager::SetStackSize(int size)
   XR_ASSERT(State::Manager, size > m_iState);
   
   StateVector stack(size);
-  for(int i = 0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     stack[i] = m_stack[i];
   }
@@ -34,7 +34,7 @@ void  State::Manager::SetStackSize(int size)
 //==============================================================================
 void  State::Manager::_ExpireState()
 {
-  if(m_tFade > 0 && m_pPrevious != 0 && m_shutdownPrevious)
+  if (m_tFade > 0 && m_pPrevious != 0 && m_shutdownPrevious)
   {
     m_pPrevious->Shutdown();
     m_shutdownPrevious = false;
@@ -93,17 +93,17 @@ void  State::Manager::Change(State* pState, int tFade)
 void State::Manager::Update(int32 tDelta)
 {
   // handle request
-  if(m_pRequested != 0)
+  if (m_pRequested != 0)
   {
     // fadeout
-    if(m_pPrevious != 0)
+    if (m_pPrevious != 0)
     {
       m_pPrevious->Exit(m_tFade);
     }
   
     // swap down
     m_stack[m_iState] = m_pRequested;
-    //if(m_pCurrent != 0) // m_pRequested != 0
+    //if (m_pCurrent != 0) // m_pRequested != 0
     //{
     m_stack[m_iState]->Enter(m_tFade);
     //}
@@ -113,21 +113,21 @@ void State::Manager::Update(int32 tDelta)
   }
 
   // fading
-  if(m_tFade > 0)
+  if (m_tFade > 0)
   {
     m_tFade -= tDelta;
 
     //// if there's a previous state fading, update it
-    //if(m_pPrevious != 0)
+    //if (m_pPrevious != 0)
     //{
     //  m_pPrevious->Update(tDelta);
     //}
 
     //// stop fading
-    //if(m_tFade <= 0)
+    //if (m_tFade <= 0)
     //{
     //  m_pCurrent->m_isFadeComplete = true;
-    //  if(m_pPrevious != 0)
+    //  if (m_pPrevious != 0)
     //  {
     //    m_pPrevious->m_isFadeComplete = true;
     //  }
@@ -135,7 +135,7 @@ void State::Manager::Update(int32 tDelta)
   }
 
   // update current state
-  if(m_stack[m_iState] != 0)
+  if (m_stack[m_iState] != 0)
   {
     m_stack[m_iState]->Update(tDelta);
   }
@@ -148,7 +148,7 @@ void State::Manager::Render()
   XR_ASSERT(RingBuffer, m_stack[m_iState] != 0);
 
   m_stack[m_iState]->Render();
-  if(m_pPrevious != 0 && m_tFade > 0)
+  if (m_pPrevious != 0 && m_tFade > 0)
   {
     m_pPrevious->Render();
   }
@@ -178,7 +178,7 @@ void  State::Exit(int32 tFade)
 //==============================================================================
 void  State::Update(int32 tDelta)
 {
-  if(tDelta > 0)
+  if (tDelta > 0)
   {
     m_tFade -= tDelta;
   }

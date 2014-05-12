@@ -12,7 +12,7 @@
 #if !defined XR_RECT_HPP
 #define XR_RECT_HPP
 
-#include  "types.hpp"
+#include "types.hpp"
 
 namespace XR
 {

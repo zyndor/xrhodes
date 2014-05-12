@@ -28,7 +28,7 @@ bool  UICheckBox::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   bool  isHandled(false);
-  if((m_pActiveArea == 0 ||
+  if ((m_pActiveArea == 0 ||
     (e.x >= m_pActiveArea->x &&
     e.y >= m_pActiveArea->y &&
     e.x < m_pActiveArea->x + m_pActiveArea->w &&
@@ -36,25 +36,25 @@ bool  UICheckBox::OnMouseAction(const Input::MouseActionEvent& e )
     (e.x >= x && e.x < kRight &&
     e.y >= y && e.y < kBottom))
   {
-    if(e.isPressed)
+    if (e.isPressed)
     {
-      if(!IsPressed())
+      if (!IsPressed())
       {
         m_state |= MASK_PRESSED;  // press
         m_lastTouch.x = e.x;
         m_lastTouch.y = e.y;
-        if(IsEnabled())
+        if (IsEnabled())
         {
           OnPressed();
         }
         isHandled = true;
       }
     }
-    else if(IsPressed())
+    else if (IsPressed())
     {
       m_state &= ~MASK_PRESSED;  // release
 
-      if(IsEnabled() &&
+      if (IsEnabled() &&
         m_lastTouch.x >= x && m_lastTouch.x < kRight &&
         m_lastTouch.y >= y && m_lastTouch.y < kBottom)
       {
@@ -65,7 +65,7 @@ bool  UICheckBox::OnMouseAction(const Input::MouseActionEvent& e )
       isHandled = true;
     }
   }
-  else if(IsPressed())
+  else if (IsPressed())
   {
     m_state &= ~MASK_PRESSED; // unpress
   }
@@ -77,7 +77,7 @@ void UICheckBox::Render() const
 {
   UIButton::Render();
 
-  if(IsSelected())
+  if (IsSelected())
   {
     XR_ASSERTMSG(UICheckBox, setSprite.GetMaterial() != 0,
       ("Material needs to be set in UICheckBox::setSprite before Render()"));
@@ -103,7 +103,7 @@ void UICheckBox::Render( UIRenderer* pRenderer ) const
 {
   UIButton::Render(pRenderer);
 
-  if(IsSelected())
+  if (IsSelected())
   {
     XR_ASSERTMSG(IW_ASSERTION_CHANNEL_DEFAULT, setSprite.GetMaterial() != 0,
       ("Material needs to be set in UICheckBox::setSprite before Render()"));
@@ -117,7 +117,7 @@ void UICheckBox::Render( UIRenderer* pRenderer ) const
 //==============================================================================
 void  UICheckBox::OnSelectedStateChanged()
 {
-  if(pOnSelectedStateChanged != 0)
+  if (pOnSelectedStateChanged != 0)
   {
     (*pOnSelectedStateChanged)(this, pCallbackData);
   }

@@ -12,7 +12,7 @@
 #if !defined XR_INDEXER2D_HPP
 #define XR_INDEXER2D_HPP
 
-#include  "types.hpp"
+#include "types.hpp"
 
 namespace XR
 {

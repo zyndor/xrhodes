@@ -12,11 +12,11 @@
 #if !defined XR_XRGL_HPP
 #define XR_XRGL_HPP
 
-#include  <GL/glew.h>
-#include  <SDL2/SDL_video.h>
-#include  <SDL2/SDL_opengl.h>
-#include  "types.hpp"
-#include  "Log.hpp"
+#include <GL/glew.h>
+#include <SDL2/SDL_video.h>
+#include <SDL2/SDL_opengl.h>
+#include "types.hpp"
+#include "Log.hpp"
 
 namespace XR {
 
@@ -25,7 +25,7 @@ inline
   void  CheckGLError(const char* pText)
 {
   GLint error(glGetError());
-  if(error != 0)
+  if (error != 0)
   {
     XR_TRACE(CheckGLError, ("%s: %d", pText, error));
   }

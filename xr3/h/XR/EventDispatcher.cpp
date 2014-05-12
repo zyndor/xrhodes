@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  "EventDispatcher.hpp"
+#include "EventDispatcher.hpp"
 
 namespace XR
 {
@@ -34,9 +34,9 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
 
   ListenerList::iterator  iFind(GetAdded(&l));
   bool  result(iFind != m_listeners.end());  // && *iErase == pListener;
-  if(result)  // if is added
+  if (result)  // if is added
   {
-    if(m_isTraversing)  // traversing - postpone removal
+    if (m_isTraversing)  // traversing - postpone removal
     {
       m_postponedRemove.push_back(pListener);
     }
@@ -46,11 +46,11 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
       m_listeners.erase(iFind);
     }
   }
-  else if(m_isTraversing) // not found in added while traversing
+  else if (m_isTraversing) // not found in added while traversing
   {
     iFind = GetPostponedAdded(&l);
     result = iFind != m_postponedAdd.end();
-    if(result)  // found it in postponed - remove instantly
+    if (result)  // found it in postponed - remove instantly
     {
       delete *iFind;
       m_postponedAdd.erase(iFind);
@@ -62,10 +62,10 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
 //==============================================================================
 void  EventDispatcherCore::Clear()
 {
-  if(m_isTraversing)
+  if (m_isTraversing)
   {
     // clear all postponed adds
-    for(ListenerList::iterator i0(m_postponedAdd.begin()),
+    for (ListenerList::iterator i0(m_postponedAdd.begin()),
       i1(m_postponedAdd.end()); i0 != i1; ++i0)
     {
       delete *i0;
@@ -78,7 +78,7 @@ void  EventDispatcherCore::Clear()
   else
   {
     // clear listeners straight away
-    for(ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
+    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
       delete *i0;

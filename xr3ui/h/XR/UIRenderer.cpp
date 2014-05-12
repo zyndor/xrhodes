@@ -52,7 +52,7 @@ RenderStream  UIRenderer::NewSprite( Material* pMaterial,
   iSprite *= Sprite::kNumVertices;
   m_uvs.Copy(rsUV, 0, rsUV.GetCapacity(), iSprite);
 
-  for(int i = 0; i < Sprite::kNumVertices; ++i)
+  for (int i = 0; i < Sprite::kNumVertices; ++i)
   {
     m_colors.Set(iSprite + i, color);
   }
@@ -77,7 +77,7 @@ RenderStream  UIRenderer::NewSprite( Material* pMaterial, Color color,
   iSprite *= Sprite::kNumVertices;
   rsUV.Adapt(m_uvs, iSprite, Sprite::kNumVertices);
 
-  for(int i = 0; i < Sprite::kNumVertices; ++i)
+  for (int i = 0; i < Sprite::kNumVertices; ++i)
   {
     m_colors.Set(iSprite + i, color);
   }
@@ -113,12 +113,12 @@ void UIRenderer::Render()
   RenderStream  rsUVs;
   RenderStream  rsCols;
   RenderStream  rsVerts;
-  while(i < m_numSpritesConsumed)
+  while (i < m_numSpritesConsumed)
   {
     Material*  pMaterial(m_parpMaterial[i]);
 
     int i1(i + 1);
-    while(i1 < m_numSpritesConsumed && m_parpMaterial[i1] == pMaterial)
+    while (i1 < m_numSpritesConsumed && m_parpMaterial[i1] == pMaterial)
     {
       ++i1;
     }

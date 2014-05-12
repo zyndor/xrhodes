@@ -1,4 +1,4 @@
-#include  "Serialized.hpp"
+#include "Serialized.hpp"
 
 namespace XR
 {
@@ -32,7 +32,7 @@ Serialized::IdType  Serialized::RegisterSerialized(const Serialized* pObj)
 
 Serialized::IdType  Serialized::GetSerializedId(const Serialized* pObj)
 {
-  if(pObj == 0)
+  if (pObj == 0)
   {
     return INVALID_ID;
   }
@@ -66,14 +66,14 @@ void  Serialized::RegisterDeserialized(Serialized* pObj)
 
 void  Serialized::ResolveReferences()
 {
-  for(JobList::iterator i0(s_jobs.begin()), i1(s_jobs.end()); i0 != i1; ++i0)
+  for (JobList::iterator i0(s_jobs.begin()), i1(s_jobs.end()); i0 != i1; ++i0)
   {
     SerializedMap::iterator iFind(s_serialized.find(i0->id));
       
     Serialized* pObject(iFind != s_serialized.end() ? iFind->value : 0);
     *static_cast<Serialized**>(i0->ppInflatable) = pObject;
 
-    if(i0->pInflateCb != 0)
+    if (i0->pInflateCb != 0)
     {
       (*i0->pInflateCb)(pObject, i0->pInflateCbData);
     }
