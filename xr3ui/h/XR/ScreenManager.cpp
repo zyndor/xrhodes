@@ -28,7 +28,7 @@ void  ScreenManager::Change(Screen* pScreen, uint32 delayMs)
 {
   XR_ASSERT(ScreenManager, pScreen != 0);
   Screen* pPrevious(0);
-  if(m_pCurrent != 0)
+  if (m_pCurrent != 0)
   {
     pPrevious = m_pCurrent->GetPrevious();
     m_pCurrent->Hide(delayMs);
@@ -36,7 +36,7 @@ void  ScreenManager::Change(Screen* pScreen, uint32 delayMs)
   }
   m_pLast = m_pCurrent;
   
-  if(pScreen != 0)
+  if (pScreen != 0)
   {
     pScreen->Show(*this, delayMs);
     pScreen->SetPrevious(pPrevious);
@@ -48,7 +48,7 @@ void  ScreenManager::Change(Screen* pScreen, uint32 delayMs)
 void  ScreenManager::Push(Screen* pScreen, uint32 delayMs)
 {
   XR_ASSERT(ScreenManager, pScreen != 0);
-  if(m_pCurrent != 0)
+  if (m_pCurrent != 0)
   {
     m_pCurrent->Unregister();
     pScreen->SetPrevious(m_pCurrent);
@@ -59,7 +59,7 @@ void  ScreenManager::Push(Screen* pScreen, uint32 delayMs)
   pScreen->Show(*this, delayMs);
 }
 
-//==============================================================================vlkd  
+//==============================================================================
 void  ScreenManager::Pop(uint32 delayMs)
 {
   XR_ASSERT(ScreenManager, m_pCurrent != 0);
@@ -68,30 +68,41 @@ void  ScreenManager::Pop(uint32 delayMs)
   
   Screen* pScreen(m_pCurrent->GetPrevious());
   m_pCurrent = pScreen;
-  if(pScreen != 0)
+  if (pScreen != 0)
   {
     pScreen->Register();
   }
 }
 
-//==============================================================================vlkd  
+//==============================================================================
 void  ScreenManager::Update(int32 ms)
 {
-  if(m_pCurrent != 0)
+  if (m_pCurrent != 0)
   {
     m_pCurrent->Update(ms);
   }
   
-  if(m_pLast != 0)
+  if (m_pLast != 0)
   {
     m_pLast->Update(ms);
   }
 }
 
-//==============================================================================vlkd  
+//==============================================================================
 void  ScreenManager::Render()
 {
+  //Renderer::Flush();
+  
+  Renderer::SetOrtho(.0f, (float)Renderer::GetScreenWidth(),
+    (float)Renderer::GetScreenHeight(), .0f);
+  Renderer::SetModelMatrix(Matrix::s_identity);
+  Renderer::SetViewMatrix(Matrix::s_identity);
+  
+  m_renderer.Clear();
   m_container.Render(&m_renderer);
+  m_renderer.Render();
+
+  Renderer::Flush();
 }
 
 } // XR

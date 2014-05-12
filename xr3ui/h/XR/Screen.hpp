@@ -12,7 +12,6 @@
 #ifndef XR_SCREEN_HPP
 #define XR_SCREEN_HPP
 
-#include <XR/Tweener.hpp>
 #include "UIContainer.hpp"
 #include "UIEventDispatcher.hpp"
 #include "UIRenderer.hpp"
@@ -35,36 +34,37 @@ public:
     S_HIDDEN
   };
   
-  // structor
+  // structors
   Screen();
   virtual ~Screen();
 
   // general
-  State   GetState() const;
-  bool    IsRegistered() const;
+  State           GetState() const;
+  bool            IsRegistered() const;
+  ScreenManager*  GetManager() const;  // no ownership transfer
   
-  Screen* GetPrevious() const;
-  void    SetPrevious(Screen* pScreen);
+  Screen*         GetPrevious() const;
+  void            SetPrevious(Screen* pScreen);
   
-  void    Show(ScreenManager& sm, uint32 ms);
-  void    Register();
-  void    Unregister();
-  void    Hide(uint32 ms);
+  void            Show(ScreenManager& sm, uint32 ms);
+  void            Register();
+  void            Unregister();
+  void            Hide(uint32 ms);
   
-  void    Update(uint32 ms);
+  void            Update(uint32 ms);
   
 protected:
   // data
-  ScreenManager*  m_pScreenManager;  // no ownership
+  ScreenManager*  m_pManager;  // no ownership
   
   // virtual
-  virtual void  _AddElements() =0;
-  virtual void  _Show(uint32 ms) =0;
-  virtual void  _Hide(uint32 ms) =0;
-  virtual void  _RemoveElements() =0;
+  virtual void    _AddElements() =0;
+  virtual void    _Show(uint32 ms) =0;
+  virtual void    _Hide(uint32 ms) =0;
+  virtual void    _RemoveElements() =0;
   
-  virtual void  _Register() =0;
-  virtual void  _Unregister() =0;
+  virtual void    _Register() =0;
+  virtual void    _Unregister() =0;
   
 private:
   // data
@@ -75,8 +75,8 @@ private:
   Screen*         m_pPrevious;
   
   // internal
-  void  _MakeActive();
-  void  _MakeHidden();
+  void            _MakeActive();
+  void            _MakeHidden();
 };
 
 //==============================================================================
@@ -100,6 +100,13 @@ inline
 Screen* Screen::GetPrevious() const
 {
   return m_pPrevious;
+}
+
+//==============================================================================
+inline
+ScreenManager*  Screen::GetManager() const
+{
+  return m_pManager;
 }
 
 } // XR

@@ -23,14 +23,11 @@ namespace XR
 class ScreenManager
 {
 public:
-  // types
-  
   // structors
   ScreenManager();
   ~ScreenManager();
 
   // general
-  Tweener&            GetTweener();
   UIContainer&        GetContainer();
   UIEventDispatcher&  GetDispatcher();
   
@@ -46,7 +43,6 @@ protected:
   Screen*                 m_pCurrent; // no ownership
   Screen*                 m_pLast;  // no ownership
   
-  Tweener                 m_tweener;
   UIContainer             m_container;
   UIEventDispatcher       m_dispatcher;
   
@@ -55,13 +51,6 @@ protected:
 
 //==============================================================================
 // implementation
-//==============================================================================
-inline
-Tweener&  ScreenManager::GetTweener()
-{
-  return m_tweener;
-}
-
 //==============================================================================
 inline
 UIContainer&        ScreenManager::GetContainer()
