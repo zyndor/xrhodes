@@ -13,6 +13,7 @@ files
   XR/ScreenManager.hpp
   XR/UIAligner.hpp #UIContainer
   XR/UIBuilder.hpp #UIContainer, Font
+  XR/UIBuilderScreen.hpp
   XR/UIButton.hpp  #UIColoredElement
   XR/UICascader.hpp  #UIAligner
   XR/UIColoredElement.hpp  #UIElement

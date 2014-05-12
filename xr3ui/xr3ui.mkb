@@ -29,6 +29,7 @@ files
   ScreenManager.cpp
   UIAligner.cpp
   UIBuilder.cpp
+  UIBuilderScreen.cpp
   UIButton.cpp
   UICascader.cpp
   UICheckBox.cpp

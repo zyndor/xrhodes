@@ -39,6 +39,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1447016992/ScreenManager.o \
 	${OBJECTDIR}/_ext/1447016992/UIAligner.o \
 	${OBJECTDIR}/_ext/1447016992/UIBuilder.o \
+	${OBJECTDIR}/_ext/1447016992/UIBuilderScreen.o \
 	${OBJECTDIR}/_ext/1447016992/UIButton.o \
 	${OBJECTDIR}/_ext/1447016992/UICascader.o \
 	${OBJECTDIR}/_ext/1447016992/UICheckBox.o \
@@ -112,6 +113,11 @@ ${OBJECTDIR}/_ext/1447016992/UIBuilder.o: /D/repos/xr3/xr3ui/h/XR/UIBuilder.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -Wall -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/UIBuilder.o /D/repos/xr3/xr3ui/h/XR/UIBuilder.cpp
+
+${OBJECTDIR}/_ext/1447016992/UIBuilderScreen.o: /D/repos/xr3/xr3ui/h/XR/UIBuilderScreen.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Wall -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/UIBuilderScreen.o /D/repos/xr3/xr3ui/h/XR/UIBuilderScreen.cpp
 
 ${OBJECTDIR}/_ext/1447016992/UIButton.o: /D/repos/xr3/xr3ui/h/XR/UIButton.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992

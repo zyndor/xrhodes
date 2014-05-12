@@ -6,6 +6,7 @@
       <itemPath>D:/repos/xr3/xr3ui/h/XR/ScreenManager.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIAligner.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIBuilder.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIBuilderScreen.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIButton.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UICascader.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UICheckBox.hpp</itemPath>
@@ -38,6 +39,7 @@
       <itemPath>D:/repos/xr3/xr3ui/h/XR/ScreenManager.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIAligner.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIBuilder.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UIBuilderScreen.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIButton.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UICascader.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UICheckBox.cpp</itemPath>
@@ -132,6 +134,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilder.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilderScreen.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilderScreen.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -458,6 +470,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilder.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilderScreen.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UIBuilderScreen.hpp"
             ex="false"
             tool="3"
             flavor2="0">
