@@ -26,9 +26,6 @@ class UIBuilder
 {
 public:
   // types
-  typedef const Sprite*(*GetSpriteCallback)(const char* pSpriteName, void* pUser);
-  typedef const Font*(*GetFontCallback)(const char* pFontName, void* pUser);
-
   typedef void*(*AllocateCallback)(int size, void* pUser);
 
   typedef UIElement*(*CreateCallback)(AllocateCallback, void* pUser);
@@ -87,23 +84,24 @@ public:
 
   void          SetMaxDepth(int maxDepth);
 
-  void          RegisterGetSpriteCallback(GetSpriteCallback pGetSpriteCb,
+  void          RegisterGetSpriteCallback(Sprite::GetCallback pGetSpriteCb,
                   void* pCbData);
-  void          RegisterGetFontCallback(GetFontCallback pGetFontCb,
+  void          RegisterGetFontCallback(Font::GetCallback pGetFontCb,
                   void* pCbData);
 
   void          RegisterCreator(const char* pName, CreateCallback pCreateCb,
                   InitCallback pInitCb, bool isContainer);
 
-  bool          RegisterHandle(const char* pName, UIElement* pUIElem);
+  bool          RegisterNamedElement(const char* pName, UIElement* pUIElem);
 
   bool          Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
                   DeallocateCallback pDeallocateCb, void* pCbData,
-                  UIContainer *pContainer);
+                  UIContainer& container);
 
-  UIElement*    GetHandle(const char* pHandle) const;
+  UIElement*    GetElement(uint32 hash) const;
+  UIElement*    GetElement(const char* pHandle) const;
 
-  void          Clear();
+  void          Destroy();
 
 protected:
   // types
@@ -133,16 +131,16 @@ protected:
   // data
   CreatorMap          m_creators;
 
-  GetSpriteCallback   m_pGetSpriteCb;
+  Sprite::GetCallback m_pGetSpriteCb;
   void*               m_pGetSpriteCbData;
 
-  GetFontCallback     m_pGetFontCb;
+  Font::GetCallback   m_pGetFontCb;
   void*               m_pGetFontCbData;
 
   DeallocateCallback  m_pDeallocateCb;
   void*               m_pDeallocateCbData;
 
-  UIContainer*        m_pContainer;
+  UIContainer*        m_pRoot;
   int                 m_depth;
   int                 m_maxDepth;  
   UIElementList*      m_parLevels;

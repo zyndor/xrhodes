@@ -49,7 +49,7 @@ float GetXmlScaleAttribute(TiXmlElement* pXml)
   XR_ASSERT(UIBuilder, pXml != 0);
   double  scale;
   pXml->Attribute("scale", &scale);
-  if(scale == .0)
+  if (scale == .0)
   {
     scale = 1.0;
   }
@@ -103,10 +103,10 @@ int UIBuilder::GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName)
 
   int value(XA_NONE);
   const char* pValue(pXml->Attribute(pAttribName));
-  if(pValue != 0)
+  if (pValue != 0)
   {
     value = FindHashedListStringValue(karAlignValueHash, kNumAlignValues, pValue);
-    if(value >= kNumAlignValues) // if not found, default to none
+    if (value >= kNumAlignValues) // if not found, default to none
     {
       XR_TRACE(UIBuilder, ("The value of '%s' is not a valid alignment.", pAttribName));
       value = XA_NONE;
@@ -136,11 +136,11 @@ int GetXmlSizeToContent(TiXmlElement* pXml)
 
   int value(0);
   const char* pValue(pXml->Attribute("sizeToContent"));
-  if(pValue != 0)
+  if (pValue != 0)
   {
-    for(int i = 0; i < kNumSizeToContentValues; ++i)
+    for (int i = 0; i < kNumSizeToContentValues; ++i)
     {
-      if(strchr(pValue, karSizeToContentChars[i]))
+      if (strchr(pValue, karSizeToContentChars[i]))
       {
         value |= XR_MASK_ID(i);
       }
@@ -156,21 +156,21 @@ void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem
   outSprite = *pSprite;
 
   float hw(pSprite->GetHalfWidth());
-  if(pUIElem->w == 0)
+  if (pUIElem->w == 0)
   {
     pUIElem->w = hw * 2.0f;
   }
-  else if(hw > .0f)
+  else if (hw > .0f)
   {
     outSprite.ScaleX((pUIElem->w / 2) / hw);
   }
 
   float hh(pSprite->GetHalfHeight());
-  if(pUIElem->h == 0)
+  if (pUIElem->h == 0)
   {
     pUIElem->h = hh * 2.0f;
   }
-  else if(pSprite->GetHalfHeight() > .0f)
+  else if (pSprite->GetHalfHeight() > .0f)
   {
     outSprite.ScaleY((pUIElem->h / 2) / hh);
   }
@@ -194,68 +194,68 @@ bool  UIBInitUIElement( TiXmlElement* pXml, UIElement* pUIElem,
 
   int temp;
   // x
-  if(success)
+  if (success)
   {
     GetXmlIntAttribute(pXml, "x", Renderer::GetScreenWidth(), temp);
 
     success = CheckInt16(temp);
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIElement requires a 16 bit 'x' value (got %d).", temp));
     }
   }
 
-  if(success)
+  if (success)
   {
     pUIElem->x = temp;
   }
 
   // y
-  if(success)
+  if (success)
   {
     GetXmlIntAttribute(pXml, "y", Renderer::GetScreenHeight(), temp);
 
     success = CheckInt16(temp);
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIElement requires a 16 bit 'y' value (got %d).", temp));
     }  
   }
 
-  if(success)
+  if (success)
   {
     pUIElem->y = temp;
   }
 
   // w
-  if(success)
+  if (success)
   {
     GetXmlIntAttribute(pXml, "w", pParent->w, temp);
 
     success = CheckInt16(temp);
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIElement requires a 16 bit 'w' value (got %d).", temp));
     }  
   }
 
-  if(success)
+  if (success)
   {
     pUIElem->w = temp;
   }
 
   // h
-  if(success)
+  if (success)
   {
     GetXmlIntAttribute(pXml, "h", pParent->h, temp);
     success = CheckInt16(temp);
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIElement requires a 16 bit 'h' value (got %d).", temp));
     }  
   }
 
-  if(success)
+  if (success)
   {
     pUIElem->h = temp;
   }
@@ -268,15 +268,15 @@ bool  UIBInitUIElement( TiXmlElement* pXml, UIElement* pUIElem,
 bool UIBInitUIColoredElement( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UIColoredElement* pColElem(static_cast<UIColoredElement*>(pUIElem));
 
     const char* pValue(pXml->Attribute("color"));
-    if(pValue != 0)
+    if (pValue != 0)
     {
       uint32  color(strtoul(pValue, 0, 16));
-      if(strlen(pValue) <= 6)
+      if (strlen(pValue) <= 6)
       {
         color |= 0xff000000;
       }
@@ -300,7 +300,7 @@ UIElement*  UIBCreateUILabel(UIBuilder::AllocateCallback pAllocCb,
 bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UILabel*  pLabel(static_cast<UILabel*>(pUIElem));
 
@@ -308,17 +308,17 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 
     // font
     pValue = pXml->Attribute("font");
-    if(pValue != 0)
+    if (pValue != 0)
     {
       const Font* pFont(pBuilder->GetFont(pValue));
       
       success = pFont != 0;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(UIBuilder, ("Couldn't find font '%s' for UILabel.", pValue));
       }
 
-      if(success)
+      if (success)
       {
         pLabel->SetFont(pFont);
       }
@@ -326,12 +326,12 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     
     // horizontal alignment
     pValue = pXml->Attribute("hAlign");
-    if(pValue != 0)
+    if (pValue != 0)
     {
       const uint32* pFind(std::find(karHorizontalAlignNameHash, karHorizontalAlignNameHash + 3, Hash::String(pValue)));
         
       int value(pFind - karHorizontalAlignNameHash);
-      if(value < 3)
+      if (value < 3)
       {
         pLabel->SetHorizontalAlignment(static_cast<Text::HAlign>(value));
       }
@@ -339,12 +339,12 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     
     // vertical alignment
     pValue = pXml->Attribute("vAlign");
-    if(pValue != 0)
+    if (pValue != 0)
     {
       const uint32* pFind(std::find(karVerticalAlignNameHash, karVerticalAlignNameHash + 3, Hash::String(pValue)));
 
       int value(pFind - karVerticalAlignNameHash);
-      if(value < 3)
+      if (value < 3)
       {
         pLabel->SetVerticalAlignment(static_cast<Text::VAlign>(value));
   	  }
@@ -352,15 +352,15 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     
     // text
     TiXmlNode* pNode(pXml->FirstChild());
-    while(pNode != 0)
+    while (pNode != 0)
     {
-      if(pNode->Type() == kTinyXmlTextType)
+      if (pNode->Type() == kTinyXmlTextType)
       {
         const char* pText(pNode->ToText()->Value());
-        if(pText != 0)
+        if (pText != 0)
         {
           success = pLabel->GetFont() != 0;
-          if(!success)
+          if (!success)
           {
             const int kBufferSize = 32;
             char  arBuffer[kBufferSize + 1];
@@ -369,7 +369,7 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
             XR_TRACE(UIBuilder, ("A font need to be set on UILabel to prepare text '%s'.", arBuffer));
           }
 
-          if(success)
+          if (success)
           {
             pLabel->PrepareText(pText);
           }
@@ -381,18 +381,18 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 
     // size to content
     uint32 sizeToContentValue(GetXmlSizeToContent(pXml));
-    if(IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH) | XR_MASK_ID(XSTC_HEIGHT)))
+    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH) | XR_MASK_ID(XSTC_HEIGHT)))
     {
       pLabel->SetSizeToText();
     }
     else
     {
-      if(IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH)))
+      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH)))
       {
         pLabel->SetWidthToText();
       }
 
-      if(IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_HEIGHT)))
+      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_HEIGHT)))
       {   
         pLabel->SetHeightToText();
       }
@@ -414,7 +414,7 @@ UIElement*  UIBCreateUIImage(UIBuilder::AllocateCallback pAllocCb,
 bool UIBInitUIImage( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UIImage*  pImage(static_cast<UIImage*>(pUIElem));
 
@@ -425,21 +425,21 @@ bool UIBInitUIImage( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     const char* pValue(0);
     pValue = pXml->Attribute("img");
     success = pValue != 0;
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIImage requires an 'img' attribute."));
     }
 
-    if(success)
+    if (success)
     {
       const Sprite* pSprite(pBuilder->GetSprite(pValue));
       success = pSprite != 0;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(UIBuilder, ("Couldn't find sprite '%s' for UIImage.", pValue));
       }
 
-      if(success)
+      if (success)
       {
         UIBSetUISprite(pSprite, pImage->sprite, pImage);
         pImage->sprite.Scale(scale);
@@ -463,17 +463,17 @@ UIElement*  UIBCreateUIImagePanel(UIBuilder::AllocateCallback pAllocCb,
 bool UIBInitUIImagePanel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UIImagePanel*  pImagePanel(static_cast<UIImagePanel*>(pUIElem));
 
     float temp;
-    if(GetXmlFloatAttribute(pXml, "hSplit", temp))
+    if (GetXmlFloatAttribute(pXml, "hSplit", temp))
     {
       pImagePanel->hSplit = temp;
     }
 
-    if(GetXmlFloatAttribute(pXml, "vSplit", temp))
+    if (GetXmlFloatAttribute(pXml, "vSplit", temp))
     {
       pImagePanel->vSplit = temp;
     }
@@ -504,28 +504,28 @@ bool  UIBInitUIProgressBarBase( TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UIProgressBarBase*  pBar(static_cast<UIProgressBarBase*>(pUIElem));
 
     // fill direction
-    if(success)
+    if (success)
     {
       const char* pValue(pXml->Attribute("fillDir"));
-      if(pValue != 0)
+      if (pValue != 0)
       {
         const uint32* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2,
           Hash::String(pValue)));
 
         int value(pFind - karDirectionNameHash);
         success = value < 2;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(UIBuilder, ("Invalid value in 'fillDir' element for UIProgressBarBase: %s",
             pValue));
         }
 
-        if(success)
+        if (success)
         {
           pBar->SetFillDirection(static_cast<UIProgressBarBase::FillDir>(value));
         }
@@ -546,7 +546,7 @@ bool  UIBInitUISliderBase( TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UISliderBase* pSlider(static_cast<UISliderBase*>(pUIElem));
 
@@ -555,27 +555,27 @@ bool  UIBInitUISliderBase( TiXmlElement* pXml, UIElement* pUIElem,
 
     const char* pValue(0);
     // material
-    if(success)
+    if (success)
     {
       pValue = pXml->Attribute("imgSlider");
 
       success = pValue != 0;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(UIBuilder,
           ("'imgSlider' attribute needs to be set for UISliderBase."));
       }
 
-      if(success)
+      if (success)
       {
         const Sprite* pSprite(pBuilder->GetSprite(pValue));
         success = pSprite != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for UISliderBase.", pValue));
         }
 
-        if(success)
+        if (success)
         {
           pSlider->sliderSprite = *pSprite;
           pSlider->sprite.Scale(scale); // might suck
@@ -617,14 +617,14 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, pBuilder));
 
-  if(success)
+  if (success)
   {
     UIButton* pButton(static_cast<UIButton*>(pUIElem));
 
     // enabled -- optional
     const char* pValue(0);
     pValue = pXml->Attribute("enabled");
-    if(!Parse::BooleanPositive(pValue))
+    if (!Parse::BooleanPositive(pValue))
     {
       pButton->SetEnabled(false);
     }
@@ -635,31 +635,31 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
     // material
     bool  arIsSet[UIButton::kNumStates] = { false, false, false };
     
-    if(success)
+    if (success)
     {
       pValue = pXml->Attribute("img");
-      if(pValue == 0)
+      if (pValue == 0)
       {
         pValue = pXml->Attribute("imgUp");
       }
 
       success = pValue != 0;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(UIBuilder,
           ("'img' or 'imgUp' attribute needs to be set for UIButton."));
       }
 
-      if(success)
+      if (success)
       {
         const Sprite*  pSprite(pBuilder->GetSprite(pValue));
         success = pSprite != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for img{Up}.", pValue));
         }
 
-        if(success)
+        if (success)
         {
           arIsSet[UIButton::S_UP] = success;
 
@@ -670,19 +670,19 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
       }
     }
     
-    if(success)
+    if (success)
     {
       pValue = pXml->Attribute("imgDown");
-      if(pValue != 0)
+      if (pValue != 0)
       {
         const Sprite*  pSprite(pBuilder->GetSprite(pValue));
         success = pSprite != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for imgDown.", pValue));
         }
 
-        if(success)
+        if (success)
         {
           arIsSet[UIButton::S_DOWN] = success;
 
@@ -693,19 +693,19 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
       }
     }
 
-    if(success)
+    if (success)
     {
       pValue = pXml->Attribute("imgOff");
-      if(pValue != 0)
+      if (pValue != 0)
       {
         const Sprite*  pSprite(pBuilder->GetSprite(pValue));
         success = pSprite != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for imgOff.", pValue));
         }
 
-        if(success)
+        if (success)
         {
           arIsSet[UIButton::S_OFF] = success;
 
@@ -716,15 +716,15 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
       }
     }
 
-    if(success)
+    if (success)
     {
-      if(!arIsSet[UIButton::S_DOWN])
+      if (!arIsSet[UIButton::S_DOWN])
       {
         pButton->arSprite[UIButton::S_DOWN] =
           pButton->arSprite[UIButton::S_UP];
       }
 
-      if(!arIsSet[UIButton::S_OFF])
+      if (!arIsSet[UIButton::S_OFF])
       {
         pButton->arSprite[UIButton::S_OFF] =
           pButton->arSprite[UIButton::S_DOWN];
@@ -748,32 +748,32 @@ bool  UIBInitUICheckBox( TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUIButton(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UICheckBox* pCheckBox(static_cast<UICheckBox*>(pUIElem));
 
     // selected -- optional
     const char* pValue(0);
     pValue = pXml->Attribute("selected");
-    if(!Parse::BooleanNegative(pValue))
+    if (!Parse::BooleanNegative(pValue))
     {
       pCheckBox->SetSelected(false);
     }
 
     // material
-    if(success)
+    if (success)
     {
       pValue = pXml->Attribute("imgSet");
-      if(pValue != 0)
+      if (pValue != 0)
       {
         const Sprite*  pSprite(pBuilder->GetSprite(pValue));
         success = pSprite != 0;
-        if(!success)
+        if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for imgSet.", pValue));
         }
 
-        if(success)
+        if (success)
         {
           UIBSetUISprite(pSprite, pCheckBox->setSprite, pCheckBox);
         }
@@ -798,12 +798,12 @@ bool  UIBInitUIRadioButton( TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder* pBuilder )
 {
   bool  success(UIBInitUICheckBox(pXml, pUIElem, pParent, pBuilder));
-  if(success)
+  if (success)
   {
     UIRadioButton*  pRadioButton(static_cast<UIRadioButton*>(pUIElem));
     
     const char* pValue(pXml->Attribute("group"));
-    if(pValue != 0 && strlen(pValue) > 0)
+    if (pValue != 0 && strlen(pValue) > 0)
     {
       pRadioButton->SetGroup(pValue);
     }
@@ -825,21 +825,21 @@ bool UIBInitUIAligner( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pPar
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, pBuilder));
 
-  if(success)
+  if (success)
   {
     UIAligner*  pAligner(static_cast<UIAligner*>(pUIElem));
 
     // horizontal alignment
     int value;
     value = UIBuilder::GetXmlAlignment(pXml, "hAlign");
-    if(value < UIBuilder::XA_NONE)
+    if (value < UIBuilder::XA_NONE)
     {
       pAligner->SetHorizontalAlignment(static_cast<UIElement::Alignment>(value - 1));
     }
 
     // vertical alignment
     value = UIBuilder::GetXmlAlignment(pXml, "vAlign");
-    if(value < UIBuilder::XA_NONE)
+    if (value < UIBuilder::XA_NONE)
     {
       pAligner->SetVerticalAlignment(static_cast<UIElement::Alignment>(value - 1));
     }
@@ -862,14 +862,14 @@ bool  UIBInitUICascader( TiXmlElement* pXml, UIElement* pUIElem,
 {
   bool  success(UIBInitUIAligner(pXml, pUIElem, pParent, pBuilder));
 
-  if(success)
+  if (success)
   {
     UICascader* pCascader(static_cast<UICascader*>(pUIElem));
     
     int temp;
     GetXmlIntAttribute(pXml, "hOffset", pCascader->w, temp);
     success = CheckInt16(temp);
-    if(success)
+    if (success)
     {
       pCascader->SetHorizontalOffset(temp);
     }
@@ -879,18 +879,18 @@ bool  UIBInitUICascader( TiXmlElement* pXml, UIElement* pUIElem,
         ("UICascader requires a 16 bit 'hOffset' value (got %d).", temp));
     }
 
-    if(success)
+    if (success)
     {
       GetXmlIntAttribute(pXml, "vOffset", pCascader->h, temp);
       success = CheckInt16(temp);
-      if(!success)
+      if (!success)
       {
         XR_TRACE(UIBuilder,
           ("UICascader requires a 16 bit 'vOffset' value (got %d).", temp));
       }
     }
 
-    if(success)
+    if (success)
     {
       pCascader->SetVerticalOffset(temp);
     }
@@ -905,7 +905,7 @@ bool  UIBInitUIGrowingLayout( TiXmlElement* pXml, UIElement* pUIElem,
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, pBuilder));
 
-  if(success)
+  if (success)
   {
     UIGrowingLayoutBase*  pLayout(static_cast<UIGrowingLayoutBase*>(pUIElem));
 
@@ -913,20 +913,20 @@ bool  UIBInitUIGrowingLayout( TiXmlElement* pXml, UIElement* pUIElem,
 
     // alignment
     int value(UIBuilder::GetXmlAlignment(pXml, "align"));
-    if(value < UIBuilder::XA_NONE)
+    if (value < UIBuilder::XA_NONE)
     {
       pLayout->SetAlignment(static_cast<UIElement::Alignment>(value - 1));
     }
 
     // grow direction
     pValue = pXml->Attribute("growDir");
-    if(pValue != 0)
+    if (pValue != 0)
     {
       const uint32* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2, Hash::String(pValue)));
 
       int value(pFind - karDirectionNameHash);
       success = value < 2;
-      if(success)
+      if (success)
       {
         pLayout->SetGrowDir(static_cast<UIGrowingLayoutBase::GrowDir>(value));
       }
@@ -940,13 +940,13 @@ bool  UIBInitUIGrowingLayout( TiXmlElement* pXml, UIElement* pUIElem,
 
     // spacing
     int spacing(0);
-    if(success)
+    if (success)
     {
       GetXmlIntAttribute(pXml, "spacing",
         UIGrowingLayoutBase::GetDefaultSpacing(), spacing);
       success = CheckInt16(spacing);
 
-      if(!success)
+      if (!success)
       {
         XR_TRACE(UIBuilder,
           ("UIGrowingLayoutBase requires a 16 bit 'spacing' value (got %d).",
@@ -954,7 +954,7 @@ bool  UIBInitUIGrowingLayout( TiXmlElement* pXml, UIElement* pUIElem,
       }  
     }
 
-    if(success)
+    if (success)
     {
       pLayout->SetSpacing(spacing);
     }
@@ -1048,91 +1048,91 @@ bool  UIBInitUIGridLayout( TiXmlElement* pXml, UIElement* pUIElem,
   int value;
   
   // rows
-  if(success)
+  if (success)
   {
     pValue = pXml->Attribute("rows", &value);
     success = pValue != 0 && CheckInt16(value) && value >= 0;
 
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIGridLayout requires a positive 16 bit 'rows' value (got %d).",
         value));
     }
   }
 
-  if(success)
+  if (success)
   {
     pLayout->SetNumRows(value);
   }
 
   // columns
-  if(success)
+  if (success)
   {
     pValue = pXml->Attribute("cols", &value);
     success = pValue != 0 && CheckInt16(value) && value >= 0;
 
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIGridLayout requires a positive 16 bit 'cols' value (got %d).",
         value));
     }
   }
 
-  if(success)
+  if (success)
   {
     pLayout->SetNumColumns(value);
   }
 
   // rowspacing
-  if(success)
+  if (success)
   {
     GetXmlIntAttribute(pXml, "rowSpacing",
       UIGridLayout::GetDefaultRowSpacing(), value);
     success = CheckInt16(value);
 
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'rowSpacing' value (got %d).",
         value));
     }
   }
 
-  if(success)
+  if (success)
   {
     pLayout->SetRowsSpacing(value);
   }
   
   // columnspacing
-  if(success)
+  if (success)
   {
     GetXmlIntAttribute(pXml, "colSpacing",
       UIGridLayout::GetDefaultRowSpacing(), value);
     success = CheckInt16(value);
 
-    if(!success)
+    if (!success)
     {
       XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'colSpacing' value (got %d).",
         value));
     }
   }
 
-  if(success)
+  if (success)
   {
     pLayout->SetColumnSpacing(value);
   }
 
-  if(success)
+  if (success)
   {
     // horizontal alignment
     value = UIBuilder::GetXmlAlignment(pXml, "hAlign");
-    if(value < UIBuilder::XA_NONE)
+    if (value < UIBuilder::XA_NONE)
     {
       pLayout->SetHorizontalAlignment(static_cast<UIElement::Alignment>(value - 1));
     }
 
     // vertical alignment
     value = UIBuilder::GetXmlAlignment(pXml, "vAlign");
-    if(value < UIBuilder::XA_NONE)
+    if (value < UIBuilder::XA_NONE)
     {
       pLayout->SetVerticalAlignment(static_cast<UIElement::Alignment>(value - 1));
     }
@@ -1148,7 +1148,7 @@ UIBuilder::UIBuilder()
   m_pGetFontCbData(0),
   m_pDeallocateCb(0),
   m_pDeallocateCbData(0),
-  m_pContainer(0),
+  m_pRoot(0),
   m_depth(0),
   m_maxDepth(0),
   m_parLevels(0),
@@ -1181,7 +1181,7 @@ UIBuilder::UIBuilder()
 //==============================================================================
 UIBuilder::~UIBuilder()
 {
-  Clear();
+  Destroy();
   delete[]  m_parLevels;
 }
 
@@ -1189,7 +1189,7 @@ UIBuilder::~UIBuilder()
 void UIBuilder::SetMaxDepth(int maxDepth)
 {
   XR_ASSERT(UIBuilder, maxDepth >= 0);
-  Clear();
+  Destroy();
   
   delete[]  m_parLevels;
   m_parLevels = new UIElementList[maxDepth];
@@ -1215,7 +1215,7 @@ void  UIBuilder::RegisterCreator( const char* pName, CreateCallback pCreateCb,
 }
 
 //==============================================================================
-bool UIBuilder::RegisterHandle( const char* pName, UIElement* pUIElem )
+bool UIBuilder::RegisterNamedElement( const char* pName, UIElement* pUIElem )
 {
   XR_ASSERT(UIBuilder, pName != 0);
   XR_ASSERT(UIBuilder, pUIElem != 0);
@@ -1223,7 +1223,7 @@ bool UIBuilder::RegisterHandle( const char* pName, UIElement* pUIElem )
   uint32                hash(Hash::String(pName));
   ElementMap::iterator  iFind(m_handles.find(hash));
   bool                  success(iFind == m_handles.end());
-  if(success)
+  if (success)
   {
     ElementMap::value_type  vInsert(hash, pUIElem);
     m_handles.insert(vInsert);
@@ -1238,26 +1238,24 @@ bool UIBuilder::RegisterHandle( const char* pName, UIElement* pUIElem )
 }
 
 //==============================================================================
-bool UIBuilder::Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
-  DeallocateCallback pDeallocateCb, void* pCbData, UIContainer *pContainer )
+bool  UIBuilder::Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
+        DeallocateCallback pDeallocateCb, void* pCbData, UIContainer& container)
 {
   XR_ASSERT(IW_ASSERTION_CHANNEL_DEFAULT, pXml != 0);
   XR_ASSERT(IW_ASSERTION_CHANNEL_DEFAULT, pAllocateCb != 0);
-  XR_ASSERT(IW_ASSERTION_CHANNEL_DEFAULT, pContainer != 0);
 
-  m_pContainer = pContainer;
-  RegisterHandle("root", pContainer);
-
+  m_pRoot = &container;
   m_pDeallocateCb = pDeallocateCb;
   m_pDeallocateCbData = pCbData;
 
-  UIContainer base(*pContainer);
+  UIContainer base(container);
   base.w = Renderer::GetScreenWidth();
   base.h = Renderer::GetScreenHeight();
 
-  UIBInitUIElement(pXml, pContainer, &base, this);
+  RegisterNamedElement("root", m_pRoot);
+  UIBInitUIElement(pXml, m_pRoot, &base, this);
 
-  return _Build(pXml, pAllocateCb, pContainer);
+  return _Build(pXml, pAllocateCb, m_pRoot);
 }
 
 //==============================================================================
@@ -1268,12 +1266,12 @@ bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
 
   pXml = pXml->FirstChildElement();
   bool  success(true);
-  while(pXml != 0)
+  while (pXml != 0)
   {
     UIElement*  pUIElem(0);
 
     CreatorMap::iterator  iFind(m_creators.find(Hash::String(pXml->Value())));
-    if(iFind != m_creators.end())
+    if (iFind != m_creators.end())
     {
       XR_TRACE(UIBuilder, ("Building a %s...", iFind->second.pName));
 
@@ -1282,7 +1280,7 @@ bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
       // create element (name)
       pUIElem = (*uicr.pCreateCb)(pAllocateCb, m_pDeallocateCbData);
       success = pUIElem != 0;
-      if(!success)
+      if (!success)
       {
         XR_TRACE(UIBuilder,
           ("Failed to create a %s, possibly due to insufficiend memory.",
@@ -1290,30 +1288,30 @@ bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
       }
 
       // setup element (attributes)
-      if(success)
+      if (success)
       {
         success = (*uicr.pInitCb)(pXml, pUIElem, pContainer, this);
-        if(!success)
+        if (!success)
         {
           XR_TRACE(UIBuilder,
             ("Failed to initialise a %s @ 0x%p. Destruction and deallocation has been attempted. Quitting build.",
               iFind->second.pName, pUIElem));
 
           pUIElem->~UIElement();
-          if(m_pDeallocateCb != 0)
+          if (m_pDeallocateCb != 0)
           {
             (*m_pDeallocateCb)(pUIElem, m_pDeallocateCbData);
           }
         }
       }
 
-      if(success)
+      if (success)
       {
         // postprocess
         _PostProcess(pXml, pUIElem);
 
         // process container
-        if(uicr.isContainer)
+        if (uicr.isContainer)
         {
           UIContainer*  pMyContainer(static_cast<UIContainer*>(pUIElem));
 
@@ -1332,7 +1330,7 @@ bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
       }
     }
 
-    if(!success)
+    if (!success)
     {
       break;
     }
@@ -1344,24 +1342,24 @@ bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
 }
 
 //==============================================================================
-void UIBuilder::Clear()
+void UIBuilder::Destroy()
 {
-  if(m_pDeallocateCb != 0)
+  if (m_pDeallocateCb != 0)
   {
-    if(m_maxDepth > 0)
+    if (m_maxDepth > 0)
     {
       UIElementList&  lElems(m_parLevels[0]);
-      for(UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
+      for (UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
         i0 != i1; ++i0)
       {
-        m_pContainer->RemoveElement(*i0);
+        m_pRoot->RemoveElement(*i0);
       }
     }
     
-    while(m_depth > 0)
+    while (m_depth > 0)
     {
       UIElementList&  lElems(m_parLevels[m_depth]);
-      for(UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
+      for (UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
         i0 != i1; ++i0)
       {
         UIElement*  p(*i0);
@@ -1371,7 +1369,7 @@ void UIBuilder::Clear()
       --m_depth;
     }
 
-    for(int i = 0; i < m_maxDepth; ++i)
+    for (int i = 0; i < m_maxDepth; ++i)
     {
       m_parLevels[i].clear();
     }
@@ -1381,33 +1379,32 @@ void UIBuilder::Clear()
 }
 
 //==============================================================================
-UIElement* UIBuilder::GetHandle( const char* pHandle ) const
+UIElement* UIBuilder::GetElement(uint32 hash) const
+{
+  ElementMap::const_iterator iFind(m_handles.find(hash));
+  return (iFind != m_handles.end()) ? iFind->second : 0;
+}
+
+//==============================================================================
+UIElement* UIBuilder::GetElement(const char* pHandle) const
 {
   XR_ASSERT(UIBuilder, pHandle != 0);
-  ElementMap::const_iterator iFind(m_handles.find(Hash::String(pHandle)));
-  if(iFind != m_handles.end())
-  {
-    return iFind->second;
-  }
-  else
-  {
-    return 0;
-  }
+  return GetElement(Hash::String(pHandle));
 }
 
 //==============================================================================
 void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
 {
   const char* pValue(pXml->Attribute("handle"));
-  if(pValue != 0)
+  if (pValue != 0)
   {
-    RegisterHandle(pValue, pUIElem);
+    RegisterNamedElement(pValue, pUIElem);
   }
 
   pValue = pXml->Attribute("alignTo");
-  if(pValue != 0)
+  if (pValue != 0)
   {
-    UIElement*  pAlignTo(GetHandle(pValue));
+    UIElement*  pAlignTo(GetElement(pValue));
     XR_ASSERT(UIBuilder, pAlignTo != 0);
 
     int alignTo(XA_NONE);
@@ -1415,13 +1412,13 @@ void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
 
     // horizontal
     alignTo = GetXmlAlignment(pXml, "alignToHorizontal");
-    if(alignTo == XA_NONE)
+    if (alignTo == XA_NONE)
     {
       alignTo = XA_LOW;
     }
 
     xTarget = pAlignTo->x;
-    switch(alignTo)
+    switch (alignTo)
     {
     case XA_LOW:
       break;
@@ -1436,20 +1433,20 @@ void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
     }
 
     int hAlignSide(GetXmlAlignment(pXml, "alignSideHorizontal"));
-    if(hAlignSide == XA_NONE)
+    if (hAlignSide == XA_NONE)
     {
       hAlignSide = alignTo;
     }
 
     // vertical
     alignTo = GetXmlAlignment(pXml, "alignToVertical");
-    if(alignTo == XA_NONE)
+    if (alignTo == XA_NONE)
     {
       alignTo = XA_LOW;
     }
 
     yTarget = pAlignTo->y;
-    switch(alignTo)
+    switch (alignTo)
     {
     case XA_LOW:
       break;
@@ -1464,7 +1461,7 @@ void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
     }
 
     int vAlignSide(GetXmlAlignment(pXml, "alignSideVertical"));
-    if(vAlignSide == XA_NONE)
+    if (vAlignSide == XA_NONE)
     {
       vAlignSide = alignTo;
     }
@@ -1479,18 +1476,18 @@ void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
 void UIBuilder::_PostProcessContainer( TiXmlElement* pXml, UIContainer* pContainer)
 {
   uint32 sizeToContentValue(GetXmlSizeToContent(pXml));
-  if(IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH) | XR_MASK_ID(XSTC_HEIGHT)))
+  if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH) | XR_MASK_ID(XSTC_HEIGHT)))
   {
     pContainer->SetSizeToContent();
   }
   else
   {
-    if(IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH)))
+    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH)))
     {
       pContainer->SetWidthToContent();
     }
 
-    if(IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_HEIGHT)))
+    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_HEIGHT)))
     {   
       pContainer->SetHeightToContent();
     }
@@ -1512,7 +1509,7 @@ const Font* UIBuilder::GetFont( const char* pName ) const
 }
 
 //==============================================================================
-void UIBuilder::RegisterGetSpriteCallback( GetSpriteCallback pGetSpriteCb,
+void UIBuilder::RegisterGetSpriteCallback( Sprite::GetCallback pGetSpriteCb,
   void* pCbData )
 {
   m_pGetSpriteCb = pGetSpriteCb;
@@ -1520,7 +1517,7 @@ void UIBuilder::RegisterGetSpriteCallback( GetSpriteCallback pGetSpriteCb,
 }
 
 //==============================================================================
-void UIBuilder::RegisterGetFontCallback( GetFontCallback pGetFontCb,
+void UIBuilder::RegisterGetFontCallback( Font::GetCallback pGetFontCb,
   void* pCbData )
 {
   m_pGetFontCb = pGetFontCb;
