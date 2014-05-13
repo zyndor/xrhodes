@@ -13,7 +13,6 @@ const char* Parse::karErrorMessage[] =
   "Failed to parse '%s' for %s value",
 };
 
-//==============================================================================
 const char* Parse::karTypeOpName[] =
 {
   "integer",
@@ -22,6 +21,10 @@ const char* Parse::karTypeOpName[] =
   "scalar",
   "float",
 };
+
+char  Parse::s_arErrorBuffer[];
+
+int Parse::s_errorCode(ERR_NONE);
 
 //==============================================================================
 int Parse::GetErrorCode()
