@@ -23,6 +23,20 @@ class UIBuilderScreen:  public Screen
 {
 public:
   // types
+  enum  Anchor
+  {
+    A_TOP_LEFT,
+    A_TOP,
+    A_TOP_RIGHT,
+    A_LEFT,
+    A_CENTER,
+    A_RIGHT,
+    A_BOTTOM_LEFT,
+    A_BOTTOM,
+    A_BOTTOM_RIGHT,
+    kNumAnchors
+  };
+  
   struct  Configuration
   {
     int                           depth;
@@ -46,13 +60,16 @@ public:
   typedef void(*TweenCallback)(Tweenable& t, void* pUser);
   
   // static
-  const static Configuration  s_defaultConfig;
+  static const Configuration  kDefaultConfig;
+  static const char* const    karAnchorName[kNumAnchors];
   
   // structors
   UIBuilderScreen();
   ~UIBuilderScreen();
   
   // general
+  virtual void        Reposition(int16 width, int16 height);
+  
   bool                Build(TiXmlElement* pXml, const Configuration& cfg);
   void                Destroy();
   

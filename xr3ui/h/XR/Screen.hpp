@@ -38,6 +38,9 @@ public:
   Screen();
   virtual ~Screen();
 
+  // virtual
+  virtual void    Reposition(int16 width, int16 height) =0;
+  
   // general
   State           GetState() const;
   bool            IsRegistered() const;
@@ -45,7 +48,7 @@ public:
   
   Screen*         GetPrevious() const;
   void            SetPrevious(Screen* pScreen);
-  
+
   void            Show(ScreenManager& sm, uint32 ms);
   void            Register();
   void            Unregister();

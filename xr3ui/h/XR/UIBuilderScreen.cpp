@@ -30,7 +30,7 @@ static const char* karTag[kNumTags] =
 };
 
 //==============================================================================
-const UIBuilderScreen::Configuration  UIBuilderScreen::s_defaultConfig =
+const UIBuilderScreen::Configuration  UIBuilderScreen::kDefaultConfig =
 {
   8,
   Sprite::Manager::Get,
@@ -40,6 +40,19 @@ const UIBuilderScreen::Configuration  UIBuilderScreen::s_defaultConfig =
   NewAllocate,
   NewDeallocate,
   0
+};
+
+const char* const UIBuilderScreen::karAnchorName[] =
+{
+  "top-left",
+  "top",
+  "top-right",
+  "left",
+  "center",
+  "right",
+  "bottom-left",
+  "bottom",
+  "bottom-right",
 };
 
 //==============================================================================
@@ -78,6 +91,8 @@ bool  UIBuilderScreen::Build(TiXmlElement* pXml, const Configuration& cfg)
 
     m_pDeallocate = cfg.pDeallocate;
     m_pDeallocateData = cfg.pAllocateData;
+    
+    Reposition(Renderer::GetScreenWidth(), Renderer::GetScreenHeight());
   }
   return result;
 }
@@ -142,6 +157,27 @@ void  UIBuilderScreen::_Hide(uint32 ms)
 void  UIBuilderScreen::_RemoveElements()
 {
   m_pManager->GetContainer().RemoveElement(&m_root);
+}
+
+//==============================================================================
+void  UIBuilderScreen::Reposition(int16 width, int16 height)
+{
+  XR_ASSERT(UIBuilderScreen, width > 0);
+  XR_ASSERT(UIBuilderScreen, height > 0);
+  const int16 arX[3] = { 0, width / 2, width };
+  const int16 arY[3] = { 0, height / 2, height };
+  for(int i = 0; i < kNumAnchors; ++i)
+  {
+    UIElement*  p(m_builder.GetElement(karTag[i]));
+    if(p != 0)
+    {
+      int x(i % 3);
+      int y(i / 3);
+      p->Align(arX[x], arY[y],
+        static_cast<UIElement::Alignment>(x + UIElement::AL_LOW),
+        static_cast<UIElement::Alignment>(y + UIElement::AL_LOW));
+    }
+  }
 }
 
 //==============================================================================
