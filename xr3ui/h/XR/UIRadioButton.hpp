@@ -44,9 +44,6 @@ public:
 
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
 
-  virtual void  Render() const;
-  virtual void  Render(UIRenderer* pRenderer) const;
-
   virtual void  OnSelectedStateChanged();
   
 protected:

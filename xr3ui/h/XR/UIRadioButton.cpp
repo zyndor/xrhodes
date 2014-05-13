@@ -4,8 +4,10 @@
 namespace XR
 {
 
+//==============================================================================
 UIRadioButton::List UIRadioButton::s_lButtons;
 
+//==============================================================================
 void UIRadioButton::GroupClear(uint32 groupHash)
 {
   for (List::iterator i0(s_lButtons.begin()), i1(s_lButtons.end()); i0 != i1; ++i0)
@@ -19,6 +21,7 @@ void UIRadioButton::GroupClear(uint32 groupHash)
   }
 }
 
+//==============================================================================
 void UIRadioButton::GroupClearExcept(uint32 groupHash, const UIRadioButton* pButton)
 {
   if (pButton != 0 && pButton->m_groupHash == groupHash)
@@ -35,6 +38,7 @@ void UIRadioButton::GroupClearExcept(uint32 groupHash, const UIRadioButton* pBut
   }
 }
 
+//==============================================================================
 UIRadioButton::UIRadioButton()
 : UICheckBox(),
   m_groupHash(NO_GROUP)
@@ -42,18 +46,21 @@ UIRadioButton::UIRadioButton()
   s_lButtons.push_back(this);
 }
 
+//==============================================================================
 UIRadioButton::~UIRadioButton()
 {
   List::iterator  iErase(std::find(s_lButtons.begin(), s_lButtons.end(), this));
   s_lButtons.erase(iErase);
 }
 
+//==============================================================================
 void UIRadioButton::SetGroup(const char* pGroupName)
 {
   XR_ASSERT(UIRadioButton, pGroupName != 0);
   SetGroup(Hash::String(pGroupName));
 }
 
+//==============================================================================
 void UIRadioButton::SetGroup(uint32 groupHash)
 {
   if (m_groupHash != groupHash)
@@ -67,6 +74,7 @@ void UIRadioButton::SetGroup(uint32 groupHash)
   }
 }
 
+//==============================================================================
 bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
 {
   const int kRight(CalculateRight());
@@ -117,8 +125,7 @@ bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
   return isHandled;
 }
 
-
-
+//==============================================================================
 void  UIRadioButton::OnSelectedStateChanged()
 {
   if (IsSelected() && m_groupHash != NO_GROUP)
