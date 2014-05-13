@@ -40,15 +40,17 @@ public:
   /// serialized objects.
   static void     ResetSerialization();
 
-  ///@brief Registers and assigns an id to the object @a pObj.
+  ///@brief Registers the object @a pObj.
+  ///@return  The id assigned to @a pObj.
   static IdType   RegisterSerialized(const Serialized* pObj);
 
-  ///@brief Retrieves the id assigned to @a pObj, or INVALID_ID, if @a pObj
-  /// was not registered.
+  ///@return  The id assigned to @a pObj, or INVALID_ID, if @a pOb was not
+  /// registered.
   static IdType   GetSerializedId(const Serialized* pObj);
 
   ///@brief Convenience method to get the id of @a pObj and write that to
   /// @a pFile.
+  ///@return Whether the operation was successful.
   static bool     SerializeId(const Serialized* pObj, int hFile);
 
   ///@brief Resets the next id to 0 and clears the list of jobs and the
@@ -74,6 +76,7 @@ public:
   ///@brief Convenience method to read an id from a @a pFile then call
   /// RegisterReference with the result, @a pObject, @a pOnInflateCb and
   /// @pOnInflateCbData.
+  ///@return Whether the operation was successful.
   template <class T>
   static bool     DeserializeId(T*& pObject, int hFile,
     OnInflateCallback pOnInflateCb, void* pOnInflateCbData);
@@ -81,6 +84,7 @@ public:
   ///@brief Convenience method to read an id from a @a pFile then call
   /// RegisterReference with the result, @a pObject, @a pOnInflateCb and
   /// @pOnInflateCbData.
+  ///@return Whether the operation was successful.
   template <class T>
   static bool     DeserializeId(const T*& pObject, int hFile,
     OnInflateCallback pOnInflateCb, void* pOnInflateCbData);

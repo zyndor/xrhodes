@@ -3,23 +3,27 @@
 namespace XR
 {
 
+//==============================================================================
 Serialized::IdType        Serialized::s_nextId;
 Serialized::IdMap         Serialized::s_ids;
 Serialized::JobList       Serialized::s_jobs;
 Serialized::SerializedMap Serialized::s_serialized;
 
+//==============================================================================
 void  Serialized::SetNextId(IdType id)
 {
   XR_ASSERT(Serialized, id != INVALID_ID);
   s_nextId = id;
 }
 
+//==============================================================================
 void  Serialized::ResetSerialization()
 {
   s_nextId = 0;
   s_ids.clear();
 }
 
+//==============================================================================
 Serialized::IdType  Serialized::RegisterSerialized(const Serialized* pObj)
 {
   XR_ASSERT(Serialized, pObj != 0);
@@ -30,6 +34,7 @@ Serialized::IdType  Serialized::RegisterSerialized(const Serialized* pObj)
   return id;
 }
 
+//==============================================================================
 Serialized::IdType  Serialized::GetSerializedId(const Serialized* pObj)
 {
   if (pObj == 0)
@@ -43,6 +48,7 @@ Serialized::IdType  Serialized::GetSerializedId(const Serialized* pObj)
   }
 }
 
+//==============================================================================
 bool  Serialized::SerializeId(const Serialized* pObj, int hFile)
 {
   XR_ASSERT(Serialized, hFile != File::INVALID_HANDLE);
@@ -50,6 +56,7 @@ bool  Serialized::SerializeId(const Serialized* pObj, int hFile)
   return File::Write(&id, sizeof(IdType), 1, hFile) == 1;
 }
 
+//==============================================================================
 void  Serialized::ResetDeserialization()
 {
   s_nextId = 0;
@@ -57,6 +64,7 @@ void  Serialized::ResetDeserialization()
   s_serialized.clear();
 }
 
+//==============================================================================
 void  Serialized::RegisterDeserialized(Serialized* pObj)
 {
   XR_ASSERT(Serialized, s_serialized.find(s_nextId) == s_serialized.end());
@@ -64,6 +72,7 @@ void  Serialized::RegisterDeserialized(Serialized* pObj)
   ++s_nextId;
 }
 
+//==============================================================================
 void  Serialized::ResolveReferences()
 {
   for (JobList::iterator i0(s_jobs.begin()), i1(s_jobs.end()); i0 != i1; ++i0)
