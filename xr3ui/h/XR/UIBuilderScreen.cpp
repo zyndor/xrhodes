@@ -7,6 +7,7 @@
 //==============================================================================
 #include "UIBuilderScreen.hpp"
 #include "ScreenManager.hpp"
+#include "UIGrowingLayoutBase.hpp"
 
 namespace XR
 {
@@ -112,6 +113,13 @@ void  UIBuilderScreen::Destroy()
 }
 
 //==============================================================================
+void  UIBuilderScreen::SetPadding(int padding)
+{
+  m_padding = padding;
+  Reposition(Renderer::GetScreenWidth(), Renderer::GetScreenHeight());
+}
+
+//==============================================================================
 void  UIBuilderScreen::_AddElements()
 {
   m_pManager->GetContainer().AddElement(&m_root);
@@ -164,8 +172,9 @@ void  UIBuilderScreen::Reposition(int16 width, int16 height)
 {
   XR_ASSERT(UIBuilderScreen, width > 0);
   XR_ASSERT(UIBuilderScreen, height > 0);
-  const int16 arX[3] = { 0, width / 2, width };
-  const int16 arY[3] = { 0, height / 2, height };
+  const int16 spacing = UIGrowingLayoutBase::GetDefaultSpacing();
+  const int16 arX[3] = { spacing, width / 2, width - spacing };
+  const int16 arY[3] = { spacing, height / 2, height - spacing };
   for(int i = 0; i < kNumAnchors; ++i)
   {
     UIElement*  p(m_builder.GetElement(karTag[i]));

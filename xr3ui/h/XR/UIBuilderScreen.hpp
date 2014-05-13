@@ -70,8 +70,12 @@ public:
   // general
   virtual void        Reposition(int16 width, int16 height);
   
-  bool                Build(TiXmlElement* pXml, const Configuration& cfg);
+  bool                Build(TiXmlElement* pXml,
+                        const Configuration& cfg = kDefaultConfig);
   void                Destroy();
+  
+  int                 GetPadding() const;
+  void                SetPadding(int padding);
   
   void                SetTweenIn(TweenCallback pOnTweenIn, void* pData);
   void                SetTweenOut(TweenCallback pOnTweenIn, void* pData);
@@ -85,6 +89,7 @@ protected:
   // data
   UIContainer                   m_root;
   UIBuilder                     m_builder;
+  int                           m_padding;
   
   UIBuilder::DeallocateCallback m_pDeallocate;
   void*                         m_pDeallocateData;
@@ -116,6 +121,13 @@ protected:
 
 //==============================================================================
 // implementation
+//==============================================================================
+inline
+int UIBuilderScreen::GetPadding() const
+{
+  return m_padding;
+}
+
 //==============================================================================
 inline
 int UIBuilderScreen::GetNumListeners() const
