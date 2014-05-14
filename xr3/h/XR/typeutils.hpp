@@ -75,8 +75,25 @@ struct  IsPointer<T*>
 };
 
 //==============================================================================
+///@brief Enforces T to be derived from B via implicit upcasting.
+template  <class T, class B>
+class AssertBase
+{
+  static void Constraint(T* p)
+  {
+    B* pBase = p;
+  }
+ 
+public:
+  AssertBase()
+  {
+    void(*p)(T*) = Constraint;
+  }
+};
+
+//==============================================================================
 ///@brief Static typeId based on of address of function-static variable.
-///@note  TypeId() doesn't persist across executions/platforms, only order does.
+///@note  TypeId() doesn't persist across executions/platforms.
 ///@note  Remember, TypeId for const T or T* != TypeId for T.
 template  <typename T>
 inline
