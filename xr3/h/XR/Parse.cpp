@@ -6,23 +6,12 @@ namespace XR
 {
 
 //==============================================================================
-const char* Parse::karErrorMessage[] =
+const char* const Parse::karErrorMessage[] =
 {
   "OK",
   "Failed to parse null string.",
   "Failed to parse '%s' for %s value",
 };
-
-const char* Parse::karTypeOpName[] =
-{
-  "integer",
-  "percent",
-  "multiplier",
-  "scalar",
-  "float",
-};
-
-char  Parse::s_arErrorBuffer[];
 
 int Parse::s_errorCode(ERR_NONE);
 
@@ -33,17 +22,10 @@ int Parse::GetErrorCode()
 }
 
 //==============================================================================
-const char* Parse::GetErrorMessage()
-{
-  return s_arErrorBuffer;
-}
-
-//==============================================================================
 bool Parse::BooleanPositive( const char* pValue )
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
-
+  
   bool  result(true);
   if (pValue != 0 && pValue[0] != '\0')
   {
@@ -61,7 +43,6 @@ bool Parse::BooleanPositive( const char* pValue )
 bool Parse::BooleanNegative( const char* pValue )
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   bool  result(false);
   if (pValue != 0 && pValue[0] != '\0')
@@ -77,36 +58,6 @@ bool Parse::BooleanNegative( const char* pValue )
 }
 
 //==============================================================================
-XR::Color Parse::Color( const char* pValue )
-{
-  s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
-
-  XR::Color col(0xffffffff);
-  if (pValue != 0)
-  {
-    uint32  rgba;
-    if (sscanf(pValue, "%x", &rgba) > 0)
-    {
-      if (strlen(pValue) <= 6)
-      {
-        rgba <<= 8;  
-        col.a = 1.0f;
-      }
-      else
-      {
-        col.a = (float)(XR_RGBA_EXTRACT_ALPHA(rgba) / 255.0f);
-      }
-
-      col.r = (float)(XR_RGBA_EXTRACT_RED(rgba) / 255.0f);
-      col.g = (float)(XR_RGBA_EXTRACT_GREEN(rgba) / 255.0f);
-      col.b = (float)(XR_RGBA_EXTRACT_BLUE(rgba) / 255.0f);
-    }
-  }
-  return col;
-}
-
-//==============================================================================
 int   Parse::Int(const char* pValue)
 {
   int v;
@@ -115,7 +66,6 @@ int   Parse::Int(const char* pValue)
     v = 0;
   }
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
   return v;
 }
 
@@ -128,36 +78,18 @@ int   Parse::Int(int base, const char* pValue)
     v = 0;
   }
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
   return v;
 }
-
-//==============================================================================
-float Parse::Float(const char* pValue)
-{
-  float v;
-  if (!Float(pValue, v))
-  {
-    v = .0f;
-  }
-  s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
-  return v;
-}
-
 
 //==============================================================================
 bool  Parse::Int( const char* pValue, int& v)
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   int value(0);
@@ -167,8 +99,6 @@ bool  Parse::Int( const char* pValue, int& v)
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
-      snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-        karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_INT]);
     }
   }
 
@@ -183,14 +113,11 @@ bool  Parse::Int( const char* pValue, int& v)
 bool  Parse::Int(int base, const char* pValue, int& v)
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   int value(0);
@@ -203,8 +130,6 @@ bool  Parse::Int(int base, const char* pValue, int& v)
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
-        snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-          karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_PERCENT]);
       }
 
       if (success)
@@ -225,8 +150,6 @@ bool  Parse::Int(int base, const char* pValue, int& v)
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
-        snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-          karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_MULTIPLIER]);
       }
 
       if (success)
@@ -241,8 +164,6 @@ bool  Parse::Int(int base, const char* pValue, int& v)
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
-        snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-          karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_SCALAR]);
       }
 
       if (success)
@@ -256,8 +177,6 @@ bool  Parse::Int(int base, const char* pValue, int& v)
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
-        snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-          karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_INT]);
       }
     }
   }
@@ -267,17 +186,26 @@ bool  Parse::Int(int base, const char* pValue, int& v)
 }
 
 //==============================================================================
+float Parse::Float(const char* pValue)
+{
+  float v;
+  if (!Float(pValue, v))
+  {
+    v = .0f;
+  }
+  s_errorCode = ERR_NONE;
+  return v;
+}
+
+//==============================================================================
 bool  Parse::Float(const char* pValue, float& v)
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   float value(.0f);
@@ -290,8 +218,6 @@ bool  Parse::Float(const char* pValue, float& v)
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
-        snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-          karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_PERCENT]);
       }
 
       if (success)
@@ -305,8 +231,6 @@ bool  Parse::Float(const char* pValue, float& v)
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
-        snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-          karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
       }
     }
   }
@@ -319,15 +243,12 @@ bool  Parse::Float(const char* pValue, float& v)
 bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   XR_ASSERT(Parse::FloatSpeedPerSecond, fps > .0f);
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   float value(.0f);
@@ -337,8 +258,6 @@ bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
-      snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-        karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
     if (success)
@@ -355,15 +274,12 @@ bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
 bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   XR_ASSERT(Parse::FloatAccelerationPerSecond, fps > .0f);
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   float value(.0f);
@@ -373,8 +289,6 @@ bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
-      snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-        karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
     if (success)
@@ -391,15 +305,12 @@ bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
 bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   XR_ASSERT(Parse::FloatScalingPerSecond, fps > .0f);
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   float value(.0f);
@@ -409,8 +320,6 @@ bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
-      snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-        karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
     if (success)
@@ -427,14 +336,11 @@ bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
 bool Parse::Range( const char* pValue, int& r0, int& r1 )
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   r0 = r1 = 0;
@@ -445,8 +351,6 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
-      snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-        karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
     if (success)
@@ -476,14 +380,11 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
 bool Parse::Range( const char* pValue, float& r0, float& r1 )
 {
   s_errorCode = ERR_NONE;
-  s_arErrorBuffer[0] = 0;
 
   bool  success(pValue != 0);
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
-    snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-      karErrorMessage[s_errorCode]);
   }
 
   r0 = r1 = 0;
@@ -494,8 +395,6 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
-      snprintf(s_arErrorBuffer, sizeof(s_arErrorBuffer),
-        karErrorMessage[s_errorCode], pValue, karTypeOpName[TO_FLOAT]);
     }
 
     if (success)
@@ -519,6 +418,35 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
     }
   }
   return success;
+}
+
+//==============================================================================
+XR::Color Parse::Color( const char* pValue )
+{
+  s_errorCode = ERR_NONE;
+
+  XR::Color col(0xffffffff);
+  if (pValue != 0)
+  {
+    uint32  rgba;
+    if (sscanf(pValue, "%x", &rgba) > 0)
+    {
+      if (strlen(pValue) <= 6)
+      {
+        rgba <<= 8;  
+        col.a = 1.0f;
+      }
+      else
+      {
+        col.a = (float)(XR_RGBA_EXTRACT_ALPHA(rgba) / 255.0f);
+      }
+
+      col.r = (float)(XR_RGBA_EXTRACT_RED(rgba) / 255.0f);
+      col.g = (float)(XR_RGBA_EXTRACT_GREEN(rgba) / 255.0f);
+      col.b = (float)(XR_RGBA_EXTRACT_BLUE(rgba) / 255.0f);
+    }
+  }
+  return col;
 }
 
 } // XR

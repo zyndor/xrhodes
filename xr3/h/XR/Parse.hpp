@@ -34,22 +34,11 @@ public:
     kNumErrors
   };
 
-  enum  TypeOp
-  {
-    TO_INT,
-    TO_PERCENT,
-    TO_MULTIPLIER,
-    TO_SCALAR,
-    TO_FLOAT,
-    kNumTypeOps
-  };
-
   // static
+  static const char* const  karErrorMessage[kNumErrors];
+  
   ///@return error code from last operation.
   static int  GetErrorCode();
-
-  ///@return Error message from last operation, if GetErrorCode() != ERR_NONE.
-  static const char*  GetErrorMessage();
 
   ///@brief Parses a string for a boolean, defaulting to positive unless <= 0,
   /// n{...} or N{...} is found. The string is allowed to be null.
@@ -71,16 +60,6 @@ public:
   ///@return  Integer value found (or defaulted to).
   static int  Int(int base, const char* pValue);
 
-  ///@brief Parses a string for a float value, defaulting to .0f. If a value
-  /// with '%' is specified, then 1/100 of it is used. If the operation was
-  /// successful, the value is then assigned to @a v.
-  ///@return  Float value found (or defaulted to).
-  static float  Float(const char* pValue);
-  
-  ///@brief Parses a string for an RGBA color, defaults to transparent black.
-  ///@return  Color found (or defaulted to).
-  static XR::Color Color(const char* pValue);
-
   ///@brief Parses a string for an int value. If the operation was successful,
   /// the value is then assigned to @a v.
   ///@return  Whether the operation was successful.
@@ -93,6 +72,12 @@ public:
   ///@return  Whether the operation was successful.
   static bool Int(int base, const char* pValue, int& v);
 
+  ///@brief Parses a string for a float value, defaulting to .0f. If a value
+  /// with '%' is specified, then 1/100 of it is used. If the operation was
+  /// successful, the value is then assigned to @a v.
+  ///@return  Float value found (or defaulted to).
+  static float  Float(const char* pValue);
+  
   ///@brief Parses a string for a float value. If a value with '%' is
   /// specified, then 1/100 of it is used. If the operation was successful, the
   /// value is then assigned to @a v.
@@ -125,12 +110,12 @@ public:
   ///@return  Whether the operation was successful.
   static bool Range(const char* pValue, float& r0, float& r1);
 
+  ///@brief Parses a string for an RGBA color, defaults to transparent black.
+  ///@return  Color found (or defaulted to).
+  static XR::Color Color(const char* pValue);
+
 protected:
   // static
-  static const char*  karErrorMessage[kNumErrors];
-  static const char*  karTypeOpName[kNumTypeOps];
-
-  static char s_arErrorBuffer[256];
   static int  s_errorCode;
 };
 
