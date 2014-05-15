@@ -106,23 +106,22 @@ public:
   void          Move(int16 vx, int16 vy);
 
   ///@brief Convenience method to register the element on a UIEventDispatcher
-  /// for S3E_POINTER_BUTTON_EVENT and S3E_POINTER_MOTION_EVENT.
+  /// for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
   bool          Register(UIEventDispatcher& disp);
 
   ///@brief Convenience method to unregister the element on a
-  /// UIEventDispatcher for S3E_POINTER_BUTTON_EVENT and
-  /// S3E_POINTER_MOTION_EVENT.
+  /// UIEventDispatcher for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
   bool          Unregister(UIEventDispatcher& disp);
 
   ///@brief Processes changes of position and/or size carried out via
   /// direct access to members.
   virtual void  OnChange();
 
-  ///@brief Handles an S3E_POINTER_BUTTON_EVENT.
+  ///@brief Handles an MOUSE_ACTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
   
-  ///@brief Handles an S3E_POINTER_MOTION_EVENT.
+  ///@brief Handles an MOUSE_MOTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
   virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
 
