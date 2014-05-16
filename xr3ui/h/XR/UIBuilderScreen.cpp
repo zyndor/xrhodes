@@ -23,7 +23,7 @@ enum
   kNumTags
 };
 
-static const char* karTag[kNumTags] = 
+static const char* const karTag[kNumTags] = 
 {
   "listener",
   "tweening",
@@ -177,7 +177,7 @@ void  UIBuilderScreen::Reposition(int16 width, int16 height)
   const int16 arY[3] = { spacing, height / 2, height - spacing };
   for(int i = 0; i < kNumAnchors; ++i)
   {
-    UIElement*  p(m_builder.GetElement(karTag[i]));
+    UIElement*  p(m_builder.GetElement(karAnchorName[i]));
     if(p != 0)
     {
       int x(i % 3);
