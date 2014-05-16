@@ -78,69 +78,32 @@ bool  GetXmlFloatAttribute(TiXmlElement* pXml, const char* pAttribName, float& v
 }
 
 //==============================================================================
-// alignment values
-const char* UIBuilder::karpAlignValues[] =
-{
-  "low",
-  "center",
-  "high",
-  "none"
-};
-
-const uint32 UIBuilder::karAlignValueHash[] =
-{
-  Hash::String(karpAlignValues[XA_LOW]),
-  Hash::String(karpAlignValues[XA_CENTER]),
-  Hash::String(karpAlignValues[XA_HIGH]),
-  Hash::String(karpAlignValues[XA_NONE])
-};
-
-//==============================================================================
-int UIBuilder::GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName)
-{
-  XR_ASSERT(UIBuilder, pXml != 0);
-  XR_ASSERT(UIBuilder, pAttribName != 0);
-
-  int value(XA_NONE);
-  const char* pValue(pXml->Attribute(pAttribName));
-  if (pValue != 0)
-  {
-    value = FindHashedListStringValue(karAlignValueHash, kNumAlignValues, pValue);
-    if (value >= kNumAlignValues) // if not found, default to none
-    {
-      XR_TRACE(UIBuilder, ("The value of '%s' is not a valid alignment.", pAttribName));
-      value = XA_NONE;
-    }
-  }
-  return value;
-}
-
-//==============================================================================
 // size to content values
-enum  XmlSizeToContentValue
+enum  XmlDimension
 {
-  XSTC_WIDTH,
-  XSTC_HEIGHT,
-  kNumSizeToContentValues
+  XD_WIDTH,
+  XD_HEIGHT,
+  kNumXmlDimensions
 };
 
-static const int karSizeToContentChars[kNumSizeToContentValues] =
+static const int karXmlDimensionChars[kNumXmlDimensions] =
 {
   'w',
   'h'
 };
 
-int GetXmlSizeToContent(TiXmlElement* pXml)
+uint32  GetXmlDimensionMask(TiXmlElement* pXml, const char* pAttribName)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
+  XR_ASSERT(UIBuilder, pAttribName != 0);
 
-  int value(0);
-  const char* pValue(pXml->Attribute("sizeToContent"));
+  uint32 value(0);
+  const char* pValue(pXml->Attribute(pAttribName));
   if (pValue != 0)
   {
-    for (int i = 0; i < kNumSizeToContentValues; ++i)
+    for (int i = 0; i < kNumXmlDimensions; ++i)
     {
-      if (strchr(pValue, karSizeToContentChars[i]))
+      if (strchr(pValue, karXmlDimensionChars[i]) != 0)
       {
         value |= XR_MASK_ID(i);
       }
@@ -380,19 +343,19 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     }
 
     // size to content
-    uint32 sizeToContentValue(GetXmlSizeToContent(pXml));
-    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH) | XR_MASK_ID(XSTC_HEIGHT)))
+    uint32 sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
+    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH) | XR_MASK_ID(XD_HEIGHT)))
     {
       pLabel->SetSizeToText();
     }
     else
     {
-      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH)))
+      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH)))
       {
         pLabel->SetWidthToText();
       }
 
-      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_HEIGHT)))
+      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_HEIGHT)))
       {   
         pLabel->SetHeightToText();
       }
@@ -1142,6 +1105,66 @@ bool  UIBInitUIGridLayout( TiXmlElement* pXml, UIElement* pUIElem,
 }
 
 //==============================================================================
+// alignment values
+const char* const UIBuilder::karpAlignValues[] =
+{
+  "low",
+  "center",
+  "high",
+  "none"
+};
+
+const uint32 UIBuilder::karAlignValueHash[] =
+{
+  Hash::String(karpAlignValues[XA_LOW]),
+  Hash::String(karpAlignValues[XA_CENTER]),
+  Hash::String(karpAlignValues[XA_HIGH]),
+  Hash::String(karpAlignValues[XA_NONE])
+};
+
+const char* const  UIBuilder::karpElementName[] =
+{
+  "spacer",
+  "button",
+  "checkBox",
+  "radioButton",
+  "label",
+  "image",
+  "imagePanel",
+  "hProgress",
+  "vProgress",
+  "hSlider",
+  "vSlider",
+  "aligner",
+  "cascader",
+  "hLayout",
+  "vLayout",
+  "hScrollLayout",
+  "vScrollLayout",
+  "gridLayout",
+};
+
+//==============================================================================
+int UIBuilder::GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName)
+{
+  XR_ASSERT(UIBuilder, pXml != 0);
+  XR_ASSERT(UIBuilder, pAttribName != 0);
+
+  int value(XA_NONE);
+  const char* pValue(pXml->Attribute(pAttribName));
+  if (pValue != 0)
+  {
+    value = FindHashedListStringValue(karAlignValueHash, kNumAlignValues, pValue);
+    if (value >= kNumAlignValues) // if not found, default to none
+    {
+      XR_TRACE(UIBuilder, ("The value of '%s' is not a valid alignment.", pAttribName));
+      value = XA_NONE;
+    }
+  }
+  return value;
+}
+
+//==============================================================================
 UIBuilder::UIBuilder()
 : m_creators(),
   m_pGetFontCb(0),
@@ -1154,28 +1177,40 @@ UIBuilder::UIBuilder()
   m_parLevels(0),
   m_handles()
 {
-  RegisterCreator("spacer", UIBCreateUISpacer, UIBInitUIElement, false);
-  RegisterCreator("button", UIBCreateUIButton, UIBInitUIButton, false);
-  RegisterCreator("checkBox", UIBCreateUICheckBox, UIBInitUICheckBox, false);
-  RegisterCreator("radioButton", UIBCreateUIRadioButton, UIBInitUIRadioButton, false);
-  RegisterCreator("label", UIBCreateUILabel, UIBInitUILabel, false);
-  RegisterCreator("image", UIBCreateUIImage, UIBInitUIImage, false);
-  RegisterCreator("imagePanel", UIBCreateUIImagePanel, UIBInitUIImagePanel, false);
-  RegisterCreator("hProgress", UIBCreateUIHorizontalProgressBar, UIBInitUIProgressBarBase, false);
-  RegisterCreator("vProgress", UIBCreateUIVerticalProgressBar, UIBInitUIProgressBarBase, false);
-  RegisterCreator("hSlider", UIBCreateUIHorizontalSlider, UIBInitUISliderBase, false);
-  RegisterCreator("vSlider", UIBCreateUIVerticalSlider, UIBInitUISliderBase, false);
+  RegisterCreator(karpElementName[UI_SPACER], UIBCreateUISpacer,
+    UIBInitUIElement, false);
+  RegisterCreator(karpElementName[UI_BUTTON], UIBCreateUIButton,
+    UIBInitUIButton, false);
+  RegisterCreator(karpElementName[UI_CHECKBOX], UIBCreateUICheckBox,
+    UIBInitUICheckBox, false);
+  RegisterCreator(karpElementName[UI_RADIOBUTTON], UIBCreateUIRadioButton,
+    UIBInitUIRadioButton, false);
+  RegisterCreator(karpElementName[UI_LABEL], UIBCreateUILabel, UIBInitUILabel, false);
+  RegisterCreator(karpElementName[UI_IMAGE], UIBCreateUIImage, UIBInitUIImage, false);
+  RegisterCreator(karpElementName[UI_IMAGEPANEL], UIBCreateUIImagePanel, UIBInitUIImagePanel, false);
+  RegisterCreator(karpElementName[UI_HPROGRESS], UIBCreateUIHorizontalProgressBar,
+    UIBInitUIProgressBarBase, false);
+  RegisterCreator(karpElementName[UI_VPROGRESS], UIBCreateUIVerticalProgressBar,
+    UIBInitUIProgressBarBase, false);
+  RegisterCreator(karpElementName[UI_HSLIDER], UIBCreateUIHorizontalSlider,
+    UIBInitUISliderBase, false);
+  RegisterCreator(karpElementName[UI_VSLIDER], UIBCreateUIVerticalSlider,
+    UIBInitUISliderBase, false);
 
   // containers
-  RegisterCreator("aligner", UIBCreateUICascader, UIBInitUIAligner, true);
-  RegisterCreator("cascader", UIBCreateUIAligner, UIBInitUICascader, true);
-  RegisterCreator("hLayout", UIBCreateUIHorizontalLayout, UIBInitUIGrowingLayout, true);
-  RegisterCreator("vLayout", UIBCreateUIVerticalLayout, UIBInitUIGrowingLayout, true);
-  RegisterCreator("hScrollLayout", UIBCreateUIHorizontalScrollingLayout,
+  RegisterCreator(karpElementName[UI_ALIGNER], UIBCreateUICascader,
+    UIBInitUIAligner, true);
+  RegisterCreator(karpElementName[UI_CASCADER], UIBCreateUIAligner,
+    UIBInitUICascader, true);
+  RegisterCreator(karpElementName[UI_HLAYOUT], UIBCreateUIHorizontalLayout,
+    UIBInitUIGrowingLayout, true);
+  RegisterCreator(karpElementName[UI_VLAYOUT], UIBCreateUIVerticalLayout,
+    UIBInitUIGrowingLayout, true);
+  RegisterCreator(karpElementName[UI_HSCROLLINGLAYOUT], UIBCreateUIHorizontalScrollingLayout,
     UIBInitUIHorizontalScrollingLayout, true);
-  RegisterCreator("vScrollLayout", UIBCreateUIVerticalScrollingLayout,
+  RegisterCreator(karpElementName[UI_VSCROLLINGLAYOUT], UIBCreateUIVerticalScrollingLayout,
     UIBInitUIVerticalScrollingLayout, true);
-  RegisterCreator("gridLayout", UIBCreateUIGridLayout, UIBInitUIGridLayout, true);
+  RegisterCreator(karpElementName[UI_GRIDLAYOUT], UIBCreateUIGridLayout, UIBInitUIGridLayout, true);
 }
 
 //==============================================================================
@@ -1206,7 +1241,6 @@ void  UIBuilder::RegisterCreator( const char* pName, CreateCallback pCreateCb,
     pCreateCb,
     pInitCb,
     isContainer
-
 #if defined IW_DEBUG
     , pName
 #endif
@@ -1401,6 +1435,15 @@ void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
     RegisterNamedElement(pValue, pUIElem);
   }
 
+  const UIElement*  pParent(pUIElem->GetParent());
+  if(pParent != 0)
+  {
+    uint32  flags(GetXmlDimensionMask(pXml, "fillParent"));
+    int16   w((flags & XR_MASK_ID(XD_WIDTH)) != 0 ? pParent->w : pUIElem->w);
+    int16   h((flags & XR_MASK_ID(XD_HEIGHT)) != 0 ? pParent->h : pUIElem->h);
+    pUIElem->SetSize(w, h);
+  }
+  
   pValue = pXml->Attribute("alignTo");
   if (pValue != 0)
   {
@@ -1475,19 +1518,19 @@ void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
 //==============================================================================
 void UIBuilder::_PostProcessContainer( TiXmlElement* pXml, UIContainer* pContainer)
 {
-  uint32 sizeToContentValue(GetXmlSizeToContent(pXml));
-  if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH) | XR_MASK_ID(XSTC_HEIGHT)))
+  uint32 sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
+  if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH) | XR_MASK_ID(XD_HEIGHT)))
   {
     pContainer->SetSizeToContent();
   }
   else
   {
-    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_WIDTH)))
+    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH)))
     {
       pContainer->SetWidthToContent();
     }
 
-    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XSTC_HEIGHT)))
+    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_HEIGHT)))
     {   
       pContainer->SetHeightToContent();
     }

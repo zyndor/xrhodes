@@ -43,7 +43,7 @@ public:
     kNumAlignValues
   };
 
-  enum UIElementTypes
+  enum UIElementType
   {
     UI_SPACER,
     UI_BUTTON,
@@ -51,6 +51,7 @@ public:
     UI_RADIOBUTTON,
     UI_LABEL,
     UI_IMAGE,
+    UI_IMAGEPANEL,
     UI_HPROGRESS,
     UI_VPROGRESS,
     UI_HSLIDER,
@@ -66,13 +67,12 @@ public:
   };
 
   // static
-  static const char*  karpAlignValues[kNumAlignValues];
-  static const uint32 karAlignValueHash[kNumAlignValues];
+  static const char* const  karpAlignValues[kNumAlignValues];
+  static const uint32       karAlignValueHash[kNumAlignValues];
 
-  static const char*  karDefaultName[kNumUIElementTypes];
+  static const char* const  karpElementName[kNumUIElementTypes];
 
-  static int          GetXmlAlignment(TiXmlElement* pXml,
-                        const char* pAttribName);
+  static int    GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName);
  
   // structors
   UIBuilder();
