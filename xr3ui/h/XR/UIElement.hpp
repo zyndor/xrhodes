@@ -12,6 +12,7 @@
 #if !defined XR_UIELEMENT_HPP
 #define XR_UIELEMENT_HPP
 
+#include <list>
 #include <XR/utils.hpp>
 #include <XR/Rect.hpp>
 #include <XR/Input.hpp>
@@ -37,6 +38,8 @@ public:
     AL_NOALIGN
   };
   
+  typedef std::list<UIElement*> List;
+
   // static
   static void  OnChangeCaller(void* pData);
   

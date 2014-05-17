@@ -204,7 +204,7 @@ void UIGridLayout::SetAlignment( Alignment hAlign, Alignment vAlign )
 void UIGridLayout::_SetWidthToContent()
 {
   int wNew(0);
-  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     int wElem((*i0)->w);
     if (wElem > wNew)
@@ -221,7 +221,7 @@ void UIGridLayout::_SetWidthToContent()
 void UIGridLayout::_SetHeightToContent()
 {
   int hNew(0);
-  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     int hElem((*i0)->h);
     if (hElem > hNew)

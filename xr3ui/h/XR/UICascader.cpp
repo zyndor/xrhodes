@@ -83,7 +83,7 @@ void UICascader::_SetWidthToContent()
 {
   int16 xMin(std::numeric_limits<int16>::max());
   int16 xMax(std::numeric_limits<int16>::min());
-  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     const UIElement*  pElem(*i0);
     if (pElem->x < xMin)
@@ -105,7 +105,7 @@ void UICascader::_SetHeightToContent()
 {
   int16 yMin(std::numeric_limits<int16>::max());
   int16 yMax(std::numeric_limits<int16>::min());
-  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     const UIElement*  pElem(*i0);
     if (pElem->y < yMin)

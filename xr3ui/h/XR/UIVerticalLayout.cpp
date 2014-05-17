@@ -62,7 +62,7 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
 void UIVerticalLayout::_SetHeightToContent()
 {
   int hNew = 0;
-  for (ElementList::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     hNew += (*i0)->h;
   }
