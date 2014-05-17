@@ -61,10 +61,17 @@ UIBuilderScreen::UIBuilderScreen ()
 : Screen(),
   m_root(),
   m_builder(),
+  m_padding(0),
+  m_pDeallocate(0),
+  m_pDeallocateData(0),
   m_numListeners(0),
   m_parpListeners(0),
   m_numTweening(0),
-  m_parpTweening(0)
+  m_parpTweening(0),
+  m_pTweenIn(0),
+  m_pTweenInData(0),
+  m_pTweenOut(0),
+  m_pTweenOutData(0)
 {}
 
 //==============================================================================
@@ -103,11 +110,15 @@ void  UIBuilderScreen::Destroy()
 {
   m_builder.Destroy();
   
-  (*m_pDeallocate)(m_parpListeners, m_pDeallocateData);
+  if(m_pDeallocate != 0)
+  {
+    (*m_pDeallocate)(m_parpListeners, m_pDeallocateData);
+    (*m_pDeallocate)(m_parpTweening, m_pDeallocateData);
+  }
+  
   memset(m_parpListeners, sizeof(UIElement*) * m_numListeners, 0x00);
   m_numListeners = 0;
   
-  (*m_pDeallocate)(m_parpTweening, m_pDeallocateData);
   memset(m_parpTweening, sizeof(UIElement*) * m_numTweening, 0x00);
   m_numTweening = 0;
 }
