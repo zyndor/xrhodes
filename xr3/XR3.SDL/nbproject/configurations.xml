@@ -88,6 +88,14 @@
       <logicalFolder name="f1" displayName="glew" projectFiles="true">
         <itemPath>C:/glew-1.10.0/src/glew.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="f2" displayName="tinyxml" projectFiles="true">
+        <itemPath>C:/tinyxml/tinystr.cpp</itemPath>
+        <itemPath>C:/tinyxml/tinystr.h</itemPath>
+        <itemPath>C:/tinyxml/tinyxml.cpp</itemPath>
+        <itemPath>C:/tinyxml/tinyxml.h</itemPath>
+        <itemPath>C:/tinyxml/tinyxmlerror.cpp</itemPath>
+        <itemPath>C:/tinyxml/tinyxmlparser.cpp</itemPath>
+      </logicalFolder>
       <itemPath>D:/repos/xr3/xr3/h/XR/AABB.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/ActorInstance.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/ActorReader.cpp</itemPath>
@@ -198,6 +206,18 @@
         </archiverTool>
       </compileType>
       <item path="C:/glew-1.10.0/src/glew.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinystr.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinystr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxml.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxml.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxmlerror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxmlparser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/AABB.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -767,6 +787,18 @@
         </archiverTool>
       </compileType>
       <item path="C:/glew-1.10.0/src/glew.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinystr.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinystr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxml.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxml.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxmlerror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="C:/tinyxml/tinyxmlparser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/AABB.cpp" ex="false" tool="1" flavor2="0">
       </item>

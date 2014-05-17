@@ -36,6 +36,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/241328751/glew.o \
+	${OBJECTDIR}/_ext/1255643999/tinystr.o \
+	${OBJECTDIR}/_ext/1255643999/tinyxml.o \
+	${OBJECTDIR}/_ext/1255643999/tinyxmlerror.o \
+	${OBJECTDIR}/_ext/1255643999/tinyxmlparser.o \
 	${OBJECTDIR}/_ext/1046665460/AABB.o \
 	${OBJECTDIR}/_ext/1046665460/ActorInstance.o \
 	${OBJECTDIR}/_ext/1046665460/ActorReader.o \
@@ -132,6 +136,26 @@ ${OBJECTDIR}/_ext/241328751/glew.o: /C/glew-1.10.0/src/glew.c
 	${MKDIR} -p ${OBJECTDIR}/_ext/241328751
 	${RM} "$@.d"
 	$(COMPILE.c) -g -I/D/repos/xr3/xr3/h -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/241328751/glew.o /C/glew-1.10.0/src/glew.c
+
+${OBJECTDIR}/_ext/1255643999/tinystr.o: /C/tinyxml/tinystr.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1255643999
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1255643999/tinystr.o /C/tinyxml/tinystr.cpp
+
+${OBJECTDIR}/_ext/1255643999/tinyxml.o: /C/tinyxml/tinyxml.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1255643999
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1255643999/tinyxml.o /C/tinyxml/tinyxml.cpp
+
+${OBJECTDIR}/_ext/1255643999/tinyxmlerror.o: /C/tinyxml/tinyxmlerror.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1255643999
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1255643999/tinyxmlerror.o /C/tinyxml/tinyxmlerror.cpp
+
+${OBJECTDIR}/_ext/1255643999/tinyxmlparser.o: /C/tinyxml/tinyxmlparser.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1255643999
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1255643999/tinyxmlparser.o /C/tinyxml/tinyxmlparser.cpp
 
 ${OBJECTDIR}/_ext/1046665460/AABB.o: /D/repos/xr3/xr3/h/XR/AABB.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
