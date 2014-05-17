@@ -8,8 +8,8 @@ namespace JSON
     
 const char  Writer::kIndent = '\t';
 
-const char* Writer::kEscapeChars = "\"\\/\b\f\n\r\t";
-const char* Writer::kEscapeSubs[] =
+const char* const Writer::kEscapeChars = "\"\\/\b\f\n\r\t";
+const char* const Writer::karEscapeSub[] =
 {
   "\\\"",
   "\\\\",
@@ -361,7 +361,7 @@ void Writer::_ProcessEscaped( const char* pValue )
       pNextEscape = strchr(kEscapeChars, pValue[0]);
       if (pNextEscape != 0)
       {
-        m_stream << kEscapeSubs[pNextEscape - kEscapeChars];
+        m_stream << karEscapeSub[pNextEscape - kEscapeChars];
         ++pValue;
       }
     }

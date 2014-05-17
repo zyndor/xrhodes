@@ -19,7 +19,7 @@ namespace XR
 {
 namespace JSON
 {
-    
+
 //==============================================================================
 ///@brief Writes JSON to a stream.
 class Writer
@@ -34,19 +34,25 @@ public:
     OBJECT,
     ARRAY
   };
+  
+  enum  EscapedChar
+  {
+    EC_QUOT,
+    EC_BACKSLASH,
+    EC_SLASH,
+    EC_BACKSPACE,
+    EC_FORM_FEED,
+    EC_NEWLINE,
+    EC_CARRIAGE_RETURN,
+    EC_TAB,
+    kNumEscapedChars
+  };
 
   // static
-//  static const char*  kQuot;
-//  static const char*  kColon;
-//  static const char*  kComma;
-//  static const char*  kObjectOpen;
-//  static const char*  kObjectClose;
-//  static const char*  kArrayOpen;
-//  static const char*  kArrayClose;
   static const char   kIndent;
 
-  static const char*  kEscapeChars;
-  static const char*  kEscapeSubs[];
+  static const char* const kEscapeChars;
+  static const char* const karEscapeSub[kNumEscapedChars];
 
   // structors
   explicit Writer(int maxDepth = kMaxParseDepthDefault);
