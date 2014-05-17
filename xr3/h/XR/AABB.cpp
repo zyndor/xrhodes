@@ -14,9 +14,7 @@ namespace XR
 {
 
 //==============================================================================
-const char*  AABB::kRootTag = "aabb";
-
-const char*  AABB::kTags[] =
+const char* const AABB::karTag[] =
 {
   "left",
   "bottom",
