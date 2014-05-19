@@ -28,12 +28,25 @@ public:
   // types
   typedef void*(*AllocateCallback)(int size, void* pUser);
 
-  typedef UIElement*(*CreateCallback)(AllocateCallback, void* pUser);
+  typedef UIElement*(*CreateCallback)(AllocateCallback pAllocate, void* pUser);
   typedef bool(*InitCallback)(TiXmlElement* pXml, UIElement* pUIElem,
-    UIContainer* pContainer, const UIBuilder* pBuilder);
+    UIContainer* pContainer, const UIBuilder& builder);
 
   typedef void(*DeallocateCallback)(void* pMemory, void* pUser);
 
+  struct  Configuration
+  {
+    int                           maxDepth;
+    Sprite::GetCallback           pGetSprite;
+    void*                         pGetSpriteData;
+    Font::GetCallback             pGetFont;
+    void*                         pGetFontData;
+    UIBuilder::AllocateCallback   pAllocate;
+    void*                         pAllocateData;
+    UIBuilder::DeallocateCallback pDeallocate;
+    void*                         pDeallocateData;
+  };
+  
   enum  XmlAlignValue
   {
     XA_LOW = UIElement::AL_LOW + 1,
@@ -67,36 +80,41 @@ public:
   };
 
   // static
-  static const char* const  karpAlignValues[kNumAlignValues];
-  static const uint32       karAlignValueHash[kNumAlignValues];
+  static const char* const    karpAlignValues[kNumAlignValues];
+  static const uint32         karAlignValueHash[kNumAlignValues];
 
-  static const char* const  karpElementName[kNumUIElementTypes];
+  static const char* const    karpElementName[kNumUIElementTypes];
+
+  static const Configuration  kDefaultConfig;
 
   static int    GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName);
  
   // structors
-  UIBuilder();
+  explicit UIBuilder(const Configuration& cfg = kDefaultConfig);
   ~UIBuilder();
 
   // general use
-  const Sprite* GetSprite(const char* pName) const;
-  const Font*   GetFont(const char* pName) const;
-
+  const Configuration&  GetConfiguration() const;
+  void                  SetConfiguration(const Configuration& cfg);
+  
   void          SetMaxDepth(int maxDepth);
 
-  void          RegisterGetSpriteCallback(Sprite::GetCallback pGetSpriteCb,
-                  void* pCbData);
-  void          RegisterGetFontCallback(Font::GetCallback pGetFontCb,
-                  void* pCbData);
+  void          SetAllocateCallback(AllocateCallback pAllocateCb, void* pCbData);
+  void          SetDeallocateCallback(DeallocateCallback pAllocateCb, void* pCbData);
+  void          SetGetSpriteCallback(Sprite::GetCallback pGetSpriteCb, void* pCbData);
+  void          SetGetFontCallback(Font::GetCallback pGetFontCb, void* pCbData);
 
+  void*         Allocate(int size);
+  void          Deallocate(void* pBuffer);
+  const Sprite* GetSprite(const char* pName) const;
+  const Font*   GetFont(const char* pName) const;
+  
   void          RegisterCreator(const char* pName, CreateCallback pCreateCb,
                   InitCallback pInitCb, bool isContainer);
 
   bool          RegisterNamedElement(const char* pName, UIElement* pUIElem);
 
-  bool          Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
-                  DeallocateCallback pDeallocateCb, void* pCbData,
-                  UIContainer& container);
+  bool          Build(TiXmlElement* pXml, UIContainer& container);
 
   UIElement*    GetElement(uint32 hash) const;
   UIElement*    GetElement(const char* pHandle) const;
@@ -130,19 +148,10 @@ protected:
 
   // data
   CreatorMap          m_creators;
-
-  Sprite::GetCallback m_pGetSpriteCb;
-  void*               m_pGetSpriteCbData;
-
-  Font::GetCallback   m_pGetFontCb;
-  void*               m_pGetFontCbData;
-
-  DeallocateCallback  m_pDeallocateCb;
-  void*               m_pDeallocateCbData;
+  Configuration       m_cfg;
 
   UIContainer*        m_pRoot;
   int                 m_depth;
-  int                 m_maxDepth;  
   UIElementList*      m_parLevels;
 
   ElementMap          m_handles;
@@ -150,6 +159,7 @@ protected:
 
 //==============================================================================
 void* PoolAllocate(int size, void* pUser);
+void  PoolDeallocate(void* pMem, void* pUser);
 
 //==============================================================================
 void* NewAllocate(int size, void* pUser);
@@ -391,6 +401,15 @@ bool UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
 ///  of the w (affects width) and h (affects height) characters, and sets the
 ///  given dimension of the container to the maximum of its children's
 ///  respective dimension(s) after all of the children have been added.
+
+//==============================================================================
+// implementation
+//==============================================================================
+inline
+const UIBuilder::Configuration& UIBuilder::GetConfiguration() const
+{
+  return  m_cfg;
+}
 
 } // XR
 

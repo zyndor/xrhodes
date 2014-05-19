@@ -37,18 +37,6 @@ public:
     kNumAnchors
   };
   
-  struct  Configuration
-  {
-    int                           depth;
-    Sprite::GetCallback           pGetSprite;
-    void*                         pGetSpriteData;
-    Font::GetCallback             pGetFont;
-    void*                         pGetFontData;
-    UIBuilder::AllocateCallback   pAllocate;
-    UIBuilder::DeallocateCallback pDeallocate;
-    void*                         pAllocateData;
-  };
-  
   struct  Tweenable
   {
     UIElement*  pElem;
@@ -60,18 +48,18 @@ public:
   typedef void(*TweenCallback)(Tweenable& t, void* pUser);
   
   // static
-  static const Configuration  kDefaultConfig;
   static const char* const    karAnchorName[kNumAnchors];
   
   // structors
-  UIBuilderScreen();
+  explicit UIBuilderScreen(const UIBuilder::Configuration& cfg);
   ~UIBuilderScreen();
   
   // general
   virtual void        Reposition(int16 width, int16 height);
   
-  bool                Build(TiXmlElement* pXml,
-                        const Configuration& cfg = kDefaultConfig);
+  void                SetConfiguration(const UIBuilder::Configuration& cfg);
+  
+  bool                Build(TiXmlElement* pXml);
   void                Destroy();
   
   int                 GetPadding() const;
@@ -90,9 +78,6 @@ protected:
   UIContainer                   m_root;
   UIBuilder                     m_builder;
   int                           m_padding;
-  
-  UIBuilder::DeallocateCallback m_pDeallocate;
-  void*                         m_pDeallocateData;
   
   int                           m_numListeners;
   UIElement**                   m_parpListeners;  // own the array, not the elements
@@ -115,8 +100,8 @@ protected:
   virtual void  _Register();
   virtual void  _Unregister();
   
-  void          _ProcessListeners(TiXmlElement* pXml, const Configuration& cfg);
-  void          _ProcessTweening(TiXmlElement* pXml, const Configuration& cfg);
+  void          _ProcessListeners(TiXmlElement* pXml);
+  void          _ProcessTweening(TiXmlElement* pXml);
 };
 
 //==============================================================================

@@ -31,18 +31,6 @@ static const char* const karTag[kNumTags] =
 };
 
 //==============================================================================
-const UIBuilderScreen::Configuration  UIBuilderScreen::kDefaultConfig =
-{
-  8,
-  Sprite::Manager::Get,
-  0,
-  Font::Manager::Get,
-  0,
-  NewAllocate,
-  NewDeallocate,
-  0
-};
-
 const char* const UIBuilderScreen::karAnchorName[] =
 {
   "top-left",
@@ -57,13 +45,11 @@ const char* const UIBuilderScreen::karAnchorName[] =
 };
 
 //==============================================================================
-UIBuilderScreen::UIBuilderScreen ()
+UIBuilderScreen::UIBuilderScreen(const UIBuilder::Configuration& cfg)
 : Screen(),
   m_root(),
   m_builder(),
   m_padding(0),
-  m_pDeallocate(0),
-  m_pDeallocateData(0),
   m_numListeners(0),
   m_parpListeners(0),
   m_numTweening(0),
@@ -81,25 +67,24 @@ UIBuilderScreen::~UIBuilderScreen ()
 }
 
 //==============================================================================
-bool  UIBuilderScreen::Build(TiXmlElement* pXml, const Configuration& cfg)
+void  UIBuilderScreen::SetConfiguration(const UIBuilder::Configuration& cfg)
+{
+  m_builder.SetConfiguration(cfg);
+}
+
+//==============================================================================
+bool  UIBuilderScreen::Build(TiXmlElement* pXml)
 {
   Destroy();
   
   XR_ASSERT(UIBuilderScreen, pXml != 0);
   
-  m_builder.RegisterGetSpriteCallback(cfg.pGetSprite, cfg.pGetSpriteData);
-  m_builder.RegisterGetFontCallback(cfg.pGetFont, cfg.pGetFontData);
-  
-  bool  result(m_builder.Build(pXml, cfg.pAllocate, cfg.pDeallocate,
-    cfg.pAllocateData, m_root));
+  bool  result(m_builder.Build(pXml, m_root));
   if(result)
   {
-    _ProcessListeners(pXml, cfg);
-    _ProcessTweening(pXml, cfg);
+    _ProcessListeners(pXml);
+    _ProcessTweening(pXml);
 
-    m_pDeallocate = cfg.pDeallocate;
-    m_pDeallocateData = cfg.pAllocateData;
-    
     Reposition(Renderer::GetScreenWidth(), Renderer::GetScreenHeight());
   }
   return result;
@@ -110,11 +95,8 @@ void  UIBuilderScreen::Destroy()
 {
   m_builder.Destroy();
   
-  if(m_pDeallocate != 0)
-  {
-    (*m_pDeallocate)(m_parpListeners, m_pDeallocateData);
-    (*m_pDeallocate)(m_parpTweening, m_pDeallocateData);
-  }
+  m_builder.Deallocate(m_parpListeners);
+  m_builder.Deallocate(m_parpTweening);
   
   memset(m_parpListeners, sizeof(UIElement*) * m_numListeners, 0x00);
   m_numListeners = 0;
@@ -221,8 +203,7 @@ void  UIBuilderScreen::_Unregister()
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessListeners(TiXmlElement* pXml,
-        const Configuration& cfg)
+void  UIBuilderScreen::_ProcessListeners(TiXmlElement* pXml)
 {
   TiXmlElement* pListenerXml(pXml->FirstChildElement(karTag[TAG_LISTENER]));
   UIElementList l;
@@ -242,16 +223,14 @@ void  UIBuilderScreen::_ProcessListeners(TiXmlElement* pXml,
   }
   
   m_numListeners = l.size();
-  void* pMem = static_cast<UIElement*>((*cfg.pAllocate)(sizeof(UIElement*) *
-    m_numListeners, cfg.pAllocateData));
+  void* pMem = m_builder.Allocate(sizeof(UIElement*) * m_numListeners);
   m_parpListeners = new (pMem) UIElement*[m_numListeners];
 
   std::copy(l.begin(), l.end(), m_parpListeners);
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessTweening(TiXmlElement* pXml,
-        const Configuration& cfg)
+void  UIBuilderScreen::_ProcessTweening(TiXmlElement* pXml)
 {
   TiXmlElement* pTweeningXml(pXml->FirstChildElement(karTag[TAG_TWEENING]));
   UIElementList l;
@@ -271,8 +250,7 @@ void  UIBuilderScreen::_ProcessTweening(TiXmlElement* pXml,
   }
   
   m_numTweening = l.size();
-  void* pMem = static_cast<UIElement*>((*cfg.pAllocate)(sizeof(UIElement*) *
-    m_numTweening, cfg.pAllocateData));
+  void* pMem = m_builder.Allocate(sizeof(UIElement*) * m_numTweening);
   m_parpTweening = new (pMem) UIElement*[m_numListeners];
   
   std::copy(l.begin(), l.end(), m_parpTweening);
