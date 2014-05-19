@@ -108,8 +108,23 @@ void  UIBuilderScreen::Destroy()
 //==============================================================================
 void  UIBuilderScreen::SetPadding(int padding)
 {
+  XR_ASSERT(UIBuilderScreen, padding >= 0);
   m_padding = padding;
   Reposition(Renderer::GetScreenWidth(), Renderer::GetScreenHeight());
+}
+
+//==============================================================================
+void  UIBuilderScreen::SetTweenIn(TweenCallback pOnTweenIn, void* pData)
+{
+  m_pTweenIn = pOnTweenIn;
+  m_pTweenInData = pData;
+}
+
+//==============================================================================
+void  UIBuilderScreen::SetTweenOut(TweenCallback pOnTweenOut, void* pData)
+{
+  m_pTweenOut= pOnTweenOut;
+  m_pTweenInData = pData;
 }
 
 //==============================================================================
