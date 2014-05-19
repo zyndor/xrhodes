@@ -95,7 +95,7 @@ void TweenVarPool<T>::Add( float duration, Tweener::Function pFunction, Type tar
 
   VarCore&  var(m_parVarBuffer[iInsert]);
   var.fValue = (float)(value);
-  var.Tween(&value, pOnFrameCb, pOnFinishedCb, pCallbackData, &tweener);
+  var.Tween(&value, pOnFrameCb, pOnFinishedCb, pCallbackData, tweener);
 
   tweener.Add(duration, pFunction, (float)(target),
     m_parVarBuffer[iInsert].fValue, OnFrameCallback, OnFinishedCallback,
