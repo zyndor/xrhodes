@@ -1361,7 +1361,7 @@ bool  UIBuilder::Build(TiXmlElement* pXml, UIContainer& container)
   base.h = Renderer::GetScreenHeight();
 
   RegisterNamedElement("root", m_pRoot);
-  UIBInitUIElement(pXml, m_pRoot, &base, this);
+  UIBInitUIElement(pXml, m_pRoot, &base, *this);
 
   return _Build(pXml, m_cfg.pAllocate, m_pRoot);
 }
