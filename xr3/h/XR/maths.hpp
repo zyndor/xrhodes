@@ -82,6 +82,14 @@ T  Max(T a, T b);
 template  <typename T>
 T  Clamp(T val, T min, T max);
 
+///@return  Linear interpolated value between @a v0 and @A v1 at @a blend.
+template  <typename T>
+T  Lerp(T v0, T v1, float blend);
+
+///@brief 
+template  <typename T, int samples>
+T Bezier(const T* parSamples, float blend);
+
 ///@return  Per-frame speed value based on per second speed @a v and @a fps.
 float CalcSpeedPerFrame(float v, float fps);
 
@@ -161,6 +169,46 @@ inline
 T  Clamp(T val, T min, T max)
 {
   return (val > min) ? ((val < max) ? val : max) : min;
+}
+
+//==============================================================================
+template  <typename T>
+inline
+T Lerp(T v0, T v1, float blend)
+{
+  return v0 + (v1 - v0) * blend;
+}
+
+//==============================================================================
+template  <typename T, int samples>
+struct  BezierImpl
+{
+  static T Calculate(const T* parSamples, float blend)
+  {
+    T arResult[samples - 1];
+    for(int i = 1; i < samples; ++i)
+    {
+      int im1(i - 1);
+      arResult[im1] = Lerp(parSamples[im1], parSamples[i], blend); 
+    }
+    return BezierImpl<T, samples - 1>::Calculate(arResult, blend);
+  }
+};
+
+template  <typename T>
+struct  BezierImpl<T, 1>
+{
+  static T Calculate(const T* parSamples, float blend)
+  {
+    return parSamples[0];
+  }
+};
+
+template  <typename T, int samples>
+inline
+T Bezier(const T* parSamples, float blend)
+{
+  return BezierImpl<T, samples>::Calculate(parSamples, blend);
 }
 
 }  // XR
