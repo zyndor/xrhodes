@@ -10,26 +10,26 @@ namespace XR
 //==============================================================================
 enum
 {
-  ATT_SIZE,
-  ATT_OUTLINE,
-  ATT_BASE,
-  ATT_SCALE_W,
-  ATT_SCALE_H,
-  ATT_FILE,
-  ATT_CHARS_COUNT,
-  ATT_CHAR_ID,
-  ATT_X,
-  ATT_Y,
-  ATT_WIDTH,
-  ATT_HEIGHT,
-  ATT_XOFFSET,
-  ATT_YOFFSET,
-  ATT_XADVANCE,
+  TAG_SIZE,
+  TAG_OUTLINE,
+  TAG_BASE,
+  TAG_SCALE_W,
+  TAG_SCALE_H,
+  TAG_FILE,
+  TAG_CHARS_COUNT,
+  TAG_CHAR_ID,
+  TAG_X,
+  TAG_Y,
+  TAG_WIDTH,
+  TAG_HEIGHT,
+  TAG_XOFFSET,
+  TAG_YOFFSET,
+  TAG_XADVANCE,
   kNumAttribs  
 };
 
 //==============================================================================
-static const char*  karAttribs[]=
+static const char* const karTag[]=
 {
   "size=",
   "outline=",
@@ -105,7 +105,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
   XR_ASSERT(Font, size >= 0);
   char* pBuffer(new char[size]);
 
-  bool success(File::Read(size, 1, hFile, pBuffer) != 0);
+  bool success(File::Read(hFile, size, 1, pBuffer) != 0);
 
   File::Close(hFile);
   if (success)
@@ -114,7 +114,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     const char* pTempRead;
     const char* pValue;
 
-    pTempRead = FindValue(pRead, karAttribs[ATT_SIZE], pValue);
+    pTempRead = FindValue(pRead, karTag[TAG_SIZE], pValue);
     success = success && (pValue != 0);
     if (success)
     {
@@ -123,7 +123,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     }
 
     float fOutline(.0f);
-    pTempRead = FindValue(pRead, karAttribs[ATT_OUTLINE], pValue);
+    pTempRead = FindValue(pRead, karTag[TAG_OUTLINE], pValue);
     success = success && (pValue != 0);
     if (success)
     {
@@ -132,7 +132,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
       pRead = pTempRead;
     }
     
-    pTempRead = FindValue(pRead, karAttribs[ATT_BASE], pValue);
+    pTempRead = FindValue(pRead, karTag[TAG_BASE], pValue);
     success = success && (pValue != 0);
     if (success)
     {
@@ -141,7 +141,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     }
 
     float fTexWidth(.0f);
-    pTempRead = FindValue(pRead, karAttribs[ATT_SCALE_W], pValue);
+    pTempRead = FindValue(pRead, karTag[TAG_SCALE_W], pValue);
     success = success && (pValue != 0);
     if (success)
     {
@@ -154,7 +154,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     }
 
     float fTexHeight(.0f);
-    pTempRead = FindValue(pRead, karAttribs[ATT_SCALE_H], pValue);
+    pTempRead = FindValue(pRead, karTag[TAG_SCALE_H], pValue);
     success = success && (pValue != 0);
     if (success)
     {
@@ -166,7 +166,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
       pRead = pTempRead;
     }
 
-    pTempRead = FindValue(pRead, karAttribs[ATT_FILE], pValue);
+    pTempRead = FindValue(pRead, karTag[TAG_FILE], pValue);
     success = success && (pValue != 0);
     if (success)
     {
@@ -203,13 +203,13 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
     if (success)
     {
-      pTempRead = FindValue(pRead, karAttribs[ATT_CHARS_COUNT], pValue);
+      pTempRead = FindValue(pRead, karTag[TAG_CHARS_COUNT], pValue);
     }
     
     success = success && pValue != 0;
     if (!success)
     {
-      XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_CHARS_COUNT]));
+      XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_CHARS_COUNT]));
     }
 
     int numChars(0);
@@ -223,7 +223,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     Glyph*  pGlyph;
     while (success && numChars > 0)
     {
-      pTempRead = FindValue(pRead, karAttribs[ATT_CHAR_ID], pValue);
+      pTempRead = FindValue(pRead, karTag[TAG_CHAR_ID], pValue);
 
       success = pValue != 0;
       if (success)
@@ -240,66 +240,66 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         }
         
         float x;
-        pTempRead = FindValue(pTempRead, karAttribs[ATT_X], pValue);
+        pTempRead = FindValue(pTempRead, karTag[TAG_X], pValue);
         success = pValue != 0;
         if (!success)
         {
-          XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_X]));
+          XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_X]));
           break;
         }
         x = (float)(atoi(pValue));
 
         float y;
-        pTempRead = FindValue(pTempRead, karAttribs[ATT_Y], pValue);
+        pTempRead = FindValue(pTempRead, karTag[TAG_Y], pValue);
         success = pValue != 0;
         if (!success)
         {
-          XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_Y]));
+          XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_Y]));
           break;
         }
         y = (float)(atoi(pValue));
 
-        pTempRead = FindValue(pTempRead, karAttribs[ATT_WIDTH], pValue);
+        pTempRead = FindValue(pTempRead, karTag[TAG_WIDTH], pValue);
         success = pValue != 0;
         if (!success)
         {
-          XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_WIDTH]));
+          XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_WIDTH]));
           break;
         }
         pGlyph->w = (float)atoi(pValue);
 
-        pTempRead = FindValue(pTempRead, karAttribs[ATT_HEIGHT], pValue);
+        pTempRead = FindValue(pTempRead, karTag[TAG_HEIGHT], pValue);
         success = pValue != 0;
         if (!success)
         {
-          XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_HEIGHT]));
+          XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_HEIGHT]));
           break;
         }
         pGlyph->h = (float)atoi(pValue);
 
-        pTempRead = FindValue(pTempRead, karAttribs[ATT_XOFFSET], pValue);
+        pTempRead = FindValue(pTempRead, karTag[TAG_XOFFSET], pValue);
         success = pValue != 0;
         if (!success)
         {
-          XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_XOFFSET]));
+          XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_XOFFSET]));
           break;
         }
         pGlyph->xOffs = (float)atoi(pValue) + fOutline;
 
-        pTempRead = FindValue(pTempRead, karAttribs[ATT_YOFFSET], pValue);
+        pTempRead = FindValue(pTempRead, karTag[TAG_YOFFSET], pValue);
         success = pValue != 0;
         if (!success)
         {
-          XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_YOFFSET]));
+          XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_YOFFSET]));
           break;
         }
         pGlyph->yOffs = (float)atoi(pValue) + fOutline;
 
-        pTempRead = FindValue(pTempRead, karAttribs[ATT_XADVANCE], pValue);
+        pTempRead = FindValue(pTempRead, karTag[TAG_XADVANCE], pValue);
         success = pValue != 0;
         if (!success)
         {
-          XR_TRACE(Font, ("%s is a required attribute.", karAttribs[ATT_XADVANCE]));
+          XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_XADVANCE]));
           break;
         }
         pGlyph->xAdvance = (float)atoi(pValue) + fOutline * 2.0f;

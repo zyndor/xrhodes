@@ -78,8 +78,8 @@ public:
   static int          Open(const char* pName, const char* pMode);
   static uint64       GetSize(int hFile);
   static const char*  GetName(int hFile);
-  static uint32       Read(int elemSize, int numElems, int hFile, void* parBuffer);
-  static char*        ReadString(int numBytes, int hFile, char* parBuffer);
+  static uint32       Read(int hFile, int elemSize, int numElems, void* parBuffer);
+  static char*        ReadLine(int hFile, int numBytes, char* parBuffer);
   static uint32       Write(const void* parBuffer, int elemSize, int numElems, int hFile);
   static uint64       Tell(int hFile);
   static bool         Seek(int hFile, int offset, SeekFrom sf);

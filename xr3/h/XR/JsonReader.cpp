@@ -754,7 +754,7 @@ Entity* LoadJSON( const char* pFilename, int maxDepth )
   int size(File::GetSize(hFile));
   char* parBuffer = new char[size];
 
-  bool  result(File::Read(size, 1, hFile, parBuffer) != 0);
+  bool  result(File::Read(hFile, size, 1, parBuffer) != 0);
   File::Close(hFile);
   
   if (!result)

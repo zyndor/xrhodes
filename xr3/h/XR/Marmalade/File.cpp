@@ -137,7 +137,7 @@ const char* File::GetName( int hFile )
 }
 
 //==============================================================================
-uint32 File::Read( int elemSize, int numElems, int hFile, void* parBuffer )
+uint32 File::Read( int hFile, int elemSize, int numElems, void* parBuffer )
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
@@ -146,7 +146,7 @@ uint32 File::Read( int elemSize, int numElems, int hFile, void* parBuffer )
 }
 
 //==============================================================================
-char* File::ReadString( int numBytes, int hFile, char* parBuffer )
+char* File::ReadLine( int hFile, int numBytes, char* parBuffer )
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);

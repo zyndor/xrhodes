@@ -93,11 +93,10 @@ int File::Open( const char* pName, const char* pMode )
   
   if (hFile != INVALID_HANDLE)
   {
-    FILE*&  pFile = s_fileImpl.arpFile[hFile];
-    
-    pFile = fopen(pName, pMode);
+    FILE*  pFile = fopen(pName, pMode);
     if (pFile != 0)
     {
+      s_fileImpl.arpFile[hFile] = pFile;
       s_fileImpl.arFilename[hFile] = pName;
       s_fileImpl.nextHandle = hFile + 1;
     }
@@ -129,7 +128,7 @@ uint64 File::GetSize( int hFile )
 }
 
 //==============================================================================
-const char* File::GetName( int hFile )
+const char* File::GetName(int hFile )
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
@@ -138,7 +137,7 @@ const char* File::GetName( int hFile )
 }
 
 //==============================================================================
-uint32 File::Read( int elemSize, int numElems, int hFile, void* parBuffer )
+uint32 File::Read(int hFile, int elemSize, int numElems, void* parBuffer)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
@@ -147,19 +146,32 @@ uint32 File::Read( int elemSize, int numElems, int hFile, void* parBuffer )
 }
 
 //==============================================================================
-char* File::ReadString( int numBytes, int hFile, char* parBuffer )
+char* File::ReadLine(int hFile, int numBytes, char* parBuffer)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
   XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
+  XR_ASSERT(File, parBuffer != 0);
+  --numBytes;
+  int result(0);
+  char* pWrite(parBuffer);
   for (int i = 0; i < numBytes; ++i)
   {
-    int result = fread(parBuffer + i, 1, 1, s_fileImpl.arpFile[hFile]);
-    if (result < 1 || parBuffer[i] == '\r' || parBuffer[i] == '\n')
+    result = fread(pWrite, 1, 1, s_fileImpl.arpFile[hFile]);
+    char  c(*pWrite);
+    bool  success(result == 1);
+    if(success)
+    {
+      ++pWrite;
+    }
+    
+    if (!success || c == '\r' || c == '\n')
     {
       break;
     }
   }
+  
+  *pWrite = '\0';
 
   return parBuffer;
 }
@@ -220,7 +232,7 @@ static const int  karSeekOriginMappings[] =
 
 bool File::Seek( int hFile, int offset, SeekFrom sf )
 {
-  return fseek(s_fileImpl.arpFile[hFile], offset, karSeekOriginMappings[sf]);
+  return fseek(s_fileImpl.arpFile[hFile], offset, karSeekOriginMappings[sf]) == 0;
 }
 
 //==============================================================================
