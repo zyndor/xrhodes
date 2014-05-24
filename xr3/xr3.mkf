@@ -54,6 +54,7 @@ files
   XR/MouseButton.hpp
   XR/Named.hpp
   XR/Parse.hpp
+  XR/ParserCore.hpp
   XR/Pool.hpp
   XR/PrimType.hpp
   XR/Quadtree.hpp

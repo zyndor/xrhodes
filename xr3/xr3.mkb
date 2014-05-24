@@ -59,6 +59,7 @@ files
   Module.cpp
   Named.cpp
   Parse.cpp
+  ParserCore.cpp
   Pool.cpp
   Quadtree.cpp
   Ray.cpp
