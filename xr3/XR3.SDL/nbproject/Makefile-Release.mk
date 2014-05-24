@@ -68,6 +68,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/Module.o \
 	${OBJECTDIR}/_ext/1046665460/Named.o \
 	${OBJECTDIR}/_ext/1046665460/Parse.o \
+	${OBJECTDIR}/_ext/1046665460/ParserCore.o \
 	${OBJECTDIR}/_ext/1046665460/Pool.o \
 	${OBJECTDIR}/_ext/1046665460/Quadtree.o \
 	${OBJECTDIR}/_ext/1046665460/Ray.o \
@@ -296,6 +297,11 @@ ${OBJECTDIR}/_ext/1046665460/Parse.o: /D/repos/xr3/xr3/h/XR/Parse.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/Parse.o /D/repos/xr3/xr3/h/XR/Parse.cpp
+
+${OBJECTDIR}/_ext/1046665460/ParserCore.o: /D/repos/xr3/xr3/h/XR/ParserCore.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/ParserCore.o /D/repos/xr3/xr3/h/XR/ParserCore.cpp
 
 ${OBJECTDIR}/_ext/1046665460/Pool.o: /D/repos/xr3/xr3/h/XR/Pool.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460

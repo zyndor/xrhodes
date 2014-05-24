@@ -45,6 +45,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Named.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Observer.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Parse.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ParserCore.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Pool.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/PrimType.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Quadtree.hpp</itemPath>
@@ -135,6 +136,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MouseButton.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Named.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Parse.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ParserCore.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Pool.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Quadtree.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Ray.cpp</itemPath>
@@ -480,6 +482,16 @@
       <item path="D:/repos/xr3/xr3/h/XR/Parse.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Parse.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ParserCore.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ParserCore.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Pool.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -1061,6 +1073,16 @@
       <item path="D:/repos/xr3/xr3/h/XR/Parse.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Parse.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ParserCore.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ParserCore.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Pool.cpp" ex="false" tool="1" flavor2="0">
       </item>
