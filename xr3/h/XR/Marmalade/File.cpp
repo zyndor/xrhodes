@@ -203,12 +203,12 @@ File::Error File::GetError()
 }
 
 //==============================================================================
-uint64 File::Tell( int hFile )
+uint32 File::Tell(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
   XR_ASSERT(File, s_pFile->arFile[hFile] != 0);
-  return (uint64)s3eFileTell(s_pFile->arFile[hFile]);
+  return s3eFileTell(s_pFile->arFile[hFile]);
 }
 
 //==============================================================================
@@ -219,7 +219,7 @@ static const s3eFileSeekOrigin  karSeekOriginMappings[] =
   S3E_FILESEEK_END,
 };
 
-bool File::Seek( int hFile, int offset, SeekFrom sf )
+bool File::Seek(int hFile, uint32 offset, SeekFrom sf)
 {
   return s3eFileSeek(s_pFile->arFile[hFile], offset,
     karSeekOriginMappings[sf]) == S3E_RESULT_SUCCESS;

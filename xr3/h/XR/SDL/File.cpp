@@ -214,12 +214,15 @@ File::Error File::GetError()
 }
 
 //==============================================================================
-uint64  File::Tell( int hFile )
+uint32  File::Tell(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
   XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  return ftell(s_fileImpl.arpFile[hFile]);
+  
+  uint64  tell(ftell(s_fileImpl.arpFile[hFile]));
+  XR_ASSERT(File, tell < std::numeric_limits<uint32>::max());
+  return (uint32)tell;
 }
 
 //==============================================================================
@@ -230,7 +233,7 @@ static const int  karSeekOriginMappings[] =
   SEEK_END,
 };
 
-bool File::Seek( int hFile, int offset, SeekFrom sf )
+bool File::Seek( int hFile, uint32 offset, SeekFrom sf )
 {
   return fseek(s_fileImpl.arpFile[hFile], offset, karSeekOriginMappings[sf]) == 0;
 }

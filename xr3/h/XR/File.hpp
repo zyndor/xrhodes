@@ -81,8 +81,8 @@ public:
   static uint32       Read(int hFile, int elemSize, int numElems, void* parBuffer);
   static char*        ReadLine(int hFile, int numBytes, char* parBuffer);
   static uint32       Write(const void* parBuffer, int elemSize, int numElems, int hFile);
-  static uint64       Tell(int hFile);
-  static bool         Seek(int hFile, int offset, SeekFrom sf);
+  static uint32       Tell(int hFile);
+  static bool         Seek(int hFile, uint32 offset, SeekFrom sf);
   static void         Close(int hFile);
   
   static Error        GetError();
