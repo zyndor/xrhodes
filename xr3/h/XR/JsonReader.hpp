@@ -27,7 +27,7 @@ namespace JSON
 //==============================================================================
 class Value;
 class Object;
-class JsonArray;
+class Array;
 
 //==============================================================================
 ///@brief Generic JSON Entity base class.
@@ -54,7 +54,7 @@ public:
   Type                GetType() const;
 
   Value*              ToValue();
-  JsonArray*          ToArray();
+  Array*              ToArray();
   Object*             ToObject();
 
   Entity*             GetChild(const char* pKey) const;
@@ -123,7 +123,7 @@ protected:
 private:
   // disabled
   Value*  ToValue();
-  JsonArray*  ToArray();
+  Array*  ToArray();
   Object* ToObject();
 };
 
@@ -170,14 +170,14 @@ protected:
 private:
   // disabled
   Value*  ToValue();
-  JsonArray*  ToArray();
+  Array*  ToArray();
   Object* ToObject();
 };
 
 //==============================================================================
 ///@brief Contains an array of elements. While these can be of
 /// whatever type, they are not keyed to names.
-class JsonArray:  public Entity
+class Array:  public Entity
 {
 public:
   // using
@@ -185,8 +185,8 @@ public:
   using Entity::GetElement;
 
   // structors
-  JsonArray();
-  ~JsonArray();
+  Array();
+  ~Array();
 
   // general
   virtual int         GetNumChildren() const;  // objects. arrays and values return 0
@@ -210,7 +210,7 @@ protected:
 private:
   // disabled
   Value*  ToValue();
-  JsonArray*  ToArray();
+  Array*  ToArray();
   Object* ToObject();
 };
 
@@ -240,7 +240,7 @@ protected:
   ParserCore  m_state;
   
   // internal
-  bool        _ParseArray(JsonArray* pArray);
+  bool        _ParseArray(Array* pArray);
   bool        _ParseObject(Object* pObject);
   Entity*     _ParseValue();
 };
@@ -268,10 +268,10 @@ Value* Entity::ToValue()
 
 //==============================================================================
 inline
-JsonArray* Entity::ToArray()
+Array* Entity::ToArray()
 {
   XR_ASSERT(Entity, m_type == ARRAY);
-  return m_type == ARRAY ? static_cast<JsonArray*>(this) : 0;
+  return m_type == ARRAY ? static_cast<Array*>(this) : 0;
 }
 
 //==============================================================================

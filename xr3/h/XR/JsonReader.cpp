@@ -320,43 +320,43 @@ const Entity* Object::GetLastChild() const
 }
 
 //==============================================================================
-JsonArray::JsonArray()
+Array::Array()
 : Entity(ARRAY),
   m_elements()
 {}
 
 //==============================================================================
-JsonArray::~JsonArray()
+Array::~Array()
 {
   std::for_each(m_elements.begin(), m_elements.end(), Deleter);
 }
 
 //==============================================================================
-int JsonArray::GetNumChildren() const
+int Array::GetNumChildren() const
 {
   return 0;
 }
 
 //==============================================================================
-int JsonArray::GetNumElements() const
+int Array::GetNumElements() const
 {
   return m_elements.size();
 }
 
 //==============================================================================
-const char* JsonArray::GetValue() const
+const char* Array::GetValue() const
 {
   return 0;
 }
 
 //==============================================================================
-int JsonArray::GetValueSize() const
+int Array::GetValueSize() const
 {
   return 0;
 }
 
 //==============================================================================
-void JsonArray::AddElement(Entity* pEntity)
+void Array::AddElement(Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
   Entity* pPrev(0);
@@ -370,16 +370,16 @@ void JsonArray::AddElement(Entity* pEntity)
 }
 
 //==============================================================================
-Entity* JsonArray::GetChild( const char* pKey, Type acceptType ) const
+Entity* Array::GetChild( const char* pKey, Type acceptType ) const
 {
   return 0;
 }
 
 //==============================================================================
-Entity* JsonArray::GetElement( int id, Type acceptType ) const
+Entity* Array::GetElement( int id, Type acceptType ) const
 {
-  XR_ASSERT(JsonArray, id >= 0);
-  XR_ASSERT(JsonArray, id < static_cast<int>(m_elements.size()));
+  XR_ASSERT(Array, id >= 0);
+  XR_ASSERT(Array, id < static_cast<int>(m_elements.size()));
   XR_ASSERT(Object, acceptType == ANY ||
     m_elements[id]->GetType() == acceptType);
   return m_elements[id];
@@ -423,7 +423,7 @@ Entity* Reader::Read(const char* parBuffer, int size)
       }
       else
       {
-        pEntity = new JsonArray();
+        pEntity = new Array();
         result = (++depth < maxDepth) &&  // check exceeding depth (not an error)
           _ParseArray(pEntity->ToArray());
       }
@@ -440,7 +440,7 @@ Entity* Reader::Read(const char* parBuffer, int size)
 }
 
 //==============================================================================
-bool  Reader::_ParseArray(JsonArray* pArray)
+bool  Reader::_ParseArray(Array* pArray)
 {
   const char* pChar(m_state.ExpectChar()); // look for array end or value
   bool result(!m_state.IsOver(pChar));
@@ -620,22 +620,28 @@ Entity* Reader::_ParseValue()
     {
       pChild = new Object();
       if (!m_state.IsOver(m_state.SkipChar()) &&
-        ++depth < maxDepth &&
-        !_ParseObject(pChild->ToObject()))
+        depth + 1 < maxDepth)
       {
-        delete pChild;
-        pChild = 0;
+        ++depth;
+        if(!_ParseObject(pChild->ToObject()))
+        {
+          delete pChild;
+          pChild = 0;
+        }
       }
     }
     else if (*pChar == kArrayBegin)
     {
-      pChild = new JsonArray();
+      pChild = new Array();
       if (!m_state.IsOver(m_state.SkipChar()) &&
-        ++depth < maxDepth &&
-        !_ParseArray(pChild->ToArray()))
+        depth + 1 < maxDepth)
       {
-        delete pChild;
-        pChild = 0;
+        ++depth;
+        if(!_ParseArray(pChild->ToArray()))
+        {
+          delete pChild;
+          pChild = 0;
+        }
       }
     }
   }
