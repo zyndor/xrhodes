@@ -385,30 +385,11 @@ Entity* JsonArray::GetElement( int id, Type acceptType ) const
   return m_elements[id];
 }
 
-//const char* karTypes[JSON_T_MAX] =
-//{
-//  "none",
-//  "[",
-//  "]",
-//  "{",
-//  "}",
-//  "(int)",
-//  "(float)",
-//  "(null)",
-//  "(true)",
-//  "(false)",
-//  "(string)",
-//  "(key)"
-//};
-
 //==============================================================================
 Reader::Reader(int depth_)
 : maxDepth(depth_),
   depth(0),
-  p0(0),
-  p1(0),
-  row(0),
-  col(0)
+  m_state()
 {}
 
 //==============================================================================
@@ -420,26 +401,18 @@ Entity* Reader::Read(const char* parBuffer, int size)
 {
   XR_ASSERT(Reader, parBuffer != 0);
   XR_ASSERT(Reader, size >= 0);
-  if (size == 0)
-  {
-    size = strlen(parBuffer);
-  }
-  
-  p0 = parBuffer;
-  p1 = parBuffer + size;
+  m_state.SetBuffer(parBuffer, size);
   depth = 0;
-  row = 1;
-  col = 1;
   
   Entity* pEntity(0);
-  const char* pChar(_ExpectChar());
-  bool        result(pChar != p1);
+  const char* pChar(m_state.ExpectChar()); // drop leading whitespace
+  bool        result(!m_state.IsOver(pChar));
   if (result)
   {
     bool  isObject(*pChar == kObjectBegin);
     bool  isArray(*pChar == kArrayBegin);
     
-    result = (isObject || isArray) && (_SkipChar() != p1);
+    result = (isObject || isArray) && !m_state.IsOver(m_state.SkipChar());
     if (result)
     {
       if (isObject)
@@ -467,86 +440,16 @@ Entity* Reader::Read(const char* parBuffer, int size)
 }
 
 //==============================================================================
-const char* Reader::_ExpectChar()
-{
-  XR_ASSERT(Reader, p0 != 0);
-  int col_(col);
-  int row_(row);
-  
-  while (p0 != p1 && iswspace(*p0))
-  {
-    if (*p0 == kNewLine)
-    {
-      col_ = 1;
-      ++row_;
-    }
-    else
-    {
-      ++col_;
-    }
-    ++p0;
-  }
-  row = row_;
-  col = col_;
-  return p0;
-}
-
-//==============================================================================  
-const char* Reader::_RequireChar(int c)
-{
-  XR_ASSERT(Reader, p0 != 0);
-  int col_(col);
-  int row_(row);
-  
-  while (p0 != p1 && *p0 != c)
-  {
-    if (*p0 == kNewLine)
-    {
-      col_ = 1;
-      ++row_;
-    }
-    else
-    {
-      ++col_;
-    }
-    ++p0;
-  }
-  row = row_;
-  col = col_;
-  return p0;
-}
-
-//==============================================================================
-const char* Reader::_SkipChar()
-{
-  XR_ASSERT(Reader, p0 != 0);
-  if (p0 != p1)
-  {
-    if (*p0 == kNewLine)
-    {
-      col = 1;
-      ++row;
-    }
-    else
-    {
-      ++col;
-    }
-    ++p0;
-  }
-  return p0;
-}
-
-//==============================================================================
 bool  Reader::_ParseArray(JsonArray* pArray)
 {
-  const char* pChar(_ExpectChar()); // look for array end or value
-  bool result(pChar != p1);
+  const char* pChar(m_state.ExpectChar()); // look for array end or value
+  bool result(!m_state.IsOver(pChar));
   if (result)
   {
     if (*pChar == kArrayEnd)
     {
       --depth;
-      _SkipChar();
+      m_state.SkipChar();
     }
     else while (result)
     {
@@ -560,14 +463,14 @@ bool  Reader::_ParseArray(JsonArray* pArray)
 
       pArray->AddElement(pChild);
 
-      pChar = _ExpectChar();
-      result = pChar != p1 && (*pChar == kComma || *pChar == kArrayEnd);
+      pChar = m_state.ExpectChar();
+      result = !m_state.IsOver(pChar) && (*pChar == kComma || *pChar == kArrayEnd);
       if (!result)
       {
         break;
       }
       
-      _SkipChar(); // leave character
+      m_state.SkipChar(); // leave character
       if (*pChar == kArrayEnd)
       {
         --depth;
@@ -581,52 +484,52 @@ bool  Reader::_ParseArray(JsonArray* pArray)
 //==============================================================================
 bool  Reader::_ParseObject(Object* pObj)
 {
-  const char* pChar(_ExpectChar());
-  bool  result(pChar != p1);
+  const char* pChar(m_state.ExpectChar());
+  bool  result(!m_state.IsOver(pChar));
   if (result)
   {
     if (*pChar == kObjectEnd)
     {
       --depth;
-      _SkipChar();
+      m_state.SkipChar();
     }
     else while (result)
     {
-      pChar = _ExpectChar();
+      pChar = m_state.ExpectChar();
       result = *pChar == kQuot;
       if (!result)
       {
         break;
       }
 
-      const char* pKey(_SkipChar()); // leave the quot
-      result = pKey != p1;
+      const char* pKey(m_state.SkipChar()); // leave the quot
+      result = !m_state.IsOver(pKey);
       if (!result)
       {
         break;
       }
 
-      const char* pKeyEnd(_RequireChar(kQuot)); // get other quot
-      result = pKeyEnd != p1;
+      const char* pKeyEnd(m_state.RequireChar(kQuot)); // get other quot
+      result = !m_state.IsOver(pKeyEnd);
       if (!result)
       {
         break;
       }
 
-      result = _SkipChar() != p1;
+      result = !m_state.IsOver(m_state.SkipChar());
       if (!result)
       {
         break;
       }
 
-      pChar = _ExpectChar();  // look for colon
-      result = pChar != p1 && *pChar == kColon;
+      pChar = m_state.ExpectChar();  // look for colon
+      result = !m_state.IsOver(pChar) && *pChar == kColon;
       if (!result)
       {
         break;
       }
 
-      result = _SkipChar() != p1;
+      result = !m_state.IsOver(m_state.SkipChar());
       if (!result)
       {
         break;
@@ -642,14 +545,14 @@ bool  Reader::_ParseObject(Object* pObj)
       // add child
       pObj->AddChild(pKey, pKeyEnd - pKey, pChild);
 
-      pChar = _ExpectChar();
-      result = pChar != p1 && (*pChar == kComma || *pChar == kObjectEnd);
+      pChar = m_state.ExpectChar();
+      result = !m_state.IsOver(pChar) && (*pChar == kComma || *pChar == kObjectEnd);
       if (!result)
       {
         break;
       }
 
-      _SkipChar();
+      m_state.SkipChar();
       if (*pChar == kObjectEnd)
       {
         --depth;
@@ -664,19 +567,19 @@ bool  Reader::_ParseObject(Object* pObj)
 Entity* Reader::_ParseValue()
 {
   Entity* pChild(0);
-  const char* pChar = _ExpectChar();
-  if (pChar != p1)
+  const char* pChar = m_state.ExpectChar();
+  if (!m_state.IsOver(pChar))
   {
     if (*pChar == kQuot) // string
     {
-      pChar = _SkipChar();
-      if (pChar != p1)
+      pChar = m_state.SkipChar();
+      if (!m_state.IsOver(pChar))
       {
-        const char* pValueEnd(_RequireChar(kQuot)); // look for quot pair
-        if (pValueEnd != p1)
+        const char* pValueEnd(m_state.RequireChar(kQuot)); // look for quot pair
+        if (!m_state.IsOver(pValueEnd))
         {
           pChild = new Value(pChar, pValueEnd - pChar);
-          _SkipChar();
+          m_state.SkipChar();
         }
       }
     }
@@ -704,20 +607,19 @@ Entity* Reader::_ParseValue()
       
       if (l > 0)
       {
-        int left(p1 - p0);
+        int left(m_state.GetNumCharsLeft());
         if (left < l)
         {
           l = left;
         }
         
-        p0 += l;
-        col += l;
+        m_state.FastForward(l);
       }
     }
     else if (*pChar == kObjectBegin)
     {
       pChild = new Object();
-      if (_SkipChar() != p1 &&
+      if (!m_state.IsOver(m_state.SkipChar()) &&
         ++depth < maxDepth &&
         !_ParseObject(pChild->ToObject()))
       {
@@ -728,7 +630,7 @@ Entity* Reader::_ParseValue()
     else if (*pChar == kArrayBegin)
     {
       pChild = new JsonArray();
-      if (_SkipChar() != p1 &&
+      if (!m_state.IsOver(m_state.SkipChar()) &&
         ++depth < maxDepth &&
         !_ParseArray(pChild->ToArray()))
       {
@@ -774,7 +676,7 @@ Entity* LoadJSON( const char* pFilename, int maxDepth )
   if (pJson == 0)
   {
     XR_ERROR(("Failed to parse '%s': error around row %d char %d",
-      pFilename, reader.row, reader.col));
+      pFilename, reader.GetState().GetRow(), reader.GetState().GetColumn()));
   }
   
   return pJson;

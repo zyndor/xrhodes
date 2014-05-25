@@ -17,6 +17,7 @@
 #include <list>
 #include <string>
 #include "json.hpp"
+#include "ParserCore.hpp"
 
 namespace XR
 {
@@ -52,18 +53,18 @@ public:
   // general
   Type                GetType() const;
 
-  Value*          ToValue();
+  Value*              ToValue();
   JsonArray*          ToArray();
-  Object*         ToObject();
+  Object*             ToObject();
 
-  Entity*         GetChild(const char* pKey) const;
-  Entity*         GetElement(int id) const;
+  Entity*             GetChild(const char* pKey) const;
+  Entity*             GetElement(int id) const;
 
-  Entity*         GetPrevSibling() const;
-  Entity*         GetNextSibling() const;
+  Entity*             GetPrevSibling() const;
+  Entity*             GetNextSibling() const;
 
-  Entity*         LinkPrevSibling(Entity* p);  // returns previous value
-  Entity*         LinkNextSibling(Entity* p);  // returns previous value
+  Entity*             LinkPrevSibling(Entity* p);  // returns previous value
+  Entity*             LinkNextSibling(Entity* p);  // returns previous value
 
   // virtual
   virtual int         GetNumChildren() const =0;  // objects. arrays and values return 0
@@ -72,8 +73,8 @@ public:
 
   virtual const char* GetValue() const =0;  // values. objects and arrays return 0
 
-  virtual Entity* GetChild(const char* pKey, Type acceptType) const =0;  // retrieve child from object
-  virtual Entity* GetElement(int id, Type acceptType) const =0;  // retrieve child from array
+  virtual Entity*     GetChild(const char* pKey, Type acceptType) const =0;  // retrieve child from object
+  virtual Entity*     GetElement(int id, Type acceptType) const =0;  // retrieve child from array
   
 private:
   // data
@@ -112,8 +113,8 @@ public:
 
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 
-  virtual Entity* GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
-  virtual Entity* GetElement(int id, Type acceptType) const;  // retrieve child from array
+  virtual Entity*     GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
+  virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
 
 protected:
   // data
@@ -150,14 +151,14 @@ public:
   void                AddChild(const char* pKey, int keySize, Entity* pEntity);
   void                AddChild(uint32 hash, Entity* pEntity);
 
-  const Entity*   GetFirstChild() const;
-  const Entity*   GetLastChild() const;
+  const Entity*       GetFirstChild() const;
+  const Entity*       GetLastChild() const;
   
-  Entity*         GetFirstChild();
-  Entity*         GetLastChild();
+  Entity*             GetFirstChild();
+  Entity*             GetLastChild();
   
-  virtual Entity* GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
-  virtual Entity* GetElement(int id, Type acceptType) const;  // retrieve child from array
+  virtual Entity*     GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
+  virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
 
 protected:
   // types
@@ -196,8 +197,8 @@ public:
 
   void                AddElement(Entity* pEntity);
 
-  virtual Entity* GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
-  virtual Entity* GetElement(int id, Type acceptType) const;  // retrieve child from array
+  virtual Entity*     GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
+  virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
 
 protected:
   // types
@@ -223,25 +224,22 @@ public:
   // data
   int             maxDepth;
   int             depth;
-  const char*     p0; // current character to process
-  const char*     p1; // end of buffer, not processed
-  int             row; // 1-based, human readable
-  int             col; // 1-based, human readable
   
   // structors
   explicit Reader(int maxDepth = kMaxParseDepthDefault);
   ~Reader();
   
   // general
+  const ParserCore& GetState() const;
+  
   ///@brief Parses the string in @a parBuffer, 
-  Entity* Read(const char* parBuffer, int size = 0);
+  Entity* Read(const char* parBuffer, int size);
   
 protected:
-  // internal
-  const char* _ExpectChar();
-  const char* _RequireChar(int c);
-  const char* _SkipChar();
+  // data
+  ParserCore  m_state;
   
+  // internal
   bool        _ParseArray(JsonArray* pArray);
   bool        _ParseObject(Object* pObject);
   Entity*     _ParseValue();
