@@ -31,7 +31,7 @@ enum  type
   LOOP_FRAME, // optional
   kCount
 };
-}
+} // AnimationTag
 
 //==============================================================================
 extern const int    kMaxAnimationFrames;

@@ -29,7 +29,8 @@ void TweenVarCore::Clear()
   pTweener = 0;
 }
 
-void TweenVarCore::Tween( void* pValue_, Tweener::Callback pOnFrameCb_, Tweener::Callback pOnFinishedCb_, void* pCallbackData_, Tweener& t )
+void  TweenVarCore::Tween(void* pValue_, Tweener::Callback pOnFrameCb_,
+        Tweener::Callback pOnFinishedCb_, void* pCallbackData_, Tweener& t)
 {
   pValue = pValue_;
   pOnFrameCb = pOnFrameCb_;

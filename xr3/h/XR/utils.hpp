@@ -32,7 +32,7 @@ const char* GetStringSafe(const char* pString);
 
 ///@brief Checks a list of values for a matching one.
 int FindHashedListStringValue(const uint32* parValues, int numValues,
-  const char* pValue);
+      const char* pValue);
 
 template <typename T>
 int CountArrayItems(T* pItems);

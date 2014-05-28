@@ -78,7 +78,9 @@ TweenVarPool<T>::~TweenVarPool()
 
 //==============================================================================
 template  <typename T>
-void TweenVarPool<T>::Add( float duration, Tweener::Function pFunction, Type target, Type& value, Tweener::Callback pOnFrameCb, Tweener::Callback pOnFinishedCb, void* pCallbackData, Tweener& tweener )
+void  TweenVarPool<T>::Add( float duration, Tweener::Function pFunction,
+        Type target, Type& value, Tweener::Callback pOnFrameCb,
+        Tweener::Callback pOnFinishedCb, void* pCallbackData, Tweener& tweener)
 {
   int iInsert(0);
   while (iInsert < m_numVars)

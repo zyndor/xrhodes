@@ -38,20 +38,20 @@ public:
   ///@return  Pointer to the character we're currently on.
   const char* GetChar() const;
   
-  ///@brief   Moves to the next non-whitespace character.
-  ///@return  The character we've ended up at.
+  ///@brief   Moves to the next non-whitespace character, if any.
+  ///@return  Pointer to the character we've ended up at.
   const char* ExpectChar();
   
-  ///@brief   Moves to the next character that matches @a c.
-  ///@return  The character we've ended up at.
+  ///@brief   Moves to the next character that matches @a c, if any.
+  ///@return  Pointer to the character we've ended up at.
   const char* RequireChar(int c);
   
-  ///@brief   Moves to the next character.
-  ///@return  The character we've ended up at.
+  ///@brief   Moves to the next character, if any.
+  ///@return  Pointer to the character we've ended up at.
   const char* SkipChar();
   
   ///@brief   SkipChar()s @a numChars times, but not past the end.
-  ///@return  The character we've ended up at.
+  ///@return  Pointer to the character we've ended up at.
   const char* FastForward(int numChars);
   
   ///@return  Number of characters left.

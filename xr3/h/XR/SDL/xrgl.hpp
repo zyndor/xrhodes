@@ -22,7 +22,7 @@ namespace XR {
 
 //==============================================================================
 inline
-  void  CheckGLError(const char* pText)
+void  CheckGLError(const char* pText)
 {
   GLint error(glGetError());
   if (error != 0)

@@ -7,23 +7,23 @@ namespace XR
 
 enum
 {
-  XML_IMAGE_PATH,
-  XML_WIDTH,
-  XML_HEIGHT,
-  XML_SPRITE,
-  XML_NAME,
-  XML_X,
-  XML_Y,
-  XML_W,
-  XML_H,
-  XML_OFFSET_X,
-  XML_OFFSET_Y,
-  XML_OFFSET_W,
-  XML_OFFSET_H,
-  XML_ROTATED
+  TAG_IMAGE_PATH,
+  TAG_WIDTH,
+  TAG_HEIGHT,
+  TAG_SPRITE,
+  TAG_NAME,
+  TAG_X,
+  TAG_Y,
+  TAG_W,
+  TAG_H,
+  Tag_OFFSET_X,
+  TAG_OFFSET_Y,
+  TAG_OFFSET_W,
+  TAG_OFFSET_H,
+  TAG_ROTATED
 };
 
-static const char* karXml[] =
+static const char* const karTag[] =
 {
   "imagePath",
   "width",
@@ -75,13 +75,13 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   const char*   pTextureName(0);
   if (success)
   {
-    pTextureName = pElem->Attribute(karXml[XML_IMAGE_PATH]);
+    pTextureName = pElem->Attribute(karTag[TAG_IMAGE_PATH]);
 
     success = pTextureName != 0;
     if (!success)
     {
       XR_TRACE(TexturePack, ("'%s' is a required attribute.",
-        karXml[XML_IMAGE_PATH]));
+        karTag[TAG_IMAGE_PATH]));
     }
   }
 
@@ -126,8 +126,8 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   int texHeight;
   if (success)
   {
-    pElem->Attribute(karXml[XML_WIDTH], &texWidth);
-    pElem->Attribute(karXml[XML_HEIGHT], &texHeight);
+    pElem->Attribute(karTag[TAG_WIDTH], &texWidth);
+    pElem->Attribute(karTag[TAG_HEIGHT], &texHeight);
 
     if (texWidth != 0)
     {
@@ -160,7 +160,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 
   if (success)
   {
-    pElem = pElem->FirstChildElement(karXml[XML_SPRITE]);
+    pElem = pElem->FirstChildElement(karTag[TAG_SPRITE]);
 
     char  arBuffer[kBufferSize];
 
@@ -171,13 +171,13 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
     while (success && pElem != 0)
     {
       // create sprite
-      const char* pSpriteName(pElem->Attribute(karXml[XML_NAME]));
+      const char* pSpriteName(pElem->Attribute(karTag[TAG_NAME]));
 
       success = !(pSpriteName == 0 ||
-        pElem->Attribute(karXml[XML_W], &w) == 0 ||
-        pElem->Attribute(karXml[XML_H], &h) == 0 ||
-        pElem->Attribute(karXml[XML_X], &x) == 0 ||
-        pElem->Attribute(karXml[XML_Y], &y) == 0);
+        pElem->Attribute(karTag[TAG_W], &w) == 0 ||
+        pElem->Attribute(karTag[TAG_H], &h) == 0 ||
+        pElem->Attribute(karTag[TAG_X], &x) == 0 ||
+        pElem->Attribute(karTag[TAG_Y], &y) == 0);
       
       if (success)
       {
@@ -202,26 +202,26 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         };
 
         // offset and total size
-        if (pElem->Attribute(karXml[XML_OFFSET_X], &xOffs) == 0)
+        if (pElem->Attribute(karTag[Tag_OFFSET_X], &xOffs) == 0)
         {
           xOffs = 0;
         }
 
-        if (pElem->Attribute(karXml[XML_OFFSET_Y], &yOffs) == 0)
+        if (pElem->Attribute(karTag[TAG_OFFSET_Y], &yOffs) == 0)
         {
           yOffs = 0;
         }
 
-        const char* pIsRotated(pElem->Attribute(karXml[XML_ROTATED]));
+        const char* pIsRotated(pElem->Attribute(karTag[TAG_ROTATED]));
         bool  isRotated(pIsRotated != 0 && strlen(pIsRotated) > 0 &&
           pIsRotated[0] == 'y');
 
-        if (pElem->Attribute(karXml[XML_OFFSET_W], &wOffs) == 0)
+        if (pElem->Attribute(karTag[TAG_OFFSET_W], &wOffs) == 0)
         {
           wOffs = isRotated ? h : w;
         }
 
-        if (pElem->Attribute(karXml[XML_OFFSET_H], &hOffs) == 0)
+        if (pElem->Attribute(karTag[TAG_OFFSET_H], &hOffs) == 0)
         {
           hOffs = isRotated ? w : h;
         }
@@ -244,7 +244,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         // add sprite
         m_sprites.insert(Hash::String(arBuffer), sprite);
         
-        pElem = pElem->NextSiblingElement(karXml[XML_SPRITE]);
+        pElem = pElem->NextSiblingElement(karTag[TAG_SPRITE]);
       }
     }
   }
