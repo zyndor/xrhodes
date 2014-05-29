@@ -228,9 +228,7 @@ a*  a::CreateManaged(uint32 hash) {\
 }\
 \
 void  a::ManagedDestruct()\
-{\
-  this->~a();\
-}\
+{}\
 
 //==============================================================================
 #define XR_CROSS_MANAGED_DEF(a, aImpl)  \
