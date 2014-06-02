@@ -15,14 +15,14 @@ namespace XR
 
 //==============================================================================
 ///@brief Updates the Param, decrementing its @a lifespan and updating the value
-/// with the @a function.
+/// with the @a pFunction.
 bool  Tweener::Param::Update(float tDelta)
 {
-  bool  over(tDelta >= lifespan);
+  tDelta *= base;
+  bool  over(progress + tDelta >= 1.0f);
   if (over)
   {
-    lifespan = .0f;
-    *pValue = target;
+    *pValue = vTarget;
     if (pOnFrame != 0)
     {
       (*pOnFrame)(pCallbackData);
@@ -35,8 +35,8 @@ bool  Tweener::Param::Update(float tDelta)
   }
   else
   {
-    lifespan -= tDelta;
-    *pValue = (*pFunction)(lifespan, duration, target, delta);
+    progress += tDelta;
+    *pValue = (*pFunction)(vStart, vTarget, progress);
     if (pOnFrame != 0)
     {
       (*pOnFrame)(pCallbackData);
@@ -55,20 +55,19 @@ Tweener::~Tweener()
 {}
 
 //==============================================================================
-///@brief Registers a param for tweening.
+///@brief Registers a Param for tweening.
 void  Tweener::Add(float duration, Function pFunction, float target,
-  float& value, Callback pOnFrame, Callback pOnFinished, void* pData)
+        float& value, Callback pOnFrame, Callback pOnFinished, void* pData)
 {
   XR_ASSERT(RingBuffer, pFunction != 0);
   XR_ASSERT(RingBuffer, duration >= .0f);
   if (duration > .0f)
   {
-    Param  p = { duration, 1.0f / duration, pFunction, target,
-      value - target, &value, pOnFrame, pOnFinished, pData };
+    Param  p = { .0f, 1.0f / duration, pFunction, value, target, &value,
+      pOnFrame, pOnFinished, pData };
 
     ParamList::iterator iInsert(std::lower_bound(m_params.begin(),
       m_params.end(), p, Param::ComparePredicate()));
-
     if (iInsert != m_params.end() && iInsert->pValue == p.pValue)
     {
       *iInsert = p;
@@ -89,7 +88,7 @@ void  Tweener::Add(float duration, Function pFunction, float target,
 }
 
 //==============================================================================
-///@brief Removes the param for the given value (if found). @a finish indicates
+///@brief Removes the Param for the given value (if found). @a finish indicates
 /// whether the value should be set to its target and its pOnFinishedCb (if
 /// any) be called.
 ///@return  Whether a value was removed.
@@ -103,7 +102,7 @@ bool  Tweener::Remove( float& value, bool finish )
   {
     if (finish)
     { 
-      value = iRemove->target;
+      value = iRemove->vTarget;
       Callback  pOnFinished(iRemove->pOnFinished);
       if (pOnFinished != 0)
       {
@@ -116,7 +115,7 @@ bool  Tweener::Remove( float& value, bool finish )
 }
 
 //==============================================================================
-///@brief Updates all params, removing the ones that have expired.
+///@brief Updates all Params, removing the ones that have expired.
 void  Tweener::Update(float tDelta)
 {
   ParamList::iterator i0(m_params.begin());
@@ -136,7 +135,7 @@ void  Tweener::Update(float tDelta)
 }
 
 //==============================================================================
-///@brief Clears all params.
+///@brief Clears all Params.
 void  Tweener::Clear()
 {
   m_params.clear();
