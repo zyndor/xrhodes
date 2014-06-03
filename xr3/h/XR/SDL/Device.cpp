@@ -133,6 +133,8 @@ void Device::Init()
 //==============================================================================
 void Device::Exit()
 {
+  XR_ASSERT(Device, !s_deviceImpl.isYielding);
+  
   SDL_Quit();
   
   delete s_deviceImpl.pConfig;
@@ -203,6 +205,7 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
+  XR_ASSERT(Device, !s_deviceImpl.isYielding);
   for (CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
     i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
   {
@@ -221,6 +224,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
+  XR_ASSERT(Device, !s_deviceImpl.isYielding);
   for (CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
     i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
   {
@@ -236,6 +240,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
 //==============================================================================
 void  Device::YieldOS(int32 ms)
 {
+  XR_ASSERT(Device, !s_deviceImpl.isYielding);
   s_deviceImpl.isYielding = true;
   SDL_Event e;
   while (SDL_PollEvent(&e) != 0)

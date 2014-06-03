@@ -105,6 +105,7 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
+  XR_ASSERT(Device, !s_pDevice->isYielding);
   for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
     i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
   {
@@ -122,6 +123,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
+  XR_ASSERT(Device, !s_pDevice->isYielding);
   for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
     i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
   {
@@ -144,5 +146,9 @@ void  Device::YieldOS(int32 ms)
 }
 
 //==============================================================================
+bool  Device::IsYielding()
+{
+  return s_pDevice->isYielding;
+}
 
 } // XR
