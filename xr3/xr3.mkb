@@ -87,6 +87,7 @@ files
   Device.cpp
   File.cpp
   HttpClient.cpp
+  Image.cpp
   Input.cpp
   KeyCode.cpp
   Material.cpp

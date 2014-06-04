@@ -38,6 +38,7 @@ files
   XR/HardString.hpp
   XR/Hash.hpp
   XR/HttpClient.hpp
+  XR/Image.hpp
   XR/Indexer2d.hpp
   XR/IndexMesh.hpp
   XR/Input.hpp

@@ -30,6 +30,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/HardString.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Hash.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/HttpClient.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/Image.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/IndexMesh.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Indexer2d.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Input.hpp</itemPath>
@@ -118,6 +119,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Font.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Grid.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Hash.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Image.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/IndexMesh.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Indexer2d.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Input.cpp</itemPath>
@@ -394,6 +396,8 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Image.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="D:/repos/xr3/xr3/h/XR/IndexMesh.cpp"
             ex="false"
             tool="1"
@@ -554,6 +558,11 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/SDL/File.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Image.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/SDL/Input.cpp"
             ex="false"
@@ -985,6 +994,8 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="D:/repos/xr3/xr3/h/XR/Image.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="D:/repos/xr3/xr3/h/XR/IndexMesh.cpp"
             ex="false"
             tool="1"
@@ -1145,6 +1156,11 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/SDL/File.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/SDL/Image.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/SDL/Input.cpp"
             ex="false"

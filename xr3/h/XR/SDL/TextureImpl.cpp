@@ -9,11 +9,10 @@ static const int  kNumMipMapLevels = 4;
 
 //==============================================================================
 TextureImpl::TextureImpl()
-: m_pSurf(0),
+: m_pSurface(0),
   m_hTexture(INVALID_HANDLE),
   m_width(0),
   m_height(0),
-  m_pitch(0),
   m_flags(XR_MASK_ID(F_CLAMPING))
 {
   XR_GL_CALL(glGenTextures(1, &m_hTexture));
@@ -32,20 +31,30 @@ TextureImpl::~TextureImpl()
 bool  TextureImpl::LoadFromFile(const char* pFileName)
 {
   FreeSurface();
-  m_pSurf = IMG_Load(pFileName);
+  m_pSurface = IMG_Load(pFileName);
 
-  bool  result(m_pSurf != 0);
+  bool  result(m_pSurface != 0);
   if (result)
   {
-    m_width = m_pSurf->w;
-    m_height = m_pSurf->h;
-    m_pitch = m_pSurf->pitch;
+    m_width = m_pSurface->w;
+    m_height = m_pSurface->h;
   }
 
   return result;
 }
 
-//===========-===================================================================
+//==============================================================================
+void  TextureImpl::CopyImage(const Image& img)
+{
+  FreeSurface();
+  
+  Image temp;
+  temp.Copy(img);
+  
+  m_pSurface = static_cast<SDL_Surface*>(temp.SwapImpl(0));
+}
+
+//==============================================================================
 uint32  TextureImpl::GetFlags() const
 {
   return m_flags;
@@ -106,7 +115,7 @@ void  TextureImpl::SetModifiable(bool state)
 //==============================================================================
 void  TextureImpl::Upload()
 {
-  XR_ASSERT(TextureImpl, m_pSurf != 0);
+  XR_ASSERT(TextureImpl, m_pSurface != 0);
 
   XR_GL_CALL(glBindTexture(GL_TEXTURE_2D, m_hTexture));
 
@@ -119,7 +128,7 @@ void  TextureImpl::Upload()
   XR_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterGl));
   
   GLenum  pixelFormat(GL_INVALID_ENUM);
-  int     bytesPerPixel(m_pSurf->format->BytesPerPixel);
+  int     bytesPerPixel(m_pSurface->format->BytesPerPixel);
   switch (bytesPerPixel)
   {
   case  1:
@@ -137,7 +146,7 @@ void  TextureImpl::Upload()
   for (int i = 0; i < mipMapLevels; ++i)
   {
     XR_GL_CALL(glTexImage2D(GL_TEXTURE_2D, i, bytesPerPixel, m_width, m_height,
-      0, pixelFormat, GL_UNSIGNED_BYTE, m_pSurf->pixels));
+      0, pixelFormat, GL_UNSIGNED_BYTE, m_pSurface->pixels));
   }
 
   if (!GetModifiable())
@@ -149,8 +158,8 @@ void  TextureImpl::Upload()
 //==============================================================================
 void  TextureImpl::FreeSurface()
 {
-  SDL_FreeSurface(m_pSurf);
-  m_pSurf = 0;
+  SDL_FreeSurface(m_pSurface);
+  m_pSurface = 0;
 }
 
 } // XR

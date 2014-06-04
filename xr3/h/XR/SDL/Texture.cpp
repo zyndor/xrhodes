@@ -36,6 +36,12 @@ bool  Texture::Load(const char* pName)
 }
 
 //==============================================================================
+void  Texture::CopyImage(const Image& img)
+{
+  return TO_IMPL()->CopyImage(img);
+}
+
+//==============================================================================
 uint32  Texture::GetFlags() const
 {
   return TO_CONST_IMPL()->GetFlags();

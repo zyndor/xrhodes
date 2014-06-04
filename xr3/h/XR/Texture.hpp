@@ -12,7 +12,7 @@
 #if !defined XR_TEXTURE_HPP
 #define XR_TEXTURE_HPP
 
-#include "CrossObject.hpp"
+#include "Image.hpp"
 #include "ResManager.hpp"
 #include "Hash.hpp"
 
@@ -34,6 +34,7 @@ public:
   bool    HasAlpha() const;
   
   bool    Load(const char* pName);
+  void    CopyImage(const Image& img);
 
   uint32  GetFlags() const; // know your platform / implementation.
   

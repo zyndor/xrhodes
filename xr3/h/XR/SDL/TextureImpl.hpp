@@ -13,6 +13,7 @@
 #define XR_TEXTUREIMPL_HPP
 
 #include "xrgl.hpp"
+#include "Texture.hpp"
 
 namespace XR
 {
@@ -47,6 +48,7 @@ public:
   int32   GetPitch() const;
 
   bool    LoadFromFile(const char* pFileName);
+  void    CopyImage(const Image& img);
 
   void    Bind(GLenum target);
   
@@ -68,12 +70,11 @@ public:
 
 protected:
   // data
-  SDL_Surface*  m_pSurf;
+  SDL_Surface*  m_pSurface;
   
   GLuint        m_hTexture;
   int32         m_width;
   int32         m_height;
-  int32         m_pitch;
   
   uint32        m_flags;
 };
@@ -98,7 +99,8 @@ int32 TextureImpl::GetHeight() const
 inline
 int32 TextureImpl::GetPitch() const
 {
-  return m_pitch;
+  XR_ASSERT(TextureImpl, m_pSurface != 0);
+  return m_pSurface->pitch;
 }
 
 //==============================================================================

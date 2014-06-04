@@ -41,35 +41,16 @@ bool  Texture::HasAlpha() const
 bool  Texture::Load(const char* pName)
 {
   XR_ASSERT(Texture, pName != 0);
-  //bool  success(File::CheckExists(pName));
-  //if(!success)
-  //{
-  //  return false;
-  //}
-
-  //int hFile(File::Open(pName, "r"));
-  //success = hFile != File::INVALID_HANDLE; 
-  //if(!success)
-  //{
-  //  return false;
-  //}
-
-  //int64 size(File::GetSize(hFile));
-  //success = size > 0;
-  //if(!success)
-  //{
-  //  return false;
-  //}
-
-  //char* parBuffer(new char[size]);
-  //success = File::Read(size, 1, hFile, parBuffer);
-  //if(!success)
-  //{
-  //  return false;
-  //}
-
   TO_IMPL()->LoadFromFile(pName);
   return !TO_CONST_IMPL()->IsCountZero();
+}
+
+//==============================================================================
+void  Texture::CopyImage(const Image& img)
+{
+  XR_ASSERT(Texture, img.HasImpl());
+  CIwImage* pImg(static_cast<CIwImage*>(const_cast<void*>(img.GetImpl())));
+  TO_IMPL()->CopyFromImage(pImg);
 }
 
 //==============================================================================

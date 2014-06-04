@@ -77,6 +77,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/784063616/Audio.o \
 	${OBJECTDIR}/_ext/784063616/Device.o \
 	${OBJECTDIR}/_ext/784063616/File.o \
+	${OBJECTDIR}/_ext/784063616/Image.o \
 	${OBJECTDIR}/_ext/784063616/Input.o \
 	${OBJECTDIR}/_ext/784063616/InputImpl.o \
 	${OBJECTDIR}/_ext/784063616/KeyCode.o \
@@ -342,6 +343,11 @@ ${OBJECTDIR}/_ext/784063616/File.o: /D/repos/xr3/xr3/h/XR/SDL/File.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/784063616
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/784063616/File.o /D/repos/xr3/xr3/h/XR/SDL/File.cpp
+
+${OBJECTDIR}/_ext/784063616/Image.o: /D/repos/xr3/xr3/h/XR/SDL/Image.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/784063616
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/784063616/Image.o /D/repos/xr3/xr3/h/XR/SDL/Image.cpp
 
 ${OBJECTDIR}/_ext/784063616/Input.o: /D/repos/xr3/xr3/h/XR/SDL/Input.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/784063616
