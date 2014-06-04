@@ -28,35 +28,57 @@ int32 CIwHttpFix::ReceivedHeaders( void* pSystem, void* pUser )
   CIwHttpFix* pHttp(static_cast<CIwHttpFix*>(pSystem));
 
   bool  success(pHttp->GetStatus() == S3E_RESULT_SUCCESS);
-  if(success)
+  if (success)
   {
-    uint32 len = pHttp->ContentExpected();
-    if(len == 0)
+    switch(pHttp->GetResponseCode())
     {
-      len = HttpClient::kDefaultChunkSize;
-    }
-
-    const char* pPhpSessid(strstr(pHttp->m_response.c_str(), kPhpSessId));
-    if(pPhpSessid != 0)
-    {
-      const char* pEnd(strchr(pPhpSessid, ';'));
-      if(pEnd != 0)
+    case  200:
       {
-        pJob->phpSessionId.assign(pPhpSessid, pEnd - pPhpSessid);
+        uint32 len = pHttp->ContentExpected();
+        if (len == 0)
+        {
+          len = HttpClient::kDefaultChunkSize;
+        }
+
+        const char* pPhpSessid(strstr(pHttp->m_response.c_str(), kPhpSessId));
+        if (pPhpSessid != 0)
+        {
+          const char* pEnd(strchr(pPhpSessid, ';'));
+          if (pEnd != 0)
+          {
+            pJob->phpSessionId.assign(pPhpSessid, pEnd - pPhpSessid);
+          }
+          else
+          {
+            pJob->phpSessionId.assign(pPhpSessid);
+          }
+        }
+
+        pJob->bufferLen = len;
+        pJob->pBuffer = (char*)(s3eMalloc(len + 1));
+        pJob->pBuffer[len] = 0;
+
+        pHttp->ReadDataAsync(pJob->pBuffer, len, 0, HttpClient::ReceivedData, pJob);
       }
-      else
+      break;
+
+    case  302:
       {
-        pJob->phpSessionId.assign(pPhpSessid);
+        std::string location;
+        pHttp->GetHeader("location", location);
+
+        pHttp->Cancel();
+        pHttp->Get(location.c_str(), ReceivedHeaders, pUser);
       }
+      break;
+
+    default:
+      success = false;
+      break;
     }
-
-    pJob->bufferLen = len;
-    pJob->pBuffer = (char*)(s3eMalloc(len + 1));
-    pJob->pBuffer[len] = 0;
-
-    pHttp->ReadDataAsync(pJob->pBuffer, len, 0, HttpClient::ReceivedData, pJob);
   }
-  else
+
+  if(!success)
   {
     pJob->pClient->ResetStatus();
     XR_TRACE(HttpClient, ("Request failed receiving headers."));
@@ -82,12 +104,12 @@ int32 HttpClient::ReceivedData( void* pSystem, void* pUser )
   CIwHTTP&  http(*static_cast<CIwHTTP*>(pJob->pHttpImpl));
 
   bool  success(http.GetStatus() == S3E_RESULT_SUCCESS);
-  if(success)
+  if (success)
   {
-    if(http.ContentReceived() != http.ContentLength())
+    if (http.ContentReceived() != http.ContentLength())
     {
       uint32  len(pJob->bufferLen);
-      if(len < http.ContentExpected())
+      if (len < http.ContentExpected())
       {
         len = http.ContentExpected();
       }
@@ -96,7 +118,7 @@ int32 HttpClient::ReceivedData( void* pSystem, void* pUser )
         len += kDefaultChunkSize;
       }
 
-      if(len != pJob->bufferLen)
+      if (len != pJob->bufferLen)
       {
         //pJob->pClient->m_pool.Alloc(len);
         pJob->pBuffer = (char*)(s3eRealloc(pJob->pBuffer, len));
@@ -138,13 +160,13 @@ std::string HttpClient::Urlify( const char** parKeyValues, bool encodeValues )
     ("Undefined value: an even number of items is required, found: %d", numKeyValues));
 
   std::ostringstream  buf;
-  for(int i = 0; i < numKeyValues;) 
+  for (int i = 0; i < numKeyValues;) 
   {
     buf << parKeyValues[i] << '=' << 
       (encodeValues ? UrlEncode(parKeyValues[i + 1]) : parKeyValues[i + 1]);
 
     i += 2;
-    if(i < numKeyValues)
+    if (i < numKeyValues)
     {
       buf << "&";
     }
@@ -174,32 +196,32 @@ bool  HttpClient::RequestPost(const char* pUri, const char* pBody,
   bool force)
 {
   bool  success(m_status == READY || force);
-  if(success)
+  if (success)
   {
     XR_TRACE(HttpClient, ("POST request to: %s", pUri));
     HttpJob*  pJob = new HttpJob(this, m_pHttpImpl, pResponseCb, pCbData);
 
     CIwHttpFix* pHttp(static_cast<CIwHttpFix*>(m_pHttpImpl));
-    if(parKeyValues != 0)
+    if (parKeyValues != 0)
     {
       int numKeyValues(CountArrayItems(parKeyValues));
       XR_ASSERTMSG(HttpClient, (numKeyValues & 1) == 0,
         ("Undefined value: an even number of items is required, found: %d", numKeyValues));
 
-      for(int i = 0; i < numKeyValues; i += 2) 
+      for (int i = 0; i < numKeyValues; i += 2) 
       {
         pHttp->SetFormData(parKeyValues[i], parKeyValues[i + 1]);
       }
     }
 
-    if(m_phpSessid.size() > 0)
+    if (m_phpSessid.size() > 0)
     {
       pHttp->SetRequestHeader("Cookie", m_phpSessid);
     }
     
     success = S3E_RESULT_ERROR != pHttp->Post(pUri, pBody, 0,
       CIwHttpFix::ReceivedHeaders, pJob);
-    if(success)
+    if (success)
     {
       m_status = BUSY;
       m_jobs.insert(pJob);
@@ -219,12 +241,12 @@ bool HttpClient::RequestGet(const char* pUri, ResponseCallback pResponseCb,
   void* pCbData, bool force)
 {
   bool  success(m_status == READY || force);
-  if(success)
+  if (success)
   {
     XR_TRACE(HttpClient, ("GET request to: %s", pUri));
 
     CIwHttpFix* pHttp(static_cast<CIwHttpFix*>(m_pHttpImpl));
-    if(m_phpSessid.size() > 0)
+    if (m_phpSessid.size() > 0)
     {
       pHttp->SetRequestHeader("Cookie", m_phpSessid);
     }
@@ -233,7 +255,7 @@ bool HttpClient::RequestGet(const char* pUri, ResponseCallback pResponseCb,
     success = S3E_RESULT_ERROR !=
       pHttp->Get(pUri, CIwHttpFix::ReceivedHeaders, pJob);
 
-    if(success)
+    if (success)
     {
       m_status = BUSY;
       m_jobs.insert(pJob);
@@ -260,7 +282,7 @@ void HttpClient::ResetStatus()
 
   m_status = READY;
 
-  for(StringSet::iterator i0(m_clearHeaders.begin()), i1(m_clearHeaders.end()); i0 != i1; ++i0)
+  for (StringSet::iterator i0(m_clearHeaders.begin()), i1(m_clearHeaders.end()); i0 != i1; ++i0)
   {
     pHttp->SetRequestHeader(i0->c_str(), "");
   }
@@ -272,20 +294,20 @@ bool HttpClient::SetHeader( const char* pKey, const char* pValue, bool oneOff )
   XR_ASSERT(HttpClient, strlen(pKey) > 0);
 
   bool  success(m_status == READY);
-  if(success)
+  if (success)
   {
-    if(pValue == 0)
+    if (pValue == 0)
     {
       pValue = "";
     }
-    if(strlen(pValue) == 0)
+    if (strlen(pValue) == 0)
     {
       oneOff = true;
     }
     
     CIwHttpFix* pHttp(static_cast<CIwHttpFix*>(m_pHttpImpl));
     pHttp->SetRequestHeader(pKey, pValue);
-    if(oneOff)
+    if (oneOff)
     {
       m_clearHeaders.insert(pKey);
     }
