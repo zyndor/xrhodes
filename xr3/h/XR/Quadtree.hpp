@@ -92,24 +92,58 @@ public:
   ~Quadtree();
   
   // general use
+  ///@brief Adds the object @a p with the AABB @a box, to the Quadtree.
   void  Add(const AABB& box, void* p);
+
+  ///@brief Adds the point object @a p at position @a pos, to the Quadtree.
   void  Add(const Vector2& pos, void* p);
   
+  ///@brief Checks the objects in the Quadtree against the AABB @a box. The
+  /// collision candidates are passed to the UnaryCallback @a pUnary.
+  ///@note  You will need to check for actual collision.
   void  Process(const AABB& box, UnaryCallback pUnary);
+
+  ///@brief Checks the objects in the Quadtree against the point @a pos. The
+  /// collision candidates are passed to the UnaryCallback @a pUnary.
+  ///@note  You will need to check for actual collision.
   void  Process(const Vector2& pos, UnaryCallback pUnary);
+
+  ///@brief Passes all objects in the Quadtree to the UnaryCallback @a pUnary.
   void  ProcessAll(UnaryCallback pUnary);
   
+  ///@brief Checks the objects in the Quadtree against the AABB @a box. The
+  /// collision candidates are passed to the BinaryCallback @a pBinary.
+  ///@note  You will need to check for actual collision.
   void  Process(const AABB& box, BinaryCallback pBinary, void *pObject);
+
+  ///@brief Checks the objects in the Quadtree against the point @a pos. The
+  /// collision candidates are passed to the BinaryCallback @a pBinary.
+  ///@note  You will need to check for actual collision.
   void  Process(const Vector2& pos, BinaryCallback pBinary, void *pObject);
+
+  ///@brief Passes all objects in the Quadtree to the BinaryCallback @a pBinary.
   void  ProcessAll(BinaryCallback pUnary, void *pObject);
   
+  ///@brief Removes from the Quadtree the first object at the address pointed
+  /// to by @a p.
+  ///@note  The assumption is made that the object has been inserted into the
+  /// Quadtree once at most.
   void  Remove(void* p);
   
+  ///@brief Convenience function to remove an object and reinsert it at using
+  /// @a box as its new boundaries.
   void  Update(const AABB& box, void* p);
   
+  ///@brief Clears the Quadtree of objects.
   void  Clear();
   
+  ///@brief Empties the list of objects and deletes all four leaves.
+  ///@note  Does not reset position.
   void  Destroy();
+
+  ///@brief Creates the Quadtree at the given starting position @a pos and half-
+  /// size (@a hw, @a hh), subdividing while any of the nodes' dimensions is >
+  /// @a min or splitting down to @a s_divisions levels if @a min is .0f.
   void  Create(const Vector2 &pos, float hw, float hh, float min);
 
 private:
@@ -199,9 +233,6 @@ Quadtree<Alloc>::~Quadtree()
 }
 
 //==============================================================================
-///@brief Adds the object @a p with the AABB @a box, to the Quadtree.
-///@note  Each object should be added to the Quadtree no more than once. For
-/// the sake of efficiency this is not being checked.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Add(const AABB& box, void* p)
@@ -216,9 +247,6 @@ void  Quadtree<Alloc>::Add(const AABB& box, void* p)
 }
 
 //==============================================================================
-///@brief Adds the point object @a p at position @a pos, to the Quadtree.
-///@note  Each object should be added to the Quadtree no more than once. For
-/// the sake of efficiency this is not being checked.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Add(const Vector2& pos, void* p)
@@ -231,9 +259,6 @@ void  Quadtree<Alloc>::Add(const Vector2& pos, void* p)
 }
 
 //==============================================================================
-///@brief Checks the objects in the Quadtree against the AABB @a box. The
-/// collision candidates are passed to the UnaryCallback @a pUnary.
-///@note  You will need to check for actual collision.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Process(const AABB& box, UnaryCallback pUnary)
@@ -248,9 +273,6 @@ void  Quadtree<Alloc>::Process(const AABB& box, UnaryCallback pUnary)
 }
 
 //==============================================================================
-///@brief Checks the objects in the Quadtree against the point @a pos. The
-/// collision candidates are passed to the UnaryCallback @a pUnary.
-///@note  You will need to check for actual collision.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Process(const Vector2& pos, UnaryCallback pUnary)
@@ -263,7 +285,6 @@ void  Quadtree<Alloc>::Process(const Vector2& pos, UnaryCallback pUnary)
 }
 
 //==============================================================================
-///@brief Passes all objects in the Quadtree to the UnaryCallback @a pUnary.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::ProcessAll(UnaryCallback pUnary)
@@ -275,9 +296,6 @@ void  Quadtree<Alloc>::ProcessAll(UnaryCallback pUnary)
 }
 
 //==============================================================================
-///@brief Checks the objects in the Quadtree against the AABB @a box. The
-/// collision candidates are passed to the BinaryCallback @a pBinary.
-///@note  You will need to check for actual collision.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Process(const AABB& box, BinaryCallback pBinary,
@@ -294,9 +312,6 @@ void  Quadtree<Alloc>::Process(const AABB& box, BinaryCallback pBinary,
 }
 
 //==============================================================================
-///@brief Checks the objects in the Quadtree against the point @a pos. The
-/// collision candidates are passed to the BinaryCallback @a pBinary.
-///@note  You will need to check for actual collision.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Process(const Vector2& pos, BinaryCallback pBinary,
@@ -311,7 +326,6 @@ void  Quadtree<Alloc>::Process(const Vector2& pos, BinaryCallback pBinary,
 }
 
 //==============================================================================
-///@brief Passes all objects in the Quadtree to the BinaryCallback @a pBinary.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::ProcessAll(BinaryCallback pBinary, void *pObject)
@@ -324,10 +338,6 @@ void  Quadtree<Alloc>::ProcessAll(BinaryCallback pBinary, void *pObject)
 }
 
 //==============================================================================
-///@brief Removes from the Quadtree the first object at the address pointed to
-/// by @a p.
-///@note  The assumption is made that the object has been inserted into the
-/// Quadtree once at most.
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Remove(void* p)
@@ -339,7 +349,15 @@ void  Quadtree<Alloc>::Remove(void* p)
 }
 
 //==============================================================================
-///@brief Clears the Quadtree of objects.
+template  <template <typename> class Alloc>
+inline
+void  Quadtree<Alloc>::Update(const AABB& box, void* p)
+{
+  Remove(p);
+  Add(box, p);
+}
+
+//==============================================================================
 template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Clear()
@@ -352,17 +370,6 @@ void  Quadtree<Alloc>::Clear()
     m_arpLeaves[SW]->Clear();
     m_arpLeaves[SE]->Clear();
   }
-}
-
-//==============================================================================
-///@brief Convenience function to remove an object and reinsert it at using
-/// @a box as its new boundaries.
-template  <template <typename> class Alloc>
-inline
-void  Quadtree<Alloc>::Update(const AABB& box, void* p)
-{
-  Remove(p);
-  Add(box, p);
 }
 
 //==============================================================================
@@ -546,8 +553,6 @@ void  Quadtree<Alloc>::_RemoveRecursion()
 }
 
 //==============================================================================
-///@brief Empties the list of objects and deletes all four leaves.
-///@note  Does not reset position.
 template  <template <typename> class Alloc>
 void  Quadtree<Alloc>::Destroy()
 {
@@ -565,9 +570,6 @@ void  Quadtree<Alloc>::Destroy()
 }
 
 //==============================================================================
-///@brief Creates the Quadtree at the given starting position @a pos and half-
-/// size (@a hw, @a hh), subdividing while any of the nodes' dimensions is >
-/// @a min or splitting down to @a s_divisions levels if @a min is .0f.
 template  <template <typename> class Alloc>
 void  Quadtree<Alloc>::Create(const Vector2 &pos, float hw, float hh, float min)
 {
