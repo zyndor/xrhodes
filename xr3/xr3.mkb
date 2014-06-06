@@ -57,6 +57,7 @@ files
   MersenneTwister.cpp
   MeshRenderer.cpp
   Module.cpp
+  MouseHandler.cpp
   Named.cpp
   Parse.cpp
   ParserCore.cpp

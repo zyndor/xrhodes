@@ -53,6 +53,7 @@ files
   XR/MeshRenderer.hpp
   XR/Module.hpp
   XR/MouseButton.hpp
+  XR/MouseHandler.hpp
   XR/Named.hpp
   XR/Parse.hpp
   XR/ParserCore.hpp

@@ -66,6 +66,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/MersenneTwister.o \
 	${OBJECTDIR}/_ext/1046665460/MeshRenderer.o \
 	${OBJECTDIR}/_ext/1046665460/Module.o \
+	${OBJECTDIR}/_ext/1046665460/MouseHandler.o \
 	${OBJECTDIR}/_ext/1046665460/Named.o \
 	${OBJECTDIR}/_ext/1046665460/Parse.o \
 	${OBJECTDIR}/_ext/1046665460/ParserCore.o \
@@ -288,6 +289,11 @@ ${OBJECTDIR}/_ext/1046665460/Module.o: /D/repos/xr3/xr3/h/XR/Module.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/Module.o /D/repos/xr3/xr3/h/XR/Module.cpp
+
+${OBJECTDIR}/_ext/1046665460/MouseHandler.o: /D/repos/xr3/xr3/h/XR/MouseHandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/MouseHandler.o /D/repos/xr3/xr3/h/XR/MouseHandler.cpp
 
 ${OBJECTDIR}/_ext/1046665460/Named.o: /D/repos/xr3/xr3/h/XR/Named.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460

@@ -43,6 +43,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/MeshRenderer.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Module.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/MouseButton.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/MouseHandler.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Named.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Observer.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Parse.hpp</itemPath>
@@ -136,6 +137,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/MeshRenderer.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Module.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/MouseButton.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/MouseHandler.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Named.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Parse.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/ParserCore.cpp</itemPath>
@@ -473,6 +475,16 @@
       <item path="D:/repos/xr3/xr3/h/XR/Module.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/MouseButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MouseHandler.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MouseHandler.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -1071,6 +1083,16 @@
       <item path="D:/repos/xr3/xr3/h/XR/Module.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/MouseButton.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MouseHandler.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/MouseHandler.hpp"
             ex="false"
             tool="3"
             flavor2="0">
