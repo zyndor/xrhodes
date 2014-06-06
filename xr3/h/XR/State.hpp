@@ -64,6 +64,9 @@ public:
     int32       m_tFade;
   };
 
+  // using
+  using Module::Render;
+
   // structors
   State();
   virtual ~State();
