@@ -21,6 +21,7 @@ files
   XR/Audio.hpp
   XR/AutoMatrix.hpp
   XR/BasicMesh.hpp
+  XR/ButtonState.hpp
   XR/Callback.hpp
   XR/Color.hpp
   XR/CrossObject.hpp

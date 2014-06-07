@@ -14,13 +14,13 @@ namespace XR
 {
 
 //==============================================================================
-static const uint8  karKeyStateMap[] =
+static const uint8  karButtonStateMap[] =
 {
-  0,  // 
-  Input::BS_IS_PRESSED | Input::BS_WAS_PRESSED,  // S3E_KEY_STATE_DOWN
+  BUTTON_UP,  // 
+  BUTTON_DOWN,  // S3E_KEY_STATE_DOWN
+  BUTTON_IS_PRESSED,  // S3E_KEY_STATE_PRESSED
   0,
-  Input::BS_IS_PRESSED,  // S3E_KEY_STATE_PRESSED
-  Input::BS_WAS_PRESSED,  // S3E_KEY_STATE_RELEASED
+  BUTTON_WAS_PRESSED,  // S3E_KEY_STATE_RELEASED
 };
 
 //==============================================================================
@@ -155,14 +155,14 @@ void Input::Update()
   for(int i = 0; i < kKeyCount; ++i)
   {
     int state(s3eKeyboardGetState(static_cast<s3eKey>(karKeyCodeNative[i])));
-    s_pInput->arKeyState[i] = karKeyStateMap[state];
+    s_pInput->arKeyState[i] = karButtonStateMap[state];
   }
 
   s3ePointerUpdate();
   for(int i = 0; i < kMouseButtonCount; ++i)
   {
-    s_pInput->arMouseButtonState[i] =
-      s3ePointerGetState(static_cast<s3ePointerButton>(i));
+    int state(s3ePointerGetState(static_cast<s3ePointerButton>(i)));
+    s_pInput->arMouseButtonState[i] = karButtonStateMap[state];
   }
 }
 

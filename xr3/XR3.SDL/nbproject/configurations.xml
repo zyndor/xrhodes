@@ -14,6 +14,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Audio.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/AutoMatrix.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/BasicMesh.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/ButtonState.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Callback.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Color.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/CrossObject.hpp</itemPath>
@@ -314,6 +315,11 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/BasicMesh.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ButtonState.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -922,6 +928,11 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/BasicMesh.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/ButtonState.hpp"
             ex="false"
             tool="3"
             flavor2="0">
