@@ -87,8 +87,8 @@ protected:
   virtual void  Init() =0;  // when state gets pushed on stack
   virtual void  Shutdown() =0;  // when state gets popped from stack; must reset changes since Init()
 
-  virtual void  _Enter();
-  virtual void  _Exit();
+  virtual void  _Enter() =0;
+  virtual void  _Exit() =0;
   virtual void  _Update(int32 tDelta) =0;
 };
 
