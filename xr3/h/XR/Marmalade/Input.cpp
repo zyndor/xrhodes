@@ -16,11 +16,11 @@ namespace XR
 //==============================================================================
 static const uint8  karKeyStateMap[] =
 {
-  0,  // 
-  Input::BS_IS_PRESSED | Input::BS_WAS_PRESSED,  // S3E_KEY_STATE_DOWN
+  BUTTON_UP,  // 
+  BUTTON_DOWN,  // S3E_KEY_STATE_DOWN
   0,
-  Input::BS_IS_PRESSED,  // S3E_KEY_STATE_PRESSED
-  Input::BS_WAS_PRESSED,  // S3E_KEY_STATE_RELEASED
+  BUTTON_IS_PRESSED,  // S3E_KEY_STATE_PRESSED
+  BUTTON_WAS_PRESSED,  // S3E_KEY_STATE_RELEASED
 };
 
 //==============================================================================

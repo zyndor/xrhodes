@@ -16,6 +16,7 @@
 #include "Callback.hpp"
 #include "KeyCode.hpp"
 #include "MouseButton.hpp"
+#include "ButtonState.hpp"
 
 namespace XR
 {
@@ -35,14 +36,6 @@ public:
     EV_TOUCH_ACTION,
     EV_TOUCH_MOTION,
     kMaxEvents
-  };
-  
-  enum  ButtonState
-  {
-    // 0x0 - !(BS_WAS_PRESSED | ISDOWN) - not pressed
-    BS_WAS_PRESSED = 0x1, // just released
-    BS_IS_PRESSED = 0x2,  // just pressed
-    // 0x3 - BS_WAS_PRESSED | BS_IS_PRESSED - held
   };
   
   struct  KeyEvent

@@ -30,18 +30,14 @@ void Input::Exit()
 //==============================================================================
 void Input::Update()
 {
-  for (int i = 0; i < kKeyCount; ++i)
-  {
-    // isPressed -> wasPressed
-    InputImpl::s_pInstance->arKeyState[i] >>= 1;
-  }
-  
   int numKeys;
   const uint8*  parKeys(SDL_GetKeyboardState(&numKeys));
   for (int i = 0; i < kKeyCount; ++i)
   {
     int k(karKeyCodeNative[i]);
-    InputImpl::s_pInstance->arKeyState[i] |= (parKeys[k] != 0) << 1;
+    InputImpl::s_pInstance->arKeyState[i] =
+      (InputImpl::s_pInstance->arKeyState[i] >> 1) |
+      ((parKeys[k] ? 1 : 0) << 1);
   }
   
   int32 x, y;
