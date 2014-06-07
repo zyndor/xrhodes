@@ -12,7 +12,7 @@
 #if !defined XR_STATE_HPP
 #define XR_STATE_HPP
 
-#include <vector>
+#include <list>
 #include "HardStack.hpp"
 #include "Module.hpp"
 
@@ -38,7 +38,6 @@ public:
     // general
     int32 GetFadeTimer() const;
 
-    void  SetStackSize(int size);
     void  Push(State* pState, int tFade = 0); // no ownership transfer
     void  Pop(int tFade = 0); // no ownership transfer
     void  Change(State* pState, int tFade = 0); // no ownership transfer
@@ -48,20 +47,19 @@ public:
     
   private:
     // types
-    typedef std::vector<State*> StateVector;
+    typedef std::list<State*> StateList;
     
-    // internal
-    void  _ExpireState();
-
     // data
-    StateVector m_stack;
-    int32       m_iState;
+    StateList m_stack;
     
-    State*      m_pRequested; // no ownership, will be made current on Update()
-    State*      m_pPrevious;  // no ownership, fading state
-    bool        m_shutdownPrevious;
+    State*    m_pRequested; // no ownership, will be made current on Update()
+    State*    m_pPrevious;  // no ownership, fading state
+    bool      m_shutdownPrevious; // if popped / changed
 
-    int32       m_tFade;
+    int32     m_tFade;
+
+    // internal
+    void  _ExpirePrevious(int32 tFade);
   };
 
   // using
@@ -71,25 +69,23 @@ public:
   State();
   virtual ~State();
   
+  // virtual
+  virtual void  Enter(int32 tFade) =0; // when requested state becomes active
+  virtual void  Exit(int32 tFade) =0;  // when requested state becomes inactive; must reset changes made since Enter()
+
+  virtual void  Update(int32 tDelta) =0;
+
   // general
-  void  Enter(int32 tFade); // when requested state becomes active
-  void  Exit(int32 tFade);  // when requested state becomes inactive; must reset changes made since Enter()
-  void  Update(int32 tDelta);
+  virtual void  UpdateFadeIn(int32 tDelta);
+  virtual void  UpdateFadeOut(int32 tDelta);
 
   // friends
   friend class  Manager;
 
 protected:
-  // data
-  int32 m_tFade;
-
   // virtual
   virtual void  Init() =0;  // when state gets pushed on stack
   virtual void  Shutdown() =0;  // when state gets popped from stack; must reset changes since Init()
-
-  virtual void  _Enter() =0;
-  virtual void  _Exit() =0;
-  virtual void  _Update(int32 tDelta) =0;
 };
 
 //==============================================================================

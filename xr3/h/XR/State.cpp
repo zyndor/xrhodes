@@ -6,7 +6,6 @@ namespace XR
 //==============================================================================
 State::Manager::Manager()
 : m_stack(),
-  m_iState(0),
   m_pRequested(0),
   m_pPrevious(0),
   m_shutdownPrevious(false),
@@ -18,29 +17,21 @@ State::Manager::~Manager()
 {}
 
 //==============================================================================
-void  State::Manager::SetStackSize(int size)
+void  State::Manager::_ExpirePrevious(int32 tFade)
 {
-  XR_ASSERT(State::Manager, size > 0);
-  XR_ASSERT(State::Manager, size > m_iState);
-  
-  StateVector stack(size);
-  for (int i = 0; i < size; ++i)
-  {
-    stack[i] = m_stack[i];
-  }
-  m_stack.swap(stack);
-}
+  XR_ASSERT(State::Manager, !m_stack.empty());
 
-//==============================================================================
-void  State::Manager::_ExpireState()
-{
-  if (m_tFade > 0 && m_pPrevious != 0 && m_shutdownPrevious)
+  if(m_pPrevious != 0 && m_shutdownPrevious)
   {
     m_pPrevious->Shutdown();
-    m_shutdownPrevious = false;
   }
 
-  m_pPrevious = m_stack[m_iState];
+  // exit and hand over last state
+  m_stack.back()->Exit(tFade);
+  m_pPrevious = m_stack.back();
+  m_stack.pop_back();
+
+  m_shutdownPrevious = true;
 }
 
 //==============================================================================
@@ -48,27 +39,29 @@ void  State::Manager::Push(State* pState, int tFade)
 {
   XR_ASSERT(State::Manager, pState != 0);
   XR_ASSERT(State::Manager, tFade >= 0);
-  XR_ASSERT(State::Manager, pState != m_stack[m_iState]);
 
-  _ExpireState();
+  // hold last state for exiting
+  m_pPrevious = m_stack.empty() ? 0 : m_stack.back();
 
-  ++m_iState;
+  // request new state
   m_pRequested = pState;
-  m_tFade = tFade;
   pState->Init();
+
+  m_tFade = tFade;
 }
 
 //==============================================================================
 void  State::Manager::Pop(int tFade)
 {
   XR_ASSERT(State::Manager, tFade >= 0);
+  XR_ASSERT(State::Manager, !m_stack.empty());
 
-  _ExpireState();
+  // expire previous state
+  _ExpirePrevious(tFade);
 
-  m_shutdownPrevious = true;
+  // roll on 
+  m_pRequested = m_stack.empty() ? 0 : m_stack.back();
 
-  --m_iState;
-  m_pRequested = m_iState >= 0 ? m_stack[m_iState] : 0;
   m_tFade = tFade;
 }
 
@@ -77,16 +70,17 @@ void  State::Manager::Change(State* pState, int tFade)
 {
   XR_ASSERT(State::Manager, pState != 0);
   XR_ASSERT(State::Manager, tFade >= 0);
-  XR_ASSERT(State::Manager, m_iState >= 0);
-  XR_ASSERT(State::Manager, pState != m_stack[m_iState]);
+  XR_ASSERT(State::Manager, !m_stack.empty());
+  XR_ASSERT(State::Manager, pState != m_stack.back());
 
-  _ExpireState();
+  // expire previous state
+  _ExpirePrevious(tFade);
 
-  m_shutdownPrevious = true;
-
+  // set pState as requested
   m_pRequested = pState;
-  m_tFade = tFade;
   pState->Init();
+
+  m_tFade = tFade;
 }
 
 //==============================================================================
@@ -95,18 +89,9 @@ void State::Manager::Update(int32 tDelta)
   // handle request
   if (m_pRequested != 0)
   {
-    // fadeout
-    if (m_pPrevious != 0)
-    {
-      m_pPrevious->Exit(m_tFade);
-    }
-  
-    // swap down
-    m_stack[m_iState] = m_pRequested;
-    //if (m_pCurrent != 0) // m_pRequested != 0
-    //{
-    m_stack[m_iState]->Enter(m_tFade);
-    //}
+    // process requested
+    m_pRequested->Enter(m_tFade);
+    m_stack.push_back(m_pRequested);
 
     // clear request
     m_pRequested = 0;
@@ -117,37 +102,46 @@ void State::Manager::Update(int32 tDelta)
   {
     m_tFade -= tDelta;
 
-    //// if there's a previous state fading, update it
-    //if (m_pPrevious != 0)
-    //{
-    //  m_pPrevious->Update(tDelta);
-    //}
+    // update fade in for state to come, if any
+    if (!m_stack.empty())
+    {
+      m_stack.back()->UpdateFadeIn(tDelta);
+    }
 
-    //// stop fading
-    //if (m_tFade <= 0)
-    //{
-    //  m_pCurrent->m_isFadeComplete = true;
-    //  if (m_pPrevious != 0)
-    //  {
-    //    m_pPrevious->m_isFadeComplete = true;
-    //  }
-    //}
+    // if there's a previous state fading out, update it
+    if (m_pPrevious != 0)
+    {
+      m_pPrevious->UpdateFadeOut(tDelta);
+
+      if (m_tFade <= 0)
+      {
+        // stop fading
+        if(m_shutdownPrevious)
+        {
+          // shutdown
+          m_pPrevious->Shutdown();
+          m_shutdownPrevious = false;
+        }
+        m_pPrevious = 0;
+      }
+    }
   }
 
   // update current state
-  if (m_stack[m_iState] != 0)
+  if (!m_stack.empty())
   {
-    m_stack[m_iState]->Update(tDelta);
+    m_stack.back()->Update(tDelta);
   }
 }
 
 //==============================================================================
 void State::Manager::Render()
 {
-  XR_ASSERT(RingBuffer, m_iState >= 0);
-  XR_ASSERT(RingBuffer, m_stack[m_iState] != 0);
+  if(!m_stack.empty())
+  {
+    m_stack.back()->Render();
+  }
 
-  m_stack[m_iState]->Render();
   if (m_pPrevious != 0 && m_tFade > 0)
   {
     m_pPrevious->Render();
@@ -156,7 +150,6 @@ void State::Manager::Render()
 
 //==============================================================================
 State::State()
-//: m_isFadeComplete(true)
 {}
 
 //==============================================================================
@@ -164,24 +157,11 @@ State::~State()
 {}
 
 //==============================================================================
-void  State::Enter(int32 tFade)
-{
-  m_tFade = tFade;
-}
+void  State::UpdateFadeIn(int32 tDelta)
+{}
 
 //==============================================================================
-void  State::Exit(int32 tFade)
-{
-  m_tFade = tFade;
-}
-
-//==============================================================================
-void  State::Update(int32 tDelta)
-{
-  if (tDelta > 0)
-  {
-    m_tFade -= tDelta;
-  }
-}
+void  State::UpdateFadeOut(int32 tDelta)
+{}
 
 } // XR
