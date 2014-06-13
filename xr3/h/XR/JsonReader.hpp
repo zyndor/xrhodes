@@ -29,20 +29,19 @@ class Value;
 class Object;
 class Array;
 
+enum  Type
+{
+  ANY = -1,
+  OBJECT,
+  ARRAY,
+  VALUE,
+};
+
 //==============================================================================
 ///@brief Generic JSON Entity base class.
 class Entity 
 {
 public:
-  // types
-  enum  Type
-  {
-    ANY = -1,
-    OBJECT,
-    ARRAY,
-    VALUE,
-  };
-
   // static
   static void Deleter(Entity* p);
 
@@ -253,7 +252,7 @@ Entity* LoadJSON(const char* pFilename,
 // implementation
 //==============================================================================
 inline
-Entity::Type Entity::GetType() const
+Type Entity::GetType() const
 {
   return m_type;
 }
@@ -308,6 +307,13 @@ inline
 Entity* Entity::GetNextSibling() const
 {
   return m_pNextSibling;
+}
+
+//==============================================================================
+inline
+const ParserCore& Reader::GetState() const
+{
+  return m_state;
 }
 
 } // JSON
