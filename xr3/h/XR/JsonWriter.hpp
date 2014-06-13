@@ -90,7 +90,7 @@ protected:
   // types
   struct Scope 
   {
-    int   type;
+    Type  type;
     bool  isEmpty;
   };
 
@@ -98,7 +98,7 @@ protected:
   void  _AddLinebreak();
   void  _AddIndent();
   void  _AddSpace();
-  void  _PushScope(int type);
+  void  _PushScope(Type type);
   void  _WriteKey( const char* pKey );
   void  _WriteComma();
   void  _WriteStringValue( const char* pValue );

@@ -6,6 +6,7 @@ namespace XR
 namespace JSON
 {
     
+//==============================================================================
 const char  Writer::kIndent = '\t';
 
 const char* const Writer::kEscapeChars = "\"\\/\b\f\n\r\t";
@@ -21,6 +22,7 @@ const char* const Writer::karEscapeSub[] =
   "\\t"
 };
 
+//==============================================================================
 Writer::Writer(int maxDepth)
 : m_stream(),
   m_parScopes(0),
@@ -34,51 +36,48 @@ Writer::Writer(int maxDepth)
   m_parScopes = new Scope[maxDepth];
 }
 
+//==============================================================================
 Writer::~Writer()
 {
   delete[] m_parScopes;
 }
 
+//==============================================================================
 void Writer::SetLinebreaks( bool pref )
 {
   m_allowLinebreaks = pref;
 }
 
+//==============================================================================
 void Writer::SetIndents( bool pref )
 {
   m_allowIndents = pref;
 }
 
+//==============================================================================
 void Writer::SetSpaceAfterColon( bool pref )
 {
   m_allowSpace = pref;
 }
 
+//==============================================================================
 void Writer::SetAutoEscape( bool pref )
 {
   m_autoEscapeString = pref;
 }
 
+//==============================================================================
 Writer&  Writer::Start(Type rootType)
 {
   XR_ASSERT(Writer, rootType != INVALID);
   m_stream.str("");
 
-  switch (rootType)
-  {
-  case  ARRAY:
-    m_stream.put(kArrayBegin);
-    break;
-    
-  case  OBJECT:
-    m_stream.put(kObjectBegin);
-    break;
-  }
   _PushScope(rootType);
 
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
 {
   _WriteKey(pKey);
@@ -104,6 +103,7 @@ Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteValue( const char* pKey, const int32 value )
 {
   _WriteKey(pKey);
@@ -112,6 +112,7 @@ Writer&  Writer::WriteValue( const char* pKey, const int32 value )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteValue( const char* pKey, const double value )
 {
   _WriteKey(pKey);
@@ -120,6 +121,7 @@ Writer&  Writer::WriteValue( const char* pKey, const double value )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteValue( const char* pKey, bool value )
 {
   _WriteKey(pKey);
@@ -128,6 +130,7 @@ Writer&  Writer::WriteValue( const char* pKey, bool value )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteObject( const char* pKey )
 {
   XR_ASSERTMSG(Writer, m_parScopes[m_depth].type != ARRAY,
@@ -135,11 +138,10 @@ Writer&  Writer::WriteObject( const char* pKey )
   _WriteKey(pKey);
   _PushScope(OBJECT);
 
-  m_stream.put(kObjectBegin);
-
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteArray( const char* pKey )
 {
   XR_ASSERTMSG(Writer, m_parScopes[m_depth].type != ARRAY,
@@ -147,11 +149,10 @@ Writer&  Writer::WriteArray( const char* pKey )
   _WriteKey(pKey);
   _PushScope(ARRAY);
 
-  m_stream.put(kArrayBegin);
-
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteArrayElement( const char* pValue )
 {
   _WriteComma();
@@ -160,6 +161,7 @@ Writer&  Writer::WriteArrayElement( const char* pValue )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteArrayElement( int32 value )
 {
   _WriteComma();
@@ -168,6 +170,7 @@ Writer&  Writer::WriteArrayElement( int32 value )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteArrayElement( double value )
 {
   _WriteComma();
@@ -176,6 +179,7 @@ Writer&  Writer::WriteArrayElement( double value )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteArrayElement( bool value )
 {
   _WriteComma();
@@ -184,19 +188,18 @@ Writer&  Writer::WriteArrayElement( bool value )
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::WriteArrayObject()
 {
   XR_ASSERTMSG(Writer, m_parScopes[m_depth].type == ARRAY,
     ("Current scope is not an array, anonymous objects are invalid. Use WriteArrayArray() instead."));
   _WriteComma();
-  _AddLinebreak();
-  _AddIndent();
   _PushScope(OBJECT);
-  m_stream.put(kObjectBegin);
 
   return *this;
 }
 
+//==============================================================================
 Writer& Writer::WriteArrayArray()
 {
   XR_ASSERTMSG(Writer, m_parScopes[m_depth].type == ARRAY,
@@ -204,21 +207,18 @@ Writer& Writer::WriteArrayArray()
   _WriteComma();
   _PushScope(ARRAY);
 
-  m_stream.put(kArrayBegin);
-
   return *this;
 }
 
+//==============================================================================
 Writer&  Writer::CloseScope()
 {
   XR_ASSERT(Writer, m_depth > 0);
 
   const int type(m_parScopes[m_depth].type);
-
   --m_depth;
-  _AddLinebreak();
-  _AddIndent();
 
+  _AddLinebreak();
   switch (type)
   {
   case OBJECT:
@@ -233,6 +233,7 @@ Writer&  Writer::CloseScope()
   return *this;
 }
 
+//==============================================================================
 std::string Writer::Finish( bool force )
 {
   if (force)
@@ -250,13 +251,11 @@ std::string Writer::Finish( bool force )
   return m_stream.str();
 }
 
-
+//==============================================================================
 void  Writer::_WriteKey( const char* pKey )
 {
   XR_ASSERT(MG, pKey != 0);
   _WriteComma();
-  _AddLinebreak();
-  _AddIndent();
 
   m_stream.put(kQuot);
   if (m_autoEscapeString)
@@ -272,7 +271,7 @@ void  Writer::_WriteKey( const char* pKey )
   _AddSpace();
 }
 
-
+//==============================================================================
 void  Writer::_WriteComma()
 {
   XR_ASSERT(Writer, m_depth > 0);
@@ -283,22 +282,37 @@ void  Writer::_WriteComma()
   else
   {
     m_stream.put(kComma);
+    _AddLinebreak();
   }
 }
 
-void  Writer::_PushScope( int type )
+//==============================================================================
+static const char  karScopeBegin[2] =
 {
+  kObjectBegin,
+  kArrayBegin
+};
+
+void  Writer::_PushScope(Type type)
+{
+  XR_ASSERT(Writer, type > INVALID);
+  XR_ASSERT(Writer, type <= ARRAY);
   XR_ASSERT(Writer, m_depth + 1 < m_maxDepth);
   ++m_depth;
   m_parScopes[m_depth].type = type;
   m_parScopes[m_depth].isEmpty = true;
+
+  m_stream.put(karScopeBegin[type]);
+  _AddLinebreak();
 }
 
+//==============================================================================
 void Writer::_AddLinebreak()
 {
   if (m_allowLinebreaks)
   {
     m_stream << '\n';
+    _AddIndent();
   }
   else
   {
@@ -306,6 +320,7 @@ void Writer::_AddLinebreak()
   }
 }
 
+//==============================================================================
 void Writer::_AddIndent()
 {
   if (m_allowIndents)
@@ -317,6 +332,7 @@ void Writer::_AddIndent()
   }
 }
 
+//==============================================================================
 void Writer::_AddSpace()
 {
   if (m_allowSpace)
@@ -325,6 +341,7 @@ void Writer::_AddSpace()
   }
 }
 
+//==============================================================================
 void Writer::_WriteStringValue( const char* pValue )
 {
   if (pValue == 0)
@@ -337,6 +354,7 @@ void Writer::_WriteStringValue( const char* pValue )
   }
 }
 
+//==============================================================================
 void Writer::_ProcessEscaped( const char* pValue )
 {
   const char* pEnd(strchr(pValue, 0));
