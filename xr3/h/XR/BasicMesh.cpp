@@ -26,6 +26,12 @@ BasicMesh::~BasicMesh()
 {}
 
 //==============================================================================
+void  BasicMesh::SetMaterial(Material* pMaterial)
+{
+  m_pMaterial = pMaterial;
+}
+
+//==============================================================================
 void  BasicMesh::InitStreams(int numVertices)
 {
   XR_ASSERT(BasicMesh, numVertices >= 0);
