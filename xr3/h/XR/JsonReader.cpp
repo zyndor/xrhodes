@@ -583,7 +583,7 @@ Entity* Reader::_ParseValue()
         }
       }
     }
-    else if (isalnum(*pChar))
+    else if (isalnum(*pChar) || *pChar == '-')
     {
       int l(0);
       if (!isalpha(*pChar))
