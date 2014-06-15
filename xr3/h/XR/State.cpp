@@ -14,7 +14,9 @@ State::Manager::Manager()
 
 //==============================================================================
 State::Manager::~Manager()
-{}
+{
+  Clear();
+}
 
 //==============================================================================
 void  State::Manager::_ExpirePrevious(int32 tFade)
@@ -148,6 +150,23 @@ void State::Manager::Render()
   }
 }
 
+//==============================================================================
+void  State::Manager::Clear()
+{
+  if(m_stack.size() > 0)
+  {
+    State*  pLast(m_stack.back());
+    pLast->Exit(0);
+
+    while(!m_stack.empty())
+    {
+      pLast = m_stack.back();
+      pLast->Shutdown();
+      m_stack.pop_back();
+    }
+  }
+}
+  
 //==============================================================================
 State::State()
 {}

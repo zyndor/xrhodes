@@ -44,6 +44,8 @@ public:
 
     void  Update(int32 tDelta);
     void  Render();
+
+    void  Clear();
     
   private:
     // types
