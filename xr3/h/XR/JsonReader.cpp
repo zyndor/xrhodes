@@ -89,7 +89,9 @@ Value::Value(double d)
 
 //==============================================================================
 Value::~Value()
-{}
+{
+  delete[] m_parValue;
+}
 
 //==============================================================================
 int Value::GetNumChildren() const
@@ -147,8 +149,8 @@ void Value::SetValue(const char* pValue, int len)
     
     if (len > 0)
     {
-      std::string str(pValue, len);
-      SetValue(str);
+      m_parValue = new char[len + 1];
+      strncpy(m_parValue, pValue, len);
     }
   }
 }
