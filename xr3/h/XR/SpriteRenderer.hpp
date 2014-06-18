@@ -77,7 +77,7 @@ protected:
 
   // data
   int         m_capacity;
-  XR::Pool*   m_pPool;
+  XR::Pool    m_pool;
   RecordList* m_pRecords;
 
   Matrix      m_mView;

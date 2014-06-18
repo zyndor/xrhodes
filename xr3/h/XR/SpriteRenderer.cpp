@@ -6,7 +6,7 @@ namespace XR
 
 //==============================================================================
 SpriteRenderer::SpriteRenderer()
-: m_pPool(0),
+: m_pool(),
   m_pRecords(0),
   m_mView(Matrix::s_identity),
   m_vForward(Vector3::s_zAxis),
@@ -19,10 +19,8 @@ SpriteRenderer::SpriteRenderer()
 //==============================================================================
 SpriteRenderer::~SpriteRenderer()
 {
-  m_pPool->Pop();
-  m_pPool->Flush();
-  delete m_pPool;
-  m_pPool = 0;
+  m_pool.Pop();
+  m_pool.Flush();
 
   m_pRecords = 0;
 }
@@ -30,25 +28,31 @@ SpriteRenderer::~SpriteRenderer()
 //==============================================================================
 void  SpriteRenderer::Init(int numRecords)
 {
-  XR_ASSERT(SpriteRenderer, m_pPool == 0);
   XR_ASSERT(SpriteRenderer, numRecords > 0);
   m_capacity = numRecords;
 
-  int nodeSize(Align((sizeof(Record) + 2 * sizeof(void*)), 4));
-  int memSize(Align(sizeof(RecordList), 4) + nodeSize * (2 * numRecords + 1));
-  m_pPool = new XR::Pool(memSize);
+  // pop all frames from pool (really should be just 1)
+  while(m_pool.GetNumFrames() > 0)
+  {
+    m_pool.Pop();
+  }
+  m_pool.Flush();
+
   // Size of Record + 2 pointers assumed, 4 bytes aligned, otherwise,
   // based on compiler and libc++ implementation, the use of RecordList::_Node,
   // std::__detail::_List_node<Record> or other abomination would be required.
+  int nodeSize(Align((sizeof(Record) + 2 * sizeof(void*)), 4));
+  int memSize(Align(sizeof(RecordList), 4) + nodeSize * (2 * numRecords + 1));
+  m_pool.SetBuffer(memSize, true, 0);
 
   // place list at the beginning of pool memory. this includes the initial
   // nodes created to indicate beginning/end of list.
-  void* pMemList(m_pPool->Allocate(sizeof(RecordList)));
+  void* pMemList(m_pool.Allocate(sizeof(RecordList)));
   m_pRecords = new (pMemList)
-    RecordList(XR::SharedPoolAllocator<Record>(*m_pPool));
+    RecordList(XR::SharedPoolAllocator<Record>(m_pool));
 
   // push frame - flushes shouldn't destroy the list.
-  m_pPool->Push();
+  m_pool.Push();
   
 #if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
   InitStreams(numRecords * Sprite::kNumVertices);
@@ -285,7 +289,7 @@ void  SpriteRenderer::Clear()
 {
   XR_ASSERT(SpriteRenderer, m_pRecords != 0);
   m_pRecords->clear();
-  m_pPool->Flush();
+  m_pool.Flush();
   m_useFadeColor = false;
 }
 
