@@ -38,9 +38,8 @@ template <typename T>
 int CountArrayItems(T* pItems);
 
 // strings
-std::string UrlEncode(std::string);
 std::string UrlEncode(const char* pString);
-std::string Char2Hex(char dec);
+std::string Char2Hex(char c);
 
 template  <typename T>
 bool  StringTo(const char* pString, T& to);

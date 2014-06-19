@@ -6,6 +6,7 @@
 namespace XR
 {
 
+//==============================================================================
 int FindHashedListStringValue( const uint32* parValues, int numValues, const char* pValue )
 {
   XR_ASSERT(GetIdFromList, parValues != 0);
@@ -21,72 +22,44 @@ int FindHashedListStringValue( const uint32* parValues, int numValues, const cha
   return id;
 }
 
-//void  MaterialiseTextures(const Material& mat, CIwResGroup* pGroup)
-//{
-//  XR_ASSERT(RingBuffer, pGroup != 0);
-//  CIwResList* pList(pGroup->GetListNamed(IW_GX_RESTYPE_TEXTURE));
-//
-//  if (pList != 0)
-//  {
-//    CIwManagedList& lTextures(pList->m_Resources);
-//
-//    CIwManaged**  i0 = lTextures.GetBegin();
-//    CIwManaged**  i1 = lTextures.GetEnd();
-//
-//    int32 hash(::Hash::String(IW_GX_RESTYPE_MATERIAL));
-//    while (i0 != i1)
-//    {
-//      CIwTexture*   pTexture(static_cast<CIwTexture*>(*i0));
-//      Material*  pMaterial(new Material);
-//
-//      pMaterial->Copy(mat);
-//      pMaterial->m_Hash = pTexture->m_Hash;
-//      pMaterial->SetTexture(pTexture);
-//
-//      pGroup->AddRes(hash, pMaterial);
-//      ++i0;
-//    }
-//  }
-//}
-
-std::string Char2Hex( char dec )
+//==============================================================================
+std::string Char2Hex(char c)
 {
-  char dig1 = (dec&0xF0) >> 4;
-  char dig2 = (dec&0x0F);
-  if (0 <= dig1 && dig1 <= 9) dig1 += '0'; //0,48 in ascii
-  if (10 <= dig1 && dig1 <=15) dig1 += 'A'-10; //a,97 in ascii
-  if (0 <= dig2 && dig2 <= 9) dig2 += '0';
-  if (10 <= dig2 && dig2 <=15) dig2 += 'A'-10;
+  char dig1((c & 0xf0) >> 4);
+  char dig2(c & 0x0f);
+  if (dig1 >= 0x0 && dig1 <= 0x9) dig1 += '0'; //0,48 in ascii
+  if (dig1 >= 0xa && dig1 <= 0xf) dig1 += 'A' - 0xa; //a,97 in ascii
+  if (dig2 >= 0x0 && dig2 <= 0x9) dig2 += '0';
+  if (dig2 >= 0xa && dig2 <= 0xf) dig2 += 'A' - 0xa;
   std::string r;
   r.append(&dig1, 1);
   r.append(&dig2, 1);
   return r;
 }
 
-std::string UrlEncode( const char* pString )
+//==============================================================================
+std::string UrlEncode(const char* pString)
 {
+  XR_ASSERT(UrlEncode, pString != 0);
   std::ostringstream escaped;
   int max = strlen(pString);
-  for (int i=0; i < max; ++i)
+  for (const char* p1(pString + max); pString != p1; ++pString)
   {
-    if ( (48 <= pString[i] && pString[i] <= 57) ||  //0-9
-      (65 <= pString[i] && pString[i] <= 90) || //abc...xyz
-      (97 <= pString[i] && pString[i] <= 122) || //ABC...XYZ
-      (pString[i]=='-' || pString[i]=='_' || pString[i]=='.' || pString[i]=='~')
-      /*(	c[i]=='~' || c[i]=='!' || c[i]=='*' || c[i]=='(' || c[i]==')' || c[i]=='\'' ||
-      c[i]=='$' || c[i]=='-' || c[i]=='_' || c[i]=='.' || c[i]=='+' )*/
-      )
+    char  c(*pString);
+    if ((c >= '0' && c <= '9') ||  // 0-9
+      (c >= 'A' && c <= 'Z') || // ABC...XYZ
+      (c >= 'a' && c <= 'z') || // abc...xyz
+      (c =='-' || c =='_' || c =='.' || c=='~'))
     {
-      escaped << pString[i];
+      escaped << c;
     }
     else
     {
       escaped << '%';
-      escaped << Char2Hex(pString[i]);	//converts char 255 to string "ff"
+      escaped << Char2Hex(c);
     }
   }
   return escaped.str();
 }
-
 
 } // XR
