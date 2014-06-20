@@ -32,10 +32,10 @@ public:
   const Vector2& GetPosition() const;
   Vector2&       GetPosition();
   
-  float  CalculateLeft() const;
-  float  CalculateRight() const;
-  float  CalculateTop() const;
-  float  CalculateBottom() const;
+  float  GetLeft() const;
+  float  GetRight() const;
+  float  GetTop() const;
+  float  GetBottom() const;
 
   float  GetHalfWidth() const;
   float  GetHalfHeight() const;
@@ -108,30 +108,30 @@ float& RectObject::GetHalfHeightRef()
 
 //==============================================================================
 inline
-float  RectObject::CalculateLeft() const
+float  RectObject::GetLeft() const
 {
   return m_position.x - m_halfWidth;
 }
 
 //==============================================================================
 inline
-float  RectObject::CalculateRight() const
+float  RectObject::GetRight() const
 {
   return m_position.x + m_halfWidth;
 }
 
 //==============================================================================
 inline
-float  RectObject::CalculateTop() const
+float  RectObject::GetTop() const
 {
-  return m_position.y + m_halfHeight;
+  return m_position.y - m_halfHeight;
 }
 
 //==============================================================================
 inline
-float  RectObject::CalculateBottom() const
+float  RectObject::GetBottom() const
 {
-  return m_position.y - m_halfHeight;
+  return m_position.y + m_halfHeight;
 }
 
 //==============================================================================

@@ -25,13 +25,10 @@ const char* const AABB::karTag[] =
 //==============================================================================
 void  AABB::Import(float x, float y, float hw, float hh)
 {
-  left = x;
-  right = (x += hw);
-  left -= hw;
-
-  bottom = y;
-  top = (y -= hh);
-  bottom += hh;
+  left = x - hw;
+  right = x + hw;
+  top = y - hh;
+  bottom = y + hh;
 }
 
 //==============================================================================

@@ -168,7 +168,7 @@ inline
 bool  AABB::HitTest(float x, float y) const
 {
   return Max(x - right, left - x) < 0 &&
-    Max(top - y, y - bottom) < 0;
+    Max(y - bottom, top - y) < 0;
 }
 
 //==============================================================================
@@ -176,7 +176,7 @@ inline
 bool  AABB::HitTest(float x, float y, HitTestInfo& inf) const
 {
   inf.xOverlap = Max(x - right, left - x);
-  inf.yOverlap = Max(top - y, y - bottom);
+  inf.yOverlap = Max(y - bottom, top - y);
   inf.hit = inf.xOverlap < 0 && inf.yOverlap < 0;
   return inf.hit;
 }
@@ -186,7 +186,7 @@ inline
 bool  AABB::HitTest(const AABB& other) const
 {
   return Max(other.left - right, left - other.right) < 0 &&
-    Max(top - other.bottom, other.top - bottom) < 0;
+    Max(bottom - other.top, other.bottom - top) < 0;
 }
 
 //==============================================================================
@@ -194,7 +194,7 @@ inline
 bool  AABB::HitTest(const AABB& other, HitTestInfo& inf) const
 {
   inf.xOverlap = Max(other.left - right, left - other.right);
-  inf.yOverlap = Max(top - other.bottom, other.top - bottom);
+  inf.yOverlap = Max(bottom - other.top, other.bottom - top);
   inf.hit = inf.xOverlap < 0 && inf.yOverlap < 0;
   return inf.hit;
 }

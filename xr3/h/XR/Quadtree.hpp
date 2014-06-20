@@ -25,31 +25,6 @@ class QuadtreeCore: public RectObject
 {
 public:
   // types
-  ///@brief A unary function that you pass to Quadtree::Process() and will be
-  /// called with each collision candidate as arguments.
-  typedef void(*UnaryCallback)(void*); 
-
-  ///@brief A binary function that you pass to Quadtree::Process() and will be
-  /// called with each collision candidate as arguments: the first one is the
-  /// one in the Quadtree, the second one is the one you passed to Process().
-  typedef void(*BinaryCallback)(void*, void*); 
-
-  // static
-  static int  GetMaxSubdivisions();
-  static void SetMaxSubdivisions(int maxSubdivisions);
-
-  static bool   CalculateCanSplit(float hw, float hh, float min);
-  static float  CalculateMin(float hw, float hh);
-
-  static const AABB&  GetCandidateBox();
-  
-  // structors
-  QuadtreeCore();
-  QuadtreeCore(const Vector2& pos, float hw, float hh);
-  ~QuadtreeCore();
-  
-protected:
-  // types
   enum  Leaf
   {
     SW,
@@ -59,6 +34,48 @@ protected:
     kNumLeaves
   };
   
+  // types
+  ///@brief A unary function that you pass to Quadtree::Process() and will be
+  /// called with each collision candidate as arguments.
+  typedef void(*UnaryCallback)(void* pSystem); 
+
+  ///@brief A binary function that you pass to Quadtree::Process() and will be
+  /// called with each collision candidate as arguments: the first one is the
+  /// one in the Quadtree, the second one is the one you passed to Process().
+  typedef void(*BinaryCallback)(void* pSystem, void* pUser); 
+
+  // static
+  ///@return The maximum number of subdivisions for quadtrees created with no
+  /// minimum node size specified.
+  static int  GetMaxSubdivisions();
+
+  ///@brief Sets the maximum number of subdivisions for quadtrees created with
+  /// no minimum node size specified.
+  static void SetMaxSubdivisions(int maxSubdivisions);
+
+  ///@return  Whether a node of half-width @a hw and half-height @a hh can
+  /// split, i.e. half of its smaller dimension is greater than the @a min.
+  /// False means no child nodes will be created.
+  static bool   CalculateCanSplit(float hw, float hh, float min);
+
+  ///@brief Calculates the minimum size of node (along either axis), based on
+  /// @a hw, @a hh and @a s_divisions.
+  static float  CalculateMin(float hw, float hh);
+
+  ///@return  The AABB that has been most recently passed for an Add, Process or
+  /// Remove operation.
+  static const AABB&  GetCandidateBox();
+  
+  // structors
+  QuadtreeCore();
+  QuadtreeCore(const Vector2& pos, float hw, float hh);
+  ~QuadtreeCore();
+
+  // general
+  ///@return  If the Quadtree can split, i.e. if child nodes are created.
+  bool  CanSplit() const;
+  
+protected:
   // static
   static int  s_maxSubdivisions;
   
@@ -92,6 +109,8 @@ public:
   ~Quadtree();
   
   // general use
+  SelfType* GetLeaf(Leaf l) const;
+
   ///@brief Adds the object @a p with the AABB @a box, to the Quadtree.
   void  Add(const AABB& box, void* p);
 
@@ -164,8 +183,6 @@ private:
 //==============================================================================
 // implementation
 //==============================================================================
-///@return The maximum number of subdivisions for quadtrees created with no
-/// minimum node size specified.
 inline
 int QuadtreeCore::GetMaxSubdivisions()
 {
@@ -173,8 +190,6 @@ int QuadtreeCore::GetMaxSubdivisions()
 }
 
 //==============================================================================
-///@brief Calculates the minimum size of node (along either axis), based on
-///@a hw and @a hh and @a s_divisions.
 inline
 float QuadtreeCore::CalculateMin(float hw, float hh)
 {
@@ -182,25 +197,27 @@ float QuadtreeCore::CalculateMin(float hw, float hh)
 }
 
 //==============================================================================
-///@return  Whether a node of half-width @a hw and half-height @a hh can split,
-/// i.e. half of its smaller dimension is greater than the @a min. False means
-/// no child nodes will be created.
 inline
 bool  QuadtreeCore::CalculateCanSplit(float hw, float hh, float min)
 {
-  XR_ASSERT(Quadtree, hw > 0);
-  XR_ASSERT(Quadtree, hh > 0);
-  XR_ASSERT(Quadtree, min > 0);
+  XR_ASSERT(Quadtree, hw > .0f);
+  XR_ASSERT(Quadtree, hh > .0f);
+  XR_ASSERT(Quadtree, min > .0f);
   return XR::Min(hw, hh) > min;
 }
 
 //==============================================================================
-///@return  The AABB that has been most recently passed for an Add, Process or
-/// Remove operation.
 inline
 const AABB& QuadtreeCore::GetCandidateBox()
 {
   return s_candidateBox;
+}
+
+//==============================================================================
+inline
+bool  QuadtreeCore::CanSplit() const
+{
+  return m_canSplit;
 }
 
 //==============================================================================
@@ -234,12 +251,20 @@ Quadtree<Alloc>::~Quadtree()
 
 //==============================================================================
 template  <template <typename> class Alloc>
+Quadtree<Alloc>*  Quadtree<Alloc>::GetLeaf(Leaf l) const
+{
+  XR_ASSERT(Quadtree, l < kNumLeaves);
+  return m_arpLeaves[l];
+}
+
+//==============================================================================
+template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Add(const AABB& box, void* p)
 {
   XR_ASSERT(Quadtree, p != 0);
-  XR_ASSERT(Quadtree, box.left < box.right);
-  XR_ASSERT(Quadtree, box.bottom < box.top);
+  XR_ASSERT(Quadtree, box.left <= box.right);
+  XR_ASSERT(Quadtree, box.top <= box.bottom);
   s_candidateBox = box;
   s_pCandidate = p;
   
@@ -265,7 +290,7 @@ void  Quadtree<Alloc>::Process(const AABB& box, UnaryCallback pUnary)
 {
   XR_ASSERT(Quadtree, pUnary != 0);
   XR_ASSERT(Quadtree, box.left <= box.right);
-  XR_ASSERT(Quadtree, box.bottom <= box.top);
+  XR_ASSERT(Quadtree, box.top <= box.bottom);
   s_candidateBox = box;
   s_pUnaryCallback = pUnary;
   
@@ -303,7 +328,7 @@ void  Quadtree<Alloc>::Process(const AABB& box, BinaryCallback pBinary,
 {
   XR_ASSERT(Quadtree, pBinary != 0);
   XR_ASSERT(Quadtree, box.left <= box.right);
-  XR_ASSERT(Quadtree, box.bottom <= box.top);
+  XR_ASSERT(Quadtree, box.top <= box.bottom);
   s_candidateBox = box;
   s_pCandidate = pObject;
   s_pBinaryCallback = pBinary;
@@ -378,7 +403,7 @@ void  Quadtree<Alloc>::_AddRecursion()
 {
   if (m_canSplit)
   {
-    if (s_candidateBox.bottom >= m_position.y)
+    if (s_candidateBox.bottom <= m_position.y)
     {
       if (s_candidateBox.right < m_position.x)
       {
@@ -391,7 +416,7 @@ void  Quadtree<Alloc>::_AddRecursion()
         return;
       }
     }
-    else if (s_candidateBox.top < m_position.y)
+    else if (s_candidateBox.top > m_position.y)
     {
       if (s_candidateBox.right < m_position.x)
       {
@@ -423,7 +448,7 @@ void  Quadtree<Alloc>::_ProcessRecursionUnary()
     bool  west(s_candidateBox.left < m_position.x);
     bool  east(s_candidateBox.right >= m_position.x);
 
-    if (s_candidateBox.top >= m_position.y)
+    if (s_candidateBox.top <= m_position.y)
     {
       if (west)
       {
@@ -436,7 +461,7 @@ void  Quadtree<Alloc>::_ProcessRecursionUnary()
       }
     }
 
-    if (s_candidateBox.bottom < m_position.y)
+    if (s_candidateBox.bottom > m_position.y)
     {
       if (west)
       {
@@ -459,7 +484,7 @@ void  Quadtree<Alloc>::_ProcessAllRecursionUnary()
   // happen to reside in the node.
   std::for_each(m_objects.begin(), m_objects.end(), s_pUnaryCallback);
 
-  // ...and collect all objects from the child nodes that the box is touching
+  // ...and process all objects in the child nodes that the box is touching
   if (m_canSplit)
   {
     m_arpLeaves[NW]->_ProcessRecursionUnary();
@@ -484,7 +509,7 @@ void  Quadtree<Alloc>::_ProcessRecursionBinary()
     bool  west(s_candidateBox.left < m_position.x);
     bool  east(s_candidateBox.right >= m_position.x);
 
-    if (s_candidateBox.top >= m_position.y)
+    if (s_candidateBox.top <= m_position.y)
     {
       if (west)
       {
@@ -497,7 +522,7 @@ void  Quadtree<Alloc>::_ProcessRecursionBinary()
       }
     }
 
-    if (s_candidateBox.bottom < m_position.y)
+    if (s_candidateBox.bottom > m_position.y)
     {
       if (west)
       {
@@ -521,7 +546,7 @@ void  Quadtree<Alloc>::_ProcessAllRecursionBinary()
   std::for_each(m_objects.begin(), m_objects.end(),
     Bind2nd<BinaryCallback, void*>(s_pBinaryCallback, s_pCandidate));
 
-  // ...and collect all objects from the child nodes that the box is touching
+  // ...and process all objects from the child nodes that the box is touching
   if (m_canSplit)
   {
     m_arpLeaves[NW]->_ProcessRecursionBinary();
@@ -575,6 +600,7 @@ void  Quadtree<Alloc>::Create(const Vector2 &pos, float hw, float hh, float min)
 {
   XR_ASSERT(Quadtree, hw > .0f);
   XR_ASSERT(Quadtree, hh > .0f);
+  XR_ASSERT(Quadtree, min >= .0f);
   Destroy();
 
   m_position = pos;
@@ -593,20 +619,23 @@ void  Quadtree<Alloc>::_Create(float min)
     min = CalculateMin(m_halfWidth, m_halfHeight);
   }
   
-  float hw(m_halfWidth * .5f);
-  float hh(m_halfHeight * .5f);
-  m_canSplit = CalculateCanSplit(hw, hh, min);
-
-  if (m_canSplit)
+  if(min > .0f)
   {
-    m_arpLeaves[NW] = new Quadtree(Vector2(m_position.x - hw,
-      m_position.y + hh), hw, hh, min, m_objects.get_allocator());
-    m_arpLeaves[NE] = new Quadtree(Vector2(m_position.x + hw,
-      m_position.y + hh), hw, hh, min, m_objects.get_allocator());
-    m_arpLeaves[SW] = new Quadtree(Vector2(m_position.x - hw,
-      m_position.y - hh), hw, hh, min, m_objects.get_allocator());
-    m_arpLeaves[SE] = new Quadtree(Vector2(m_position.x + hw,
-      m_position.y - hh), hw, hh, min, m_objects.get_allocator());
+    float hw(m_halfWidth * .5f);
+    float hh(m_halfHeight * .5f);
+    m_canSplit = CalculateCanSplit(hw, hh, min);
+
+    if (m_canSplit)
+    {
+      m_arpLeaves[NW] = new Quadtree(Vector2(m_position.x - hw,
+        m_position.y - hh), hw, hh, min, m_objects.get_allocator());
+      m_arpLeaves[NE] = new Quadtree(Vector2(m_position.x + hw,
+        m_position.y - hh), hw, hh, min, m_objects.get_allocator());
+      m_arpLeaves[SW] = new Quadtree(Vector2(m_position.x - hw,
+        m_position.y + hh), hw, hh, min, m_objects.get_allocator());
+      m_arpLeaves[SE] = new Quadtree(Vector2(m_position.x + hw,
+        m_position.y + hh), hw, hh, min, m_objects.get_allocator());
+    }
   }
 }
 
