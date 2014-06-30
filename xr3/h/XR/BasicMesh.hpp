@@ -38,6 +38,10 @@ public:
   
   void                InitStreams(int numVertices);
   
+  Vector3             CalculateCentre() const;
+  float               CalculateRadius() const;
+  void                CalculateExtents(Vector3& minOut, Vector3& maxOut) const;
+  
   virtual void        Render(); //const?
   
 protected:
@@ -51,7 +55,7 @@ protected:
 };
 
 //==============================================================================
-//  implementation
+// implementation
 //==============================================================================
 inline
 RenderStream& BasicMesh::GetVertices()

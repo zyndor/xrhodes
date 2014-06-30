@@ -40,6 +40,90 @@ void  BasicMesh::InitStreams(int numVertices)
 }
 
 //==============================================================================
+Vector3 BasicMesh::CalculateCentre() const
+{
+  Vector3 centre(Vector3::s_zero);
+  const int n(m_vertices.GetCapacity());
+  if(n > 0)
+  {
+    for(int i = 0; i < n; ++i)
+    {
+      centre += m_vertices.GetVector3(i);
+    }
+    centre *= 1.0f / n;
+  }
+  return centre;
+}
+
+//==============================================================================
+float BasicMesh::CalculateRadius() const
+{
+  float radius(.0f);
+  const int n(m_vertices.GetCapacity());
+  if(n > 0)
+  {
+    for(int i = 0; i < n; ++i)
+    {
+      float d(m_vertices.GetVector3(i).Dot());
+      if(d > radius)
+      {
+        radius = d;
+      }
+    }
+    radius = sqrtf(radius);
+  }
+  return radius;
+}
+
+//==============================================================================
+void  BasicMesh::CalculateExtents(Vector3& minOut, Vector3& maxOut) const
+{
+  const int n(m_vertices.GetCapacity());
+  if(n > 0)
+  {
+    minOut.x = minOut.y = minOut.z = std::numeric_limits<float>::max();
+    maxOut.x = maxOut.y = maxOut.z = -std::numeric_limits<float>::max();
+    for(int i = 0; i < n; ++i)
+    {
+      Vector3 v(m_vertices.GetVector3(i));
+      if(v.x < minOut.x)
+      {
+        minOut.x = v.x;
+      }
+
+      if(v.y < minOut.y)
+      {
+        minOut.y = v.y;
+      }
+
+      if(v.z < minOut.z)
+      {
+        minOut.z = v.z;
+      }
+
+      if(v.x > maxOut.x)
+      {
+        maxOut.x = v.x;
+      }
+
+      if(v.y > maxOut.y)
+      {
+        maxOut.y = v.y;
+      }
+
+      if(v.z > maxOut.z)
+      {
+        maxOut.z = v.z;
+      }
+    }
+  }
+  else
+  {
+    minOut = maxOut = Vector3::s_zero;
+  }
+}
+
+//==============================================================================
 void  BasicMesh::Render()
 {
   if (m_vertices.GetCapacity() > 0)
