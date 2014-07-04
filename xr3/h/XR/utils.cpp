@@ -1,26 +1,9 @@
 #include <cstring>
-#include <algorithm>
 #include "utils.hpp"
 #include "Hash.hpp"
 
 namespace XR
 {
-
-//==============================================================================
-int FindHashedListStringValue( const uint32* parValues, int numValues, const char* pValue )
-{
-  XR_ASSERT(GetIdFromList, parValues != 0);
-  XR_ASSERT(GetIdFromList, numValues >= 0);
-  int id(-1);
-  if (pValue != 0)
-  {
-    const uint32* pFind(std::find(parValues, parValues + numValues,
-      Hash::String(pValue)));
-
-    id = pFind - parValues;
-  }
-  return id;
-}
 
 //==============================================================================
 std::string Char2Hex(char c)

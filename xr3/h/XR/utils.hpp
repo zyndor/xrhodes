@@ -13,6 +13,7 @@
 #define XR_UTILS_HPP
 
 #include <sstream>
+#include <algorithm>
 #include "types.hpp"
 
 namespace XR
@@ -30,10 +31,11 @@ bool  CheckInt16(int value);
 ///@brief
 const char* GetStringSafe(const char* pString);
 
-///@brief Checks a list of values for a matching one.
-int FindHashedListStringValue(const uint32* parValues, int numValues,
-      const char* pValue);
+///@return Index of item in array of values, @a numValues if not found.
+template <typename T>
+int FindItemId(const T* parValues, int numValues, const T* pValue);
 
+///@brief Count number of elements in a null terminated array.
 template <typename T>
 int CountArrayItems(T* pItems);
 
@@ -110,12 +112,14 @@ const char* GetStringSafe(const char* pString)
 }
 
 //==============================================================================
-template  <typename T>
-bool  StringTo(const char* pString, T& to)
+template <typename T>
+inline
+int FindItemId(const T* parValues, int numValues, const T& item)
 {
-  std::istringstream  iss(pString);
-
-  return !(iss >> std::ws >> to).fail() && (iss >> std::ws).eof();
+  XR_ASSERT(GetIdFromList, parValues != 0);
+  XR_ASSERT(GetIdFromList, numValues >= 0);
+  const T* pFind(std::find(parValues, parValues + numValues, item));
+  return pFind - parValues;
 }
 
 //==============================================================================
@@ -132,6 +136,15 @@ int CountArrayItems(T* pItems)
   }
 
   return count;
+}
+
+//==============================================================================
+template  <typename T>
+bool  StringTo(const char* pString, T& to)
+{
+  std::istringstream  iss(pString);
+
+  return !(iss >> std::ws >> to).fail() && (iss >> std::ws).eof();
 }
 
 } // XR
