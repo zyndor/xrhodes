@@ -262,7 +262,7 @@ bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
 
     if (success)
     {
-      value /= fps;
+      value = CalcSpeedPerFrame(value, fps);
     }
   }
 
@@ -293,7 +293,7 @@ bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
 
     if (success)
     {
-      value /= fps * fps;
+      value = CalcAccelerationPerFrame(value, fps);
     }
   }
 
@@ -324,7 +324,7 @@ bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
 
     if (success)
     {
-      value = powf(value, 1.0f / fps);
+      value = CalcScalingPerFrame(value, fps);
     }
   }
 
