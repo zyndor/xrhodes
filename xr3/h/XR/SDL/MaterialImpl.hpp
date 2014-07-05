@@ -39,6 +39,9 @@ public:
   GLenum        cullMode;
   GLboolean     depthWriteEnabled;
   Color         colAmbient;
+  Color         colDiffuse;
+  Color         colSpecular;
+  Color         colEmissive;
 
   // structors
   MaterialImpl();

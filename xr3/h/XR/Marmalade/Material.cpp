@@ -182,9 +182,45 @@ void  Material::SetAmbientColor(const Color& c)
 }
 
 //==============================================================================
+void  Material::SetDiffuseColor(const Color& c)
+{
+  TO_IMPL()->SetColDiffuse(c.GetABGR());
+}
+
+//==============================================================================
+void  Material::SetSpecularColor(const Color& c)
+{
+  TO_IMPL()->SetColSpecular(c.GetABGR());
+}
+
+//==============================================================================
+void  Material::SetEmissiveColor(const Color& c)
+{
+  TO_IMPL()->SetColEmissive(c.GetABGR());
+}
+
+//==============================================================================
 Color  Material::GetAmbientColor() const
 {
   return Color(static_cast<CIwMaterial*>(m_pImpl)->GetColAmbient().Get());
+}
+
+//==============================================================================
+Color  Material::GetDiffuseColor() const
+{
+  return Color(static_cast<CIwMaterial*>(m_pImpl)->GetColDiffuse().Get());
+}
+
+//==============================================================================
+Color  Material::GetSpecularColor() const
+{
+  return Color(static_cast<CIwMaterial*>(m_pImpl)->GetColSpecular().Get());
+}
+
+//==============================================================================
+Color  Material::GetEmissiveColor() const
+{
+  return Color(static_cast<CIwMaterial*>(m_pImpl)->GetColEmissive().Get());
 }
 
 //==============================================================================

@@ -14,7 +14,10 @@ MaterialImpl::MaterialImpl()
   blendMode(Material::BLEND_ADD),
   cullMode(GL_BACK),
   depthWriteEnabled(GL_TRUE),
-  colAmbient(1.0f, 1.0f, 1.0f, 1.0f)
+  colAmbient(1.0f, 1.0f, 1.0f, 1.0f),
+  colDiffuse(1.0f, 1.0f, 1.0f, 1.0f),
+  colSpecular(.0f, .0f, .0f, .0f),
+  colEmissive(.0f, .0f, .0f, .0f)
 {}
 
 //==============================================================================
@@ -26,6 +29,9 @@ void  MaterialImpl::Apply()
 {
   XR_ASSERT(MaterialImpl, arpTextures[0] != 0);
   XR_GL_CALL(glColor4f(colAmbient.r, colAmbient.g, colAmbient.b, colAmbient.a));
+  XR_GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, colDiffuse.arData));
+  XR_GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, colSpecular.arData));
+  XR_GL_CALL(glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, colEmissive.arData));
   XR_GL_CALL(glEnable(GL_DEPTH_TEST));
   if (arpTextures[0] == 0)
   {

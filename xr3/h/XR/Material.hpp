@@ -83,7 +83,13 @@ public:
   void          SetDepthWriteEnabled(bool state);
 
   void          SetAmbientColor(const Color& c);
+  void          SetDiffuseColor(const Color& c);
+  void          SetSpecularColor(const Color& c);
+  void          SetEmissiveColor(const Color& c);
   Color         GetAmbientColor() const;
+  Color         GetDiffuseColor() const;
+  Color         GetSpecularColor() const;
+  Color         GetEmissiveColor() const;
 
   void          SetTexture(int id, Texture& t);
   Texture       GetTexture(int id) const;

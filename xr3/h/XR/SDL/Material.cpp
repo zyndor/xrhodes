@@ -100,9 +100,45 @@ Color Material::GetAmbientColor() const
 }
 
 //==============================================================================
+Color Material::GetDiffuseColor() const
+{
+  return TO_CONST_IMPL()->colDiffuse;
+}
+
+//==============================================================================
+Color Material::GetSpecularColor() const
+{
+  return TO_CONST_IMPL()->colSpecular;
+}
+
+//==============================================================================
+Color Material::GetEmissiveColor() const
+{
+  return TO_CONST_IMPL()->colEmissive;
+}
+
+//==============================================================================
 void  Material::SetAmbientColor(const Color& col)
 {
   TO_IMPL()->colAmbient = col;
+}
+
+//=========================================l=====================================
+void  Material::SetDiffuseColor(const Color& col)
+{
+  TO_IMPL()->colDiffuse = col;
+}
+
+//==============================================================================
+void  Material::SetSpecularColor(const Color& col)
+{
+  TO_IMPL()->colSpecular = col;
+}
+
+//==============================================================================
+void  Material::SetEmissiveColor(const Color& col)
+{
+  TO_IMPL()->colEmissive = col;
 }
 
 //==============================================================================
