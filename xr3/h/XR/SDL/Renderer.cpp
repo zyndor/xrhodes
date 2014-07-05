@@ -214,7 +214,7 @@ Material* Renderer::AllocMaterial()
 //==============================================================================
 RenderStream* Renderer::AllocStream(RenderStream::Format fmt, int numElems)
 {
-  XR_ASSERT(Renderer, numElems > 0);
+  XR_ASSERT(Renderer, numElems >= 0);
 
   int   bufferBytes(RenderStream::CalculateByteSize(fmt, numElems));
   void* pMem(Alloc(sizeof(RenderStream) + bufferBytes));
@@ -383,8 +383,8 @@ Ray Renderer::GetViewRay(int16 x, int16 y)
   vUp.Normalise();
 
   float hProj(s_rendererImpl.rayCastZNear * s_rendererImpl.tanVFovHalf);
-  float wProj(hProj * ((float)s_rendererImpl.screenSize.x /
-    (float)s_rendererImpl.screenSize.y));
+  float wProj(hProj * (float(s_rendererImpl.screenSize.x) /
+    float(s_rendererImpl.screenSize.y)));
   
   vUp *= hProj;
   vRight *= wProj;
@@ -393,8 +393,8 @@ Ray Renderer::GetViewRay(int16 x, int16 y)
   int hHalf(s_rendererImpl.screenSize.y / 2);
   x -= wHalf;
   y -= hHalf;
-  float fx((float)x / wHalf);
-  float fy((float)y / hHalf);
+  float fx(float(x) / wHalf);
+  float fy(float(y) / hHalf);
 
   Ray r;
   r.position = s_rendererImpl.rayCastView.t;
@@ -585,6 +585,18 @@ void  Renderer::DrawPrims( PrimType pt, const uint16* pInds, int numInds)
 void Renderer::PrintString( int16 x, int16 y, const char* pString )
 {
   //IwGxPrintString(x, y, pString);
+}
+
+//==============================================================================
+void  Renderer::SetLighting(bool state)
+{
+  XR_GL_CALL(state ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING));
+}
+
+//==============================================================================
+void  Renderer::SetFog(bool state)
+{
+  XR_GL_CALL(state ? glEnable(GL_FOG) : glDisable(GL_FOG));
 }
 
 //==============================================================================

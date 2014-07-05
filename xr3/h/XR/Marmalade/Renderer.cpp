@@ -92,7 +92,7 @@ Material* Renderer::AllocMaterial()
 //==============================================================================
 RenderStream* Renderer::AllocStream(RenderStream::Format fmt, int numElems)
 {
-  IwAssert(Renderer, numElems > 0);
+  IwAssert(Renderer, numElems >= 0);
 
   int   bufferBytes(RenderStream::CalculateByteSize(fmt, numElems));
   void* pMemStream(Alloc(sizeof(RenderStream) + bufferBytes));
@@ -168,7 +168,7 @@ void Renderer::SetPerspective(float vFov, float aspect, float zNear,
 
   s_pRenderer->zNear = zNear;
   s_pRenderer->zFar = zFar;
-  s_pRenderer->zView = (float)(IwGxGetScreenHeight() / 2) / f;
+  s_pRenderer->zView = float(IwGxGetScreenHeight() / 2) / f;
   IwGxSetFarZNearZ(zFar, zNear);
   IwGxSetPerspectiveMatrix(arPerspMatrix);
 
@@ -179,7 +179,7 @@ void Renderer::SetPerspective(float vFov, float aspect, float zNear,
 //==============================================================================
 void Renderer::SetPerspective(float vFov, float zNear, float zFar)
 {
-  SetPerspective(vFov, (float)IwGxGetScreenWidth() / (float)IwGxGetScreenHeight(),
+  SetPerspective(vFov, float(IwGxGetScreenWidth()) / float(IwGxGetScreenHeight()),
     zNear, zFar);
 }
 
@@ -268,7 +268,7 @@ Ray Renderer::GetViewRay(int16 x, int16 y)
   const int   wScr(GetScreenWidth());
   const int   hScr(GetScreenHeight());
   float hProj(s_pRenderer->rayCastZNear * s_pRenderer->tanVFovHalf);
-  float wProj(hProj * ((float)wScr / (float)hScr));
+  float wProj(hProj * (float(wScr) / float(hScr)));
   
   vUp *= hProj;
   vRight *= wProj;
@@ -277,8 +277,8 @@ Ray Renderer::GetViewRay(int16 x, int16 y)
   int hHalf(hScr / 2);
   x -= wHalf;
   y -= hHalf;
-  float fx((float)x / wHalf);
-  float fy((float)y / hHalf);
+  float fx(float(x) / wHalf);
+  float fy(float(y) / hHalf);
 
   Ray r;
   r.position = s_pRenderer->rayCastView.t;
@@ -398,6 +398,18 @@ void  Renderer::DrawPrims( PrimType pt, const uint16* pInds, int numInds)
 void  Renderer::PrintString( int16 x, int16 y, const char* pString )
 {
   IwGxPrintString(x, y, pString);
+}
+
+//==============================================================================
+void  Renderer::SetLighting(bool state)
+{
+  state ? IwGxLightingOn() : IwGxLightingOff();
+}
+
+//==============================================================================
+void  Renderer::SetFog(bool state)
+{
+  state ? IwGxFogOn() : IwGxFogOff();
 }
 
 //==============================================================================

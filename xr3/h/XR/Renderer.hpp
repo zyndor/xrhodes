@@ -63,7 +63,7 @@ public:
   static void           SetPerspective(float vFov, float zNear, float zFar);
 
   static void           SetFarNearZ(float zFar, float zNear);
-  static void           SetPerspMult( float perspMul );
+  static void           SetPerspMult(float perspMul);
   static float          GetNearZ();
   static float          GetFarZ();
   static float          GetPerspMult();  
@@ -96,6 +96,9 @@ public:
   static Rect           GetScissorRect();
   static void           SetScissorRect( const Rect& r );
   static void           ClearScissorRect();
+
+  static void           SetLighting(bool state);
+  static void           SetFog(bool state);
   
   static void           ClearBuffer(uint32 flags = (BF_COLOR | BF_DEPTH));
   static void           Flush();
@@ -105,6 +108,6 @@ public:
 } // XR
 
 //==============================================================================
-#define XR_RENDERER_ALLOC(c, n) static_cast<c*>(Renderer::Alloc(sizeof(c) * (n)))
+#define XR_RENDERER_ALLOC(c, n) static_cast<c*>(XR::Renderer::Alloc(sizeof(c) * (n)))
 
 #endif // XR_RENDERER_HPP
