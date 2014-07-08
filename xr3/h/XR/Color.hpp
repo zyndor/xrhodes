@@ -13,6 +13,7 @@
 #define XR_COLOR_HPP
 
 #include "types.hpp"
+#include "maths.hpp"
 
 namespace XR
 {
@@ -79,10 +80,10 @@ public:
   {}
 
   explicit Color(uint32 abgr)
-  : r((abgr & 0xff) * XR_ONE_OVER_0XFF),
-    g(((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF),
-    b(((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF),
-    a(((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF)
+  : r(float(abgr & 0xff) * XR_ONE_OVER_0XFF),
+    g(float((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF),
+    b(float((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF),
+    a(float((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF)
   {}
 
   // general
@@ -96,10 +97,24 @@ public:
 
   void  Set(uint32 abgr)
   {
-    r = (abgr & 0xff) * XR_ONE_OVER_0XFF;
-    g = ((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF;
-    b = ((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF;
-    a = ((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF;
+    r = float(abgr & 0xff) * XR_ONE_OVER_0XFF;
+    g = float((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF;
+    b = float((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF;
+    a = float((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF;
+  }
+
+  Color&  Clamp()
+  {
+    r = XR::Clamp(r, .0f, 1.0f);
+    g = XR::Clamp(g, .0f, 1.0f);
+    b = XR::Clamp(b, .0f, 1.0f);
+    a = XR::Clamp(a, .0f, 1.0f);
+    return *this;
+  }
+
+  Color Solid() const
+  {
+    return Color(r, g, b);
   }
 
   // overloads
