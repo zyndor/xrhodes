@@ -78,6 +78,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Tweener.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Worker.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/debug.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/debugdraw.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/functors.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/fundamentals.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/json.hpp</itemPath>
@@ -165,6 +166,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/TweenVarPool.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Tweener.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Worker.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/debugdraw.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/fundamentals.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/json.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/maths.cpp</itemPath>
@@ -752,6 +754,16 @@
       <item path="D:/repos/xr3/xr3/h/XR/Worker.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/debug.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/debugdraw.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/debugdraw.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/functors.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -1365,6 +1377,16 @@
       <item path="D:/repos/xr3/xr3/h/XR/Worker.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/debug.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/debugdraw.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/debugdraw.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/functors.hpp" ex="false" tool="3" flavor2="0">
       </item>
