@@ -45,6 +45,8 @@ files
   XR/IndexMesh.hpp
   XR/Input.hpp
   XR/json.hpp
+  XR/JsonEntity.hpp
+  XR/JsonParser.hpp
   XR/JsonReader.hpp
   XR/JsonWriter.hpp
   XR/KeyCode.hpp

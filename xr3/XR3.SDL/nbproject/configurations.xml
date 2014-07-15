@@ -35,6 +35,8 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/IndexMesh.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Indexer2d.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Input.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonEntity.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonParser.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/JsonReader.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/JsonWriter.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/KeyCode.hpp</itemPath>
@@ -128,6 +130,8 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Input.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/InputImpl.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/InputImpl.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonEntity.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/JsonParser.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/JsonReader.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/JsonWriter.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/KeyCode.cpp</itemPath>
@@ -429,6 +433,26 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Input.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonEntity.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonEntity.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonParser.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonParser.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/JsonReader.cpp"
             ex="false"
@@ -1052,6 +1076,26 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Input.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonEntity.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonEntity.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonParser.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/JsonParser.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/JsonReader.cpp"
             ex="false"

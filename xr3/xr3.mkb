@@ -51,6 +51,8 @@ files
   Indexer2d.cpp
   IndexMesh.cpp
   json.cpp
+  JsonEntity.cpp
+  JsonParser.cpp
   JsonReader.cpp
   JsonWriter.cpp
   Log.cpp

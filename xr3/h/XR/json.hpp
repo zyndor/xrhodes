@@ -28,7 +28,9 @@ enum  Char
   kObjectEnd = '}',
   kArrayBegin = '[',
   kArrayEnd = ']',
-  kNewLine = '\n'
+  kNewLine = '\n',
+  kDecimal = '.',
+  kExponential = 'e'
 };
 
 //==============================================================================

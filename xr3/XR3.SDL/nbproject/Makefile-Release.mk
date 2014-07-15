@@ -60,6 +60,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/Hash.o \
 	${OBJECTDIR}/_ext/1046665460/IndexMesh.o \
 	${OBJECTDIR}/_ext/1046665460/Indexer2d.o \
+	${OBJECTDIR}/_ext/1046665460/JsonEntity.o \
+	${OBJECTDIR}/_ext/1046665460/JsonParser.o \
 	${OBJECTDIR}/_ext/1046665460/JsonReader.o \
 	${OBJECTDIR}/_ext/1046665460/JsonWriter.o \
 	${OBJECTDIR}/_ext/1046665460/Log.o \
@@ -260,6 +262,16 @@ ${OBJECTDIR}/_ext/1046665460/Indexer2d.o: /D/repos/xr3/xr3/h/XR/Indexer2d.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/Indexer2d.o /D/repos/xr3/xr3/h/XR/Indexer2d.cpp
+
+${OBJECTDIR}/_ext/1046665460/JsonEntity.o: /D/repos/xr3/xr3/h/XR/JsonEntity.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/JsonEntity.o /D/repos/xr3/xr3/h/XR/JsonEntity.cpp
+
+${OBJECTDIR}/_ext/1046665460/JsonParser.o: /D/repos/xr3/xr3/h/XR/JsonParser.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/JsonParser.o /D/repos/xr3/xr3/h/XR/JsonParser.cpp
 
 ${OBJECTDIR}/_ext/1046665460/JsonReader.o: /D/repos/xr3/xr3/h/XR/JsonReader.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
