@@ -166,12 +166,12 @@ const char* Device::GetConfig(const char* pGroup, const char* pId)
     if (pGroup != 0)
     {
       JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pGroup,
-        JSON::Entity::OBJECT));
+        JSON::OBJECT));
       XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a group in root.", pGroup));
       if (pEntity != 0)
       {
         JSON::Object* pGroupData(pEntity->ToObject());
-        pEntity = pGroupData->GetChild(pId, JSON::Entity::VALUE);
+        pEntity = pGroupData->GetChild(pId, JSON::VALUE);
         XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in '%s'.", pId, pGroup));
         if (pEntity != 0)
         {
@@ -182,7 +182,7 @@ const char* Device::GetConfig(const char* pGroup, const char* pId)
     else
     {
       JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pId,
-        JSON::Entity::VALUE));
+        JSON::VALUE));
       XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in root.", pId));
       if (pEntity != 0)
       {

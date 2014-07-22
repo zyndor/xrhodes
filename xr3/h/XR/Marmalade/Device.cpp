@@ -70,7 +70,7 @@ void Device::Init()
 void Device::Exit()
 {
   XR_ASSERTMSG(Device, s_pDevice != 0, ("Not initialised."));
-  XR_ASSERT(DeviceEventHandler, !s_pDevice->isYielding);
+  XR_ASSERT(Device, !s_pDevice->isYielding);
 
   s3eDeviceUnRegister(S3E_DEVICE_PAUSE, DeviceEventHandler);
   s3eDeviceUnRegister(S3E_DEVICE_UNPAUSE, DeviceEventHandler);
@@ -139,7 +139,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
 //==============================================================================
 void  Device::YieldOS(int32 ms)
 {
-  XR_ASSERT(DeviceEventHandler, !s_pDevice->isYielding);
+  XR_ASSERT(Device, !s_pDevice->isYielding);
   s_pDevice->isYielding = true;
   s3eDeviceYield(ms);
   s_pDevice->isYielding = false;
