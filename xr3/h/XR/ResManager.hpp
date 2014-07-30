@@ -111,7 +111,7 @@ template  <class T>
 inline
 bool  ResManager<T>::Manage( const char* pName, T* pObj)
 {
-  return Manage(Hash::String(pName));
+  return Manage(Hash::String(pName), pObj);
 }
 
 //==============================================================================
@@ -204,6 +204,7 @@ public:\
   typedef ResManager<a> Manager;\
   typedef a*(*GetCallback)(const char* pName, void* pData);\
   \
+  static a* CreateManageable();\
   static a* CreateManaged(const char* pName) {\
               XR_ASSERT(a, pName != 0);\
               return CreateManaged(Hash::String(pName));\
@@ -214,15 +215,21 @@ public:\
 
 //==============================================================================
 #define XR_MANAGED_DEF(a) \
+a*  a::CreateManageable() {\
+  a*  pRes(0);\
+  void* pMem(Manager::Allocate(sizeof(a)));\
+  if (pMem != 0)\
+  {\
+    pRes = new (pMem) a;\
+  }\
+  return pRes;\
+}\
+\
 a*  a::CreateManaged(uint32 hash) {\
   a*  pRes(Manager::Get(hash));\
   if (pRes == 0)\
   {\
-    void* pMem(Manager::Allocate(sizeof(a)));\
-    if (pMem != 0)\
-    {\
-      pRes = new (pMem) a;\
-    }\
+    pRes = CreateManageable();\
   }\
   return pRes;\
 }\
@@ -232,14 +239,23 @@ void  a::ManagedDestruct()\
 
 //==============================================================================
 #define XR_CROSS_MANAGED_DEF(a, aImpl)  \
+a*  a::CreateManageable() {\
+  a*  pRes(0);\
+  void* pMem(Manager::Allocate(sizeof(aImpl) + sizeof(a)));\
+  if (pMem != 0) {\
+    aImpl*  pResImpl(new (pMem) aImpl);\
+    pRes = new (pResImpl + 1) a;\
+    pRes->SwapImpl(pResImpl);\
+  }\
+  return pRes;\
+}\
+\
 a*  a::CreateManaged(uint32 hash) {\
   a*  pRes(Manager::Get(hash));\
   if (pRes == 0) {\
-    void* pMem(Manager::Allocate(sizeof(aImpl) + sizeof(a)));\
-    if (pMem != 0) {\
-      aImpl*  pResImpl(new (pMem) aImpl);\
-      pRes = new (pResImpl + 1) a;\
-      pRes->SwapImpl(pResImpl);\
+    pRes = CreateManageable();\
+    if(pRes != 0) {\
+      Manager::Manage(hash, pRes);\
     }\
   }\
   return pRes;\
