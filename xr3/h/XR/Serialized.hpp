@@ -44,7 +44,7 @@ public:
   ///@return  The id assigned to @a pObj.
   static IdType   RegisterSerialized(const Serialized* pObj);
 
-  ///@return  The id assigned to @a pObj, or INVALID_ID, if @a pOb was not
+  ///@return  The id assigned to @a pObj, or INVALID_ID, if @a pObj was not
   /// registered.
   static IdType   GetSerializedId(const Serialized* pObj);
 

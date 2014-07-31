@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_RAY_HPP
+#if !defined XR_RAY_HPP
 #define XR_RAY_HPP
 
 #include "vectypes.hpp"

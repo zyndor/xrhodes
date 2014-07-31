@@ -96,10 +96,10 @@ void  TweenVarPool<T>::Add( float duration, Tweener::Function pFunction,
     ("Not enough variables available on TweenVarPool %p, try increasing the maximum (%d).", this, m_numVars));
 
   VarCore&  var(m_parVarBuffer[iInsert]);
-  var.fValue = (float)(value);
+  var.fValue = float(value);
   var.Tween(&value, pOnFrameCb, pOnFinishedCb, pCallbackData, tweener);
 
-  tweener.Add(duration, pFunction, (float)(target),
+  tweener.Add(duration, pFunction, float(target),
     m_parVarBuffer[iInsert].fValue, OnFrameCallback, OnFinishedCallback,
     &m_parVarBuffer[iInsert]);
 }

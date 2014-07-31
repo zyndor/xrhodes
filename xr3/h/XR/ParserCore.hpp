@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_PARSERCORE_HPP
+#if !defined XR_PARSERCORE_HPP
 #define XR_PARSERCORE_HPP
 
 #include "types.hpp"
@@ -29,7 +29,7 @@ public:
   
   // general
   ///@brief Resets the internal state and sets up to read @a size characters
-  /// from @a parBuffer.
+  /// from @a parBuffer. If @a size is 0, it will set it to strlen(parBuffer).
   void        SetBuffer(const char* parBuffer, int size);
   
   int         GetRow() const;
@@ -57,7 +57,7 @@ public:
   ///@return  Number of characters left.
   int         GetNumCharsLeft() const;
   
-  ///@return  Whether @a p is past the end of the buffer.
+  ///@return  Whether @a p is at or past the end of the buffer.
   bool        IsOver(const char* p) const;
 
 protected:

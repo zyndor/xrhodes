@@ -134,7 +134,7 @@ bool  Parse::Int(int base, const char* pValue, int& v)
 
       if (success)
       {
-        value = static_cast<int>(Round((float)(percent * base / 100.0)));
+        value = static_cast<int>(Round(float(percent * base / 100.0)));
       }
     }
     else if (strchr(pValue, 'x') != 0)
@@ -154,7 +154,7 @@ bool  Parse::Int(int base, const char* pValue, int& v)
 
       if (success)
       {
-        value = static_cast<int>(Round((float)(multi * base)));
+        value = static_cast<int>(Round(float(multi * base)));
       }
     }
     else if (strchr(pValue, '.') != 0)
@@ -168,7 +168,7 @@ bool  Parse::Int(int base, const char* pValue, int& v)
 
       if (success)
       {
-        value = static_cast<int>(Round((float)(scalar * base)));
+        value = static_cast<int>(Round(float(scalar * base)));
       }
     }
     else
@@ -222,7 +222,7 @@ bool  Parse::Float(const char* pValue, float& v)
 
       if (success)
       {
-        value = (float)(percent / 100.0);
+        value = float(percent / 100.0);
       }
     }
     else
@@ -438,12 +438,12 @@ XR::Color Parse::Color( const char* pValue )
       }
       else
       {
-        col.a = (float)(XR_RGBA_EXTRACT_ALPHA(rgba) / 255.0f);
+        col.a = float(XR_RGBA_EXTRACT_ALPHA(rgba) / 255.0f);
       }
 
-      col.r = (float)(XR_RGBA_EXTRACT_RED(rgba) / 255.0f);
-      col.g = (float)(XR_RGBA_EXTRACT_GREEN(rgba) / 255.0f);
-      col.b = (float)(XR_RGBA_EXTRACT_BLUE(rgba) / 255.0f);
+      col.r = float(XR_RGBA_EXTRACT_RED(rgba) / 255.0f);
+      col.g = float(XR_RGBA_EXTRACT_GREEN(rgba) / 255.0f);
+      col.b = float(XR_RGBA_EXTRACT_BLUE(rgba) / 255.0f);
     }
   }
   return col;

@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_IMAGE_HPP
+#if !defined XR_IMAGE_HPP
 #define XR_IMAGE_HPP
 
 #include "types.hpp"

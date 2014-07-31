@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_JSONENTITY_HPP
+#if !defined XR_JSONENTITY_HPP
 #define XR_JSONENTITY_HPP
 
 #include <map>

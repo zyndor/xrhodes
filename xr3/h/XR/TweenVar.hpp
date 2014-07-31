@@ -78,7 +78,7 @@ void TweenVar<T>::Tween( float duration, Tweener::Function pFunction,
 {
   fValue = static_cast<Type>(value);
   TweenVarCore::Tween(&value, pOnFrameCb_, pOnFinishedCb_, pCallbackData_, t);
-  t.Add(duration, pFunction, (float)(target), fValue,
+  t.Add(duration, pFunction, float(target), fValue,
     OnFrameCallback, (pOnFinishedCb_ != 0) ? OnFinishedCallback : 0, this);
 }
 

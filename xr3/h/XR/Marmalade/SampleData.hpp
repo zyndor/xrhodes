@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SAMPLEDATA_HPP
+#if !defined XR_SAMPLEDATA_HPP
 #define XR_SAMPLEDATA_HPP
 
 #include "types.hpp"

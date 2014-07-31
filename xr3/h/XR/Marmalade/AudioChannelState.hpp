@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_AUDIOCHANNELSTATE_HPP
+#if !defined XR_AUDIOCHANNELSTATE_HPP
 #define XR_AUDIOCHANNELSTATE_HPP
 
 #include "SampleData.hpp"

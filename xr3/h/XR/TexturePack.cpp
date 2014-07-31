@@ -195,10 +195,10 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         // set uvs
         AABB  uvs =
         {
-          (float)(x) / texWidth,
-          (float)(y) / texHeight,
-          (float)(x + w) / texWidth,
-          (float)(y + h) / texHeight,
+          float(x) / texWidth,
+          float(y) / texHeight,
+          float(x + w) / texWidth,
+          float(y + h) / texHeight,
         };
 
         // offset and total size

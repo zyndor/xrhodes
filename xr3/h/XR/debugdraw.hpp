@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_DEBUGDRAW_HPP
+#if !defined XR_DEBUGDRAW_HPP
 #define XR_DEBUGDRAW_HPP
 
 #include  "Renderer.hpp"

@@ -136,7 +136,7 @@ int RandSign()
 inline
 float  FlopRand()
 {
-  return (float)(rand() % RAND_MAX) * kRecRandMax;
+  return float(rand() % RAND_MAX) * kRecRandMax;
 }
 
 //==============================================================================
@@ -181,22 +181,22 @@ T Lerp(T v0, T v1, float blend)
 
 //==============================================================================
 template  <typename T, int samples>
-struct  BezierImpl
+struct  _BezierImpl
 {
   static T Calculate(const T* parSamples, float blend)
   {
     T arResult[samples - 1];
     for(int i = 1; i < samples; ++i)
     {
-      int im1(i - 1);
+      const int im1(i - 1);
       arResult[im1] = Lerp(parSamples[im1], parSamples[i], blend); 
     }
-    return BezierImpl<T, samples - 1>::Calculate(arResult, blend);
+    return _BezierImpl<T, samples - 1>::Calculate(arResult, blend);
   }
 };
 
 template  <typename T>
-struct  BezierImpl<T, 1>
+struct  _BezierImpl<T, 1>
 {
   static T Calculate(const T* parSamples, float blend)
   {
@@ -208,7 +208,7 @@ template  <typename T, int samples>
 inline
 T Bezier(const T* parSamples, float blend)
 {
-  return BezierImpl<T, samples>::Calculate(parSamples, blend);
+  return _BezierImpl<T, samples>::Calculate(parSamples, blend);
 }
 
 }  // XR

@@ -118,7 +118,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     success = success && (pValue != 0);
     if (success)
     {
-      m_size = (float)atoi(pValue);
+      m_size = float(atof(pValue));
       pRead = pTempRead;
     }
 
@@ -127,7 +127,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     success = success && (pValue != 0);
     if (success)
     {
-      fOutline = (float)atoi(pValue);
+      fOutline = float(atof(pValue));
       m_size += fOutline * 2.0f;
       pRead = pTempRead;
     }
@@ -136,7 +136,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     success = success && (pValue != 0);
     if (success)
     {
-      m_base = m_size - atoi(pValue);
+      m_base = m_size - float(atof(pValue));
       pRead = pTempRead;
     }
 
@@ -145,7 +145,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     success = success && (pValue != 0);
     if (success)
     {
-      fTexWidth = (float)atoi(pValue);
+      fTexWidth = float(atof(pValue));
       if (fTexWidth > .0f)
       {
         fTexWidth = 1.0f / fTexWidth;
@@ -158,7 +158,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     success = success && (pValue != 0);
     if (success)
     {
-      fTexHeight = (float)atoi(pValue);
+      fTexHeight = float(atof(pValue));
       if (fTexHeight > .0f)
       {
         fTexHeight = 1.0f / fTexHeight;
@@ -247,7 +247,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_X]));
           break;
         }
-        x = (float)(atoi(pValue));
+        x = float(atof(pValue));
 
         float y;
         pTempRead = FindValue(pTempRead, karTag[TAG_Y], pValue);
@@ -257,7 +257,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_Y]));
           break;
         }
-        y = (float)(atoi(pValue));
+        y = float(atof(pValue));
 
         pTempRead = FindValue(pTempRead, karTag[TAG_WIDTH], pValue);
         success = pValue != 0;
@@ -266,7 +266,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_WIDTH]));
           break;
         }
-        pGlyph->w = (float)atoi(pValue);
+        pGlyph->w = float(atof(pValue));
 
         pTempRead = FindValue(pTempRead, karTag[TAG_HEIGHT], pValue);
         success = pValue != 0;
@@ -275,7 +275,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_HEIGHT]));
           break;
         }
-        pGlyph->h = (float)atoi(pValue);
+        pGlyph->h = float(atof(pValue));
 
         pTempRead = FindValue(pTempRead, karTag[TAG_XOFFSET], pValue);
         success = pValue != 0;
@@ -284,7 +284,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_XOFFSET]));
           break;
         }
-        pGlyph->xOffs = (float)atoi(pValue) + fOutline;
+        pGlyph->xOffs = float(atof(pValue)) + fOutline;
 
         pTempRead = FindValue(pTempRead, karTag[TAG_YOFFSET], pValue);
         success = pValue != 0;
@@ -293,7 +293,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_YOFFSET]));
           break;
         }
-        pGlyph->yOffs = (float)atoi(pValue) + fOutline;
+        pGlyph->yOffs = float(atof(pValue)) + fOutline;
 
         pTempRead = FindValue(pTempRead, karTag[TAG_XADVANCE], pValue);
         success = pValue != 0;
@@ -302,7 +302,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_XADVANCE]));
           break;
         }
-        pGlyph->xAdvance = (float)atoi(pValue) + fOutline * 2.0f;
+        pGlyph->xAdvance = float(atof(pValue)) + fOutline * 2.0f;
 
         // uvs
         pGlyph->uvs.left = x * fTexWidth;

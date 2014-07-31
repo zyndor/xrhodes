@@ -45,6 +45,7 @@ void Application::SetFrameDelayMs( int32 ms )
 void Application::Run()
 {
   XR_ASSERT(Application, !m_isRunning);
+  XR_ASSERT(Application, m_frameDelayMs > 0);
   m_isRunning = true;
   
   uint64 tLast;

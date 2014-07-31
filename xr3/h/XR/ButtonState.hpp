@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_BUTTONSTATE_HPP
+#if !defined XR_BUTTONSTATE_HPP
 #define XR_BUTTONSTATE_HPP
 
 namespace XR

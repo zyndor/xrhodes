@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MOUSEHANDLER_HPP
+#if !defined XR_MOUSEHANDLER_HPP
 #define XR_MOUSEHANDLER_HPP
 
 #include  "Input.hpp"

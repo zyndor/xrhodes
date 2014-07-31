@@ -9,7 +9,7 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_ADPCM_HPP
+#if !defined XR_ADPCM_HPP
 #define XR_ADPCM_HPP
 
 #include "types.hpp"

@@ -22,8 +22,6 @@ enum  PrimType
   PRIM_TRI_LIST,
   PRIM_TRI_STRIP,
   PRIM_TRI_FAN,
-//  PRIM_QUAD_LIST,
-//  PRIM_QUAD_STRIP,
 };
 
 } // XR
