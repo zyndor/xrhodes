@@ -14,6 +14,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <algorithm>
 #include "types.hpp"
 
 namespace XR
@@ -85,31 +86,33 @@ class HardString<0>
 // implementation
 //==============================================================================
 template  <int N>
+inline
 HardString<N>::HardString()
-: m_arBuffer()
 {
   m_arBuffer[0] = 0;
 }
   
 //==============================================================================
 template  <int N>
+inline
 HardString<N>::HardString(const char* pString)
-: m_arBuffer()
 {
   XR_ASSERT(HardString<>, strlen(pString) < N);
-  strcpy(m_arBuffer, pString);    
+  strncpy(m_arBuffer, pString, N - 1);    
 }
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N>::HardString(int32 n)
-: m_arBuffer()
 {
+  m_arBuffer[0] = 0;
   operator+=(n);
 }
   
 //==============================================================================
 template  <int N>
+inline
 int HardString<N>::size() const
 {
   return strlen(m_arBuffer);
@@ -117,6 +120,7 @@ int HardString<N>::size() const
   
 //==============================================================================
 template  <int N>
+inline
 int HardString<N>::capacity() const
 {
   return kCapacity;
@@ -124,6 +128,7 @@ int HardString<N>::capacity() const
 
 //==============================================================================
 template  <int N>
+inline
 const char* HardString<N>::c_str() const
 {
   return m_arBuffer;
@@ -131,6 +136,7 @@ const char* HardString<N>::c_str() const
 
 //==============================================================================
 template  <int N>
+inline
 int HardString<N>::find(const char* pSub) const
 {
   char* p(strstr(m_arBuffer, pSub));
@@ -139,6 +145,7 @@ int HardString<N>::find(const char* pSub) const
 
 //==============================================================================
 template  <int N>
+inline
 int HardString<N>::find(int c) const
 {
   char* p(strchr(m_arBuffer, c));
@@ -147,6 +154,7 @@ int HardString<N>::find(int c) const
 
 //==============================================================================
 template  <int N>
+inline
 int HardString<N>::rfind(int c) const
 {
   char* p(strrchr(m_arBuffer, c));
@@ -155,30 +163,25 @@ int HardString<N>::rfind(int c) const
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N>&  HardString<N>::tolower()
 {
-  int n(size());
-  for (int i = 0; i < n; ++i)
-  {
-    m_arBuffer[i] = ::tolower(m_arBuffer[i]);
-  }
+  std::transform(m_arBuffer, m_arBuffer + size(), m_arBuffer, ::tolower);
   return *this;
 }
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N>&  HardString<N>::toupper()
 {
-  int n(size());
-  for (int i = 0; i < n; ++i)
-  {
-    m_arBuffer[i] = ::toupper(m_arBuffer[i]);
-  }
+  std::transform(m_arBuffer, m_arBuffer + size(), m_arBuffer, ::toupper);
   return *this;
 }
 
 //==============================================================================
 template  <int N>
+inline
 void  HardString<N>::clear()
 {
   m_arBuffer[0] = 0;
@@ -201,6 +204,7 @@ HardString<N>&  HardString<N>::assign(const char* pStr, int size)
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N>& HardString<N>::operator =(const char* pString)
 {
   XR_ASSERT(HardString<N>, strlen(pString) < kCapacity);
@@ -210,6 +214,7 @@ HardString<N>& HardString<N>::operator =(const char* pString)
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N>& HardString<N>::operator =(const HardString<N>& str)
 {
   return (*this = str.c_str());
@@ -227,6 +232,7 @@ HardString<N>& HardString<N>::operator =(int n)
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N>& HardString<N>::operator +=(const char* pString)
 {
   XR_ASSERT(HardString<>, size() + strlen(pString) < N);
@@ -236,6 +242,7 @@ HardString<N>& HardString<N>::operator +=(const char* pString)
   
 //==============================================================================
 template  <int N>
+inline
 HardString<N>& HardString<N>::operator +=(const HardString<N>& str)
 {
   return (*this += str.c_str());
@@ -253,6 +260,7 @@ HardString<N>&  HardString<N>::operator +=(int n)
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N> HardString<N>::operator +(const char* pString) const
 {
   HardString<N> str(*this);
@@ -262,6 +270,7 @@ HardString<N> HardString<N>::operator +(const char* pString) const
 
 //==============================================================================
 template  <int N>
+inline
 HardString<N> HardString<N>::operator +(const HardString<N>& str) const
 {
   return (*this + str.c_str());
@@ -269,6 +278,7 @@ HardString<N> HardString<N>::operator +(const HardString<N>& str) const
   
 //==============================================================================
 template  <int N>
+inline
 HardString<N> HardString<N>::operator +(int n) const
 {
   HardString<N> str(*this);
@@ -277,6 +287,7 @@ HardString<N> HardString<N>::operator +(int n) const
 
 //==============================================================================
 template  <int N>
+inline
 char  HardString<N>::operator[](int i) const
 {
   XR_ASSERT(HardString<>, i >= 0);
@@ -286,6 +297,7 @@ char  HardString<N>::operator[](int i) const
 
 //==============================================================================
 template  <int N>
+inline
 char&  HardString<N>::operator[](int i)
 {
   XR_ASSERT(HardString<>, i >= 0);
@@ -295,6 +307,7 @@ char&  HardString<N>::operator[](int i)
   
 //==============================================================================
 template  <int N>
+inline
 bool  HardString<N>::operator==(const char* pString) const
 {
   return strcmp(m_arBuffer, pString) != 0;
@@ -302,9 +315,18 @@ bool  HardString<N>::operator==(const char* pString) const
 
 //==============================================================================
 template  <int N>
+inline
 bool  HardString<N>::operator==(const HardString<N>& str) const
 {
   return strcmp(m_arBuffer, str.c_str()) != 0;
+}
+
+//==============================================================================
+template  <int N>
+inline
+HardString<N>::operator const char *() const
+{
+  return m_arBuffer;
 }
 
 } // XR
