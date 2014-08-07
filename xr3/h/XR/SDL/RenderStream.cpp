@@ -10,6 +10,18 @@ struct  Vec2gl
 {
   GLfloat x, y;
   
+  Vec2gl(float x_, float y_)
+  : x(x_),
+    y(y_)
+  {}
+  
+  Vec2gl& operator+=(const Vec2gl& rhs)
+  {
+    x += rhs.x;
+    y += rhs.y;
+    return *this;
+  }
+
   Vec2gl& operator*=(float s)
   {
     x *= s;
@@ -22,6 +34,18 @@ struct  Vec2gl
 struct  Vec3gl: Vec2gl
 {
   GLfloat z;
+
+  Vec3gl(float x_, float y_, float z_)
+  : Vec2gl(x_, y_),
+    z(z_)
+  {}
+  
+  Vec3gl& operator+=(const Vec3gl& rhs)
+  {
+    Vec2gl::operator +=(rhs);
+    z += rhs.z;
+    return *this;
+  }
 
   Vec3gl& operator*=(float s)
   {
@@ -412,7 +436,7 @@ void  RenderStream::Scale(float s, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if (size == SIZE_REST)
@@ -423,13 +447,17 @@ void  RenderStream::Scale(float s, int offset, int size)
   switch (m_format)
   {
   case  F_VECTOR2:
-    std::for_each(static_cast<Vec2gl*>(GetData(offset)),
-      static_cast<Vec2gl*>(GetData(offset)) + size, Scaler(s));
+    {
+      Vec2gl* pData(static_cast<Vec2gl*>(m_pData) + offset);
+      std::for_each(pData, pData + size, Scaler(s));
+    }
     break;
 
   case  F_VECTOR3:
-    std::for_each(static_cast<Vec3gl*>(GetData(offset)),
-      static_cast<Vec3gl*>(GetData(offset)) + size, Scaler(s));
+    {
+      Vec3gl* pData(static_cast<Vec3gl*>(m_pData) + offset);
+      std::for_each(pData, pData + size, Scaler(s));
+    }
     break;
   }
 }
@@ -439,7 +467,7 @@ void  RenderStream::ScaleX(float sx, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if (size == SIZE_REST)
@@ -450,13 +478,17 @@ void  RenderStream::ScaleX(float sx, int offset, int size)
   switch (m_format)
   {
   case  F_VECTOR2:
-    std::for_each(static_cast<Vec2gl*>(GetData(offset)),
-      static_cast<Vec2gl*>(GetData(offset)) + size, ScalerX(sx));
+    {
+      Vec2gl* pData(static_cast<Vec2gl*>(m_pData) + offset);
+      std::for_each(pData, pData + size, ScalerX(sx));
+    }
     break;
 
   case  F_VECTOR3:
-    std::for_each(static_cast<Vec3gl*>(GetData(offset)),
-      static_cast<Vec3gl*>(GetData(offset)) + size, ScalerX(sx));
+    {
+      Vec3gl* pData(static_cast<Vec3gl*>(m_pData) + offset);
+      std::for_each(pData, pData + size, ScalerX(sx));
+    }
     break;
   }
 }
@@ -466,7 +498,7 @@ void  RenderStream::ScaleY(float sy, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if (size == SIZE_REST)
@@ -477,13 +509,17 @@ void  RenderStream::ScaleY(float sy, int offset, int size)
   switch (m_format)
   {
   case  F_VECTOR2:
-    std::for_each(static_cast<Vec2gl*>(GetData(offset)),
-      static_cast<Vec2gl*>(GetData(offset)) + size, ScalerY(sy));
+    {
+      Vec2gl* pData(static_cast<Vec2gl*>(m_pData) + offset);
+      std::for_each(pData, pData + size, ScalerY(sy));
+    }
     break;
 
   case  F_VECTOR3:
-    std::for_each(static_cast<Vec3gl*>(GetData(offset)),
-      static_cast<Vec3gl*>(GetData(offset)) + size, ScalerY(sy));
+    {
+      Vec3gl* pData(static_cast<Vec3gl*>(m_pData) + offset);
+      std::for_each(pData, pData + size, ScalerY(sy));
+    }
     break;
   }
 }
@@ -493,7 +529,7 @@ void  RenderStream::ScaleZ(float sz, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if (size == SIZE_REST)
@@ -504,8 +540,10 @@ void  RenderStream::ScaleZ(float sz, int offset, int size)
   switch (m_format)
   {
   case  F_VECTOR3:
-    std::for_each(static_cast<Vec3gl*>(GetData(offset)),
-      static_cast<Vec3gl*>(GetData(offset)) + size, ScalerZ(sz));
+    {
+      Vec3gl* pData(static_cast<Vec3gl*>(m_pData) + offset);
+      std::for_each(pData, pData + size, ScalerZ(sz));
+    }
     break;
   }
 }
@@ -515,7 +553,7 @@ void  RenderStream::Translate(const Vector2& t, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if (size == SIZE_REST)
@@ -523,13 +561,13 @@ void  RenderStream::Translate(const Vector2& t, int offset, int size)
     size = m_capacity - offset;
   }
 
-  GLfloat*  i0(static_cast<GLfloat*>(m_pData) + offset * 2);
-  GLfloat*  i1(static_cast<GLfloat*>(m_pData) + (offset + size) * 2);
+  Vec2gl  rhs(t.x, t.y);
+  Vec2gl* i0(static_cast<Vec2gl*>(m_pData) + offset);
+  Vec2gl* i1(i0 + size);
   while (i0 != i1)
   {
-    i0[VX] += t.x;
-    i0[VY] += t.y;
-    i0 += 2;
+    *i0 += rhs;
+    ++i0;
   }
 }
 
@@ -538,7 +576,7 @@ void  RenderStream::Translate(const Vector3& t, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if (size == SIZE_REST)
@@ -546,14 +584,13 @@ void  RenderStream::Translate(const Vector3& t, int offset, int size)
     size = m_capacity - offset;
   }
 
-  GLfloat*  i0(static_cast<GLfloat*>(m_pData) + offset * 3);
-  GLfloat*  i1(static_cast<GLfloat*>(m_pData) + (offset + size) * 3);
+  Vec3gl  rhs(t.x, t.y, t.z);
+  Vec3gl* i0(static_cast<Vec3gl*>(m_pData) + offset);
+  Vec3gl* i1(i0 + size);
   while (i0 != i1)
   {
-    i0[VX] += t.x;
-    i0[VY] += t.y;
-    i0[VZ] += t.z;
-    i0 += 2;
+    *i0 += rhs;
+    ++i0;
   }
 }
 

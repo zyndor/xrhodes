@@ -411,7 +411,7 @@ void  RenderStream::Scale(float s, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if(size == SIZE_REST)
@@ -422,14 +422,18 @@ void  RenderStream::Scale(float s, int offset, int size)
   switch(m_format)
   {
   case  F_VECTOR2:
-    std::for_each(static_cast<CIwFVec2*>(GetData(offset)),
-      static_cast<CIwFVec2*>(m_pData) + offset + size, Scaler(s));
-    break;
+    {
+      CIwFVec2* pStart(static_cast<CIwFVec2*>(m_pData) + offset);
+      std::for_each(pStart, pStart + size, Scaler(s));
+      break;
+    }
 
   case  F_VECTOR3:
-    std::for_each(static_cast<CIwFVec3*>(GetData(offset)),
-      static_cast<CIwFVec3*>(m_pData) + offset + size, Scaler(s));
-    break;
+    {
+      CIwFVec3* pStart(static_cast<CIwFVec3*>(m_pData) + offset);
+      std::for_each(pStart, pStart + size, Scaler(s));
+      break;
+    }
   }
 }
 
@@ -438,7 +442,7 @@ void  RenderStream::ScaleX(float sx, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if(size == SIZE_REST)
@@ -449,14 +453,18 @@ void  RenderStream::ScaleX(float sx, int offset, int size)
   switch(m_format)
   {
   case  F_VECTOR2:
-    std::for_each(static_cast<CIwFVec2*>(GetData(offset)),
-      static_cast<CIwFVec2*>(m_pData) + offset + size, ScalerX(sx));
-    break;
+    {
+      CIwFVec2* pStart(static_cast<CIwFVec2*>(m_pData) + offset);
+      std::for_each(pStart, pStart + size, ScalerX(sx));
+      break;
+    }
 
   case  F_VECTOR3:
-    std::for_each(static_cast<CIwFVec3*>(GetData(offset)),
-      static_cast<CIwFVec3*>(m_pData) + offset + size, ScalerX(sx));
-    break;
+    {
+      CIwFVec3* pStart(static_cast<CIwFVec3*>(m_pData) + offset);
+      std::for_each(pStart, pStart + size, ScalerX(sx));
+      break;
+    }
   }
 }
 
@@ -465,7 +473,7 @@ void  RenderStream::ScaleY(float sy, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2 || m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if(size == SIZE_REST)
@@ -476,14 +484,18 @@ void  RenderStream::ScaleY(float sy, int offset, int size)
   switch(m_format)
   {
   case  F_VECTOR2:
-    std::for_each(static_cast<CIwFVec2*>(GetData(offset)),
-      static_cast<CIwFVec2*>(m_pData) + offset + size, ScalerY(sy));
-    break;
+    {
+      CIwFVec2* pStart(static_cast<CIwFVec2*>(m_pData) + offset);
+      std::for_each(pStart, pStart + size, ScalerY(sy));
+      break;
+    }
 
   case  F_VECTOR3:
-    std::for_each(static_cast<CIwFVec3*>(GetData(offset)),
-      static_cast<CIwFVec3*>(m_pData) + offset + size, ScalerY(sy));
-    break;
+    {
+      CIwFVec3* pStart(static_cast<CIwFVec3*>(m_pData) + offset);
+      std::for_each(pStart, pStart + size, ScalerY(sy));
+      break;
+    }
   }
 }
 
@@ -492,7 +504,7 @@ void  RenderStream::ScaleZ(float sz, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if(size == SIZE_REST)
@@ -503,9 +515,11 @@ void  RenderStream::ScaleZ(float sz, int offset, int size)
   switch(m_format)
   {
   case  F_VECTOR3:
-    std::for_each(static_cast<CIwFVec3*>(GetData(offset)),
-      static_cast<CIwFVec3*>(m_pData) + offset + size, ScalerZ(sz));
-    break;
+    {
+      CIwFVec3* pStart(static_cast<CIwFVec3*>(m_pData) + offset);
+      std::for_each(pStart, pStart + size, ScalerZ(sz));
+      break;
+    }
   }
 }
 
@@ -514,7 +528,7 @@ void  RenderStream::Translate(const Vector2& t, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR2);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if(size == SIZE_REST)
@@ -522,8 +536,8 @@ void  RenderStream::Translate(const Vector2& t, int offset, int size)
     size = m_capacity - offset;
   }
 
-  std::for_each(static_cast<CIwFVec2*>(GetData(offset)),
-    static_cast<CIwFVec2*>(m_pData) + offset + size,
+  CIwFVec2* pStart(static_cast<CIwFVec2*>(m_pData) + offset);
+  std::for_each(pStart, pStart + size,
     Translator<CIwFVec2>(CIwFVec2(t.x, t.y)));
 }
 
@@ -532,7 +546,7 @@ void  RenderStream::Translate(const Vector3& t, int offset, int size)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR3);
   XR_ASSERT(RenderStream, offset >= 0);
-  XR_ASSERT(RenderStream, offset < m_capacity);
+  XR_ASSERT(RenderStream, offset <= m_capacity);
   XR_ASSERT(RenderStream, size >= SIZE_REST);
   XR_ASSERT(RenderStream, size == SIZE_REST || offset + size <= m_capacity);
   if(size == SIZE_REST)
@@ -540,8 +554,8 @@ void  RenderStream::Translate(const Vector3& t, int offset, int size)
     size = m_capacity - offset;
   }
 
-  std::for_each(static_cast<CIwFVec3*>(GetData(offset)),
-    static_cast<CIwFVec3*>(m_pData) + offset + size,
+  CIwFVec3* pStart(static_cast<CIwFVec3*>(m_pData) + offset);
+  std::for_each(pStart, pStart + size,
     Translator<CIwFVec3>(CIwFVec3(t.x, t.y, t.z)));
 }
 
