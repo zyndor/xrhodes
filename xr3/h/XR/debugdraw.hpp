@@ -18,7 +18,8 @@ namespace XR
 {
 
 //==============================================================================
-void  DebugDrawCircle(const Vector2& pos, float radius);
+void  DebugDrawCircle(float radius);
+void  DebugDrawFilledCircle(float radius);
 
 //==============================================================================
 // implementation
