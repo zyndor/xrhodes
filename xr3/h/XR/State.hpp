@@ -20,7 +20,15 @@ namespace XR
 {
 
 //==============================================================================
-///@brief An application state
+///@brief An application state. Lifecycle:
+///@ Init() when pushed onto the stack
+///@   Enter(), FadeIn() when previous state has exited.
+///@     UpdateFadeIn() when fading in
+///@     Update() when active (fadeout has finished)
+///@   FadeOut() when new state was requested
+///@     UpdateFadeOut() while fading out
+///@   Exit() when fadeout has finished
+///@ Shutdown() when popped from stack
 class State: protected Module
 {
 public:
@@ -54,14 +62,15 @@ public:
     // data
     StateList m_stack;
     
-    State*    m_pRequested; // no ownership, will be made current on Update()
-    State*    m_pPrevious;  // no ownership, fading state
-    bool      m_shutdownPrevious; // if popped / changed
+    State*  m_pExiting;  // no ownership
+    State*  m_pCurrent;  // no ownership, processed if there's no exiting state.
 
-    int32     m_tFade;
+    bool    m_doShutdown;
+    int     m_fadeDelay;
+    int     m_tFade;
 
     // internal
-    void  _ExpirePrevious(int32 tFade);
+    void  _QuickExit();
   };
 
   // using
@@ -72,13 +81,15 @@ public:
   virtual ~State();
   
   // virtual
-  virtual void  Enter(int32 tFade) =0; // when requested state becomes active
-  virtual void  Exit(int32 tFade) =0;  // when requested state becomes inactive; must reset changes made since Enter()
+  virtual void  Enter() =0; // when requested state becomes active
+  virtual void  Exit() =0;  // when requested state becomes inactive; must reset changes made since Enter()
 
   virtual void  Update(int32 tDelta) =0;
 
   // general
+  virtual void  FadeIn(int32 tFade);
   virtual void  UpdateFadeIn(int32 tDelta);
+  virtual void  FadeOut(int32 tFade);
   virtual void  UpdateFadeOut(int32 tDelta);
 
   // friends
