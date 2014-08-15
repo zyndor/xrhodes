@@ -152,6 +152,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Ray.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/RectObject.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/RenderStream.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/RenderStreamIO.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Renderer.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/RingBuffer.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Sample.cpp</itemPath>
@@ -572,6 +573,11 @@
       <item path="D:/repos/xr3/xr3/h/XR/RenderStream.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RenderStreamIO.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Renderer.hpp" ex="false" tool="3" flavor2="0">
@@ -1215,6 +1221,11 @@
       <item path="D:/repos/xr3/xr3/h/XR/RenderStream.hpp"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/RenderStreamIO.cpp"
+            ex="false"
+            tool="1"
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Renderer.hpp" ex="false" tool="3" flavor2="0">
