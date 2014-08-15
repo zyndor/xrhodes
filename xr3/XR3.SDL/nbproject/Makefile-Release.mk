@@ -76,6 +76,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/Quadtree.o \
 	${OBJECTDIR}/_ext/1046665460/Ray.o \
 	${OBJECTDIR}/_ext/1046665460/RectObject.o \
+	${OBJECTDIR}/_ext/1046665460/RenderStreamIO.o \
 	${OBJECTDIR}/_ext/1046665460/RingBuffer.o \
 	${OBJECTDIR}/_ext/784063616/Audio.o \
 	${OBJECTDIR}/_ext/784063616/Device.o \
@@ -342,6 +343,11 @@ ${OBJECTDIR}/_ext/1046665460/RectObject.o: /D/repos/xr3/xr3/h/XR/RectObject.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/RectObject.o /D/repos/xr3/xr3/h/XR/RectObject.cpp
+
+${OBJECTDIR}/_ext/1046665460/RenderStreamIO.o: /D/repos/xr3/xr3/h/XR/RenderStreamIO.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/RenderStreamIO.o /D/repos/xr3/xr3/h/XR/RenderStreamIO.cpp
 
 ${OBJECTDIR}/_ext/1046665460/RingBuffer.o: /D/repos/xr3/xr3/h/XR/RingBuffer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460

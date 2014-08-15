@@ -68,6 +68,7 @@ files
   Quadtree.cpp
   Ray.cpp
   RectObject.cpp
+  RenderStreamIO.cpp
   RingBuffer.cpp
   Serialized.cpp
   SharedPoolAllocator.cpp
