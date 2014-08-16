@@ -63,6 +63,11 @@ struct SVector2
   {}
 
   // general
+  int16 Magnitude() const
+  {
+    return int16(sqrtf(Dot()));
+  }
+
   int16 Dot() const
   {
     return Dot(*this);
@@ -138,6 +143,11 @@ struct Vector2
   {}
 
   // general
+  float Magnitude() const
+  {
+    return sqrtf(Dot());
+  }
+
   float Dot() const
   {
     return Dot(*this);
@@ -261,6 +271,11 @@ struct Vector3
   {}
 
   // general
+  float Magnitude() const
+  {
+    return sqrtf(Dot());
+  }
+
   float Dot() const
   {
     return Dot(*this);
@@ -287,6 +302,11 @@ struct Vector3
   Vector3 Lerp(const Vector3& to, float t) const
   {
     return Vector3(x + (to.x - x) * t, y + (to.y - y) * t, z + (to.z - z) * t);
+  }
+
+  Vector2 XY() const
+  {
+    return Vector2(x, y);
   }
 
   // operators
