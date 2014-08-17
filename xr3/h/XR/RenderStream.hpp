@@ -14,6 +14,7 @@
 
 #include "vectypes.hpp"
 #include "Color.hpp"
+#include "File.hpp"
 
 namespace XR
 {
@@ -179,6 +180,9 @@ public:
   void      Translate(const Vector2& t, int offset = 0, int size = SIZE_REST);
   void      Translate(const Vector3& t, int offset = 0, int size = SIZE_REST);
   
+  bool      ReadFile(int hFile);
+  bool      WriteFile(int hFile) const;
+
   void      Destroy();
 
   // operator overloads
