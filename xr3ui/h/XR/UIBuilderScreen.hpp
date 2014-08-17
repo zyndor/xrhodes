@@ -51,7 +51,7 @@ public:
   static const char* const    karAnchorName[kNumAnchors];
   
   // structors
-  explicit UIBuilderScreen(const UIBuilder::Configuration& cfg);
+  explicit UIBuilderScreen(const UIBuilder::Configuration& cfg = UIBuilder::kDefaultConfig);
   ~UIBuilderScreen();
   
   // general
@@ -60,6 +60,8 @@ public:
   void                SetConfiguration(const UIBuilder::Configuration& cfg);
   
   bool                Build(TiXmlElement* pXml);
+  UIElement*          GetElement(const char* pName);
+  UIElement*          GetElement(uint32 hash);
   void                Destroy();
   
   int                 GetPadding() const;
@@ -106,6 +108,20 @@ protected:
 
 //==============================================================================
 // implementation
+//==============================================================================
+inline
+UIElement*  UIBuilderScreen::GetElement(const char* pHandle)
+{
+  return m_builder.GetElement(pHandle);
+}
+
+//==============================================================================
+inline
+UIElement*  UIBuilderScreen::GetElement(uint32 hash)
+{
+  return m_builder.GetElement(hash);
+}
+
 //==============================================================================
 inline
 int UIBuilderScreen::GetPadding() const
