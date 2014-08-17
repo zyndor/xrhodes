@@ -12,6 +12,7 @@
 #if !defined XR_TEXT_HPP
 #define XR_TEXT_HPP
 
+#include <string>
 #include "Font.hpp"
 #include "IndexMesh.hpp"
 
