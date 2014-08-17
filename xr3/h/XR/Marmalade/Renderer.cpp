@@ -17,6 +17,7 @@ struct  RendererImpl
   bool            isPerspective;
   float           rayCastZNear;
   Matrix          rayCastView;
+  uint32          flushId;
 };
 
 static RendererImpl* s_pRenderer(0);
@@ -53,6 +54,8 @@ void Renderer::Init()
   SetPerspective(M_PI * .25f, 10.0f, 1000.0f);
   GetViewMatrix(s_pRenderer->rayCastView);
   s_pRenderer->rayCastZNear = s_pRenderer->zNear;
+
+  s_pRenderer->flushId = 1;
 }
 
 //==============================================================================
@@ -424,12 +427,19 @@ void Renderer::ClearBuffer(uint32 flags)
 void Renderer::Flush()
 {
   IwGxFlush();
+  ++s_pRenderer->flushId;
 }
 
 //==============================================================================
 void Renderer::Present()
 {
   IwGxSwapBuffers();
+}
+
+//==============================================================================
+uint32  Renderer::GetFlushId()
+{
+  return s_pRenderer->flushId;
 }
 
 } // XR

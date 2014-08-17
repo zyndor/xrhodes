@@ -103,6 +103,8 @@ public:
   static void           ClearBuffer(uint32 flags = (BF_COLOR | BF_DEPTH));
   static void           Flush();
   static void           Present();
+
+  static uint32         GetFlushId();
 };
 
 } // XR

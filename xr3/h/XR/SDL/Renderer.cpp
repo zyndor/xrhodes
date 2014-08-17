@@ -32,6 +32,7 @@ static struct
   int32                 numNormals;
   Matrix                rayCastView;
   float                 rayCastZNear;
+  uint32                flushId;
 } s_rendererImpl;
 
 //==============================================================================
@@ -145,6 +146,8 @@ void Renderer::Init()
   UpdateModelViewMatrix();
 
   s_rendererImpl.rayCastView = Matrix::s_identity;
+  
+  s_rendererImpl.frames = 1;
   
   s_rendererImpl.initSuccess = true;
 }
@@ -621,6 +624,13 @@ void Renderer::Present()
 {
   Flush();
   SDL_GL_SwapWindow(s_rendererImpl.pMainWindow);
+  ++s_rendererImpl.flushId;
+}
+
+//==============================================================================
+uint32  Renderer::GetFlushId()
+{
+  return s_rendererImpl.flushId;
 }
 
 } // XR
