@@ -16,13 +16,12 @@
 #include <limits>
 
 //==============================================================================
+#if defined XR_SDL
+#include <SDL2/SDL.h>
+
 #if !defined NDEBUG || defined XR_DEBUG_PERFORMANCE
 #define XR_DEBUG
 #endif  // NDEBUG
-
-//==============================================================================
-#if defined XR_SDL
-#include <SDL2/SDL.h>
 
 #define XR_TRACE(chnl, msg)            printf msg; printf("\n") // stub
 #define XR_ASSERT(chnl, cond)          SDL_assert(cond)
@@ -54,6 +53,10 @@ typedef Uint64          uint64;
 #elif defined XR_MARMALADE
 #include "s3eTypes.h"
 #include "IwDebug.h"
+
+#if defined IW_DEBUG || defined XR_DEBUG_PERFORMANCE
+#define XR_DEBUG
+#endif
 
 #define XR_TRACE(chnl, msg)            IwTrace(chnl, msg)
 #define XR_ASSERT(chnl, cond)          IwAssert(chnl, cond)
