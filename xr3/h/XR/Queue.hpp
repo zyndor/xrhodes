@@ -541,7 +541,7 @@ void  Queue<Type, AllocType>::clear()
 template  <typename Type, class AllocType>
 void  Queue<Type, AllocType>::adopt(SelfType& rhs)
 {
-  SelfType  temp;
+  SelfType  temp(m_allocator);
   std::swap(rhs, temp);
 
   _adopt(temp);
@@ -558,7 +558,7 @@ void  Queue<Type, AllocType>::adopt(SelfType& rhs, iterator end)
 
   if (!(rhs.empty() || rhs.m_pHead == end.pNode))
   {
-    SelfType  temp;
+    SelfType  temp(m_allocator);
     NodeType  *pNode(rhs.m_pHead);
     temp.m_pHead = pNode;
 
