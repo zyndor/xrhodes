@@ -52,7 +52,6 @@ const int karKeyCodeNative[] =
   s3eKeyF11, //97,           //!< Key F11.
   s3eKeyF12, //98,           //!< Key F12.
 
-  s3eKey0, //13,           //!< Key 0 on device numberpad and on main keyboard.
   s3eKey1, //14,           //!< Key 1 on device numberpad and on main keyboard.
   s3eKey2, //15,           //!< Key 2 on device numberpad and on main keyboard.
   s3eKey3, //16,           //!< Key 3 on device numberpad and on main keyboard.
@@ -62,6 +61,7 @@ const int karKeyCodeNative[] =
   s3eKey7, //20,           //!< Key 7 on device numberpad and on main keyboard.
   s3eKey8, //21,           //!< Key 8 on device numberpad and on main keyboard.
   s3eKey9, //22,           //!< Key 9 on device numberpad and on main keyboard.
+  s3eKey0, //13,           //!< Key 0 on device numberpad and on main keyboard.
 
   s3eKeyA, //23,           //!< Key A.
   s3eKeyB, //24,           //!< Key B.
