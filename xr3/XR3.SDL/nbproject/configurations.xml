@@ -85,6 +85,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/fundamentals.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/json.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/maths.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/memory.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/strings.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/types.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/typeutils.hpp</itemPath>
@@ -815,6 +816,8 @@
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/maths.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="D:/repos/xr3/xr3/h/XR/memory.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="D:/repos/xr3/xr3/h/XR/strings.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/types.hpp" ex="false" tool="3" flavor2="0">
@@ -1462,6 +1465,8 @@
       <item path="D:/repos/xr3/xr3/h/XR/maths.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/maths.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/memory.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/strings.hpp" ex="false" tool="3" flavor2="0">
       </item>

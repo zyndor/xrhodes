@@ -13,6 +13,19 @@ namespace XR
 {
 
 //==============================================================================
+void* Pool::Allocate(size_t size, void* pUser)
+{
+  Pool*  pPool(static_cast<Pool*>(pUser));
+  return pPool->Allocate(size);
+}
+
+//==============================================================================
+void  Pool::Deallocate(void* pMem, void* pUser)
+{
+  // sweet nothings
+}
+
+//==============================================================================
 Pool::Pool()
 : m_parBuffer(0),
   m_isAuto(false),
@@ -21,7 +34,7 @@ Pool::Pool()
 {}
 
 //==============================================================================
-Pool::Pool(int size)
+Pool::Pool(size_t size)
 : m_parBuffer(new Byte[size]),
   m_isAuto(true),
   m_frames(),
@@ -33,7 +46,7 @@ Pool::Pool(int size)
 }
 
 //==============================================================================
-Pool::Pool(int size, bool isAuto, Byte* parBuffer)
+Pool::Pool(size_t size, bool isAuto, Byte* parBuffer)
 : m_parBuffer(0),
   m_isAuto(false),
   m_frames(),
@@ -63,7 +76,7 @@ void* Pool::RegainBuffer()
 }
 
 //==============================================================================
-void  Pool::SetBuffer(int size, bool isAuto, void* parBuffer)
+void  Pool::SetBuffer(size_t size, bool isAuto, void* parBuffer)
 {
   XR_ASSERTMSG(XR::Pool, m_parBuffer == m_pNext,
     ("Already allocated from pool; those objects will be invalidated."));
@@ -88,7 +101,7 @@ void  Pool::SetBuffer(int size, bool isAuto, void* parBuffer)
 }
 
 //==============================================================================
-void* Pool::Allocate(int numBytes)
+void* Pool::Allocate(size_t numBytes)
 {
   XR_ASSERT(Pool::Pool, numBytes >= 0);
   XR_ASSERT(Pool::Pool, m_parBuffer != 0);

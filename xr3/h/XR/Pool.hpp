@@ -13,9 +13,7 @@
 #define XR_POOL_HPP
 
 #include "HardStack.hpp"
-
-#define TO_KBYTES(a) ((a) * 1024)
-#define TO_MBYTES(a) (TO_KBYTES(a) * 1024)
+#include "memory.hpp"
 
 namespace XR
 {
@@ -35,18 +33,21 @@ public:
   // static
   static const int  kMaxFrames = 8;
 
+  static void* Allocate(size_t size, void* pUser);
+  static void  Deallocate(void* pMem, void* pUser);
+
   // structors
   Pool();
 
   ///@brief Constructs a Pool with a buffer of @a size bytes, allocated with
   /// new[]. The Pool takes ownership of this memory.
-  explicit Pool(int size);
+  explicit Pool(size_t size);
 
   ///@brief Constructs a Pool with a buffer of @a size bytes. @a isAuto
   /// signifies that the Pool will delete[] the memory on destruction or
   /// SetBuffer(). If a size > 0 is specified with a @a parBuffer of 0,
   /// the buffer will be allocated with new[].
-  Pool(int size, bool isAuto, Byte* parBuffer); // ownership transfer
+  Pool(size_t size, bool isAuto, Byte* parBuffer); // ownership transfer
 
   ~Pool();
 
@@ -65,11 +66,11 @@ public:
   /// allocated with new[] and @a isAuto will be set to true.
   ///@note  You have to make sure that @a parBuffer (unless is a 0 pointer),
   /// does span @a size bytes.
-  void  SetBuffer(int size, bool isAuto, void* parBuffer); // ownership transfer
+  void  SetBuffer(size_t size, bool isAuto, void* parBuffer); // ownership transfer
 
   ///@return  A @a size bytes chunk of memory, or 0 if there was not enough
   /// memory left in the pool.
-  void* Allocate(int numBytes);
+  void* Allocate(size_t numBytes);
   
   ///@brief Returns the allocation pointer to the beginning of the frame,
   /// making its memory available to be allocated again.
@@ -170,4 +171,4 @@ int Pool::CanPush() const
 
 #define XR_POOL_ALLOC_INIT(type, num, pool) new (XR_POOL_ALLOC(type, (num), (pool))) type()
 
-#endif  //XR_POOL_HPP
+#endif  // XR_POOL_HPP
