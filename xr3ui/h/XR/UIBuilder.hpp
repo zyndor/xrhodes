@@ -14,6 +14,7 @@
 
 #include <map>
 #include <string>
+#include <XR/memory.hpp>
 #include <tinyxml.h>
 #include <XR/Font.hpp>
 #include "UIContainer.hpp"
@@ -26,25 +27,21 @@ class UIBuilder
 {
 public:
   // types
-  typedef void*(*AllocateCallback)(int size, void* pUser);
-
   typedef UIElement*(*CreateCallback)(AllocateCallback pAllocate, void* pUser);
   typedef bool(*InitCallback)(TiXmlElement* pXml, UIElement* pUIElem,
     UIContainer* pContainer, const UIBuilder& builder);
 
-  typedef void(*DeallocateCallback)(void* pMemory, void* pUser);
-
   struct  Configuration
   {
-    int                           maxDepth;
-    Sprite::GetCallback           pGetSprite;
-    void*                         pGetSpriteData;
-    Font::GetCallback             pGetFont;
-    void*                         pGetFontData;
-    UIBuilder::AllocateCallback   pAllocate;
-    void*                         pAllocateData;
-    UIBuilder::DeallocateCallback pDeallocate;
-    void*                         pDeallocateData;
+    int                 maxDepth;
+    Sprite::GetCallback pGetSprite;
+    void*               pGetSpriteData;
+    Font::GetCallback   pGetFont;
+    void*               pGetFontData;
+    AllocateCallback    pAllocate;
+    void*               pAllocateData;
+    DeallocateCallback  pDeallocate;
+    void*               pDeallocateData;
   };
   
   enum  XmlAlignValue
@@ -141,7 +138,7 @@ protected:
 
   // internal
   bool  _Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
-          UIContainer* pContainer);
+          UIContainer* pContainer, int& depth);
 
   void  _PostProcess(TiXmlElement* pXml, UIElement* pUIElem);
   void  _PostProcessContainer(TiXmlElement* pXml, UIContainer* pUIContainer);
@@ -158,50 +155,36 @@ protected:
 };
 
 //==============================================================================
-void* PoolAllocate(int size, void* pUser);
-void  PoolDeallocate(void* pMem, void* pUser);
-
-//==============================================================================
-void* NewAllocate(int size, void* pUser);
+void* NewAllocate(size_t size, void* pUser);
 void  NewDeallocate(void* pMem, void* pUser);
 
 //==============================================================================
-UIElement* UIBCreateUISpacer(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUISpacer(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUILabel(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUIImage(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUIImagePanel(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUIHorizontalProgressBar(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUILabel(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUIVerticalProgressBar(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUIImage(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUIHorizontalSlider(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUIImagePanel(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUIVerticalSlider(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalProgressBar(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUIButton(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUICheckBox(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUIRadioButton(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUIAligner(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUICascader(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUIHorizontalLayout(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUIVerticalProgressBar(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUIVerticalLayout(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalSlider(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUIHorizontalScrollingLayout(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUIVerticalSlider(UIBuilder::AllocateCallback pAllocCb,
+UIElement* UIBCreateUIVerticalScrollingLayout(AllocateCallback pAllocCb,
   void* pAllocCbData);
-UIElement* UIBCreateUIButton(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUICheckBox(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIRadioButton(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIAligner(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUICascader(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIVerticalLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalScrollingLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIVerticalScrollingLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIGridLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData);
+UIElement* UIBCreateUIGridLayout(AllocateCallback pAllocCb, void* pAllocCbData);
 
 //==============================================================================
 /// PLEASE NOTE THAT THE ATTRIBUTE NAMES ARE CASE SENSITIVE.

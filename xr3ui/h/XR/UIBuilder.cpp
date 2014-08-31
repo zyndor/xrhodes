@@ -57,8 +57,8 @@ float GetXmlScaleAttribute(TiXmlElement* pXml)
 }
 
 //==============================================================================
-bool  GetXmlIntAttribute(TiXmlElement* pXml, const char* pAttribName,
-  int base, int& v)
+bool  GetXmlIntAttribute(TiXmlElement* pXml, const char* pAttribName, int base,
+        int& v)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
   XR_ASSERT(UIBuilder, pAttribName != 0);
@@ -113,7 +113,7 @@ uint32  GetXmlDimensionMask(TiXmlElement* pXml, const char* pAttribName)
 }
 
 //==============================================================================
-void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem ) 
+void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem) 
 {
   XR_ASSERT(UIBuilder, pSprite != 0);
   outSprite = *pSprite;
@@ -142,7 +142,7 @@ void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem
 //==============================================================================
 // creator callbacks
 // spacer
-UIElement*  UIBCreateUISpacer(UIBuilder::AllocateCallback pAllocCb,
+UIElement*  UIBCreateUISpacer(AllocateCallback pAllocCb,
   void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UISpacer), pAllocCbData));
@@ -150,7 +150,7 @@ UIElement*  UIBCreateUISpacer(UIBuilder::AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-bool  UIBInitUIElement( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIElement(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(true);
@@ -228,7 +228,8 @@ bool  UIBInitUIElement( TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // colored elements
-bool UIBInitUIColoredElement( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder& builder)
+bool  UIBInitUIColoredElement(TiXmlElement* pXml, UIElement* pUIElem, 
+        UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
   if (success)
@@ -252,15 +253,15 @@ bool UIBInitUIColoredElement( TiXmlElement* pXml, UIElement* pUIElem, UIContaine
 
 //==============================================================================
 // label
-UIElement*  UIBCreateUILabel(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUILabel(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UILabel), pAllocCbData));
   return new (static_cast<UILabel*>(pMem)) UILabel;
 }
 
 //==============================================================================
-bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder& builder)
+bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent,
+        const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
   if (success)
@@ -366,15 +367,15 @@ bool UIBInitUILabel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 
 //==============================================================================
 // image
-UIElement*  UIBCreateUIImage(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIImage(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UIImage), pAllocCbData));
   return new (static_cast<UIImage*>(pMem)) UIImage;
 }
 
 //==============================================================================
-bool UIBInitUIImage( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder& builder)
+bool  UIBInitUIImage(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent,
+        const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
   if (success)
@@ -415,15 +416,15 @@ bool UIBInitUIImage( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 
 //==============================================================================
 // imagepanel
-UIElement*  UIBCreateUIImagePanel(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIImagePanel(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UIImagePanel), pAllocCbData));
   return new (static_cast<UIImagePanel*>(pMem)) UIImage;
 }
 
 //==============================================================================
-bool UIBInitUIImagePanel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder& builder)
+bool  UIBInitUIImagePanel(TiXmlElement* pXml, UIElement* pUIElem,
+        UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, builder));
   if (success)
@@ -446,8 +447,8 @@ bool UIBInitUIImagePanel( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* p
 
 //==============================================================================
 // progress bars
-UIElement*  UIBCreateUIHorizontalProgressBar(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIHorizontalProgressBar(AllocateCallback pAllocCb,
+              void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UIHorizontalProgressBar), pAllocCbData));
   return new (static_cast<UIHorizontalProgressBar*>(pMem))
@@ -455,15 +456,15 @@ UIElement*  UIBCreateUIHorizontalProgressBar(UIBuilder::AllocateCallback pAllocC
 }
 
 //==============================================================================
-UIElement*  UIBCreateUIVerticalProgressBar(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIVerticalProgressBar(AllocateCallback pAllocCb,
+              void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UIVerticalProgressBar), pAllocCbData));
   return new (static_cast<UIVerticalProgressBar*>(pMem)) UIVerticalProgressBar;
 }
 
 //==============================================================================
-bool  UIBInitUIProgressBarBase( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIProgressBarBase(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, builder));
@@ -505,7 +506,7 @@ bool  UIBInitUIProgressBarBase( TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // sliders
-bool  UIBInitUISliderBase( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUISliderBase(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, builder));
@@ -550,16 +551,16 @@ bool  UIBInitUISliderBase( TiXmlElement* pXml, UIElement* pUIElem,
 }
 
 //==============================================================================
-UIElement*  UIBCreateUIVerticalSlider(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIVerticalSlider(AllocateCallback pAllocCb,
+              void* pAllocCbData)
 {
   return new (static_cast<UIVerticalSlider*>((*pAllocCb)(sizeof(UIVerticalSlider),
     pAllocCbData))) UIVerticalSlider;
 }
 
 //==============================================================================
-UIElement*  UIBCreateUIHorizontalSlider(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIHorizontalSlider(AllocateCallback pAllocCb,
+              void* pAllocCbData)
 {
   return new (static_cast<UIHorizontalSlider*>((*pAllocCb)(sizeof(UIHorizontalSlider),
     pAllocCbData))) UIHorizontalSlider;
@@ -567,16 +568,15 @@ UIElement*  UIBCreateUIHorizontalSlider(UIBuilder::AllocateCallback pAllocCb,
 
 //==============================================================================
 // button
-UIElement*  UIBCreateUIButton(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIButton(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   return new (static_cast<UIButton*>((*pAllocCb)(sizeof(UIButton),
     pAllocCbData))) UIButton;
 }
 
 //==============================================================================
-bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder& builder)
+bool  UIBInitUIButton(TiXmlElement* pXml, UIElement* pUIElem,
+        UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
 
@@ -699,15 +699,14 @@ bool UIBInitUIButton( TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // checkbox
-UIElement*  UIBCreateUICheckBox(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUICheckBox(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   return new (static_cast<UICheckBox*>((*pAllocCb)(sizeof(UICheckBox),
     pAllocCbData))) UICheckBox;
 }
 
 //==============================================================================
-bool  UIBInitUICheckBox( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUICheckBox(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIButton(pXml, pUIElem, pParent, builder));
@@ -749,7 +748,7 @@ bool  UIBInitUICheckBox( TiXmlElement* pXml, UIElement* pUIElem,
     
 //==============================================================================
 // radio button
-UIElement*  UIBCreateUIRadioButton(UIBuilder::AllocateCallback pAllocCb,
+UIElement*  UIBCreateUIRadioButton(AllocateCallback pAllocCb,
               void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UIRadioButton), pAllocCbData));
@@ -757,7 +756,7 @@ UIElement*  UIBCreateUIRadioButton(UIBuilder::AllocateCallback pAllocCb,
 }
                 
 //==============================================================================
-bool  UIBInitUIRadioButton( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIRadioButton(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUICheckBox(pXml, pUIElem, pParent, builder));
@@ -776,15 +775,15 @@ bool  UIBInitUIRadioButton( TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // aligner
-UIElement*  UIBCreateUIAligner(UIBuilder::AllocateCallback pAllocCb,
-              void* pAllocCbData)
+UIElement*  UIBCreateUIAligner(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UIAligner), pAllocCbData));
   return new (static_cast<UIAligner*>(pMem)) UIAligner;
 }
 
 //==============================================================================
-bool UIBInitUIAligner( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent, const UIBuilder& builder)
+bool  UIBInitUIAligner(TiXmlElement* pXml, UIElement* pUIElem,
+        UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
 
@@ -812,15 +811,14 @@ bool UIBInitUIAligner( TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pPar
 
 //==============================================================================
 // cascader
-UIElement*  UIBCreateUICascader(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUICascader(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UICascader), pAllocCbData));
   return new (static_cast<UICascader*>(pMem)) UICascader;
 }
 
 //==============================================================================
-bool  UIBInitUICascader( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUICascader(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIAligner(pXml, pUIElem, pParent, builder));
@@ -863,7 +861,7 @@ bool  UIBInitUICascader( TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // growing layouts
-bool  UIBInitUIGrowingLayout( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIGrowingLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
@@ -926,7 +924,7 @@ bool  UIBInitUIGrowingLayout( TiXmlElement* pXml, UIElement* pUIElem,
 }
 
 //==============================================================================
-UIElement*  UIBCreateUIHorizontalLayout(UIBuilder::AllocateCallback pAllocCb,
+UIElement*  UIBCreateUIHorizontalLayout(AllocateCallback pAllocCb,
               void* pAllocCbData)
 {
   return new (static_cast<UIHorizontalLayout*>((*pAllocCb)(sizeof(UIHorizontalLayout),
@@ -934,23 +932,23 @@ UIElement*  UIBCreateUIHorizontalLayout(UIBuilder::AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-UIElement*  UIBCreateUIVerticalLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIVerticalLayout(AllocateCallback pAllocCb,
+              void* pAllocCbData)
 {
   return new (static_cast<UIVerticalLayout*>((*pAllocCb)(sizeof(UIVerticalLayout),
     pAllocCbData))) UIVerticalLayout;
 }
 
 //==============================================================================
-UIElement*  UIBCreateUIHorizontalScrollingLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIHorizontalScrollingLayout(AllocateCallback pAllocCb,
+              void* pAllocCbData)
 {
   return new (static_cast<UIHorizontalScrollingLayout*>((*pAllocCb)(sizeof(UIVerticalScrollingLayout),
     pAllocCbData))) UIVerticalScrollingLayout;
 }
 
 //==============================================================================
-bool  UIBInitUIHorizontalScrollingLayout( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIHorizontalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   UIHorizontalScrollingLayout*  pLayout(static_cast<UIHorizontalScrollingLayout*>(pUIElem));
@@ -967,15 +965,15 @@ bool  UIBInitUIHorizontalScrollingLayout( TiXmlElement* pXml, UIElement* pUIElem
 }
 
 //==============================================================================
-UIElement*  UIBCreateUIVerticalScrollingLayout(UIBuilder::AllocateCallback pAllocCb,
-  void* pAllocCbData)
+UIElement*  UIBCreateUIVerticalScrollingLayout(AllocateCallback pAllocCb,
+              void* pAllocCbData)
 {
   return new (static_cast<UIVerticalScrollingLayout*>((*pAllocCb)(sizeof(UIVerticalScrollingLayout),
     pAllocCbData))) UIVerticalScrollingLayout;
 }
 
 //==============================================================================
-bool  UIBInitUIVerticalScrollingLayout( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIVerticalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   UIVerticalScrollingLayout*  pLayout(static_cast<UIVerticalScrollingLayout*>(pUIElem));
@@ -993,7 +991,7 @@ bool  UIBInitUIVerticalScrollingLayout( TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // grid layout
-UIElement*  UIBCreateUIGridLayout(UIBuilder::AllocateCallback pAllocCb,
+UIElement*  UIBCreateUIGridLayout(AllocateCallback pAllocCb,
               void* pAllocCbData)
 {
   return new (static_cast<UIGridLayout*>((*pAllocCb)(sizeof(UIGridLayout),
@@ -1001,7 +999,7 @@ UIElement*  UIBCreateUIGridLayout(UIBuilder::AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-bool  UIBInitUIGridLayout( TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   UIGridLayout*  pLayout(static_cast<UIGridLayout*>(pUIElem));
@@ -1207,9 +1205,9 @@ UIBuilder::UIBuilder(const Configuration& cfg)
     UIBInitUISliderBase, false);
 
   // containers
-  RegisterCreator(karpElementName[UI_ALIGNER], UIBCreateUICascader,
+  RegisterCreator(karpElementName[UI_ALIGNER], UIBCreateUIAligner,
     UIBInitUIAligner, true);
-  RegisterCreator(karpElementName[UI_CASCADER], UIBCreateUIAligner,
+  RegisterCreator(karpElementName[UI_CASCADER], UIBCreateUICascader,
     UIBInitUICascader, true);
   RegisterCreator(karpElementName[UI_HLAYOUT], UIBCreateUIHorizontalLayout,
     UIBInitUIGrowingLayout, true);
@@ -1233,6 +1231,7 @@ UIBuilder::~UIBuilder()
 void  UIBuilder::SetConfiguration(const Configuration& cfg)
 {
   m_cfg = cfg;
+  SetMaxDepth(cfg.maxDepth);
 }
 
 //==============================================================================
@@ -1247,16 +1246,16 @@ void UIBuilder::SetMaxDepth(int maxDepth)
 }
 
 //==============================================================================
-void UIBuilder::SetGetSpriteCallback( Sprite::GetCallback pGetSpriteCb,
-  void* pCbData )
+void UIBuilder::SetGetSpriteCallback(Sprite::GetCallback pGetSpriteCb,
+  void* pCbData)
 {
   m_cfg.pGetSprite = pGetSpriteCb;
   m_cfg.pGetSpriteData = pCbData;
 }
 
 //==============================================================================
-void UIBuilder::SetGetFontCallback( Font::GetCallback pGetFontCb,
-  void* pCbData )
+void UIBuilder::SetGetFontCallback(Font::GetCallback pGetFontCb,
+  void* pCbData)
 {
   m_cfg.pGetFont = pGetFontCb;
   m_cfg.pGetFontData = pCbData;
@@ -1293,7 +1292,7 @@ void  UIBuilder::Deallocate(void* pBuffer)
 }
 
 //==============================================================================
-const Sprite* UIBuilder::GetSprite( const char* pName ) const
+const Sprite* UIBuilder::GetSprite(const char* pName) const
 {
   XR_ASSERTMSG(UIBuilder, m_cfg.pGetSprite != 0,
     ("%s callback was not set.", "GetSprite"));
@@ -1301,7 +1300,7 @@ const Sprite* UIBuilder::GetSprite( const char* pName ) const
 }
 
 //==============================================================================
-const Font* UIBuilder::GetFont( const char* pName ) const
+const Font* UIBuilder::GetFont(const char* pName) const
 {
   XR_ASSERTMSG(UIBuilder, m_cfg.pGetFont != 0,
     ("%s callback was not set.", "GetFont"));
@@ -1309,8 +1308,8 @@ const Font* UIBuilder::GetFont( const char* pName ) const
 }
 
 //==============================================================================
-void  UIBuilder::RegisterCreator( const char* pName, CreateCallback pCreateCb,
-        InitCallback pInitCb, bool isContainer )
+void  UIBuilder::RegisterCreator(const char* pName, CreateCallback pCreateCb,
+        InitCallback pInitCb, bool isContainer)
 {
   XR_ASSERT(UIBuilder, pName != 0);
   UICreatorRecord uicr =
@@ -1326,7 +1325,7 @@ void  UIBuilder::RegisterCreator( const char* pName, CreateCallback pCreateCb,
 }
 
 //==============================================================================
-bool UIBuilder::RegisterNamedElement( const char* pName, UIElement* pUIElem )
+bool UIBuilder::RegisterNamedElement(const char* pName, UIElement* pUIElem)
 {
   XR_ASSERT(UIBuilder, pName != 0);
   XR_ASSERT(UIBuilder, pUIElem != 0);
@@ -1363,12 +1362,13 @@ bool  UIBuilder::Build(TiXmlElement* pXml, UIContainer& container)
   RegisterNamedElement("root", m_pRoot);
   UIBInitUIElement(pXml, m_pRoot, &base, *this);
 
-  return _Build(pXml, m_cfg.pAllocate, m_pRoot);
+  int depth(0);
+  return _Build(pXml, m_cfg.pAllocate, m_pRoot, depth);
 }
 
 //==============================================================================
-bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
-  UIContainer* pContainer )
+bool  UIBuilder::_Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
+        UIContainer* pContainer, int& depth)
 {
   XR_ASSERT(UIBuilder, pContainer != 0);
 
@@ -1420,18 +1420,23 @@ bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
         {
           UIContainer*  pMyContainer(static_cast<UIContainer*>(pUIElem));
 
-          ++m_depth;
-          XR_ASSERTMSG(UIBuilder, m_depth < m_cfg.maxDepth,
+          ++depth;
+          if(m_depth < depth)
+          {
+            m_depth = depth;
+          }
+
+          XR_ASSERTMSG(UIBuilder, depth < m_cfg.maxDepth,
             ("maxDepth (%d) too small, try a greater value.", m_cfg.maxDepth));
-          success = _Build(pXml, pAllocateCb, pMyContainer);
+          success = _Build(pXml, pAllocateCb, pMyContainer, depth);
           _PostProcessContainer(pXml, pMyContainer);
-          --m_depth;
+          --depth;
         }
 
         // add to parent
         pContainer->AddElement(pUIElem);
 
-        m_parLevels[m_depth].push_back(pUIElem);
+        m_parLevels[depth].push_back(pUIElem);
       }
     }
 
@@ -1449,9 +1454,11 @@ bool UIBuilder::_Build( TiXmlElement* pXml, AllocateCallback pAllocateCb,
 //==============================================================================
 void UIBuilder::Destroy()
 {
-  if (m_cfg.pDeallocate != 0)
+  if (m_depth > 0)
   {
-    if (m_cfg.maxDepth > 0)
+    XR_ASSERT(UIBuilder, m_parLevels != 0);
+    
+    if (m_pRoot != 0)
     {
       UIElementList&  lElems(m_parLevels[0]);
       for (UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
@@ -1461,23 +1468,22 @@ void UIBuilder::Destroy()
       }
     }
     
-    while (m_depth > 0)
+    for (int i = 0; i < m_depth; ++i)
     {
-      UIElementList&  lElems(m_parLevels[m_depth]);
+      UIElementList&  lElems(m_parLevels[i]);
       for (UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
         i0 != i1; ++i0)
       {
         UIElement*  p(*i0);
         p->~UIElement();
+
         (*m_cfg.pDeallocate)(p, m_cfg.pDeallocateData);
       }
-      --m_depth;
-    }
 
-    for (int i = 0; i < m_cfg.maxDepth; ++i)
-    {
       m_parLevels[i].clear();
     }
+
+    m_depth = 0;
   }
 
   m_handles.clear();
@@ -1498,7 +1504,7 @@ UIElement* UIBuilder::GetElement(const char* pHandle) const
 }
 
 //==============================================================================
-void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
+void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
 {
   const char* pValue(pXml->Attribute("handle"));
   if (pValue != 0)
@@ -1587,7 +1593,7 @@ void UIBuilder::_PostProcess( TiXmlElement* pXml, UIElement* pUIElem )
 }
 
 //==============================================================================
-void UIBuilder::_PostProcessContainer( TiXmlElement* pXml, UIContainer* pContainer)
+void UIBuilder::_PostProcessContainer(TiXmlElement* pXml, UIContainer* pContainer)
 {
   uint32 sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
   if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH) | XR_MASK_ID(XD_HEIGHT)))
@@ -1609,24 +1615,7 @@ void UIBuilder::_PostProcessContainer( TiXmlElement* pXml, UIContainer* pContain
 }
 
 //==============================================================================
-void* PoolAllocate(int size, void* pUser)
-{
-  XR_ASSERT(UIBuilder, pUser != 0);
-  Pool*  pPool(static_cast<Pool*>(pUser));
-
-  XR_TRACE(UIBuilder,
-    ("UIBuilder allocating %d bytes from Pool %p...(%d bytes left)", size,
-      pUser, pPool->CalculateFree()));
-
-  return pPool->Allocate(size);
-}
-
-//==============================================================================
-void  PoolDeallocate(void* pMem, void* pUser)
-{}
-
-//==============================================================================
-void* NewAllocate(int size, void* pUser)
+void* NewAllocate(size_t size, void* pUser)
 {
   return new Byte[size];
 }
