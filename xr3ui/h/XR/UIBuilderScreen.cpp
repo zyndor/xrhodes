@@ -124,7 +124,17 @@ void  UIBuilderScreen::SetTweenIn(TweenCallback pOnTweenIn, void* pData)
 void  UIBuilderScreen::SetTweenOut(TweenCallback pOnTweenOut, void* pData)
 {
   m_pTweenOut= pOnTweenOut;
-  m_pTweenInData = pData;
+  m_pTweenOutData = pData;
+}
+
+//==============================================================================
+void  UIBuilderScreen::MoveTweening(int16 x, int16 y)
+{
+  for(UIElement** i0 = m_parpTweening, ** i1 = i0 + m_numTweening; i0 != i1; ++i0)
+  {
+    UIElement*  p(*i0);
+    p->Move(x, y);
+  }
 }
 
 //==============================================================================
@@ -136,8 +146,7 @@ void  UIBuilderScreen::_AddElements()
 //==============================================================================
 void  UIBuilderScreen::_Show(uint32 ms)
 {
-  XR_ASSERT(UIBuilderScreen, m_pTweenIn != 0);
-  if (m_numTweening > 0)
+  if (m_pTweenIn != 0 && m_numTweening > 0)
   {
     float     percent(1.0f / m_numTweening);
     Tweenable t = { 0, 0, percent, ms };
@@ -154,8 +163,7 @@ void  UIBuilderScreen::_Show(uint32 ms)
 //==============================================================================
 void  UIBuilderScreen::_Hide(uint32 ms)
 {
-  XR_ASSERT(UIBuilderScreen, m_pTweenOut != 0);
-  if (m_numTweening > 0)
+  if (m_pTweenOut != 0 && m_numTweening > 0)
   {
     float     percent(1.0f / m_numTweening);
     Tweenable t = { 0, 0, percent, ms };
@@ -180,9 +188,8 @@ void  UIBuilderScreen::Reposition(int16 width, int16 height)
 {
   XR_ASSERT(UIBuilderScreen, width > 0);
   XR_ASSERT(UIBuilderScreen, height > 0);
-  const int16 spacing = UIGrowingLayoutBase::GetDefaultSpacing();
-  const int16 arX[3] = { spacing, width / 2, width - spacing };
-  const int16 arY[3] = { spacing, height / 2, height - spacing };
+  const int16 arX[3] = { m_padding, width / 2, width - m_padding };
+  const int16 arY[3] = { m_padding, height / 2, height - m_padding };
   for(int i = 0; i < kNumAnchors; ++i)
   {
     UIElement*  p(m_builder.GetElement(karAnchorName[i]));

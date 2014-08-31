@@ -62,7 +62,6 @@ public:
   bool                Build(TiXmlElement* pXml);
   UIElement*          GetElement(const char* pName);
   UIElement*          GetElement(uint32 hash);
-  void                Destroy();
   
   int                 GetPadding() const;
   void                SetPadding(int padding);
@@ -74,6 +73,10 @@ public:
   UIElement* const *  GetListeners() const; // no ownership transfer
   int                 GetNumTweening() const;
   UIElement* const *  GetTweening() const; // no ownership transfer
+
+  void                MoveTweening(int16 x, int16 y);
+
+  void                Destroy();
   
 protected:
   // data
