@@ -78,7 +78,7 @@ public:
   void  Clear();
 
   ///@brief   Destroys the internal storage of sprite data.
-  void  Uninit();
+  void  Shutdown();
 
 protected:
   // data

@@ -28,25 +28,29 @@ public:
   ~ScreenManager();
 
   // general
+  void                Init(int numSprites);
+
   UIContainer&        GetContainer();
   UIEventDispatcher&  GetDispatcher();
   
-  void Change(Screen* pScreen, uint32 delayMs);
-  void Push(Screen* pScreen, uint32 delayMs);
-  void Pop(uint32 delayMs);
+  void                Change(Screen* pScreen, uint32 delayMs);
+  void                Push(Screen* pScreen, uint32 delayMs);
+  void                Pop(uint32 delayMs);
   
-  void Update(int32 ms);
-  void Render();
+  void                Update(int32 ms);
+  void                Render();
+
+  void                Shutdown();
   
 protected:
   // static
-  Screen*                 m_pCurrent; // no ownership
-  Screen*                 m_pLast;  // no ownership
+  Screen*             m_pCurrent; // no ownership
+  Screen*             m_pLast;  // no ownership
   
-  UIContainer             m_container;
-  UIEventDispatcher       m_dispatcher;
+  UIContainer         m_container;
+  UIEventDispatcher   m_dispatcher;
   
-  UIRenderer              m_renderer;
+  UIRenderer          m_renderer;
 };
 
 //==============================================================================

@@ -16,14 +16,14 @@ UIRenderer::UIRenderer()
 //==============================================================================
 UIRenderer::~UIRenderer()
 {
-  Uninit();
+  Shutdown();
 }
 
 //==============================================================================
 void UIRenderer::Init( int numSprites )
 {
   XR_ASSERT(UIRenderer, numSprites > 0);
-  Uninit();
+  XR_ASSERTMSG(UIRenderer, m_parpMaterial == 0, ("Already initialised. This is an error."));
 
   m_parpMaterial = new Material*[numSprites];
 
@@ -136,8 +136,8 @@ void UIRenderer::Render()
     Renderer::SetUVStream(rsUVs, 0);
     Renderer::SetColStream(rsCols);
     Renderer::SetVertStream(rsVerts);
-    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[i * Sprite::kNumIndices],
-      numSprites * Sprite::kNumIndices);
+    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], numSprites *
+      Sprite::kNumIndices);
 
     i = i1;
   }
@@ -153,7 +153,7 @@ void UIRenderer::Clear()
 }
 
 //==============================================================================
-void UIRenderer::Uninit()
+void UIRenderer::Shutdown()
 {
   Clear();
 
