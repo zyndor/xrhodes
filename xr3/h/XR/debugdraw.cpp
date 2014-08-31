@@ -27,6 +27,37 @@ static void SetMaterial()
 }
 
 //==============================================================================
+void  DebugDrawRect(float hw, float hh)
+{
+  RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 5));
+  pStream->Set(0, Vector3(-hw, -hh, .0f));
+  pStream->Set(1, Vector3(-hw, hh, .0f));
+  pStream->Set(2, Vector3(hw, hh, .0f));
+  pStream->Set(3, Vector3(hw, -hh, .0f));
+  pStream->Set(4, pStream->GetVector3(0));
+
+  SetMaterial();
+  Renderer::SetVertStream(*pStream);
+  Renderer::SetColStream();
+  Renderer::DrawPrims(PRIM_LINE_STRIP);
+}
+
+//==============================================================================
+void  DebugDrawFillRect(float hw, float hh)
+{
+  RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 4));
+  pStream->Set(0, Vector3(-hw, -hh, .0f));
+  pStream->Set(1, Vector3(-hw, hh, .0f));
+  pStream->Set(2, Vector3(hw, hh, .0f));
+  pStream->Set(3, Vector3(hw, -hh, .0f));
+
+  SetMaterial();
+  Renderer::SetVertStream(*pStream);
+  Renderer::SetColStream();
+  Renderer::DrawPrims(PRIM_TRI_FAN);
+}
+
+//==============================================================================
 void  DebugDrawCircle(float radius)
 {
   int numVerts(floorf(radius * .666f));
@@ -51,7 +82,7 @@ void  DebugDrawCircle(float radius)
 }
 
 //==============================================================================
-void  DebugDrawFilledCircle(float radius)
+void  DebugDrawFillCircle(float radius)
 {
   int numVerts(floorf(radius * .666f));
   float theta(M_PI / numVerts);

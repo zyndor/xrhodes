@@ -18,8 +18,11 @@ namespace XR
 {
 
 //==============================================================================
+void  DebugDrawRect(float hw, float hh);
+void  DebugDrawFillRect(float hw, float hh);
+
 void  DebugDrawCircle(float radius);
-void  DebugDrawFilledCircle(float radius);
+void  DebugDrawFillCircle(float radius);
 
 //==============================================================================
 // implementation
