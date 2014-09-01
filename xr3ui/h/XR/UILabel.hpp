@@ -57,10 +57,6 @@ public:
 protected:
   // data
   mutable Text  m_text;
-
-  // internal
-  void  _SetWidthToText();
-  void  _SetHeightToText();
 };
 
 //==============================================================================

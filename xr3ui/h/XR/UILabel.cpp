@@ -30,7 +30,13 @@ void UILabel::Render() const
   XR_ASSERT(UILabel, m_text.GetFont() != 0);
   Renderer::SetMaterial(m_text.GetFont()->GetMaterial());
   Renderer::SetAmbientColor(color);
+  Renderer::SetColStream();
+
+  static Matrix m;
+  Renderer::GetModelMatrix(m);
+  Renderer::SetModelMatrix(Matrix(Vector3(float(x + w / 2), float(y + h / 2), .0f)));
   m_text.Render();
+  Renderer::SetModelMatrix(m);
 }
 
 //==============================================================================
@@ -77,48 +83,25 @@ void UILabel::PrepareText( const char* pText )
     ("Can't prepare NULL text."));
   m_text.SetSize((float)w, (float)h, false);
   m_text.SetText(pText);
-  m_text.GetVertices().Translate(Vector3((float)(w / 2), -(float)(h / 2), .0f));
 }
 
 //==============================================================================
 void UILabel::SetWidthToText()
 {
-  Vector3 offset(-(float)(w / 2), .0f, .0f); // negative
-  _SetWidthToText();
-  offset.x += (float)(w / 2);
-  m_text.GetVertices().Translate(offset);
+  w = m_text.GetMaxLineWidth();
 }
 
 //==============================================================================
 void UILabel::SetHeightToText()
 {
-  Vector3 offset(.0f, (float)(h / 2), .0f); // negative
-  _SetHeightToText();
-  offset.y += -(float)(h / 2);
-  m_text.GetVertices().Translate(offset);
+  h = m_text.GetHeight();
 }
 
 //==============================================================================
 void UILabel::SetSizeToText()
 {
-  Vector3 offset(-(float)(w / 2), (float)(h / 2), .0f); // negative
-  _SetWidthToText();
-  _SetHeightToText();
-  offset.x += (float)(w / 2);
-  offset.y += -(float)(h / 2);
-  m_text.GetVertices().Translate(offset);
-}
-
-//==============================================================================
-void UILabel::_SetWidthToText()
-{
-  w = m_text.GetMaxLineWidth();
-}
-
-//==============================================================================
-void UILabel::_SetHeightToText()
-{
-  h = m_text.GetHeight();
+  SetWidthToText();
+  SetHeightToText();
 }
 
 //==============================================================================
@@ -131,7 +114,6 @@ int UILabel::GetLineWidth( int line ) const
 void UILabel::OnChange()
 {
   m_text.SetSize((float)w, (float)h);
-  m_text.GetVertices().Translate(Vector3(w / 2, -h / 2, .0f));
 }
 
 } // XR
