@@ -98,7 +98,10 @@ public:
   static void           ClearScissorRect();
 
   static void           SetLighting(bool state);
+
   static void           SetFog(bool state);
+  static void           SetFogColor(Color c);
+  static void           SetFogRange(float zFar, float zNear);
   
   static void           ClearBuffer(uint32 flags = (BF_COLOR | BF_DEPTH));
   static void           Flush();

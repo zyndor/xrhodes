@@ -416,6 +416,20 @@ void  Renderer::SetFog(bool state)
 }
 
 //==============================================================================
+void  Renderer::SetFogColor(Color c)
+{
+  CIwColour col;
+  col.Set(c.GetABGR());
+  IwGxSetFogCol(col);
+}
+
+//==============================================================================
+void  Renderer::SetFogRange(float zFar, float zNear)
+{
+  IwGxSetFogFarZNearZ(zFar, zNear);
+}
+
+//==============================================================================
 void Renderer::ClearBuffer(uint32 flags)
 {
   uint32  flag2(((flags & BF_COLOR) ? IW_GX_COLOUR_BUFFER_F : 0 ) |

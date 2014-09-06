@@ -603,6 +603,19 @@ void  Renderer::SetFog(bool state)
 }
 
 //==============================================================================
+void  Renderer::SetFogColor(Color c)
+{
+  XR_GL_CALL(glFogfv(GL_FOG_COLOR, c.arData));
+}
+
+//==============================================================================
+void  Renderer::SetFogRange(float zFar, float zNear)
+{
+  XR_GL_CALL(glFogf(GL_FOG_START, zNear));
+  XR_GL_CALL(glFogf(GL_FOG_END, zFar));
+}
+
+//==============================================================================
 void Renderer::ClearBuffer(uint32 flags)
 {
   GLbitfield  bitField(((flags & BF_COLOR) ? GL_COLOR_BUFFER_BIT: 0 ) |
