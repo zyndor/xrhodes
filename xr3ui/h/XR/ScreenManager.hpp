@@ -45,7 +45,7 @@ public:
 protected:
   // static
   Screen*             m_pCurrent; // no ownership
-  Screen*             m_pLast;  // no ownership
+  Screen*             m_pPrevious;  // no ownership
   
   UIContainer         m_container;
   UIEventDispatcher   m_dispatcher;

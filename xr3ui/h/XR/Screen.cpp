@@ -11,7 +11,7 @@ namespace XR
 {
 
 //==============================================================================
-Screen::Screen ()
+Screen::Screen()
 : m_pManager(0),
   m_state(S_HIDDEN),
   m_timer(0),
@@ -20,7 +20,7 @@ Screen::Screen ()
 {}
 
 //==============================================================================
-Screen::~Screen ()
+Screen::~Screen()
 {}
 
 //==============================================================================
@@ -78,7 +78,7 @@ void  Screen::Unregister()
 //==============================================================================
 void  Screen::Hide(uint32 ms)
 {
-  XR_ASSERTMSG(Screen, m_state < S_HIDING,
+  XR_ASSERTMSG(Screen, m_state < S_HIDING || (m_state == S_HIDING && ms < m_timer),
     ("Invalid state to Hide() screen: %d", m_state));
   if (m_isRegistered)
   {

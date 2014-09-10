@@ -75,7 +75,7 @@ private:
   uint32          m_timer;
   bool            m_isRegistered;
   
-  Screen*         m_pPrevious;
+  Screen*         m_pPrevious;  // no ownership
   
   // internal
   void            _MakeActive();

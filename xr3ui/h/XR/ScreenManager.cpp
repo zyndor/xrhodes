@@ -13,7 +13,7 @@ namespace XR
 //==============================================================================
 ScreenManager::ScreenManager()
 : m_pCurrent(0),
-  m_pLast(0),
+  m_pPrevious(0),
   m_container(),
   m_dispatcher(),
   m_renderer()
@@ -41,7 +41,7 @@ void  ScreenManager::Change(Screen* pScreen, uint32 delayMs)
     m_pCurrent->Hide(delayMs);
     m_pCurrent->SetPrevious(0);
   }
-  m_pLast = m_pCurrent;
+  m_pPrevious = m_pCurrent;
   
   if (pScreen != 0)
   {
@@ -61,7 +61,7 @@ void  ScreenManager::Push(Screen* pScreen, uint32 delayMs)
     pScreen->SetPrevious(m_pCurrent);
   }
   
-  m_pLast = m_pCurrent;
+  m_pPrevious = m_pCurrent;
   m_pCurrent = pScreen;
   pScreen->Show(*this, delayMs);
 }
@@ -70,7 +70,7 @@ void  ScreenManager::Push(Screen* pScreen, uint32 delayMs)
 void  ScreenManager::Pop(uint32 delayMs)
 {
   XR_ASSERT(ScreenManager, m_pCurrent != 0);
-  m_pLast = m_pCurrent;
+  m_pPrevious = m_pCurrent;
   m_pCurrent->Hide(delayMs);
   
   Screen* pScreen(m_pCurrent->GetPrevious());
@@ -89,9 +89,9 @@ void  ScreenManager::Update(int32 ms)
     m_pCurrent->Update(ms);
   }
   
-  if (m_pLast != 0)
+  if (m_pPrevious != 0)
   {
-    m_pLast->Update(ms);
+    m_pPrevious->Update(ms);
   }
 }
 
@@ -116,6 +116,21 @@ void  ScreenManager::Render()
 //==============================================================================
 void  ScreenManager::Shutdown()
 {
+  if(m_pPrevious != 0 && m_pPrevious->GetState() <= Screen::S_HIDING)
+  {
+    m_pPrevious->Hide(0);
+  }
+
+  while(m_pCurrent != 0)
+  {
+    Screen* pPrevious(m_pCurrent->GetPrevious());
+    if(m_pCurrent->GetState() <= Screen::S_HIDING)
+    {
+      m_pCurrent->Hide(0);
+    }
+    m_pCurrent = pPrevious;
+  }
+
   m_renderer.Shutdown();
 }
 
