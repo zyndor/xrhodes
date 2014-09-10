@@ -419,27 +419,59 @@ bool  UIBInitUIImage(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 UIElement*  UIBCreateUIImagePanel(AllocateCallback pAllocCb, void* pAllocCbData)
 {
   void* pMem((*pAllocCb)(sizeof(UIImagePanel), pAllocCbData));
-  return new (static_cast<UIImagePanel*>(pMem)) UIImage;
+  return new (static_cast<UIImagePanel*>(pMem)) UIImagePanel;
 }
 
 //==============================================================================
 bool  UIBInitUIImagePanel(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
-  bool  success(UIBInitUIImage(pXml, pUIElem, pParent, builder));
+  bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
   if (success)
   {
     UIImagePanel*  pImagePanel(static_cast<UIImagePanel*>(pUIElem));
 
-    float temp;
-    if (GetXmlFloatAttribute(pXml, "hSplit", temp))
+    // scale
+    float scale(GetXmlScaleAttribute(pXml));
+
+    // material
+    const char* pValue(0);
+    pValue = pXml->Attribute("img");
+    success = pValue != 0;
+    if (!success)
     {
-      pImagePanel->hSplit = temp;
+      XR_TRACE(UIBuilder, ("UIImagePanel requires an 'img' attribute."));
     }
 
-    if (GetXmlFloatAttribute(pXml, "vSplit", temp))
+    if (success)
     {
-      pImagePanel->vSplit = temp;
+      const Sprite* pSprite(builder.GetSprite(pValue));
+      success = pSprite != 0;
+      if (!success)
+      {
+        XR_TRACE(UIBuilder, ("Couldn't find sprite '%s' for UIImagePanel.", pValue));
+      }
+
+      if (success)
+      {
+        pImagePanel->sprite = *pSprite;
+      }
+    }
+
+    if (success)
+    {
+      pImagePanel->sprite.Scale(scale);
+      
+      float temp;
+      if (GetXmlFloatAttribute(pXml, "hSplit", temp))
+      {
+        pImagePanel->hSplit = temp;
+      }
+
+      if (GetXmlFloatAttribute(pXml, "vSplit", temp))
+      {
+        pImagePanel->vSplit = temp;
+      }
     }
   }
   return success;
@@ -944,7 +976,7 @@ UIElement*  UIBCreateUIHorizontalScrollingLayout(AllocateCallback pAllocCb,
               void* pAllocCbData)
 {
   return new (static_cast<UIHorizontalScrollingLayout*>((*pAllocCb)(sizeof(UIVerticalScrollingLayout),
-    pAllocCbData))) UIVerticalScrollingLayout;
+    pAllocCbData))) UIHorizontalScrollingLayout;
 }
 
 //==============================================================================
@@ -1415,6 +1447,11 @@ bool  UIBuilder::_Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
         // postprocess
         _PostProcess(pXml, pUIElem);
 
+        // add to parent
+        pContainer->AddElement(pUIElem);
+
+        m_parLevels[depth].push_back(pUIElem);
+
         // process container
         if (uicr.isContainer)
         {
@@ -1432,11 +1469,6 @@ bool  UIBuilder::_Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
           _PostProcessContainer(pXml, pMyContainer);
           --depth;
         }
-
-        // add to parent
-        pContainer->AddElement(pUIElem);
-
-        m_parLevels[depth].push_back(pUIElem);
       }
     }
 
@@ -1468,7 +1500,7 @@ void UIBuilder::Destroy()
       }
     }
     
-    for (int i = 0; i < m_depth; ++i)
+    for (int i = 0; i <= m_depth; ++i)
     {
       UIElementList&  lElems(m_parLevels[i]);
       for (UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
