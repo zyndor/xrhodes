@@ -163,7 +163,7 @@ void UIRenderer::Shutdown()
   m_vertices.Destroy();
   m_uvs.Destroy();
   m_colors.Destroy();
-  m_indices.clear();
+  IndexArray().swap(m_indices);
 
   m_numSprites = 0;
 }
