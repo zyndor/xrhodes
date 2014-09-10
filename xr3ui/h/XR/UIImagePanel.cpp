@@ -64,7 +64,7 @@ void UIImagePanel::Render() const
     arU[3] = rsSpriteUVs.GetX(Sprite::VI_NE);
   }
 
-  arU[1] = (arU[3] - arU[0]) * hSplit;
+  arU[1] = Lerp(arU[0], arU[3], hSplit);
   arU[2] = arU[1];
   
   float arV[4];
@@ -79,7 +79,7 @@ void UIImagePanel::Render() const
     arV[3] = rsSpriteUVs.GetY(Sprite::VI_SW);
   }
 
-  arV[1] = (arV[3] - arV[0]) * vSplit;
+  arV[1] = Lerp(arV[0], arV[3], vSplit);
   arV[2] = arV[1];
   
   int ix0(0);
@@ -239,7 +239,7 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
     arU[3] = rsSpriteUVs.GetX(Sprite::VI_NE);
   }
 
-  arU[1] = (arU[3] - arU[0]) * hSplit;
+  arU[1] = Lerp(arU[0], arU[3], hSplit);
   arU[2] = arU[1];
 
   float arV[4];
@@ -254,7 +254,7 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
     arV[3] = rsSpriteUVs.GetY(Sprite::VI_SW);
   }
 
-  arV[1] = (arV[3] - arV[0]) * vSplit;
+  arV[1] = Lerp(arV[0], arV[3], vSplit);
   arV[2] = arV[1];
 
   int ix0(0);
