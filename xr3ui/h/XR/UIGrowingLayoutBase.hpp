@@ -24,8 +24,8 @@ public:
   // types
   enum  GrowDir // along axis, in screen space
   {
-    GD_NEGATIVE,
-    GD_POSITIVE
+    GD_POSITIVE,
+    GD_NEGATIVE
   };
 
   // static
