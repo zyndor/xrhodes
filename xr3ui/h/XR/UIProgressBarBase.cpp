@@ -3,25 +3,30 @@
 namespace XR
 {
 
+//==============================================================================
 UIProgressBarBase::UIProgressBarBase( FillDir fd )
 : UIImage(),
   m_percentage(.0f),
   m_fillDir(fd)
 {}
 
+//==============================================================================
 UIProgressBarBase::~UIProgressBarBase()
 {}
 
+//==============================================================================
 float UIProgressBarBase::GetPercentage() const
 {
   return m_percentage;
 }
 
+//==============================================================================
 UIProgressBarBase::FillDir UIProgressBarBase::GetFillDirection() const
 {
   return m_fillDir;
 }
 
+//==============================================================================
 void UIProgressBarBase::SetFillDirection( FillDir fd )
 {
   if (m_fillDir != fd)
@@ -30,6 +35,7 @@ void UIProgressBarBase::SetFillDirection( FillDir fd )
   }
 }
 
+//==============================================================================
 void UIProgressBarBase::SetPercentage( float perc )
 {
   if (perc < .0f)

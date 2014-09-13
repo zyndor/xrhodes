@@ -4,13 +4,16 @@
 namespace XR
 {
 
+//==============================================================================
 UIHorizontalProgressBar::UIHorizontalProgressBar()
 : UIProgressBarBase(UIProgressBarBase::FD_POSITIVE)
 {}
 
+//==============================================================================
 UIHorizontalProgressBar::~UIHorizontalProgressBar()
 {}
 
+//==============================================================================
 void UIHorizontalProgressBar::Render() const
 {
   bool  isFdPositive(m_fillDir == FD_POSITIVE);
@@ -108,6 +111,7 @@ void UIHorizontalProgressBar::Render() const
   }
 }
 
+//==============================================================================
 void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
 {
   bool  isFdPositive(m_fillDir == FD_POSITIVE);

@@ -4,16 +4,18 @@
 namespace XR
 {
 
-
+//==============================================================================
 UICascader::UICascader()
 : UIAligner(),
-m_horizontalOffset(0),
-m_verticalOffset(0)
+  m_horizontalOffset(0),
+  m_verticalOffset(0)
 {}
 
+//==============================================================================
 UICascader::~UICascader()
 {}
 
+//==============================================================================
 void UICascader::_AlignElement( UIElement* pElem )
 {
   if (m_hAlign != AL_NOALIGN)
@@ -61,6 +63,7 @@ void UICascader::_AlignElement( UIElement* pElem )
   pElem->OnChange();
 }
 
+//==============================================================================
 void UICascader::SetHorizontalOffset( int16 val )
 {
   if (val != m_horizontalOffset)
@@ -70,6 +73,7 @@ void UICascader::SetHorizontalOffset( int16 val )
   }
 }
 
+//==============================================================================
 void UICascader::SetVerticalOffset( int16 val )
 {
   if (val != m_verticalOffset)
@@ -79,6 +83,7 @@ void UICascader::SetVerticalOffset( int16 val )
   }
 }
 
+//==============================================================================
 void UICascader::_SetWidthToContent()
 {
   int16 xMin(std::numeric_limits<int16>::max());
@@ -101,6 +106,7 @@ void UICascader::_SetWidthToContent()
   w = xMax - xMin;
 }
 
+//==============================================================================
 void UICascader::_SetHeightToContent()
 {
   int16 yMin(std::numeric_limits<int16>::max());
@@ -122,6 +128,5 @@ void UICascader::_SetHeightToContent()
   
   h = yMax - yMin;
 }
-
 
 } // XR

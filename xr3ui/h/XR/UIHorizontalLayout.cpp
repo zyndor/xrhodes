@@ -3,15 +3,16 @@
 namespace XR
 {
 
-
+//==============================================================================
 UIHorizontalLayout::UIHorizontalLayout()
 : UIGrowingLayoutBase()
 {}
 
+//==============================================================================
 UIHorizontalLayout::~UIHorizontalLayout()
 {}
 
-
+//==============================================================================
 void UIHorizontalLayout::_AlignElement( UIElement* pElem )
 {
   if (m_align != AL_NOALIGN)
@@ -61,6 +62,7 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
   pElem->OnChange();
 }
 
+//==============================================================================
 void UIHorizontalLayout::_SetWidthToContent()
 {
   int wNew = 0;

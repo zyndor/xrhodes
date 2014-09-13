@@ -5,28 +5,32 @@
 namespace XR
 {
 
-
+//==============================================================================
 UIContainer::UIContainer()
 : UIElement(),
   m_lElements()
 {}
 
+//==============================================================================
 UIContainer::~UIContainer()
 {}
 
+//==============================================================================
 void UIContainer::Render() const
 {
   std::for_each(m_lElements.begin(), m_lElements.end(),
     XR::Caller<const UIElement>(&UIElement::Render));
 }
 
-void UIContainer::Render( UIRenderer* pRenderer ) const
+//==============================================================================
+void UIContainer::Render(UIRenderer* pRenderer) const
 {
   std::for_each(m_lElements.begin(), m_lElements.end(),
     XR::Caller<const UIElement, void, UIRenderer*>(&UIElement::Render, pRenderer));
 }
 
-bool  UIContainer::AddElement( UIElement* pElem )
+//==============================================================================
+bool  UIContainer::AddElement(UIElement* pElem)
 {
   XR_ASSERTMSG(UIContainer, pElem != 0,
     ("Trying to add NULL element to UIContainer."));
@@ -54,7 +58,8 @@ bool  UIContainer::AddElement( UIElement* pElem )
   return success;
 }
 
-bool  UIContainer::RemoveElement( UIElement* pElem )
+//==============================================================================
+bool  UIContainer::RemoveElement(UIElement* pElem)
 {
   UIElement::List::iterator i0(std::find(m_lElements.begin(), m_lElements.end(), pElem));
   bool  success(i0 != m_lElements.end());
@@ -66,11 +71,13 @@ bool  UIContainer::RemoveElement( UIElement* pElem )
   return success;
 }
 
-void UIContainer::_AlignElement( UIElement* pElem )
+//==============================================================================
+void UIContainer::_AlignElement(UIElement* pElem)
 {
   // do some nothings
 }
 
+//==============================================================================
 void UIContainer::_RealignElements(UIElement::List::iterator i)
 {
   UIElement::List el;
@@ -82,6 +89,7 @@ void UIContainer::_RealignElements(UIElement::List::iterator i)
   }
 }
 
+//==============================================================================
 void UIContainer::RemoveAllElements()
 {
   for (UIElement::List::iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
@@ -91,29 +99,34 @@ void UIContainer::RemoveAllElements()
   m_lElements.clear();
 }
 
-void UIContainer::_AddChild( UIElement* pElem )
+//==============================================================================
+void UIContainer::_AddChild(UIElement* pElem)
 {
   _AlignElement(pElem);
   m_lElements.push_back(pElem);
 }
 
+//==============================================================================
 void UIContainer::OnChange()
 {
   _RealignElements(m_lElements.begin());
 }
 
+//==============================================================================
 void UIContainer::SetWidthToContent()
 {
   _SetWidthToContent();
   OnChange();
 }
 
+//==============================================================================
 void UIContainer::SetHeightToContent()
 {
   _SetHeightToContent();
   OnChange();
 }
 
+//==============================================================================
 void UIContainer::SetSizeToContent()
 {
   _SetWidthToContent();
@@ -121,6 +134,7 @@ void UIContainer::SetSizeToContent()
   OnChange();
 }
 
+//==============================================================================
 void UIContainer::_SetWidthToContent()
 {
   int wNew(0);
@@ -136,6 +150,7 @@ void UIContainer::_SetWidthToContent()
   w = wNew;
 }
 
+//==============================================================================
 void UIContainer::_SetHeightToContent()
 {
   int hNew(0);
@@ -151,7 +166,8 @@ void UIContainer::_SetHeightToContent()
   h = hNew;
 }
 
-bool UIContainer::MoveUpElement( UIElement* pElem )
+//==============================================================================
+bool UIContainer::MoveUpElement(UIElement* pElem)
 {
   bool  success(RemoveElement(pElem));
   if (success)
@@ -161,7 +177,8 @@ bool UIContainer::MoveUpElement( UIElement* pElem )
   return success;
 }
 
-bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e )
+//==============================================================================
+bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e)
 {
   bool  isHandled(false);
   for (UIElement::List::iterator i0(m_lElements.begin()), i1(m_lElements.end());
@@ -177,7 +194,8 @@ bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e )
   return isHandled;
 }
 
-bool UIContainer::OnMouseMotion(const Input::MouseMotionEvent& e )
+//==============================================================================
+bool UIContainer::OnMouseMotion(const Input::MouseMotionEvent& e)
 {
   bool  handled(false);
   for (UIElement::List::iterator i0(m_lElements.begin()), i1(m_lElements.end());

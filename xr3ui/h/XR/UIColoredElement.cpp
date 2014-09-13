@@ -4,16 +4,17 @@
 namespace XR
 {
 
+//==============================================================================
 UIColoredElement::UIColoredElement()
 : UIElement(),
-  color()
-{
-  color.Set(0xffffffff);
-}
+  color(0xffffffff)
+{}
 
+//==============================================================================
 UIColoredElement::~UIColoredElement()
 {}
 
+//==============================================================================
 void  UIColoredElement::_CalculateSpriteVerts( const Sprite* pSprite,
         RenderStream& rsVerts) const
 {

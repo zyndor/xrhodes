@@ -4,6 +4,7 @@
 namespace XR
 {
 
+//==============================================================================
 UISliderBase::UISliderBase()
 : UIImage(),
   pOnValueChangeCb(0),
@@ -13,20 +14,24 @@ UISliderBase::UISliderBase()
   m_percentage(.0f)
 {}
 
+//==============================================================================
 UISliderBase::~UISliderBase()
 {}
 
+//==============================================================================
 int UISliderBase::CalculateValue() const
 {
   int range(CalculateRange());
   return static_cast<int>(Round(range * m_percentage));
 }
 
+//==============================================================================
 void UISliderBase::SetValue( int value )
 {
   SetPercentage(static_cast<float>(value) / CalculateRange());
 }
 
+//==============================================================================
 void UISliderBase::SetPercentage( float percentage )
 {
   if (percentage < .0f)

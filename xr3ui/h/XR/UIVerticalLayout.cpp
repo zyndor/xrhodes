@@ -3,14 +3,16 @@
 namespace XR
 {
 
+//==============================================================================
 UIVerticalLayout::UIVerticalLayout()
 : UIGrowingLayoutBase()
 {}
 
+//==============================================================================
 UIVerticalLayout::~UIVerticalLayout()
 {}
 
-
+//==============================================================================
 void UIVerticalLayout::_AlignElement( UIElement* pElem )
 {
   if (m_align != AL_NOALIGN)
@@ -59,6 +61,7 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
   pElem->OnChange();
 }
 
+//==============================================================================
 void UIVerticalLayout::_SetHeightToContent()
 {
   int hNew = 0;
