@@ -195,14 +195,14 @@ float Sprite::GetHalfHeight() const
 inline
 float Sprite::GetQuadWidth() const
 {
-  return m_vertices.GetVector2(VI_NE).x - m_vertices.GetVector2(VI_NW).x;
+  return m_vertices.GetVector3(VI_NE).x - m_vertices.GetVector3(VI_NW).x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetQuadHeight() const
 {
-  return m_vertices.GetVector2(VI_SW).y - m_vertices.GetVector2(VI_NW).y;
+  return m_vertices.GetVector3(VI_SW).y - m_vertices.GetVector3(VI_NW).y;
 }
 
 //==============================================================================

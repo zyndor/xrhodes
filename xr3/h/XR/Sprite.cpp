@@ -100,9 +100,10 @@ void Sprite::CopyIndicesTo(uint16* parInds, int offset)
 //==============================================================================
 Sprite::Sprite()
 : BasicMesh(),
-  m_isUVRotated(false),
   m_halfWidth(.0f),
-  m_halfHeight(.0f)
+  m_halfHeight(.0f),
+  m_isUVRotated(false),
+  m_offset(Vector2::s_zero)
 {
   InitStreams(kNumVertices);
 }
