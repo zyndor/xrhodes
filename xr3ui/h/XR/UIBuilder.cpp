@@ -22,8 +22,8 @@ namespace XR
 //==============================================================================
 static const uint32 karDirectionNameHash[] =
 {
-  Hash::String("positive"),
-  Hash::String("negative")
+  Hash::String("negative"),
+  Hash::String("positive")
 };
 
 static const uint32 karHorizontalAlignNameHash[] =
