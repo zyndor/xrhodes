@@ -103,6 +103,14 @@ public:
     a = float((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF;
   }
 
+  void  Set(float r_, float g_, float b_, float a_)
+  {
+    r = r_;
+    g = g_;
+    b = b_;
+    a = a_;
+  }
+
   Color&  Clamp()
   {
     r = XR::Clamp(r, .0f, 1.0f);
