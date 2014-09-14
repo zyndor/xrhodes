@@ -42,25 +42,27 @@ public:
   ~Text();
   
   // general
-  const Font* GetFont() const;
-  HAlign      GetHorizontalAlignment() const;
-  VAlign      GetVerticalAlignment() const;
-  float       GetBoxWidth() const;
-  float       GetBoxHeight() const;
+  const Font*   GetFont() const;
+  HAlign        GetHorizontalAlignment() const;
+  VAlign        GetVerticalAlignment() const;
+  float         GetBoxWidth() const;
+  float         GetBoxHeight() const;
 
-  void        SetFont(const Font& f, bool update = true);
-  void        SetHorizontalAlignment(HAlign ha, bool update = true);
-  void        SetVerticalAlignment(VAlign va, bool update = true);
-  void        SetText(const char* pText, bool update = true);
-  void        SetSize(float boxWidth, float boxHeight, bool update = true);
-  void        Update();
+  void          SetFont(const Font& f, bool update = true);
+  void          SetHorizontalAlignment(HAlign ha, bool update = true);
+  void          SetVerticalAlignment(VAlign va, bool update = true);
+  void          SetText(const char* pText, bool update = true);
+  void          SetSize(float boxWidth, float boxHeight, bool update = true);
+  void          Update();
 
-  int         GetNumLines() const;
-  float       GetLineWidth(int n) const;
-  float       GetMaxLineWidth() const;
-  float       GetHeight() const;
+  int           GetNumLines() const;
+  float         GetLineWidth(int n) const;
+  float         GetMaxLineWidth() const;
+  float         GetHeight() const;
   
-  void        Clear();
+  RenderStream* CreateColStream(const Color& c) const;
+
+  void          Clear();
   
 protected:
   // types

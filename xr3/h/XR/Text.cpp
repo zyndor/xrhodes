@@ -296,4 +296,17 @@ float Text::GetMaxLineWidth() const
   return max;
 }
 
+//==============================================================================
+RenderStream*  Text::CreateColStream(const Color& c) const
+{
+  const int n(GetVertices().GetCapacity());
+  RenderStream* pCols(Renderer::AllocStream(RenderStream::F_COLOR, n));
+  for(int i = 0; i < n; ++i)
+  {
+    pCols->Set(i, c);
+  }
+
+  return pCols;
+}
+
 } // XR
