@@ -12,6 +12,8 @@
 #if !defined XR_MEMORY_HPP
 #define XR_MEMORY_HPP
 
+#include  <stdlib.h>
+
 namespace XR
 {
 
