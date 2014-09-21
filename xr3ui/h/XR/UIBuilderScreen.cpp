@@ -188,8 +188,8 @@ void  UIBuilderScreen::Reposition(int16 width, int16 height)
 {
   XR_ASSERT(UIBuilderScreen, width > 0);
   XR_ASSERT(UIBuilderScreen, height > 0);
-  const int16 arX[3] = { m_padding, width / 2, width - m_padding };
-  const int16 arY[3] = { m_padding, height / 2, height - m_padding };
+  const int16 arX[3] = { int16(m_padding), width / 2, width - m_padding };
+  const int16 arY[3] = { int16(m_padding), height / 2, height - m_padding };
   for(int i = 0; i < kNumAnchors; ++i)
   {
     UIElement*  p(m_builder.GetElement(karAnchorName[i]));

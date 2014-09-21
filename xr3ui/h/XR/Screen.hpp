@@ -33,7 +33,9 @@ public:
     S_HIDING,
     S_HIDDEN
   };
-  
+
+  typedef void(*BecomeActiveCallback)(Screen* pScreen, void* pUser);
+
   // structors
   Screen();
   virtual ~Screen();
@@ -49,12 +51,14 @@ public:
   Screen*         GetPrevious() const;
   void            SetPrevious(Screen* pScreen);
 
-  void            Show(ScreenManager& sm, uint32 ms);
+  void            SetOnBecomeActive(BecomeActiveCallback pCb, void* pData);
+
+  void            Show(ScreenManager& sm, int32 ms);
   void            Register();
   void            Unregister();
   void            Hide(uint32 ms);
   
-  void            Update(uint32 ms);
+  void            Update(int32 ms);
   
 protected:
   // data
@@ -72,10 +76,13 @@ protected:
 private:
   // data
   State           m_state;
-  uint32          m_timer;
+  int32           m_timer;
   bool            m_isRegistered;
   
   Screen*         m_pPrevious;  // no ownership
+
+  BecomeActiveCallback  m_pOnBecomeActive;
+  void*                 m_pOnBecomeActiveData;
   
   // internal
   void            _MakeActive();
