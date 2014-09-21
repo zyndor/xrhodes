@@ -95,9 +95,9 @@ const int karKeyCodeNative[] =
   s3eKeyRightBracket, //111, //!< Right Bracket ']' Key.
   s3eKeySemicolon, //108,    //!< Semicolon ';' Key.
   s3eKeyApostrophe, //109,   //!< Apostrophe (') Key.
+  s3eKeyHash, //76,        //!< # Key.
   s3eKeyMinus, //113,        //!< Minus '-' key on main keyboard.
   s3eKeyEquals, //112,       //!< Equals '=' Key.
-  s3eKeyHash, //76,        //!< # Key.
   s3eKeyComma, //104,        //!< Comma ',' Key.
   s3eKeyPeriod, //105,       //!< Period '.' Key.
   s3eKeySlash, //106,        //!< Forward slash '/' Key.
