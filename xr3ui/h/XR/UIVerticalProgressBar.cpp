@@ -28,28 +28,27 @@ void UIVerticalProgressBar::Render() const
   float percMax(yMax / h);
 
   if ((isFdPositive && m_percentage >= percMin) ||
-    (!isFdPositive && m_percentage < percMax))
+    (!isFdPositive && m_percentage <= percMax))
   {
     float perc(Clamp(m_percentage, percMin, percMax));
-    float y1(h * perc);
+    float y1(h * (isFdPositive ? perc : 1.0f - perc));
 
     float ws(w / (sprite.GetHalfWidth() * 2.0f));
     float left(x + sprite.GetLeftPadding() * ws);
     float right(x + w - sprite.GetRightPadding() * ws);
 
     const RenderStream& rsSpriteUVs(sprite.GetUVs());
-    float uv1;
+    const float hRatio(hSprite / sprite.GetQuadHeight());
+    float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = (percMax - perc) * (rsSpriteUVs.GetX(Sprite::VI_NW) -
-        rsSpriteUVs.GetX(Sprite::VI_SW)) / sprite.GetQuadHeight() *
-        hSprite;
+      uv1 = XR::Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
+        rsSpriteUVs.GetX(Sprite::VI_NW), uv1);
     }
     else
     {
-      uv1 = (perc - percMin) * (rsSpriteUVs.GetY(Sprite::VI_SW) -
-        rsSpriteUVs.GetY(Sprite::VI_NW)) / sprite.GetQuadHeight() *
-        hSprite;
+      uv1 = XR::Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
+        rsSpriteUVs.GetY(Sprite::VI_SW), uv1);
     }
 
     RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3,
@@ -126,28 +125,27 @@ void UIVerticalProgressBar::Render( UIRenderer* pRenderer ) const
   float percMax(yMax / h);
 
   if ((isFdPositive && m_percentage >= percMin) ||
-    (!isFdPositive && m_percentage < percMax))
+    (!isFdPositive && m_percentage <= percMax))
   {
     float perc(Clamp(m_percentage, percMin, percMax));
-    float y1(h * perc);
+    float y1(h * (isFdPositive ? perc : 1.0f - perc));
 
     float ws(w / (sprite.GetHalfWidth() * 2.0f));
     float left(x + sprite.GetLeftPadding() * ws);
     float right(x + w - sprite.GetRightPadding() * ws);
 
     const RenderStream&  rsSpriteUVs(sprite.GetUVs());
-    float uv1;
+    const float hRatio(hSprite / sprite.GetQuadHeight());
+    float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = (percMax - perc) * (rsSpriteUVs.GetX(Sprite::VI_NW) -
-        rsSpriteUVs.GetX(Sprite::VI_SW)) / sprite.GetQuadHeight() *
-        hSprite;
+      uv1 = XR::Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
+        rsSpriteUVs.GetX(Sprite::VI_NW), uv1);
     }
     else
     {
-      uv1 = (perc - percMin) * (rsSpriteUVs.GetY(Sprite::VI_SW) -
-        rsSpriteUVs.GetY(Sprite::VI_NW)) / sprite.GetQuadHeight() *
-        hSprite;
+      uv1 = XR::Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
+        rsSpriteUVs.GetY(Sprite::VI_SW), uv1);
     }
 
     RenderStream  rsUVs;
