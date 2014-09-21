@@ -175,6 +175,16 @@ struct Vector2
     return Vector2(x + (to.x - x) * t, y + (to.y - y) * t);
   }
 
+  Vector2 ToPolar() const
+  {
+    return Vector2(atan2f(y, x), Magnitude());
+  }
+
+  Vector2 ToCartesian() const
+  {
+    return Vector2(cosf(x) * y, sinf(x) * y);
+  }
+
   // operators
   Vector2& operator +=(const Vector2& rhs)
   {
