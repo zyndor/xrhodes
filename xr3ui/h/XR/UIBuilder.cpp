@@ -1135,7 +1135,10 @@ bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
 }
 
 //==============================================================================
-// alignment values
+const char* const UIBuilder::kInclude = "include";
+
+const uint32  UIBuilder::kIncludeHash = Hash::String(kInclude);
+
 const char* const UIBuilder::karpAlignValues[] =
 {
   "low",
@@ -1224,9 +1227,12 @@ UIBuilder::UIBuilder(const Configuration& cfg)
     UIBInitUICheckBox, false);
   RegisterCreator(karpElementName[UI_RADIOBUTTON], UIBCreateUIRadioButton,
     UIBInitUIRadioButton, false);
-  RegisterCreator(karpElementName[UI_LABEL], UIBCreateUILabel, UIBInitUILabel, false);
-  RegisterCreator(karpElementName[UI_IMAGE], UIBCreateUIImage, UIBInitUIImage, false);
-  RegisterCreator(karpElementName[UI_IMAGEPANEL], UIBCreateUIImagePanel, UIBInitUIImagePanel, false);
+  RegisterCreator(karpElementName[UI_LABEL], UIBCreateUILabel, UIBInitUILabel,
+    false);
+  RegisterCreator(karpElementName[UI_IMAGE], UIBCreateUIImage, UIBInitUIImage,
+    false);
+  RegisterCreator(karpElementName[UI_IMAGEPANEL], UIBCreateUIImagePanel,
+    UIBInitUIImagePanel, false);
   RegisterCreator(karpElementName[UI_HPROGRESS], UIBCreateUIHorizontalProgressBar,
     UIBInitUIProgressBarBase, false);
   RegisterCreator(karpElementName[UI_VPROGRESS], UIBCreateUIVerticalProgressBar,
@@ -1245,11 +1251,14 @@ UIBuilder::UIBuilder(const Configuration& cfg)
     UIBInitUIGrowingLayout, true);
   RegisterCreator(karpElementName[UI_VLAYOUT], UIBCreateUIVerticalLayout,
     UIBInitUIGrowingLayout, true);
-  RegisterCreator(karpElementName[UI_HSCROLLINGLAYOUT], UIBCreateUIHorizontalScrollingLayout,
+  RegisterCreator(karpElementName[UI_HSCROLLINGLAYOUT],
+    UIBCreateUIHorizontalScrollingLayout,
     UIBInitUIHorizontalScrollingLayout, true);
-  RegisterCreator(karpElementName[UI_VSCROLLINGLAYOUT], UIBCreateUIVerticalScrollingLayout,
+  RegisterCreator(karpElementName[UI_VSCROLLINGLAYOUT],
+    UIBCreateUIVerticalScrollingLayout,
     UIBInitUIVerticalScrollingLayout, true);
-  RegisterCreator(karpElementName[UI_GRIDLAYOUT], UIBCreateUIGridLayout, UIBInitUIGridLayout, true);
+  RegisterCreator(karpElementName[UI_GRIDLAYOUT], UIBCreateUIGridLayout,
+    UIBInitUIGridLayout, true);
 }
 
 //==============================================================================
@@ -1395,12 +1404,11 @@ bool  UIBuilder::Build(TiXmlElement* pXml, UIContainer& container)
   UIBInitUIElement(pXml, m_pRoot, &base, *this);
 
   int depth(0);
-  return _Build(pXml, m_cfg.pAllocate, m_pRoot, depth);
+  return _Build(pXml, m_pRoot, depth);
 }
 
 //==============================================================================
-bool  UIBuilder::_Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
-        UIContainer* pContainer, int& depth)
+bool  UIBuilder::_Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth)
 {
   XR_ASSERT(UIBuilder, pContainer != 0);
 
@@ -1410,7 +1418,8 @@ bool  UIBuilder::_Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
   {
     UIElement*  pUIElem(0);
 
-    CreatorMap::iterator  iFind(m_creators.find(Hash::String(pXml->Value())));
+    uint32  hash(Hash::String(pXml->Value()));
+    CreatorMap::iterator  iFind(m_creators.find(hash));
     if (iFind != m_creators.end())
     {
       XR_TRACE(UIBuilder, ("Building a %s...", iFind->second.pName));
@@ -1465,10 +1474,26 @@ bool  UIBuilder::_Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
 
           XR_ASSERTMSG(UIBuilder, depth < m_cfg.maxDepth,
             ("maxDepth (%d) too small, try a greater value.", m_cfg.maxDepth));
-          success = _Build(pXml, pAllocateCb, pMyContainer, depth);
+          success = _Build(pXml, pMyContainer, depth);
           _PostProcessContainer(pXml, pMyContainer);
           --depth;
         }
+      }
+    }
+    else if (kIncludeHash == hash)
+    {
+      const char* pValue(pXml->Attribute("src"));
+      success = pValue != 0;
+      if(success)
+      {
+        TiXmlDocument doc;
+        std::string fileName((m_cfg.pFormatFileName != 0) ?
+          (*m_cfg.pFormatFileName)(pValue, m_cfg.pFormatFileNameUser) :
+          pValue);
+        
+        success = doc.LoadFile(fileName.c_str()) &&
+          doc.RootElement() != 0 &&
+          _Build(doc.RootElement(), pContainer, depth);
       }
     }
 

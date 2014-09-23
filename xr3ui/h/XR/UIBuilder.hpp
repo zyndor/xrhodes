@@ -30,18 +30,21 @@ public:
   typedef UIElement*(*CreateCallback)(AllocateCallback pAllocate, void* pUser);
   typedef bool(*InitCallback)(TiXmlElement* pXml, UIElement* pUIElem,
     UIContainer* pContainer, const UIBuilder& builder);
+  typedef std::string(*FormatFileNameCallback)(const char* pName, void* pUser);
 
   struct  Configuration
   {
-    int                 maxDepth;
-    Sprite::GetCallback pGetSprite;
-    void*               pGetSpriteData;
-    Font::GetCallback   pGetFont;
-    void*               pGetFontData;
-    AllocateCallback    pAllocate;
-    void*               pAllocateData;
-    DeallocateCallback  pDeallocate;
-    void*               pDeallocateData;
+    int                     maxDepth;
+    Sprite::GetCallback     pGetSprite;
+    void*                   pGetSpriteData;
+    Font::GetCallback       pGetFont;
+    void*                   pGetFontData;
+    AllocateCallback        pAllocate;
+    void*                   pAllocateData;
+    DeallocateCallback      pDeallocate;
+    void*                   pDeallocateData;
+    FormatFileNameCallback  pFormatFileName;
+    void*                   pFormatFileNameUser;
   };
   
   enum  XmlAlignValue
@@ -77,6 +80,8 @@ public:
   };
 
   // static
+  static const char* const    kInclude;
+  static const uint32         kIncludeHash;
   static const char* const    karpAlignValues[kNumAlignValues];
   static const uint32         karAlignValueHash[kNumAlignValues];
 
@@ -137,8 +142,7 @@ protected:
   typedef std::map<uint32, UIElement*>      ElementMap;
 
   // internal
-  bool  _Build(TiXmlElement* pXml, AllocateCallback pAllocateCb,
-          UIContainer* pContainer, int& depth);
+  bool  _Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth);
 
   void  _PostProcess(TiXmlElement* pXml, UIElement* pUIElem);
   void  _PostProcessContainer(TiXmlElement* pXml, UIContainer* pUIContainer);
