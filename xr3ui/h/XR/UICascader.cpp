@@ -119,7 +119,7 @@ void UICascader::_SetHeightToContent()
       yMin = pElem->y;
     }
 
-    int16 bottom(pElem->CalculateRight());
+    int16 bottom(pElem->CalculateBottom());
     if (bottom > yMax)
     {
       yMax = bottom;
