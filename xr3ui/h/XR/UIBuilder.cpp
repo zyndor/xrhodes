@@ -986,12 +986,16 @@ bool  UIBInitUIHorizontalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
   UIHorizontalScrollingLayout*  pLayout(static_cast<UIHorizontalScrollingLayout*>(pUIElem));
 
   int xOffset;
-  GetXmlIntAttribute(pXml, "xOffset", pLayout->w, xOffset);
-  pLayout->SetXOffset(xOffset);
+  if (GetXmlIntAttribute(pXml, "xOffset", pLayout->w, xOffset))
+  {
+    pLayout->SetXOffset(xOffset);
+  }
 
   float sensitivity;
-  GetXmlFloatAttribute(pXml, "sensitivity", sensitivity);
-  pLayout->SetSensitivity(sensitivity);
+  if (GetXmlFloatAttribute(pXml, "sensitivity", sensitivity))
+  {
+    pLayout->SetSensitivity(sensitivity);
+  }
 
   return UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder);
 }
@@ -1011,12 +1015,16 @@ bool  UIBInitUIVerticalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
   UIVerticalScrollingLayout*  pLayout(static_cast<UIVerticalScrollingLayout*>(pUIElem));
 
   int yOffset;
-  GetXmlIntAttribute(pXml, "yOffset", pLayout->h, yOffset);
-  pLayout->SetYOffset(yOffset);
+  if (GetXmlIntAttribute(pXml, "yOffset", pLayout->h, yOffset))
+  {
+    pLayout->SetYOffset(yOffset);
+  }
 
   float sensitivity;
-  GetXmlFloatAttribute(pXml, "sensitivity", sensitivity);
-  pLayout->SetSensitivity(sensitivity);
+  if (GetXmlFloatAttribute(pXml, "sensitivity", sensitivity))
+  {
+    pLayout->SetSensitivity(sensitivity);
+  }
 
   return UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder);
 }
