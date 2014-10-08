@@ -56,7 +56,7 @@ bool SampleData::Load( const char* pFilename )
   uint32 fileSize(File::GetSize(hFile));
 
   RiffHeader  rh;
-  if(File::Read(sizeof(RiffHeader), 1, hFile, &rh) != 1 ||
+  if(File::Read(hFile, sizeof(RiffHeader), 1, &rh) != 1 ||
     strncmp(rh.arHead, "RIFF", 4) != 0 ||
     strncmp(rh.arSubType, "WAVE", 4) != 0) 
   {
@@ -69,7 +69,7 @@ bool SampleData::Load( const char* pFilename )
   bool            error(false);
   bool            readData(false);
 
-  while(File::Read(sizeof(RiffChunkHeader), 1, hFile, &rch) == 1)
+  while(File::Read(hFile, sizeof(RiffChunkHeader), 1, &rch) == 1)
   {
     uint32 chunkStart = File::Tell(hFile);
 
@@ -125,7 +125,7 @@ bool SampleData::_ReadChunkFormat( const RiffChunkHeader& rch, int hFile,
   WaveFormatAdpcm wf;
   
   if(rch.length < 16 ||
-    File::Read(sizeof(WaveFormatAdpcm), 1, hFile, &wf) != 1)
+    File::Read(hFile, sizeof(WaveFormatAdpcm), 1, &wf) != 1)
   {
     XR_ERROR(("Invalid format chunk in WAV file %s.", File::GetName(hFile)));
     return false;
@@ -181,7 +181,8 @@ bool SampleData::_ReadChunkData( const RiffChunkHeader& rch, SampleFormat sf,
 {
   if(sf == SF_UNKNOWN)
   {
-    XR_ERROR(("Data sequence error in %s: format should preced data.", File::GetName(hFile)));
+    XR_ERROR(("Data sequence error in %s: format should preced data.",
+      File::GetName(hFile)));
     return false;
   }
 
@@ -202,7 +203,7 @@ bool SampleData::_ReadChunkData( const RiffChunkHeader& rch, SampleFormat sf,
   switch(sf)
   {
   case  SF_ADPCM_MONO:
-    if(File::Read(1, rch.length, hFile, parSamples) != rch.length)
+    if(File::Read(hFile, rch.length, 1, parSamples) != 1)
     {
       XR_ERROR(("Error reading sample data from %s", File::GetName(hFile)));
       return false;
@@ -213,7 +214,7 @@ bool SampleData::_ReadChunkData( const RiffChunkHeader& rch, SampleFormat sf,
     {
       int     ns((rch.length / 2) & ~1);
       int16*  parBuffer(new int16[ns]);
-      if(File::Read(2, ns, hFile, parBuffer) != (uint32)ns)
+      if(File::Read(hFile, ns, 2, parBuffer) != 2)
       {
         XR_ERROR(("Error reading sample data from %s", File::GetName(hFile)));
         return false;
@@ -235,7 +236,7 @@ bool SampleData::_ReadChunkData( const RiffChunkHeader& rch, SampleFormat sf,
   //  {
   //    int     ns(rch.length & ~1);
   //    uint8*  parBuffer(new uint8[ns]);
-  //    if(File::Read(1, ns, hFile, parBuffer) != ns)
+  //    if(File::Read(hFile, ns, 1, parBuffer) != 1)
   //    {
   //      XR_ERROR(("Error reading sample data from %s", File::GetName(hFile)));
   //      return false;
@@ -264,7 +265,7 @@ bool SampleData::_ReadChunkData( const RiffChunkHeader& rch, SampleFormat sf,
 bool SampleData::_ReadChunkFact( const RiffChunkHeader& rch, int hFile )
 {
   uint32  n;
-  if(File::Read(sizeof(n), 1, hFile, &n) != 1)
+  if(File::Read(hFile, sizeof(n), 1, &n) != 1)
   {
     XR_ERROR(("Error reading wave file fact from %s", File::GetName(hFile)));
     return false;
