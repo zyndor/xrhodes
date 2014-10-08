@@ -22,7 +22,10 @@ Parser::Parser(int maxDepth)
   m_maxDepth(maxDepth),
   m_pCallback(0),
   m_pCallbackUser(0)
-{}
+{
+	XR_ASSERTMSG(Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
+		maxDepth));
+}
 
 //==============================================================================
 Parser::~Parser ()
@@ -47,18 +50,10 @@ bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
     bool  isArray(*pChar == kArrayBegin);
     
     result = (isObject || isArray) && !m_state.IsOver(m_state.SkipChar());
-    if (result)
+    if (result && m_depth + 1 < m_maxDepth) // check exceeding max depth (not an error)
     {
-      if (isObject)
-      {
-        result = (++m_depth < m_maxDepth) &&  // check exceeding depth (not an error)
-          _ParseObject();
-      }
-      else
-      {
-        result = (++m_depth < m_maxDepth) &&  // check exceeding depth (not an error)
-          _ParseArray();
-      }
+      ++m_depth;
+      result = isObject ? _ParseObject() : _ParseArray();
     }
   }
    
