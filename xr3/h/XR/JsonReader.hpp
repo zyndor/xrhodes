@@ -58,10 +58,6 @@ protected:
 };
 
 //==============================================================================
-Entity* LoadJSON(const char* pFilename,
-          int maxDepth = kMaxParseDepthDefault);
-
-//==============================================================================
 // implementation
 //==============================================================================
 inline
@@ -71,6 +67,11 @@ const ParserCore& Reader::GetState() const
 }
 
 } // JSON
+
+//==============================================================================
+JSON::Entity* LoadJSON(const char* pFilename,
+          int maxDepth = JSON::kMaxParseDepthDefault, bool quietErrors = false);
+
 } // XR
 
 #endif // XR_JSONREADER_HPP

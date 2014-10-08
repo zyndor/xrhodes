@@ -160,14 +160,19 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
   }
 }
 
+} // JSON
+
 //==============================================================================
-Entity* LoadJSON( const char* pFilename, int maxDepth )
+JSON::Entity* LoadJSON(const char* pFilename, int maxDepth, bool quietErrors)
 {
   XR_ASSERT(LoadJSON, pFilename != 0);
   int hFile(File::Open(pFilename, "rb"));
   if (hFile == File::INVALID_HANDLE)
   {
-    XR_ERROR(("Failed to open file '%s'", pFilename));
+    if(!quietErrors)
+    {
+      XR_ERROR(("Failed to open file '%s'", pFilename));
+    }
     return 0;
   }
   
@@ -179,19 +184,22 @@ Entity* LoadJSON( const char* pFilename, int maxDepth )
   
   if (!result)
   {
-    XR_ERROR(("Failed to read contents of '%s': %s", pFilename,
-      File::GetErrorString()));
+    if(!quietErrors)
+    {
+      XR_ERROR(("Failed to read contents of '%s': %s", pFilename,
+        File::GetErrorString()));
+    }
     delete[] parBuffer;
     return 0;
   }
   
   // parse parse parse
-  Reader  reader(maxDepth);
-  Entity* pJson(reader.Read(parBuffer, size));
+  JSON::Reader  reader(maxDepth);
+  JSON::Entity* pJson(reader.Read(parBuffer, size));
   
   // done, clean up
   delete[] parBuffer;
-  if (pJson == 0)
+  if (pJson == 0 && !quietErrors)
   {
     XR_ERROR(("Failed to parse '%s': error around row %d char %d",
       pFilename, reader.GetState().GetRow(), reader.GetState().GetColumn()));
@@ -200,5 +208,4 @@ Entity* LoadJSON( const char* pFilename, int maxDepth )
   return pJson;
 }
 
-} // JSON
 } // XR
