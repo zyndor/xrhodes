@@ -29,6 +29,7 @@ public:
   int16         GetXOffset() const;
   int16&        GetXOffsetRef();
   float         GetSensitivity() const;
+  bool          IsTouched() const;
 
   void          SetXOffset(int16 xOffs);
   void          SetSensitivity(float s);
@@ -72,6 +73,13 @@ inline
 float UIHorizontalScrollingLayout::GetSensitivity() const
 {
   return m_sensitivity;
+}
+
+//==============================================================================
+inline
+bool  UIHorizontalScrollingLayout::IsTouched() const
+{
+  return m_isTouched;
 }
 
 } // XR
