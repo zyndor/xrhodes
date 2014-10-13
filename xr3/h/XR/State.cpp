@@ -8,6 +8,7 @@ State::Manager::Manager()
 :  m_stack(),
   m_pCurrent(0),
   m_pExiting(0),
+  m_doInit(false),
   m_doShutdown(false),
   m_fadeDelay(0),
   m_tFade(0)
@@ -44,17 +45,17 @@ void  State::Manager::Push(State* pState, int tFadeMs)
     _QuickExit();
   }
 
-  // init new state
-  pState->Init();
-
   // set current state as exiting and if any, start fadeout
   m_pExiting = m_pCurrent;
   if(m_pExiting != 0)
   {
     m_pExiting->FadeOut(tFadeMs);
+    m_doInit = true;
   }
   else
   {
+    m_doInit = false;
+    pState->Init();
     pState->Enter();
     pState->FadeIn(tFadeMs);
   }
@@ -81,6 +82,7 @@ void  State::Manager::Pop(int tFadeMs)
   m_pExiting = m_pCurrent;
   m_pExiting->FadeOut(tFadeMs);
   m_doShutdown = true;
+  m_doInit = false;
 
   m_fadeDelay = tFadeMs;
   m_tFade = tFadeMs;
@@ -113,7 +115,7 @@ void  State::Manager::Change(State* pState, int tFadeMs)
     
   // set new current state
   XR_ASSERT(StateManager, !m_stack.empty());
-  pState->Init();
+  m_doInit = true;
   m_pCurrent = pState;
   m_stack.back() = pState;
 }
@@ -133,6 +135,13 @@ void  State::Manager::Update(int tFadeMs)
 
       if(m_pCurrent != 0)
       {
+        // init new state, if need be
+        if(m_doInit)
+        {
+          m_pCurrent->Init();
+          m_doInit = false;	
+        }
+
         // if there's a new current state, enter it and state its fade in.
         m_pCurrent->Enter();
         m_pCurrent->FadeIn(m_fadeDelay);

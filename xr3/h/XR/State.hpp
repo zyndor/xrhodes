@@ -65,6 +65,7 @@ public:
     State*  m_pExiting;  // no ownership
     State*  m_pCurrent;  // no ownership, processed if there's no exiting state.
 
+    bool    m_doInit;
     bool    m_doShutdown;
     int     m_fadeDelay;
     int     m_tFade;
@@ -81,9 +82,6 @@ public:
   virtual ~State();
   
   // virtual
-  virtual void  Enter() =0; // when requested state becomes active
-  virtual void  Exit() =0;  // when requested state becomes inactive; must reset changes made since Enter()
-
   virtual void  Update(int32 tDelta) =0;
 
   // general
@@ -98,6 +96,8 @@ public:
 protected:
   // virtual
   virtual void  Init() =0;  // when state gets pushed on stack
+  virtual void  Enter() =0; // when requested state becomes active
+  virtual void  Exit() =0;  // when requested state becomes inactive; must reset changes made since Enter()
   virtual void  Shutdown() =0;  // when state gets popped from stack; must reset changes since Init()
 };
 
