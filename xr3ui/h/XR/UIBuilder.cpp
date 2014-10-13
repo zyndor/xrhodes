@@ -611,7 +611,6 @@ bool  UIBInitUIButton(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
-
   if (success)
   {
     UIButton* pButton(static_cast<UIButton*>(pUIElem));
@@ -818,7 +817,6 @@ bool  UIBInitUIAligner(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
-
   if (success)
   {
     UIAligner*  pAligner(static_cast<UIAligner*>(pUIElem));
@@ -854,7 +852,6 @@ bool  UIBInitUICascader(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIAligner(pXml, pUIElem, pParent, builder));
-
   if (success)
   {
     UICascader* pCascader(static_cast<UICascader*>(pUIElem));
@@ -897,7 +894,6 @@ bool  UIBInitUIGrowingLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
-
   if (success)
   {
     UIGrowingLayoutBase*  pLayout(static_cast<UIGrowingLayoutBase*>(pUIElem));
@@ -983,21 +979,25 @@ UIElement*  UIBCreateUIHorizontalScrollingLayout(AllocateCallback pAllocCb,
 bool  UIBInitUIHorizontalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
-  UIHorizontalScrollingLayout*  pLayout(static_cast<UIHorizontalScrollingLayout*>(pUIElem));
-
-  int xOffset;
-  if (GetXmlIntAttribute(pXml, "xOffset", pLayout->w, xOffset))
+  bool  success(UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder));
+  if(success)
   {
-    pLayout->SetXOffset(xOffset);
+    UIHorizontalScrollingLayout*  pLayout(static_cast<UIHorizontalScrollingLayout*>(pUIElem));
+
+    int xOffset;
+    if (GetXmlIntAttribute(pXml, "xOffset", pLayout->w, xOffset))
+    {
+      pLayout->SetXOffset(xOffset);
+    }
+
+    float sensitivity;
+    if (GetXmlFloatAttribute(pXml, "sensitivity", sensitivity))
+    {
+      pLayout->SetSensitivity(sensitivity);
+    }
   }
 
-  float sensitivity;
-  if (GetXmlFloatAttribute(pXml, "sensitivity", sensitivity))
-  {
-    pLayout->SetSensitivity(sensitivity);
-  }
-
-  return UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder);
+  return success;
 }
 
 //==============================================================================
@@ -1012,21 +1012,25 @@ UIElement*  UIBCreateUIVerticalScrollingLayout(AllocateCallback pAllocCb,
 bool  UIBInitUIVerticalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
-  UIVerticalScrollingLayout*  pLayout(static_cast<UIVerticalScrollingLayout*>(pUIElem));
-
-  int yOffset;
-  if (GetXmlIntAttribute(pXml, "yOffset", pLayout->h, yOffset))
+  bool  success(UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder));
+  if(success)
   {
-    pLayout->SetYOffset(yOffset);
+    UIVerticalScrollingLayout*  pLayout(static_cast<UIVerticalScrollingLayout*>(pUIElem));
+
+    int yOffset;
+    if (GetXmlIntAttribute(pXml, "yOffset", pLayout->h, yOffset))
+    {
+      pLayout->SetYOffset(yOffset);
+    }
+
+    float sensitivity;
+    if (GetXmlFloatAttribute(pXml, "sensitivity", sensitivity))
+    {
+      pLayout->SetSensitivity(sensitivity);
+    }
   }
 
-  float sensitivity;
-  if (GetXmlFloatAttribute(pXml, "sensitivity", sensitivity))
-  {
-    pLayout->SetSensitivity(sensitivity);
-  }
-
-  return UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder);
+  return success;
 }
 
 //==============================================================================
@@ -1042,100 +1046,101 @@ UIElement*  UIBCreateUIGridLayout(AllocateCallback pAllocCb,
 bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
-  UIGridLayout*  pLayout(static_cast<UIGridLayout*>(pUIElem));
-  bool  success(true);
+  bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
+  if(success)
+  {
+    UIGridLayout*  pLayout(static_cast<UIGridLayout*>(pUIElem));
 
-  const char* pValue(0);
-  int value;
+    const char* pValue(0);
+    int value;
   
-  // rows
-  if (success)
-  {
-    pValue = pXml->Attribute("rows", &value);
-    success = pValue != 0 && CheckInt16(value) && value >= 0;
-
-    if (!success)
+    // rows
+    if (success)
     {
-      XR_TRACE(UIBuilder, ("UIGridLayout requires a positive 16 bit 'rows' value (got %d).",
-        value));
-    }
-  }
+      pValue = pXml->Attribute("rows", &value);
+      success = pValue != 0 && CheckInt16(value) && value >= 0;
 
-  if (success)
-  {
-    pLayout->SetNumRows(value);
-  }
-
-  // columns
-  if (success)
-  {
-    pValue = pXml->Attribute("cols", &value);
-    success = pValue != 0 && CheckInt16(value) && value >= 0;
-
-    if (!success)
-    {
-      XR_TRACE(UIBuilder, ("UIGridLayout requires a positive 16 bit 'cols' value (got %d).",
-        value));
-    }
-  }
-
-  if (success)
-  {
-    pLayout->SetNumColumns(value);
-  }
-
-  // rowspacing
-  if (success)
-  {
-    GetXmlIntAttribute(pXml, "rowSpacing",
-      UIGridLayout::GetDefaultRowSpacing(), value);
-    success = CheckInt16(value);
-
-    if (!success)
-    {
-      XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'rowSpacing' value (got %d).",
-        value));
-    }
-  }
-
-  if (success)
-  {
-    pLayout->SetRowsSpacing(value);
-  }
-  
-  // columnspacing
-  if (success)
-  {
-    GetXmlIntAttribute(pXml, "colSpacing",
-      UIGridLayout::GetDefaultRowSpacing(), value);
-    success = CheckInt16(value);
-
-    if (!success)
-    {
-      XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'colSpacing' value (got %d).",
-        value));
-    }
-  }
-
-  if (success)
-  {
-    pLayout->SetColumnSpacing(value);
-  }
-
-  if (success)
-  {
-    // horizontal alignment
-    value = UIBuilder::GetXmlAlignment(pXml, "hAlign");
-    if (value < UIBuilder::XA_NONE)
-    {
-      pLayout->SetHorizontalAlignment(static_cast<UIElement::Alignment>(value - 1));
+      if (!success)
+      {
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a positive 16 bit 'rows' value (got %d).",
+          value));
+      }
     }
 
-    // vertical alignment
-    value = UIBuilder::GetXmlAlignment(pXml, "vAlign");
-    if (value < UIBuilder::XA_NONE)
+    if (success)
     {
-      pLayout->SetVerticalAlignment(static_cast<UIElement::Alignment>(value - 1));
+      pLayout->SetNumRows(value);
+    }
+
+    // columns
+    if (success)
+    {
+      pValue = pXml->Attribute("cols", &value);
+      success = pValue != 0 && CheckInt16(value) && value >= 0;
+
+      if (!success)
+      {
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a positive 16 bit 'cols' value (got %d).",
+          value));
+      }
+    }
+
+    if (success)
+    {
+      pLayout->SetNumColumns(value);
+    }
+
+    // rowspacing
+    if (success && GetXmlIntAttribute(pXml, "rowSpacing",
+      UIGridLayout::GetDefaultRowSpacing(), value))
+    {
+      success = CheckInt16(value);
+
+      if (!success)
+      {
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'rowSpacing' value (got %d).",
+          value));
+      }
+
+      if (success)
+      {
+        pLayout->SetRowsSpacing(value);
+      }
+    }
+
+    // columnspacing
+    if (success && GetXmlIntAttribute(pXml, "colSpacing",
+      UIGridLayout::GetDefaultRowSpacing(), value))
+    {
+      success = CheckInt16(value);
+
+      if (!success)
+      {
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'colSpacing' value (got %d).",
+          value));
+      }
+
+      if (success)
+      {
+        pLayout->SetColumnSpacing(value);
+      }
+    }
+
+    if (success)
+    {
+      // horizontal alignment
+      value = UIBuilder::GetXmlAlignment(pXml, "hAlign");
+      if (value < UIBuilder::XA_NONE)
+      {
+        pLayout->SetHorizontalAlignment(static_cast<UIElement::Alignment>(value - 1));
+      }
+
+      // vertical alignment
+      value = UIBuilder::GetXmlAlignment(pXml, "vAlign");
+      if (value < UIBuilder::XA_NONE)
+      {
+        pLayout->SetVerticalAlignment(static_cast<UIElement::Alignment>(value - 1));
+      }
     }
   }
 
