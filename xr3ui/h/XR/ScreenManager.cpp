@@ -12,7 +12,7 @@ namespace XR
 
 //==============================================================================
 ScreenManager::ScreenManager()
-: m_pCurrent(0),
+: m_stack(),
   m_pPrevious(0),
   m_container(),
   m_dispatcher(),
@@ -35,63 +35,72 @@ void  ScreenManager::Change(Screen* pScreen, int32 delayMs)
 {
   XR_ASSERT(ScreenManager, pScreen != 0);
   Screen* pPrevious(0);
-  if (m_pCurrent != 0)
+  if (!m_stack.empty())
   {
-    pPrevious = m_pCurrent->GetPrevious();
-    m_pCurrent->Hide(delayMs);
-    m_pCurrent->SetPrevious(0);
+    pPrevious = m_stack.back();
+    pPrevious->Hide(delayMs);
+    m_stack.pop_back();
   }
-  m_pPrevious = m_pCurrent;
+  m_pPrevious = pPrevious;
   
   if (pScreen != 0)
   {
     pScreen->Show(*this, delayMs);
-    pScreen->SetPrevious(pPrevious);
+    m_stack.push_back(pScreen);
   }
-  m_pCurrent = pScreen;
 }
 
 //==============================================================================
 void  ScreenManager::Push(Screen* pScreen, int32 delayMs)
 {
   XR_ASSERT(ScreenManager, pScreen != 0);
-  if (m_pCurrent != 0)
+  Screen* pPrevious(0);
+  if (!m_stack.empty())
   {
-    m_pCurrent->Unregister();
-    pScreen->SetPrevious(m_pCurrent);
+    pPrevious = m_stack.back();
+    pPrevious->Unregister();
   }
   
-  m_pPrevious = m_pCurrent;
-  m_pCurrent = pScreen;
+  m_pPrevious = pPrevious;
+  m_stack.push_back(pScreen);
   pScreen->Show(*this, delayMs);
 }
 
 //==============================================================================
 void  ScreenManager::Pop(int32 delayMs)
 {
-  XR_ASSERT(ScreenManager, m_pCurrent != 0);
-  m_pPrevious = m_pCurrent;
-  m_pCurrent->Hide(delayMs);
-  
-  Screen* pScreen(m_pCurrent->GetPrevious());
-  m_pCurrent = pScreen;
-  if (pScreen != 0)
+  XR_ASSERT(ScreenManager, !m_stack.empty());
+  Screen* pCurrent(m_stack.back());
+  m_pPrevious = pCurrent;
+
+  pCurrent->Hide(delayMs);
+  m_stack.pop_back();
+
+  if (!m_stack.empty())
   {
-    pScreen->Register();
+    Screen* pScreen(m_stack.back());
+    if (pScreen != 0)
+    {
+      pScreen->Register();
+    }
   }
 }
 
 //==============================================================================
 void  ScreenManager::Update(int32 ms)
 {
-  if (m_pCurrent != 0)
+  if (!m_stack.empty())
   {
-    m_pCurrent->Update(ms);
+    m_stack.back()->Update(ms);
   }
   
   if (m_pPrevious != 0)
   {
     m_pPrevious->Update(ms);
+    if (m_pPrevious->GetState() == Screen::S_HIDDEN)
+    {
+      m_pPrevious = 0;
+    }
   }
 }
 
@@ -109,7 +118,7 @@ void  ScreenManager::Render()
   m_renderer.Clear();
   m_container.Render(&m_renderer);
   m_renderer.Render();
-
+  
   Renderer::Flush();
 }
 
@@ -121,14 +130,14 @@ void  ScreenManager::Shutdown()
     m_pPrevious->Hide(0);
   }
 
-  while(m_pCurrent != 0)
+  while(!m_stack.empty())
   {
-    Screen* pPrevious(m_pCurrent->GetPrevious());
-    if(m_pCurrent->GetState() <= Screen::S_HIDING)
+    Screen* pPrevious(m_stack.back());
+    if(pPrevious->GetState() <= Screen::S_HIDING)
     {
-      m_pCurrent->Hide(0);
+      pPrevious->Hide(0);
     }
-    m_pCurrent = pPrevious;
+    m_stack.pop_back();
   }
 
   m_renderer.Shutdown();

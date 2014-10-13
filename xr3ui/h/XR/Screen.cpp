@@ -16,7 +16,6 @@ Screen::Screen()
   m_state(S_HIDDEN),
   m_timer(0),
   m_isRegistered(false),
-  m_pPrevious(0),
   m_pOnBecomeActive(0),
   m_pOnBecomeActiveData(0)
 {}
@@ -24,21 +23,6 @@ Screen::Screen()
 //==============================================================================
 Screen::~Screen()
 {}
-
-//==============================================================================
-void  Screen::SetPrevious(Screen* pScreen)
-{
-#if defined XR_DEBUG && !defined XR_PERFORMANCE_DEBUG
-  Screen* pTemp(pScreen);
-  while (pTemp != 0)
-  {
-    XR_ASSERTMSG(Screen, pTemp != this, ("Setting previous screen creates cyclic dependency."));
-    pTemp = pTemp->GetPrevious();
-  }
-#endif
-  
-  m_pPrevious = pScreen;
-}
 
 //==============================================================================
 void  Screen::SetOnBecomeActive(BecomeActiveCallback pCb, void *pData)

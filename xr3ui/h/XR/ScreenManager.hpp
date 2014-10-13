@@ -43,8 +43,11 @@ public:
   void                Shutdown();
   
 protected:
+  // types
+  typedef std::list<Screen*>  ScreenList;
+
   // static
-  Screen*             m_pCurrent; // no ownership
+  ScreenList          m_stack; // no ownership
   Screen*             m_pPrevious;  // no ownership
   
   UIContainer         m_container;

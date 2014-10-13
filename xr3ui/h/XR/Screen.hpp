@@ -48,9 +48,6 @@ public:
   bool            IsRegistered() const;
   ScreenManager*  GetManager() const;  // no ownership transfer
   
-  Screen*         GetPrevious() const;
-  void            SetPrevious(Screen* pScreen);
-
   void            SetOnBecomeActive(BecomeActiveCallback pCb, void* pData);
 
   void            Show(ScreenManager& sm, int32 ms);
@@ -79,8 +76,6 @@ private:
   int32           m_timer;
   bool            m_isRegistered;
   
-  Screen*         m_pPrevious;  // no ownership
-
   BecomeActiveCallback  m_pOnBecomeActive;
   void*                 m_pOnBecomeActiveData;
   
@@ -103,13 +98,6 @@ inline
 bool  Screen::IsRegistered() const
 {
   return m_isRegistered;
-}
-
-//==============================================================================
-inline
-Screen* Screen::GetPrevious() const
-{
-  return m_pPrevious;
 }
 
 //==============================================================================
