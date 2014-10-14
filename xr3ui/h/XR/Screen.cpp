@@ -71,8 +71,8 @@ void  Screen::Unregister()
 //==============================================================================
 void  Screen::Hide(uint32 ms)
 {
-  XR_ASSERTMSG(Screen, m_state < S_HIDING || (m_state == S_HIDING && ms < m_timer),
-    ("Invalid state to Hide() screen: %d", m_state));
+  XR_ASSERTMSG(Screen, m_state < S_HIDING || (m_state == S_HIDING &&
+    ms <= m_timer), ("Invalid state to Hide() screen: %d", m_state));
   if (m_isRegistered)
   {
     Unregister();

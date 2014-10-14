@@ -54,6 +54,9 @@ protected:
   UIEventDispatcher   m_dispatcher;
   
   UIRenderer          m_renderer;
+
+  // internal
+  void  _ClearExiting();
 };
 
 //==============================================================================

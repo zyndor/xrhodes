@@ -34,6 +34,8 @@ void  ScreenManager::Init(int numSprites)
 void  ScreenManager::Change(Screen* pScreen, int32 delayMs)
 {
   XR_ASSERT(ScreenManager, pScreen != 0);
+  _ClearExiting();
+
   Screen* pPrevious(0);
   if (!m_stack.empty())
   {
@@ -70,6 +72,8 @@ void  ScreenManager::Push(Screen* pScreen, int32 delayMs)
 void  ScreenManager::Pop(int32 delayMs)
 {
   XR_ASSERT(ScreenManager, !m_stack.empty());
+  _ClearExiting();
+
   Screen* pCurrent(m_stack.back());
   m_pPrevious = pCurrent;
 
@@ -125,10 +129,7 @@ void  ScreenManager::Render()
 //==============================================================================
 void  ScreenManager::Shutdown()
 {
-  if(m_pPrevious != 0 && m_pPrevious->GetState() <= Screen::S_HIDING)
-  {
-    m_pPrevious->Hide(0);
-  }
+  _ClearExiting();
 
   while(!m_stack.empty())
   {
@@ -141,6 +142,19 @@ void  ScreenManager::Shutdown()
   }
 
   m_renderer.Shutdown();
+}
+
+//==============================================================================
+void  ScreenManager::_ClearExiting()
+{
+  if(m_pPrevious != 0)
+  {
+    if(m_pPrevious->GetState() <= Screen::S_HIDING)
+    {
+      m_pPrevious->Hide(0);
+    }
+    m_pPrevious = 0;
+  }
 }
 
 } // XR
