@@ -4,41 +4,41 @@ namespace XR
 {
 
 //==============================================================================
-int16 UIGridLayout::s_defaultRowSpacing(0);
-int16 UIGridLayout::s_defaultColumnSpacing(0);
+int16 UIGridLayout::s_defaultRowPadding(0);
+int16 UIGridLayout::s_defaultColumnPadding(0);
 
 //==============================================================================
-void UIGridLayout::SetDefaultSpacing( int16 spacing )
+void UIGridLayout::SetDefaultPadding( int16 padding )
 {
-  XR_ASSERT(UIGridLayout, spacing >= 0);
-  s_defaultRowSpacing = spacing;
-  s_defaultColumnSpacing = spacing;
+  XR_ASSERT(UIGridLayout, padding >= 0);
+  s_defaultRowPadding = padding;
+  s_defaultColumnPadding = padding;
 }
 
 //==============================================================================
-void UIGridLayout::SetDefaultRowSpacing( int16 spacing )
+void UIGridLayout::SetDefaultRowPadding( int16 padding )
 {
-  XR_ASSERT(UIGridLayout, spacing >= 0);
-  s_defaultRowSpacing = spacing;
+  XR_ASSERT(UIGridLayout, padding >= 0);
+  s_defaultRowPadding = padding;
 }
 
 //==============================================================================
-void UIGridLayout::SetDefaultColumnSpacing( int16 spacing )
+void UIGridLayout::SetDefaultColumnPadding( int16 padding )
 {
-  XR_ASSERT(UIGridLayout, spacing >= 0);
-  s_defaultColumnSpacing = spacing;
+  XR_ASSERT(UIGridLayout, padding >= 0);
+  s_defaultColumnPadding = padding;
 }
 
 //==============================================================================
-int16 UIGridLayout::GetDefaultRowSpacing()
+int16 UIGridLayout::GetDefaultRowPadding()
 {
-  return s_defaultRowSpacing;
+  return s_defaultRowPadding;
 }
 
 //==============================================================================
-int16 UIGridLayout::GetDefaultColumnSpacing()
+int16 UIGridLayout::GetDefaultColumnPadding()
 {
-  return s_defaultColumnSpacing;
+  return s_defaultColumnPadding;
 }
 
 //==============================================================================
@@ -48,8 +48,8 @@ UIGridLayout::UIGridLayout()
   m_vAlign(AL_LOW),
   m_numColumns(0),
   m_numRows(0),
-  m_columnSpacing(s_defaultRowSpacing),
-  m_rowSpacing(s_defaultRowSpacing)
+  m_columnPadding(s_defaultRowPadding),
+  m_rowPadding(s_defaultRowPadding)
 {}
 
 //==============================================================================
@@ -64,18 +64,18 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
 
   if (m_hAlign != AL_NOALIGN)
   {
-    int xElem(x + column * m_columnSpacing);
+    int xElem(x + column * (m_cellWidth + m_columnPadding));
     switch (m_hAlign)
     {
     case  AL_LOW:
       break;
 
     case  AL_CENTER:
-      xElem += (m_columnSpacing - pElem->w) / 2;
+      xElem += (m_cellWidth - pElem->w) / 2;
       break;
 
     case  AL_HIGH:
-      xElem += m_columnSpacing - pElem->w;
+      xElem += m_cellWidth - pElem->w;
       break;
     }
     pElem->x = xElem;
@@ -83,18 +83,18 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
 
   if (m_vAlign != AL_NOALIGN)
   {
-    int yElem(y + row * m_columnSpacing);
+    int yElem(y + row * (m_cellHeight + m_rowPadding));
     switch (m_vAlign)
     {
     case  AL_LOW:
       break;
 
     case  AL_CENTER:
-      yElem += (m_rowSpacing - pElem->h) / 2;
+      yElem += (m_cellHeight - pElem->h) / 2;
       break;
 
     case  AL_HIGH:
-      yElem += m_rowSpacing - pElem->h;
+      yElem += m_cellHeight - pElem->h;
       break;
     }
     pElem->y = yElem;
@@ -104,32 +104,63 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
 }
 
 //==============================================================================
-void UIGridLayout::SetColumnSpacing(int16 spacing)
+void UIGridLayout::SetCellWidth(int16 wCell)
 {
-  if (spacing != m_columnSpacing)
+  if (wCell != m_cellWidth)
   {
-    m_columnSpacing = spacing;
+    m_cellWidth = wCell;
     OnChange();
   }
 }
 
 //==============================================================================
-void UIGridLayout::SetRowsSpacing(int16 spacing)
+void UIGridLayout::SetCellHeight(int16 hCell)
 {
-  if (spacing != m_rowSpacing)
+  if (hCell != m_cellHeight)
   {
-    m_rowSpacing = spacing;
+    m_cellHeight = hCell;
     OnChange();
   }
 }
 
 //==============================================================================
-void UIGridLayout::SetSpacing(int16 spacing)
+void UIGridLayout::SetCellSize(int16 wCell, int16 hCell)
 {
-  if (m_columnSpacing != spacing || m_rowSpacing != spacing)
+  if (wCell != m_cellWidth || hCell != m_cellHeight)
   {
-    m_columnSpacing = spacing;
-    m_rowSpacing = spacing;
+    m_cellWidth = wCell;
+    m_cellHeight = hCell;
+    OnChange();
+  }
+}
+
+//==============================================================================
+void UIGridLayout::SetColumnPadding(int16 padding)
+{
+  if (padding != m_columnPadding)
+  {
+    m_columnPadding = padding;
+    OnChange();
+  }
+}
+
+//==============================================================================
+void UIGridLayout::SetRowPadding(int16 padding)
+{
+  if (padding != m_rowPadding)
+  {
+    m_rowPadding = padding;
+    OnChange();
+  }
+}
+
+//==============================================================================
+void UIGridLayout::SetCellPadding(int16 xPadding, int16 yPadding)
+{
+  if (m_columnPadding != xPadding || m_rowPadding != yPadding)
+  {
+    m_columnPadding = xPadding;
+    m_rowPadding = yPadding;
     OnChange();
   }
 }
@@ -213,8 +244,8 @@ void UIGridLayout::_SetWidthToContent()
     }
   }
 
-  m_columnSpacing = wNew;
-  w = m_columnSpacing * m_numColumns;
+  m_cellWidth = wNew;
+  w = m_cellWidth * m_numColumns + m_columnPadding * (m_numColumns - 1);
 }
 
 //==============================================================================
@@ -230,8 +261,8 @@ void UIGridLayout::_SetHeightToContent()
     }
   }
 
-  m_rowSpacing = hNew;
-  h = m_rowSpacing * m_numRows;
+  m_cellHeight = hNew;
+  h = m_cellHeight * m_numRows + m_rowPadding * (m_numRows - 1);
 }
 
 } // XR

@@ -1090,39 +1090,73 @@ bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
       pLayout->SetNumColumns(value);
     }
 
-    // rowspacing
-    if (success && GetXmlIntAttribute(pXml, "rowSpacing",
-      UIGridLayout::GetDefaultRowSpacing(), value))
+    // cell width
+    if (success && GetXmlIntAttribute(pXml, "wCell", pParent->w, value))
     {
       success = CheckInt16(value);
 
       if (!success)
       {
-        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'rowSpacing' value (got %d).",
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'wCell' value (got %d).",
           value));
       }
 
       if (success)
       {
-        pLayout->SetRowsSpacing(value);
+        pLayout->SetCellWidth(value);
       }
     }
 
-    // columnspacing
-    if (success && GetXmlIntAttribute(pXml, "colSpacing",
-      UIGridLayout::GetDefaultRowSpacing(), value))
+    // cell height
+    if (success && GetXmlIntAttribute(pXml, "hCell", pParent->h, value))
     {
       success = CheckInt16(value);
 
       if (!success)
       {
-        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'colSpacing' value (got %d).",
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'hCell' value (got %d).",
           value));
       }
 
       if (success)
       {
-        pLayout->SetColumnSpacing(value);
+        pLayout->SetCellWidth(value);
+      }
+    }
+
+    // column padding
+    if (success && GetXmlIntAttribute(pXml, "colPadding",
+      UIGridLayout::GetDefaultRowPadding(), value))
+    {
+      success = CheckInt16(value);
+
+      if (!success)
+      {
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'colPadding' value (got %d).",
+          value));
+      }
+
+      if (success)
+      {
+        pLayout->SetColumnPadding(value);
+      }
+    }
+
+    // row padding
+    if (success && GetXmlIntAttribute(pXml, "rowPadding",
+      UIGridLayout::GetDefaultRowPadding(), value))
+    {
+      success = CheckInt16(value);
+
+      if (!success)
+      {
+        XR_TRACE(UIBuilder, ("UIGridLayout requires a 16 bit 'rowPadding' value (got %d).",
+          value));
+      }
+
+      if (success)
+      {
+        pLayout->SetRowPadding(value);
       }
     }
 

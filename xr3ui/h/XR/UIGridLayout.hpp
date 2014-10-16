@@ -23,12 +23,12 @@ class UIGridLayout: public UIContainer
 {
 public:
   // static
-  static int16  GetDefaultRowSpacing();
-  static int16  GetDefaultColumnSpacing();
+  static int16  GetDefaultRowPadding();
+  static int16  GetDefaultColumnPadding();
 
-  static void   SetDefaultSpacing(int16 spacing);
-  static void   SetDefaultRowSpacing(int16 spacing);
-  static void   SetDefaultColumnSpacing(int16 spacing);
+  static void   SetDefaultPadding(int16 padding);
+  static void   SetDefaultRowPadding(int16 padding);
+  static void   SetDefaultColumnPadding(int16 padding);
 
   // structors
   UIGridLayout();
@@ -38,9 +38,19 @@ public:
   int16 GetNumRows() const;
   int16 GetNumColumns() const;
 
-  void  SetColumnSpacing(int16 spacing);
-  void  SetRowsSpacing(int16 spacing);
-  void  SetSpacing(int16 spacing);
+  int16 GetCellWidth() const;
+  int16 GetCellHeight() const;
+
+  int16 GetColumnPadding() const;
+  int16 GetRowPadding() const;
+
+  void  SetCellWidth(int16 wCell);
+  void  SetCellHeight(int16 hCell);
+  void  SetCellSize(int16 wCell, int16 hCell);
+
+  void  SetColumnPadding(int16 padding);
+  void  SetRowPadding(int16 padding);
+  void  SetCellPadding(int16 xPadding, int16 yPadding);
 
   void  SetHorizontalAlignment(Alignment hAlign);
   void  SetVerticalAlignment(Alignment vAlign);
@@ -52,17 +62,19 @@ public:
 
 protected:
   // static
-  static int16  s_defaultRowSpacing;
-  static int16  s_defaultColumnSpacing;
+  static int16  s_defaultRowPadding;
+  static int16  s_defaultColumnPadding;
 
   // data
   Alignment m_hAlign;
   Alignment m_vAlign;
 
-  int16 m_numColumns;
-  int16 m_numRows;
-  int16 m_columnSpacing;  // ignores size of elements
-  int16 m_rowSpacing;  // ignores size of elements
+  int   m_numColumns;
+  int   m_numRows;
+  int16 m_cellWidth;
+  int16 m_cellHeight;
+  int16 m_columnPadding;
+  int16 m_rowPadding;
 
   // internal
   virtual void _AlignElement( UIElement* pElem );
