@@ -123,7 +123,6 @@ void  Text::Update()
     int   space1(-1);
     bool  isInSpace(false);
     
-    c = *pText;
     while (c != '\n')
     {
       if (iswspace(c))
@@ -148,7 +147,7 @@ void  Text::Update()
       if (pGlyph != 0)
       {
         hFill += pGlyph->xAdvance;
-        if (hFill > m_boxWidth && isInSpace)
+        if (hFill > m_boxWidth)
         {
           break;
         }
