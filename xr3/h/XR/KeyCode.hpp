@@ -107,6 +107,8 @@ enum  KeyCode
   K_PERIOD,     //.
   K_SLASH,      //.
   K_BACKSLASH,  // \ reverse solidus?
+
+  K_BACK,
   
   kKeyCount,
   K_UNKNOWN = kKeyCount

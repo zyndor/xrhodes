@@ -102,6 +102,8 @@ const int karKeyCodeNative[] =
   s3eKeyPeriod, //105,       //!< Period '.' Key.
   s3eKeySlash, //106,        //!< Forward slash '/' Key.
   s3eKeyBackSlash, //107,    //!< Back slash '\' Key.
+
+  s3eKeyBack                 // back key on Android / WP8 / Kindle etc
 };
 
 //==============================================================================

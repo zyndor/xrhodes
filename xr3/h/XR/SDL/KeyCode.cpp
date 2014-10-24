@@ -104,6 +104,8 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_PERIOD, //55,
   SDL_SCANCODE_SLASH, //56,
   SDL_SCANCODE_BACKSLASH, //49,
+  
+  SDL_SCANCODE_AC_BACK
 };
 
 //==============================================================================
