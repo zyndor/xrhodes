@@ -29,6 +29,7 @@ files
   XR/UIImage.hpp #UIColoredElement, Sprite
   XR/UIImagePanel.hpp  #UIImage
   XR/UILabel.hpp #UIColoredElement, Text2D
+  XR/UINavigator.hpp
   XR/UIProgressBarBase.hpp #UIColoredElement, Sprite
   XR/UIRadioButton.hpp	#UIButton
   XR/UIRenderer.hpp

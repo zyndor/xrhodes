@@ -23,6 +23,7 @@
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImage.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImagePanel.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UILabel.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UINavigator.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRadioButton.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRenderer.hpp</itemPath>
@@ -56,6 +57,7 @@
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImage.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIImagePanel.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UILabel.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UINavigator.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRadioButton.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRenderer.cpp</itemPath>
@@ -304,6 +306,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/UILabel.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UINavigator.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UINavigator.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -640,6 +652,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/UILabel.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UINavigator.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UINavigator.hpp"
             ex="false"
             tool="3"
             flavor2="0">

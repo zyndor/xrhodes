@@ -46,6 +46,7 @@ files
   UIImage.cpp
   UIImagePanel.cpp
   UILabel.cpp
+  UINavigator.cpp
   UIProgressBarBase.cpp
   UIRadioButton.cpp
   UIRenderer.cpp

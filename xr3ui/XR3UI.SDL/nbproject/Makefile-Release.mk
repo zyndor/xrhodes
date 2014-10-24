@@ -56,6 +56,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1447016992/UIImage.o \
 	${OBJECTDIR}/_ext/1447016992/UIImagePanel.o \
 	${OBJECTDIR}/_ext/1447016992/UILabel.o \
+	${OBJECTDIR}/_ext/1447016992/UINavigator.o \
 	${OBJECTDIR}/_ext/1447016992/UIProgressBarBase.o \
 	${OBJECTDIR}/_ext/1447016992/UIRadioButton.o \
 	${OBJECTDIR}/_ext/1447016992/UIRenderer.o \
@@ -198,6 +199,11 @@ ${OBJECTDIR}/_ext/1447016992/UILabel.o: /D/repos/xr3/xr3ui/h/XR/UILabel.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -Wall -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/UILabel.o /D/repos/xr3/xr3ui/h/XR/UILabel.cpp
+
+${OBJECTDIR}/_ext/1447016992/UINavigator.o: /D/repos/xr3/xr3ui/h/XR/UINavigator.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Wall -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/UINavigator.o /D/repos/xr3/xr3ui/h/XR/UINavigator.cpp
 
 ${OBJECTDIR}/_ext/1447016992/UIProgressBarBase.o: /D/repos/xr3/xr3ui/h/XR/UIProgressBarBase.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
