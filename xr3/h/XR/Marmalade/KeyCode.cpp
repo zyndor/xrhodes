@@ -39,6 +39,8 @@ const int karKeyCodeNative[] =
   s3eKeyInsert, //118,       //!< Insert key
   s3eKeyDelete, //123,       //!< Delete key
 
+  s3eKeyPause,               // pause
+
   s3eKeyF1, //49,          //!< Key F1.
   s3eKeyF2, //50,          //!< Key F2.
   s3eKeyF3, //51,          //!< Key F3.
@@ -103,7 +105,7 @@ const int karKeyCodeNative[] =
   s3eKeySlash, //106,        //!< Forward slash '/' Key.
   s3eKeyBackSlash, //107,    //!< Back slash '\' Key.
 
-  s3eKeyBack                 // back key on Android / WP8 / Kindle etc
+  s3eKeyBack,                // back key on Android / WP8 / Kindle etc
 };
 
 //==============================================================================

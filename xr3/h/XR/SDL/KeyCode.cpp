@@ -41,6 +41,8 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_INSERT, //73,
   SDL_SCANCODE_DELETE, //76,
   
+  SDL_SCANCODE_PAUSE,
+  
   SDL_SCANCODE_F1, //58,
   SDL_SCANCODE_F2, //59,
   SDL_SCANCODE_F3, //60,

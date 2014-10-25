@@ -43,6 +43,8 @@ enum  KeyCode
   K_END,
   K_INS,
   K_DEL,
+
+  K_PAUSE,
   
   K_F1,
   K_F2,
