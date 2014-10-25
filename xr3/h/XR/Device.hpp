@@ -53,7 +53,7 @@ public:
   static bool         IsQuitting();
   static bool         IsPaused();
   
-  static const char*  GetConfig(const char* pGroup, const char* pId);
+  static bool         GetConfig(const char* pGroup, const char* pId, char* pOutValue);
   static int          GetConfigInt(const char* pGroup, const char* pId,
                         int defaultValue);
   

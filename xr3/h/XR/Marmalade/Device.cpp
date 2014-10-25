@@ -1,4 +1,5 @@
 #include <s3eDevice.h>
+#include <s3eConfig.h>
 #include <IwGx.h>
 #include "Device.hpp"
 
@@ -100,6 +101,23 @@ bool Device::IsPaused()
   return s3eDeviceCheckPauseRequest() == S3E_TRUE;
 }
 
+//==============================================================================
+bool  Device::GetConfig(const char* pGroup, const char* pId, char* pOutValue)
+{
+  return s3eConfigGetString(pGroup, pId, pOutValue) == S3E_RESULT_SUCCESS;
+}
+
+//==============================================================================
+int Device::GetConfigInt(const char* pGroup, const char* pId, int defaultValue)
+{
+  int value;
+  if(s3eConfigGetInt(pGroup, pId, &value) == S3E_RESULT_ERROR)
+  {
+    value = defaultValue;
+  }
+  return value;
+}
+  
 //==============================================================================
 bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
 {

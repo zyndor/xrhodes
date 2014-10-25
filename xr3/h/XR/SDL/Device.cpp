@@ -123,7 +123,7 @@ void Device::Init()
     File::Close(hFile);
   }
 
-  s_deviceImpl.pConfig = JSON::LoadJSON(kConfigName);
+  s_deviceImpl.pConfig = LoadJSON(kConfigName);
   
   SDL_AddEventWatch(FilterEvents, 0);
 
@@ -157,7 +157,7 @@ bool Device::IsPaused()
 }
 
 //==============================================================================
-const char* Device::GetConfig(const char* pGroup, const char* pId)
+bool  Device::GetConfig(const char* pGroup, const char* pId, char* pOutValue)
 {
   XR_ASSERT(Device, pId != 0);
   const char* pResult(0);
@@ -190,7 +190,13 @@ const char* Device::GetConfig(const char* pGroup, const char* pId)
       }
     }
   }
-  return pResult;
+  
+  bool  success(pResult != 0);
+  if(success)
+  {
+    strcpy(pOutValue, pResult);
+  }
+  return success;
 }
 
 //==============================================================================
