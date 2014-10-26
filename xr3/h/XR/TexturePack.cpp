@@ -5,6 +5,7 @@
 namespace XR
 {
 
+//==============================================================================
 enum
 {
   TAG_IMAGE_PATH,
@@ -41,16 +42,19 @@ static const char* const karTag[] =
   "r"
 };
 
+//==============================================================================
 TexturePack::TexturePack()
 : m_sprites(),
   m_pMaterial(0)
 {}
 
+//==============================================================================
 TexturePack::~TexturePack()
 {
   Clear();
 }
 
+//==============================================================================
 bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   void* pGetCbData)
 {
@@ -242,7 +246,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         sprite.SetHalfSize(wOffs / 2, hOffs / 2, false);
 
         // add sprite
-        m_sprites.insert(Hash::String(arBuffer), sprite);
+        m_sprites[Hash::String(arBuffer)] = sprite;
         
         pElem = pElem->NextSiblingElement(karTag[TAG_SPRITE]);
       }
@@ -252,7 +256,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   return success;
 }
 
-
+//==============================================================================
 Sprite* TexturePack::Get( const char* pName, bool allowMissing )
 {
   XR_ASSERT(TexturePack, pName != 0);
@@ -271,6 +275,7 @@ const Sprite* TexturePack::Get( const char* pName, bool allowMissing ) const
   return pSprite;
 }
 
+//==============================================================================
 Sprite* TexturePack::Get( const char* pName )
 {
   XR_ASSERT(TexturePack, pName != 0);
@@ -279,6 +284,7 @@ Sprite* TexturePack::Get( const char* pName )
   return pSprite;
 }
 
+//==============================================================================
 const Sprite* TexturePack::Get( const char* pName ) const
 {
   XR_ASSERT(TexturePack, pName != 0);
@@ -287,20 +293,22 @@ const Sprite* TexturePack::Get( const char* pName ) const
   return pSprite;
 }
 
-
+//==============================================================================
 void  TexturePack::ScaleSprites(float x)
 {
   ScaleSprites(x, x);
 }
 
+//==============================================================================
 void  TexturePack::ScaleSprites(float x, float y)
 {
-  for (SpriteDictionary::iterator i0(m_sprites.begin()), i1(m_sprites.end()); i0 != i1; ++i0)
+  for (SpriteMap::iterator i0(m_sprites.begin()), i1(m_sprites.end()); i0 != i1; ++i0)
   {
-    i0->value.Scale(x, y);
+    i0->second.Scale(x, y);
   }
 }
 
+//==============================================================================
 void TexturePack::Clear()
 {
   m_sprites.clear();

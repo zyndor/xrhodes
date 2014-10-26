@@ -12,7 +12,7 @@
 #if !defined XR_TEXTUREPACK_HPP
 #define XR_TEXTUREPACK_HPP
 
-#include "Dictionary.hpp"
+#include <map>
 #include "Sprite.hpp"
 
 namespace XR
@@ -23,40 +23,40 @@ class TexturePack
 {
 public:
   // types
-  typedef Dictionary<uint32, Sprite>  SpriteDictionary;
+  typedef std::map<uint32, Sprite>  SpriteMap;
 
   // structors
   TexturePack();
   ~TexturePack();
 
   // general
-  bool                    Load(const char* pName,
-                            Material::GetCallback pGetCb = Material::Manager::Get,
-                            void* pGetCbData = 0);
+  bool              Load(const char* pName,
+                      Material::GetCallback pGetCb = Material::Manager::Get,
+                      void* pGetCbData = 0);
 
-  Material*               GetMaterial() const;  // no ownership transfer
+  Material*         GetMaterial() const;  // no ownership transfer
 
-  int                     CountSprites() const;
+  int               CountSprites() const;
 
-  Sprite*                 Get(const char* pName, bool allowMissing); // no ownership transfer
-  Sprite*                 Get(const char* pName); // no ownership transfer
-  Sprite*                 Get(uint32 hash); // no ownership transfer
+  Sprite*           Get(const char* pName, bool allowMissing); // no ownership transfer
+  Sprite*           Get(const char* pName); // no ownership transfer
+  Sprite*           Get(uint32 hash); // no ownership transfer
 
-  const Sprite*           Get(const char* pName, bool allowMissing) const; // no ownership transfer
-  const Sprite*           Get(const char* pName) const;
-  const Sprite*           Get(uint32 hash) const;
+  const Sprite*     Get(const char* pName, bool allowMissing) const; // no ownership transfer
+  const Sprite*     Get(const char* pName) const;
+  const Sprite*     Get(uint32 hash) const;
 
-  const SpriteDictionary& GetSprites() const;
+  const SpriteMap&  GetSprites() const;
 
-  void                    ScaleSprites(float x);
-  void                    ScaleSprites(float x, float y);
+  void              ScaleSprites(float x);
+  void              ScaleSprites(float x, float y);
 
-  void                    Clear();
+  void              Clear();
 
 protected:
   // data
-  Material*         m_pMaterial;  // no ownership
-  SpriteDictionary  m_sprites;
+  Material*  m_pMaterial;  // no ownership
+  SpriteMap  m_sprites;
 };
 
 //==============================================================================
@@ -77,7 +77,7 @@ int TexturePack::CountSprites() const
 
 //==============================================================================
 inline
-const TexturePack::SpriteDictionary& TexturePack::GetSprites() const
+const TexturePack::SpriteMap& TexturePack::GetSprites() const
 {
   return m_sprites;
 }
@@ -86,14 +86,16 @@ const TexturePack::SpriteDictionary& TexturePack::GetSprites() const
 inline
 Sprite* TexturePack::Get( uint32 hash )
 {
-  return m_sprites.find_value(hash);
+  SpriteMap::iterator  iFind(m_sprites.find(hash));
+  return iFind != m_sprites.end() ? &iFind->second : 0;
 }
 
 //==============================================================================
 inline
 const Sprite* TexturePack::Get( uint32 hash ) const
 {
-  return m_sprites.find_value(hash);
+  SpriteMap::const_iterator  iFind(m_sprites.find(hash));
+  return iFind != m_sprites.end() ? &iFind->second : 0;
 }
 
 } // XR
