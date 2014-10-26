@@ -113,10 +113,10 @@ public:
 
   Color&  Clamp()
   {
-    r = XR::Clamp(r, .0f, 1.0f);
-    g = XR::Clamp(g, .0f, 1.0f);
-    b = XR::Clamp(b, .0f, 1.0f);
-    a = XR::Clamp(a, .0f, 1.0f);
+    r = Saturate(r);
+    g = Saturate(g);
+    b = Saturate(b);
+    a = Saturate(a);
     return *this;
   }
 
