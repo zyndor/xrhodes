@@ -28,8 +28,6 @@ public:
   ~ScreenManager();
 
   // general
-  void                Init(int numSprites);
-
   UIContainer&        GetContainer();
   UIEventDispatcher&  GetDispatcher();
   
@@ -38,7 +36,9 @@ public:
   void                Pop(int32 delayMs);
   
   void                Update(int32 ms);
+
   void                Render();
+  void                Render(XR::UIRenderer& r);
 
   void                Shutdown();
   
@@ -53,8 +53,6 @@ protected:
   UIContainer         m_container;
   UIEventDispatcher   m_dispatcher;
   
-  UIRenderer          m_renderer;
-
   // internal
   void  _ClearExiting();
 };

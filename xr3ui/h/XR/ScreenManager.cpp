@@ -15,20 +15,12 @@ ScreenManager::ScreenManager()
 : m_stack(),
   m_pPrevious(0),
   m_container(),
-  m_dispatcher(),
-  m_renderer()
+  m_dispatcher()
 {}
 
 //==============================================================================
 ScreenManager::~ScreenManager()
 {}
-
-//==============================================================================
-void  ScreenManager::Init(int numSprites)
-{
-  XR_ASSERT(ScreenManager, numSprites >= 0);
-  m_renderer.Init(numSprites);
-}
 
 //==============================================================================
 void  ScreenManager::Change(Screen* pScreen, int32 delayMs)
@@ -111,19 +103,13 @@ void  ScreenManager::Update(int32 ms)
 //==============================================================================
 void  ScreenManager::Render()
 {
-  //Renderer::Flush();
-  
-  Renderer::ClearBuffer(XR::Renderer::BF_DEPTH);
-  Renderer::SetOrtho(.0f, (float)Renderer::GetScreenWidth(),
-    (float)Renderer::GetScreenHeight(), .0f, 1000.0f, -1000.0f);
-  Renderer::SetViewMatrix(Matrix::s_identity);
-  Renderer::SetModelMatrix(Matrix::s_identity);
-  
-  m_renderer.Clear();
-  m_container.Render(&m_renderer);
-  m_renderer.Render();
-  
-  Renderer::Flush();
+  m_container.Render();
+}
+
+//==============================================================================
+void  ScreenManager::Render(XR::UIRenderer& r)
+{
+  m_container.Render(&r);
 }
 
 //==============================================================================
@@ -131,25 +117,23 @@ void  ScreenManager::Shutdown()
 {
   _ClearExiting();
 
-  while(!m_stack.empty())
+  while (!m_stack.empty())
   {
     Screen* pPrevious(m_stack.back());
-    if(pPrevious->GetState() <= Screen::S_HIDING)
+    if (pPrevious->GetState() <= Screen::S_HIDING)
     {
       pPrevious->Hide(0);
     }
     m_stack.pop_back();
   }
-
-  m_renderer.Shutdown();
 }
 
 //==============================================================================
 void  ScreenManager::_ClearExiting()
 {
-  if(m_pPrevious != 0)
+  if (m_pPrevious != 0)
   {
-    if(m_pPrevious->GetState() <= Screen::S_HIDING)
+    if (m_pPrevious->GetState() <= Screen::S_HIDING)
     {
       m_pPrevious->Hide(0);
     }
