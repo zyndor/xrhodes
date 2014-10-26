@@ -82,6 +82,9 @@ T  Max(T a, T b);
 template  <typename T>
 T  Clamp(T val, T min, T max);
 
+///@return  The value @a val clamped to @a min and @a max.
+float Saturate(float val);
+
 ///@return  Linear interpolated value between @a v0 and @A v1 at @a blend.
 template  <typename T>
 T  Lerp(T v0, T v1, float blend);
@@ -169,6 +172,13 @@ inline
 T  Clamp(T val, T min, T max)
 {
   return (val > min) ? ((val < max) ? val : max) : min;
+}
+
+//==============================================================================
+inline
+float Saturate(float val)
+{
+  return val < 1.0f ? (val > .0f ? val : .0f) : 1.0f;
 }
 
 //==============================================================================
