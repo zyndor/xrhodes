@@ -9,6 +9,7 @@ library
 files
 {
 	(h)
+  XR/Cursor.hpp
   XR/Screen.hpp
   XR/ScreenManager.hpp
   XR/UIAligner.hpp #UIContainer

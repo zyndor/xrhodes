@@ -24,7 +24,8 @@ files
   xr3ui.mkf
   
   [src]
-  (h/XR)  
+  (h/XR)
+  Cursor.cpp  
   Screen.cpp
   ScreenManager.cpp
   UIAligner.cpp

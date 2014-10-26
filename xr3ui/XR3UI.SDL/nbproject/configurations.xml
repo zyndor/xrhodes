@@ -2,6 +2,7 @@
 <configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles" displayName="h" projectFiles="true">
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/Cursor.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/Screen.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/ScreenManager.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIAligner.hpp</itemPath>
@@ -36,6 +37,7 @@
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIVerticalSlider.hpp</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="src" projectFiles="true">
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/Cursor.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/Screen.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/ScreenManager.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIAligner.cpp</itemPath>
@@ -106,6 +108,10 @@
         <archiverTool>
         </archiverTool>
       </compileType>
+      <item path="D:/repos/xr3/xr3ui/h/XR/Cursor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/Cursor.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/Screen.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/Screen.hpp" ex="false" tool="3" flavor2="0">
@@ -452,6 +458,10 @@
         <archiverTool>
         </archiverTool>
       </compileType>
+      <item path="D:/repos/xr3/xr3ui/h/XR/Cursor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/Cursor.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/Screen.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/Screen.hpp" ex="false" tool="3" flavor2="0">

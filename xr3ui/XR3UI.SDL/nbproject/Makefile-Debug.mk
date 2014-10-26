@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/1447016992/Cursor.o \
 	${OBJECTDIR}/_ext/1447016992/Screen.o \
 	${OBJECTDIR}/_ext/1447016992/ScreenManager.o \
 	${OBJECTDIR}/_ext/1447016992/UIAligner.o \
@@ -94,6 +95,11 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a: ${OBJECTFILES}
 	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libxr3ui.sdl.a
+
+${OBJECTDIR}/_ext/1447016992/Cursor.o: /D/repos/xr3/xr3ui/h/XR/Cursor.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/Cursor.o /D/repos/xr3/xr3ui/h/XR/Cursor.cpp
 
 ${OBJECTDIR}/_ext/1447016992/Screen.o: /D/repos/xr3/xr3ui/h/XR/Screen.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
