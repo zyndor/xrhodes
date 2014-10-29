@@ -172,7 +172,7 @@ void  Text::Update()
     
     Line  l;
     l.text.assign(pText, i);
-    l.width = hFill;
+    l.width = ceilf(hFill);
     
     lines.push_back(l);
     
@@ -188,7 +188,7 @@ void  Text::Update()
   }
   
   //m_lines.insert(m_lines.end(), lines.begin(), lines.end());
-  m_height = m_pFont->CalcHeight((int)m_lines.size());
+  m_height = ceilf(m_pFont->CalcHeight((int)m_lines.size()));
   
   // generate uvs and coordinates
   InitStreams(numGlyphsTotal * Sprite::kNumVertices);

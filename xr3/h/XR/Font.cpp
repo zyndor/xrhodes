@@ -73,6 +73,16 @@ static const char* FindValue(const char* pBuffer, const char* pKey,
 XR_MANAGED_DEF(Font)
 
 //==============================================================================
+void  Font::Glyph::Scale(float s)
+{
+  w *= s;
+  h *= s;
+  xOffs *= s;
+  yOffs *= s;
+  xAdvance *= s;
+}
+
+//==============================================================================
 Font::Font()
 : m_size(.0f),
   m_base(.0f),
@@ -319,6 +329,23 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
   delete[] pBuffer;
 
   return success;
+}
+
+//==============================================================================
+void  Font::Scale(float s)
+{
+  m_size *= s;
+  m_base *= s;
+
+  for(Glyph* i0(m_arGlyphs), * i1(m_arGlyphs + kNumBasicGlyphs); i0 != i1; ++i0)
+  {
+    i0->Scale(s);
+  }
+  
+  for(GlyphMap::iterator i0(m_dGlyphs.begin()), i1(m_dGlyphs.end()); i0 != i1; ++i0)
+  {
+    i0->second.Scale(s);
+  }
 }
 
 //==============================================================================

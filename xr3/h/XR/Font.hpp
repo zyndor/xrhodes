@@ -12,8 +12,8 @@
 #if !defined XR_FONT_HPP
 #define XR_FONT_HPP
 
+#include <map>
 #include "Sprite.hpp"
-#include "Dictionary.hpp"
 
 namespace XR
 {
@@ -39,6 +39,8 @@ public:
     float xAdvance;
     
     AABB  uvs;
+
+    void  Scale(float s);
   };
 
   // structors
@@ -56,19 +58,19 @@ public:
 
   Material*       GetMaterial() const;  // no ownership transfer
 
+  void            Scale(float s); 
   void            Clear();
 
 protected:
   // types
-  typedef Dictionary<int, Glyph>  GlyphDictionary;
-  typedef Dictionary<int, AABB>   AABBDictionary;
+  typedef std::map<int, Glyph>  GlyphMap;
 
   // data
   float           m_size;
   float           m_base; // extra space required below last line
   
   Glyph           m_arGlyphs[kNumBasicGlyphs];
-  GlyphDictionary m_dGlyphs;
+  GlyphMap        m_dGlyphs;
 
   Material*       m_pMaterial;  // no ownership
 };
@@ -100,7 +102,8 @@ const Font::Glyph*  Font::GetGlyph(int chr) const
   }
   else
   {
-    return m_dGlyphs.find_value(chr);
+    GlyphMap::const_iterator iFind(m_dGlyphs.find(chr));
+    return iFind != m_dGlyphs.end() ? &iFind->second : 0;
   }
 }
 
