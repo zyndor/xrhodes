@@ -11,6 +11,8 @@ struct  DeviceImpl
 {
   // data
   CallbackObject::List  arCallbacks[Device::kMaxEvents];
+  CallbackObject::List  arPostponedAdd[Device::kMaxEvents];
+  CallbackObject::List  arPostponedRemove[Device::kMaxEvents];
   bool                  isYielding;
 };
 
@@ -123,7 +125,8 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
-  XR_ASSERT(Device, !s_pDevice->isYielding);
+
+  // check if already added
   for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
     i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
   {
@@ -132,7 +135,25 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
       return false;
     }
   }
-  s_pDevice->arCallbacks[ev].push_back(CallbackObject(pCb, pCbData));
+
+  if(s_pDevice->isYielding)
+  {
+    // check for a postponed add as well
+    for(CallbackObject::List::iterator i0(s_pDevice->arPostponedAdd[ev].begin()),
+      i1(s_pDevice->arPostponedAdd[ev].end()); i0 != i1; ++i0)
+    {
+      if(i0->pCb == pCb)
+      {
+        return false;
+      }
+    }
+
+    s_pDevice->arPostponedAdd[ev].push_back(CallbackObject(pCb, pCbData));    
+  }
+  else
+  {
+    s_pDevice->arCallbacks[ev].push_back(CallbackObject(pCb, pCbData));
+  }
   return true;
 }
 
@@ -141,14 +162,41 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
 {
   XR_ASSERT(Device, ev < kMaxEvents);
   XR_ASSERT(Device, pCb != 0);
-  XR_ASSERT(Device, !s_pDevice->isYielding);
-  for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
-    i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
+  if(s_pDevice->isYielding)
   {
-    if(i0->pCb == pCb)
+    // if got it, add to remove list
+    for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
+      i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
     {
-      s_pDevice->arCallbacks[ev].erase(i0);
-      return true;
+      if(i0->pCb == pCb)
+      {
+        s_pDevice->arPostponedRemove[ev].push_back(*i0);
+        return true;
+      }
+    }
+
+    // if on postponed add list, remove it
+    for(CallbackObject::List::iterator i0(s_pDevice->arPostponedAdd[ev].begin()),
+      i1(s_pDevice->arPostponedAdd[ev].end()); i0 != i1; ++i0)
+    {
+      if(i0->pCb == pCb)
+      {
+        i0 = s_pDevice->arPostponedAdd[ev].erase(i0);
+        return true;
+      }
+    }
+  }
+  else
+  {
+    // if got it, remove
+    for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
+      i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
+    {
+      if(i0->pCb == pCb)
+      {
+        s_pDevice->arCallbacks[ev].erase(i0);
+        return true;
+      }
     }
   }
   return false;
@@ -161,6 +209,27 @@ void  Device::YieldOS(int32 ms)
   s_pDevice->isYielding = true;
   s3eDeviceYield(ms);
   s_pDevice->isYielding = false;
+
+  for(int i = 0; i < kMaxEvents; ++i)
+  {
+    Event e(static_cast<Event>(i));
+    CallbackObject::List& lRemove(s_pDevice->arPostponedRemove[i]);
+    while(!lRemove.empty())
+    {
+      bool  result(UnregisterCallback(e, lRemove.front().pCb));
+      XR_ASSERT(Device, result);
+      lRemove.pop_front();
+    }
+
+    CallbackObject::List& lAdd(s_pDevice->arPostponedAdd[i]);
+    while(!lAdd.empty())
+    {
+      CallbackObject& cbo(lAdd.front());
+      bool  result(RegisterCallback(e, cbo.pCb, cbo.pCbData));
+      XR_ASSERT(Device, result);
+      lAdd.pop_front();
+    }
+  }
 }
 
 //==============================================================================
