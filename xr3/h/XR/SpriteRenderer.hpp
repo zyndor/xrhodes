@@ -40,8 +40,7 @@ public:
   // general
   void  Init(int numRecords);
 
-  void  SetView(Matrix mView, float zNear, float zFar);
-  void  SetFadeColor(Color c);
+  void  SetView(Matrix mView/*, float zNear, float zFar*/);
 
   void  Add(const XR::Sprite* pSprite, const Vector3& position, float s,
           float rz);
@@ -82,12 +81,8 @@ protected:
 
   Matrix      m_mView;
   Vector3     m_vForward;
-  float       m_zNear;
-  float       m_zFar;
-  float       m_depthRangeRcp;
-  
-  Color       m_fadeColor;
-  bool        m_useFadeColor;
+  //float       m_zNear;
+  //float       m_zFar;
 
 #if !defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
   typedef std::vector<uint16> Uint16Array;

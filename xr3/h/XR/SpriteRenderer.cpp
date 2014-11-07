@@ -7,13 +7,11 @@ namespace XR
 //==============================================================================
 SpriteRenderer::SpriteRenderer()
 : m_pool(),
-  m_pRecords(0),
+  m_pRecords(0)/*,
   m_mView(Matrix::s_identity),
   m_vForward(Vector3::s_zAxis),
   m_zNear(.0f),
-  m_zFar(1000.0f),
-  m_fadeColor(),
-  m_useFadeColor(false)
+  m_zFar(1000.0f)*/
 {}
 
 //==============================================================================
@@ -76,31 +74,17 @@ void  SpriteRenderer::Init(int numRecords)
 }
 
 //==============================================================================
-void  SpriteRenderer::SetView(Matrix mView, float zNear, float zFar)
+void  SpriteRenderer::SetView(Matrix mView/*, float zNear, float zFar*/)
 {
-  XR_ASSERT(SpriteRenderer, zNear < zFar);
+  //XR_ASSERT(SpriteRenderer, zNear < zFar);
   
-  m_vForward = Vector3(mView.zx, mView.zy, mView.zz);
-  m_vForward.Normalise();
-
+  m_vForward = Vector3(mView.zx, mView.zy, mView.zz).Normalise();
+  
   //mView.Transpose();  // the actual view is a transpose, so this isn't needed.
   m_mView = mView;
 
-  m_zNear = zNear;
-  m_zFar = zFar;
-  
-  m_depthRangeRcp = zFar - zNear;
-  if (m_depthRangeRcp > .0f)
-  {
-    m_depthRangeRcp = 1.0f / m_depthRangeRcp;
-  }
-}
-
-//==============================================================================
-void  SpriteRenderer::SetFadeColor(Color c)
-{
-  m_useFadeColor = true;
-  m_fadeColor = c;
+  //m_zNear = zNear;
+  //m_zFar = zFar;
 }
 
 //==============================================================================
@@ -126,21 +110,11 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
   }
   
   float zTemp = (r.xForm.t - m_mView.t).Dot(m_vForward);
-  if (zTemp > m_zNear && zTemp < m_zFar) // if in front of camera
+  if (zTemp > .0f/*m_zNear && zTemp < m_zFar*/) // if in front of camera
   {
-    if (m_useFadeColor)
-    {
-      float distScale((zTemp - m_zNear) * m_depthRangeRcp);
-      distScale *= distScale;
-      
-      r.tint *= (1.0f - distScale);
-      r.tint += m_fadeColor * distScale;
-    }
-    
     r.zTemp = zTemp;
     RecordList::iterator iInsert(std::lower_bound(m_pRecords->begin(),
       m_pRecords->end(), r, Record::Compare));
-
     m_pRecords->insert(iInsert, r);
   }
 }
@@ -164,7 +138,7 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
 
   if (sy != 1.0f)
   {
-    r.xForm.ScaleY(sx);
+    r.xForm.ScaleY(sy);
   }
 
   if (rz != .0f)
@@ -173,21 +147,11 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
   }
 
   float zTemp = (r.xForm.t - m_mView.t).Dot(m_vForward);
-  if (zTemp > m_zNear && zTemp < m_zFar) // if in front of camera
+  if (zTemp > .0f/*m_zNear && zTemp < m_zFar*/) // if in front of camera
   {
-    if (m_useFadeColor)
-    {
-      float distScale((zTemp - m_zNear) * m_depthRangeRcp);
-      distScale *= distScale;
-      
-      r.tint *= (1.0f - distScale);
-      r.tint += m_fadeColor * distScale;
-    }
-    
     r.zTemp = zTemp;
     RecordList::iterator iInsert(std::lower_bound(m_pRecords->begin(),
       m_pRecords->end(), r, Record::Compare));
-
     m_pRecords->insert(iInsert, r);
   }
 }
@@ -277,10 +241,8 @@ void  SpriteRenderer::Render()
     Renderer::SetColStream(colBatch);
     Renderer::SetUVStream(uvBatch, 0);
     Renderer::SetVertStream(vertBatch);
-    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0] + indexOffset,
+    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0]/* + indexOffset*/,
       numIndices);
-    
-    indexOffset += numIndices;
   }
 }
 
@@ -290,7 +252,6 @@ void  SpriteRenderer::Clear()
   XR_ASSERT(SpriteRenderer, m_pRecords != 0);
   m_pRecords->clear();
   m_pool.Flush();
-  m_useFadeColor = false;
 }
 
 } // XR
