@@ -51,6 +51,7 @@ files
   UIProgressBarBase.cpp
   UIRadioButton.cpp
   UIRenderer.cpp
+  UISelector.cpp
   UISliderBase.cpp
   UISpacer.cpp
   UIState.cpp

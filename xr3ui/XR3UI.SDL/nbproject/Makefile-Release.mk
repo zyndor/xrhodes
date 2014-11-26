@@ -61,6 +61,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1447016992/UIProgressBarBase.o \
 	${OBJECTDIR}/_ext/1447016992/UIRadioButton.o \
 	${OBJECTDIR}/_ext/1447016992/UIRenderer.o \
+	${OBJECTDIR}/_ext/1447016992/UISelector.o \
 	${OBJECTDIR}/_ext/1447016992/UISliderBase.o \
 	${OBJECTDIR}/_ext/1447016992/UISpacer.o \
 	${OBJECTDIR}/_ext/1447016992/UIState.o \
@@ -225,6 +226,11 @@ ${OBJECTDIR}/_ext/1447016992/UIRenderer.o: /D/repos/xr3/xr3ui/h/XR/UIRenderer.cp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -Wall -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/UIRenderer.o /D/repos/xr3/xr3ui/h/XR/UIRenderer.cpp
+
+${OBJECTDIR}/_ext/1447016992/UISelector.o: /D/repos/xr3/xr3ui/h/XR/UISelector.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Wall -DXR_SDL -I/C/tinyxml/ -I../../xr3/h/ -I../h/XR/ -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1447016992/UISelector.o /D/repos/xr3/xr3ui/h/XR/UISelector.cpp
 
 ${OBJECTDIR}/_ext/1447016992/UISliderBase.o: /D/repos/xr3/xr3ui/h/XR/UISliderBase.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1447016992

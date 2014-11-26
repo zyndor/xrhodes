@@ -28,6 +28,8 @@
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIProgressBarBase.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRadioButton.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIRenderer.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UISelector.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3ui/h/XR/UISelector.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UISliderBase.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UISpacer.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3ui/h/XR/UIState.hpp</itemPath>
@@ -352,6 +354,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/UIRenderer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISelector.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISelector.hpp"
             ex="false"
             tool="3"
             flavor2="0">
@@ -702,6 +714,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3ui/h/XR/UIRenderer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISelector.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3ui/h/XR/UISelector.hpp"
             ex="false"
             tool="3"
             flavor2="0">

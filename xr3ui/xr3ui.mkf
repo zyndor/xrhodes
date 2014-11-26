@@ -34,6 +34,7 @@ files
   XR/UIProgressBarBase.hpp #UIColoredElement, Sprite
   XR/UIRadioButton.hpp	#UIButton
   XR/UIRenderer.hpp
+  XR/UISelector.hpp
   XR/UISliderBase.hpp  #UIColoredElement, Sprite
   XR/UISpacer.hpp  #UIElement
   XR/UIState.hpp #State, S3eEventDispatcher, UIRadioButton, UIImagePanel, UILabel, UISpacer, UICascader, UIHorizontalScrollingLayout, UIVerticalScrollingLayout, UIGridLayout, UIHorizontalProgressBar, UIVerticalProgressBar, UIHorizontalSlider, UIVerticalSlider
