@@ -24,6 +24,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Entity.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/EventDispatcher.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/File.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/FileBuffer.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Font.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Grid.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/HardList.hpp</itemPath>
@@ -122,6 +123,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/Entity.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/EventDispatcher.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/File.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/FileBuffer.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Font.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Grid.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Hash.cpp</itemPath>
@@ -382,6 +384,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/File.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/FileBuffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/FileBuffer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Font.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -1032,6 +1044,16 @@
             flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/File.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/FileBuffer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/FileBuffer.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Font.cpp" ex="false" tool="1" flavor2="0">
       </item>

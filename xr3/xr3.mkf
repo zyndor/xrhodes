@@ -31,6 +31,7 @@ files
   XR/Entity.hpp
   XR/EventDispatcher.hpp
   XR/File.hpp
+  XR/FileBuffer.hpp
   XR/Font.hpp
   XR/functors.hpp
   XR/fundamentals.hpp

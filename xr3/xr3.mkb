@@ -44,6 +44,7 @@ files
   DelayedCallback.cpp
   Entity.cpp
   EventDispatcher.cpp
+  FileBuffer.cpp
   Font.cpp
   fundamentals.cpp
   Grid.cpp

@@ -55,6 +55,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/DelayedCallback.o \
 	${OBJECTDIR}/_ext/1046665460/Entity.o \
 	${OBJECTDIR}/_ext/1046665460/EventDispatcher.o \
+	${OBJECTDIR}/_ext/1046665460/FileBuffer.o \
 	${OBJECTDIR}/_ext/1046665460/Font.o \
 	${OBJECTDIR}/_ext/1046665460/Grid.o \
 	${OBJECTDIR}/_ext/1046665460/Hash.o \
@@ -238,6 +239,11 @@ ${OBJECTDIR}/_ext/1046665460/EventDispatcher.o: /D/repos/xr3/xr3/h/XR/EventDispa
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/EventDispatcher.o /D/repos/xr3/xr3/h/XR/EventDispatcher.cpp
+
+${OBJECTDIR}/_ext/1046665460/FileBuffer.o: /D/repos/xr3/xr3/h/XR/FileBuffer.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/FileBuffer.o /D/repos/xr3/xr3/h/XR/FileBuffer.cpp
 
 ${OBJECTDIR}/_ext/1046665460/Font.o: /D/repos/xr3/xr3/h/XR/Font.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
