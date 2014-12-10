@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    26/09/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIBUILDER_HPP
@@ -30,7 +30,7 @@ public:
   typedef UIElement*(*CreateCallback)(AllocateCallback pAllocate, void* pUser);
   typedef bool(*InitCallback)(TiXmlElement* pXml, UIElement* pUIElem,
     UIContainer* pContainer, const UIBuilder& builder);
-  typedef std::string(*FormatFileNameCallback)(const char* pName, void* pUser);
+  typedef std::string(*ProcessStringCallback)(const char* pName, void* pUser);
 
   struct  Configuration
   {
@@ -43,7 +43,9 @@ public:
     void*                   pAllocateData;
     DeallocateCallback      pDeallocate;
     void*                   pDeallocateData;
-    FormatFileNameCallback  pFormatFileName;
+    ProcessStringCallback   pProcessText;
+    void*                   pProcessTextUser;
+    ProcessStringCallback   pFormatFileName;
     void*                   pFormatFileNameUser;
   };
   
@@ -110,6 +112,7 @@ public:
   void          Deallocate(void* pBuffer);
   const Sprite* GetSprite(const char* pName) const;
   const Font*   GetFont(const char* pName) const;
+  std::string   ProcessText(const char* pText) const;
   
   void          RegisterCreator(const char* pName, CreateCallback pCreateCb,
                   InitCallback pInitCb, bool isContainer);

@@ -335,7 +335,7 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 
           if (success)
           {
-            pLabel->PrepareText(pText);
+            pLabel->PrepareText(builder.ProcessText(pText).c_str());
           }
           break;
         }
@@ -1393,6 +1393,19 @@ const Font* UIBuilder::GetFont(const char* pName) const
   XR_ASSERTMSG(UIBuilder, m_cfg.pGetFont != 0,
     ("%s callback was not set.", "GetFont"));
   return (*m_cfg.pGetFont)(pName, m_cfg.pGetFontData);
+}
+
+//==============================================================================
+std::string UIBuilder::ProcessText(const char* pText) const
+{
+  if(m_cfg.pProcessText != 0)
+  {
+    return (*m_cfg.pProcessText)(pText, m_cfg.pProcessTextUser);
+  }
+  else
+  {
+    return pText;
+  }
 }
 
 //==============================================================================
