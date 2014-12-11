@@ -112,7 +112,7 @@ inline
 float Font::CalcHeight(int numLines) const
 {
   XR_ASSERT(Font::Adapter, numLines >= 0);
-  return numLines * m_size + m_base;
+  return ceilf(numLines * m_size + m_base);
 }
 
 //==============================================================================

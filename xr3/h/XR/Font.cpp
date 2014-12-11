@@ -1,6 +1,6 @@
 #include <limits>
 #include <iostream>
-#include "File.hpp"
+#include "FileBuffer.hpp"
 #include "Font.hpp"
 #include "utils.hpp"
 
@@ -105,22 +105,17 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
   Clear();
 
   XR_ASSERT(Font, pName != 0);
-  int hFile(File::Open(pName, "rb"));
-  if (hFile == File::INVALID_HANDLE)
+  FileBuffer  file;
+  bool  success(file.Open(pName, "rb"));
+  if (!success)
   {
     return false;
   }
 
-  int64 size(File::GetSize(hFile));
-  XR_ASSERT(Font, size >= 0);
-  char* pBuffer(new char[size]);
-
-  bool success(File::Read(hFile, size, 1, pBuffer) != 0);
-
-  File::Close(hFile);
+  file.Close();
   if (success)
   {
-    const char* pRead(pBuffer);
+    const char* pRead(file.GetData());
     const char* pTempRead;
     const char* pValue;
 
@@ -325,8 +320,6 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
       --numChars;
     }
   }
-
-  delete[] pBuffer;
 
   return success;
 }
