@@ -1,5 +1,5 @@
 #include "JsonReader.hpp"
-#include "File.hpp"
+#include "FileBuffer.hpp"
 #include "utils.hpp"
 
 namespace XR
@@ -166,8 +166,8 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 JSON::Entity* LoadJSON(const char* pFilename, int maxDepth, bool quietErrors)
 {
   XR_ASSERT(LoadJSON, pFilename != 0);
-  int hFile(File::Open(pFilename, "rb"));
-  if (hFile == File::INVALID_HANDLE)
+  XR::FileBuffer  file;
+  if (!file.Open(pFilename, "rb"))
   {
     if(!quietErrors)
     {
@@ -176,29 +176,14 @@ JSON::Entity* LoadJSON(const char* pFilename, int maxDepth, bool quietErrors)
     return 0;
   }
   
-  uint32  size(File::GetSize(hFile));
-  char*   parBuffer = new char[size];
+  file.Close();
 
-  bool  result(File::Read(hFile, size, 1, parBuffer) != 0);
-  File::Close(hFile);
-  
-  if (!result)
-  {
-    if(!quietErrors)
-    {
-      XR_ERROR(("Failed to read contents of '%s': %s", pFilename,
-        File::GetErrorString()));
-    }
-    delete[] parBuffer;
-    return 0;
-  }
-  
   // parse parse parse
   JSON::Reader  reader(maxDepth);
-  JSON::Entity* pJson(reader.Read(parBuffer, size));
+  JSON::Entity* pJson(reader.Read(file.GetData(), file.GetSize()));
   
   // done, clean up
-  delete[] parBuffer;
+  file.Destroy();
   if (pJson == 0 && !quietErrors)
   {
     XR_ERROR(("Failed to parse '%s': error around row %d char %d",

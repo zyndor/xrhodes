@@ -70,7 +70,7 @@ const ParserCore& Reader::GetState() const
 
 //==============================================================================
 JSON::Entity* LoadJSON(const char* pFilename,
-          int maxDepth = JSON::kMaxParseDepthDefault, bool quietErrors = false);
+  int maxDepth = JSON::kMaxParseDepthDefault, bool quietErrors = false);
 
 } // XR
 
