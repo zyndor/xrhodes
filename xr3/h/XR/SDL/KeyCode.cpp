@@ -34,11 +34,11 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_RETURN, //40,
   SDL_SCANCODE_SPACE, //44,
 
+  SDL_SCANCODE_INSERT, //73,
+  SDL_SCANCODE_HOME, //74,
   SDL_SCANCODE_PAGEUP, //75,
   SDL_SCANCODE_PAGEDOWN, //78,
-  SDL_SCANCODE_HOME, //74,
   SDL_SCANCODE_END, //77,
-  SDL_SCANCODE_INSERT, //73,
   SDL_SCANCODE_DELETE, //76,
   
   SDL_SCANCODE_PAUSE,
@@ -107,7 +107,9 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_SLASH, //56,
   SDL_SCANCODE_BACKSLASH, //49,
   
-  SDL_SCANCODE_AC_BACK
+  SDL_SCANCODE_AC_BACK, // 270
+  SDL_SCANCODE_MENU,  // 118
+  SDL_SCANCODE_SELECT // 119 -- might not
 };
 
 //==============================================================================

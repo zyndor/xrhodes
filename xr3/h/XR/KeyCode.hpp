@@ -37,11 +37,11 @@ enum  KeyCode
   K_ENTER,
   K_SPACE,
   
+  K_INS,
+  K_HOME,
   K_PGUP,
   K_PGDOWN,
-  K_HOME,
   K_END,
-  K_INS,
   K_DEL,
 
   K_PAUSE,
@@ -111,6 +111,8 @@ enum  KeyCode
   K_BACKSLASH,  // \ reverse solidus?
 
   K_BACK,
+  K_MENU,
+  K_OK,
   
   kKeyCount,
   K_UNKNOWN = kKeyCount
