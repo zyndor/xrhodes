@@ -16,6 +16,7 @@ FileBuffer::FileBuffer()
 FileBuffer::~FileBuffer()
 {
   Close();
+  Destroy();
 }
 
 //==============================================================================
