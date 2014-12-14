@@ -65,7 +65,7 @@ struct  PtrFindPredicate
 };
 
 //==============================================================================
-///@brief For using pointers as keys in a Dictionary
+///@brief For using pointers as keys in maps.
 struct  PtrHash
 {
   size_t  operator()(const void* p) const
@@ -101,7 +101,7 @@ bool IsIdMask(uint32 id, uint32 mask)
 inline
 bool  CheckInt16(int value)
 {
-  return (((value & 0xffff8000) + 0x8000) & 0xffff7fff) != 0;
+  return !(((value & 0xffff8000) + 0x8000) & 0xffff7fff);
 }
 
 //==============================================================================
