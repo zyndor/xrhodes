@@ -49,6 +49,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/AnimationReader.o \
 	${OBJECTDIR}/_ext/1046665460/Application.o \
 	${OBJECTDIR}/_ext/1046665460/BasicMesh.o \
+	${OBJECTDIR}/_ext/1046665460/CSV.o \
 	${OBJECTDIR}/_ext/1046665460/Callback.o \
 	${OBJECTDIR}/_ext/1046665460/Color.o \
 	${OBJECTDIR}/_ext/1046665460/CrossObject.o \
@@ -209,6 +210,11 @@ ${OBJECTDIR}/_ext/1046665460/BasicMesh.o: /D/repos/xr3/xr3/h/XR/BasicMesh.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/BasicMesh.o /D/repos/xr3/xr3/h/XR/BasicMesh.cpp
+
+${OBJECTDIR}/_ext/1046665460/CSV.o: /D/repos/xr3/xr3/h/XR/CSV.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/CSV.o /D/repos/xr3/xr3/h/XR/CSV.cpp
 
 ${OBJECTDIR}/_ext/1046665460/Callback.o: /D/repos/xr3/xr3/h/XR/Callback.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460

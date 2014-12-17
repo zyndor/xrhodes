@@ -25,6 +25,7 @@ files
   XR/Callback.hpp
   XR/Color.hpp
   XR/CrossObject.hpp
+  XR/CSV.hpp
   XR/debugdraw.hpp
   XR/DelayedCallback.hpp
   XR/Device.hpp
