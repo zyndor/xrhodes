@@ -25,13 +25,27 @@ void  Cursor::OnMotion(void* pSystem, void* pUser)
 }
 
 //==============================================================================
+void  Cursor::OnAction(void* pSystem, void* pUser)
+{
+  XR::Input::MouseActionEvent*  pEvent(static_cast<XR::Input::MouseActionEvent*>(pSystem));
+
+  Cursor*  pCursor(static_cast<Cursor*>(pUser));
+  pCursor->m_isPressed = pEvent->isPressed;
+  if(pEvent->isPressed)
+  {
+    pCursor->Wake();
+  }
+}
+
+//==============================================================================
 Cursor::Cursor()
 : m_isEnabled(false),
   m_timeOut(INT_FAST32_MAX),
   m_timer(INT_FAST32_MAX),
   m_moveTreshold(.0f),
   m_keepAliveTreshold(.0f),
-  m_image()
+  m_image(),
+  m_isPressed(false)
 {}
 
 //==============================================================================
@@ -69,10 +83,13 @@ void  Cursor::SetEnabled(bool state)
   if(state)
   {
     XR::Input::RegisterCallback(XR::Input::EV_MOUSE_MOTION, OnMotion, this);
+    XR::Input::RegisterCallback(XR::Input::EV_MOUSE_ACTION, OnAction, this);
   }
   else
   {
     XR::Input::UnregisterCallback(XR::Input::EV_MOUSE_MOTION, OnMotion);
+    XR::Input::UnregisterCallback(XR::Input::EV_MOUSE_ACTION, OnAction);
+    m_isPressed = false;
   }
 }
 
@@ -92,10 +109,13 @@ void  Cursor::Wake()
 //==============================================================================
 void  Cursor::Update(int ms)
 {
-  m_timer -= ms;
-  if(m_timer < 0xff)
+  if(!m_isPressed)
   {
-    m_image.color.a = XR::Saturate(float(m_timer) / 0xff);
+    m_timer -= ms;
+    if(m_timer < 0xff)
+    {
+      m_image.color.a = XR::Saturate(float(m_timer) / 0xff);
+    }
   }
 }
 

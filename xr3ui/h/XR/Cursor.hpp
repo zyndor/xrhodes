@@ -43,6 +43,7 @@ public:
 private:
   // static
   static void OnMotion(void* pSystem, void* pUser);
+  static void OnAction(void* pSystem, void* pUser);
 
   // data
   bool        m_isEnabled;
@@ -52,6 +53,8 @@ private:
   int         m_timer;
   float       m_moveTreshold;
   float       m_keepAliveTreshold;
+
+  bool        m_isPressed;
 };
 
 } // XR
