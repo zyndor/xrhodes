@@ -119,6 +119,7 @@ void  Text::Update()
     int   i(0);
     float hFill(.0f);
     float hFillFirstSpace(.0f);
+    int   numGlyphsTotalFirstSpace(0);
     int   space0(-1);
     int   space1(-1);
     bool  isInSpace(false);
@@ -132,6 +133,7 @@ void  Text::Update()
           space0 = i;
           isInSpace = true;
           hFillFirstSpace = hFill;
+          numGlyphsTotalFirstSpace = numGlyphsTotal;
         }
       }
       else
@@ -162,12 +164,13 @@ void  Text::Update()
       
       pGlyph = m_pFont->GetGlyph(c);
     }
-    
+
     bool  spaceCut(hFill > m_boxWidth && space0 >= 0);
     if (spaceCut)
     {
       i = space0;
       hFill = hFillFirstSpace;
+      numGlyphsTotal = numGlyphsTotalFirstSpace;
     }
     
     Line  l;
