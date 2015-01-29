@@ -135,29 +135,39 @@ Entity* Value::GetElement( int id, Type acceptType ) const
 }
 
 //==============================================================================
+void Value::SetValue(const char* pValue)
+{
+  delete[] m_parValue;
+
+  if (pValue == 0)
+  {
+    m_parValue = 0;
+  }
+  else
+  {
+    int len(strlen(pValue));
+    
+    m_parValue = new char[len + 1];
+    strncpy(m_parValue, pValue, len);
+    m_parValue[len] = '\0';
+  }
+}
+
+//==============================================================================
 void Value::SetValue(const char* pValue, int len)
 {
   XR_ASSERT(Value, len >= 0);
   delete[] m_parValue;
-  m_parValue = 0;
   
   if (pValue == 0)
   {
-    len = 0;
+    m_parValue = 0;
   }
   else
   {
-    if (len == 0)
-    {
-      len = strlen(pValue);
-    }
-    
-    if (len > 0)
-    {
-      m_parValue = new char[len + 1];
-      strncpy(m_parValue, pValue, len);
-      m_parValue[len] = '\0';
-    }
+    m_parValue = new char[len + 1];
+    strncpy(m_parValue, pValue, len);
+    m_parValue[len] = '\0';
   }
 }
 

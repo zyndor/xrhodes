@@ -100,6 +100,7 @@ public:
   ~Value();
 
   // general
+  void                SetValue(const char* pValue);
   void                SetValue(const char* pValue, int len);
   void                SetValue(int i);
   void                SetValue(double d);

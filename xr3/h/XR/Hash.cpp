@@ -20,7 +20,7 @@ static void  ClearStringLookup()
 #endif  //XR_DEBUG
 
 //==============================================================================
-uint32 Hash::String( const char* pString, uint32 hash)
+uint32  Hash::String(const char* pString, uint32 hash)
 {
   XR_ASSERT(Hash, pString != 0);
   int c;
@@ -48,14 +48,10 @@ uint32 Hash::String( const char* pString, uint32 hash)
 }
 
 //==============================================================================
-uint32 Hash::String( const char* pString, int size, uint32 hash)
+uint32  Hash::String(const char* pString, int size, uint32 hash)
 {
   XR_ASSERT(Hash, pString != 0);
-  if (size <= 0)
-  {
-    size = strlen(pString);
-  }
-  
+    
   int c;
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   const char* pSaved(pString);
@@ -84,7 +80,7 @@ uint32 Hash::String( const char* pString, int size, uint32 hash)
 }
 
 //==============================================================================
-uint32 Hash::Data( const void* pData, int32 size, uint32 hash)
+uint32  Hash::Data(const void* pData, int32 size, uint32 hash)
 {
   XR_ASSERT(Hash, size >= 0);
   const char* p0(static_cast<const char*>(pData));
@@ -98,7 +94,7 @@ uint32 Hash::Data( const void* pData, int32 size, uint32 hash)
 }
 
 //==============================================================================
-void   Hash::DebugClearStringLookup()
+void  Hash::DebugClearStringLookup()
 {
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   s_stringLookup.clear();
