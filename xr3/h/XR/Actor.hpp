@@ -12,8 +12,8 @@
 #if !defined XR_ACTOR_HPP
 #define XR_ACTOR_HPP
 
+#include <map>
 #include "types.hpp"
-#include "Dictionary.hpp"
 #include "Animation.hpp"
 #include "Hash.hpp"
 
@@ -24,15 +24,17 @@ namespace XR
 template <class T>
 class Actor
 {
+  XR_MANAGED_DECL(Actor<T>)
+
 public:
   // types
   typedef T               Type;
   typedef Animation<Type> AnimationType;
   
-  typedef Dictionary<uint32, AnimationType>  DictionaryType;
+  typedef std::map<uint32, AnimationType>  MapType;
   
   // data
-  DictionaryType actions;
+  MapType actions;
   
   // structors
   Actor();
@@ -60,7 +62,7 @@ Actor<T>::~Actor()
 template <class T>
 const typename Actor<T>::AnimationType* Actor<T>::GetAction( uint32 nameHash ) const
 {
-  typename DictionaryType::const_iterator iFind(actions.find(nameHash));
+  typename MapType::const_iterator iFind(actions.find(nameHash));
   return iFind != actions.end() ? &iFind->second : 0;
 }
 

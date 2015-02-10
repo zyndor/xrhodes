@@ -63,7 +63,8 @@ private:
   };
 
   // static
-  static bool GetFrameDataCallback(const char* pName, void* pData, Type& frame);
+  static bool GetFrameDataCallback(const char* pName, int index, void* pData,
+    Type& frame);
 };
 
 //==============================================================================
@@ -111,7 +112,8 @@ bool ActorReader<Type>::Read(TiXmlElement* pXml,
 
       if (success)
       {
-        if (actor.actions.Get(pActionName) != 0)
+        const uint32  hash(XR::Hash::String(pActionName));
+        if (actor.actions.find(hash) != actor.actions.end())
         {
           XR_TRACE(ActorReader,
             ("Action named '%s' already exists in actor '%s' and will be overwritten.",
@@ -119,7 +121,7 @@ bool ActorReader<Type>::Read(TiXmlElement* pXml,
         }
 
         success = AnimationReader<Type>::Read(pXml, GetFrameDataCallback,
-          &sd, actor.actions[pActionName]);
+          &sd, actor.actions[hash]);
       }
       pXml = pXml->NextSiblingElement(karActorTag[ActorTag::ACTION]);
     }
@@ -129,8 +131,8 @@ bool ActorReader<Type>::Read(TiXmlElement* pXml,
 
 //==============================================================================
 template  <class Type>
-bool ActorReader<Type>::GetFrameDataCallback(const char* pName,
-  void* pData, Type& frame)
+bool ActorReader<Type>::GetFrameDataCallback(const char* pName, int index,
+      void* pData, Type& frame)
 {
   XR_ASSERT(ActorReader, pName != 0);
   XR_ASSERT(ActorReader, pData != 0);
@@ -140,7 +142,7 @@ bool ActorReader<Type>::GetFrameDataCallback(const char* pName,
   name += "_";
   name += pName;
 
-  return (*pSessionData->pGetFrameDataCb)(name.c_str(),
+  return (*pSessionData->pGetFrameDataCb)(name.c_str(), index,
     pSessionData->pGetFrameDataCbData, frame);
 }
 

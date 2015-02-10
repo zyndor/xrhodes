@@ -17,6 +17,7 @@
 #include "strings.hpp"
 #include "Parse.hpp"
 #include "Animation.hpp"
+#include "ParserCore.hpp"
 
 namespace XR
 {
@@ -49,7 +50,8 @@ public:
   typedef T               Type;
   typedef Animation<Type> AnimationType;
 
-  typedef bool(*GetFrameDataCallback)(const char*, void*, Type&);
+  typedef bool(*GetFrameDataCallback)(const char* pName, int index, void* pData,
+    Type& frame);
 
   // static
   static bool  Read(TiXmlElement* pXml, GetFrameDataCallback pGetFrameDataCb,
@@ -96,7 +98,7 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
   // frame delay
   if (success)
   {
-    success = ParseFloat(pXml->Attribute(karAnimationTag[AnimationTag::FRAME_DELAY]),
+    success = Parse::Float(pXml->Attribute(karAnimationTag[AnimationTag::FRAME_DELAY]),
       anim.frameDelay);
     if (!success)
     {
@@ -118,34 +120,70 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
 
   if (success)
   {
-    SString name(pResourceName);
-    name += "_f###";
+    typedef std::list<Type> FrameList;
+    FrameList frames;
+    Type      frame;
 
-    char* pWrite(strchr(name.c_str(), '#'));
-
-    anim.frames.resize(kMaxAnimationFrames);
-
-    int   numFrames(0);
     bool  gotFrame(false);
     do
     {
-      snprintf(pWrite, 3, "%03d", numFrames + 1); // names are 1-based
-        
-      gotFrame = (*pGetFrameDataCb)(name.c_str(), pGetFrameDataCbData,
-        anim.frames[numFrames]);
+      gotFrame = (*pGetFrameDataCb)(pResourceName, frames.size(),
+        pGetFrameDataCbData, frame);
       if (gotFrame)
       {
-        ++numFrames;
+        frames.push_back(frame);
       }
-    } while (gotFrame && numFrames < kMaxAnimationFrames);
-
-    anim.frames.resize_optimised(numFrames);
-
-    if (numFrames == 0)
+    } while (gotFrame && frames.size() < kMaxAnimationFrames);
+    
+    if (frames.empty())
     {
       XR_TRACE(AnimationReader,
         ("Animation '%s' has 0 frames (resource name: %s).", pName,
           pResourceName));
+    }
+    else
+    {
+      // have we got a comma separated list of frames as text?
+      TiXmlNode*  pText(pXml->FirstChild());
+      while(pText != 0)
+      {
+        if(pText->Type() == TiXmlNode::TEXT)
+        {
+          break;
+        }
+        pText = pText->NextSibling();
+      }
+
+      AnimationType::FrameVector  fv;
+      fv.assign(frames.begin(), frames.end());
+
+      if(pText != 0 && pText->Type() == TiXmlNode::TEXT)
+      {
+        ParserCore  parser;
+        parser.SetBuffer(pText->Value(), strlen(pText->Value()));
+
+        frames.clear();
+        while(!parser.IsOver(parser.ExpectChar()))
+        {
+          int i(atoi(parser.GetChar()) - 1);
+          XR_ASSERT(AnimationReader, i >= 0 && i < fv.size());
+
+          frames.push_back(fv[i]);
+
+          if(parser.IsOver(parser.RequireChar(',')) ||
+            parser.IsOver(parser.SkipChar()))
+          {
+            break;
+          }
+        }
+
+        anim.frames.assign(frames.begin(), frames.end());
+      }
+      else
+      {
+        // just copy the frames neat
+        anim.frames.swap(fv);
+      }
     }
   }
   return success;

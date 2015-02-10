@@ -14,6 +14,7 @@
 
 #include <vector>
 #include "types.hpp"
+#include "ResManager.hpp"
 
 namespace XR
 {
@@ -44,6 +45,8 @@ protected:
 template	<class T>
 class	Animation:  protected AnimationCore
 {
+  XR_MANAGED_DECL(Animation<T>)
+
 public:
 	// types
 	typedef T	Type;
