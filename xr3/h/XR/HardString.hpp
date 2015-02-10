@@ -236,7 +236,7 @@ inline
 HardString<N>& HardString<N>::operator +=(const char* pString)
 {
   XR_ASSERT(HardString<>, size() + strlen(pString) < N);
-  sprintf(m_arBuffer + size(), pString);
+  strcpy(m_arBuffer + size(), pString);
   return *this;
 }
   
