@@ -12,10 +12,10 @@
 #if !defined XR_RESMANAGER_HPP
 #define XR_RESMANAGER_HPP
 
+#include <map>
 #include "types.hpp"
 #include "Pool.hpp"
 #include "Hash.hpp"
-#include "Dictionary.hpp"
 
 namespace XR
 {
@@ -45,7 +45,7 @@ public:
   
 private:
   // types
-  typedef Dictionary<uint32, T*>  ObjectMap;
+  typedef std::map<uint32, T*>  ObjectMap;
 
   // data
   static Pool*      s_pPool;
@@ -84,8 +84,11 @@ void ResManager<T>::Exit()
   for (typename ObjectMap::iterator i0(s_objects.begin()), i1(s_objects.end());
     i0 != i1; ++i0)
   {
-    i0->value->ManagedDestruct();
-    i0->value->~T();
+    if(i0->second != 0)
+    {
+      i0->second->ManagedDestruct();
+      i0->second->~T();
+    }
   }
   
   s_objects.clear();
@@ -122,7 +125,7 @@ T* ResManager<T>::Get( uint32 hash )
   T*  pObj(0);
   if (iFind != s_objects.end())
   {
-    pObj = iFind->value;
+    pObj = iFind->second;
   }
   return pObj;
 }
@@ -168,7 +171,7 @@ template  <class T>
 void ResManager<T>::FlushFrame()
 {
   XR_ASSERT(ResManager, s_pPool != 0);
-  XR_ASSERT(ResManager, s_pPool->GetNumFrames() > 0);
+  XR_ASSERT(ResManager, s_pPool->GetNumFrames() >= 0);
   s_pPool->Flush();
   _DestructFrameObjects();
 }
@@ -178,13 +181,23 @@ template  <class T>
 void ResManager<T>::_DestructFrameObjects() 
 {
   void* pCurrent(s_pPool->Allocate(0));
-  for (typename ObjectMap::iterator i0(s_objects.begin()), i1(s_objects.end()); i0 != i1; ++i0)
+  for (typename ObjectMap::iterator i0(s_objects.begin()), i1(s_objects.end());
+    i0 != i1;)
   {
-    if (i0->value >= pCurrent)
+    if (i0->second >= pCurrent)
     {
-      i0->value->ManagedDestruct();
-      i0->value->~T();
-      i0->value = 0;
+      i0->second->ManagedDestruct();
+      i0->second->~T();
+      i0->second = 0;
+
+      typename ObjectMap::iterator iTemp(i0);
+      ++i0;
+
+      s_objects.erase(iTemp);
+    }
+    else
+    {
+      ++i0;
     }
   }
 }
