@@ -12,6 +12,7 @@
 #if !defined XR_ANIMATIONREADER_HPP
 #define XR_ANIMATIONREADER_HPP
 
+#include <list>
 #include <tinyxml.h>
 #include "types.hpp"
 #include "strings.hpp"
@@ -154,7 +155,7 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
         pText = pText->NextSibling();
       }
 
-      AnimationType::FrameVector  fv;
+      typename AnimationType::FrameVector  fv;
       fv.assign(frames.begin(), frames.end());
 
       if(pText != 0 && pText->Type() == TiXmlNode::TEXT)
