@@ -83,6 +83,9 @@ typedef SceUInt64       uint64;
 #endif  //platform
 
 //==============================================================================
+#define XR_CRASHTEST(call)  { printf("At: %s\n", #call, __FILE__, __LINE__); fflush(stdout); call; printf("OK.\n"; }
+ 
+//==============================================================================
 #define XR_ONE_OVER_0XFF  (1.0f / float(0xff))
 
 //==============================================================================
@@ -125,14 +128,12 @@ int16 ClipToInt16(int32 val);
 inline
 int16 ClipToInt16( int32 val )
 {
-  if (((val - std::numeric_limits<int16>::min()) &
-    ~std::numeric_limits<int16>::max()) != 0)
+  if(((val - INT_FAST16_MIN) & ~UINT16_MAX) != 0)
   {
-    bool  over(val > std::numeric_limits<int16>::max());
-    bool  under(val < std::numeric_limits<int16>::min());
+    bool  over(val > INT_FAST16_MAX);
+    bool  under(val < INT_FAST16_MIN);
     XR_ASSERT(ClipToInt16, over ^ under);
-    val = (over * std::numeric_limits<int16>::max()) +
-      (under * std::numeric_limits<int16>::min());
+    val = over * INT_FAST16_MAX + under * INT_FAST16_MIN;
   }
 
   return static_cast<int16>(val);
