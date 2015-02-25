@@ -34,7 +34,14 @@ public:
   {
     EV_UPDATE,
     EV_RENDER,
+    EV_SECOND,
     kMaxEvents
+  };
+
+  struct  SecondEvent
+  {
+    int numRenders;
+    int numUpdates;
   };
 
   // static
@@ -43,10 +50,9 @@ public:
     
   static int32  GetFrameDelayMs();
   static bool   IsRunning();
-  static int32  GetNumLastUpdates();
-  static int32  GetNumLastRenders();
   
   static void   SetCallback(Event e, Callback pCb, void* pCbData);
+  
   static void   BreakUpdate();
   
   static void   SetFrameDelayMs(int32 ms);
@@ -58,8 +64,6 @@ private:
   static int32           m_frameDelayMs;
   
   static bool            m_isRunning;
-  static int32           m_lastUpdates;
-  static int32           m_lastRenders;
   
   static CallbackObject  m_arCallback[kMaxEvents];
   static bool            m_breakUpdate;
@@ -79,20 +83,6 @@ inline
 bool Application::IsRunning()
 {
   return m_isRunning;
-}
-
-//==============================================================================
-inline
-int32 Application::GetNumLastUpdates()
-{
-  return m_lastUpdates;
-}
-
-//==============================================================================
-inline
-int32 Application::GetNumLastRenders()
-{
-  return m_lastRenders;
 }
 
 } // XR

@@ -6,8 +6,6 @@ namespace XR
 //==============================================================================
 int32           Application::m_frameDelayMs(0);
 bool            Application::m_isRunning(false);
-int32           Application::m_lastUpdates(0);
-int32           Application::m_lastRenders(0);
 CallbackObject  Application::m_arCallback[];
 bool            Application::m_breakUpdate(false);  
 
@@ -52,8 +50,7 @@ void Application::Run()
   uint64 tNow = Timer::GetUST();
   int64 tAccum(m_frameDelayMs);
   int64 tSecond(0);
-  int32 numUpdates(0);
-  int32 numRenders(0);
+  SecondEvent eSec = { 0, 0 };
   
   while (!Device::IsQuitting())
   {    
@@ -63,7 +60,7 @@ void Application::Run()
     Renderer::Flush();
     Renderer::Present();
     
-    ++numRenders;
+    ++eSec.numRenders;
     
     // update time
     tLast = tNow;
@@ -76,11 +73,10 @@ void Application::Run()
     // update stats
     if (tSecond >= 1000)
     {
-      m_lastUpdates = numUpdates;
-      numUpdates = 0;
+      m_arCallback[EV_SECOND].CallSafe(&eSec);
       
-      m_lastRenders = numRenders;
-      numRenders = 0;
+      eSec.numUpdates = 0;
+      eSec.numRenders = 0;
       
       tSecond -= 1000;
     }
@@ -109,7 +105,7 @@ void Application::Run()
       m_arCallback[EV_UPDATE].Call(0);
 
       tAccum -= m_frameDelayMs;
-      ++numUpdates;
+      ++eSec.numUpdates;
     }
   }
 
