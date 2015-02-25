@@ -20,6 +20,7 @@ namespace XR
 //==============================================================================
 ///@brief Axis Aligned Bounding Box class with support for Import()ing
 /// from / Export()ing to halfsize information and for HitTest()s.
+///@note Assumes the positive Y axis pointing downwards. 
 struct  AABB
 {
   // types
@@ -167,8 +168,8 @@ float AABB::CalculateYness() const
 inline
 bool  AABB::HitTest(float x, float y) const
 {
-  return Max(x - right, left - x) < 0 &&
-    Max(y - bottom, top - y) < 0;
+  return Max(x - right, left - x) < .0f &&
+    Max(y - bottom, top - y) < .0f;
 }
 
 //==============================================================================
@@ -177,7 +178,7 @@ bool  AABB::HitTest(float x, float y, HitTestInfo& inf) const
 {
   inf.xOverlap = Max(x - right, left - x);
   inf.yOverlap = Max(y - bottom, top - y);
-  inf.hit = inf.xOverlap < 0 && inf.yOverlap < 0;
+  inf.hit = inf.xOverlap < .0f && inf.yOverlap < .0f;
   return inf.hit;
 }
 
@@ -185,8 +186,8 @@ bool  AABB::HitTest(float x, float y, HitTestInfo& inf) const
 inline
 bool  AABB::HitTest(const AABB& other) const
 {
-  return Max(other.left - right, left - other.right) < 0 &&
-    Max(bottom - other.top, other.bottom - top) < 0;
+  return Max(other.left - right, left - other.right) < .0f &&
+    Max(other.bottom - top, bottom - other.top) < .0f;
 }
 
 //==============================================================================
@@ -194,8 +195,8 @@ inline
 bool  AABB::HitTest(const AABB& other, HitTestInfo& inf) const
 {
   inf.xOverlap = Max(other.left - right, left - other.right);
-  inf.yOverlap = Max(bottom - other.top, other.bottom - top);
-  inf.hit = inf.xOverlap < 0 && inf.yOverlap < 0;
+  inf.yOverlap = Max(other.bottom - top, bottom - other.top);
+  inf.hit = inf.xOverlap < .0f && inf.yOverlap < .0f;
   return inf.hit;
 }
 
