@@ -37,15 +37,16 @@ Serialized::IdType  Serialized::RegisterSerialized(const Serialized* pObj)
 //==============================================================================
 Serialized::IdType  Serialized::GetSerializedId(const Serialized* pObj)
 {
-  if (pObj == 0)
-  {
-    return INVALID_ID;
-  }
-  else
+  IdType id(INVALID_ID);
+  if (pObj != 0)
   {
     IdMap::iterator iFind(s_ids.find(pObj));
-    return iFind == s_ids.end() ? INVALID_ID : iFind->value;
+    if(iFind != s_ids.end())
+    {
+      id = iFind->second;
+    }
   }
+  return id;
 }
 
 //==============================================================================
@@ -79,7 +80,7 @@ void  Serialized::ResolveReferences()
   {
     SerializedMap::iterator iFind(s_serialized.find(i0->id));
       
-    Serialized* pObject(iFind != s_serialized.end() ? iFind->value : 0);
+    Serialized* pObject(iFind != s_serialized.end() ? iFind->second : 0);
     *static_cast<Serialized**>(i0->ppInflatable) = pObject;
 
     if (i0->pInflateCb != 0)

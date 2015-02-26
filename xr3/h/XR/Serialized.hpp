@@ -13,7 +13,7 @@
 #define XR_SERIALIZED_HPP
 
 #include <list>
-#include "Dictionary.hpp"
+#include <map>
 #include "utils.hpp"
 #include "File.hpp"
 
@@ -109,7 +109,7 @@ public:
 
 private:
   // types
-  typedef Dictionary<const Serialized*, IdType> IdMap;
+  typedef std::map<const Serialized*, IdType> IdMap;
 
   struct  Job
   {
@@ -119,8 +119,8 @@ private:
     void*             pInflateCbData;
   };
 
-  typedef std::list<Job>                          JobList;
-  typedef Dictionary<IdType, Serialized*> SerializedMap;
+  typedef std::list<Job>                JobList;
+  typedef std::map<IdType, Serialized*> SerializedMap;
 
   // static
   static IdType         s_nextId;
