@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    28/07/2011
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_QUADTREE_HPP
@@ -16,6 +16,11 @@
 #include "RectObject.hpp"
 #include "Queue.hpp"
 #include "functors.hpp"
+
+#if defined  _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4351)
+#endif  //_MSC_VER
 
 namespace XR
 {
@@ -200,8 +205,8 @@ float QuadtreeCore::CalculateMin(float hw, float hh)
 inline
 bool  QuadtreeCore::CalculateCanSplit(float hw, float hh, float min)
 {
-  XR_ASSERT(Quadtree, hw > .0f);
-  XR_ASSERT(Quadtree, hh > .0f);
+  XR_ASSERT(Quadtree, hw >= .0f);
+  XR_ASSERT(Quadtree, hh >= .0f);
   XR_ASSERT(Quadtree, min > .0f);
   return XR::Min(hw, hh) > min;
 }
@@ -598,8 +603,8 @@ void  Quadtree<Alloc>::Destroy()
 template  <template <typename> class Alloc>
 void  Quadtree<Alloc>::Create(const Vector2 &pos, float hw, float hh, float min)
 {
-  XR_ASSERT(Quadtree, hw > .0f);
-  XR_ASSERT(Quadtree, hh > .0f);
+  XR_ASSERT(Quadtree, hw >= .0f);
+  XR_ASSERT(Quadtree, hh >= .0f);
   XR_ASSERT(Quadtree, min >= .0f);
   Destroy();
 
@@ -640,5 +645,9 @@ void  Quadtree<Alloc>::_Create(float min)
 }
 
 } // XR
+
+#if defined  _MSC_VER
+#pragma warning(pop)
+#endif  //_MSC_VER
 
 #endif  //XR_QUADTREE_HPP
