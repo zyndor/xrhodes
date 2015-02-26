@@ -55,7 +55,7 @@ void  ScreenManager::Push(Screen* pScreen, int32 delayMs)
     pPrevious->Unregister();
   }
   
-  m_pPrevious = pPrevious;
+  //m_pPrevious = pPrevious;  // probably not necessary - we only care if it isn't on the stack
   m_stack.push_back(pScreen);
   pScreen->Show(*this, delayMs);
 }
