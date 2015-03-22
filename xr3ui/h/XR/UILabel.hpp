@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    21/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UILABEL_HPP
@@ -49,6 +49,8 @@ public:
 
   void  PrepareText(const char* pText);
 
+  const Text& GetText() const;
+
   virtual void OnChange();
   
   virtual void Render() const;
@@ -57,6 +59,8 @@ public:
 protected:
   // data
   mutable Text  m_text;
+  int16         m_oldWidth;
+  int16         m_oldHeight;
 };
 
 //==============================================================================
@@ -87,6 +91,13 @@ inline
 int UILabel::GetNumLines() const
 {
   return m_text.GetNumLines();
+}
+
+//==============================================================================
+inline
+const Text& UILabel::GetText() const
+{
+  return m_text;
 }
 
 } // XR

@@ -12,7 +12,9 @@ const Font* UILabel::s_pDefaultFont(0);
 //==============================================================================
 UILabel::UILabel()
 : UIColoredElement(),
-  m_text()
+  m_text(),
+  m_oldWidth(0),
+  m_oldHeight(0)
 {
   if (s_pDefaultFont != 0)
   {
@@ -29,8 +31,8 @@ void UILabel::Render() const
 {
   XR_ASSERT(UILabel, m_text.GetFont() != 0);
   Renderer::SetMaterial(m_text.GetFont()->GetMaterial());
-  Renderer::SetAmbientColor(color);
-  Renderer::SetColStream();
+
+  Renderer::SetColStream(*m_text.CreateColStream(color));
 
   static Matrix m;
   Renderer::GetModelMatrix(m);
@@ -113,7 +115,13 @@ int UILabel::GetLineWidth( int line ) const
 //==============================================================================
 void UILabel::OnChange()
 {
-  m_text.SetSize((float)w, (float)h);
+  if(!(m_oldWidth == w && m_oldHeight == h))
+  {
+    m_text.SetSize(float(w), float(h));
+
+    m_oldWidth = w;
+    m_oldHeight = h;
+  }
 }
 
 } // XR
