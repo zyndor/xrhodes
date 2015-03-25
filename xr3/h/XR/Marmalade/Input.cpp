@@ -146,7 +146,7 @@ void Input::Update()
   {
     int state(s3eKeyboardGetState(static_cast<s3eKey>(karKeyCodeNative[i])));
     s_pInput->arKeyState[i] = (s_pInput->arKeyState[i] >> 1) |
-      ((state & 1) << 1);
+      (((state & (S3E_KEY_STATE_DOWN | S3E_KEY_STATE_PRESSED)) != 0) << 1);
   }
 
   s3ePointerUpdate();
@@ -154,7 +154,7 @@ void Input::Update()
   {
     int state(s3ePointerGetState(static_cast<s3ePointerButton>(i)));
     s_pInput->arMouseButtonState[i] = (s_pInput->arMouseButtonState[i] >> 1) |
-      ((state & 1) << 1);
+      ((state & S3E_POINTER_STATE_DOWN) << 1);
   }
 }
 
