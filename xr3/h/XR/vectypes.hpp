@@ -268,7 +268,7 @@ struct Vector3
   : x(.0f), y(.0f), z(.0f)
   {}
   
-  Vector3(const float arData[3])
+  explicit Vector3(const float arData[3])
   : x(arData[VX]),
     y(arData[VY]),
     z(arData[VZ])
@@ -426,10 +426,16 @@ struct Matrix
     memcpy(arRot, karIdentityData, sizeof(arRot));
   }
   
-  Matrix(const Vector3& t_)
+  explicit Matrix(const Vector3& t_)
   : t(t_)
   {
     memcpy(arRot, karIdentityData, sizeof(arRot));
+  }
+
+  explicit Matrix(const float arData[kNumMatrixInds])
+  : t()
+  {
+    memcpy(arRot, arData, sizeof(arRot));
   }
 
   Matrix(const Matrix& rhs, const Vector3& t_)
@@ -713,6 +719,28 @@ public:
   // static
   static const float  karUnitQuaternionData[kNumQuaternionInds];
   
+  static Quaternion FromEuler(Vector3 pyr)
+  {
+    // pitch, yaw, roll
+    pyr *= .5f;
+  
+    const float c1(cosf(pyr.y));
+    const float c2(cosf(pyr.x));
+    const float c3(cosf(pyr.z));
+    const float s1(sinf(pyr.y));
+    const float s2(sinf(pyr.x));
+    const float s3(sinf(pyr.z));
+  
+    const float c2c3(c2 * c3);
+    const float s2s3(s2 * s3);
+
+    Quaternion  q(s1 * c2c3 - c1 * s2s3,
+      c1 * s2 * c3 - s1 * c2 * s3,
+      c1 * c2 * s3 - s1 * s2 * c3,
+      c1 * c2c3 - s1 * s2s3);
+    return q;
+  }
+
   // data
   union
   {
@@ -728,6 +756,18 @@ public:
   {
     memcpy(arData, karUnitQuaternionData, sizeof(arData));
   }
+
+  explicit Quaternion(const float arData_[kNumQuaternionInds])
+  {
+    memcpy(arData, arData_, sizeof(arData));
+  }
+  
+  Quaternion(float i_, float j_, float k_, float w_)
+  : i(i_),
+    j(j_),
+    k(k_),
+    w(w_)
+  {}
   
   // general
   void  Conjugate()
@@ -740,6 +780,18 @@ public:
   float Magnitude() const
   {
     return sqrtf(w * w + i * i + j * j + k * k);
+  }
+
+  void  Normalise()
+  {
+    float mag(Magnitude());
+    XR_ASSERT(Quaternion, mag > .0f);
+
+    mag = 1.0f / mag;
+    i *= mag;
+    j *= mag;
+    k *= mag;
+    w *= mag;
   }
   
   void  SetAxisAngle(float x, float y, float z, float theta)
@@ -775,7 +827,7 @@ public:
       x = y = z = .0f;
     }
 
-    theta *= 2;
+    theta *= 2.0f;
   }
   
   void  GetAxisAngle(Vector3& v, float theta)
@@ -806,23 +858,43 @@ public:
     v.z = vzk2 + wpz - vxpz;
   }
   
+  Vector3 ToEuler() const
+  {
+	  const float iSqr(i * i);
+	  const float jSqr(j * j);
+	  const float kSqr(k * k);
+	  const float wSqr(w * w);
+
+    Vector3 v(asinf(-2.0f * (i * k - j * w)),
+      atan2f(2.0f * (k * j + i * w), 1.0f - 2.0f * (iSqr + jSqr)),
+      atan2f(2.0f * (i * j + k * w), 1.0f - 2.0f * (jSqr + kSqr)));
+    return v;
+  }
+
   // operator overloads
+  Quaternion  operator-() const
+  {
+    Quaternion  temp(*this);
+    temp.Conjugate();
+    return temp;
+  }
+
   Quaternion& operator*=(const Quaternion& rhs)
   {
     float w0(w);
-    float x0(i);
-    float y0(j);
-    float z0(k);
+    float i0(i);
+    float j0(j);
+    float k0(k);
 
     float w1(rhs.w);
-    float x1(rhs.i);
-    float y1(rhs.j);
-    float z1(rhs.k);
+    float i1(rhs.i);
+    float j1(rhs.j);
+    float k1(rhs.k);
 
-    w = w0 * w1 - x0 * x1 - y0 * y1 - z0 * z1;
-    i = w0 * x1 + x0 * w1 + y0 * z1 - z0 * y1;
-    j = w0 * y1 - x0 * z1 + y0 * w1 + z0 * x1;
-    k = w0 * z1 + x0 * y1 - y0 * x1 + z0 * w1;
+    w = w0 * w1 - i0 * i1 - j0 * j1 - k0 * k1;
+    i = w0 * i1 + i0 * w1 + j0 * k1 - k0 * j1;
+    j = w0 * j1 - i0 * k1 + j0 * w1 + k0 * i1;
+    k = w0 * k1 + i0 * j1 - j0 * i1 + k0 * w1;
     return *this;
   }
   
@@ -834,23 +906,23 @@ public:
   
   operator Matrix() const
   {
-    float xy(2.0f * i * j);
-    float wz(2.0f * w * k);
-    float xz(2.0f * i * k);
-    float wy(2.0f * w * j);
-    float yz(2.0f * j * k);
-    float wx(2.0f * w * i);
+    float ij(2.0f * i * j);
+    float wk(2.0f * w * k);
+    float ik(2.0f * i * k);
+    float wj(2.0f * w * j);
+    float jk(2.0f * j * k);
+    float wi(2.0f * w * i);
 
     float wSqr(w * w);
-    float xSqr(i * i);
-    float ySqr(j * j);
-    float zSqr(k * k);
+    float iSqr(i * i);
+    float jSqr(j * j);
+    float kSqr(k * k);
 
     float arMatrix[kNumMatrixInds] =
     {
-      wSqr + xSqr - ySqr - zSqr, xy - wz, xz + wy,
-      xy + wz, wSqr - xSqr + ySqr - zSqr, yz - wx,
-      xz - wy, yz + wx, wSqr - xSqr - ySqr + zSqr
+      wSqr + iSqr - jSqr - kSqr, ij - wk, ik + wj,
+      ij + wk, wSqr - iSqr + jSqr - kSqr, jk - wi,
+      ik - wj, jk + wi, wSqr - iSqr - jSqr + kSqr
     };
     return Matrix(arMatrix);
   }
@@ -858,10 +930,14 @@ public:
 
 } // XR
 
-#define XR_TRACE_VECTOR2(name, vector)  XR_TRACE(name, ("%.3f, %.3f, %.3f",\
+#define XR_TRACE_VECTOR2(name, vector)  XR_TRACE(name, ("{ %.3f, %.3f }",\
   name, vector.x, vector.y))
-#define XR_TRACE_VECTOR3(name, vector)  XR_TRACE(name, ("%.3f, %.3f, %.3f",\
+#define XR_TRACE_VECTOR3(name, vector)  XR_TRACE(name, ("{ %.3f, %.3f, %.3f }",\
   name, vector.x, vector.y, vector.z))
+#define XR_TRACE_MATRIX(name, matrix)  XR_TRACE(name, ("{ %.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f } }",\
+  name, matrix.xx, matrix.xy, matrix.xz, matrix.yx, matrix.yy, matrix.yz, matrix.zx, matrix.zy, matrix.zz))
+#define XR_TRACE_QUAT(name, quat)  XR_TRACE(name, ("{ %.3f, %.3f, %.3f, %.3f }",\
+  name, quat.i, quat.j, quat.k, quat.w))
 
 
 #endif // XR_VECTYPES_HPP
