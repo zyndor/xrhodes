@@ -47,8 +47,9 @@ bool  FileBuffer::Open(const char* pName, const char* pMode)
     if(HasFlag(READ_F))
     {
       m_size = File::GetSize(m_handle);
-      m_pData = new char[m_size];
+      m_pData = new char[m_size + 1];
       success = File::Read(m_handle, m_size, 1, m_pData) == 1;
+	  m_pData[m_size] = '\0';
     }
   }
   return success;

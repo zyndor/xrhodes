@@ -20,6 +20,8 @@ namespace XR
 //==============================================================================
 class FileBuffer
 {
+	XR_NONCOPY_DECL(FileBuffer)
+
 public:
   enum  Flags
   {
