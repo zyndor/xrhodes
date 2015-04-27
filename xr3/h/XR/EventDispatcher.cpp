@@ -60,6 +60,27 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
 }
 
 //==============================================================================
+void  EventDispatcherCore::ProcessPostponed()
+{
+  // clear everything
+  if (m_postponedClear)
+  {
+    Clear();
+    m_postponedClear = false;
+  }
+
+  // do postponed add
+  m_listeners.splice(m_listeners.end(), m_postponedAdd);
+
+  // do postponed removal
+  while (!m_postponedRemove.empty())
+  {
+    RemoveListener(m_postponedRemove.back());
+    m_postponedRemove.pop_back();
+  }
+}
+
+//==============================================================================
 void  EventDispatcherCore::Clear()
 {
   if (m_isTraversing)

@@ -95,7 +95,7 @@ protected:
       ListenerBaseBase::Compare(p)) != iEnd;
   }
   
-  bool  IsPostPonedAdded(ListenerBaseBase* p) const
+  bool  IsPostponedAdded(ListenerBaseBase* p) const
   {
     ListenerList::const_reverse_iterator  iEnd(m_postponedAdd.rend());
     return std::find_if (m_postponedAdd.rbegin(), iEnd,
@@ -103,6 +103,8 @@ protected:
   }
   
   bool  RemoveListener(void* pListener); // no ownership transfer
+
+  void  ProcessPostponed();
   
   void  Clear();
 };
@@ -178,7 +180,7 @@ public:
     {
       if (m_isTraversing)  // traversing
       {
-        result = !IsPostPonedAdded(&l);
+        result = !IsPostponedAdded(&l);
         if (result)  // if unique - postpone add
         {
           m_postponedAdd.push_back(l.Clone());
@@ -211,21 +213,9 @@ public:
 
     // finish traversal
     m_isTraversing = false;
-    if (m_postponedClear)
-    {
-      Clear();
-    }
-    
-    // do postponed add
-    m_listeners.splice(m_listeners.end(), m_postponedAdd);
 
-    // do postponed removal
-    while (!m_postponedRemove.empty())
-    {
-      RemoveListener(m_postponedRemove.back());
-      m_postponedRemove.pop_back();
-    }
-    
+    ProcessPostponed();
+        
     return handled;
   }
 
@@ -243,15 +233,7 @@ public:
     // finish traversal
     m_isTraversing = false;
     
-    // do postponed add
-    m_listeners.splice(m_listeners.end(), m_postponedAdd);
-
-    // do postponed removal
-    while (!m_postponedRemove.empty())
-    {
-      RemoveListener(m_postponedRemove.back());
-      m_postponedRemove.pop_back();
-    }
+    ProcessPostponed();
   }
 };
 
@@ -323,7 +305,7 @@ public:
     {
       if (m_isTraversing)  // traversing
       {
-        result = !IsPostPonedAdded(&l);
+        result = !IsPostponedAdded(&l);
         if (result)  // if unique - postpone add
         {
           m_postponedAdd.push_back(l.Clone());
@@ -357,15 +339,7 @@ public:
     // finish traversal
     m_isTraversing = false;
     
-    // do postponed add
-    m_listeners.splice(m_listeners.end(), m_postponedAdd);
-
-    // do postponed removal
-    while (!m_postponedRemove.empty())
-    {
-      RemoveListener(m_postponedRemove.back());
-      m_postponedRemove.pop_back();
-    }
+    ProcessPostponed();
     
     return handled;
   }
@@ -383,20 +357,8 @@ public:
 
     // finish traversal
     m_isTraversing = false;
-    if (m_postponedClear)
-    {
-      Clear();
-    }
     
-    // do postponed add
-    m_listeners.splice(m_listeners.end(), m_postponedAdd);
-
-    // do postponed removal
-    while (!m_postponedRemove.empty())
-    {
-      RemoveListener(m_postponedRemove.back());
-      m_postponedRemove.pop_back();
-    }
+    ProcessPostponed();
   }
 };
 
