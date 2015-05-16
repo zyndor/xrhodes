@@ -799,7 +799,7 @@ public:
     theta *= .5f;
     w = cosf(theta);
 
-    float sinTheta(sinf(theta));
+    const float sinTheta(sinf(theta));
     i = x * sinTheta;
     j = y * sinTheta;
     k = z * sinTheta;
@@ -837,21 +837,21 @@ public:
   
   void  RotateVec(Vector3& v)
   {
-    float px((w * v.x) - (j * v.z) + (k * v.y));
-    float py((w * v.y) - (k * v.x) + (i * v.z));
-    float pz((w * v.z) - (i * v.y) + (j * v.x));
+    const float px((w * v.x) - (j * v.z) + (k * v.y));
+    const float py((w * v.y) - (k * v.x) + (i * v.z));
+    const float pz((w * v.z) - (i * v.y) + (j * v.x));
 
-    float wpx(w * px);
-    float wpy(w * py);
-    float wpz(w * pz);
-    
-    float vxpx((j * pz) - (k * py));
-    float vxpy((k * px) - (i * pz));
-    float vxpz((i * py) - (j * px));
+    const float wpx(w * px);
+    const float wpy(w * py);
+    const float wpz(w * pz);
 
-    float vxi2(v.x * i * i);
-    float vyj2(v.y * j * j);
-    float vzk2(v.z * k * k);
+    const float vxpx((j * pz) - (k * py));
+    const float vxpy((k * px) - (i * pz));
+    const float vxpz((i * py) - (j * px));
+
+    const float vxi2(v.x * i * i);
+    const float vyj2(v.y * j * j);
+    const float vzk2(v.z * k * k);
     
     v.x = vxi2 + wpx - vxpx;
     v.y = vyj2 + wpy - vxpy;
@@ -881,15 +881,15 @@ public:
 
   Quaternion& operator*=(const Quaternion& rhs)
   {
-    float w0(w);
-    float i0(i);
-    float j0(j);
-    float k0(k);
+    const float w0(w);
+    const float i0(i);
+    const float j0(j);
+    const float k0(k);
 
-    float w1(rhs.w);
-    float i1(rhs.i);
-    float j1(rhs.j);
-    float k1(rhs.k);
+    const float w1(rhs.w);
+    const float i1(rhs.i);
+    const float j1(rhs.j);
+    const float k1(rhs.k);
 
     w = w0 * w1 - i0 * i1 - j0 * j1 - k0 * k1;
     i = w0 * i1 + i0 * w1 + j0 * k1 - k0 * j1;
@@ -906,19 +906,19 @@ public:
   
   operator Matrix() const
   {
-    float ij(2.0f * i * j);
-    float wk(2.0f * w * k);
-    float ik(2.0f * i * k);
-    float wj(2.0f * w * j);
-    float jk(2.0f * j * k);
-    float wi(2.0f * w * i);
+    const float ij(2.0f * i * j);
+    const float wk(2.0f * w * k);
+    const float ik(2.0f * i * k);
+    const float wj(2.0f * w * j);
+    const float jk(2.0f * j * k);
+    const float wi(2.0f * w * i);
 
-    float wSqr(w * w);
-    float iSqr(i * i);
-    float jSqr(j * j);
-    float kSqr(k * k);
+    const float wSqr(w * w);
+    const float iSqr(i * i);
+    const float jSqr(j * j);
+    const float kSqr(k * k);
 
-    float arMatrix[kNumMatrixInds] =
+    const float arMatrix[kNumMatrixInds] =
     {
       wSqr + iSqr - jSqr - kSqr, ij - wk, ik + wj,
       ij + wk, wSqr - iSqr + jSqr - kSqr, jk - wi,
