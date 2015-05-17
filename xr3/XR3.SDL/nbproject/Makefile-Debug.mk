@@ -107,6 +107,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1046665460/TweenVar.o \
 	${OBJECTDIR}/_ext/1046665460/TweenVarPool.o \
 	${OBJECTDIR}/_ext/1046665460/Tweener.o \
+	${OBJECTDIR}/_ext/1046665460/UIID.o \
 	${OBJECTDIR}/_ext/1046665460/debugdraw.o \
 	${OBJECTDIR}/_ext/1046665460/fundamentals.o \
 	${OBJECTDIR}/_ext/1046665460/json.o \
@@ -500,6 +501,11 @@ ${OBJECTDIR}/_ext/1046665460/Tweener.o: /D/repos/xr3/xr3/h/XR/Tweener.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/Tweener.o /D/repos/xr3/xr3/h/XR/Tweener.cpp
+
+${OBJECTDIR}/_ext/1046665460/UIID.o: /D/repos/xr3/xr3/h/XR/UIID.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGLEW_STATIC -DXR_SDL -I/C/tinyxml -I/C/glew-1.10.0/src -I../h/XR -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1046665460/UIID.o /D/repos/xr3/xr3/h/XR/UIID.cpp
 
 ${OBJECTDIR}/_ext/1046665460/debugdraw.o: /D/repos/xr3/xr3/h/XR/debugdraw.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1046665460

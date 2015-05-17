@@ -33,6 +33,7 @@ files
   XR/EventDispatcher.hpp
   XR/File.hpp
   XR/FileBuffer.hpp
+  XR/fileutils.hpp
   XR/Font.hpp
   XR/functors.hpp
   XR/fundamentals.hpp
@@ -91,6 +92,7 @@ files
   XR/TweenVarPool.hpp
   XR/types.hpp
   XR/typeutils.hpp
+  XR/UIID.hpp
   XR/utils.hpp
   XR/vectypes.hpp
   XR/Worker.hpp

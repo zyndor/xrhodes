@@ -80,6 +80,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/TweenVar.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/TweenVarPool.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Tweener.hpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/UIID.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Worker.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/debug.hpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/debugdraw.hpp</itemPath>
@@ -175,6 +176,7 @@
       <itemPath>D:/repos/xr3/xr3/h/XR/TweenVar.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/TweenVarPool.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/Tweener.cpp</itemPath>
+      <itemPath>D:/repos/xr3/xr3/h/XR/UIID.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/SDL/Worker.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/debugdraw.cpp</itemPath>
       <itemPath>D:/repos/xr3/xr3/h/XR/fundamentals.cpp</itemPath>
@@ -799,6 +801,10 @@
       <item path="D:/repos/xr3/xr3/h/XR/Tweener.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Tweener.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/UIID.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/UIID.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Worker.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -1463,6 +1469,10 @@
       <item path="D:/repos/xr3/xr3/h/XR/Tweener.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Tweener.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/UIID.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="D:/repos/xr3/xr3/h/XR/UIID.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="D:/repos/xr3/xr3/h/XR/Worker.hpp" ex="false" tool="3" flavor2="0">
       </item>
