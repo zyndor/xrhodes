@@ -35,7 +35,7 @@ uint32  Hash::String(const char* pString, uint32 hash)
 
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   StringMap::iterator iFind(s_stringLookup.find(hash));
-  XR_ASSERTMSG(Hash, iFind == s_stringLookup.end() || strcmp(pSaved,
+  XR_ASSERTMSG(Hash, iFind == s_stringLookup.end() || strcasecmp(pSaved,
     iFind->second.c_str()) == 0, ("Hash collision - %s vs %s (%d)", pSaved,
       iFind->second.c_str(), hash));
   if (iFind == s_stringLookup.end())
@@ -67,7 +67,7 @@ uint32  Hash::String(const char* pString, int size, uint32 hash)
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   StringMap::iterator iFind(s_stringLookup.find(hash));
   // look for index of first non matching character being @a size
-  XR_ASSERTMSG(Hash, iFind == s_stringLookup.end() || strncmp(pSaved,
+  XR_ASSERTMSG(Hash, iFind == s_stringLookup.end() || strncasecmp(pSaved,
     iFind->second.c_str(), savedSize) == 0, ("Hash collision - %s vs %s (%d)",
       pSaved, iFind->second.c_str(), hash));
   if (iFind == s_stringLookup.end())
