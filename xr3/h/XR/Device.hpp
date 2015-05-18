@@ -6,12 +6,13 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    11/09/2013
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_DEVICE_HPP
 #define XR_DEVICE_HPP
 
+#include <string>
 #include "Callback.hpp"
 #include "File.hpp"
 #include "Log.hpp"
@@ -53,7 +54,7 @@ public:
   static bool         IsQuitting();
   static bool         IsPaused();
   
-  static bool         GetConfig(const char* pGroup, const char* pId, char* pOutValue);
+  static std::string  GetConfig(const char* pGroup, const char* pId);
   static int          GetConfigInt(const char* pGroup, const char* pId,
                         int defaultValue);
   

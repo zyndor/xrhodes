@@ -104,9 +104,14 @@ bool Device::IsPaused()
 }
 
 //==============================================================================
-bool  Device::GetConfig(const char* pGroup, const char* pId, char* pOutValue)
+std::string Device::GetConfig(const char* pGroup, const char* pId)
 {
-  return s3eConfigGetString(pGroup, pId, pOutValue) == S3E_RESULT_SUCCESS;
+  char        arBuffer[S3E_CONFIG_STRING_MAX];
+  if(s3eConfigGetString(pGroup, pId, arBuffer) != S3E_RESULT_SUCCESS)
+  {
+    arBuffer[0] = '\0';
+  }
+  return std::string(arBuffer);
 }
 
 //==============================================================================

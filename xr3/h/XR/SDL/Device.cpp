@@ -5,6 +5,7 @@
 #include "JsonWriter.hpp"
 #include "InputImpl.hpp"
 #include "Renderer.hpp"
+#include "utils.hpp"
 
 namespace XR
 {
@@ -159,10 +160,10 @@ bool Device::IsPaused()
 }
 
 //==============================================================================
-bool  Device::GetConfig(const char* pGroup, const char* pId, char* pOutValue)
+std::string Device::GetConfig(const char* pGroup, const char* pId)
 {
   XR_ASSERT(Device, pId != 0);
-  const char* pResult(0);
+  std::string result;
   if (s_deviceImpl.pConfig != 0)
   {
     if (pGroup != 0)
@@ -188,24 +189,19 @@ bool  Device::GetConfig(const char* pGroup, const char* pId, char* pOutValue)
       XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in root.", pId));
       if (pEntity != 0)
       {
-        pResult = pEntity->ToValue()->GetValue();
+        result = GetStringSafe(pEntity->GetValue());
       }
     }
   }
   
-  bool  success(pResult != 0);
-  if(success)
-  {
-    strcpy(pOutValue, pResult);
-  }
-  return success;
+  return result;
 }
 
 //==============================================================================
 int Device::GetConfigInt(const char* pGroup, const char* pId, int defaultValue)
 {
-  const char* pValue(GetConfig(pGroup, pId));
-  return pValue != 0 ? atoi(pValue) : defaultValue;
+  std::string  value(GetConfig(pGroup, pId).c_str());
+  return value.empty() ? defaultValue : atoi(pValue);
 }
 
 //==============================================================================
