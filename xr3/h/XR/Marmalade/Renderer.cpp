@@ -128,15 +128,15 @@ void Renderer::SetOrtho(float left, float right, float bottom, float top,
   }
 
   float dx(1.0f / (right - left));
-  float dy(1.0f / (top - bottom));
-  float dz(1.0f / (zFar - zNear));
+  float dy(1.0f / (bottom - top));  // simplified -dy
+  float dz(1.0f / (zNear - zFar));	// simplified -dz
   
   float arPerspMatrix[16] =
   {
     2.0f * dx, .0f, .0f, .0f,
-    .0f, -2.0f * dy, .0f, .0f,
-    .0f, .0f, -2.0f * dz, .0f,
-    (left + right) * -dx, (top + bottom) * -dy, (zFar + zNear) * -dz, 1.0f
+    .0f, 2.0f * dy, .0f, .0f,
+    .0f, .0f, 2.0f * dz, .0f,
+    (left + right) * -dx, (top + bottom) * dy, (zFar + zNear) * dz, 1.0f
   };
   
   s_pRenderer->zNear = zNear;
@@ -419,7 +419,7 @@ void  Renderer::SetFog(bool state)
 void  Renderer::SetFogColor(Color c)
 {
   CIwColour col;
-  col.Set(c.GetABGR());
+  col.Set(c.r * 0xff, c.g * 0xff, c.b * 0xff, c.a * 0xff);
   IwGxSetFogCol(col);
 }
 
