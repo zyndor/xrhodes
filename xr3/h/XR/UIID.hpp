@@ -20,6 +20,8 @@ namespace XR
 
 typedef std::vector<uint8>  UIID;
 
+extern const size_t kUIIDSize;
+
 //==============================================================================
 // Generates a 16-byte Unique Instance Identifier.
 //==============================================================================

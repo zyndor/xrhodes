@@ -6,7 +6,7 @@
 namespace XR
 {
 
-static const size_t kUIIDSize = 16;
+const size_t kUIIDSize = 16;
 
 //==============================================================================
 UIID  GenerateUIID()
