@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    11/10/2013
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_CALLBACK_HPP
@@ -45,6 +45,9 @@ public:
   
   void  Call(void* pSystem);
   void  CallSafe(void* pSystem);
+
+  // operators
+  void  operator()(void* pSystem);
 };
 
 //==============================================================================
@@ -65,6 +68,13 @@ void  CallbackObject::CallSafe(void* pSystem)
   {
     (*pCb)(pSystem, pCbData);
   }
+}
+
+//==============================================================================
+inline
+void  CallbackObject::operator()(void* pSystem)
+{
+  Call(pSystem);
 }
 
 } // XR
