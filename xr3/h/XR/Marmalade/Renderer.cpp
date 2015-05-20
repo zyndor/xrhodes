@@ -51,7 +51,7 @@ void Renderer::Init()
   s_pRenderer->scissorRect.h = rect.h;
   s_pRenderer->numVertices = 0;
 
-  SetPerspective(M_PI * .25f, 10.0f, 1000.0f);
+  SetPerspective(float(M_PI * .25), 10.0f, 1000.0f);
   GetViewMatrix(s_pRenderer->rayCastView);
   s_pRenderer->rayCastZNear = s_pRenderer->zNear;
 
@@ -333,15 +333,15 @@ void  Renderer::SetNormStream(RenderStream& rs)
 }
 
 //==============================================================================
-void Renderer::SetClearColor( Color c )
+void Renderer::SetClearColor(Color c)
 {
-  IwGxSetColClear(c.r * 0xff, c.g * 0xff, c.b * 0xff, c.a * 0xff);
+  IwGxSetColClear(uint8(c.r * 0xff), uint8(c.g * 0xff), uint8(c.b * 0xff), uint8(c.a * 0xff));
 }
 
 //==============================================================================
-void Renderer::SetAmbientColor( Color c )
+void Renderer::SetAmbientColor(Color c)
 {
-  IwGxSetColAmbient(c.r * 0xff, c.g * 0xff, c.b * 0xff, c.a * 0xff);
+  IwGxSetColAmbient(uint8(c.r * 0xff), uint8(c.g * 0xff), uint8(c.b * 0xff), uint8(c.a * 0xff));
 }
 
 //==============================================================================
@@ -357,7 +357,7 @@ Color Renderer::GetAmbientColor()
 }
 
 //==============================================================================
-void Renderer::SetScissorRect( const Rect& r )
+void Renderer::SetScissorRect(const Rect& r)
 {
   memcpy(&s_pRenderer->scissorRect, &r, sizeof(Rect));
   IwGxSetScissorScreenSpace(r.x, r.y, r.w, r.h);
@@ -386,19 +386,19 @@ static const IwGxPrimType arPrimTypeMappings[] =
 };
 
 //==============================================================================
-void  Renderer::DrawPrims( PrimType pt)
+void  Renderer::DrawPrims(PrimType pt)
 {
   IwGxDrawPrims(arPrimTypeMappings[pt], 0, s_pRenderer->numVertices);
 }
 
 //==============================================================================
-void  Renderer::DrawPrims( PrimType pt, const uint16* pInds, int numInds)
+void  Renderer::DrawPrims(PrimType pt, const uint16* pInds, int numInds)
 {
   IwGxDrawPrims(arPrimTypeMappings[pt], const_cast<uint16*>(pInds), numInds);
 }
 
 //==============================================================================
-void  Renderer::PrintString( int16 x, int16 y, const char* pString )
+void  Renderer::PrintString(int16 x, int16 y, const char* pString)
 {
   IwGxPrintString(x, y, pString);
 }
@@ -419,7 +419,7 @@ void  Renderer::SetFog(bool state)
 void  Renderer::SetFogColor(Color c)
 {
   CIwColour col;
-  col.Set(c.r * 0xff, c.g * 0xff, c.b * 0xff, c.a * 0xff);
+  col.Set(uint8(c.r * 0xff), uint8(c.g * 0xff), uint8(c.b * 0xff), uint8(c.a * 0xff));
   IwGxSetFogCol(col);
 }
 

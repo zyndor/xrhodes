@@ -178,25 +178,28 @@ void Material::SetDepthWriteEnabled( bool state)
 //==============================================================================
 void  Material::SetAmbientColor(const Color& c)
 {
-  TO_IMPL()->SetColAmbient(c.GetABGR());
+  TO_IMPL()->SetColAmbient(uint8(c.r * 0xff), uint8(c.g * 0xff), uint8(c.b * 0xff),
+    uint8(c.a * 0xff));
 }
 
 //==============================================================================
 void  Material::SetDiffuseColor(const Color& c)
 {
-  TO_IMPL()->SetColDiffuse(c.GetABGR());
+  TO_IMPL()->SetColDiffuse(uint8(c.r * 0xff), uint8(c.g * 0xff), uint8(c.b * 0xff),
+    uint8(c.a * 0xff));
 }
 
 //==============================================================================
 void  Material::SetSpecularColor(const Color& c)
 {
-  TO_IMPL()->SetColSpecular(c.GetABGR());
+  TO_IMPL()->SetColSpecular(uint8(c.r * 0xff), uint8(c.g * 0xff), uint8(c.b * 0xff));
 }
 
 //==============================================================================
 void  Material::SetEmissiveColor(const Color& c)
 {
-  TO_IMPL()->SetColEmissive(c.GetABGR());
+  TO_IMPL()->SetColEmissive(uint8(c.r * 0xff), uint8(c.g * 0xff), uint8(c.b * 0xff),
+    uint8(c.a * 0xff));
 }
 
 //==============================================================================
