@@ -98,7 +98,7 @@ inline
 void  SpriteRenderer::Add(const XR::Sprite* pSprite, const Vector3& position,
         float s, float rz, bool billboard)
 {
-  Add(Color::s_default, pSprite, position, s, rz);
+  Add(Color::s_default, pSprite, position, s, rz, billboard);
 }
 
 //==============================================================================
@@ -106,7 +106,7 @@ inline
 void  SpriteRenderer::Add(const XR::Sprite* pSprite, const Vector3& position,
         float sx, float sy, float rz, bool billboard)
 {
-  Add(Color::s_default, pSprite, position, sx, sy, rz);
+  Add(Color::s_default, pSprite, position, sx, sy, rz, billboard);
 }
 
 } // XR
