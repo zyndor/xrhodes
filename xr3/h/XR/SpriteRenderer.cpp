@@ -49,7 +49,7 @@ void  SpriteRenderer::Init(int numRecords)
   m_pRecords = new (pMemList)
     RecordList(XR::SharedPoolAllocator<Record>(m_pool));
 
-  // push frame - flushes shouldn't destroy the list.
+  // push frame - flushes must not destroy the list.
   m_pool.Push();
   
 #if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
@@ -89,12 +89,12 @@ void  SpriteRenderer::SetView(Matrix mView/*, float zNear, float zFar*/)
 
 //==============================================================================
 void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
-  const Vector3& position, float s, float rz)
+  const Vector3& position, float s, float rz, bool billboard)
 {
   XR_ASSERT(SpriteRenderer, m_pRecords->size() < (size_t)m_capacity);
   Record  r =
   {
-    Matrix(m_mView, position),
+    billboard ? Matrix(m_mView, position) : Matrix(position),
     tint,
     pSprite
   };
@@ -121,12 +121,12 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
 
 //==============================================================================
 void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
-  const Vector3& position, float sx, float sy, float rz)
+  const Vector3& position, float sx, float sy, float rz, bool billboard)
 {
   XR_ASSERT(SpriteRenderer, m_pRecords->size() < (size_t)m_capacity);
   Record  r =
   {
-    Matrix(m_mView, position),
+    billboard ? Matrix(m_mView, position) : Matrix(position),
     tint,
     pSprite
   };
@@ -180,8 +180,6 @@ void  SpriteRenderer::Render()
 #endif
   
   int           vertexOffset(0);
-  int           indexOffset(0);
-
   RenderStream  colBatch;
   RenderStream  uvBatch;
   RenderStream  vertBatch;
@@ -241,8 +239,7 @@ void  SpriteRenderer::Render()
     Renderer::SetColStream(colBatch);
     Renderer::SetUVStream(uvBatch, 0);
     Renderer::SetVertStream(vertBatch);
-    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0]/* + indexOffset*/,
-      numIndices);
+    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], numIndices);
   }
 }
 

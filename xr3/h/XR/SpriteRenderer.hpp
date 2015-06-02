@@ -43,14 +43,14 @@ public:
   void  SetView(Matrix mView/*, float zNear, float zFar*/);
 
   void  Add(const XR::Sprite* pSprite, const Vector3& position, float s,
-          float rz);
+          float rz, bool billboard = true);
   void  Add(const XR::Sprite* pSprite, const Vector3& position, float sx,
-          float sy, float rz);
+          float sy, float rz, bool billboard = true);
 
   void  Add(Color tint, const XR::Sprite* pSprite, const Vector3& position,
-          float s, float rz);
+          float s, float rz, bool billboard = true);
   void  Add(Color tint, const XR::Sprite* pSprite, const Vector3& position,
-          float sx, float sy, float rz);
+          float sx, float sy, float rz, bool billboard = true);
 
   virtual void  Render();
 
@@ -96,7 +96,7 @@ protected:
 //==============================================================================
 inline
 void  SpriteRenderer::Add(const XR::Sprite* pSprite, const Vector3& position,
-        float s, float rz)
+        float s, float rz, bool billboard)
 {
   Add(Color::s_default, pSprite, position, s, rz);
 }
@@ -104,7 +104,7 @@ void  SpriteRenderer::Add(const XR::Sprite* pSprite, const Vector3& position,
 //==============================================================================
 inline
 void  SpriteRenderer::Add(const XR::Sprite* pSprite, const Vector3& position,
-        float sx, float sy, float rz)
+        float sx, float sy, float rz, bool billboard)
 {
   Add(Color::s_default, pSprite, position, sx, sy, rz);
 }
