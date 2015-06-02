@@ -10,6 +10,9 @@
 namespace XR
 {
 
+namespace DebugDraw
+{
+
 //==============================================================================
 static uint32     s_lastFlush(0);
 static Material*  s_pMaterial(0);
@@ -27,7 +30,7 @@ static void SetMaterial()
 }
 
 //==============================================================================
-void  DebugDrawRect(float hw, float hh)
+void  Rect(float hw, float hh, XR::Material* pMaterial)
 {
   RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 5));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
@@ -36,14 +39,21 @@ void  DebugDrawRect(float hw, float hh)
   pStream->Set(3, Vector3(hw, -hh, .0f));
   pStream->Set(4, pStream->GetVector3(0));
 
-  SetMaterial();
+  if(pMaterial == 0)
+  {
+    SetMaterial();
+  }
+  else
+  {
+    XR::Renderer::SetMaterial(pMaterial);
+  }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
   Renderer::DrawPrims(PRIM_LINE_STRIP);
 }
 
 //==============================================================================
-void  DebugDrawFillRect(float hw, float hh)
+void  FillRect(float hw, float hh, XR::Material* pMaterial)
 {
   RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 4));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
@@ -51,14 +61,21 @@ void  DebugDrawFillRect(float hw, float hh)
   pStream->Set(2, Vector3(hw, hh, .0f));
   pStream->Set(3, Vector3(hw, -hh, .0f));
 
-  SetMaterial();
+  if(pMaterial == 0)
+  {
+    SetMaterial();
+  }
+  else
+  {
+    XR::Renderer::SetMaterial(pMaterial);
+  }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
   Renderer::DrawPrims(PRIM_TRI_FAN);
 }
 
 //==============================================================================
-void  DebugDrawCircle(float radius)
+void  Circle(float radius, XR::Material* pMaterial)
 {
   int numVerts(floorf(radius * .666f));
   float theta(M_PI / numVerts);
@@ -75,14 +92,21 @@ void  DebugDrawCircle(float radius)
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
   }
   
-  SetMaterial();
+  if(pMaterial == 0)
+  {
+    SetMaterial();
+  }
+  else
+  {
+    XR::Renderer::SetMaterial(pMaterial);
+  }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
   Renderer::DrawPrims(PRIM_LINE_STRIP);
 }
 
 //==============================================================================
-void  DebugDrawFillCircle(float radius)
+void  FillCircle(float radius, XR::Material* pMaterial)
 {
   int numVerts(floorf(radius * .666f));
   float theta(M_PI / numVerts);
@@ -100,10 +124,19 @@ void  DebugDrawFillCircle(float radius)
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
   }
 
-  SetMaterial();
+  if(pMaterial == 0)
+  {
+    SetMaterial();
+  }
+  else
+  {
+    XR::Renderer::SetMaterial(pMaterial);
+  }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
   Renderer::DrawPrims(PRIM_TRI_FAN);
 }
+
+} // DebugDraw
 
 } // XR

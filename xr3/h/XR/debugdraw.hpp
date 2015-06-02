@@ -17,16 +17,21 @@
 namespace XR
 {
 
-//==============================================================================
-void  DebugDrawRect(float hw, float hh);
-void  DebugDrawFillRect(float hw, float hh);
+namespace DebugDraw
+{
 
-void  DebugDrawCircle(float radius);
-void  DebugDrawFillCircle(float radius);
+//==============================================================================
+void  Rect(float hw, float hh, XR::Material* pMaterial = 0);
+void  FillRect(float hw, float hh, XR::Material* pMaterial = 0);
+
+void  Circle(float radius, XR::Material* pMaterial = 0);
+void  FillCircle(float radius, XR::Material* pMaterial = 0);
 
 //==============================================================================
 // implementation
 //==============================================================================
+
+} // DebugDraw
 
 } // XR
 
