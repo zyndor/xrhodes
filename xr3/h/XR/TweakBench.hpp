@@ -13,11 +13,14 @@
 #define XR_TWEAKBENCH_HPP
 
 #include  <map>
-#include  "Hash.hpp"
 
 namespace XR
 {
 
+//==============================================================================
+///@brief Facilitates the live tweaking of variables of primitive types by
+/// maintaining a registrar of them and allowing centralised access to them
+/// using identifiers.
 //==============================================================================
 class TweakBench
 {
@@ -45,31 +48,27 @@ public:
 
   // general
   template  <typename T>
-  uint32  Register(const char* pName, T& var);
+  uint32  Register(uint32 name, T& var);
 
   bool    Register(uint32 name, float& var);
   bool    Register(uint32 name, int& var);
   bool    Register(uint32 name, bool& var);
   
   template  <typename T>
-  bool    Get(const char* pName, T& val) const;
+  bool    Get(uint32 name, T& val) const;
 
   bool    Get(uint32 name, float& val) const;
   bool    Get(uint32 name, int& val) const;
   bool    Get(uint32 name, bool& val) const;
 
   template  <typename T>
-  bool    Set(const char* pName, T val);
+  bool    Set(uint32 name, T val);
 
   bool    Set(uint32 name, float val);
   bool    Set(uint32 name, int val);
   bool    Set(uint32 name, bool val);
   
-  Variable::Type  GetType(const char* pName) const;
   Variable::Type  GetType(uint32 name) const;
-
-  bool    Load(const char* pFilename);
-  bool    Save(const char* pFilename) const;
 
 protected:
   // types
@@ -83,36 +82,23 @@ protected:
 // implementation
 //==============================================================================
 template  <typename T>
-uint32  TweakBench::Register(const char* pName, T& var)
+uint32  TweakBench::Register(uint32 name, T& var)
 {
-  XR_ASSERT(TweakBench, pName != 0);
-  uint32  hash(XR::Hash::String(pName));
-  return Register(hash, var) ? hash : INVALID_ID;
+  return Register(name, var) ? name : INVALID_ID;
 }
 
 //==============================================================================
 template  <typename T>
-bool    TweakBench::Get(const char* pName, T& val) const
+bool    TweakBench::Get(uint32 name, T& val) const
 {
-  XR_ASSERT(TweakBench, pName != 0);
-  uint32  hash(XR::Hash::String(pName));
-  return Get(hash, val);
+  return Get(name, val);
 }
 
 //==============================================================================
 template  <typename T>
-bool    TweakBench::Set(const char* pName, T val)
+bool    TweakBench::Set(uint32 name, T val)
 {
-  XR_ASSERT(TweakBench, pName != 0);
-  uint32  hash(XR::Hash::String(pName));
-  return Set(hash, val);
-}
-
-//==============================================================================
-inline
-TweakBench::Variable::Type TweakBench::GetType(const char* pName) const
-{
-  return GetType(XR::Hash::String(pName));
+  return Set(name, val);
 }
 
 } // XR
