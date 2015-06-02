@@ -79,6 +79,7 @@ files
   State.cpp
   Text.cpp
   TexturePack.cpp
+  TweakBench.cpp
   Tweener.cpp
   TweenVar.cpp
   TweenVarPool.cpp

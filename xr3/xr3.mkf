@@ -87,6 +87,7 @@ files
   XR/Texture.hpp
   XR/TexturePack.hpp
   XR/Timer.hpp
+  XR/TweakBench.hpp
   XR/Tweener.hpp
   XR/TweenVar.hpp
   XR/TweenVarPool.hpp
