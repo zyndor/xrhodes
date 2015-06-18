@@ -74,16 +74,17 @@ void  SpriteRenderer::Init(int numRecords)
 }
 
 //==============================================================================
-void  SpriteRenderer::SetView(Matrix mView/*, float zNear, float zFar*/)
+void  SpriteRenderer::SetView(Matrix mView, float zNear/*, float zFar*/)
 {
   //XR_ASSERT(SpriteRenderer, zNear < zFar);
+  XR_ASSERT(SpriteRenderer, zNear > .0f);
   
   m_vForward = Vector3(mView.zx, mView.zy, mView.zz).Normalise();
   
   //mView.Transpose();  // the actual view is a transpose, so this isn't needed.
   m_mView = mView;
 
-  //m_zNear = zNear;
+  m_zNear = zNear;
   //m_zFar = zFar;
 }
 
@@ -110,7 +111,7 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
   }
   
   float zTemp = (r.xForm.t - m_mView.t).Dot(m_vForward);
-  if (zTemp > .0f/*m_zNear && zTemp < m_zFar*/) // if in front of camera
+  if (zTemp > m_zNear/* && zTemp < m_zFar*/) // if in front of camera
   {
     r.zTemp = zTemp;
     RecordList::iterator iInsert(std::lower_bound(m_pRecords->begin(),
@@ -147,7 +148,7 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
   }
 
   float zTemp = (r.xForm.t - m_mView.t).Dot(m_vForward);
-  if (zTemp > .0f/*m_zNear && zTemp < m_zFar*/) // if in front of camera
+  if (zTemp > m_zNear/* && zTemp < m_zFar*/) // if in front of camera
   {
     r.zTemp = zTemp;
     RecordList::iterator iInsert(std::lower_bound(m_pRecords->begin(),

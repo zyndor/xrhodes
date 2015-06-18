@@ -40,7 +40,7 @@ public:
   // general
   void  Init(int numRecords);
 
-  void  SetView(Matrix mView/*, float zNear, float zFar*/);
+  void  SetView(Matrix mView, float zNear/*, float zFar*/);
 
   void  Add(const XR::Sprite* pSprite, const Vector3& position, float s,
           float rz, bool billboard = true);
@@ -62,7 +62,7 @@ protected:
   {
     static bool Compare(const Record& lhs, const Record& rhs)
     {
-      return lhs.zTemp < rhs.zTemp;
+      return lhs.zTemp > rhs.zTemp;
     }
 
     Matrix            xForm;
@@ -81,7 +81,7 @@ protected:
 
   Matrix      m_mView;
   Vector3     m_vForward;
-  //float       m_zNear;
+  float       m_zNear;
   //float       m_zFar;
 
 #if !defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
