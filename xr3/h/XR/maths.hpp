@@ -93,6 +93,12 @@ T  Lerp(T v0, T v1, float blend);
 template  <typename T, int samples>
 T Bezier(const T* parSamples, float blend);
 
+///@return	Interpolated value between @a edge0 and @a edge1.
+float SmoothStep(float edge0, float edge1, float x);
+
+///@return	Interpolated value between @a edge0 and @a edge1.
+float SmootherStep(float edge0, float edge1, float x);
+
 ///@return  Per-frame speed value based on per second speed @a v and @a fps.
 float CalcSpeedPerFrame(float v, float fps);
 
@@ -139,7 +145,7 @@ int RandSign()
 inline
 float  FlopRand()
 {
-  return float(rand() % RAND_MAX) * kRecRandMax;
+  return float(rand()) * kRecRandMax;
 }
 
 //==============================================================================
@@ -219,6 +225,22 @@ inline
 T Bezier(const T* parSamples, float blend)
 {
   return _BezierImpl<T, samples>::Calculate(parSamples, blend);
+}
+
+//==============================================================================
+inline
+float SmoothStep(float edge0, float edge1, float x)
+{
+  x = Saturate((x - edge0) / (edge1 - edge0));
+  return x * x * (3.0f - 2.0f * x); 
+}
+
+//==============================================================================
+inline
+float SmootherStep(float edge0, float edge1, float x)
+{
+  x = Saturate((x - edge0) / (edge1 - edge0));
+  return x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f); 
 }
 
 }  // XR
