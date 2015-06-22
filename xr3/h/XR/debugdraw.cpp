@@ -30,7 +30,52 @@ static void SetMaterial()
 }
 
 //==============================================================================
-void  Rect(float hw, float hh, XR::Material* pMaterial)
+void  Line(const Vector3& v, Material* pMaterial)
+{
+	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 2));
+	pStream->Set(0, Vector3::s_zero);
+	pStream->Set(1, v);
+
+	if(pMaterial == 0)
+	{
+		SetMaterial();
+	}
+  else
+  {
+    Renderer::SetMaterial(pMaterial);
+  }
+  Renderer::SetVertStream(*pStream);
+  Renderer::SetColStream();
+  Renderer::DrawPrims(PRIM_LINE_STRIP);
+}
+
+//==============================================================================
+void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
+{
+	++numVerts;
+	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
+	pStream->Set(0, Vector3::s_zero);
+	for(int i = 1; i < numVerts; ++i)
+	{
+		pStream->Set(i, *pVerts);
+		++pVerts;
+	}
+
+	if(pMaterial == 0)
+	{
+		SetMaterial();
+	}
+  else
+  {
+    Renderer::SetMaterial(pMaterial);
+  }
+  Renderer::SetVertStream(*pStream);
+  Renderer::SetColStream();
+  Renderer::DrawPrims(PRIM_LINE_STRIP);
+}
+
+//==============================================================================
+void  Rect(float hw, float hh, Material* pMaterial)
 {
   RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 5));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
@@ -45,7 +90,7 @@ void  Rect(float hw, float hh, XR::Material* pMaterial)
   }
   else
   {
-    XR::Renderer::SetMaterial(pMaterial);
+    Renderer::SetMaterial(pMaterial);
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -53,7 +98,7 @@ void  Rect(float hw, float hh, XR::Material* pMaterial)
 }
 
 //==============================================================================
-void  FillRect(float hw, float hh, XR::Material* pMaterial)
+void  FillRect(float hw, float hh, Material* pMaterial)
 {
   RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 4));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
@@ -67,7 +112,7 @@ void  FillRect(float hw, float hh, XR::Material* pMaterial)
   }
   else
   {
-    XR::Renderer::SetMaterial(pMaterial);
+    Renderer::SetMaterial(pMaterial);
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -75,7 +120,7 @@ void  FillRect(float hw, float hh, XR::Material* pMaterial)
 }
 
 //==============================================================================
-void  Circle(float radius, XR::Material* pMaterial)
+void  Circle(float radius, Material* pMaterial)
 {
   int numVerts(floorf(radius * .666f));
   float theta(M_PI / numVerts);
@@ -98,7 +143,7 @@ void  Circle(float radius, XR::Material* pMaterial)
   }
   else
   {
-    XR::Renderer::SetMaterial(pMaterial);
+    Renderer::SetMaterial(pMaterial);
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -106,7 +151,7 @@ void  Circle(float radius, XR::Material* pMaterial)
 }
 
 //==============================================================================
-void  FillCircle(float radius, XR::Material* pMaterial)
+void  FillCircle(float radius, Material* pMaterial)
 {
   int numVerts(floorf(radius * .666f));
   float theta(M_PI / numVerts);
@@ -130,7 +175,7 @@ void  FillCircle(float radius, XR::Material* pMaterial)
   }
   else
   {
-    XR::Renderer::SetMaterial(pMaterial);
+    Renderer::SetMaterial(pMaterial);
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();

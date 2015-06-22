@@ -21,11 +21,14 @@ namespace DebugDraw
 {
 
 //==============================================================================
-void  Rect(float hw, float hh, XR::Material* pMaterial = 0);
-void  FillRect(float hw, float hh, XR::Material* pMaterial = 0);
+void  Line(const Vector3& v, Material* pMaterial = 0);
+void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial = 0);
 
-void  Circle(float radius, XR::Material* pMaterial = 0);
-void  FillCircle(float radius, XR::Material* pMaterial = 0);
+void  Rect(float hw, float hh, Material* pMaterial = 0);
+void  FillRect(float hw, float hh, Material* pMaterial = 0);
+
+void  Circle(float radius, Material* pMaterial = 0);
+void  FillCircle(float radius, Material* pMaterial = 0);
 
 //==============================================================================
 // implementation
