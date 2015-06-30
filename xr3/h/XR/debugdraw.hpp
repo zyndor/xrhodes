@@ -23,6 +23,7 @@ namespace DebugDraw
 //==============================================================================
 void  Line(const Vector3& v, Material* pMaterial = 0);
 void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial = 0);
+void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial = 0);
 
 void  Rect(float hw, float hh, Material* pMaterial = 0);
 void  FillRect(float hw, float hh, Material* pMaterial = 0);

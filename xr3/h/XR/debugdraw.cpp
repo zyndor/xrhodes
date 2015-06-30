@@ -52,13 +52,11 @@ void  Line(const Vector3& v, Material* pMaterial)
 //==============================================================================
 void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
 {
-	++numVerts;
 	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
-	pStream->Set(0, Vector3::s_zero);
-	for(int i = 1; i < numVerts; ++i)
+	for(int i = 0; i < numVerts; ++i)
 	{
-		pStream->Set(i, *pVerts);
-		++pVerts;
+		pStream->Set(i, *parVerts);
+		++parVerts;
 	}
 
 	if(pMaterial == 0)
@@ -72,6 +70,29 @@ void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
   Renderer::DrawPrims(PRIM_LINE_STRIP);
+}
+
+//==============================================================================
+void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial)
+{
+	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
+	for(int i = 0; i < numVerts; ++i)
+	{
+		pStream->Set(i, *parVerts);
+		++parVerts;
+	}
+
+	if(pMaterial == 0)
+	{
+		SetMaterial();
+	}
+  else
+  {
+    Renderer::SetMaterial(pMaterial);
+  }
+  Renderer::SetVertStream(*pStream);
+  Renderer::SetColStream();
+  Renderer::DrawPrims(PRIM_LINE_LIST);
 }
 
 //==============================================================================
