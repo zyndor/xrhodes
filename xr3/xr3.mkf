@@ -24,6 +24,7 @@ files
   XR/ButtonState.hpp
   XR/Callback.hpp
   XR/Color.hpp
+  XR/Command.hpp
   XR/CrossObject.hpp
   XR/CSV.hpp
   XR/debugdraw.hpp
@@ -55,6 +56,7 @@ files
   XR/Log.hpp
   XR/maths.hpp
   XR/Material.hpp
+  XR/MemFnAdaptor.hpp
   XR/memory.hpp
   XR/MersenneTwister.hpp
   XR/MeshRenderer.hpp
