@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    21/06/2011
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_QUEUE_HPP
@@ -50,12 +50,12 @@ template <typename Type>
 struct  Iterator: public std::forward_iterator_tag
 {
   // types
-  typedef Node<Type>      NodeType;
-  typedef Iterator<Type>  SelfType;
+  typedef Node<Type>                NodeType;
+  typedef Iterator<Type>            SelfType;
 
-  typedef Type  value_type;
-  typedef Type* pointer;
-  typedef Type& reference;
+  typedef Type                      value_type;
+  typedef Type*                     pointer;
+  typedef Type&                     reference;
 
   typedef ptrdiff_t                 difference_type;
   typedef std::forward_iterator_tag iterator_category;
@@ -84,13 +84,13 @@ template <typename Type>
 struct  ConstIterator: public std::forward_iterator_tag
 {
   // types
-  typedef const Node<Type>      NodeType;
-  typedef Iterator<Type>        IteratorType;
-  typedef ConstIterator<Type>   SelfType;
+  typedef const Node<Type>          NodeType;
+  typedef Iterator<Type>            IteratorType;
+  typedef ConstIterator<Type>       SelfType;
 
-  typedef Type        value_type;
-  typedef const Type* pointer;
-  typedef const Type& reference;
+  typedef Type                      value_type;
+  typedef const Type*               pointer;
+  typedef const Type&               reference;
 
   typedef ptrdiff_t                 difference_type;
   typedef std::forward_iterator_tag iterator_category;
@@ -303,18 +303,18 @@ public:
   typedef QueueImpl::Iterator<value_type>       iterator;
   typedef QueueImpl::ConstIterator<value_type>  const_iterator;
 
-  typedef AllocType allocator;
+  typedef AllocType                             allocator;
   
-  typedef size_t    size_type;
-  typedef ptrdiff_t difference_type;
+  typedef size_t                                size_type;
+  typedef ptrdiff_t                             difference_type;
 
-  typedef typename allocator::reference       reference;
-  typedef typename allocator::const_reference const_reference;
-  typedef typename allocator::pointer         pointer;
-  typedef typename allocator::const_pointer   const_pointer;
+  typedef typename allocator::reference         reference;
+  typedef typename allocator::const_reference   const_reference;
+  typedef typename allocator::pointer           pointer;
+  typedef typename allocator::const_pointer     const_pointer;
 
-  typedef Queue<value_type, AllocType>  SelfType;
-  typedef QueueImpl::Node<value_type>   NodeType;
+  typedef Queue<value_type, AllocType>          SelfType;
+  typedef QueueImpl::Node<value_type>           NodeType;
 
   typedef typename AllocType::template rebind<NodeType>::other NodeAllocType;
   
@@ -490,15 +490,15 @@ void  Queue<Type, AllocType>::push_back(value_type d)
   NodeType  *pNode(m_allocator.allocate(1));
   m_allocator.construct(pNode, NodeType(d));
   
-  if (m_pHead != 0)
+  if (empty())
   {
-    m_pTail->Hook(pNode);
-    m_pTail = static_cast<NodeType*>(m_pTail->pNext);
+    m_pHead = pNode;
+    m_pTail = pNode;	// = m_pHead, but Load-Hit-Store
   }
   else
   {
-    m_pHead = pNode;
-    m_pTail = m_pHead;
+    m_pTail->Hook(pNode);
+    m_pTail = static_cast<NodeType*>(m_pTail->pNext);
   }
 }
 
@@ -509,10 +509,9 @@ void  Queue<Type, AllocType>::push_back(value_type d)
 template  <typename Type, class AllocType>
 void  Queue<Type, AllocType>::pop_front()
 {
-  XR_ASSERT(Queue, m_pHead != 0);
+  XR_ASSERT(Queue, !empty());
   NodeType  *pDelete(m_pHead);
   m_pHead = static_cast<NodeType*>(m_pHead->pNext);
-  //pDelete->pNext = 0;  // no recursive deletion of trailing nodes
   m_allocator.destroy(pDelete);
   m_allocator.deallocate(pDelete, 1);
 }
@@ -532,8 +531,8 @@ void  Queue<Type, AllocType>::clear()
     m_allocator.deallocate(pHead, 1);
     pHead = pTemp;
   }
-  //_pTail = 0;
   m_pHead = pHead;
+  //m_pTail = 0;	// not necessary; we're only accessing m_pTail when m_pHead != 0
 }
 
 //==============================================================================
@@ -613,12 +612,12 @@ void  Queue<Type, AllocType>::_adopt(SelfType& rhs)
     m_pTail->pNext = rhs.m_pHead;
   }
 
-  if (rhs.m_pHead != 0)
+  if (!rhs.empty())
   {
     rhs.m_pHead = 0;
 
     m_pTail = rhs.m_pTail;
-    //rhs._pTail = 0;  // not necessary; we're only modifying tail if head != 0
+    //rhs.m_pTail = 0;	// not necessary; we're only accessing m_pTail when m_pHead != 0
   }
 }
 
