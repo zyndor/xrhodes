@@ -13,102 +13,97 @@
 #define XR_STATE_HPP
 
 #include <list>
-#include "HardStack.hpp"
-#include "Module.hpp"
 
 namespace XR
 {
 
 //==============================================================================
-///@brief An application state. Lifecycle:
-///@ Init() when pushed onto the stack
-///@   Enter(), FadeIn() when previous state has exited.
-///@     UpdateFadeIn() when fading in
-///@     Update() when active (fadeout has finished)
-///@   FadeOut() when new state was requested
-///@     UpdateFadeOut() while fading out
-///@   Exit() when fadeout has finished
-///@ Shutdown() when popped from stack
-class State: protected Module
+///@brief An application state. Life cycle:
+/// Init() when pushed onto the stack,
+///   Enter() when becoming the current state,
+///     Update(), Render() while active
+///   Exit() when a new state was requested,
+/// Shutdown() when removed from the stack.
+//==============================================================================
+class State
 {
 public:
-  ///@brief Manages the Update() and Render()ing of states as well as state
-  /// transitions
-  class Manager
-  {
-    XR_NONCOPY_DECL(Manager)
+	// types
+	//==============================================================================
+	///@brief Maintains a stack of states and manages their life cycles.
+	//==============================================================================
+	class	Manager
+	{
+	public:
+		// structors
+		Manager();
+		~Manager();
 
-  public:
-    // structors
-    Manager();
-    ~Manager();
+		// general
+		void	Push(State* p);	// no ownership transfer
+		void	Change(State* p);	// no ownership transfer
+		void	Pop();
 
-    // general
-    int32 GetFadeTimer() const;
+		void	Update(int32 tDelta);
+		void	Render();
 
-    void  Push(State* pState, int tFade = 0); // no ownership transfer
-    void  Pop(int tFade = 0); // no ownership transfer
-    void  Change(State* pState, int tFade = 0); // no ownership transfer
+		void	Clear();
 
-    void  Update(int32 tDelta);
-    void  Render();
+	protected:
+		// types
+		typedef std::list<State*>	Stack;
+		
+		// data
+		Stack	m_states;
+		
+		// internal
+		void	_Push(State* p);
+		void	_Pop();
+	};
 
-    void  Clear();
-    
-  private:
-    // types
-    typedef std::list<State*> StateList;
-    
-    // data
-    StateList m_stack;
-    
-    State*  m_pExiting;  // no ownership
-    State*  m_pCurrent;  // no ownership, processed if there's no exiting state.
+	//==============================================================================
+	///@brief Signifies the result of a State Update() encapsulating State::Manager
+	/// operation and a next State to go to.
+	//==============================================================================
+	struct	Result
+	{
+		// types
+		enum	Operation
+		{
+			NONE,
+			PUSH,
+			CHANGE,
+			POP
+		};
 
-    bool    m_doInit;
-    bool    m_doShutdown;
-    int     m_fadeDelay;
-    int     m_tFade;
+		// structors
+		Result()
+		:	operation(NONE),
+			pState(0)
+		{}
 
-    // internal
-    void  _QuickExit();
-  };
+		Result(Operation op, State* p = 0)
+		:	operation(op),
+			pState(p)
+		{}
 
-  // using
-  using Module::Render;
-
-  // structors
-  State();
-  virtual ~State();
-  
-  // virtual
-  virtual void  Update(int32 tDelta) =0;
-
-  // general
-  virtual void  FadeIn(int32 tFade);
-  virtual void  UpdateFadeIn(int32 tDelta);
-  virtual void  FadeOut(int32 tFade);
-  virtual void  UpdateFadeOut(int32 tDelta);
-
-  // friends
-  friend class  Manager;
-
-protected:
-  // virtual
-  virtual void  Init() =0;  // when state gets pushed on stack
-  virtual void  Enter() =0; // when requested state becomes active
-  virtual void  Exit() =0;  // when requested state becomes inactive; must reset changes made since Enter()
-  virtual void  Shutdown() =0;  // when state gets popped from stack; must reset changes since Init()
+		// data
+		Operation	operation;
+		State*		pState;
+	};
+	
+	// structors
+	State();
+	virtual ~State();
+	
+	// general
+	virtual void	Init()	{}
+	virtual void	Enter() =0;
+	virtual void	Update(int32 ms, Result& result) =0;
+	virtual void	Render() =0;
+	virtual void	Exit() =0;
+	virtual void	Shutdown() {}
 };
-
-//==============================================================================
-// implementation
-//==============================================================================
-inline
-int32 State::Manager::GetFadeTimer() const
-{
-  return m_tFade;
-}
 
 } // XR
 
