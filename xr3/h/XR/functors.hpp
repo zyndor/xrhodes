@@ -84,42 +84,6 @@ struct  Assigner: protected ValueFunctorCore<T>
 };
 
 //==============================================================================
-///@brief Adds its base value to everything you pass to it.
-template  <typename T>
-struct  Adder: protected ValueFunctorCore<T>
-{
-  typedef ValueFunctorCore<T> BaseType;
-  
-  explicit Adder(T value)
-  : BaseType(value)
-  {}
-
-  inline
-  void  operator()(T& d) const
-  {
-    d += BaseType::m_value;
-  }
-};
-
-//==============================================================================
-///@brief Multiplies everything you pass to it by its base value.
-template  <typename T>
-struct  Scaler: protected ValueFunctorCore<T>
-{
-  typedef ValueFunctorCore<T>  BaseType;
-
-  explicit Scaler(T value)
-  : BaseType(value)
-  {}
-
-  inline
-  void  operator()(T& d)
-  {
-    d *= BaseType::m_value;
-  }
-};
-
-//==============================================================================
 ///@brief Stores the smallest of all values passed to it. Uses operator< for
 /// comparison.
 template  <typename T>
@@ -317,39 +281,6 @@ struct  Bind2nd
   Operation op;
   Arg2      arg2;
 };
-
-//==============================================================================
-///@brief MemberCallers can be used to forward generic callbacks to member
-/// methods taking 0 - 3 arguments
-template  <class Callee, void(Callee::*pMethod)()>
-void  MemberCaller(void* pData)
-{
-  (static_cast<Callee*>(pData)->*pMethod)();
-}
-
-//==============================================================================
-template  <class Callee, typename Arg1,
-  void(Callee::*pMethod)(Arg1)>
-void  MemberCaller(void* pData, Arg1 arg1)
-{
-  (static_cast<Callee*>(pData)->*pMethod)(arg1);
-}
-
-//==============================================================================
-template  <class Callee, typename Arg1, typename Arg2,
-  void(Callee::*pMethod)(Arg1, Arg2)>
-void  MemberCaller(void* pData, Arg1 arg1, Arg2 arg2)
-{
-  (static_cast<Callee*>(pData)->*pMethod)(arg1, arg2);
-}
-
-//==============================================================================
-template  <class Callee, typename Arg1, typename Arg2, typename Arg3,
-  void(Callee::*pMethod)(Arg1, Arg2, Arg3)>
-void  MemberCaller(void* pData, Arg1 arg1, Arg2 arg2, Arg3 arg3)
-{
-  (static_cast<Callee*>(pData)->*pMethod)(arg1, arg2, arg3);
-}
 
 }  // XR
 
