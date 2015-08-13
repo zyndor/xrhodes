@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    16/07/2011
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_TYPESUTILS_HPP
@@ -75,6 +75,20 @@ struct  IsPointer<T*>
 };
 
 //==============================================================================
+///@brief Tells you whether T0 is the same type T1.
+template	<typename T0, typename T1>
+struct	IsEqualType
+{
+	enum { kResult = false };
+};
+
+template	<typename T0>
+struct	IsEqualType<T0, T0>
+{
+	enum { kResult = true };
+};
+
+//==============================================================================
 ///@brief Enforces T to be derived from B via implicit upcasting.
 template  <class T, class B>
 class AssertBase
@@ -97,10 +111,10 @@ public:
 ///@note  Remember, TypeId for const T or T* != TypeId for T.
 template  <typename T>
 inline
-unsigned int TypeId()
+size_t  TypeId()
 {
   static char c;
-  return reinterpret_cast<unsigned int>(&c);
+  return reinterpret_cast<size_t>(&c);
 }
 
 }  // XR
