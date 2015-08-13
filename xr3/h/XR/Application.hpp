@@ -27,46 +27,48 @@ namespace XR
 //==============================================================================
 class Application
 {
-  XR_NONOBJECT_DECL(Application)
+ 	XR_NONOBJECT_DECL(Application)
 public:
-  // types
-  enum  Event
-  {
-    EV_UPDATE,
-    EV_RENDER,
-    EV_SECOND,
-    kMaxEvents
-  };
-
-  struct  SecondEvent
-  {
-    int numRenders;
-    int numUpdates;
-  };
-
-  // static
-  static void   Init();
-  static void   Exit();
-    
-  static int32  GetFrameDelayMs();
-  static bool   IsRunning();
-  
-  static void   SetCallback(Event e, Callback pCb, void* pCbData);
-  
-  static void   BreakUpdate();
-  
-  static void   SetFrameDelayMs(int32 ms);
-
-  static void   Run();
+	// types
+	enum  Event
+	{
+		EV_UPDATE,
+		EV_RENDER,
+		EV_SECOND,
+		kMaxEvents
+	};
+	
+	struct  SecondEvent
+	{
+		int numRenders;
+		int numUpdates;
+	};
+	
+	// static
+	static void   Init();
+	static void   Exit();
+	  
+	static int32  GetFrameDelayMs();
+	static bool   IsRunning();
+	
+	static void   SetCallback(Event e, Callback pCb, void* pCbData);
+	
+	static void   BreakUpdate();
+	
+	static void   SetFrameDelayMs(int32 ms);
+	static void   SetFrameCappingMs(int32 ms);
+	
+	static void   Run();
   
 private:
-  // static
-  static int32           m_frameDelayMs;
-  
-  static bool            m_isRunning;
-  
-  static CallbackObject  m_arCallback[kMaxEvents];
-  static bool            m_breakUpdate;
+	// static
+	static int32           m_frameDelayMs;
+	static int32           m_frameCappingMs;
+	
+	static bool            m_isRunning;
+	
+	static CallbackObject  m_arCallback[kMaxEvents];
+	static bool            m_breakUpdate;
 };
 
 //==============================================================================
