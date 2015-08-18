@@ -33,7 +33,7 @@ template	<typename Return, class Callee>
 struct	MemFnAdaptor<Return, Callee>
 {
 	template	<Return(Callee::*Method)()>
-	static Return	Method(Callee& c)
+	static Return	Function(Callee& c)
 	{
 		return (c.*Method)();
 	}
@@ -43,7 +43,7 @@ template	<typename Return, class Callee>
 struct	MemFnAdaptor<Return, const Callee>
 {
 	template	<Return(Callee::*Method)() const>
-	static Return	Method(const Callee& c)
+	static Return	Function(const Callee& c)
 	{
 		return (c.*Method)();
 	}
@@ -55,7 +55,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, Callee, Arg1>
 {
 	template	<Return(Callee::*Method)(Arg1)>
-	static Return	Method(Callee& c, Arg1 arg1)
+	static Return	Function(Callee& c, Arg1 arg1)
 	{
 		return (c.*Method)(arg1);
 	} 
@@ -66,7 +66,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, const Callee, Arg1>
 {
 	template	<Return(Callee::*Method)(Arg1) const>
-	static Return	Method(const Callee& c, Arg1 arg1)
+	static Return	Function(const Callee& c, Arg1 arg1)
 	{
 		return (c.*Method)(arg1);
 	} 
@@ -79,7 +79,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, Callee, Arg1, Arg2>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2)>
-	static Return	Method(Callee& c, Arg1 arg1, Arg2 arg2)
+	static Return	Function(Callee& c, Arg1 arg1, Arg2 arg2)
 	{
 		return (c.*Method)(arg1, arg2);
 	}
@@ -91,7 +91,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, const Callee, Arg1, Arg2>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2) const>
-	static Return	Method(const Callee& c, Arg1 arg1, Arg2 arg2)
+	static Return	Function(const Callee& c, Arg1 arg1, Arg2 arg2)
 	{
 		return (c.*Method)(arg1, arg2);
 	}
@@ -105,7 +105,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, Callee, Arg1, Arg2, Arg3>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3)>
-	static Return	Method(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3)
+	static Return	Function(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3)
 	{
 		return (c.*Method)(arg1, arg2, arg3);
 	}
@@ -118,7 +118,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, const Callee, Arg1, Arg2, Arg3>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3) const>
-	static Return	Method(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3)
+	static Return	Function(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3)
 	{
 		return (c.*Method)(arg1, arg2, arg3);
 	}
@@ -133,7 +133,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, Callee, Arg1, Arg2, Arg3, Arg4>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3, Arg4)>
-	static Return	Method(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
+	static Return	Function(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
 	{
 		return (c.*Method)(arg1, arg2, arg3, arg4);
 	}
@@ -147,7 +147,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, const Callee, Arg1, Arg2, Arg3, Arg4>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3, Arg4) const>
-	static Return	Method(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
+	static Return	Function(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
 	{
 		return (c.*Method)(arg1, arg2, arg3, arg4);
 	}
@@ -163,7 +163,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, Callee, Arg1, Arg2, Arg3, Arg4, Arg5>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3, Arg4, Arg5)>
-	static Return	Method(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
+	static Return	Function(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
 	{
 		return (c.*Method)(arg1, arg2, arg3, arg4, arg5);
 	}
@@ -178,7 +178,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, const Callee, Arg1, Arg2, Arg3, Arg4, Arg5>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3, Arg4, Arg5) const>
-	static Return	Method(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
+	static Return	Function(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
 	{
 		return (c.*Method)(arg1, arg2, arg3, arg4, arg5);
 	}
@@ -194,7 +194,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>
-	static Return	Method(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6)
+	static Return	Function(Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6)
 	{
 		return (c.*Method)(arg1, arg2, arg3, arg4, arg5, arg6);
 	}
@@ -210,7 +210,7 @@ template	<typename Return, class Callee,
 struct	MemFnAdaptor<Return, const Callee, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6>
 {
 	template	<Return(Callee::*Method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6) const>
-	static Return	Method(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6)
+	static Return	Function(const Callee& c, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6)
 	{
 		return (c.*Method)(arg1, arg2, arg3, arg4, arg5, arg6);
 	}
