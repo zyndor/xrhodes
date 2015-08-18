@@ -88,7 +88,7 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))(m_arg1);
 	}
 
 protected:
@@ -116,7 +116,8 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1, m_arg2);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))
+			(BaseType::m_arg1, m_arg2);
 	}
 
 protected:
@@ -144,7 +145,8 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1, m_arg2, m_arg3);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))
+			(BaseType::m_arg1, BaseType::m_arg2, m_arg3);
 	}
 
 protected:
@@ -172,7 +174,8 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1, m_arg2, m_arg3, m_arg4);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))
+			(BaseType::m_arg1, BaseType::m_arg2, BaseType::m_arg3, m_arg4);
 	}
 
 protected:
@@ -200,7 +203,8 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1, m_arg2, m_arg3, m_arg4, m_arg5);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))
+			(BaseType::m_arg1, BaseType::m_arg2, BaseType::m_arg3, BaseType::m_arg4, m_arg5);
 	}
 
 protected:
@@ -228,7 +232,9 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1, m_arg2, m_arg3, m_arg4, m_arg5, m_arg6);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))
+			(BaseType::m_arg1, BaseType::m_arg2, BaseType::m_arg3, BaseType::m_arg4,
+				BaseType::m_arg5, m_arg6);
 	}
 
 protected:
@@ -256,7 +262,9 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1, m_arg2, m_arg3, m_arg4, m_arg5, m_arg6, m_arg7);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))
+			(BaseType::m_arg1, BaseType::m_arg2, BaseType::m_arg3, BaseType::m_arg4,
+				BaseType::m_arg5, BaseType::m_arg6, m_arg7);
 	}
 
 protected:
@@ -284,7 +292,9 @@ public:
 	// general
 	virtual Return	Execute()
 	{
-		return (*reinterpret_cast<Function>(m_pFunction))(m_arg1, m_arg2, m_arg3, m_arg4, m_arg5, m_arg6, m_arg7, m_arg8);
+		return (*reinterpret_cast<typename BaseType::Function>(BaseType::m_pFunction))
+			(BaseType::m_arg1, BaseType::m_arg2, BaseType::m_arg3, BaseType::m_arg4,
+				BaseType::m_arg5, BaseType::m_arg6, BaseType::m_arg7, m_arg8);
 	}
 
 protected:
