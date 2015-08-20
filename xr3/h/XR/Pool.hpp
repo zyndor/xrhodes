@@ -12,7 +12,7 @@
 #if !defined XR_POOL_HPP
 #define XR_POOL_HPP
 
-#include "HardStack.hpp"
+#include <list>
 #include "memory.hpp"
 
 namespace XR
@@ -91,12 +91,7 @@ public:
   ///@return  The number of frames on the Pool.
   int GetNumFrames() const;
   
-  ///@return  The number of legal Push() calls that you can make on this Pool.
-  int CanPush() const;
-
   ///@brief Creates a frame beginning at the point of the next allocation.
-  ///@note  You will have to make sure that the number of frames don't exceed
-  /// kMaxFrames.
   void  Push();
 
   ///@brief Flushes and removes the last frame.
@@ -109,7 +104,7 @@ public:
 
 protected:
   // types
-  typedef HardStack<Byte*, kMaxFrames> FrameStack;
+  typedef std::list<Byte*> FrameStack;
 
   // data
   Byte* m_parBuffer;
@@ -140,7 +135,7 @@ int Pool::CalculateSize() const
 inline
 int Pool::CalculateFrameSize() const
 {
-  return m_pEnd - (GetNumFrames() > 0 ? m_frames.Top() : m_parBuffer);
+  return m_pEnd - (m_frames.empty() ? m_parBuffer : m_frames.back());
 }
 
 //==============================================================================
@@ -154,14 +149,7 @@ int Pool::CalculateFree() const
 inline
 int Pool::GetNumFrames() const
 {
-  return m_frames.NumElements();
-}
-
-//==============================================================================
-inline
-int Pool::CanPush() const
-{
-  return FrameStack::kMaxSize - m_frames.NumElements();
+  return int(m_frames.size());
 }
 
 } // XR

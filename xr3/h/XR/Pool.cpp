@@ -8,6 +8,7 @@
 //
 //==============================================================================
 #include "Pool.hpp"
+#include "types.hpp"
 
 namespace XR
 {
@@ -71,7 +72,7 @@ void* Pool::RegainBuffer()
   m_isAuto = false;
   m_pNext = 0;
   m_pEnd = 0;
-  m_frames.Reset();
+  m_frames.clear();
   return m_parBuffer;
 }
 
@@ -122,22 +123,21 @@ void* Pool::Allocate(size_t numBytes)
 //==============================================================================
 void  Pool::Flush()
 {
-  m_pNext = m_frames.IsEmpty() ? m_parBuffer : m_frames.Top();
+  m_pNext = m_frames.empty() ? m_parBuffer : m_frames.back();
 }
 
 //==============================================================================
 void  Pool::Push()
 {
-  XR_ASSERT(Pool::Pool, CanPush());
-  m_frames.Push(m_pNext);
+  m_frames.push_back(m_pNext);
 }
 
 //==============================================================================
 void  Pool::Pop()
 {
-  XR_ASSERT(Pool::Pool, GetNumFrames() > 0);
+  XR_ASSERT(Pool::Pool, !m_frames.empty());
   Flush();
-  m_frames.Pop();
+  m_frames.pop_back();
 }
 
 } // XR
