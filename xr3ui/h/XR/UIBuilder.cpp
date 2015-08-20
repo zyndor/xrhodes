@@ -1633,8 +1633,8 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
   if(pParent != 0)
   {
     uint32  flags(GetXmlDimensionMask(pXml, "fillParent"));
-    int16   w((flags & XR_MASK_ID(XD_WIDTH)) != 0 ? pParent->w : pUIElem->w);
-    int16   h((flags & XR_MASK_ID(XD_HEIGHT)) != 0 ? pParent->h : pUIElem->h);
+    int   w((flags & XR_MASK_ID(XD_WIDTH)) != 0 ? pParent->w : pUIElem->w);
+    int   h((flags & XR_MASK_ID(XD_HEIGHT)) != 0 ? pParent->h : pUIElem->h);
     pUIElem->SetSize(w, h);
   }
   
@@ -1645,7 +1645,7 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
     XR_ASSERT(UIBuilder, pAlignTo != 0);
 
     int alignTo(XA_NONE);
-    int16 xTarget(0), yTarget(0);
+    int xTarget(0), yTarget(0);
 
     // horizontal
     alignTo = GetXmlAlignment(pXml, "alignToHorizontal");

@@ -133,7 +133,7 @@ void UIVerticalScrollingLayout::Render( UIRenderer* pRenderer ) const
 }
 
 //==============================================================================
-void UIVerticalScrollingLayout::SetYOffset( int16 yOffs )
+void UIVerticalScrollingLayout::SetYOffset(int yOffs)
 {
   if (yOffs > 0)
   {

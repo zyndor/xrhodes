@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    25/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UICASCADER_HPP
@@ -26,11 +26,11 @@ public:
   virtual ~UICascader();
 
   // general use
-  int16 GetHorizontalOffset() const;
-  int16 GetVerticalOffset() const;
+  int GetHorizontalOffset() const;
+  int GetVerticalOffset() const;
 
-  void  SetHorizontalOffset(int16 val);
-  void  SetVerticalOffset(int16 val);
+  void  SetHorizontalOffset(int val);
+  void  SetVerticalOffset(int val);
 
 protected:
   // internal use
@@ -40,22 +40,22 @@ protected:
   virtual void _SetHeightToContent();
 
   // data
-  int16 m_horizontalOffset;
-  int16 m_verticalOffset;
+  int m_horizontalOffset;
+  int m_verticalOffset;
 };
 
 //==============================================================================
 //  implementation
 //==============================================================================
 inline
-int16 UICascader::GetHorizontalOffset() const
+int UICascader::GetHorizontalOffset() const
 {
   return m_horizontalOffset;
 }
 
 //==============================================================================
 inline
-int16 UICascader::GetVerticalOffset() const
+int UICascader::GetVerticalOffset() const
 {
   return m_verticalOffset;
 }

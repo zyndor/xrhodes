@@ -64,7 +64,7 @@ void UICascader::_AlignElement( UIElement* pElem )
 }
 
 //==============================================================================
-void UICascader::SetHorizontalOffset( int16 val )
+void UICascader::SetHorizontalOffset( int val )
 {
   if (val != m_horizontalOffset)
   {
@@ -74,7 +74,7 @@ void UICascader::SetHorizontalOffset( int16 val )
 }
 
 //==============================================================================
-void UICascader::SetVerticalOffset( int16 val )
+void UICascader::SetVerticalOffset( int val )
 {
   if (val != m_verticalOffset)
   {
@@ -86,8 +86,8 @@ void UICascader::SetVerticalOffset( int16 val )
 //==============================================================================
 void UICascader::_SetWidthToContent()
 {
-  int16 xMin(std::numeric_limits<int16>::max());
-  int16 xMax(std::numeric_limits<int16>::min());
+  int xMin(std::numeric_limits<int>::max());
+  int xMax(std::numeric_limits<int>::min());
   for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     const UIElement*  pElem(*i0);
@@ -96,7 +96,7 @@ void UICascader::_SetWidthToContent()
       xMin = pElem->x;
     }
 
-    int16 right(pElem->CalculateRight());
+    int right(pElem->CalculateRight());
     if (right > xMax)
     {
       xMax = right;
@@ -109,8 +109,8 @@ void UICascader::_SetWidthToContent()
 //==============================================================================
 void UICascader::_SetHeightToContent()
 {
-  int16 yMin(std::numeric_limits<int16>::max());
-  int16 yMax(std::numeric_limits<int16>::min());
+  int yMin(std::numeric_limits<int>::max());
+  int yMax(std::numeric_limits<int>::min());
   for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     const UIElement*  pElem(*i0);
@@ -119,7 +119,7 @@ void UICascader::_SetHeightToContent()
       yMin = pElem->y;
     }
 
-    int16 bottom(pElem->CalculateBottom());
+    int bottom(pElem->CalculateBottom());
     if (bottom > yMax)
     {
       yMax = bottom;

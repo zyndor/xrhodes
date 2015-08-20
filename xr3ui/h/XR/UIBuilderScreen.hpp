@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    09/05/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_UIBUILDERSCREEN_HPP
@@ -55,7 +55,7 @@ public:
   ~UIBuilderScreen();
   
   // general
-  virtual void        Reposition(int16 width, int16 height);
+  virtual void        Reposition(int width, int height);
   
   void                SetConfiguration(const UIBuilder::Configuration& cfg);
   
@@ -74,27 +74,31 @@ public:
   int                 GetNumTweening() const;
   UIElement* const *  GetTweening() const; // no ownership transfer
 
-  void                MoveTweening(int16 x, int16 y);
+  void                MoveTweening(int x, int y);
 
   void                Destroy();
   
 protected:
   // data
-  UIContainer                   m_root;
-  UIBuilder                     m_builder;
-  int                           m_padding;
+#ifdef  XR_DEBUG
+  std::string   m_debugName;
+#endif  //XR_DEBUG
+
+  UIContainer   m_root;
+  UIBuilder     m_builder;
+  int           m_padding;
   
-  int                           m_numListeners;
-  UIElement**                   m_parpListeners;  // own the array, not the elements
+  int           m_numListeners;
+  UIElement**   m_parpListeners;  // own the array, not the elements
   
-  int                           m_numTweening;
-  UIElement**                   m_parpTweening;  // own the array, not the elements
+  int           m_numTweening;
+  UIElement**   m_parpTweening;  // own the array, not the elements
   
-  TweenCallback                 m_pTweenIn;
-  void*                         m_pTweenInData;
+  TweenCallback m_pTweenIn;
+  void*         m_pTweenInData;
   
-  TweenCallback                 m_pTweenOut;
-  void*                         m_pTweenOutData;
+  TweenCallback m_pTweenOut;
+  void*         m_pTweenOutData;
   
   // internal
   virtual void  _AddElements();

@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    21/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIGROWINGLAYOUTBASE_HPP
@@ -29,33 +29,33 @@ public:
   };
 
   // static
-  static void   SetDefaultSpacing(int16 spacing);
-  static int16  GetDefaultSpacing();
+  static void   SetDefaultSpacing(int spacing);
+  static int  GetDefaultSpacing();
 
   // structors
   UIGrowingLayoutBase();
   virtual ~UIGrowingLayoutBase();
 
   // virtual
-  virtual int16 CalculateElementsExtent() const =0;
+  virtual int CalculateElementsExtent() const =0;
 
   // general
   GrowDir   GetGrowDir() const;
   Alignment GetAlignment() const;
-  int16     GetSpacing() const;
+  int     GetSpacing() const;
 
   void  SetGrowDir(GrowDir growDir);
   void  SetAlignment(Alignment align);
-  void  SetSpacing(int16 spacing);
+  void  SetSpacing(int spacing);
 
 protected:
   // static
-  static int16  s_defaultSpacing;
+  static int  s_defaultSpacing;
 
   // data
   GrowDir   m_growDir;
   Alignment m_align;
-  int16     m_spacing;
+  int     m_spacing;
 };
 
 //==============================================================================
@@ -76,7 +76,7 @@ UIGrowingLayoutBase::Alignment UIGrowingLayoutBase::GetAlignment() const
 
 //==============================================================================
 inline
-int16 UIGrowingLayoutBase::GetSpacing() const
+int UIGrowingLayoutBase::GetSpacing() const
 {
   return m_spacing;
 }

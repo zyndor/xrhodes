@@ -1,15 +1,15 @@
 //-
 // Nuclear Heart Games
-// Robreed
+// XRhodes
 //
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
-#ifndef RB_UINAVIGATOR_HPP
-#define RB_UINAVIGATOR_HPP
+#if !defined XR_UINAVIGATOR_HPP
+#define XR_UINAVIGATOR_HPP
 
 #include  <map>
 #include  <XR/UIElement.hpp>
@@ -60,4 +60,4 @@ protected:
 
 } // XR
 
-#endif  //RB_UINAVIGATOR_HPP
+#endif  //XR_UINAVIGATOR_HPP

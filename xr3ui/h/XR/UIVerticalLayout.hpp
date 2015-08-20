@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    21/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIVERTICALLAYOUT_HPP
@@ -26,7 +26,7 @@ public:
   ~UIVerticalLayout();
 
   // general
-  virtual int16 CalculateElementsExtent() const;
+  virtual int CalculateElementsExtent() const;
 
 protected:
   // internal
@@ -39,7 +39,7 @@ protected:
 // implementation
 //==============================================================================
 inline
-int16 UIVerticalLayout::CalculateElementsExtent() const
+int UIVerticalLayout::CalculateElementsExtent() const
 {
   return m_lElements.empty() ? 0 : (m_growDir == GD_POSITIVE ? 
     (m_lElements.back()->CalculateBottom() - m_lElements.front()->y) :

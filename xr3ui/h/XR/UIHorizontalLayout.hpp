@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    21/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIHORIZONTALLAYOUT_HPP
@@ -27,7 +27,7 @@ public:
   virtual ~UIHorizontalLayout();
 
   // general
-  virtual int16 CalculateElementsExtent() const;
+  virtual int CalculateElementsExtent() const;
 
 protected:
   // internal
@@ -40,7 +40,7 @@ protected:
 // implementation
 //==============================================================================
 inline
-int16 UIHorizontalLayout::CalculateElementsExtent() const
+int UIHorizontalLayout::CalculateElementsExtent() const
 {
   return m_lElements.empty() ? 0 : (m_growDir == GD_POSITIVE ? 
     (m_lElements.back()->CalculateRight() - m_lElements.front()->x) :

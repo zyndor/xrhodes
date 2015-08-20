@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    21/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIELEMENT_HPP
@@ -45,7 +45,7 @@ public:
   
   // structors
   UIElement();
-  UIElement(int16 w, int16 h);
+  UIElement(int w, int h);
   virtual ~UIElement();
 
   // virtual
@@ -72,10 +72,10 @@ public:
   int           CalculateBottom() const;
 
   ///@brief Sets the position of the UIElement and calls OnChange().
-  void          SetPosition(int16 x1, int16 y1);
+  void          SetPosition(int x1, int y1);
 
   ///@brief Sets the size of the UIElement and calls OnChange().
-  void          SetSize(int16 w1, int16 h1);
+  void          SetSize(int w1, int h1);
 
   ///@brief Convenience method to set the size of the element to another
   /// element.
@@ -83,15 +83,15 @@ public:
 
   ///@brief Aligns the element horizontally to the given x coordinate and with
   /// the given alignment, then calls OnChange().
-  void          AlignHorizontally(int16 x1, Alignment hAlign);
+  void          AlignHorizontally(int x1, Alignment hAlign);
 
   ///@brief Aligns the element vertically to the given y coordinate and with
   /// the given alignment, then calls OnChange().
-  void          AlignVertically(int16 y1, Alignment vAlign);
+  void          AlignVertically(int y1, Alignment vAlign);
 
   ///@brief Aligns the element along both axes to the given coordinates and
   /// with the given alignment, then calls OnChange().
-  void          Align(int16 x1, int16 y1, Alignment hAlign, Alignment vAlign);
+  void          Align(int x1, int y1, Alignment hAlign, Alignment vAlign);
 
   ///@brief Convenience method to center the UIElement horizontally on
   /// screen.
@@ -106,7 +106,7 @@ public:
 
   ///@brief Offsets the position of the UIElement by @a vx and @a vy and calls
   /// OnChage().
-  void          Move(int16 vx, int16 vy);
+  void          Move(int vx, int vy);
 
   ///@brief Convenience method to register the element on a UIEventDispatcher
   /// for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
@@ -143,11 +143,11 @@ protected:
 
   ///@brief Aligns the element horizontally to the given x coordinate and with
   /// the given alignment, without calling OnChange().
-  void  _AlignHorizontally(int16 x1, Alignment hAlign);
+  void  _AlignHorizontally(int x1, Alignment hAlign);
 
   ///@brief Aligns the element vertically to the given x coordinate and with
   /// the given alignment, without calling OnChange().
-  void  _AlignVertically(int16 y1, Alignment vAlign);
+  void  _AlignVertically(int y1, Alignment vAlign);
 };
 
 //==============================================================================

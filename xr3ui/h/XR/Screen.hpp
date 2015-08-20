@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    07/05/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_SCREEN_HPP
@@ -41,7 +41,7 @@ public:
   virtual ~Screen();
 
   // virtual
-  virtual void    Reposition(int16 width, int16 height) =0;
+  virtual void    Reposition(int width, int height) =0;
   
   // general
   State           GetState() const;

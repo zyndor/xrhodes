@@ -4,16 +4,16 @@ namespace XR
 {
 
 //==============================================================================
-int16 UIGrowingLayoutBase::s_defaultSpacing(0);
+int UIGrowingLayoutBase::s_defaultSpacing(0);
 
 //==============================================================================
-int16 UIGrowingLayoutBase::GetDefaultSpacing()
+int UIGrowingLayoutBase::GetDefaultSpacing()
 {
   return s_defaultSpacing;
 }
 
 //==============================================================================
-void UIGrowingLayoutBase::SetDefaultSpacing( int16 spacing )
+void UIGrowingLayoutBase::SetDefaultSpacing( int spacing )
 {
   XR_ASSERT(UIGrowingLayoutBase, spacing >= 0);
   s_defaultSpacing = spacing;
@@ -39,7 +39,7 @@ void UIGrowingLayoutBase::SetGrowDir( GrowDir growDir )
 }
 
 //==============================================================================
-void UIGrowingLayoutBase::SetSpacing( int16 spacing )
+void UIGrowingLayoutBase::SetSpacing( int spacing )
 {
   XR_ASSERTMSG(IW_ASSERTION_CHANNEL_DEFAULT, spacing >= 0, ("Invalid negative spacing value."));
 

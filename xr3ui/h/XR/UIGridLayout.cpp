@@ -4,11 +4,11 @@ namespace XR
 {
 
 //==============================================================================
-int16 UIGridLayout::s_defaultRowPadding(0);
-int16 UIGridLayout::s_defaultColumnPadding(0);
+int UIGridLayout::s_defaultRowPadding(0);
+int UIGridLayout::s_defaultColumnPadding(0);
 
 //==============================================================================
-void UIGridLayout::SetDefaultPadding( int16 padding )
+void UIGridLayout::SetDefaultPadding( int padding )
 {
   XR_ASSERT(UIGridLayout, padding >= 0);
   s_defaultRowPadding = padding;
@@ -16,27 +16,27 @@ void UIGridLayout::SetDefaultPadding( int16 padding )
 }
 
 //==============================================================================
-void UIGridLayout::SetDefaultRowPadding( int16 padding )
+void UIGridLayout::SetDefaultRowPadding( int padding )
 {
   XR_ASSERT(UIGridLayout, padding >= 0);
   s_defaultRowPadding = padding;
 }
 
 //==============================================================================
-void UIGridLayout::SetDefaultColumnPadding( int16 padding )
+void UIGridLayout::SetDefaultColumnPadding( int padding )
 {
   XR_ASSERT(UIGridLayout, padding >= 0);
   s_defaultColumnPadding = padding;
 }
 
 //==============================================================================
-int16 UIGridLayout::GetDefaultRowPadding()
+int UIGridLayout::GetDefaultRowPadding()
 {
   return s_defaultRowPadding;
 }
 
 //==============================================================================
-int16 UIGridLayout::GetDefaultColumnPadding()
+int UIGridLayout::GetDefaultColumnPadding()
 {
   return s_defaultColumnPadding;
 }
@@ -104,7 +104,7 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
 }
 
 //==============================================================================
-void UIGridLayout::SetCellWidth(int16 wCell)
+void UIGridLayout::SetCellWidth(int wCell)
 {
   if (wCell != m_cellWidth)
   {
@@ -114,7 +114,7 @@ void UIGridLayout::SetCellWidth(int16 wCell)
 }
 
 //==============================================================================
-void UIGridLayout::SetCellHeight(int16 hCell)
+void UIGridLayout::SetCellHeight(int hCell)
 {
   if (hCell != m_cellHeight)
   {
@@ -124,7 +124,7 @@ void UIGridLayout::SetCellHeight(int16 hCell)
 }
 
 //==============================================================================
-void UIGridLayout::SetCellSize(int16 wCell, int16 hCell)
+void UIGridLayout::SetCellSize(int wCell, int hCell)
 {
   if (wCell != m_cellWidth || hCell != m_cellHeight)
   {
@@ -135,7 +135,7 @@ void UIGridLayout::SetCellSize(int16 wCell, int16 hCell)
 }
 
 //==============================================================================
-void UIGridLayout::SetColumnPadding(int16 padding)
+void UIGridLayout::SetColumnPadding(int padding)
 {
   if (padding != m_columnPadding)
   {
@@ -145,7 +145,7 @@ void UIGridLayout::SetColumnPadding(int16 padding)
 }
 
 //==============================================================================
-void UIGridLayout::SetRowPadding(int16 padding)
+void UIGridLayout::SetRowPadding(int padding)
 {
   if (padding != m_rowPadding)
   {
@@ -155,7 +155,7 @@ void UIGridLayout::SetRowPadding(int16 padding)
 }
 
 //==============================================================================
-void UIGridLayout::SetCellPadding(int16 xPadding, int16 yPadding)
+void UIGridLayout::SetCellPadding(int xPadding, int yPadding)
 {
   if (m_columnPadding != xPadding || m_rowPadding != yPadding)
   {
@@ -166,7 +166,7 @@ void UIGridLayout::SetCellPadding(int16 xPadding, int16 yPadding)
 }
 
 //==============================================================================
-void UIGridLayout::SetNumRows( int16 rows )
+void UIGridLayout::SetNumRows( int rows )
 {
   XR_ASSERT(UIGridLayout, rows >= 0);
   if (m_numRows != rows)
@@ -177,7 +177,7 @@ void UIGridLayout::SetNumRows( int16 rows )
 }
 
 //==============================================================================
-void UIGridLayout::SetNumColumns( int16 cols )
+void UIGridLayout::SetNumColumns( int cols )
 {
   XR_ASSERT(UIGridLayout, cols >= 0);
   if (m_numColumns != cols)
@@ -188,7 +188,7 @@ void UIGridLayout::SetNumColumns( int16 cols )
 }
 
 //==============================================================================
-void UIGridLayout::SetGrid( int16 cols, int16 rows )
+void UIGridLayout::SetGrid( int cols, int rows )
 {
   XR_ASSERT(UIGridLayout, rows >= 0);
   XR_ASSERT(UIGridLayout, cols >= 0);

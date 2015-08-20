@@ -61,7 +61,7 @@ void UIVerticalProgressBar::Render() const
 
     if (isFdPositive)
     {
-      int16 top(y + yMin);
+      int top(y + yMin);
 
       if (sprite.IsUVRotated())
       {
@@ -81,7 +81,7 @@ void UIVerticalProgressBar::Render() const
     }
     else
     {
-      int16 bottom(y + yMax);
+      int bottom(y + yMax);
 
       if (sprite.IsUVRotated())
       {

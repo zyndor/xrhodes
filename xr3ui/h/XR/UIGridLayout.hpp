@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    21/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIGRIDLAYOUT_HPP
@@ -23,47 +23,47 @@ class UIGridLayout: public UIContainer
 {
 public:
   // static
-  static int16  GetDefaultRowPadding();
-  static int16  GetDefaultColumnPadding();
+  static int		GetDefaultRowPadding();
+  static int		GetDefaultColumnPadding();
 
-  static void   SetDefaultPadding(int16 padding);
-  static void   SetDefaultRowPadding(int16 padding);
-  static void   SetDefaultColumnPadding(int16 padding);
+  static void   SetDefaultPadding(int padding);
+  static void   SetDefaultRowPadding(int padding);
+  static void   SetDefaultColumnPadding(int padding);
 
   // structors
   UIGridLayout();
   virtual ~UIGridLayout();
 
   // general
-  int16 GetNumRows() const;
-  int16 GetNumColumns() const;
+  int		GetNumRows() const;
+  int		GetNumColumns() const;
 
-  int16 GetCellWidth() const;
-  int16 GetCellHeight() const;
+  int		GetCellWidth() const;
+  int		GetCellHeight() const;
 
-  int16 GetColumnPadding() const;
-  int16 GetRowPadding() const;
+  int		GetColumnPadding() const;
+  int		GetRowPadding() const;
 
-  void  SetCellWidth(int16 wCell);
-  void  SetCellHeight(int16 hCell);
-  void  SetCellSize(int16 wCell, int16 hCell);
+  void  SetCellWidth(int wCell);
+  void  SetCellHeight(int hCell);
+  void  SetCellSize(int wCell, int hCell);
 
-  void  SetColumnPadding(int16 padding);
-  void  SetRowPadding(int16 padding);
-  void  SetCellPadding(int16 xPadding, int16 yPadding);
+  void  SetColumnPadding(int padding);
+  void  SetRowPadding(int padding);
+  void  SetCellPadding(int xPadding, int yPadding);
 
   void  SetHorizontalAlignment(Alignment hAlign);
   void  SetVerticalAlignment(Alignment vAlign);
   void  SetAlignment(Alignment hAlign, Alignment vAlign);
 
-  void  SetNumRows(int16 rows);
-  void  SetNumColumns(int16 cols);
-  void  SetGrid(int16 columns, int16 rows);
+  void  SetNumRows(int rows);
+  void  SetNumColumns(int cols);
+  void  SetGrid(int columns, int rows);
 
 protected:
   // static
-  static int16  s_defaultRowPadding;
-  static int16  s_defaultColumnPadding;
+  static int  s_defaultRowPadding;
+  static int  s_defaultColumnPadding;
 
   // data
   Alignment m_hAlign;
@@ -71,10 +71,10 @@ protected:
 
   int   m_numColumns;
   int   m_numRows;
-  int16 m_cellWidth;
-  int16 m_cellHeight;
-  int16 m_columnPadding;
-  int16 m_rowPadding;
+  int m_cellWidth;
+  int m_cellHeight;
+  int m_columnPadding;
+  int m_rowPadding;
 
   // internal
   virtual void _AlignElement( UIElement* pElem );
@@ -87,14 +87,14 @@ protected:
 // implementation
 //==============================================================================
 inline
-int16 UIGridLayout::GetNumRows() const
+int UIGridLayout::GetNumRows() const
 {
   return m_numRows;
 }
 
 //==============================================================================
 inline
-int16 UIGridLayout::GetNumColumns() const
+int UIGridLayout::GetNumColumns() const
 {
   return m_numColumns;
 }

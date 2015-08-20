@@ -75,6 +75,15 @@ void  UIBuilderScreen::SetConfiguration(const UIBuilder::Configuration& cfg)
 //==============================================================================
 bool  UIBuilderScreen::Build(TiXmlElement* pXml)
 {
+#ifdef  XR_DEBUG
+  TiXmlNode*  pNode(pXml);
+  while(pNode->Type() != TiXmlNode::DOCUMENT)
+  {
+    pNode = pNode->Parent();
+  }
+  m_debugName = pNode->Value();
+#endif  //XR_DEBUG
+
   Destroy();
   
   XR_ASSERT(UIBuilderScreen, pXml != 0);
@@ -128,7 +137,7 @@ void  UIBuilderScreen::SetTweenOut(TweenCallback pOnTweenOut, void* pData)
 }
 
 //==============================================================================
-void  UIBuilderScreen::MoveTweening(int16 x, int16 y)
+void  UIBuilderScreen::MoveTweening(int x, int y)
 {
   for(UIElement** i0 = m_parpTweening, ** i1 = i0 + m_numTweening; i0 != i1; ++i0)
   {
@@ -184,12 +193,12 @@ void  UIBuilderScreen::_RemoveElements()
 }
 
 //==============================================================================
-void  UIBuilderScreen::Reposition(int16 width, int16 height)
+void  UIBuilderScreen::Reposition(int width, int height)
 {
   XR_ASSERT(UIBuilderScreen, width > 0);
   XR_ASSERT(UIBuilderScreen, height > 0);
-  const int16 arX[3] = { int16(m_padding), width / 2, width - m_padding };
-  const int16 arY[3] = { int16(m_padding), height / 2, height - m_padding };
+  const int arX[3] = { int(m_padding), width / 2, width - m_padding };
+  const int arY[3] = { int(m_padding), height / 2, height - m_padding };
   for(int i = 0; i < kNumAnchors; ++i)
   {
     UIElement*  p(m_builder.GetElement(karAnchorName[i]));

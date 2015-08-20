@@ -32,23 +32,23 @@ void UIImagePanel::Render() const
   
   float xSplit(wSprite * hSplit);
   float ySplit(hSprite * vSplit);
-  int16 ixSplit(static_cast<int16>(Round(xSplit)));
-  int16 iySplit(static_cast<int16>(Round(ySplit)));
+  int ixSplit(static_cast<int>(Round(xSplit)));
+  int iySplit(static_cast<int>(Round(ySplit)));
   
-  int16 arXCoords[4] =
+  int arXCoords[4] =
   {
-    x + (int16)XR::Round(sprite.GetLeftPadding()),
+    x + (int)XR::Round(sprite.GetLeftPadding()),
     x + ixSplit,
     x + w - ixSplit,
-    x + w - (int16)XR::Round(sprite.GetRightPadding())
+    x + w - (int)XR::Round(sprite.GetRightPadding())
   };
 
-  int16 arYCoords[4] =
+  int arYCoords[4] =
   {
-    y + (int16)XR::Round(sprite.GetTopPadding()),
+    y + (int)XR::Round(sprite.GetTopPadding()),
     y + iySplit,
     y + h - iySplit,
-    y + h - (int16)XR::Round(sprite.GetBottomPadding())
+    y + h - (int)XR::Round(sprite.GetBottomPadding())
   };
   
   const RenderStream& rsSpriteUVs(sprite.GetUVs());
@@ -207,23 +207,23 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
 
   float xSplit(wSprite * hSplit);
   float ySplit(hSprite * vSplit);
-  int16 ixSplit(static_cast<int16>(Round(xSplit)));
-  int16 iySplit(static_cast<int16>(Round(ySplit)));
+  int ixSplit(static_cast<int>(Round(xSplit)));
+  int iySplit(static_cast<int>(Round(ySplit)));
   
-  int16 arXCoords[4] =
+  int arXCoords[4] =
   {
-    x + (int16)XR::Round(sprite.GetLeftPadding()),
+    x + (int)XR::Round(sprite.GetLeftPadding()),
     x + ixSplit,
     x + w - ixSplit,
-    x + w - (int16)XR::Round(sprite.GetRightPadding())
+    x + w - (int)XR::Round(sprite.GetRightPadding())
   };
 
-  int16 arYCoords[4] =
+  int arYCoords[4] =
   {
-    y + (int16)XR::Round(sprite.GetTopPadding()),
+    y + (int)XR::Round(sprite.GetTopPadding()),
     y + iySplit,
     y + h - iySplit,
-    y + h - (int16)XR::Round(sprite.GetBottomPadding())
+    y + h - (int)XR::Round(sprite.GetBottomPadding())
   };
 
   const RenderStream& rsSpriteUVs(sprite.GetUVs());

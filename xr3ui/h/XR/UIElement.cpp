@@ -12,7 +12,7 @@ UIElement::UIElement()
 {}
 
 //==============================================================================
-UIElement::UIElement( int16 w, int16 h )
+UIElement::UIElement(int w, int h)
 : Rect(0, 0, w, h),
   m_pParent(0)
 {}
@@ -38,7 +38,7 @@ void  UIElement::OnChange()
 {}
 
 //==============================================================================
-void UIElement::SetPosition( int16 x1, int16 y1 )
+void UIElement::SetPosition( int x1, int y1 )
 {
   x = x1;
   y = y1;
@@ -46,7 +46,7 @@ void UIElement::SetPosition( int16 x1, int16 y1 )
 }
 
 //==============================================================================
-void UIElement::SetSize( int16 w1, int16 h1 )
+void UIElement::SetSize( int w1, int h1 )
 {
   XR_ASSERTMSG(UIElement, w1 >= 0, ("Invalid negative width value."));
   XR_ASSERTMSG(UIElement, h1 >= 0, ("Invalid negative height value."));
@@ -56,7 +56,7 @@ void UIElement::SetSize( int16 w1, int16 h1 )
 }
 
 //==============================================================================
-void UIElement::Move( int16 vx, int16 vy )
+void UIElement::Move( int vx, int vy )
 {
   SetPosition(x + vx, y + vy);
 }
@@ -70,21 +70,21 @@ void UIElement::Resize( const UIElement* pElem )
 }
 
 //==============================================================================
-void UIElement::AlignHorizontally( int16 x1, Alignment hAlign )
+void UIElement::AlignHorizontally( int x1, Alignment hAlign )
 {
   _AlignHorizontally(x1, hAlign);
   OnChange();
 }
 
 //==============================================================================
-void UIElement::AlignVertically( int16 y1, Alignment vAlign )
+void UIElement::AlignVertically( int y1, Alignment vAlign )
 {
   _AlignVertically(y1, vAlign);
   OnChange();
 }
 
 //==============================================================================
-void UIElement::Align( int16 x1, int16 y1, Alignment hAlign, Alignment vAlign )
+void UIElement::Align( int x1, int y1, Alignment hAlign, Alignment vAlign )
 {
   _AlignHorizontally(x1, hAlign);
   _AlignVertically(y1, vAlign);
@@ -126,7 +126,7 @@ void UIElement::_CenterVertically()
 }
 
 //==============================================================================
-void UIElement::_AlignHorizontally( int16 x1, Alignment hAlign )
+void UIElement::_AlignHorizontally( int x1, Alignment hAlign )
 {
   switch (hAlign)
   {
@@ -145,7 +145,7 @@ void UIElement::_AlignHorizontally( int16 x1, Alignment hAlign )
 }
 
 //==============================================================================
-void UIElement::_AlignVertically( int16 y1, Alignment vAlign )
+void UIElement::_AlignVertically( int y1, Alignment vAlign )
 {
   switch (vAlign)
   {

@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    21/06/2012
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIVERTICALSCROLLINGLAYOUT_HPP
@@ -26,12 +26,12 @@ public:
   virtual ~UIVerticalScrollingLayout();
 
   // general use
-  int16         GetYOffset() const;
-  int16&        GetYOffsetRef();
+  int         GetYOffset() const;
+  int&        GetYOffsetRef();
   float         GetSensitivity() const;
   bool          IsTouched() const;
 
-  void          SetYOffset(int16 yOffs);
+  void          SetYOffset(int yOffs);
   void          SetSensitivity(float s);
 
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
@@ -42,11 +42,11 @@ public:
 
 protected:
   // data
-  int16 m_yOffset;
+  int m_yOffset;
   float m_sensitivity;
 
   bool  m_isTouched;
-  int16 m_lastTouchY;
+  int m_lastTouchY;
 
   // internal
   virtual void _AlignElement( UIElement* pElem );
@@ -56,14 +56,14 @@ protected:
 // implementation
 //==============================================================================
 inline
-int16 UIVerticalScrollingLayout::GetYOffset() const
+int UIVerticalScrollingLayout::GetYOffset() const
 {
   return m_yOffset;
 }
 
 //==============================================================================
 inline
-int16& UIVerticalScrollingLayout::GetYOffsetRef()
+int& UIVerticalScrollingLayout::GetYOffsetRef()
 {
   return m_yOffset;
 }

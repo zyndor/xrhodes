@@ -17,7 +17,7 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
 {
   if (m_align != AL_NOALIGN)
   {
-    int16 xElem(x);
+    int xElem(x);
     switch (m_align)
     {
     case  AL_LOW:
@@ -34,7 +34,7 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
     pElem->x = xElem;
   }
 
-  int16 yElem(0);
+  int yElem(0);
   if (m_lElements.size() > 0)
   {
     UIElement*  pLast(m_lElements.back());

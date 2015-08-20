@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub
 // @date    23/08/2013
 //
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_UIRADIOBUTTON_HPP
