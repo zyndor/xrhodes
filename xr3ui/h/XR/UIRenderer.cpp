@@ -118,9 +118,11 @@ void UIRenderer::Render()
     Material*  pMaterial(m_parpMaterial[i]);
 
     int i1(i + 1);
-    while (i1 < m_numSpritesConsumed && m_parpMaterial[i1] == pMaterial)
+    Material*  pMatCompare(m_parpMaterial[i1]);
+    while (i1 < m_numSpritesConsumed && pMatCompare == pMaterial)
     {
       ++i1;
+      ++pMatCompare;
     }
 
     int numSprites(i1 - i);
