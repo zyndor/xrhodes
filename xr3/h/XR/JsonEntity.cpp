@@ -269,7 +269,7 @@ void  Object::AddChild(const char* pKey, Entity* pEntity)
 }
 
 //==============================================================================
-void  Object::AddChild(const char* pKey, int keySize, Entity* pEntity)
+void  Object::AddChild(const char* pKey, size_t keySize, Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
   AddChild(Hash::String(pKey, keySize), pEntity);

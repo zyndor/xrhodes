@@ -147,7 +147,7 @@ public:
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 
   void                AddChild(const char* pKey, Entity* pEntity);
-  void                AddChild(const char* pKey, int keySize, Entity* pEntity);
+  void                AddChild(const char* pKey, size_t keySize, Entity* pEntity);
   void                AddChild(uint32 hash, Entity* pEntity);
 
   const Entity*       GetFirstChild() const;
