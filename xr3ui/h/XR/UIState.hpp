@@ -47,57 +47,57 @@ public:
   virtual ~UIState();
   
   // general
-  UIRenderer* GetRenderer() const;  // no ownership transfer
-  void        SetRenderer(UIRenderer* pRenderer);  // no ownership transfer
+  UIRenderer*					GetRenderer() const;  // no ownership transfer
+  void								SetRenderer(UIRenderer* pRenderer);  // no ownership transfer
 
+	virtual void				Init();
+	virtual void				Update(int32 ms, Result& result);
+	virtual void				Render();
+	virtual void				Shutdown();
+	
 protected:
   // typedef
   typedef void(*Callback)(void*);
   
   // static
-  static UIState* s_pActiveInstance;
+  static UIState*			s_pActiveInstance;
 
   // virtual
-  virtual void _Init() =0;
-  virtual void _Shutdown() =0;
-  virtual void _Update(int32 ms) =0;
-  virtual void _Render();
+  virtual void				_Init() =0;
+  virtual void				_Shutdown() =0;
+  virtual void				_Update(int32 ms, Result& result) =0;
+  virtual void				_Render();
 
-  // internal
-  virtual void  Init();
-  virtual void  Update(int32 ms);
-  virtual void  Render();
-  virtual void  Shutdown();
-
+	// internal
   UIContainer&        GetUIRoot();
-  UIEventDispatcher& GetDispatcher();
+  UIEventDispatcher&	GetDispatcher();
   
-  void  PushModality(Callback pOnModalityPopCb, void* pOnModalityPopCbData);
-  void  RequestModalityPop();
+  void								PushModality(Callback pOnModalityPopCb, void* pOnModalityPopCbData);
+  void								RequestModalityPop();
 
-  virtual void _OnModalityRenderStart( int modalitiesRendered );
+  virtual void				_OnModalityRenderStart( int modalitiesRendered );
 
 private:
   // typedef
   struct  Modality
   {
-    UIContainer         container;
-    UIEventDispatcher  dispatcher;
-    Callback            pOnModalityPopCb;
-    void*               pOnModalityPopCbData;
+    UIContainer        container;
+    UIEventDispatcher	dispatcher;
+    Callback          pOnModalityPopCb;
+    void*             pOnModalityPopCbData;
   };
   
   typedef std::list<Modality> ModalityList;
 
   // internal
-  void  PopModality();
+  void								PopModality();
 
   // data
-  ModalityList  m_modalities;
-  bool          m_isModalityPopRequested;
+  ModalityList				m_modalities;
+  bool								m_isModalityPopRequested;
   
-  UIRenderer*   m_pRenderer;  // no ownership
-};
+  UIRenderer*					m_pRenderer;  // no ownership
+};	
 
 //==============================================================================
 // implementation

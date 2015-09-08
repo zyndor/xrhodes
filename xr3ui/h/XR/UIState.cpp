@@ -42,7 +42,7 @@ void UIState::Shutdown()
 }
 
 //==============================================================================
-void UIState::Update(int32 ms)
+void UIState::Update(int32 ms, Result& result)
 {
   if (m_isModalityPopRequested)
   {
@@ -50,7 +50,7 @@ void UIState::Update(int32 ms)
     m_isModalityPopRequested = false;
   }
 
-  _Update(ms);
+  _Update(ms, result);
 }
 
 //==============================================================================
