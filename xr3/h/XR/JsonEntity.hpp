@@ -6,7 +6,7 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    15/07/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_JSONENTITY_HPP
@@ -41,9 +41,6 @@ enum  Type
 class Entity 
 {
 public:
-  // static
-  static void Deleter(Entity* p);
-
   // structors
   Entity(Type t);
   virtual ~Entity();
@@ -65,6 +62,8 @@ public:
   Entity*             LinkNextSibling(Entity* p);  // returns previous value
 
   // virtual
+  virtual Entity*     Clone() const =0;
+  
   virtual int         GetNumChildren() const =0;  // objects. arrays and values return 0
   virtual int         GetNumElements() const =0;  // arrays. objects and values return 0
   virtual int         GetValueSize() const =0;    // values. objects and arrays return 0
@@ -76,10 +75,10 @@ public:
   
 private:
   // data
-  Type        m_type;
+  Type                m_type;
   
-  Entity* m_pPrevSibling; // no ownership
-  Entity* m_pNextSibling; // no ownership
+  Entity*              m_pPrevSibling; // no ownership
+  Entity*              m_pNextSibling; // no ownership
 };
 
 //==============================================================================
@@ -93,6 +92,7 @@ public:
 
   // structors
   Value();
+  Value(const Value& rhs);
   explicit Value(std::string value);
   explicit Value(int i);
   explicit Value(double d);
@@ -106,6 +106,8 @@ public:
   void                SetValue(double d);
   void                SetValue(std::string str);
 
+  virtual Value*      Clone() const;
+  
   virtual int         GetNumChildren() const;  // objects. arrays and values return 0
   virtual int         GetNumElements() const;  // arrays. objects and values return 0
   virtual int         GetValueSize() const;    // values. objects and arrays return 0
@@ -131,15 +133,21 @@ private:
 class Object: public Entity
 {
 public:
+  // types
+  typedef std::list<std::string>  StringList;
+  
   // using
   using Entity::GetChild;
   using Entity::GetElement;
 
   // structors
   Object();
+  Object(const Object& rhs);
   ~Object();
 
   // general
+  virtual Object*     Clone() const;
+  
   virtual int         GetNumChildren() const;  // objects. arrays and values return 0
   virtual int         GetNumElements() const;  // arrays. objects and values return 0
   virtual int         GetValueSize() const;    // values. objects and arrays return 0
@@ -148,8 +156,10 @@ public:
 
   void                AddChild(const char* pKey, Entity* pEntity);
   void                AddChild(const char* pKey, size_t keySize, Entity* pEntity);
-  void                AddChild(uint32 hash, Entity* pEntity);
-
+  void                AddChild(std::string name, Entity* pEntity);
+  
+  void                GetChildNames(StringList& sl) const;
+  
   const Entity*       GetFirstChild() const;
   const Entity*       GetLastChild() const;
   
@@ -161,10 +171,26 @@ public:
 
 protected:
   // types
-  typedef std::map<uint32, Entity*>  EntityMap;
+  struct  Child
+  {
+    // types
+    typedef std::map<uint32, Child>      Map;
 
+    struct  GetName
+    {
+      std::string  operator()(const Map::value_type& v) const
+      {
+        return v.second.name;
+      }
+    };
+    
+    // data
+    std::string  name;
+    Entity*      pEntity;
+  };
+  
   // data
-  EntityMap m_children;
+  Child::Map          m_children;
   
 private:
   // disabled
@@ -174,8 +200,8 @@ private:
 };
 
 //==============================================================================
-///@brief Contains an array of elements. While these can be of
-/// whatever type, they are not keyed to names.
+///@brief Contains an array of elements. While these can be of whatever type,
+/// they are not keyed to names.
 class Array:  public Entity
 {
 public:
@@ -185,9 +211,12 @@ public:
 
   // structors
   Array();
+  Array(const Array& rhs);
   ~Array();
 
   // general
+  virtual Array*      Clone() const;
+  
   virtual int         GetNumChildren() const;  // objects. arrays and values return 0
   virtual int         GetNumElements() const;  // arrays. objects and values return 0
   virtual int         GetValueSize() const;    // values. objects and arrays return 0
@@ -248,14 +277,14 @@ Object* Entity::ToObject()
 
 //==============================================================================
 inline
-Entity* Entity::GetChild( const char* pKey ) const
+Entity* Entity::GetChild(const char* pKey) const
 {
   return GetChild(pKey, ANY);
 }
 
 //==============================================================================
 inline
-Entity* Entity::GetElement( int id ) const
+Entity* Entity::GetElement(int id) const
 {
   return GetElement(id, ANY);
 }

@@ -2,7 +2,7 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
 #include <cstring>
@@ -10,17 +10,12 @@
 #include <sstream>
 #include "Hash.hpp"
 #include "JsonEntity.hpp"
+#include "functors.hpp"
 
 namespace XR
 {
 namespace JSON
 {
-
-//==============================================================================  
-void Entity::Deleter(Entity* p)
-{
-  delete p;
-}
 
 //==============================================================================
 Entity::Entity(Type t)
@@ -36,9 +31,14 @@ Entity::~Entity()
 {}
 
 //==============================================================================
-Entity* Entity::LinkPrevSibling( Entity* p )
+Entity* Entity::LinkPrevSibling(Entity* p)
 {
   Entity* pTemp(m_pPrevSibling);
+  if (pTemp != 0)
+  {
+    pTemp->m_pNextSibling = 0;
+  }
+  
   m_pPrevSibling = p;
   if (p != 0)
   {
@@ -49,9 +49,14 @@ Entity* Entity::LinkPrevSibling( Entity* p )
 }
 
 //==============================================================================
-Entity* Entity::LinkNextSibling( Entity* p )
+Entity* Entity::LinkNextSibling(Entity* p)
 {
   Entity* pTemp(m_pNextSibling);
+  if (pTemp != 0)
+  {
+    pTemp->m_pPrevSibling = 0;
+  }
+  
   m_pNextSibling = p;
   if (p != 0)
   {
@@ -67,6 +72,14 @@ Value::Value()
 : Entity(VALUE),
   m_parValue(0)
 {}
+
+//==============================================================================
+Value::Value(const Value& rhs)
+: Entity(VALUE),
+  m_parValue(0)
+{
+  SetValue(rhs.m_parValue);
+}
 
 //==============================================================================
 Value::Value(const char* pValue, size_t len)
@@ -123,13 +136,13 @@ const char* Value::GetValue() const
 }
 
 //==============================================================================
-Entity* Value::GetChild( const char* pKey, Type acceptType ) const
+Entity* Value::GetChild(const char* pKey, Type acceptType) const
 {
   return 0;
 }
 
 //==============================================================================
-Entity* Value::GetElement( int id, Type acceptType ) const
+Entity* Value::GetElement(int id, Type acceptType) const
 {
   return 0;
 }
@@ -197,26 +210,49 @@ void  Value::SetValue(std::string str)
 }
 
 //==============================================================================
+Value* Value::Clone() const
+{
+  return new Value(*this);
+}
+
+//==============================================================================
 Object::Object()
 : Entity(OBJECT),
   m_children()
 {}
 
 //==============================================================================
+Object::Object(const Object& rhs)
+: Entity(OBJECT),
+  m_children(rhs.m_children)
+{
+  for (Child::Map::iterator i0 = m_children.begin(), i1 = m_children.end();
+    i0 != i1; ++i0)
+  {
+    i0->second.pEntity = i0->second.pEntity->Clone();
+  }
+}
+
+//==============================================================================
 Object::~Object()
 {
-  while (!m_children.empty())
+  for (Child::Map::iterator i0 = m_children.begin(), i1 = m_children.end();
+    i0 != i1; ++i0)
   {
-    EntityMap::iterator iDelete(m_children.begin());
-    delete iDelete->second;
-    m_children.erase(iDelete);
+    delete i0->second.pEntity;
   }
+}
+
+//==============================================================================
+Object* Object::Clone() const
+{
+  return new Object(*this);
 }
 
 //==============================================================================
 int Object::GetNumChildren() const
 {
-  return m_children.size();
+  return int(m_children.size());
 }
 
 //==============================================================================
@@ -238,25 +274,23 @@ const char* Object::GetValue() const
 }
 
 //==============================================================================
-Entity* Object::GetChild( const char* pKey, Type acceptType ) const
+Entity* Object::GetChild(const char* pKey, Type acceptType) const
 {
   XR_ASSERT(Object, pKey != 0);
   uint32  hash(Hash::String(pKey));
-  EntityMap::const_iterator iFind(m_children.find(hash));
+  Child::Map::const_iterator iFind(m_children.find(hash));
+  Entity* pResult = 0;
   if (iFind != m_children.end())
   {
     XR_ASSERT(Object, acceptType == ANY ||
-      iFind->second->GetType() == acceptType);
-    return iFind->second;
+      iFind->second.pEntity->GetType() == acceptType);
+    pResult = iFind->second.pEntity;
   }
-  else
-  {
-    return 0;
-  }
+  return pResult;
 }
 
 //==============================================================================
-Entity* Object::GetElement( int id, Type acceptType ) const
+Entity* Object::GetElement(int id, Type acceptType) const
 {
   return 0;
 }
@@ -265,76 +299,87 @@ Entity* Object::GetElement( int id, Type acceptType ) const
 void  Object::AddChild(const char* pKey, Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
-  AddChild(Hash::String(pKey), pEntity);
+  AddChild(std::string(pKey), pEntity);
 }
 
 //==============================================================================
 void  Object::AddChild(const char* pKey, size_t keySize, Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
-  AddChild(Hash::String(pKey, keySize), pEntity);
+  AddChild(std::string(pKey, keySize), pEntity);
 }
 
 //==============================================================================
-void  Object::AddChild(uint32 hash, Entity* pEntity)
+void  Object::AddChild(std::string name, Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
-  EntityMap::iterator iFind(m_children.find(hash));
+  const uint32  hash(Hash::String(name.c_str()));
+  Child::Map::iterator iFind(m_children.find(hash));
   if (iFind != m_children.end())
   {
-    delete iFind->second;
+    delete iFind->second.pEntity;
+    iFind->second.pEntity = pEntity;
   }
-  m_children[hash] = pEntity;
-
-  if (m_children.size() > 1)
+  else
   {
+    Child&  c(m_children[hash]);
+    c.pEntity = pEntity;
+    c.name = name;
     iFind = m_children.find(hash);
-    
-    EntityMap::iterator iPrev(iFind);
-    EntityMap::iterator iNext(iFind);
-    ++iNext;
-    bool  hasPrev(iPrev != m_children.begin());
-    bool  hasNext(iNext != m_children.end());
-    if (hasPrev)
-    {
-      --iPrev;
-      XR_ASSERT(Object, hasNext || iPrev->second->GetNextSibling() == 0);
-      iPrev->second->LinkNextSibling(pEntity);
-    }
-    if (hasNext)
-    {
-      XR_ASSERT(Object, hasPrev || iPrev->second->GetPrevSibling() == 0);
-      iNext->second->LinkPrevSibling(pEntity);      
-    }
   }
+
+  Child::Map::iterator iPrev(iFind);
+  Child::Map::iterator iNext(iFind);
+  ++iNext;  // we know that an object keyed to hash exists.
+  bool  hasPrev(iPrev != m_children.begin());
+  bool  hasNext(iNext != m_children.end());
+  if (hasPrev)
+  {
+    --iPrev;
+    XR_ASSERT(Object, hasNext || iPrev->second.pEntity->GetNextSibling() == 0);
+    iPrev->second.pEntity->LinkNextSibling(pEntity);
+  }
+  
+  if (hasNext)
+  {
+    XR_ASSERT(Object, hasPrev || iPrev->second.pEntity->GetPrevSibling() == 0);
+    iNext->second.pEntity->LinkPrevSibling(pEntity);
+  }
+}
+
+//==============================================================================
+void  Object::GetChildNames(StringList& sl) const
+{
+  std::transform(m_children.begin(), m_children.end(), std::back_inserter(sl),
+    Child::GetName());
 }
 
 //==============================================================================
 Entity* Object::GetFirstChild()
 {
-  EntityMap::iterator i0(m_children.begin());
-  return i0 != m_children.end() ? i0->second : 0;
+  Child::Map::iterator i0(m_children.begin());
+  return i0 != m_children.end() ? i0->second.pEntity : 0;
 }
 
 //==============================================================================
 Entity* Object::GetLastChild()
 {
-  EntityMap::reverse_iterator i0(m_children.rbegin());
-  return i0 != m_children.rend() ? i0->second : 0;
+  Child::Map::reverse_iterator i0(m_children.rbegin());
+  return i0 != m_children.rend() ? i0->second.pEntity : 0;
 }
 
 //==============================================================================
 const Entity* Object::GetFirstChild() const
 {
-  EntityMap::const_iterator i0(m_children.begin());
-  return i0 != m_children.end() ? i0->second : 0;
+  Child::Map::const_iterator i0(m_children.begin());
+  return i0 != m_children.end() ? i0->second.pEntity : 0;
 }
 
 //==============================================================================
 const Entity* Object::GetLastChild() const
 {
-  EntityMap::const_reverse_iterator i0(m_children.rbegin());
-  return i0 != m_children.rend() ? i0->second : 0;
+  Child::Map::const_reverse_iterator i0(m_children.rbegin());
+  return i0 != m_children.rend() ? i0->second.pEntity : 0;
 }
 
 //==============================================================================
@@ -344,9 +389,24 @@ Array::Array()
 {}
 
 //==============================================================================
+Array::Array(const Array& rhs)
+: Entity(ARRAY),
+  m_elements(rhs.m_elements)
+{
+  std::transform(m_elements.begin(), m_elements.end(), m_elements.begin(),
+    std::mem_fun(&Entity::Clone));
+}
+
+//==============================================================================
 Array::~Array()
 {
-  std::for_each(m_elements.begin(), m_elements.end(), Deleter);
+  std::for_each(m_elements.begin(), m_elements.end(), Deleter<Entity>);
+}
+
+//==============================================================================
+Array*  Array::Clone() const
+{
+  return new Array(*this);
 }
 
 //==============================================================================
@@ -388,13 +448,13 @@ void Array::AddElement(Entity* pEntity)
 }
 
 //==============================================================================
-Entity* Array::GetChild( const char* pKey, Type acceptType ) const
+Entity* Array::GetChild(const char* pKey, Type acceptType) const
 {
   return 0;
 }
 
 //==============================================================================
-Entity* Array::GetElement( int id, Type acceptType ) const
+Entity* Array::GetElement(int id, Type acceptType) const
 {
   XR_ASSERT(Array, id >= 0);
   XR_ASSERT(Array, id < static_cast<int>(m_elements.size()));
