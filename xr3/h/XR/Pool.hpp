@@ -57,7 +57,7 @@ public:
   ///@brief Returns ownership of the buffer and resets the Pool.
   ///@note  No further allocations will be possible through the Pool until a
   /// new buffer is set with SetBuffer().
-  void* RegainBuffer();
+  Byte* RegainBuffer();
 
   ///@brief Sets a buffer for the Pool. @a isAuto signifies ownership transfer
   /// of @a parBuffer to the pool. This memory will be delete[]d on destruction
@@ -66,7 +66,7 @@ public:
   /// allocated with new[] and @a isAuto will be set to true.
   ///@note  You have to make sure that @a parBuffer (unless is a 0 pointer),
   /// does span @a size bytes.
-  void  SetBuffer(size_t size, bool isAuto, void* parBuffer); // ownership transfer
+  void  SetBuffer(size_t size, bool isAuto, Byte* parBuffer); // ownership transfer
 
   ///@return  A @a size bytes chunk of memory, or 0 if there was not enough
   /// memory left in the pool.

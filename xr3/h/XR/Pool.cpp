@@ -65,7 +65,7 @@ Pool::~Pool()
 }
 
 //==============================================================================
-void* Pool::RegainBuffer()
+Byte* Pool::RegainBuffer()
 {
   Byte* pReturn(m_parBuffer);
   m_parBuffer = 0;
@@ -77,7 +77,7 @@ void* Pool::RegainBuffer()
 }
 
 //==============================================================================
-void  Pool::SetBuffer(size_t size, bool isAuto, void* parBuffer)
+void  Pool::SetBuffer(size_t size, bool isAuto, Byte* parBuffer)
 {
   XR_ASSERTMSG(XR::Pool, m_parBuffer == m_pNext,
     ("Already allocated from pool; those objects will be invalidated."));
