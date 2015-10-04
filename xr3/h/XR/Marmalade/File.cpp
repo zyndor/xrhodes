@@ -44,13 +44,13 @@ void File::Exit()
 }
 
 //==============================================================================
-bool File::SecureSave( void* pBuffer, uint16 size )
+bool File::SecureSave(void* pBuffer, uint16 size)
 {
   return s3eSecureStoragePut(pBuffer, size) == S3E_RESULT_SUCCESS;
 }
 
 //==============================================================================
-bool File::SecureLoad( void* pBuffer, uint16 size )
+bool File::SecureLoad(void* pBuffer, uint16 size)
 {
   return s3eSecureStorageGet(pBuffer, size) == S3E_RESULT_SUCCESS;
 }
@@ -80,13 +80,13 @@ const char* File::SecureGetErrorString()
 }
 
 //==============================================================================
-bool File::CheckExists( const char* pName )
+bool File::CheckExists(const char* pName)
 {
   return s3eFileCheckExists(pName) != 0;
 }
 
 //==============================================================================
-int File::Open( const char* pName, const char* pMode )
+int File::Open(const char* pName, const char* pMode)
 {
   int hFile(INVALID_HANDLE);
   for(int i = 0; i < S3E_FILE_MAX_HANDLES; ++i)
@@ -119,16 +119,16 @@ int File::Open( const char* pName, const char* pMode )
 }
 
 //==============================================================================
-uint64 File::GetSize( int hFile )
+size_t File::GetSize(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
   XR_ASSERT(File, s_pFile->arFile[hFile] != 0);
-  return (uint64)s3eFileGetSize(s_pFile->arFile[hFile]);
+  return s3eFileGetSize(s_pFile->arFile[hFile]);
 }
 
 //==============================================================================
-const char* File::GetName( int hFile )
+const char* File::GetName(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
@@ -137,7 +137,7 @@ const char* File::GetName( int hFile )
 }
 
 //==============================================================================
-uint32 File::Read( int hFile, int elemSize, int numElems, void* parBuffer )
+size_t File::Read(int hFile, size_t elemSize, size_t numElems, void* parBuffer)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
@@ -146,16 +146,16 @@ uint32 File::Read( int hFile, int elemSize, int numElems, void* parBuffer )
 }
 
 //==============================================================================
-char* File::ReadLine( int hFile, int numBytes, char* parBuffer )
+char* File::ReadLine(int hFile, size_t bufferSize, char* parBuffer)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
   XR_ASSERT(File, s_pFile->arFile[hFile] != 0);
-  return s3eFileReadString(parBuffer, numBytes, s_pFile->arFile[hFile]);
+  return s3eFileReadString(parBuffer, bufferSize, s_pFile->arFile[hFile]);
 }
 
 //==============================================================================
-uint32 File::Write(const void* parBuffer, int elemSize, int numElems, int hFile )
+size_t File::Write(const void* parBuffer, size_t elemSize, size_t numElems, int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
@@ -164,7 +164,7 @@ uint32 File::Write(const void* parBuffer, int elemSize, int numElems, int hFile 
 }
 
 //==============================================================================
-void File::Close( int hFile )
+void File::Close(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
@@ -203,7 +203,7 @@ File::Error File::GetError()
 }
 
 //==============================================================================
-uint32 File::Tell(int hFile)
+size_t File::Tell(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < S3E_FILE_MAX_HANDLES);
@@ -219,7 +219,7 @@ static const s3eFileSeekOrigin  karSeekOriginMappings[] =
   S3E_FILESEEK_END,
 };
 
-bool File::Seek(int hFile, uint32 offset, SeekFrom sf)
+bool File::Seek(int hFile, size_t offset, SeekFrom sf)
 {
   return s3eFileSeek(s_pFile->arFile[hFile], offset,
     karSeekOriginMappings[sf]) == S3E_RESULT_SUCCESS;

@@ -76,13 +76,13 @@ public:
 
   static bool         CheckExists(const char* pName);
   static int          Open(const char* pName, const char* pMode);
-  static uint64       GetSize(int hFile);
+  static size_t       GetSize(int hFile);
   static const char*  GetName(int hFile);
-  static uint32       Read(int hFile, int elemSize, int numElems, void* parBuffer);
-  static char*        ReadLine(int hFile, int numBytes, char* parBuffer);
-  static uint32       Write(const void* parBuffer, int elemSize, int numElems, int hFile);
-  static uint32       Tell(int hFile);
-  static bool         Seek(int hFile, uint32 offset, SeekFrom sf);
+  static size_t       Read(int hFile, size_t elemSize, size_t numElems, void* parBuffer);
+  static char*        ReadLine(int hFile, size_t bufferSize, char* parBuffer);
+  static size_t       Write(const void* parBuffer, size_t elemSize, size_t numElems, int hFile);
+  static size_t       Tell(int hFile);
+  static bool         Seek(int hFile, size_t offset, SeekFrom sf);
   static void         Close(int hFile);
   
   static Error        GetError();

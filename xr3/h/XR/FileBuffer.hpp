@@ -41,7 +41,7 @@ public:
   int         GetSize() const;
   const char* GetData() const;
 
-  bool        Write(const void* pBuffer, int size, int numElems);
+  bool        Write(const void* pBuffer, size_t size, size_t numElems);
   void        Close();
 
   void        Destroy();

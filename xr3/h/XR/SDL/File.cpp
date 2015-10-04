@@ -37,13 +37,13 @@ void File::Exit()
 }
 
 //==============================================================================
-bool File::SecureSave( void* pBuffer, uint16 size )
+bool File::SecureSave(void* pBuffer, uint16 size)
 {
   return false;
 }
 
 //==============================================================================
-bool File::SecureLoad( void* pBuffer, uint16 size )
+bool File::SecureLoad(void* pBuffer, uint16 size)
 {
   return false;
 }
@@ -66,7 +66,7 @@ const char* File::SecureGetErrorString()
 }
 
 //==============================================================================
-bool File::CheckExists( const char* pName )
+bool File::CheckExists(const char* pName)
 {
   FILE* pFile(fopen(pName, "r"));
   bool  result = pFile != 0;
@@ -78,7 +78,7 @@ bool File::CheckExists( const char* pName )
 }
 
 //==============================================================================
-int File::Open( const char* pName, const char* pMode )
+int File::Open(const char* pName, const char* pMode)
 {
   int hFile(INVALID_HANDLE);
   for (int i = 0; i < kMaxFileHandles; ++i)
@@ -109,14 +109,14 @@ int File::Open( const char* pName, const char* pMode )
 }
 
 //==============================================================================
-uint64 File::GetSize( int hFile )
+size_t File::GetSize(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
   XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
   
-  uint64 offset(ftell(s_fileImpl.arpFile[hFile]));
-  uint64 result(0);
+  size_t offset(ftell(s_fileImpl.arpFile[hFile]));
+  size_t result(0);
   if (0 == fseek(s_fileImpl.arpFile[hFile], 0, SEEK_END))
   {
     result = ftell(s_fileImpl.arpFile[hFile]);
@@ -128,7 +128,7 @@ uint64 File::GetSize( int hFile )
 }
 
 //==============================================================================
-const char* File::GetName(int hFile )
+const char* File::GetName(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
@@ -137,7 +137,7 @@ const char* File::GetName(int hFile )
 }
 
 //==============================================================================
-uint32 File::Read(int hFile, int elemSize, int numElems, void* parBuffer)
+size_t File::Read(int hFile, size_t elemSize, size_t numElems, void* parBuffer)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
@@ -146,16 +146,16 @@ uint32 File::Read(int hFile, int elemSize, int numElems, void* parBuffer)
 }
 
 //==============================================================================
-char* File::ReadLine(int hFile, int numBytes, char* parBuffer)
+char* File::ReadLine(int hFile, size_t bufferSize, char* parBuffer)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
   XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
   XR_ASSERT(File, parBuffer != 0);
-  --numBytes;
+  --bufferSize;
   int result(0);
   char* pWrite(parBuffer);
-  for (int i = 0; i < numBytes; ++i)
+  for (int i = 0; i < bufferSize; ++i)
   {
     result = fread(pWrite, 1, 1, s_fileImpl.arpFile[hFile]);
     char  c(*pWrite);
@@ -177,7 +177,7 @@ char* File::ReadLine(int hFile, int numBytes, char* parBuffer)
 }
 
 //==============================================================================
-uint32 File::Write(const void* parBuffer, int elemSize, int numElems, int hFile )
+size_t File::Write(const void* parBuffer, size_t elemSize, size_t numElems, int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
@@ -186,7 +186,7 @@ uint32 File::Write(const void* parBuffer, int elemSize, int numElems, int hFile 
 }
 
 //==============================================================================
-void File::Close( int hFile )
+void File::Close(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
@@ -214,15 +214,14 @@ File::Error File::GetError()
 }
 
 //==============================================================================
-uint32  File::Tell(int hFile)
+size_t  File::Tell(int hFile)
 {
   XR_ASSERT(File, hFile >= 0);
   XR_ASSERT(File, hFile < kMaxFileHandles);
   XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
   
-  uint64  tell(ftell(s_fileImpl.arpFile[hFile]));
-  XR_ASSERT(File, tell < std::numeric_limits<uint32>::max());
-  return (uint32)tell;
+  size_t  tell(ftell(s_fileImpl.arpFile[hFile]));
+  return tell;
 }
 
 //==============================================================================
@@ -233,7 +232,7 @@ static const int  karSeekOriginMappings[] =
   SEEK_END,
 };
 
-bool File::Seek( int hFile, uint32 offset, SeekFrom sf )
+bool File::Seek(int hFile, size_t offset, SeekFrom sf)
 {
   return fseek(s_fileImpl.arpFile[hFile], offset, karSeekOriginMappings[sf]) == 0;
 }

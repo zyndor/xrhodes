@@ -49,14 +49,14 @@ bool  FileBuffer::Open(const char* pName, const char* pMode)
       m_size = File::GetSize(m_handle);
       m_pData = new char[m_size + 1];
       success = File::Read(m_handle, m_size, 1, m_pData) == 1;
-	  m_pData[m_size] = '\0';
+      m_pData[m_size] = '\0';
     }
   }
   return success;
 }
 
 //==============================================================================
-bool  FileBuffer::Write(const void* pBuffer, int size, int numElems)
+bool  FileBuffer::Write(const void* pBuffer, size_t size, size_t numElems)
 {
   return HasFlag(WRITE_F) &&
     File::Write(pBuffer, size, numElems, m_handle) == numElems;
