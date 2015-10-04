@@ -95,7 +95,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
       kBufferSize);
 
     char  arBuffer[kBufferSize];
-    sprintf(arBuffer, pTextureName);
+    strncpy(arBuffer, pTextureName, kBufferSize);
 
     char* pPeriod(strrchr(arBuffer, '.'));
     if (pPeriod != 0)
@@ -188,7 +188,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         XR_ASSERT(TexturePack, static_cast<int>(strlen(pSpriteName)) < kBufferSize);
 
         // get name, strip extension
-        sprintf(arBuffer, pSpriteName);
+        strncpy(arBuffer, pSpriteName, kBufferSize);
 
         char* pPeriod(strrchr(arBuffer, '.'));
         if (pPeriod != 0)
