@@ -89,6 +89,32 @@ struct	IsEqualType<T0, T0>
 };
 
 //==============================================================================
+template  <typename T>
+struct  UnConst
+{
+  typedef T Type;
+};
+
+template  <typename T>
+struct  UnConst<const T>
+{
+  typedef T Type;
+};
+
+//==============================================================================
+template  <typename T>
+struct  UnPointer
+{
+  typedef T Type;
+};
+
+template  <typename T>
+struct  UnPointer<T*>
+{
+  typedef T Type;
+};
+
+//==============================================================================
 ///@brief Enforces T to be derived from B via implicit upcasting.
 template  <class T, class B>
 class AssertBase
