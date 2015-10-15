@@ -14,9 +14,7 @@ namespace XR
 EventDispatcherCore::EventDispatcherCore()
 : m_listeners(),
   m_isTraversing(false),
-  m_postponedAdd(),
-  m_postponedRemove(),
-  m_postponedClear(false)
+  m_postponed()
 {}
 
 //==============================================================================
@@ -38,7 +36,7 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
   {
     if (m_isTraversing)  // traversing - postpone removal
     {
-      m_postponedRemove.push_back(pListener);
+      m_postponed.push_back(Postponed(Postponed::REMOVE, pListener));
     }
     else  // not traversing - remove instantly
     {
@@ -48,12 +46,12 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
   }
   else if (m_isTraversing) // not found in added while traversing
   {
-    iFind = GetPostponedAdded(&l);
-    result = iFind != m_postponedAdd.end();
+    PostponedList::iterator iFindPostponed = GetPostponedAdded(&l);
+    result = iFindPostponed != m_postponed.end();
     if (result)  // found it in postponed - remove instantly
     {
-      delete *iFind;
-      m_postponedAdd.erase(iFind);
+      delete static_cast<ListenerBaseBase*>(iFindPostponed->pData);
+      m_postponed.erase(iFindPostponed);
     }
   }
   return result;
@@ -62,22 +60,25 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
 //==============================================================================
 void  EventDispatcherCore::ProcessPostponed()
 {
-  // clear everything
-  if (m_postponedClear)
+  for(PostponedList::iterator i0 = m_postponed.begin(), i1 = m_postponed.end(); i0 != i1; ++i0)
   {
-    Clear();
-    m_postponedClear = false;
-  }
+    switch(i0->type)
+    {
+    case Postponed::ADD:
+      _AddListener(static_cast<ListenerBaseBase*>(i0->pData));
+      break;
 
-  // do postponed add
-  m_listeners.splice(m_listeners.end(), m_postponedAdd);
+    case Postponed::REMOVE:
+      RemoveListener(i0->pData);
+      break;
 
-  // do postponed removal
-  while (!m_postponedRemove.empty())
-  {
-    RemoveListener(m_postponedRemove.back());
-    m_postponedRemove.pop_back();
+    case Postponed::CLEAR:
+      Clear();
+      break;
+    }
   }
+  
+  m_postponed.clear();
 }
 
 //==============================================================================
@@ -86,15 +87,17 @@ void  EventDispatcherCore::Clear()
   if (m_isTraversing)
   {
     // clear all postponed adds
-    for (ListenerList::iterator i0(m_postponedAdd.begin()),
-      i1(m_postponedAdd.end()); i0 != i1; ++i0)
+    for (PostponedList::iterator i0 = m_postponed.begin(), i1 = m_postponed.end(); i0 != i1;)
     {
-      delete *i0;
+      if (i0->type == Postponed::ADD)
+      {
+        delete static_cast<ListenerBaseBase*>(i0->pData);
+      }
     }
-    m_postponedAdd.clear();
+    m_postponed.clear();
 
     // flag postponed clear
-    m_postponedClear = true;
+    m_postponed.push_back(Postponed(Postponed::CLEAR));
   }
   else
   {
