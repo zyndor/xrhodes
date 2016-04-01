@@ -68,6 +68,7 @@ files
   XR/ParserCore.hpp
   XR/Pool.hpp
   XR/PrimType.hpp
+  XR/RefHolder.hpp
   XR/Quadtree.hpp
   XR/Queue.hpp
   XR/Ray.hpp
