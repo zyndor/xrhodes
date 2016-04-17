@@ -6,10 +6,10 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    11/09/2013
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TYPES_HPP
+#ifndef XR_TYPES_HPP
 #define XR_TYPES_HPP
 
 #include <cstdio>
@@ -83,26 +83,26 @@ typedef SceUInt64       uint64;
 #endif  //platform
 
 //==============================================================================
+#define	XR_RAWTRACE(format)	printf format; fflush(stdout);
+
+//==============================================================================
 #define XR_CRASHTEST(call)  { printf("At: %s\n", #call, __FILE__, __LINE__); fflush(stdout); call; printf("OK.\n"; }
  
 //==============================================================================
 #define XR_ONE_OVER_0XFF  (1.0f / float(0xff))
 
 //==============================================================================
-#define XR_MASK_ID(id) (1 << static_cast<uint32>(id))
-
-//==============================================================================
-#define XR_MASK_HAS_ID(mask, id) (((mask) & XR_MASK_ID(id)) != 0)
+#define XR_MASK_ID(id) (1 << static_cast<size_t>(id))
 
 //==============================================================================
 #define XR_NONOBJECT_DECL(className) \
-  private:  \
-    className();  \
+  private:\
+    className();\
     ~className();
 
 //==============================================================================
 #define XR_NONCOPY_DECL(className) \
-  private:  \
+  private:\
     className(const className& rhs);\
     className& operator=(const className& rhs);
 
@@ -126,14 +126,16 @@ int16 ClipToInt16(int32 val);
 // implementation
 //==============================================================================
 inline
-int16 ClipToInt16( int32 val )
+int16 ClipToInt16(int32 val)
 {
-  if(((val - INT_FAST16_MIN) & ~UINT16_MAX) != 0)
+  if (((val - std::numeric_limits<int16>::min()) &
+    ~std::numeric_limits<uint16>::max()) != 0)
   {
-    bool  over(val > INT_FAST16_MAX);
-    bool  under(val < INT_FAST16_MIN);
+    bool  over(val > std::numeric_limits<int16>::max());
+    bool  under(val < std::numeric_limits<int16>::min());
     XR_ASSERT(ClipToInt16, over ^ under);
-    val = over * INT_FAST16_MAX + under * INT_FAST16_MIN;
+    val = over * std::numeric_limits<int16>::max() + under *
+      std::numeric_limits<int16>::min();
   }
 
   return static_cast<int16>(val);
