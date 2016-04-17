@@ -113,12 +113,6 @@ namespace XR
 {
 
 //==============================================================================
-template  <typename T>
-struct Identity 
-{
-  typedef T Type;
-};
-
 int32 Align(int32 value, int32 alignment);
 int16 ClipToInt16(int32 val);
 

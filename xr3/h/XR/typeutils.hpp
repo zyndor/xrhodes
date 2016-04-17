@@ -6,10 +6,10 @@
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
 // @date    16/07/2011
 //
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TYPESUTILS_HPP
+#ifndef XR_TYPESUTILS_HPP
 #define XR_TYPESUTILS_HPP
 
 namespace XR
@@ -20,6 +20,14 @@ namespace XR
 /// meaningful and should not be used.
 class Nontype
 {};
+
+//==============================================================================
+///@brief	The type itself.
+template  <typename T>
+struct Identity 
+{
+  typedef T Type;
+};
 
 //==============================================================================
 ///@brief Ternary typedef operator. Based on the value of @a kCheck,
@@ -132,15 +140,26 @@ public:
 };
 
 //==============================================================================
-///@brief Static typeId based on of address of function-static variable.
-///@note  TypeId() doesn't persist across executions/platforms.
-///@note  Remember, TypeId for const T or T* != TypeId for T.
+namespace
+{
 template  <typename T>
 inline
-size_t  TypeId()
+size_t  TypeIdImpl()
 {
   static char c;
   return reinterpret_cast<size_t>(&c);
+}
+
+}	// noname
+
+///@brief Static typeId based on of address of function-static variable.
+///@note  TypeId() doesn't persist across executions/platforms.
+///@note	Discards constness and pointerness.
+template	<typename T>
+inline
+size_t	TypeId()
+{
+	return TypeIdImpl<typename UnPointer<typename UnConst<T>::Type>::Type>();
 }
 
 }  // XR
