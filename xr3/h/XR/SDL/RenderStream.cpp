@@ -63,7 +63,7 @@ const int  RenderStream::karElemSize[kMaxFormat] =
   sizeof(GLfloat) * 4
 };
 
-RenderStream  RenderStream::s_zero(F_INVALID, 0, 0, false);
+RenderStream  RenderStream::s_zero(F_INVALID, 0);
 
 //==============================================================================
 int RenderStream::CalculateByteSize(Format fmt, int capacity)
@@ -203,6 +203,8 @@ float RenderStream::GetX(int i) const
   case  F_VECTOR3:
     return *(static_cast<GLfloat*>(m_pData) + i * 3 + VX);
   }
+  
+  return std::numeric_limits<float>::quiet_NaN();
 }
 
 //==============================================================================
@@ -217,6 +219,8 @@ float RenderStream::GetY(int i) const
   case  F_VECTOR3:
     return *(static_cast<GLfloat*>(m_pData) + (i * 3) + VY);
   }
+  
+  return std::numeric_limits<float>::quiet_NaN();
 }
 
 //==============================================================================

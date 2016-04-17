@@ -163,6 +163,7 @@ float RenderStream::GetX(int i) const
     return (static_cast<CIwFVec3*>(m_pData) + i)->x;
     break;
   }
+  return std::numeric_limits<float>::quiet_NaN();
 };
 
 //==============================================================================
@@ -181,6 +182,7 @@ float RenderStream::GetY(int i) const
     return (static_cast<CIwFVec3*>(m_pData) + i)->y;
     break;
   }
+  return std::numeric_limits<float>::quiet_NaN();
 };
 
 //==============================================================================
