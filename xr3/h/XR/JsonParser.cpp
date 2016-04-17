@@ -218,7 +218,7 @@ bool  Parser::_ParseValue()
       const char* pDecimal(0);
       while (result && !m_state.IsOver(pValueEnd) &&
         !(*pValueEnd == kComma || *pValueEnd == kObjectEnd || *pValueEnd == kArrayEnd ||
-          iswspace(*pValueEnd)))
+          isspace(*pValueEnd)))
       {
         const bool  isExponential(*pValueEnd == kExponential);
         const bool  isDecimal(*pValueEnd == kDecimal);
@@ -274,7 +274,7 @@ bool  Parser::_ParseValue()
       const char* pValueEnd(m_state.SkipChar());
       while (!m_state.IsOver(pValueEnd) &&
         !(*pValueEnd == kComma || *pValueEnd == kObjectEnd || *pValueEnd == kArrayEnd ||
-          iswspace(*pValueEnd)))
+          isspace(*pValueEnd)))
       {
         pValueEnd = m_state.SkipChar();
       }
