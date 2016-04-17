@@ -9,8 +9,8 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 // 
 //==============================================================================
-#if !defined CrossObject_h__
-#define CrossObject_h__
+#ifndef XR_CROSSOBJECT_HPP
+#define XR_CROSSOBJECT_HPP
 
 #include "types.hpp"
 
@@ -113,4 +113,4 @@ void  a::DeleteImpl(void* pImpl)\
 }\
 
 
-#endif // CrossObject_h__
+#endif // XR_CROSSOBJECT_HPP
