@@ -59,8 +59,8 @@ Tweener::~Tweener()
 void  Tweener::Add(float duration, Function pFunction, float target,
         float& value, Callback pOnFrame, Callback pOnFinished, void* pData)
 {
-  XR_ASSERT(RingBuffer, pFunction != 0);
-  XR_ASSERT(RingBuffer, duration >= .0f);
+  XR_ASSERT(Tweener, pFunction != 0);
+  XR_ASSERT(Tweener, duration >= .0f);
   if (duration > .0f)
   {
     Param  p = { .0f, 1.0f / duration, pFunction, value, target, &value,
