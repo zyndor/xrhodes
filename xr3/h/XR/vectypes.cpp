@@ -24,4 +24,13 @@ const float Matrix::karIdentityData[] =
 
 Matrix Matrix::s_identity;
 
+//==============================================================================
+const float Quaternion::karUnitQuaternionData[] =
+{
+  1.0f,
+  .0f,
+  .0f,
+  .0f
+};
+
 } // XR
