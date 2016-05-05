@@ -6,42 +6,64 @@
 //
 //==============================================================================
 #include <string.h>
-#include "Named.hpp"
+#include "Name.hpp"
 
 namespace XR
 {
-
-//==============================================================================
-Named::Named ()
-: m_name(0)
-{}
-
-//==============================================================================
-Named::Named(uint32 name)
-: m_name(name)
-{}
-
-//==============================================================================
-Named::Named(const char* pName)
-: m_name(TransformName(pName, strlen(pName)))
-{}
-
-//==============================================================================
-Named::~Named ()
-{}
-
-//==============================================================================
-void  Named::SetName(uint32 name)
+namespace
 {
-  m_name = name;
+const char* kUndefined = "#UNDEFINED#";
 }
 
 //==============================================================================
-void  Named::SetName(const char* pName)
+Name::Name()
+: m_value(0)
+#ifdef  XR_DEBUG
+  ,
+  m_debugValue(kUndefined)
+#endif  //XR_DEBUG
+{}
+
+//==============================================================================
+Name::Name(uint32 name)
+: m_value(name)
+#ifdef  XR_DEBUG
+  ,
+  m_debugValue(kUndefined)
+#endif  //XR_DEBUG
+{}
+
+//==============================================================================
+Name::Name(const std::string& name)
+: m_value(XR::Hash::String(name.c_str()))
+#ifdef  XR_DEBUG
+  ,
+  m_debugValue(name)
+#endif  //XR_DEBUG
+{}
+
+//==============================================================================
+Name::~Name()
+{}
+
+//==============================================================================
+Name& Name::operator=(uint32 value)
 {
-  XR_ASSERTMSG(Named, pName != 0, ("Null name is invalid."));
-  XR_ASSERTMSG(Named, strlen(pName) > 0, ("Empty name is invalid."));
-  m_name = TransformName(pName, strlen(pName));
+  m_value = value;
+#ifdef  XR_DEBUG
+  m_debugValue = kUndefined;
+#endif  //XR_DEBUG
+  return *this;
+}
+
+//==============================================================================
+Name& Name::operator=(const std::string& name)
+{
+  m_value = XR::Hash::String(name.c_str());
+#ifdef  XR_DEBUG
+  m_debugValue = name;
+#endif  //XR_DEBUG
+  return *this;
 }
 
 } // XR

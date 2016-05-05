@@ -19,17 +19,15 @@ namespace XR
 {
 
 //==============================================================================
-class MeshRenderer:  public Entity::Component
+class MeshRenderer:  public Entity::ComponentT<MeshRenderer>
 {
-  XR_ENTITY_COMPONENT_GETTYPEID_DECL(MeshRenderer)
-  
 public:
   // structors
   MeshRenderer();
   ~MeshRenderer();
   
   // general
-  virtual Component*  Clone() const;
+  virtual MeshRenderer*  Clone() const;
   
   BasicMesh*  GetMesh() const;  // no ownership transfer
   void        SetMesh(BasicMesh* pMesh);  // no ownership transfer

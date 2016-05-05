@@ -63,7 +63,7 @@ files
   XR/Module.hpp
   XR/MouseButton.hpp
   XR/MouseHandler.hpp
-  XR/Named.hpp
+  XR/Name.hpp
   XR/Parse.hpp
   XR/ParserCore.hpp
   XR/Pool.hpp

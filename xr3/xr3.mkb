@@ -63,7 +63,7 @@ files
   MeshRenderer.cpp
   Module.cpp
   MouseHandler.cpp
-  Named.cpp
+  Name.cpp
   Parse.cpp
   ParserCore.cpp
   Pool.cpp

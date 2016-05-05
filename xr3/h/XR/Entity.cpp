@@ -8,7 +8,6 @@
 #include "Entity.hpp"
 #include "functors.hpp"
 #include "types.hpp"
-#include "Named.hpp"
 
 namespace XR {
 
@@ -27,46 +26,34 @@ void  Entity::Component::SetOwner(Entity* pOwner)
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   XR_ASSERTMSG(Entity::Component, pOwner == 0 ||
     pOwner->FindComponent(this->GetTypeId()) == this,
-    ("Entity (%d) needs to add Component %p before calling SetOwner()",
-      pOwner->GetName(), this));
+    ("Entity (%s) needs to add Component %p before calling SetOwner()",
+      pOwner->GetName().GetDebugValue(), this));
 #endif
   m_pOwner = pOwner;
 }
 
 //==============================================================================
 Entity::Entity()
-: Named(),
-  translation(),
+: translation(),
   rotation(),
   scaling(),
   m_pParent(0),
   m_xForm(),
   m_children(),
-  m_components()
+  m_components(),
+  m_name()
 {}
 
 //==============================================================================
-Entity::Entity(uint32 name)
-: Named(name),
-  translation(),
+Entity::Entity(Name n)
+: translation(),
   rotation(),
   scaling(),
   m_pParent(0),
   m_xForm(),
   m_children(),
-  m_components()
-{}
-
-//==============================================================================
-Entity::Entity(const char* pName)
-: Named(pName),
-  translation(),
-  rotation(),
-  scaling(),
-  m_pParent(0),
-  m_xForm(),
-  m_children(),
-  m_components()
+  m_components(),
+  m_name(n)
 {}
 
 //==============================================================================
@@ -75,6 +62,22 @@ Entity::~Entity()
   DetachFromParent();
   std::for_each(m_children.begin(), m_children.end(), Deleter<Entity>);
   std::for_each(m_components.begin(), m_components.end(), Deleter<Component>);
+}
+
+//==============================================================================
+void  Entity::SetName(Name n)
+{
+  m_name = n;
+}
+
+//==============================================================================
+void  Entity::UpdateTransform()
+{
+  m_xForm = rotation;
+  m_xForm.ScaleX(scaling.x);
+  m_xForm.ScaleY(scaling.y);
+  m_xForm.ScaleZ(scaling.z);
+  m_xForm.t = translation;
 }
 
 //==============================================================================
@@ -89,35 +92,24 @@ Matrix  Entity::GetWorldTransform() const
 }
 
 //==============================================================================
-void  Entity::UpdateTransform()
-{
-  m_xForm = rotation;
-  m_xForm.ScaleX(scaling.x);
-  m_xForm.ScaleY(scaling.y);
-  m_xForm.ScaleZ(scaling.z);
-  m_xForm.t = translation;
-}
-
-//==============================================================================
 void  Entity::DetachFromParent()
 {
   if (m_pParent != 0)
   {
-    m_pParent->RemoveChild(this);
+    m_pParent->RemoveChild(*this);
     m_pParent = 0;
   }
 }
 
 //==============================================================================
-void  Entity::AddChild(Entity* p)
+void  Entity::AddChild(Entity& e)
 {
-  XR_ASSERTMSG(Entity, p != 0, ("Null child is invalid."));
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   // check for cyclic dependency - p being a parent of this somewhere higher up.
   Entity* pParent(this);
   do
   {
-    XR_ASSERTMSG(Entity, pParent != p,
+    XR_ASSERTMSG(Entity, pParent != &e,
       ("Adding child creates cyclic dependency."));
     pParent = pParent->GetParent();
   }
@@ -128,133 +120,100 @@ void  Entity::AddChild(Entity* p)
     i0 != i1; ++i0)
   {
     const Entity* p1(*i0);
-    XR_ASSERTMSG(Entity, p1 != p, ("Child already added."));
-    XR_ASSERTMSG(Entity, p1->GetName() != p->GetName(),
+    XR_ASSERTMSG(Entity, p1 != &e, ("Child already added."));
+    XR_ASSERTMSG(Entity, p1->GetName() != e.GetName(),
       ("Child with same name already exists."));
   }
 #endif  //XR_DEBUG
 
-  m_children.push_back(p);
+  m_children.push_back(&e);
 }
 
 //==============================================================================
-void  Entity::RemoveChild(Entity* p)
+void  Entity::RemoveChild(Entity& e)
 {
-  XR_ASSERT(Entity, p != 0);
-  m_children.remove(p);
-  p->m_pParent = 0;
+  List::iterator  iFind = std::find(m_children.begin(), m_children.end(), &e);
+  if(iFind != m_children.end())
+  {
+    m_children.erase(iFind);
+    e.m_pParent = 0;
+  }
 }
 
 //==============================================================================
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-struct  DebugFindEntry
-{
-  uint32      hash;
-  const char* pPath;
-};
-#endif  //XR_DEBUG
-
 Entity* Entity::FindChild(const char* pName) const
 {
   XR_ASSERT(Entity, pName != 0);
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  std::list<DebugFindEntry> hierarchy;
-#else
-  std::list<uint32> hierarchy;
-#endif  //XR_DEBUG
 
   const char* pBegin(pName);
   const char* pEnd(pName + strlen(pName));
-  do
+  const Entity* pParent = this;
+  Entity* pFound = 0;
+  while(pBegin != pEnd)
   {
-    const char* pNext(strchr(pName, SEPARATOR));
-    if (pNext == 0)
-    {
-      pNext = pEnd;
-    }
-    else
-    {
-      ++pNext;
-    }
+    const char* pNext(std::find(pBegin, pEnd, SEPARATOR));
 
-    int len(pNext - pBegin);
+    const ptrdiff_t len(pNext - pBegin);
     XR_ASSERT(Entity, len > 0);
-    uint32  hash(TransformName(pBegin, len));
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-    DebugFindEntry  r = { hash, pName };
-    hierarchy.push_back(r);
-#else
-    hierarchy.push_back(hash);
-#endif  //XR_DEBUG
 
+    const uint32  hash(Hash::String(pBegin, len));
+    pFound = pParent->FindChild(Name(hash));
+    XR_ASSERTMSG(Entity, pFound != 0, ("FindChild() failed at %s.", pBegin));
+    pParent = pFound;
+
+    if (pNext != pEnd)
+    {
+      ++pNext;  // skip separator
+    }
     pBegin = pNext;
   }
-  while (pBegin != pEnd);
-
-  Entity* pFound(hierarchy.empty() ? 0 : const_cast<Entity*>(this));
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  for (std::list<DebugFindEntry>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
-    pFound != 0 && i0 != i1; ++i0)
-  {
-    pFound = pFound->FindChild(i0->hash);
-    XR_ASSERTMSG(Entity, pFound != 0, ("FindChild failed at %s.",
-      i0->pPath));
-  }
-#else
-  for (std::list<uint32>::iterator i0(hierarchy.begin()), i1(hierarchy.end());
-    pFound != 0 && i0 != i1; ++i0)
-  {
-    pFound = pFound->FindChild(*i0);
-  }
-#endif  //XR_DEBUG
 
   return pFound;
 }
 
 //==============================================================================
-Entity* Entity::FindChild(uint32 name) const
+Entity* Entity::FindChild(Name n) const
 {
   List::const_iterator  iEnd(m_children.end());
-  List::const_iterator  iFind(std::find_if (m_children.begin(), iEnd,
-    FindPredicate(name)));
+  List::const_iterator  iFind(std::find_if(m_children.begin(), iEnd,
+    FindPredicate(n)));
   return iFind != iEnd ? *iFind : 0;
 }
 
 //==============================================================================
-void  Entity::AddComponent(Component* p)
+void  Entity::AddComponent(Component& c)
 {
-  XR_ASSERT(Entity, p != 0);
-  Entity* pOwner(p->GetOwner());
-  if (pOwner != this)
-  {
+  Entity* pOwner(c.GetOwner());
+  XR_ASSERT(Entity, pOwner != this);
+
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-    XR_ASSERTMSG(Entity, FindComponent(p->GetTypeId()) != 0,
-      ("Entity already has a component of type %d; only one allowed.",
-        p->GetTypeId()));
+  XR_ASSERTMSG(Entity, FindComponent(c.GetTypeId()) != 0,
+    ("Entity already has a component of type %d; only one allowed.",
+      c.GetTypeId()));
 #endif  //XR_DEBUG
     
-    if (pOwner != 0)
-    {
-      pOwner->RemoveComponent(p);
-    }
-    m_components.push_back(p);
-    p->SetOwner(this);  // after it has actually been added
+  if (pOwner != 0)
+  {
+    pOwner->RemoveComponent(c);
   }
+
+  bool  inserted = m_components.insert(&c).second;
+  XR_ASSERT(Entity, inserted);
+
+  c.SetOwner(this);  // after it has actually been added
 }
 
 //==============================================================================
-void  Entity::RemoveComponent(Component* p)
+void  Entity::RemoveComponent(Component& c)
 {
-  XR_ASSERT(Entity, p != 0);
-  m_components.remove(p);
-  p->SetOwner(0);
+  m_components.erase(&c);
+  c.SetOwner(0);
 }
 
 //==============================================================================
-
-Entity::Component*  Entity::FindComponent(uint32 typeId) const
+Entity::Component*  Entity::FindComponent(size_t typeId) const
 {
-  Component::List::const_iterator iFind(std::find_if (m_components.begin(),
+  Component::Set::const_iterator iFind(std::find_if (m_components.begin(),
     m_components.end(), Component::FindPredicate(typeId)));
   return iFind != m_components.end() ? *iFind : 0;
 }
@@ -272,15 +231,15 @@ Entity* Entity::Clone(Entity* pParent) const
  
   if (pParent != 0)
   {
-    pParent->AddChild(pEntity);
+    pParent->AddChild(*pEntity);
   }
   
   // clone components
-  for (Component::List::const_iterator i0(m_components.begin()), i1(m_components.end());
+  for (Component::Set::const_iterator i0(m_components.begin()), i1(m_components.end());
     i0 != i1; ++i0)
   {
     const Component* pComp(*i0);
-    pEntity->AddComponent(pComp->Clone());
+    pEntity->AddComponent(*pComp->Clone());
   }
   
   // clone children to newly cloned entity - recursive

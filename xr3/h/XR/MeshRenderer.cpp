@@ -12,7 +12,7 @@ namespace XR
 
 //==============================================================================
 MeshRenderer::MeshRenderer ()
-: Entity::Component(),
+: Entity::ComponentT<MeshRenderer>(),
   m_pMesh(0)
 {}
 
@@ -21,7 +21,7 @@ MeshRenderer::~MeshRenderer ()
 {}
 
 //==============================================================================
-Entity::Component*  MeshRenderer::Clone() const
+MeshRenderer*  MeshRenderer::Clone() const
 {
   MeshRenderer*  pClone(new MeshRenderer());
   pClone->SetMesh(m_pMesh);
@@ -37,11 +37,11 @@ void  MeshRenderer::SetMesh(BasicMesh* pMesh)
 //==============================================================================
 void  MeshRenderer::Render()
 {
-  XR_ASSERT(MeshRenderer, m_pOwner != 0);
+  XR_ASSERT(MeshRenderer, GetOwner() != 0);
   XR_ASSERT(MeshRenderer, m_pMesh != 0);
   // TODO: probably introduce interim RendererComponent with model[view] matrix
   // stack update, rather than regenerating the world transform from scratch.
-  Renderer::SetModelMatrix(m_pOwner->GetWorldTransform());
+  Renderer::SetModelMatrix(GetOwner()->GetWorldTransform());
   m_pMesh->Render();
 }
 
