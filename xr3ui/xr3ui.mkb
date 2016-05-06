@@ -54,7 +54,6 @@ files
   UISelector.cpp
   UISliderBase.cpp
   UISpacer.cpp
-  UIState.cpp
   UIVerticalLayout.cpp
   UIVerticalProgressBar.cpp
   UIVerticalScrollingLayout.cpp
