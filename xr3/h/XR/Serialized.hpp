@@ -27,11 +27,11 @@ public:
   // types
   typedef uint32  IdType;
 
-  enum  { INVALID_ID = -1 };
-
   typedef void(*OnInflateCallback)(Serialized* pObject, void* pUserData);
 
   // static
+  static const IdType kInvalidId = -1;
+
   ///@brief Sets the id that the next object will be given when
   /// RegisterSerialized() / RegisterDeserialized() is called.
   static void     SetNextId(IdType id);

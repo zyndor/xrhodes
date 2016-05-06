@@ -12,7 +12,7 @@ Serialized::SerializedMap Serialized::s_serialized;
 //==============================================================================
 void  Serialized::SetNextId(IdType id)
 {
-  XR_ASSERT(Serialized, id != INVALID_ID);
+  XR_ASSERT(Serialized, id != kInvalidId);
   s_nextId = id;
 }
 
@@ -37,7 +37,7 @@ Serialized::IdType  Serialized::RegisterSerialized(const Serialized* pObj)
 //==============================================================================
 Serialized::IdType  Serialized::GetSerializedId(const Serialized* pObj)
 {
-  IdType id(INVALID_ID);
+  IdType id(kInvalidId);
   if (pObj != 0)
   {
     IdMap::iterator iFind(s_ids.find(pObj));
