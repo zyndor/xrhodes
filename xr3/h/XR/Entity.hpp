@@ -112,12 +112,10 @@ public:
     }
   };
   
+  // static
   ///@brief The separator character used in an Entity path to FindChild(), e.g.
   /// "World.EntryPoint.Gate"
-  enum
-  {
-    SEPARATOR = '.'
-  };
+  static const char kSeparator = '.';
 
   // data
   Vector3         translation;

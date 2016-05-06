@@ -151,7 +151,7 @@ Entity* Entity::FindChild(const char* pName) const
   Entity* pFound = 0;
   while(pBegin != pEnd)
   {
-    const char* pNext(std::find(pBegin, pEnd, SEPARATOR));
+    const char* pNext(std::find(pBegin, pEnd, kSeparator));
 
     const ptrdiff_t len(pNext - pBegin);
     XR_ASSERT(Entity, len > 0);
