@@ -23,9 +23,8 @@ ScreenManager::~ScreenManager()
 {}
 
 //==============================================================================
-void  ScreenManager::Change(Screen* pScreen, int32 delayMs)
+void  ScreenManager::Change(Screen& screen, int32 delayMs)
 {
-  XR_ASSERT(ScreenManager, pScreen != 0);
   _ClearExiting();
 
   Screen* pPrevious(0);
@@ -37,27 +36,23 @@ void  ScreenManager::Change(Screen* pScreen, int32 delayMs)
   }
   m_pPrevious = pPrevious;
   
-  if (pScreen != 0)
-  {
-    pScreen->Show(*this, delayMs);
-    m_stack.push_back(pScreen);
-  }
+  m_stack.push_back(&screen);
+  screen.Show(*this, delayMs);
 }
 
 //==============================================================================
-void  ScreenManager::Push(Screen* pScreen, int32 delayMs)
+void  ScreenManager::Push(Screen& screen, int32 delayMs)
 {
-  XR_ASSERT(ScreenManager, pScreen != 0);
   Screen* pPrevious(0);
   if (!m_stack.empty())
   {
     pPrevious = m_stack.back();
     pPrevious->Unregister();
-  }
-  
+  }  
   //m_pPrevious = pPrevious;  // probably not necessary - we only care if it isn't on the stack
-  m_stack.push_back(pScreen);
-  pScreen->Show(*this, delayMs);
+
+  m_stack.push_back(&screen);
+  screen.Show(*this, delayMs);
 }
 
 //==============================================================================

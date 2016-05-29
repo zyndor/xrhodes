@@ -31,8 +31,8 @@ public:
   UIContainer&        GetContainer();
   UIEventDispatcher&  GetDispatcher();
   
-  void                Change(Screen* pScreen, int32 delayMs);
-  void                Push(Screen* pScreen, int32 delayMs);
+  void                Change(Screen& screen, int32 delayMs);
+  void                Push(Screen& screen, int32 delayMs);
   void                Pop(int32 delayMs);
   
   void                Update(int32 ms);

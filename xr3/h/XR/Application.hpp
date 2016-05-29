@@ -12,7 +12,6 @@
 #if !defined XR_APPLICATION_HPP
 #define XR_APPLICATION_HPP
 
-#include "State.hpp"
 #include "Device.hpp"
 #include "File.hpp"
 #include "Log.hpp"

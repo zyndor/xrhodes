@@ -40,8 +40,8 @@ public:
 		~Manager();
 
 		// general
-		void	Push(State* p);	// no ownership transfer
-		void	Change(State* p);	// no ownership transfer
+		void	Push(State& s);	// no ownership transfer
+		void	Change(State& s);	// no ownership transfer
 		void	Pop();
 
 		void	Update(int32 tDelta);
@@ -57,7 +57,7 @@ public:
 		Stack	m_states;
 		
 		// internal
-		void	_Push(State* p);
+		void	_Push(State& s);
 		void	_Pop();
 	};
 

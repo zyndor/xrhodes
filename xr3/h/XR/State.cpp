@@ -14,24 +14,22 @@ State::Manager::~Manager()
 {}
 		
 //==============================================================================
-void	State::Manager::Push(State* p)	// no ownership transfer
+void	State::Manager::Push(State& s)
 {
-	XR_ASSERT(State::Manager, p != 0);
 	if(!m_states.empty())
 	{
 		m_states.back()->Exit();
 	}
 			
-	_Push(p);
+	_Push(s);
 }
 		
 //==============================================================================
-void	State::Manager::Change(State* p)	// no ownership transfer
+void	State::Manager::Change(State& s)
 {
 	XR_ASSERT(State::Manager, !m_states.empty());
-	XR_ASSERT(State::Manager, p != 0);
 	_Pop();
-	_Push(p);
+	_Push(s);
 }
 		
 //==============================================================================
@@ -58,12 +56,12 @@ void	State::Manager::Update(int32 ms)
 		{
 		case	Result::PUSH:
 			XR_ASSERT(State::Manager, result.pState != 0);
-			Push(result.pState);
+			Push(*result.pState);
 			break;
 
 		case	Result::CHANGE:
 			XR_ASSERT(State::Manager, result.pState != 0);
-			Change(result.pState);
+			Change(*result.pState);
 			break;
 
 		case	Result::POP:
@@ -100,11 +98,11 @@ void	State::Manager::Clear()
 }
 
 //==============================================================================
-void	State::Manager::_Push(State* p)
+void	State::Manager::_Push(State& s)
 {
-	m_states.push_back(p);
-	p->Init();
-	p->Enter();
+	m_states.push_back(&s);
+	s.Init();
+	s.Enter();
 }
 
 //==============================================================================
