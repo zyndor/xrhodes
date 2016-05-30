@@ -281,15 +281,10 @@ Ray Renderer::GetViewRay(int16 x, int16 y)
   float fx(float(x) / wHalf);
   float fy(float(y) / hHalf);
 
-  Ray r;
-  r.position = s_pRenderer->rayCastView.t;
-  Vector3 zNearHit(s_pRenderer->rayCastView.t +
-    (vForward * s_pRenderer->rayCastZNear) + (vRight * fx) + (vUp * fy));
-  r.direction = zNearHit - s_pRenderer->rayCastView.t;
-  r.direction.Normalise();
-  r.length = std::numeric_limits<float>::max();
- 
-  return r;
+  Vector3 zNearHit((vForward * s_pRenderer->rayCastZNear) + (vRight * fx) + (vUp * fy));
+  zNearHit.Normalise();
+
+  return Ray(s_pRenderer->rayCastView.t, zNearHit, std::numeric_limits<float>::max());
 }
 
 //==============================================================================
