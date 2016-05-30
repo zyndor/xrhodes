@@ -379,18 +379,16 @@ Ray Renderer::GetViewRay(int16 x, int16 y)
 
   Vector3 vRight(s_rendererImpl.rayCastView.xx, s_rendererImpl.rayCastView.yx,
     s_rendererImpl.rayCastView.zx);
-  vRight.Normalise();
 
   Vector3 vUp(s_rendererImpl.rayCastView.xy, s_rendererImpl.rayCastView.yy,
     s_rendererImpl.rayCastView.zy);
-  vUp.Normalise();
 
   float hProj(s_rendererImpl.rayCastZNear * s_rendererImpl.tanVFovHalf);
   float wProj(hProj * (float(s_rendererImpl.screenSize.x) /
     float(s_rendererImpl.screenSize.y)));
   
-  vUp *= hProj;
-  vRight *= wProj;
+  vRight.Normalise(wProj);
+  vUp.Normalise(hProj);
   
   int wHalf(s_rendererImpl.screenSize.x / 2);
   int hHalf(s_rendererImpl.screenSize.y / 2);
