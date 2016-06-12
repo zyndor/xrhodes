@@ -1,6 +1,7 @@
 #include <tinyxml.h>
 #include "TexturePack.hpp"
 #include "utils.hpp"
+#include "strings.hpp"
 
 namespace XR
 {
@@ -61,8 +62,6 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   XR_ASSERT(TexturePack, pName != 0);
   XR_ASSERT(TexturePack, strlen(pName) > 0);
 
-  static const int kBufferSize = 256;
-
   // clean up
   m_sprites.clear();
 
@@ -91,38 +90,19 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 
   if (success)
   {
-    XR_ASSERT(TexturePack, static_cast<int>(strlen(pTextureName)) <
-      kBufferSize);
-
-    char  arBuffer[kBufferSize];
-    strncpy(arBuffer, pTextureName, kBufferSize);
-
-    char* pPeriod(strrchr(arBuffer, '.'));
+    LString buffer(pTextureName);
+    char* pPeriod(buffer.rfind('.'));
     if (pPeriod != 0)
     {
       *pPeriod = '\0';
     }
 
-    m_pMaterial = (*pGetCb)(arBuffer, pGetCbData);
-
-    //else
-    //{
-    //  CIwTexture* pTexture(new CIwTexture);
-    //  pTexture->LoadFromFile(pTextureName);
-    //  pTexture->SetFiltering(true);
-    //  pTexture->SetMipMapping(false);
-    //  pTexture->Upload();
-
-    //  m_pMaterial = new Material();
-    //  m_pMaterial->SetTexture(pTexture);
-
-    //  pMaterial = m_pMaterial;
-    //}
+    m_pMaterial = (*pGetCb)(buffer, pGetCbData);
 
     success = m_pMaterial != 0;
     if (!success)
     {
-      XR_TRACE(TexturePack, ("Failed to find material '%s'.", arBuffer));
+      XR_TRACE(TexturePack, ("Failed to find material '%s'.", buffer));
     }
   }
 
@@ -166,8 +146,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   {
     pElem = pElem->FirstChildElement(karTag[TAG_SPRITE]);
 
-    char  arBuffer[kBufferSize];
-
+    LString buffer;
     int x, y; // position of top left corner on sprite sheet
     int w, h; // size on sprite sheet
     int xOffs, yOffs; // amount of translation left and down
@@ -185,12 +164,10 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
       
       if (success)
       {
-        XR_ASSERT(TexturePack, static_cast<int>(strlen(pSpriteName)) < kBufferSize);
-
         // get name, strip extension
-        strncpy(arBuffer, pSpriteName, kBufferSize);
+        buffer = pSpriteName;
 
-        char* pPeriod(strrchr(arBuffer, '.'));
+        char* pPeriod(buffer.rfind('.'));
         if (pPeriod != 0)
         {
           *pPeriod = '\0';
@@ -246,7 +223,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         sprite.SetHalfSize(wOffs / 2, hOffs / 2, false);
 
         // add sprite
-        m_sprites[Hash::String(arBuffer)] = sprite;
+        m_sprites[Hash::String(buffer)] = sprite;
         
         pElem = pElem->NextSiblingElement(karTag[TAG_SPRITE]);
       }

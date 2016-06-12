@@ -36,15 +36,24 @@ public:
   // structors
   HardString();
   HardString(const char* pString);
+  HardString(const char* pString, size_t size);
   explicit HardString(int32 n);
   
   // general
   int             size() const;
   int             capacity() const;
   const char*     c_str() const;
-  int             find(const char* pSub) const;
-  int             find(int c) const;
-  int             rfind(int c) const;
+
+  const char*     find(const char* pSub) const;
+  char*           find(const char* pSub);
+  const char*     find(int c) const;
+  char*           find(int c);
+  const char*     rfind(const char* pSub) const;
+  char*           rfind(const char* pSub);
+  const char*     rfind(int c) const;
+  char*           rfind(int c);
+
+  HardString<N>   substr(size_t offs, size_t size) const;
 
   HardString<N>&  tolower();
   HardString<N>&  toupper();
@@ -85,6 +94,23 @@ class HardString<0>
 //==============================================================================
 // implementation
 //==============================================================================
+inline
+char* strrstr(const char* haystack, const char* needle)
+{
+  size_t needleSize = strlen(needle);
+  char* p = (char*)haystack + strlen(haystack) - needleSize;
+  while(p >= haystack)
+  {
+    if(strncmp(p, needle, needleSize) == 0)
+    {
+      break;
+    }
+    --p;
+  }
+  return p < haystack ? 0 : p;
+}
+
+//==============================================================================
 template  <int N>
 inline
 HardString<N>::HardString()
@@ -97,8 +123,18 @@ template  <int N>
 inline
 HardString<N>::HardString(const char* pString)
 {
-  XR_ASSERT(HardString<>, strlen(pString) < N);
-  strncpy(m_arBuffer, pString, N - 1);    
+  const size_t  size = strlen(pString);
+  XR_ASSERT(HardString<>, size <= capacity());
+  strncpy(m_arBuffer, pString, size);
+}
+
+//==============================================================================
+template  <int N>
+inline
+HardString<N>::HardString(const char* pString, size_t size)
+{
+  XR_ASSERT(HardString<>, size <= capacity());
+  strncpy(m_arBuffer, pString, size);
 }
 
 //==============================================================================
@@ -137,28 +173,74 @@ const char* HardString<N>::c_str() const
 //==============================================================================
 template  <int N>
 inline
-int HardString<N>::find(const char* pSub) const
+const char* HardString<N>::find(const char* pSub) const
 {
-  char* p(strstr(m_arBuffer, pSub));
-  return p != 0 ? static_cast<int>(p - m_arBuffer) : kCapacity;
+  return strstr(m_arBuffer, pSub);
 }
 
 //==============================================================================
 template  <int N>
 inline
-int HardString<N>::find(int c) const
+char* HardString<N>::find(const char* pSub)
 {
-  char* p(strchr(m_arBuffer, c));
-  return p != 0 ? static_cast<int>(p - m_arBuffer) : kCapacity;
+  return strstr(m_arBuffer, pSub);
 }
 
 //==============================================================================
 template  <int N>
 inline
-int HardString<N>::rfind(int c) const
+const char* HardString<N>::find(int c) const
 {
-  char* p(strrchr(m_arBuffer, c));
-  return p != 0 ? static_cast<int>(p - m_arBuffer) : kCapacity;
+  return strchr(m_arBuffer, c);
+}
+
+//==============================================================================
+template  <int N>
+inline
+char* HardString<N>::find(int c)
+{
+  return strchr(m_arBuffer, c);
+}
+
+//==============================================================================
+template  <int N>
+inline
+const char* HardString<N>::rfind(const char* pSub) const
+{
+  return strrstr(m_arBuffer, pSub);
+}
+
+//==============================================================================
+template  <int N>
+inline
+char* HardString<N>::rfind(const char* pSub)
+{
+  return strrstr(m_arBuffer, pSub);
+}
+
+//==============================================================================
+template  <int N>
+inline
+const char* HardString<N>::rfind(int c) const
+{
+  return strrchr(m_arBuffer, c);
+}
+
+//==============================================================================
+template  <int N>
+inline
+char* HardString<N>::rfind(int c)
+{
+  return strrchr(m_arBuffer, c);
+}
+
+//==============================================================================
+template  <int N>
+inline
+HardString<N> HardString<N>::substr(size_t offs, size_t size) const
+{
+  XR_ASSERT(HardString<>, offs + size <= capacity());
+  return HardString<N>(m_arBuffer + offs, size);
 }
 
 //==============================================================================
