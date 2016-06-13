@@ -23,7 +23,7 @@ namespace XR
 //==============================================================================
 ///@brief Fixed capacity string class that doesn't allocate memory through its
 /// lifespan.
-template  <int N>
+template  <size_t N>
 class HardString
 {
 public:
@@ -40,18 +40,19 @@ public:
   explicit HardString(int32 n);
   
   // general
-  int             size() const;
-  int             capacity() const;
+  size_t          size() const;
+  size_t          capacity() const;
   const char*     c_str() const;
 
   const char*     find(const char* pSub) const;
   char*           find(const char* pSub);
-  const char*     find(int c) const;
-  char*           find(int c);
+  const char*     find(int32 c) const;
+  char*           find(int32 c);
+
   const char*     rfind(const char* pSub) const;
   char*           rfind(const char* pSub);
-  const char*     rfind(int c) const;
-  char*           rfind(int c);
+  const char*     rfind(int32 c) const;
+  char*           rfind(int32 c);
 
   HardString<N>   substr(size_t offs, size_t size) const;
 
@@ -64,23 +65,24 @@ public:
   // operators
   HardString<N>&  operator =(const char* pString);
   HardString<N>&  operator =(const HardString<N>& str);
-  HardString<N>&  operator =(int n);
+  HardString<N>&  operator =(int32 n);
 
   HardString<N>&  operator +=(const char* pString);
   HardString<N>&  operator +=(const HardString<N>& str);
-  HardString<N>&  operator +=(int n);
+  HardString<N>&  operator +=(int32 n);
 
   HardString<N>   operator +(const char* pString) const;
   HardString<N>   operator +(const HardString<N>& str) const;
-  HardString<N>   operator +(int n) const;
+  HardString<N>   operator +(int32 n) const;
 
-  char            operator[](int i) const;
-  char&           operator[](int i);
+  const char&     operator[](size_t i) const;
+  char&           operator[](size_t i);
   
   bool            operator==(const char* pString) const;
   bool            operator==(const HardString<N>& str) const;
 
-                  operator const char*() const;
+  bool            operator<(const char* pString) const;
+  bool            operator<(const HardString<N>& str) const;
 
 protected:
   // data
@@ -90,6 +92,21 @@ protected:
 template  <>
 class HardString<0>
 {};
+
+template  <size_t N>
+bool  operator!=(const HardString<N>& s, const char* pStr);
+
+template  <size_t N>
+bool  operator!=(const HardString<N>& s0, const HardString<N>& s1);
+
+template  <size_t N>
+bool  operator==(const char* pStr, const HardString<N>& s);
+
+template  <size_t N>
+bool  operator!=(const char* pStr, const HardString<N>& s);
+
+template  <size_t N>
+bool  operator<(const char* pStr, const HardString<N>& s);
 
 //==============================================================================
 // implementation
@@ -111,7 +128,7 @@ char* strrstr(const char* haystack, const char* needle)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>::HardString()
 {
@@ -119,7 +136,7 @@ HardString<N>::HardString()
 }
   
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>::HardString(const char* pString)
 {
@@ -129,7 +146,7 @@ HardString<N>::HardString(const char* pString)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>::HardString(const char* pString, size_t size)
 {
@@ -138,7 +155,7 @@ HardString<N>::HardString(const char* pString, size_t size)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>::HardString(int32 n)
 {
@@ -147,23 +164,23 @@ HardString<N>::HardString(int32 n)
 }
   
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-int HardString<N>::size() const
+size_t  HardString<N>::size() const
 {
   return strlen(m_arBuffer);
 }
   
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-int HardString<N>::capacity() const
+size_t  HardString<N>::capacity() const
 {
   return kCapacity;
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 const char* HardString<N>::c_str() const
 {
@@ -171,7 +188,7 @@ const char* HardString<N>::c_str() const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 const char* HardString<N>::find(const char* pSub) const
 {
@@ -179,7 +196,7 @@ const char* HardString<N>::find(const char* pSub) const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 char* HardString<N>::find(const char* pSub)
 {
@@ -187,23 +204,23 @@ char* HardString<N>::find(const char* pSub)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-const char* HardString<N>::find(int c) const
+const char* HardString<N>::find(int32 c) const
 {
   return strchr(m_arBuffer, c);
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-char* HardString<N>::find(int c)
+char* HardString<N>::find(int32 c)
 {
   return strchr(m_arBuffer, c);
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 const char* HardString<N>::rfind(const char* pSub) const
 {
@@ -211,7 +228,7 @@ const char* HardString<N>::rfind(const char* pSub) const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 char* HardString<N>::rfind(const char* pSub)
 {
@@ -219,23 +236,23 @@ char* HardString<N>::rfind(const char* pSub)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-const char* HardString<N>::rfind(int c) const
+const char* HardString<N>::rfind(int32 c) const
 {
   return strrchr(m_arBuffer, c);
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-char* HardString<N>::rfind(int c)
+char* HardString<N>::rfind(int32 c)
 {
   return strrchr(m_arBuffer, c);
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N> HardString<N>::substr(size_t offs, size_t size) const
 {
@@ -244,7 +261,7 @@ HardString<N> HardString<N>::substr(size_t offs, size_t size) const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>&  HardString<N>::tolower()
 {
@@ -253,7 +270,7 @@ HardString<N>&  HardString<N>::tolower()
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>&  HardString<N>::toupper()
 {
@@ -262,7 +279,7 @@ HardString<N>&  HardString<N>::toupper()
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 void  HardString<N>::clear()
 {
@@ -270,7 +287,7 @@ void  HardString<N>::clear()
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 HardString<N>&  HardString<N>::assign(const char* pStr, int size)
 {
   XR_ASSERT(HardString<N>, pStr != 0);
@@ -285,7 +302,7 @@ HardString<N>&  HardString<N>::assign(const char* pStr, int size)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>& HardString<N>::operator =(const char* pString)
 {
@@ -295,7 +312,7 @@ HardString<N>& HardString<N>::operator =(const char* pString)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>& HardString<N>::operator =(const HardString<N>& str)
 {
@@ -303,8 +320,8 @@ HardString<N>& HardString<N>::operator =(const HardString<N>& str)
 }
 
 //==============================================================================
-template  <int N>
-HardString<N>& HardString<N>::operator =(int n)
+template  <size_t N>
+HardString<N>& HardString<N>::operator =(int32 n)
 {
   char  arBuffer[16];
   sprintf(arBuffer, "%d", n);
@@ -313,7 +330,7 @@ HardString<N>& HardString<N>::operator =(int n)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>& HardString<N>::operator +=(const char* pString)
 {
@@ -323,7 +340,7 @@ HardString<N>& HardString<N>::operator +=(const char* pString)
 }
   
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N>& HardString<N>::operator +=(const HardString<N>& str)
 {
@@ -331,8 +348,8 @@ HardString<N>& HardString<N>::operator +=(const HardString<N>& str)
 }
   
 //==============================================================================
-template  <int N>
-HardString<N>&  HardString<N>::operator +=(int n)
+template  <size_t N>
+HardString<N>&  HardString<N>::operator +=(int32 n)
 {
   char  arBuffer[16];
   sprintf(arBuffer, "%d", n);
@@ -341,7 +358,7 @@ HardString<N>&  HardString<N>::operator +=(int n)
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N> HardString<N>::operator +(const char* pString) const
 {
@@ -351,7 +368,7 @@ HardString<N> HardString<N>::operator +(const char* pString) const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 HardString<N> HardString<N>::operator +(const HardString<N>& str) const
 {
@@ -359,18 +376,18 @@ HardString<N> HardString<N>::operator +(const HardString<N>& str) const
 }
   
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-HardString<N> HardString<N>::operator +(int n) const
+HardString<N> HardString<N>::operator +(int32 n) const
 {
   HardString<N> str(*this);
   return str += n;
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-char  HardString<N>::operator[](int i) const
+const char&  HardString<N>::operator[](size_t i) const
 {
   XR_ASSERT(HardString<>, i >= 0);
   XR_ASSERT(HardString<>, i < size());
@@ -378,9 +395,9 @@ char  HardString<N>::operator[](int i) const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-char&  HardString<N>::operator[](int i)
+char&  HardString<N>::operator[](size_t i)
 {
   XR_ASSERT(HardString<>, i >= 0);
   XR_ASSERT(HardString<>, i < size());
@@ -388,7 +405,7 @@ char&  HardString<N>::operator[](int i)
 }
   
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 bool  HardString<N>::operator==(const char* pString) const
 {
@@ -396,7 +413,7 @@ bool  HardString<N>::operator==(const char* pString) const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
 bool  HardString<N>::operator==(const HardString<N>& str) const
 {
@@ -404,11 +421,59 @@ bool  HardString<N>::operator==(const HardString<N>& str) const
 }
 
 //==============================================================================
-template  <int N>
+template  <size_t N>
 inline
-HardString<N>::operator const char *() const
+bool  HardString<N>::operator<(const char* pString) const
 {
-  return m_arBuffer;
+  return strcmp(m_arBuffer, pString) < 0;
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  HardString<N>::operator<(const HardString<N>& str) const
+{
+  return strcmp(m_arBuffer, str.c_str()) < 0;
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  operator!=(HardString<N>& s, const char* pStr)
+{
+  return !(s == pStr);
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  operator!=(HardString<N>& s0, HardString<N>& s1)
+{
+  return !(s0 == s1);
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  operator==(const char* pStr, HardString<N>& s)
+{
+  return s == pStr;
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  operator!=(const char* pStr, HardString<N>& s)
+{
+  return !(s == pStr);
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  operator<(const char* pStr, HardString<N>& s)
+{
+  return strcmp(pStr, s.c_str()) < 0;
 }
 
 } // XR

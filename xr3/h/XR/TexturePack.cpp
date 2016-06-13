@@ -97,7 +97,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
       *pPeriod = '\0';
     }
 
-    m_pMaterial = (*pGetCb)(buffer, pGetCbData);
+    m_pMaterial = (*pGetCb)(buffer.c_str(), pGetCbData);
 
     success = m_pMaterial != 0;
     if (!success)
@@ -223,7 +223,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         sprite.SetHalfSize(wOffs / 2, hOffs / 2, false);
 
         // add sprite
-        m_sprites[Hash::String(buffer)] = sprite;
+        m_sprites[Hash::String(buffer.c_str())] = sprite;
         
         pElem = pElem->NextSiblingElement(karTag[TAG_SPRITE]);
       }
