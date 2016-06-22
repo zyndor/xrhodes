@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// MouseHandler.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    06/06/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_MOUSEHANDLER_HPP
+#ifndef XR_MOUSEHANDLER_HPP
 #define XR_MOUSEHANDLER_HPP
 
 #include  "Input.hpp"
@@ -32,11 +30,6 @@ public:
   // virtual
   virtual void  OnMouseAction(const Input::MouseActionEvent& e) =0;
   virtual void  OnMouseMotion(const Input::MouseMotionEvent& e) =0;
-
-private:
-  // static
-  static void _OnMouseAction(void* pSystem, void* pUser);
-  static void _OnMouseMotion(void* pSystem, void* pUser);
 };
 
 } // XR

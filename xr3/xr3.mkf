@@ -100,4 +100,9 @@ files
   XR/utils.hpp
   XR/vectypes.hpp
   XR/Worker.hpp
+
+  [detail]
+  (h/XR/detail)
+  CallbackAdaptor.inl
+  CallbackObject.inl
 }

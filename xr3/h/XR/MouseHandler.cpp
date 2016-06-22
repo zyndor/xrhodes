@@ -11,20 +11,6 @@ namespace XR
 {
 
 //==============================================================================
-void  MouseHandler::_OnMouseAction(void* pSystem, void* pUser)
-{
-  static_cast<MouseHandler*>(pUser)->
-    OnMouseAction(*static_cast<Input::MouseActionEvent*>(pSystem));
-}
-
-//==============================================================================
-void  MouseHandler::_OnMouseMotion(void* pSystem, void* pUser)
-{
-  static_cast<MouseHandler*>(pUser)->
-    OnMouseMotion(*static_cast<Input::MouseMotionEvent*>(pSystem));
-}
-
-//==============================================================================
 MouseHandler::MouseHandler()
 {}
 
@@ -35,15 +21,21 @@ MouseHandler::~MouseHandler()
 //==============================================================================
 void  MouseHandler::RegisterMouseCallbacks()
 {
-  Input::RegisterCallback(Input::EV_MOUSE_ACTION, _OnMouseAction, this);
-  Input::RegisterCallback(Input::EV_MOUSE_MOTION, _OnMouseMotion, this);
+  Input::RegisterCallback(Input::EV_MOUSE_ACTION,
+    CallbackAdaptor<const Input::MouseActionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseAction>,
+    this);
+  Input::RegisterCallback(Input::EV_MOUSE_MOTION,
+    CallbackAdaptor<const Input::MouseMotionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseMotion>,
+    this);
 }
 
 //==============================================================================
 void  MouseHandler::UnregisterMouseCallbacks()
 {
-  Input::UnregisterCallback(Input::EV_MOUSE_ACTION, _OnMouseAction);
-  Input::UnregisterCallback(Input::EV_MOUSE_MOTION, _OnMouseMotion);
+  Input::UnregisterCallback(Input::EV_MOUSE_MOTION,
+    CallbackAdaptor<const Input::MouseMotionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseMotion>);
+  Input::UnregisterCallback(Input::EV_MOUSE_ACTION,
+    CallbackAdaptor<const Input::MouseActionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseAction>);
 }
 
 } // XR
