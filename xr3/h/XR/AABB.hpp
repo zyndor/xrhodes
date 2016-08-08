@@ -2,11 +2,9 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// AABB.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    15/06/2011
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_AABB_HPP
@@ -168,16 +166,16 @@ float AABB::CalculateYness() const
 inline
 bool  AABB::HitTest(float x, float y) const
 {
-  return Max(x - right, left - x) < .0f &&
-    Max(y - bottom, top - y) < .0f;
+  return std::max(x - right, left - x) < .0f &&
+    std::max(y - bottom, top - y) < .0f;
 }
 
 //==============================================================================
 inline
 bool  AABB::HitTest(float x, float y, HitTestInfo& inf) const
 {
-  inf.xOverlap = Max(x - right, left - x);
-  inf.yOverlap = Max(y - bottom, top - y);
+  inf.xOverlap = std::max(x - right, left - x);
+  inf.yOverlap = std::max(y - bottom, top - y);
   inf.hit = inf.xOverlap < .0f && inf.yOverlap < .0f;
   return inf.hit;
 }
@@ -186,16 +184,16 @@ bool  AABB::HitTest(float x, float y, HitTestInfo& inf) const
 inline
 bool  AABB::HitTest(const AABB& other) const
 {
-  return Max(other.left - right, left - other.right) < .0f &&
-    Max(other.bottom - top, bottom - other.top) < .0f;
+  return std::max(other.left - right, left - other.right) < .0f &&
+    std::max(other.bottom - top, bottom - other.top) < .0f;
 }
 
 //==============================================================================
 inline
 bool  AABB::HitTest(const AABB& other, HitTestInfo& inf) const
 {
-  inf.xOverlap = Max(other.left - right, left - other.right);
-  inf.yOverlap = Max(other.bottom - top, bottom - other.top);
+  inf.xOverlap = std::max(other.left - right, left - other.right);
+  inf.yOverlap = std::max(other.bottom - top, bottom - other.top);
   inf.hit = inf.xOverlap < .0f && inf.yOverlap < .0f;
   return inf.hit;
 }

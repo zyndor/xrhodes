@@ -2,11 +2,9 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// maths.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    15/06/2011
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_MATHS_HPP
@@ -69,14 +67,6 @@ float  FlopRand();
 ///@return  +1 if @a check is true, -1 otherwise.
 template  <typename T>
 T BoolToSign(bool check);
-
-///@return  The smaller of two values.
-template  <typename T>
-T  Min(T a, T b);
-
-///@return  The greater of two values.
-template  <typename T>
-T  Max(T a, T b);
 
 ///@return  The value @a val clamped to @a min and @a max.
 template  <typename T>
@@ -154,22 +144,6 @@ inline
 T BoolToSign(bool check)
 {
   return static_cast<T>((static_cast<int>(check) << 1) - 1);
-}
-
-//==============================================================================
-template  <typename T>
-inline
-T  Min(T a, T b)
-{
-  return a < b ? a : b;
-}
-
-//==============================================================================
-template  <typename T>
-inline
-T  Max(T a, T b)
-{
-  return a > b ? a : b;
 }
 
 //==============================================================================

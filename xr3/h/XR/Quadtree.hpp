@@ -2,11 +2,9 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// Quadtree.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    28/07/2011
 //
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_QUADTREE_HPP
@@ -208,7 +206,7 @@ bool  QuadtreeCore::CalculateCanSplit(float hw, float hh, float min)
   XR_ASSERT(Quadtree, hw >= .0f);
   XR_ASSERT(Quadtree, hh >= .0f);
   XR_ASSERT(Quadtree, min > .0f);
-  return XR::Min(hw, hh) > min;
+  return std::min(hw, hh) > min;
 }
 
 //==============================================================================
