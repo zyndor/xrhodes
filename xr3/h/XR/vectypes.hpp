@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// vectypes.hpp
 // @author  Gyorgy Straub
-// @date    26/09/2013
 //
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_VECTYPES_HPP
+#ifndef XR_VECTYPES_HPP
 #define XR_VECTYPES_HPP
 
 #include <cstring>
@@ -298,7 +296,7 @@ struct Vector3
 
   Vector3&  Normalise(float s = 1.0f)
   {
-    float d(Dot(*this));
+    float d(Dot());
     XR_ASSERT(Vector3, d > .0f);
     return this->operator*=(s / sqrtf(d));
   }
@@ -445,6 +443,21 @@ struct Matrix
   }
 
   // general
+  Vector3 ColumnX() const
+  {
+    return Vector3(xx, yx, zx);
+  }
+
+  Vector3 ColumnY() const
+  {
+    return Vector3(xy, yy, zy);
+  }
+
+  Vector3 ColumnZ() const
+  {
+    return Vector3(xz, yz, zz);
+  }
+
   void  ScaleX(float s)
   {
     xx *= s;
@@ -719,24 +732,26 @@ public:
   // static
   static const float  karUnitQuaternionData[kNumQuaternionInds];
   
-  static Quaternion FromEuler(Vector3 pyr)
+  static Quaternion FromEuler(Vector3 pitchYawRoll)
   {
     // pitch, yaw, roll
-    pyr *= .5f;
+    pitchYawRoll *= .5f;
   
-    const float c1(cosf(pyr.y));
-    const float c2(cosf(pyr.x));
-    const float c3(cosf(pyr.z));
-    const float s1(sinf(pyr.y));
-    const float s2(sinf(pyr.x));
-    const float s3(sinf(pyr.z));
+    const float c1(cosf(pitchYawRoll.y));
+    const float c2(cosf(pitchYawRoll.x));
+    const float c3(cosf(pitchYawRoll.z));
+    const float s1(sinf(pitchYawRoll.y));
+    const float s2(sinf(pitchYawRoll.x));
+    const float s3(sinf(pitchYawRoll.z));
   
     const float c2c3(c2 * c3);
     const float s2s3(s2 * s3);
+    const float s2c3(s2 * c3);
+    const float c2s3(c2 * s3);
 
     Quaternion  q(s1 * c2c3 - c1 * s2s3,
-      c1 * s2 * c3 - s1 * c2 * s3,
-      c1 * c2 * s3 - s1 * s2 * c3,
+      c1 * s2c3 - s1 * c2s3,
+      c1 * c2s3 - s1 * s2c3,
       c1 * c2c3 - s1 * s2s3);
     return q;
   }
