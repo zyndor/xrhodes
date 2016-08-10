@@ -141,21 +141,25 @@ struct Vector2
   {}
 
   // general
+  ///@brief Calculates the magnitude of this vector.
   float Magnitude() const
   {
     return sqrtf(Dot());
   }
 
+  ///@brief Calculates the dot product of this vector with itself.
   float Dot() const
   {
     return Dot(*this);
   }
 
+  ///@brief Calculates the dot product of this vector with @a rhs.
   float Dot(const Vector2& rhs) const
   {
     return x * rhs.x + y * rhs.y;
   }
 
+  ///@brief Normalises this vector.
   Vector2&  Normalise(float s = 1.0f)
   {
     float d(Dot(*this));
@@ -163,21 +167,26 @@ struct Vector2
     return this->operator*=(s / sqrtf(d));
   }
 
+  ///@brief Pseudo-cross product - calculates the dot product of this
+  /// vector with the perpendicular of @a rhs.
   float Cross(const Vector2& rhs) const
   {
     return x * rhs.y - y * rhs.x;
   }
   
+  ///@brief Linearly interpolates between this vector and @a to, at the given @a t blend factor.
   Vector2 Lerp(const Vector2& to, float t) const
   {
     return Vector2(x + (to.x - x) * t, y + (to.y - y) * t);
   }
 
+  ///@brief Returns a conversion of this vector into polar coordinates.
   Vector2 ToPolar() const
   {
     return Vector2(atan2f(y, x), Magnitude());
   }
 
+  ///@brief Returns a conversion of this vector into cartesian coordinates.
   Vector2 ToCartesian() const
   {
     return Vector2(cosf(x) * y, sinf(x) * y);
@@ -240,6 +249,36 @@ struct Vector2
     s = 1.0f / s;
     return Vector2(x * s, y * s);
   }
+
+  Vector2&  operator*=(Vector2 const& rhs)
+  {
+    x *= rhs.x;
+    y *= rhs.y;
+    return *this;
+  }
+
+  Vector2 operator*(Vector2 const& rhs) const
+  {
+    Vector2 temp(*this);
+    temp *= rhs;
+    return temp;
+  }
+
+  Vector2&  operator/=(Vector2 const& rhs)
+  {
+    XR_ASSERT(Vector2, rhs.x != .0f);
+    x /= rhs.x;
+    XR_ASSERT(Vector2, rhs.y != .0f);
+    y /= rhs.y;
+    return *this;
+  }
+
+  Vector2 operator/(Vector2 const& rhs) const
+  {
+    Vector2 temp(*this);
+    temp /= rhs;
+    return temp;
+  }
 };
 
 //==============================================================================
@@ -247,6 +286,7 @@ struct Vector3
 {
   // static
   static Vector3  s_zero;
+  static Vector3  s_one;
   static Vector3  s_xAxis;
   static Vector3  s_yAxis;
   static Vector3  s_zAxis;
@@ -279,21 +319,25 @@ struct Vector3
   {}
 
   // general
+  ///@brief Calculates the magnitude of this vector.
   float Magnitude() const
   {
     return sqrtf(Dot());
   }
 
+  ///@brief Calculates the dot product of this vector with itself.
   float Dot() const
   {
     return Dot(*this);
   }
 
+  ///@brief Calculates the dot product of this vector with @a rhs.
   float Dot(const Vector3& rhs) const
   {
     return x * rhs.x + y * rhs.y + z * rhs.z;
   }
 
+  ///@brief Normalises this vector.
   Vector3&  Normalise(float s = 1.0f)
   {
     float d(Dot());
@@ -301,20 +345,35 @@ struct Vector3
     return this->operator*=(s / sqrtf(d));
   }
 
+  ///@brief Calculates the cross product of this vector with @a rhs.
   Vector3  Cross(const Vector3& rhs) const
   {
     return Vector3(y * rhs.z - z * rhs.y, z * rhs.x - x * rhs.z, x * rhs.y -
       y * rhs.x);
   }
 
+  ///@brief Linearly interpolates between this vector and @a to, at the given @a t blend factor.
   Vector3 Lerp(const Vector3& to, float t) const
   {
     return Vector3(x + (to.x - x) * t, y + (to.y - y) * t, z + (to.z - z) * t);
   }
 
+  ///@brief Provides a Vector2 using the x and y components of this vector.
   Vector2 XY() const
   {
     return Vector2(x, y);
+  }
+
+  ///@brief Provides a Vector2 using the y and z components of this vector.
+  Vector2 YZ() const
+  {
+    return Vector2(y, z);
+  }
+
+  ///@brief Provides a Vector2 using the z and x components of this vector.
+  Vector2 ZX() const
+  {
+    return Vector2(z, x);
   }
 
   // operators
@@ -378,6 +437,39 @@ struct Vector3
     s = 1.0f / s;
     return Vector3(x * s, y * s, z * s);
   }
+
+  Vector3&  operator*=(Vector3 const& rhs)
+  {
+    x *= rhs.x;
+    y *= rhs.y;
+    z *= rhs.z;
+    return *this;
+  }
+
+  Vector3 operator*(Vector3 const& rhs) const
+  {
+    Vector3 temp(*this);
+    temp *= rhs;
+    return temp;
+  }
+
+  Vector3&  operator/=(Vector3 const& rhs)
+  {
+    XR_ASSERT(Vector3, rhs.x != .0f);
+    x /= rhs.x;
+    XR_ASSERT(Vector3, rhs.y != .0f);
+    y /= rhs.y;
+    XR_ASSERT(Vector3, rhs.z != .0f);
+    z /= rhs.z;
+    return *this;
+  }
+
+  Vector3 operator/(Vector3 const& rhs) const
+  {
+    Vector3 temp(*this);
+    temp /= rhs;
+    return temp;
+  }
 };
 
 //==============================================================================
@@ -418,7 +510,7 @@ struct Matrix
   Vector3 t;
   
   // structors
-  explicit Matrix()
+  Matrix()
   {}
 
   explicit Matrix(const Vector3& t_)
@@ -430,13 +522,13 @@ struct Matrix
   explicit Matrix(const float arData[kNumMatrixInds])
   : t()
   {
-    memcpy(arRot, arData, sizeof(arRot));
+    CopyRot(arData);
   }
 
   Matrix(const Matrix& rhs, const Vector3& t_)
   : t(t_)
   {
-    memcpy(arRot, rhs.arRot, sizeof(arRot));
+    CopyRot(rhs);
   }
 
   // general
@@ -657,6 +749,8 @@ struct Matrix
       m.arRot[y + 2] * n.arRot[i + kNumVector3Inds * 2];
   }
 
+  ///@brief Transforms this matrix by the matrix @a m, applying its
+  /// rotation and translation.
   void  TransformBy(const Matrix& m)
   {
     RotateBy(m);
@@ -963,8 +1057,7 @@ public:
     GetAxisAngle(v.x, v.y, v.z, theta);
   }
   
-  ///@brief Applies the rotation that the quaternion represents, to the
-  /// given vector @a v.
+  ///@brief Rotates the vector @a v around the origin by this quaternion.
   void  RotateVec(Vector3& v) const
   {
     const float px((w * v.x) - (j * v.z) + (k * v.y));
@@ -988,6 +1081,14 @@ public:
     v.z = vzk2 + wpz - vxpz;
   }
   
+  ///@brief Rotates the vector @a v around the given pivot by this quaternion.
+  void  RotateVec(Vector3 const& pivot, Vector3& v)
+  {
+    v -= pivot;
+    RotateVec(v);
+    v += pivot;
+  }
+
   ///@brief Creates a vector containing the euler angles of the rotation that
   /// this quaternion represents.
   Vector3 ToEuler() const

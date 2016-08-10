@@ -10,6 +10,7 @@ Vector2 Vector2::s_zero(.0f, .0f);
 
 //==============================================================================
 Vector3 Vector3::s_zero(.0f, .0f, .0f);
+Vector3 Vector3::s_one(1.0f, 1.0f, 1.0f);
 Vector3 Vector3::s_xAxis(1.0f, .0f, .0f);
 Vector3 Vector3::s_yAxis(.0f, 1.0f, .0f);
 Vector3 Vector3::s_zAxis(.0f, .0f, 1.0f);
