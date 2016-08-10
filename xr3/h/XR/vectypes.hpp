@@ -418,12 +418,9 @@ struct Matrix
   Vector3 t;
   
   // structors
-  Matrix()
-  : t()
-  {
-    memcpy(arRot, karIdentityData, sizeof(arRot));
-  }
-  
+  explicit Matrix()
+  {}
+
   explicit Matrix(const Vector3& t_)
   : t(t_)
   {
@@ -443,16 +440,19 @@ struct Matrix
   }
 
   // general
+  ///@brief Gives you the column vector for X.
   Vector3 ColumnX() const
   {
     return Vector3(xx, yx, zx);
   }
 
+  ///@brief Gives you the column vector for Y.
   Vector3 ColumnY() const
   {
     return Vector3(xy, yy, zy);
   }
 
+  ///@brief Gives you the column vector for Z.
   Vector3 ColumnZ() const
   {
     return Vector3(xz, yz, zz);
@@ -479,6 +479,7 @@ struct Matrix
     zz *= s;
   }
   
+  ///@brief Scales the rotation part of this matrix by the scalar @a s.
   void  ScaleRot(float s)
   {
     xx *= s;
@@ -492,6 +493,10 @@ struct Matrix
     zz *= s;
   }
 
+  ///@brief Sets the matrix to represent a rotation around the X axis,
+  /// with the option to reset the translation part (@a resetTrans)
+  /// and set the value of the components that aren't involved in the 
+  /// rotation, to zero (@a setZeros).
   void  SetRotX(float theta, bool resetTrans, bool setZeros)
   {
     if (resetTrans)
@@ -512,6 +517,10 @@ struct Matrix
     yz = -(zy = sinf(theta));
   }
   
+  ///@brief Sets the matrix to represent a rotation around the Y axis,
+  /// with the option to reset the translation part (@a resetTrans)
+  /// and set the value of the components that aren't involved in the 
+  /// rotation, to zero (@a setZeros).
   void  SetRotY(float theta, bool resetTrans, bool setZeros)
   {
     if (resetTrans)
@@ -532,6 +541,10 @@ struct Matrix
     zx = -(xz = sinf(theta));
   }
 
+  ///@brief Sets the matrix to represent a rotation around the Z axis,
+  /// with the option to reset the translation part (@a resetTrans)
+  /// and set the value of the components that aren't involved in the 
+  /// rotation, to zero (@a setZeros).
   void  SetRotZ(float theta, bool resetTrans, bool setZeros)
   {
     if (resetTrans)
@@ -552,6 +565,8 @@ struct Matrix
     xy = -(yx = sinf(theta));
   }
   
+  ///@brief Transform the rotation part of the matrix only, by
+  /// rotating it @a theta degrees around the X axis.
   void  RotateX(float theta)
   {
     Matrix  m;
@@ -559,6 +574,8 @@ struct Matrix
     RotateBy(m);
   }
 
+  ///@brief Transform the rotation part of the matrix only, by
+  /// rotating it @a theta degrees around the Y axis.
   void  RotateY(float theta)
   {
     Matrix  m;
@@ -566,41 +583,53 @@ struct Matrix
     RotateBy(m);
   }
 
+  ///@brief Transform the rotation part of the matrix only, by
+  /// rotating it @a theta degrees around the Z axis.
   void  RotateZ(float theta)
   {
     Matrix  m;
     m.SetRotZ(theta, true, true);
     RotateBy(m);
   }
-  
+
+  ///@brief Calculates the amount of rotation the matrix represents around the
+  /// X axis.
   float DirX() const
   {
     Vector3 v(RotateVec(Vector3::s_xAxis));
     return  atan2f(v.y, v.z);
   }
   
+  ///@brief Calculates the amount of rotation the matrix represents around the
+  /// Y axis.
   float DirY() const
   {
     Vector3 v(RotateVec(Vector3::s_yAxis));
     return  atan2f(v.x, v.z);
   }
   
+  ///@brief Calculates the amount of rotation the matrix represents around the
+  /// Z axis.
   float DirZ() const
   {
     Vector3 v(RotateVec(Vector3::s_zAxis));
     return  atan2f(v.y, v.x);
   }
   
+  ///@brief Copies rotation data from the given array.
   void  CopyRot(const float parRot[kNumMatrixInds])
   {
     memcpy(arRot, parRot, sizeof(arRot));
   }
   
+  ///@brief Copies rotation data from the given matrix.
   void  CopyRot(const Matrix& m)
   {
     CopyRot(m.arRot);
   }
   
+  ///@brief Transforms the rotation part of this matrix by the rotation part
+  /// of the other matrix @a m. No translation applied or modified.
   void  RotateBy(const Matrix& m)
   {
     Matrix  n(*this);
@@ -613,18 +642,6 @@ struct Matrix
     CalculateComponent(m, n, VZ, VX);
     CalculateComponent(m, n, VZ, VY);
     CalculateComponent(m, n, VZ, VZ);
-  }
-  
-  Vector3  RotateVec(const Vector3& v) const
-  {
-    return Vector3(v.x * xx + v.y * yx + v.z * zx,
-      v.x * xy + v.y * yy + v.z * zy,
-      v.x * xz + v.y * yz + v.z * zz);
-  }
-  
-  Vector3  TransformVec(const Vector3& v) const
-  {
-    return RotateVec(v) + t;
   }
   
   void  CalculateComponent(const Matrix& m, const Matrix& n, int i, int j)
@@ -640,6 +657,28 @@ struct Matrix
       m.arRot[y + 2] * n.arRot[i + kNumVector3Inds * 2];
   }
 
+  void  TransformBy(const Matrix& m)
+  {
+    RotateBy(m);
+    t = m.TransformVec(t);
+  }
+
+  ///@brief Rotates the vector by this matrix.
+  Vector3  RotateVec(const Vector3& v) const
+  {
+    return Vector3(v.x * xx + v.y * yx + v.z * zx,
+      v.x * xy + v.y * yy + v.z * zy,
+      v.x * xz + v.y * yz + v.z * zz);
+  }
+  
+  ///@brief Transforms the vector by this matrix.
+  Vector3  TransformVec(const Vector3& v) const
+  {
+    return RotateVec(v) + t;
+  }
+  
+  ///@brief Calculates a transformation looking from the position @a from to
+  /// @a to, with the given @a up vector.
   void  LookAt(const Vector3& from, const Vector3& to, const Vector3& up)
   {
     Vector3  vz(to - from);
@@ -661,11 +700,15 @@ struct Matrix
     memcpy(arRot + MZX, &vz, sizeof(vz));
   }
 
+  ///@brief Calculates a transformation looking from the translation part
+  /// of the matrix used as a position, to @a to, with the given @a up vector.
   void  LookAt(const Vector3& to, const Vector3& up)
   {
     LookAt(Vector3(t.x, t.y, t.z), to, up);
   }
 
+  ///@brief Writes data from the matrix into the given array in OpenGL's
+  /// format.
   void  ToGL(float arData[16]) const
   {
     XR_ASSERT(Matrix, arData != 0);
@@ -687,6 +730,7 @@ struct Matrix
     arData[15] = 1.0f;
   }
   
+  ///@brief Changes the rotation part of this matrix to its transpose.
   Matrix&  Transpose()
   {
     std::swap(arRot[MXY], arRot[MYX]);
@@ -695,6 +739,7 @@ struct Matrix
     return *this;
   }
   
+  ///@brief Calculates the transpose of the rotation part of this matrix.
   Matrix  Transposed() const
   {
     return Matrix(*this).Transpose();
@@ -703,8 +748,7 @@ struct Matrix
   // operator overloads
   Matrix&  operator*=(const Matrix& rhs)
   {
-    RotateBy(rhs);
-    t = rhs.TransformVec(t);
+    TransformBy(rhs);
     return *this;
   }
 
@@ -732,9 +776,12 @@ public:
   // static
   static const float  karUnitQuaternionData[kNumQuaternionInds];
   
-  static Quaternion FromEuler(Vector3 pitchYawRoll)
+  static Quaternion s_unit;
+
+  ///@brief Creates a quaternion from a vector of pitch, yaw, roll rotations.
+  ///@note The angles are in radians.
+  static void CreateFromEuler(Vector3 pitchYawRoll, Quaternion& q)
   {
-    // pitch, yaw, roll
     pitchYawRoll *= .5f;
   
     const float c1(cosf(pitchYawRoll.y));
@@ -749,10 +796,84 @@ public:
     const float s2c3(s2 * c3);
     const float c2s3(c2 * s3);
 
-    Quaternion  q(s1 * c2c3 - c1 * s2s3,
-      c1 * s2c3 - s1 * c2s3,
-      c1 * c2s3 - s1 * s2c3,
-      c1 * c2c3 - s1 * s2s3);
+    q.i = s1 * c2c3 - c1 * s2s3;
+    q.j = c1 * s2c3 - s1 * c2s3;
+    q.k = c1 * c2s3 - s1 * s2c3;
+    q.w = c1 * c2c3 - s1 * s2s3;
+  }
+
+  static Quaternion CreateFromEuler(Vector3 const& pitchYawRoll)
+  {
+    Quaternion  q;
+    CreateFromEuler(pitchYawRoll, q);
+    return q;
+  }
+
+  ///@brief Creates a quaternion that rotates by @a angle radians around the
+  /// given @axis.
+  ///@note The angle needs to be in radians.
+  static void CreateFromAxisAngle(Vector3 const& axis, float angle, Quaternion& q)
+  {
+    angle *= .5f;
+    q.w = cosf(angle);
+
+    const float s = sinf(angle);
+    q.i = axis.x * s;
+    q.j = axis.y * s;
+    q.k = axis.z * s;
+    q.Normalise();
+  }
+
+  static Quaternion CreateFromAxisAngle(Vector3 const& axis, float angle)
+  {
+    Quaternion  q;
+    CreateFromAxisAngle(axis, angle, q);
+    return q;
+  }
+
+  ///@brief Offers more efficient creation of a quaternion that rotates from
+  /// @a from to @a to. The vectors must be normalised.
+  static void CreateFromToDirectionNormalised(Vector3 const& from, Vector3 const& to, Quaternion& q)
+  {
+    float d = from.Dot(to);
+    if (d * d < 1.0f)
+    {
+      Vector3 c = from.Cross(to);
+      Quaternion q(c.x, c.y, c.z, d + 1.0f);
+      q.Normalise();
+    }
+  }
+
+  static Quaternion CreateFromToDirectionNormalised(Vector3 const& from, Vector3 const& to)
+  {
+    Quaternion  q;
+    CreateFromToDirectionNormalised(from, to, q);
+    return q;
+  }
+
+  ///@brief Creates a quaternion that rotates from @a from to @a to. These
+  /// vectors will be normalised.
+  static void CreateFromToDirection(Vector3 from, Vector3 to, Quaternion& q)
+  {
+    float dFrom = from.Dot();
+    if (dFrom > .0f)
+    {
+      from *= 1.0f / sqrtf(dFrom);
+    }
+
+    float dTo = to.Dot();
+    if (dTo > .0f)
+    {
+      to *= 1.0f / sqrtf(dTo);
+    }
+
+    CreateFromToDirectionNormalised(from, to, q);
+  }
+
+  static Quaternion CreateFromToDirection(Vector3 const& from, Vector3 const& to)
+  {
+    Quaternion  q;
+    CreateFromToDirection(from, to, q);
     return q;
   }
 
@@ -785,6 +906,7 @@ public:
   {}
   
   // general
+  /// Calculates the conjugate of this quaternion.
   void  Conjugate()
   {
     i = -i;
@@ -792,14 +914,18 @@ public:
     k = -k;
   }
   
+  ///@brief Calculates the magnitude of this quaternion.
   float Magnitude() const
   {
     return sqrtf(w * w + i * i + j * j + k * k);
   }
 
+  ///@brief Scales this quaternion by the inverse of the magnitude, i.e.
+  /// makes its magnitude 1.0f.
+  ///@note Quaternion must be non zero.
   void  Normalise()
   {
-    float mag(Magnitude());
+    float mag = Magnitude();
     XR_ASSERT(Quaternion, mag > .0f);
 
     mag = 1.0f / mag;
@@ -809,48 +935,37 @@ public:
     w *= mag;
   }
   
-  void  SetAxisAngle(float x, float y, float z, float theta)
+  ///@brief Calculates an axis and an angle that describe the rotation
+  /// that the quaternion represents, and stores it in the given values.
+  void  GetAxisAngle(float& x, float& y, float& z, float& theta) const
   {
-    theta *= .5f;
-    w = cosf(theta);
-
-    const float sinTheta(sinf(theta));
-    i = x * sinTheta;
-    j = y * sinTheta;
-    k = z * sinTheta;
-  }
-  
-  void  SetAxisAngle(const Vector3& v, float theta)
-  {
-    SetAxisAngle(v.x, v.y, v.z, theta);
-  }
-  
-  void  GetAxisAngle(float& x, float& y, float& z, float& theta)
-  {
-    theta = acosf(w);
-
-    float sinTheta(sinf(theta));
-    if (sinTheta > .0f)
+    theta = 2.0f * acosf(w);
+    float w2 = w * w;
+    if (w2 < 1.0f)
     {
-      sinTheta = 1.0f / sinTheta;
-      x = i * sinTheta;
-      y = j * sinTheta;
-      z = k * sinTheta;
+      w2 = 1.0f / (1.0f - sqrtf(w2));
+      x = i * w2;
+      y = j * w2;
+      z = k * w2;
     }
     else
     {
-      x = y = z = .0f;
+      x = .0f;
+      y = .0f;
+      z = .0f;
     }
-
-    theta *= 2.0f;
   }
   
-  void  GetAxisAngle(Vector3& v, float theta)
+  ///@brief Calculates an axis and an angle that describe the rotation
+  /// that the quaternion represents, and stores it in the given values.
+  void  GetAxisAngle(Vector3& v, float& theta) const
   {
     GetAxisAngle(v.x, v.y, v.z, theta);
   }
   
-  void  RotateVec(Vector3& v)
+  ///@brief Applies the rotation that the quaternion represents, to the
+  /// given vector @a v.
+  void  RotateVec(Vector3& v) const
   {
     const float px((w * v.x) - (j * v.z) + (k * v.y));
     const float py((w * v.y) - (k * v.x) + (i * v.z));
@@ -873,6 +988,8 @@ public:
     v.z = vzk2 + wpz - vxpz;
   }
   
+  ///@brief Creates a vector containing the euler angles of the rotation that
+  /// this quaternion represents.
   Vector3 ToEuler() const
   {
 	  const float iSqr(i * i);

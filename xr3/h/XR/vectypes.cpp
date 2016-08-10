@@ -22,7 +22,7 @@ const float Matrix::karIdentityData[] =
   .0f, .0f, 1.0f
 };
 
-Matrix Matrix::s_identity;
+Matrix Matrix::s_identity(karIdentityData);
 
 //==============================================================================
 const float Quaternion::karUnitQuaternionData[] =
@@ -32,5 +32,7 @@ const float Quaternion::karUnitQuaternionData[] =
   .0f,
   .0f
 };
+
+Quaternion Quaternion::s_unit(karUnitQuaternionData);
 
 } // XR
