@@ -25,6 +25,7 @@ public:
   // structors
   Name();
   explicit Name(uint32 value);
+  explicit Name(const char* pName, size_t length);
   explicit Name(const std::string& name);
   ~Name();
   

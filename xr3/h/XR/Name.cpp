@@ -34,6 +34,15 @@ Name::Name(uint32 name)
 {}
 
 //==============================================================================
+Name::Name(const char* pName, size_t length)
+  : m_value(XR::Hash::String(pName, length))
+#ifdef  XR_DEBUG
+  ,
+  m_debugValue(pName, length)
+#endif  //XR_DEBUG
+{}
+
+//==============================================================================
 Name::Name(const std::string& name)
 : m_value(XR::Hash::String(name.c_str()))
 #ifdef  XR_DEBUG
