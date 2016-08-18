@@ -2,7 +2,7 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #include "MeshRenderer.hpp"
@@ -11,13 +11,13 @@ namespace XR
 {
 
 //==============================================================================
-MeshRenderer::MeshRenderer ()
-: Entity::ComponentT<MeshRenderer>(),
+MeshRenderer::MeshRenderer()
+: BaseType(),
   m_pMesh(0)
 {}
 
 //==============================================================================
-MeshRenderer::~MeshRenderer ()
+MeshRenderer::~MeshRenderer()
 {}
 
 //==============================================================================

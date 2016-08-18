@@ -1,19 +1,17 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
-// GameObject.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    11/03/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #if !defined XR_ENTITY_HPP
 #define XR_ENTITY_HPP
 
 #include <list>
-#include <set>
+#include <map>
 #include "vectypes.hpp"
 #include "Name.hpp"
 #include "typeutils.hpp"
@@ -23,7 +21,7 @@ namespace XR
 
 //==============================================================================
 ///@brief Entity has a 3D transformation composed of translation, rotation and
-/// scaling (applied in this order), a list of Components and a list of child
+/// scaling (applied in this order), a set of Components and a list of child
 /// Entities (both of which it has ownership of).
 class Entity
 {
@@ -52,69 +50,60 @@ public:
     Name  m_name;
   };
   
-  ///@brief Component class which define a single unique aspect of an Entity,
+  ///@brief Component class which defines a single unique aspect of an Entity,
   /// with access to the Entity that owns it.
-  ///@note  GetType() is expected to return the TypeId for your component class.
-  /// The XR_ENTITY_COMPONENT_GETTYPE_DECL() macro helps with this.
   class Component
   {
     XR_NONCOPY_DECL(Component)
   
   public:
-    // types
-    typedef std::set<Component*> Set;
-    
-    ///@brief Finds a component that matches the typedId it's constructed with.
-    class FindPredicate
+    // static
+    template <typename T>
+    static size_t GetTypeIdImpl()
     {
-    public:
-      // structor
-      explicit FindPredicate(size_t typeId)
-      : m_typeId(typeId)
-      {}
-      
-      // operators
-      bool  operator()(const Component* p) const
-      {
-        return p->GetTypeId() < m_typeId;
-      }
-      
-    private:
-      // data
-      size_t  m_typeId;
-    };
-    
+      return XR::TypeId<T>();
+    }
+
     // structors
     Component();
     virtual ~Component();
     
     // virtual
+    ///@brief Returns the type id of the component.
     virtual size_t      GetTypeId() const =0;
-    virtual Component*  Clone() const =0; // Note: don't bother copying the owner.
-    
+
+    ///@brief Creates a copy of the component; this instance will be returned.
+    virtual Component*  Clone() const =0;
+
     // general
     Entity* GetOwner() const;
-    void    SetOwner(Entity* pOwner);
-    
+
   private:
+    // friend
+    friend class Entity;
+
     // data
     Entity* m_pOwner; // no ownership
   };
 
+  ///@brief Helper class to automate the definition of GetTypeId().
   template  <typename T>
   class ComponentT: public Component
   {
   public:
+    // types
+    typedef ComponentT<T> BaseType;
+
     // general
     virtual size_t  GetTypeId() const
     {
-      return XR::TypeId<T>();
+      return GetTypeIdImpl<T>();
     }
   };
   
   // static
   ///@brief The separator character used in an Entity path to FindChild(), e.g.
-  /// "World.EntryPoint.Gate"
+  /// "Zone.Locators.PlayerStart"
   static const char kSeparator = '.';
 
   // data
@@ -123,50 +112,108 @@ public:
   Vector3         scaling;
   
   // structors
-  Entity();
-  explicit Entity(Name n);
+  explicit Entity(Entity* pParent);
+  explicit Entity(Name n, Entity* pParent);
   ~Entity();
   
   // general
   Name            GetName() const;
   void            SetName(Name n);
 
+  ///@brief Updates the local transform matrix of this Entity.
   void            UpdateTransform();
   const Matrix&   GetTransform() const;
   
+  ///@brief Calculates and returns the world transform matrix of this Entity,
+  /// based on the transforms of itself and its parents.
   Matrix          GetWorldTransform() const;
   
+  ///@brief Returns the parent of this Entity, or nullptr if none.
   Entity*         GetParent() const;
+
+  ///@brief Removes this entity from the list of its parent's children. If this
+  /// Entity doesn't have a parent, this is a no-op.
   void            DetachFromParent();
   
-  void            AddChild(Entity& e);  // ownership
-  void            RemoveChild(Entity& e); // release ownership
+  ///@brief Adds the Entity @a e as a child of this and transfers its ownership
+  /// to this.
+  void            AddChild(Entity& e);
 
+  ///@brief If only @a e is a child of this, relinquishes ownership of it and
+  /// removes it from the list of children of this.
+  ///@return The success of the operation.
+  bool            RemoveChild(Entity& e);
+
+  ///@brief Returns a read only list of this' children. Does not transfer
+  /// ownership of any of them.
   const List&     GetChildren() const;
   
-  Entity*         FindChild(const char* pPath) const; // no transfer
-  Entity*         FindChild(Name n) const; // no transfer
+  ///@brief Attempts to find a child in the given @a path, which should be
+  /// a kSeparator delimited list of names, e.g. "Zone.Locators.PlayerStart".
+  ///@return Pointer to the child entity, or if if wasn't found, null.
+  ///@note Does not transfer ownership.
+  Entity*         FindChild(const char* pPath) const;
 
-  void            AddComponent(Component& c); // ownership
-  void            RemoveComponent(Component& c);  // release ownership
-  
-  Component*      FindComponent(size_t typeId) const;
+  ///@brief Attempts to find an immediate child with a name @a n.
+  ///@return Pointer to the child entity, or if if wasn't found, null.
+  ///@note Does not transfer ownership.
+  Entity*         FindChild(Name n) const;
 
-  ///@note Uses TypeId - assumes that your Components' GetType() does too.
-  template  <typename T>
-  Component*      FindComponent() const;
-  
+  ///@brief If this Entity has a component of type T, a pointer to it is
+  /// returned, otherwise nullptr.
+  template <class T>
+  T*              FindComponent() const;
+
+  ///@brief Adds a default constructed component of type T to this Entity.
+  ///@return Pointer to the component, or nullptr if component of the given
+  /// type has already existed on this Entity.
+  ///@note Allocates the component instance.
+  template <class T>
+  T*              AddComponent();
+
+  ///@brief Attempts to add the given Component instance. This will only be
+  /// successful if this Entity does not yet have a component of the same type.
+  /// If @A component has a previous owner, it will be removed from it.
+  ///@note Transfers ownership, but only if successful.
+  bool            AddComponent(Component& component);
+
+  ///@brief If this Entity has a component of type T, removes it and deallocates
+  /// the instance that was found.
+  template <class T>
+  void            RemoveComponent();
+
+  ///@brief Attempts to remove the given component instance.
+  ///@return THe success of the operation.
+  ///@note Transfers ownership, but only if successful.
+  bool            RemoveComponent(Component& component);
+
+  ///@return The success of the operation.
+  ///@brief Creates a deep copy of this Entity and all of its components and
+  /// child entities, then if @a pParent is not nullptr, adds the clone to it
+  /// as a child.
   Entity*         Clone(Entity* pParent) const;
 
-protected:
+  ///@brief Processes this Entity and all of its children using the visitor
+  /// @a v, depth-first.
+  template <class Visitor>
+  void            Visit(Visitor v);
+
+private:
+  // types
+  typedef std::map<size_t, Component*> ComponentMap;
+
   // data
   Entity*         m_pParent;  // no ownership
   Matrix          m_xForm;
   
   List            m_children; // yes ownership
-  Component::Set  m_components; // yes ownership
+  ComponentMap    m_components; // yes ownership
 
   Name            m_name;
+
+  // internal
+  Component*      FindComponent(size_t typeId) const;
+  void            _AddComponent(Component& component, const size_t* typeIdHint = 0);
 };
 
 //==============================================================================
@@ -180,7 +227,7 @@ Entity* Entity::Component::GetOwner() const
 
 //==============================================================================
 inline
-Name  Entity::GetName() const
+Name Entity::GetName() const
 {
   return m_name;
 }
@@ -207,13 +254,60 @@ const Entity::List& Entity::GetChildren() const
 }
 
 //==============================================================================
-template  <typename T>
+template  <class T>
 inline
-Entity::Component*  Entity::FindComponent() const
+T*  Entity::FindComponent() const
 {
-  return FindComponent(ComponentT<T>::GetTypeId());
+  return static_cast<T*>(FindComponent(Component::GetTypeIdImpl<T>()));
+}
+
+//==============================================================================
+template  <class T>
+inline
+T*  Entity::AddComponent()
+{
+  T* pComponent = 0;
+  const size_t typeId = Component::GetTypeIdImpl<T>();
+  if(FindComponent(typeId) == 0)
+  {
+    pComponent = new T();
+    _AddComponent(*pComponent, &typeId);
+  }
+  return pComponent;
+}
+
+//==============================================================================
+template  <class T>
+inline
+void Entity::RemoveComponent()
+{
+  Component*  pComponent = FindComponent<T>();
+  if(pComponent != 0 && RemoveComponent(*pComponent))
+  {
+    delete pComponent;
+  }
+}
+
+//==============================================================================
+template  <class Visitor>
+inline
+void  Entity::Visit(Visitor v)
+{
+  v(*this);
+  for(List::iterator i0 = m_children.begin(), i1 = m_children.end(); i0 != i1; ++i0)
+  {
+    v(**i0);
+  }
 }
 
 } // XR
+
+///@brief Declares 'name' as a derivative of XR::Entity::ComponentT<name> thereby
+/// further facilitating the automation of a GetTypeId() implementation required
+/// for Component subtypes.
+///@usage class or struct XR_COMPONENT_DECL(MyComponent) { /* declarations */ };
+///@note Can be combined with templates and multiple inheritance:
+/// template <typename T> class XR_COMPONENT_DECL(MyComponent), public OtherBase{};
+#define XR_COMPONENT_DECL(name) name: public XR::Entity::ComponentT<name>
 
 #endif // XR_ENTITY_HPP

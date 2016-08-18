@@ -2,11 +2,9 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// MeshRenderer.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    16/04/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_MESHRENDERER_HPP

@@ -1,8 +1,8 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #include "Entity.hpp"
@@ -21,47 +21,50 @@ Entity::Component::~Component()
 {}
 
 //==============================================================================
-void  Entity::Component::SetOwner(Entity* pOwner)
-{
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  XR_ASSERTMSG(Entity::Component, pOwner == 0 ||
-    pOwner->FindComponent(this->GetTypeId()) == this,
-    ("Entity (%s) needs to add Component %p before calling SetOwner()",
-      pOwner->GetName().GetDebugValue(), this));
-#endif
-  m_pOwner = pOwner;
-}
-
-//==============================================================================
-Entity::Entity()
+Entity::Entity(Entity* pParent)
 : translation(),
-  rotation(),
-  scaling(),
+  rotation(Quaternion::s_unit),
+  scaling(Vector3::s_one),
   m_pParent(0),
   m_xForm(),
   m_children(),
   m_components(),
   m_name()
-{}
+{
+  if(pParent != 0)
+  {
+    pParent->AddChild(*this);
+  }
+}
 
 //==============================================================================
-Entity::Entity(Name n)
+Entity::Entity(Name n, Entity* pParent)
 : translation(),
-  rotation(),
-  scaling(),
+  rotation(Quaternion::s_unit),
+  scaling(Vector3::s_one),
   m_pParent(0),
   m_xForm(),
   m_children(),
   m_components(),
   m_name(n)
-{}
+{
+  if (pParent != 0)
+  {
+    pParent->AddChild(*this);
+  }
+}
 
 //==============================================================================
 Entity::~Entity()
 {
   DetachFromParent();
   std::for_each(m_children.begin(), m_children.end(), Deleter<Entity>);
-  std::for_each(m_components.begin(), m_components.end(), Deleter<Component>);
+
+  for(ComponentMap::iterator i0 = m_components.begin(), i1 = m_components.end();
+    i0 != i1; ++i0)
+  {
+    delete i0->second;
+  }
 }
 
 //==============================================================================
@@ -125,19 +128,23 @@ void  Entity::AddChild(Entity& e)
       ("Child with same name already exists."));
   }
 #endif  //XR_DEBUG
-
+  
+  e.DetachFromParent();
   m_children.push_back(&e);
+  e.m_pParent = this;
 }
 
 //==============================================================================
-void  Entity::RemoveChild(Entity& e)
+bool  Entity::RemoveChild(Entity& e)
 {
   List::iterator  iFind = std::find(m_children.begin(), m_children.end(), &e);
-  if(iFind != m_children.end())
+  bool result = iFind != m_children.end();
+  if(result)
   {
     m_children.erase(iFind);
     e.m_pParent = 0;
   }
+  return result;
 }
 
 //==============================================================================
@@ -146,7 +153,7 @@ Entity* Entity::FindChild(const char* pName) const
   XR_ASSERT(Entity, pName != 0);
 
   const char* pBegin(pName);
-  const char* pEnd(pName + strlen(pName));
+  const char* const pEnd(pName + strlen(pName));
   const Entity* pParent = this;
   Entity* pFound = 0;
   while(pBegin != pEnd)
@@ -156,8 +163,7 @@ Entity* Entity::FindChild(const char* pName) const
     const ptrdiff_t len(pNext - pBegin);
     XR_ASSERT(Entity, len > 0);
 
-    const uint32  hash(Hash::String(pBegin, len));
-    pFound = pParent->FindChild(Name(hash));
+    pFound = pParent->FindChild(Name(pBegin, size_t(len)));
     XR_ASSERTMSG(Entity, pFound != 0, ("FindChild() failed at %s.", pBegin));
     pParent = pFound;
 
@@ -181,65 +187,77 @@ Entity* Entity::FindChild(Name n) const
 }
 
 //==============================================================================
-void  Entity::AddComponent(Component& c)
-{
-  Entity* pOwner(c.GetOwner());
-  XR_ASSERT(Entity, pOwner != this);
-
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  XR_ASSERTMSG(Entity, FindComponent(c.GetTypeId()) != 0,
-    ("Entity already has a component of type %d; only one allowed.",
-      c.GetTypeId()));
-#endif  //XR_DEBUG
-    
-  if (pOwner != 0)
-  {
-    pOwner->RemoveComponent(c);
-  }
-
-  bool  inserted = m_components.insert(&c).second;
-  XR_ASSERT(Entity, inserted);
-
-  c.SetOwner(this);  // after it has actually been added
-}
-
-//==============================================================================
-void  Entity::RemoveComponent(Component& c)
-{
-  m_components.erase(&c);
-  c.SetOwner(0);
-}
-
-//==============================================================================
 Entity::Component*  Entity::FindComponent(size_t typeId) const
 {
-  Component::Set::const_iterator iFind(std::find_if (m_components.begin(),
-    m_components.end(), Component::FindPredicate(typeId)));
-  return iFind != m_components.end() ? *iFind : 0;
+  ComponentMap::const_iterator iFind = m_components.find(typeId);
+  return iFind != m_components.end() ? iFind->second : 0;
+}
+
+//==============================================================================
+bool Entity::AddComponent(Component& component)
+{
+  const size_t typeId = component.GetTypeId();
+  const bool result = FindComponent(typeId) == 0;
+  if(result)
+  {
+    if(component.m_pOwner != 0)
+    {
+      component.m_pOwner->RemoveComponent(component);
+      component.m_pOwner = 0;
+    }
+
+    _AddComponent(component, &typeId);
+  }
+  return result;
+}
+
+//==============================================================================
+void Entity::_AddComponent(Component& component, const size_t* typeIdHint)
+{
+  XR_ASSERT(Entity, component.GetOwner() == 0);
+  const size_t  typeId = typeIdHint != 0 ? *typeIdHint : component.GetTypeId();
+  XR_ASSERT(Entity, FindComponent(typeId) == 0);
+  m_components.insert(ComponentMap::value_type(typeId, &component));
+  component.m_pOwner = this;
+}
+
+//==============================================================================
+bool Entity::RemoveComponent(Component& component)
+{
+  bool result = false;
+  ComponentMap::iterator i0 = m_components.begin();
+  ComponentMap::iterator i1 = m_components.end();
+  while(i0 != i1)
+  {
+    result = i0->second == &component;
+    if(result)
+    {
+      component.m_pOwner = 0;
+      m_components.erase(i0);
+      break;
+    }
+    ++i0;
+  }
+  return result;
 }
 
 //==============================================================================
 Entity* Entity::Clone(Entity* pParent) const
 {
-  Entity* pEntity(new Entity(GetName()));
+  Entity* pClone(new Entity(GetName(), pParent));
   
   // copy local transformation
-  pEntity->translation = translation;
-  pEntity->rotation = rotation;
-  pEntity->scaling = scaling;
-  //pEntity->UpdateTransform(); // WATCH
- 
-  if (pParent != 0)
-  {
-    pParent->AddChild(*pEntity);
-  }
-  
+  pClone->translation = translation;
+  pClone->rotation = rotation;
+  pClone->scaling = scaling;
+  //pEntity->UpdateTransform();
+
   // clone components
-  for (Component::Set::const_iterator i0(m_components.begin()), i1(m_components.end());
+  for (ComponentMap::const_iterator i0(m_components.begin()), i1(m_components.end());
     i0 != i1; ++i0)
   {
-    const Component* pComp(*i0);
-    pEntity->AddComponent(*pComp->Clone());
+    const Component* pComp(i0->second);
+    pClone->_AddComponent(*pComp->Clone());
   }
   
   // clone children to newly cloned entity - recursive
@@ -247,10 +265,10 @@ Entity* Entity::Clone(Entity* pParent) const
     i0 != i1; ++i0)
   {
     const Entity* pChild(*i0);
-    pChild->Clone(pEntity);
+    pChild->Clone(pClone);
   }
 
-  return pEntity;
+  return pClone;
 }
 
 } // XR
