@@ -1,5 +1,5 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
 // @author  Gyorgy Straub
@@ -504,7 +504,9 @@ struct Matrix
     float  arRot[kNumMatrixInds];
     struct
     {
-      float  xx, xy, xz, yx, yy, yz, zx, zy, zz;
+      float  xx, xy, xz, // local x axis
+              yx, yy, yz, // local y axis
+              zx, zy, zz; // local z axis
     };
   };
   Vector3 t;
@@ -787,8 +789,8 @@ struct Matrix
       vz.x = 1.0f;
     }
 
-    Vector3  vx(up.Cross(vz));  // x axis
-    Vector3  vy(vz.Cross(vx));  // y axis
+    Vector3  vx(up.Cross(vz));  // local x axis
+    Vector3  vy(vz.Cross(vx));  // local y axis
     memcpy(arRot + MXX, &vx, sizeof(vx));
     memcpy(arRot + MYX, &vy, sizeof(vy));
     memcpy(arRot + MZX, &vz, sizeof(vz));

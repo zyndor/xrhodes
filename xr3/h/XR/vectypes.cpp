@@ -28,10 +28,10 @@ Matrix Matrix::s_identity(karIdentityData);
 //==============================================================================
 const float Quaternion::karUnitQuaternionData[] =
 {
-  1.0f,
   .0f,
   .0f,
-  .0f
+  .0f,
+  1.0f
 };
 
 Quaternion Quaternion::s_unit(karUnitQuaternionData);
