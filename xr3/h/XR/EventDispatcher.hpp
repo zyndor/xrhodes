@@ -1,5 +1,5 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
 // EventDispatcher.hpp
@@ -121,10 +121,10 @@ protected:
 };
 
 //==============================================================================
-template  <typename E = void>
+template  <typename Return, typename E = void>
 class EventDispatcher:  protected EventDispatcherCore
 {
-public:
+protected:
   // types
   typedef E Event;
   
@@ -136,7 +136,7 @@ public:
     virtual ~ListenerBase() {}
     
     // virtual
-    virtual bool  Handle(E ev) =0;
+    virtual Return Handle(E eventData) =0;
   };
   
   template  <class T>
@@ -145,7 +145,7 @@ public:
   public:
     // types
     typedef T Type;
-    typedef bool(Type::*Callback)(Event);
+    typedef Return(Type::*Callback)(Event);
     
     // data
     Callback  pCallback;
@@ -157,9 +157,9 @@ public:
     {}
     
     // general
-    virtual bool  Handle(E ev)
+    virtual Return Handle(E eventData)
     {
-      return (static_cast<T*>(ListenerBase::pObject)->*pCallback)(ev);
+      return (static_cast<T*>(ListenerBase::pObject)->*pCallback)(eventData);
     }
     
     Listener* Clone() const
@@ -172,14 +172,6 @@ public:
   using EventDispatcherCore::RemoveListener;
   using EventDispatcherCore::Clear;
   
-  // structors
-  EventDispatcher()
-  : EventDispatcherCore()
-  {}
-  
-  ~EventDispatcher()
-  {}
-  
   // general
   template  <class T>
   bool  AddListener(T* pListener, typename Listener<T>::Callback pCallback)  // no ownership transfer
@@ -205,53 +197,12 @@ public:
     }
     return result;
   }
-  
-  bool  Notify(E ev)
-  {
-    // start traversal
-    m_isTraversing = true;
-    
-    bool  handled(false);
-    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
-      i0 != i1; ++i0)
-    {
-      if (static_cast<ListenerBase*>(*i0)->Handle(ev))
-      {
-        handled = true;
-        break;
-      }
-    }
-
-    // finish traversal
-    m_isTraversing = false;
-
-    ProcessPostponed();
-        
-    return handled;
-  }
-
-  void  Broadcast(E ev)
-  {
-    // start traversal
-    m_isTraversing = true;
-    
-    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
-      i0 != i1; ++i0)
-    {
-      static_cast<ListenerBase*>(*i0)->Handle(ev);  // ignore return value
-    }
-
-    // finish traversal
-    m_isTraversing = false;
-    
-    ProcessPostponed();
-  }
 };
 
-template  <>
-class EventDispatcher<void>:  protected EventDispatcherCore
+template  <typename Return>
+class EventDispatcher<Return, void>:  protected EventDispatcherCore
 {
-public:
+protected:
   // types
   class ListenerBase: public ListenerBaseBase
   {
@@ -261,7 +212,7 @@ public:
     virtual ~ListenerBase() {}
     
     // virtual
-    virtual bool  Handle() =0;
+    virtual Return Handle() =0;
   };
   
   template  <class T>
@@ -270,7 +221,7 @@ public:
   public:
     // types
     typedef T Type;
-    typedef bool(Type::*Callback)();
+    typedef Return(Type::*Callback)();
     
     // data
     Callback  pCallback;
@@ -282,7 +233,7 @@ public:
     {}
     
     // general
-    virtual bool  Handle()
+    virtual Return Handle()
     {
       return (static_cast<T*>(pObject)->*pCallback)();
     }
@@ -292,18 +243,6 @@ public:
       return new Listener(static_cast<T*>(pObject), pCallback);
     }
   };
-  
-  // using
-  using EventDispatcherCore::RemoveListener;
-  using EventDispatcherCore::Clear;
-  
-  // structors
-  EventDispatcher()
-  : EventDispatcherCore()
-  {}
-  
-  ~EventDispatcher()
-  {}
   
   // general
   template  <class T>
@@ -330,12 +269,65 @@ public:
     }
     return result;
   }
-  
+};
+
+//==============================================================================
+template <typename E = void>
+class EventNotifier : protected EventDispatcher<bool, E>
+{
+public:
+  // types
+  typedef EventDispatcher<bool, E>  BaseType;
+
+  // using
+  using BaseType::AddListener;
+  using BaseType::RemoveListener;
+  using BaseType::Clear;
+
+  // general
+  bool  Notify(E eventData)
+  {
+    // start traversal
+    m_isTraversing = true;
+
+    bool  handled(false);
+    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
+      i0 != i1; ++i0)
+    {
+      if (static_cast<ListenerBase*>(*i0)->Handle(eventData))
+      {
+        handled = true;
+        break;
+      }
+    }
+
+    // finish traversal
+    m_isTraversing = false;
+
+    ProcessPostponed();
+
+    return handled;
+  }
+};
+
+template <>
+class EventNotifier<void> : protected EventDispatcher<bool>
+{
+public:
+  // types
+  typedef EventDispatcher<bool>  BaseType;
+
+  // using
+  using BaseType::AddListener;
+  using BaseType::RemoveListener;
+  using BaseType::Clear;
+
+  // general
   bool  Notify()
   {
     // start traversal
     m_isTraversing = true;
-    
+
     bool  handled(false);
     for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
@@ -349,26 +341,72 @@ public:
 
     // finish traversal
     m_isTraversing = false;
-    
+
     ProcessPostponed();
-    
+
     return handled;
   }
+};
 
-  void  Broadcast()
+//==============================================================================
+template <typename E = void>
+class EventBroadcaster : protected EventDispatcher<void, E>
+{
+public:
+  // types
+  typedef EventDispatcher<void, E>  BaseType;
+
+  // using
+  using BaseType::AddListener;
+  using BaseType::RemoveListener;
+  using BaseType::Clear;
+
+  // general
+  void  Broadcast(E eventData)
   {
     // start traversal
     m_isTraversing = true;
-    
+
     for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
-      static_cast<ListenerBase*>(*i0)->Handle();  // ignore return value
+      static_cast<ListenerBase*>(*i0)->Handle(eventData);
     }
 
     // finish traversal
     m_isTraversing = false;
-    
+
+    ProcessPostponed();
+  }
+};
+
+template <>
+class EventBroadcaster<void>: protected EventDispatcher<void>
+{
+public:
+  // types
+  typedef EventDispatcher<void>  BaseType;
+
+  // using
+  using BaseType::AddListener;
+  using BaseType::RemoveListener;
+  using BaseType::Clear;
+
+  // general
+  void  Broadcast()
+  {
+    // start traversal
+    m_isTraversing = true;
+
+    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
+      i0 != i1; ++i0)
+    {
+      static_cast<ListenerBase*>(*i0)->Handle();
+    }
+
+    // finish traversal
+    m_isTraversing = false;
+
     ProcessPostponed();
   }
 };

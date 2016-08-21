@@ -1,5 +1,5 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
 // copyright (c) 2011 - 2014. All rights reserved.
