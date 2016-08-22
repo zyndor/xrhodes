@@ -1,15 +1,13 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
-// Input.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    03/10/2013
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_INPUT_HPP
+#ifndef XR_INPUT_HPP
 #define XR_INPUT_HPP
 
 #include "vectypes.hpp"

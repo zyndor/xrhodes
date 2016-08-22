@@ -1,14 +1,13 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #include <s3eKeyboard.h>
 #include <s3ePointer.h>
 #include "Input.hpp"
-//#include "S3eInputDevice.hpp"
 
 namespace XR
 {
@@ -125,7 +124,7 @@ void Input::Init()
 //==============================================================================
 void Input::Exit()
 {
-  XR_ASSERTMSG(Input, s_pInput != 0, ("Already initialised!"));
+  XR_ASSERTMSG(Input, s_pInput != 0, ("Not initialised!"));
 
   s3eKeyboardUnRegister(S3E_KEYBOARD_KEY_EVENT, OnKeyAction);
   s3ePointerUnRegister(S3E_POINTER_BUTTON_EVENT, OnMouseAction);
