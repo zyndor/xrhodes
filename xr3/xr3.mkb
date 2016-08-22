@@ -44,7 +44,6 @@ files
   debugdraw.cpp
   DelayedCallback.cpp
   Entity.cpp
-  EventDispatcher.cpp
   FileBuffer.cpp
   Font.cpp
   fundamentals.cpp
@@ -109,4 +108,8 @@ files
   Texture.cpp
   Timer.cpp
   Worker.cpp
+
+  [src/detail]
+  (h/XR/detail)
+  EventDispatcher.cpp
 }

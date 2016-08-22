@@ -1,15 +1,15 @@
-#include "UIEventDispatcher.hpp"
+#include "UIEventNotifier.hpp"
 
 namespace XR
 {
 
 //==============================================================================
-void  UIEventDispatcher::UIPointerActionCallback( void* pSystem, void* pUser )
+void  UIEventNotifier::UIPointerActionCallback(void* pSystem, void* pUser)
 {
-  UIEventDispatcher   *pDispatcher(static_cast<UIEventDispatcher*>(pUser));
+  UIEventNotifier   *pDispatcher(static_cast<UIEventNotifier*>(pUser));
   Input::MouseActionEvent *pEvent(static_cast<Input::MouseActionEvent*>(pSystem));
 
-  bool  zeroHit(!pDispatcher->m_action.Notify(*pEvent) &&
+  bool  zeroHit(!pDispatcher->m_actionNotifier.Notify(*pEvent) &&
     pDispatcher->m_pZeroHitCb != 0);
   
   if (zeroHit)
@@ -19,28 +19,28 @@ void  UIEventDispatcher::UIPointerActionCallback( void* pSystem, void* pUser )
 }
 
 //==============================================================================
-void  UIEventDispatcher::UIPointerMotionCallback( void* pSystem, void* pUser )
+void  UIEventNotifier::UIPointerMotionCallback(void* pSystem, void* pUser)
 {
-  UIEventDispatcher    *pDispatcher(static_cast<UIEventDispatcher*>(pUser));
+  UIEventNotifier    *pDispatcher(static_cast<UIEventNotifier*>(pUser));
   Input::MouseMotionEvent *pEvent(static_cast<Input::MouseMotionEvent*>(pSystem));
 
-  pDispatcher->m_motion.Notify(*pEvent);
+  pDispatcher->m_motionNotifier.Notify(*pEvent);
 }
 
 //==============================================================================
-UIEventDispatcher::UIEventDispatcher()
-: m_action(),
-  m_motion(),
+UIEventNotifier::UIEventNotifier()
+: m_actionNotifier(),
+  m_motionNotifier(),
   m_pZeroHitCb(0),
   m_pZeroHitCbData(0)
 {}
 
 //==============================================================================
-UIEventDispatcher::~UIEventDispatcher()
+UIEventNotifier::~UIEventNotifier()
 {}
 
 //==============================================================================
-bool  UIEventDispatcher::Register()
+bool  UIEventNotifier::Register()
 {
   return  Input::RegisterCallback(Input::EV_MOUSE_ACTION,
       UIPointerActionCallback, this) &&
@@ -49,7 +49,7 @@ bool  UIEventDispatcher::Register()
 }
 
 //==============================================================================
-bool  UIEventDispatcher::Unregister()
+bool  UIEventNotifier::Unregister()
 {
   return  Input::UnregisterCallback(Input::EV_MOUSE_ACTION,
       UIPointerActionCallback) &&
@@ -58,30 +58,30 @@ bool  UIEventDispatcher::Unregister()
 }
 
 //==============================================================================
-bool  UIEventDispatcher::AddListener(UIElement* pListener)
+bool  UIEventNotifier::AddListener(UIElement* pListener)
 {
-  m_action.AddListener(pListener, &UIElement::OnMouseAction);
-  m_motion.AddListener(pListener, &UIElement::OnMouseMotion);
+  m_actionNotifier.AddListener(pListener, &UIElement::OnMouseAction);
+  m_motionNotifier.AddListener(pListener, &UIElement::OnMouseMotion);
   return true;
 }
 
 //==============================================================================
-bool  UIEventDispatcher::RemoveListener(UIElement* pListener)
+bool  UIEventNotifier::RemoveListener(UIElement* pListener)
 {
-  m_action.RemoveListener(pListener);
-  m_motion.RemoveListener(pListener);
+  m_actionNotifier.RemoveListener(pListener);
+  m_motionNotifier.RemoveListener(pListener);
   return true;
 }
 
 //==============================================================================
-void UIEventDispatcher::RemoveAllListeners()
+void UIEventNotifier::RemoveAllListeners()
 {
-  m_action.Clear();
-  m_motion.Clear();
+  m_actionNotifier.Clear();
+  m_motionNotifier.Clear();
 }
 
 //==============================================================================
-void UIEventDispatcher::SetZeroHitCallback( ZeroHitCallback pZeroHitCb, void* pCbData )
+void UIEventNotifier::SetZeroHitCallback(ZeroHitCallback pZeroHitCb, void* pCbData)
 {
   m_pZeroHitCb = pZeroHitCb;
   m_pZeroHitCbData = pCbData;
