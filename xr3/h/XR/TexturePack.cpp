@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Interactive
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include <tinyxml.h>
 #include "TexturePack.hpp"
 #include "utils.hpp"
@@ -102,7 +109,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
     success = m_pMaterial != 0;
     if (!success)
     {
-      XR_TRACE(TexturePack, ("Failed to find material '%s'.", buffer));
+      XR_TRACE(TexturePack, ("Failed to find material '%s'.", buffer.c_str()));
     }
   }
 

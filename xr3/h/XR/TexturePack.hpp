@@ -1,15 +1,13 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
-// TexturePack.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    06/12/2012
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TEXTUREPACK_HPP
+#ifndef XR_TEXTUREPACK_HPP
 #define XR_TEXTUREPACK_HPP
 
 #include <map>
