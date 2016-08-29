@@ -38,6 +38,7 @@ files
   Application.cpp
   BasicMesh.cpp
   Callback.cpp
+  Camera.cpp
   Color.cpp
   CrossObject.cpp
   CSV.cpp
@@ -66,6 +67,7 @@ files
   Name.cpp
   Parse.cpp
   ParserCore.cpp
+  ProjectionHelpers.cpp
   Pool.cpp
   Quadtree.cpp
   Ray.cpp
