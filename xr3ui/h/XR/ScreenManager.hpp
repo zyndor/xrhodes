@@ -2,11 +2,9 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// ScreenManager.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    07/05/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_SCREENMANAGER_HPP
@@ -29,7 +27,7 @@ public:
 
   // general
   UIContainer&        GetContainer();
-  UIEventDispatcher&  GetDispatcher();
+  UIEventNotifier&    GetNotifier();
   
   void                Change(Screen& screen, int32 delayMs);
   void                Push(Screen& screen, int32 delayMs);
@@ -51,7 +49,7 @@ protected:
   Screen*             m_pPrevious;  // no ownership
   
   UIContainer         m_container;
-  UIEventDispatcher   m_dispatcher;
+  UIEventNotifier   m_dispatcher;
   
   // internal
   void  _ClearExiting();
@@ -68,7 +66,7 @@ UIContainer&        ScreenManager::GetContainer()
 
 //==============================================================================
 inline
-UIEventDispatcher&  ScreenManager::GetDispatcher()
+UIEventNotifier&  ScreenManager::GetNotifier()
 {
   return m_dispatcher;
 }

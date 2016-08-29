@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// UIElement.hpp
 // @author  Gyorgy Straub
-// @date    21/06/2012
 //
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIELEMENT_HPP
+#ifndef XR_UIELEMENT_HPP
 #define XR_UIELEMENT_HPP
 
 #include <list>
@@ -22,7 +20,7 @@ namespace XR
 
 //==============================================================================
 class UIContainer;
-class UIEventDispatcher;
+class UIEventNotifier;
 class UIRenderer;
 
 //==============================================================================
@@ -110,11 +108,11 @@ public:
 
   ///@brief Convenience method to register the element on a UIEventDispatcher
   /// for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
-  bool          Register(UIEventDispatcher& disp);
+  bool          Register(UIEventNotifier& disp);
 
   ///@brief Convenience method to unregister the element on a
   /// UIEventDispatcher for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
-  bool          Unregister(UIEventDispatcher& disp);
+  bool          Unregister(UIEventNotifier& disp);
 
   ///@brief Processes changes of position and/or size carried out via
   /// direct access to members.

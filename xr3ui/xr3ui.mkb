@@ -37,7 +37,7 @@ files
   UIColoredElement.cpp
   UIContainer.cpp
   UIElement.cpp
-  UIEventDispatcher.cpp
+  UIEventNotifier.cpp
   UIGridLayout.cpp
   UIGrowingLayoutBase.cpp
   UIHorizontalLayout.cpp

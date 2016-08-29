@@ -2,34 +2,32 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// UIEventDispatcher.hpp
 // @author  Gyorgy Straub
-// @date    25/06/2012
 //
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIEVENTDISPATCHER_HPP
-#define XR_UIEVENTDISPATCHER_HPP
+#ifndef XR_UIEVENTNOTIFIER_HPP
+#define XR_UIEVENTNOTIFIER_HPP
 
 #include <list>
 #include <XR/Input.hpp>
-#include <XR/EventDispatcher.hpp>
+#include <XR/EventNotifier.hpp>
 #include "UIElement.hpp"
 
 namespace XR
 {
 
 //==============================================================================
-class UIEventDispatcher
+class UIEventNotifier
 {
 public:
   // types
   typedef void(*ZeroHitCallback)(const Input::MouseActionEvent&, void*);
 
   // structors
-  explicit UIEventDispatcher();
-  ~UIEventDispatcher();
+  explicit UIEventNotifier();
+  ~UIEventNotifier();
 
   // general use
   bool  Register();
@@ -49,8 +47,8 @@ protected:
   static void UIPointerMotionCallback(void* pSystem, void* pUser);
 
   // data
-  EventDispatcher<const Input::MouseActionEvent&> m_action;
-  EventDispatcher<const Input::MouseMotionEvent&> m_motion;
+  EventNotifier<const Input::MouseActionEvent&> m_actionNotifier;
+  EventNotifier<const Input::MouseMotionEvent&> m_motionNotifier;
 
   ZeroHitCallback m_pZeroHitCb;
   void*           m_pZeroHitCbData;
@@ -58,4 +56,4 @@ protected:
 
 } // XR
 
-#endif // XR_UIEVENTDISPATCHER_HPP
+#endif // XR_UIEVENTNOTIFIER_HPP

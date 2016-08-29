@@ -2,18 +2,16 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// Screen.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    07/05/2014
 //
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_SCREEN_HPP
 #define XR_SCREEN_HPP
 
 #include "UIContainer.hpp"
-#include "UIEventDispatcher.hpp"
+#include "UIEventNotifier.hpp"
 #include "UIRenderer.hpp"
 
 namespace XR

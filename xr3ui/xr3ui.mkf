@@ -20,7 +20,7 @@ files
   XR/UIColoredElement.hpp  #UIElement
   XR/UIContainer.hpp #UIElement
   XR/UIElement.hpp
-  XR/UIEventDispatcher.hpp  #UIElement
+  XR/UIEventNotifier.hpp  #UIElement
   XR/UIGridLayout.hpp  #UIContainer
   XR/UIGrowingLayoutBase.hpp #UIContainer
   XR/UIHorizontalLayout.hpp  #UIGrowingLayoutBase
