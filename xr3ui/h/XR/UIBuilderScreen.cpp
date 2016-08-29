@@ -216,7 +216,7 @@ void  UIBuilderScreen::Reposition(int width, int height)
 //==============================================================================
 void  UIBuilderScreen::_Register()
 {
-  UIEventDispatcher&  dispatcher(m_pManager->GetDispatcher());
+  UIEventNotifier&  dispatcher(m_pManager->GetNotifier());
   for (int i = 0; i < m_numListeners; ++i)
   {
     dispatcher.AddListener(m_parpListeners[i]);
@@ -226,7 +226,7 @@ void  UIBuilderScreen::_Register()
 //==============================================================================
 void  UIBuilderScreen::_Unregister()
 {
-  UIEventDispatcher&  dispatcher(m_pManager->GetDispatcher());
+  UIEventNotifier&  dispatcher(m_pManager->GetNotifier());
   for (int i = 0; i < m_numListeners; ++i)
   {
     dispatcher.RemoveListener(m_parpListeners[i]);

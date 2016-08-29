@@ -1,6 +1,13 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include <XR/Renderer.hpp>
 #include "UIElement.hpp"
-#include "UIEventDispatcher.hpp"
+#include "UIEventNotifier.hpp"
 
 namespace XR
 {
@@ -172,13 +179,13 @@ void UIElement::OnChangeCaller( void* pData )
 }
 
 //==============================================================================
-bool  UIElement::Register( UIEventDispatcher& disp )
+bool  UIElement::Register( UIEventNotifier& disp )
 {
   return disp.AddListener(this);
 }
 
 //==============================================================================
-bool  UIElement::Unregister( UIEventDispatcher& disp )
+bool  UIElement::Unregister( UIEventNotifier& disp )
 {
   return disp.RemoveListener(this);
 }

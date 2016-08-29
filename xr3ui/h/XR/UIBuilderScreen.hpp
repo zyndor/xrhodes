@@ -2,11 +2,9 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// UIBuilderScreen.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    09/05/2014
 //
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_UIBUILDERSCREEN_HPP
