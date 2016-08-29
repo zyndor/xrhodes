@@ -18,11 +18,9 @@ struct  RendererImpl
   // data
   float           zFar;
   float           zNear;
-  float           zView;
   float           tanHalfVerticalFov;
   Rect            scissorRect;
   int             numVertices;
-  bool            isPerspective;
   uint32          flushId;
 };
 
@@ -136,11 +134,9 @@ void Renderer::SetOrtho(float left, float right, float bottom, float top,
   
   s_pRenderer->zNear = zNear;
   s_pRenderer->zFar = zFar;
-  s_pRenderer->zView = .0f;
+  s_pRenderer->tanHalfVerticalFov = .0f;
   //IwGxSetFarZNearZ(zFar, zNear);
   IwGxSetPerspectiveMatrix(arPerspMatrix);
-
-  s_pRenderer->isPerspective = false;
 }
 
 //==============================================================================
@@ -153,15 +149,13 @@ void Renderer::SetPerspective(float vFov, float aspect, float zNear,
   //IwGxSetFlags(flags);
 
   float arPerspMatrix[16];
-  ProjectionHelpers::CalculatePerspective(vFov, aspect, zNear, zFar, arPerspMatrix, &s_pRenderer->tanHalfVerticalFov);
+  ProjectionHelpers::CalculatePerspective(vFov, aspect, zNear, zFar, arPerspMatrix,
+    &s_pRenderer->tanHalfVerticalFov);
 
   s_pRenderer->zNear = zNear;
   s_pRenderer->zFar = zFar;
-  s_pRenderer->zView = float(IwGxGetScreenHeight() / 2) * s_pRenderer->tanHalfVerticalFov;
   IwGxSetFarZNearZ(zFar, zNear);
   IwGxSetPerspectiveMatrix(arPerspMatrix);
-
-  s_pRenderer->isPerspective = true;
 }
 
 //==============================================================================
@@ -180,14 +174,6 @@ void Renderer::SetFarNearZ( float zFar, float zNear )
 }
 
 //==============================================================================
-void  Renderer::SetPerspMult(float pm)
-{
-  // stub, recalculate projection
-  s_pRenderer->zView = pm;
-  IwGxSetPerspMul(pm);
-}
-
-//==============================================================================
 float Renderer::GetNearZ()
 {
   return s_pRenderer->zNear;
@@ -200,9 +186,9 @@ float Renderer::GetFarZ()
 }
 
 //==============================================================================
-float Renderer::GetPerspMult()
+float Renderer::GetPerspectiveMultiple()
 {
-  return s_pRenderer->zView;
+  return s_pRenderer->tanHalfVerticalFov * (GetScreenHeight() / 2);
 }
 
 //==============================================================================

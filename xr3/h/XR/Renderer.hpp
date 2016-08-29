@@ -73,10 +73,10 @@ public:
   static void           SetPerspective(float verticalFov, float zNear, float zFar);
 
   static void           SetFarNearZ(float zFar, float zNear);
-  static void           SetPerspMult(float perspMul);
   static float          GetNearZ();
   static float          GetFarZ();
-  static float          GetPerspMult();  
+
+  static float          GetPerspectiveMultiple();
 
   static void           SetViewMatrix(const Matrix& m);
   static void           SetModelMatrix(const Matrix& m);

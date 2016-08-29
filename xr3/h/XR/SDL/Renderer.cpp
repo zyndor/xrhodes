@@ -29,8 +29,6 @@ static struct
   float                 zFar;
   float                 zNear;
   float                 tanHalfVerticalFov;
-  float                 zView;
-  bool                  isPerspective;
   Rect                  scissorRect;
   Pool                  framePool;
   int32                 numVertices;
@@ -250,12 +248,10 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
     zNear = -zFar;
   }
   s_rendererImpl.zNear = zNear;
-  s_rendererImpl.zView = .0f;
+  s_rendererImpl.tanHalfVerticalFov = .0f;
   
   XR_GL_CALL(glOrtho(left, right, bottom, top, s_rendererImpl.zNear,
     s_rendererImpl.zFar));
-  
-  s_rendererImpl.isPerspective = false;
 }
 
 //==============================================================================
@@ -282,12 +278,7 @@ void  Renderer::SetPerspective(float verticalFov, float aspect, float zNear, flo
   float height = zNear * s_rendererImpl.tanHalfVerticalFov;
   float width = height * aspect;
 
-  s_rendererImpl.zView = height * .5f / tanf(verticalFov);
-
   XR_GL_CALL(glFrustum(-width, width, height, -height, zNear, zFar));
-  
-  // raycasting
-  s_rendererImpl.isPerspective = true;
 }
 
 //==============================================================================
@@ -305,12 +296,6 @@ void Renderer::SetFarNearZ( float zFar, float zNear )
 }
 
 //==============================================================================
-void  Renderer::SetPerspMult(float pm)
-{
-  s_rendererImpl.zView = pm; // stub
-}
-
-//==============================================================================
 float Renderer::GetNearZ()
 {
   return s_rendererImpl.zNear;
@@ -323,9 +308,9 @@ float Renderer::GetFarZ()
 }
 
 //==============================================================================
-float Renderer::GetPerspMult()
+float Renderer::GetPerspectiveMultiple()
 {
-  return s_rendererImpl.zView;
+  return s_rendererImpl.tanHalfVerticalFov * (GetScreenHeight() / 2);
 }
 
 //==============================================================================
