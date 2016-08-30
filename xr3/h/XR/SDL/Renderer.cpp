@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Interactive
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include "xrgl.hpp"
 #include "Renderer.hpp"
 #include "Device.hpp"
@@ -21,17 +28,13 @@ static struct
   Matrix                mView;
   float                 zFar;
   float                 zNear;
-  float                 tanVFovHalf;
-  float                 zView;
-  bool                  isPerspective;
+  float                 tanHalfVerticalFov;
   Rect                  scissorRect;
   Pool                  framePool;
   int32                 numVertices;
   int32                 numTexCoords;
   int32                 numColors;
   int32                 numNormals;
-  Matrix                rayCastView;
-  float                 rayCastZNear;
   uint32                flushId;
 } s_rendererImpl;
 
@@ -145,8 +148,6 @@ void Renderer::Init()
   s_rendererImpl.mModel = Matrix::s_identity;
   UpdateModelViewMatrix();
 
-  s_rendererImpl.rayCastView = Matrix::s_identity;
-  
   s_rendererImpl.frames = 1;
   
   s_rendererImpl.initSuccess = true;
@@ -247,16 +248,14 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
     zNear = -zFar;
   }
   s_rendererImpl.zNear = zNear;
-  s_rendererImpl.zView = .0f;
+  s_rendererImpl.tanHalfVerticalFov = .0f;
   
   XR_GL_CALL(glOrtho(left, right, bottom, top, s_rendererImpl.zNear,
     s_rendererImpl.zFar));
-  
-  s_rendererImpl.isPerspective = false;
 }
 
 //==============================================================================
-void  Renderer::SetPerspective(float vFov, float aspect, float zNear, float zFar)
+void  Renderer::SetPerspective(float verticalFov, float aspect, float zNear, float zFar)
 {
   XR_ASSERT(Renderer, zNear < zFar);
   XR_ASSERT(Renderer, aspect > .0f);
@@ -266,7 +265,7 @@ void  Renderer::SetPerspective(float vFov, float aspect, float zNear, float zFar
   s_rendererImpl.zNear = zNear;
   s_rendererImpl.zFar = zFar;
   
-//  float f(1.0f / tanf(vFov * .5f));
+//  float f(1.0f / tanf(verticalFov * .5f));
 //  float dz(1.0f / (zFar - zNear));
 //  float arData[16] =
 //  {
@@ -275,23 +274,17 @@ void  Renderer::SetPerspective(float vFov, float aspect, float zNear, float zFar
 //    .0f, .0f, (zNear + zFar) * dz, (2.0f * zNear * zFar) * dz,
 //    .0f, .0f, 1.0f, .0f      
 //  };
-  s_rendererImpl.tanVFovHalf = tanf(vFov * .5f);
-  float height = zNear * s_rendererImpl.tanVFovHalf;
+  s_rendererImpl.tanHalfVerticalFov = tanf(verticalFov * .5f);
+  float height = zNear * s_rendererImpl.tanHalfVerticalFov;
   float width = height * aspect;
 
-  s_rendererImpl.zView = height * .5f / tanf(vFov);
-
   XR_GL_CALL(glFrustum(-width, width, height, -height, zNear, zFar));
-  
-  // raycasting
-  s_rendererImpl.rayCastZNear = zNear;
-  s_rendererImpl.isPerspective = true;
 }
 
 //==============================================================================
-void  Renderer::SetPerspective(float vFov, float zNear, float zFar)
+void  Renderer::SetPerspective(float verticalFov, float zNear, float zFar)
 {
-  SetPerspective(vFov, float(GetScreenWidth()) / float(GetScreenHeight()), zNear, zFar);
+  SetPerspective(verticalFov, float(GetScreenWidth()) / float(GetScreenHeight()), zNear, zFar);
 }
 
 //==============================================================================
@@ -300,12 +293,6 @@ void Renderer::SetFarNearZ( float zFar, float zNear )
   XR_GL_CALL(glDepthRange(zNear, zFar));
   s_rendererImpl.zFar = zFar;
   s_rendererImpl.zNear = zNear;
-}
-
-//==============================================================================
-void  Renderer::SetPerspMult(float pm)
-{
-  s_rendererImpl.zView = pm; // stub
 }
 
 //==============================================================================
@@ -321,9 +308,9 @@ float Renderer::GetFarZ()
 }
 
 //==============================================================================
-float Renderer::GetPerspMult()
+float Renderer::GetPerspectiveMultiple()
 {
-  return s_rendererImpl.zView;
+  return s_rendererImpl.tanHalfVerticalFov * (GetScreenHeight() / 2);
 }
 
 //==============================================================================
@@ -335,11 +322,6 @@ void Renderer::SetViewMatrix(const Matrix& m)
   s_rendererImpl.mView.zz *= -1.0f;
   s_rendererImpl.mView.Transpose();
   UpdateModelViewMatrix();
-  
-  if (s_rendererImpl.isPerspective)
-  {
-    s_rendererImpl.rayCastView = s_rendererImpl.mView;
-  }
 }
 
 //==============================================================================
@@ -363,44 +345,6 @@ void  Renderer::GetViewMatrix(Matrix& m)
 void  Renderer::GetModelMatrix(Matrix& m)
 {
   m = s_rendererImpl.mModel;
-}
-
-//==============================================================================
-Ray Renderer::GetViewRay(int16 x, int16 y)
-{
-  // we're quietly transposing mView back for the purposes of our calculation.
-  Vector3 vForward(-s_rendererImpl.rayCastView.xz,
-    -s_rendererImpl.rayCastView.yz,
-    -s_rendererImpl.rayCastView.zz);
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  XR_ASSERTMSG(Renderer, fabsf(vForward.Dot() - 1.0f) < kEpsilon,
-    ("View matrix forward direction is not normalised."));
-#endif
-
-  Vector3 vRight(s_rendererImpl.rayCastView.xx, s_rendererImpl.rayCastView.yx,
-    s_rendererImpl.rayCastView.zx);
-
-  Vector3 vUp(s_rendererImpl.rayCastView.xy, s_rendererImpl.rayCastView.yy,
-    s_rendererImpl.rayCastView.zy);
-
-  float hProj(s_rendererImpl.rayCastZNear * s_rendererImpl.tanVFovHalf);
-  float wProj(hProj * (float(s_rendererImpl.screenSize.x) /
-    float(s_rendererImpl.screenSize.y)));
-  
-  vRight.Normalise(wProj);
-  vUp.Normalise(hProj);
-  
-  int wHalf(s_rendererImpl.screenSize.x / 2);
-  int hHalf(s_rendererImpl.screenSize.y / 2);
-  x -= wHalf;
-  y -= hHalf;
-  float fx(float(x) / wHalf);
-  float fy(float(y) / hHalf);
-
-  Vector3 zNearHit((vForward * s_rendererImpl.rayCastZNear) + (vRight * fx) + (vUp * fy));
-  zNearHit.Normalize();
-
-  return Ray(s_rendererImpl.rayCastView.t, zNearHit, std::numeric_limits<float>::max());
 }
 
 //==============================================================================

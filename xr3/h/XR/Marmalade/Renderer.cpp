@@ -1,5 +1,13 @@
+//
+// Nuclear Heart Interactive
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include <IwGx.h>
 #include "Renderer.hpp"
+#include "ProjectionHelpers.hpp"
 
 namespace XR
 {
@@ -10,13 +18,9 @@ struct  RendererImpl
   // data
   float           zFar;
   float           zNear;
-  float           zView;
-  float           tanVFovHalf;
+  float           tanHalfVerticalFov;
   Rect            scissorRect;
   int             numVertices;
-  bool            isPerspective;
-  float           rayCastZNear;
-  Matrix          rayCastView;
   uint32          flushId;
 };
 
@@ -29,11 +33,11 @@ void Renderer::Init()
 
   s_pRenderer = new RendererImpl;
 
-  s3eSurfaceSetInt( S3E_SURFACE_DEVICE_ORIENTATION_LOCK, S3E_SURFACE_LANDSCAPE);
+  s3eSurfaceSetInt(S3E_SURFACE_DEVICE_ORIENTATION_LOCK, S3E_SURFACE_LANDSCAPE);
   IwGxTickUpdate(); 
   IwGxFlush(); 
   IwGxSwapBuffers();
-  s3eSurfaceSetInt( S3E_SURFACE_DEVICE_ORIENTATION_LOCK,
+  s3eSurfaceSetInt(S3E_SURFACE_DEVICE_ORIENTATION_LOCK,
     S3E_SURFACE_ORIENTATION_FREE);
 
   IwGxSetSortMode(IW_GX_SORT_NONE);
@@ -52,8 +56,6 @@ void Renderer::Init()
   s_pRenderer->numVertices = 0;
 
   SetPerspective(float(M_PI * .25), 10.0f, 1000.0f);
-  GetViewMatrix(s_pRenderer->rayCastView);
-  s_pRenderer->rayCastZNear = s_pRenderer->zNear;
 
   s_pRenderer->flushId = 1;
 }
@@ -112,7 +114,7 @@ void Renderer::SetPerspMatrix( const float arData[kNumPersMatrixElems] )
 
 //==============================================================================
 void Renderer::SetOrtho(float left, float right, float bottom, float top,
-  float zFar, float zNear)
+  float zNear, float zFar)
 {
   XR_ASSERT(Renderer, left != right);
   XR_ASSERT(Renderer, top != bottom);
@@ -127,25 +129,14 @@ void Renderer::SetOrtho(float left, float right, float bottom, float top,
     zNear = -zFar;
   }
 
-  float dx(1.0f / (right - left));
-  float dy(1.0f / (bottom - top));  // simplified -dy
-  float dz(1.0f / (zNear - zFar));	// simplified -dz
-  
-  float arPerspMatrix[16] =
-  {
-    2.0f * dx, .0f, .0f, .0f,
-    .0f, 2.0f * dy, .0f, .0f,
-    .0f, .0f, 2.0f * dz, .0f,
-    (left + right) * -dx, (top + bottom) * dy, (zFar + zNear) * dz, 1.0f
-  };
+  float arPerspMatrix[16];
+  ProjectionHelpers::CalculateOrtho(left, right, bottom, top, zNear, zFar, arPerspMatrix);
   
   s_pRenderer->zNear = zNear;
   s_pRenderer->zFar = zFar;
-  s_pRenderer->zView = .0f;
+  s_pRenderer->tanHalfVerticalFov = .0f;
   //IwGxSetFarZNearZ(zFar, zNear);
   IwGxSetPerspectiveMatrix(arPerspMatrix);
-
-  s_pRenderer->isPerspective = false;
 }
 
 //==============================================================================
@@ -157,32 +148,20 @@ void Renderer::SetPerspective(float vFov, float aspect, float zNear,
   //flags &= ~IW_GX_ORTHO_PROJ_F;
   //IwGxSetFlags(flags);
 
-  s_pRenderer->tanVFovHalf = tanf(vFov * .5f);
-  float f(1.0f / s_pRenderer->tanVFovHalf);
-  float dz(zNear - zFar);
-  
-  float arPerspMatrix[16] =
-  {
-    f / aspect, .0f, .0f, .0f,
-    .0f, f, .0f, .0f,
-    .0f, .0f, (zFar + zNear) / dz, -1.0f,
-    .0f, .0f, (2.0f * zFar * zNear) / dz, .0f
-  };
+  float arPerspMatrix[16];
+  ProjectionHelpers::CalculatePerspective(vFov, aspect, zNear, zFar, arPerspMatrix,
+    &s_pRenderer->tanHalfVerticalFov);
 
   s_pRenderer->zNear = zNear;
   s_pRenderer->zFar = zFar;
-  s_pRenderer->zView = float(IwGxGetScreenHeight() / 2) / f;
   IwGxSetFarZNearZ(zFar, zNear);
   IwGxSetPerspectiveMatrix(arPerspMatrix);
-
-  s_pRenderer->isPerspective = true;
-  s_pRenderer->rayCastZNear = zNear;
 }
 
 //==============================================================================
-void Renderer::SetPerspective(float vFov, float zNear, float zFar)
+void Renderer::SetPerspective(float verticalFov, float zNear, float zFar)
 {
-  SetPerspective(vFov, float(IwGxGetScreenWidth()) / float(IwGxGetScreenHeight()),
+  SetPerspective(verticalFov, float(IwGxGetScreenWidth()) / float(IwGxGetScreenHeight()),
     zNear, zFar);
 }
 
@@ -192,14 +171,6 @@ void Renderer::SetFarNearZ( float zFar, float zNear )
   IwAssert(Renderer, zFar > zNear);
   s_pRenderer->zFar = zFar;
   s_pRenderer->zNear = zNear;
-}
-
-//==============================================================================
-void  Renderer::SetPerspMult(float pm)
-{
-  // stub, recalculate projection
-  s_pRenderer->zView = pm;
-  IwGxSetPerspMul(pm);
 }
 
 //==============================================================================
@@ -215,9 +186,9 @@ float Renderer::GetFarZ()
 }
 
 //==============================================================================
-float Renderer::GetPerspMult()
+float Renderer::GetPerspectiveMultiple()
 {
-  return s_pRenderer->zView;
+  return s_pRenderer->tanHalfVerticalFov * (GetScreenHeight() / 2);
 }
 
 //==============================================================================
@@ -225,11 +196,6 @@ void Renderer::SetViewMatrix( const Matrix& mView)
 {
   const CIwFMat*  pMat(reinterpret_cast<const CIwFMat*>(&mView));
   IwGxSetViewMatrix(pMat);
-
-  if(s_pRenderer->isPerspective)
-  {
-    s_pRenderer->rayCastView = mView;
-  }
 }
 
 //==============================================================================
@@ -254,37 +220,6 @@ void  Renderer::GetModelMatrix(Matrix& m)
   CIwFMat&  mModel(IwGxGetModelMatrix());
   memcpy(&m, &mModel, sizeof(CIwFMat));
   m.Transpose();
-}
-
-//==============================================================================
-Ray Renderer::GetViewRay(int16 x, int16 y)
-{
-  Vector3 vForward(s_pRenderer->rayCastView.arRot + MZX);
-//  vForward.Normalise();
-
-  Vector3 vRight(s_pRenderer->rayCastView.arRot + MXX);
-
-  Vector3 vUp(s_pRenderer->rayCastView.arRot + MYX);
-
-  const int   wScr(GetScreenWidth());
-  const int   hScr(GetScreenHeight());
-  float hProj(s_pRenderer->rayCastZNear * s_pRenderer->tanVFovHalf);
-  float wProj(hProj * (float(wScr) / float(hScr)));
-  
-  vRight.Normalise(wProj);
-  vUp.Normalise(hProj);
-  
-  int wHalf(wScr / 2);
-  int hHalf(hScr / 2);
-  x -= wHalf;
-  y -= hHalf;
-  float fx(float(x) / wHalf);
-  float fy(float(y) / hHalf);
-
-  Vector3 zNearHit((vForward * s_pRenderer->rayCastZNear) + (vRight * fx) + (vUp * fy));
-  zNearHit.Normalise();
-
-  return Ray(s_pRenderer->rayCastView.t, zNearHit, std::numeric_limits<float>::max());
 }
 
 //==============================================================================

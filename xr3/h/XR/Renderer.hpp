@@ -1,15 +1,13 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
-// RenderStream.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    11/09/2011
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_RENDERER_HPP
+#ifndef XR_RENDERER_HPP
 #define XR_RENDERER_HPP
 
 #include "Callback.hpp"
@@ -56,17 +54,29 @@ public:
   
   static void           SetPerspMatrix(const float arData[kNumPersMatrixElems]);
 
+  ///@brief Sets up orthographic projection.
+  ///@param zNear distance of the near viewing plane.
+  ///@param zFar distance of the far viewing plane.
   static void           SetOrtho(float left, float right, float bottom,
-                          float top, float zFar = 1000.0f, float zNear = .0f);
-  static void           SetPerspective(float vFov, float aspect, float zNear,
-                          float zFar);
-  static void           SetPerspective(float vFov, float zNear, float zFar);
+                          float top, float zNear, float zFar);
+
+  ///@brief Sets up perspective projection.
+  ///@param verticalFov Vertical field of view in radians.
+  ///@param aspectRatio The ratio of the projection width to (/ over) height.
+  ///@param zNear The distance of the near clipping pane from the camera.
+  ///@param zFar The distance of the far clipping pane from the camera.
+  static void           SetPerspective(float verticalFov, float aspectRatio,
+                          float zNear, float zFar);
+
+  ///@brief Sets up perspective projection. The aspect ratio is calculated from the
+  /// current screen width and height.
+  static void           SetPerspective(float verticalFov, float zNear, float zFar);
 
   static void           SetFarNearZ(float zFar, float zNear);
-  static void           SetPerspMult(float perspMul);
   static float          GetNearZ();
   static float          GetFarZ();
-  static float          GetPerspMult();  
+
+  static float          GetPerspectiveMultiple();
 
   static void           SetViewMatrix(const Matrix& m);
   static void           SetModelMatrix(const Matrix& m);
@@ -74,8 +84,6 @@ public:
   static void           GetViewMatrix(Matrix& m);
   static void           GetModelMatrix(Matrix& m);
 
-  static Ray            GetViewRay(int16 x, int16 y);
-  
   static void           SetMaterial(Material* pMat);
 
   static void           SetVertStream(RenderStream& rs);
