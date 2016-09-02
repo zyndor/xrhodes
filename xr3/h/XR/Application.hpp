@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// Application.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    09/18/2012
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_APPLICATION_HPP
+#ifndef XR_APPLICATION_HPP
 #define XR_APPLICATION_HPP
 
 #include "Device.hpp"
@@ -26,48 +24,46 @@ namespace XR
 //==============================================================================
 class Application
 {
- 	XR_NONOBJECT_DECL(Application)
+  XR_NONOBJECT_DECL(Application)
 public:
-	// types
-	enum  Event
-	{
-		EV_UPDATE,
-		EV_RENDER,
-		EV_SECOND,
-		kMaxEvents
-	};
-	
-	struct  SecondEvent
-	{
-		int numRenders;
-		int numUpdates;
-	};
-	
-	// static
-	static void   Init();
-	static void   Exit();
-	  
-	static int32  GetFrameDelayMs();
-	static bool   IsRunning();
-	
-	static void   SetCallback(Event e, Callback pCb, void* pCbData);
-	
-	static void   BreakUpdate();
-	
-	static void   SetFrameDelayMs(int32 ms);
-	static void   SetFrameCappingMs(int32 ms);
-	
-	static void   Run();
+  // types
+  struct  SecondEvent
+  {
+    int numRenders;
+    int numUpdates;
+  };
+
+  class Runner
+  {
+  public:
+    virtual ~Runner();
+    
+    virtual void Update() =0;
+    virtual void Render() =0;
+    virtual void OnSecond(SecondEvent const& se);
+  };
+  
+  // static
+  static void   Init();
+  static void   Exit();
+    
+  static int32  GetFrameDelayMs();
+  static bool   IsRunning();
+  
+  static void   BreakUpdate();
+  
+  static void   SetFrameDelayMs(int32 ms);
+  static void   SetFrameCappingMs(int32 ms);
+  
+  static void   Run(Runner& r);
   
 private:
-	// static
-	static int32           m_frameDelayMs;
-	static int32           m_frameCappingMs;
-	
-	static bool            m_isRunning;
-	
-	static CallbackObject  m_arCallback[kMaxEvents];
-	static bool            m_breakUpdate;
+  // static
+  static int32  m_frameDelayMs;
+  static int32  m_frameCappingMs;
+  
+  static bool   m_isRunning;
+  static bool   m_breakUpdate;
 };
 
 //==============================================================================
