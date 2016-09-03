@@ -1,6 +1,12 @@
-#include <SDL2/SDL_timer.h>
-#include "Timer.hpp"
-#include "Callback.hpp"
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
+#include <SDL_timer.h>
+#include <XR/Timer.hpp>
 
 namespace XR
 {

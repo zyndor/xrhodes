@@ -50,10 +50,6 @@ UIBuilderScreen::UIBuilderScreen(const UIBuilder::Configuration& cfg)
   m_root(),
   m_builder(),
   m_padding(0),
-  m_numListeners(0),
-  m_parpListeners(0),
-  m_numTweening(0),
-  m_parpTweening(0),
   m_pTweenIn(0),
   m_pTweenInData(0),
   m_pTweenOut(0),
@@ -76,12 +72,8 @@ void  UIBuilderScreen::SetConfiguration(const UIBuilder::Configuration& cfg)
 bool  UIBuilderScreen::Build(TiXmlElement* pXml)
 {
 #ifdef  XR_DEBUG
-  TiXmlNode*  pNode(pXml);
-  while(pNode->Type() != TiXmlNode::DOCUMENT)
-  {
-    pNode = pNode->Parent();
-  }
-  m_debugName = pNode->Value();
+  TiXmlDocument*  pDoc = pXml->GetDocument();
+  m_debugName = pDoc ? pDoc->Value() : "unknown";
 #endif  //XR_DEBUG
 
   Destroy();
@@ -103,15 +95,9 @@ bool  UIBuilderScreen::Build(TiXmlElement* pXml)
 void  UIBuilderScreen::Destroy()
 {
   m_builder.Destroy();
-  
-  m_builder.Deallocate(m_parpListeners);
-  m_builder.Deallocate(m_parpTweening);
-  
-  memset(m_parpListeners, sizeof(UIElement*) * m_numListeners, 0x00);
-  m_numListeners = 0;
-  
-  memset(m_parpTweening, sizeof(UIElement*) * m_numTweening, 0x00);
-  m_numTweening = 0;
+
+  UIElementVector().swap(m_listeners);
+  UIElementVector().swap(m_tweening);
 }
 
 //==============================================================================
@@ -139,10 +125,9 @@ void  UIBuilderScreen::SetTweenOut(TweenCallback pOnTweenOut, void* pData)
 //==============================================================================
 void  UIBuilderScreen::MoveTweening(int x, int y)
 {
-  for(UIElement** i0 = m_parpTweening, ** i1 = i0 + m_numTweening; i0 != i1; ++i0)
+  for(auto t: m_tweening)
   {
-    UIElement*  p(*i0);
-    p->Move(x, y);
+    t->Move(x, y);
   }
 }
 
@@ -155,13 +140,13 @@ void  UIBuilderScreen::_AddElements()
 //==============================================================================
 void  UIBuilderScreen::_Show(uint32 ms)
 {
-  if (m_pTweenIn != 0 && m_numTweening > 0)
+  if (m_pTweenIn != 0 && !m_tweening.empty())
   {
-    float     percent(1.0f / m_numTweening);
+    float     percent(1.0f / GetNumTweening());
     Tweenable t = { 0, 0, percent, ms };
-    while (t.id < m_numTweening)
+    while (t.id < GetNumTweening())
     {
-      t.pElem = m_parpTweening[t.id];
+      t.pElem = m_tweening[t.id];
       (*m_pTweenIn)(t, m_pTweenInData);
       t.percent += percent;
       ++t.id;
@@ -172,13 +157,13 @@ void  UIBuilderScreen::_Show(uint32 ms)
 //==============================================================================
 void  UIBuilderScreen::_Hide(uint32 ms)
 {
-  if (m_pTweenOut != 0 && m_numTweening > 0)
+  if (m_pTweenOut != 0 && !m_tweening.empty())
   {
-    float     percent(1.0f / m_numTweening);
+    float     percent(1.0f / GetNumTweening());
     Tweenable t = { 0, 0, percent, ms };
-    while (t.id < m_numTweening)
+    while (t.id < GetNumTweening())
     {
-      t.pElem = m_parpTweening[t.id];
+      t.pElem = m_tweening[t.id];
       (*m_pTweenOut)(t, m_pTweenOutData);
       t.percent += percent;
       ++t.id;
@@ -197,8 +182,8 @@ void  UIBuilderScreen::Reposition(int width, int height)
 {
   XR_ASSERT(UIBuilderScreen, width > 0);
   XR_ASSERT(UIBuilderScreen, height > 0);
-  const int arX[3] = { int(m_padding), width / 2, width - m_padding };
-  const int arY[3] = { int(m_padding), height / 2, height - m_padding };
+  const int arX[3] = { m_padding, width / 2, width - m_padding };
+  const int arY[3] = { m_padding, height / 2, height - m_padding };
   for(int i = 0; i < kNumAnchors; ++i)
   {
     UIElement*  p(m_builder.GetElement(karAnchorName[i]));
@@ -217,9 +202,9 @@ void  UIBuilderScreen::Reposition(int width, int height)
 void  UIBuilderScreen::_Register()
 {
   UIEventNotifier&  dispatcher(m_pManager->GetNotifier());
-  for (int i = 0; i < m_numListeners; ++i)
+  for(auto l: m_listeners)
   {
-    dispatcher.AddListener(m_parpListeners[i]);
+    dispatcher.AddListener(l);
   }
 }
 
@@ -227,9 +212,9 @@ void  UIBuilderScreen::_Register()
 void  UIBuilderScreen::_Unregister()
 {
   UIEventNotifier&  dispatcher(m_pManager->GetNotifier());
-  for (int i = 0; i < m_numListeners; ++i)
+  for (auto l : m_listeners)
   {
-    dispatcher.RemoveListener(m_parpListeners[i]);
+    dispatcher.RemoveListener(l);
   }
 }
 
@@ -253,11 +238,7 @@ void  UIBuilderScreen::_ProcessListeners(TiXmlElement* pXml)
     pListenerXml = pListenerXml->NextSiblingElement(karTag[TAG_LISTENER]);
   }
   
-  m_numListeners = l.size();
-  void* pMem = m_builder.Allocate(sizeof(UIElement*) * m_numListeners);
-  m_parpListeners = new (pMem) UIElement*[m_numListeners];
-
-  std::copy(l.begin(), l.end(), m_parpListeners);
+  m_listeners.assign(l.begin(), l.end());
 }
 
 //==============================================================================
@@ -280,11 +261,7 @@ void  UIBuilderScreen::_ProcessTweening(TiXmlElement* pXml)
     pTweeningXml = pTweeningXml->NextSiblingElement(karTag[TAG_TWEENING]);
   }
   
-  m_numTweening = l.size();
-  void* pMem = m_builder.Allocate(sizeof(UIElement*) * m_numTweening);
-  m_parpTweening = new (pMem) UIElement*[m_numListeners];
-  
-  std::copy(l.begin(), l.end(), m_parpTweening);
+  m_tweening.assign(l.begin(), l.end());
 }
 
 } // XR

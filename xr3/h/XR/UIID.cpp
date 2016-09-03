@@ -14,32 +14,41 @@ UIID  GenerateUIID()
   UIID  uiid;
   uiid.resize(kUIIDSize);
 
-  UIID::value_type*  pWrite(uiid.begin());
-  UIID::value_type*  pEnd(uiid.end());
+  UIID::iterator  iWrite(uiid.begin());
+  UIID::iterator  iEnd(uiid.end());
 
   // append time in millisecs
   const uint64  tNow = Timer::GetUTC();
 
   const int kOffset = 0;
-  memcpy(pWrite, &tNow + kOffset, sizeof(tNow) - kOffset);
-  pWrite += sizeof(tNow) - kOffset; // 8 bytes
+  std::copy(reinterpret_cast<const UIID::value_type*>(&tNow),
+    reinterpret_cast<const UIID::value_type*>(&tNow + sizeof(&tNow)),
+    iWrite);
+  //memcpy(iWrite, &tNow + kOffset, sizeof(tNow) - kOffset);
+  iWrite += sizeof(tNow) - kOffset; // 8 bytes
 
   // append address of local variable - random enough
   UIID::value_type*   p = &uiid[0];
-  UIID::value_type**  pp = &p;
-  memcpy(pWrite, &pp, sizeof(&pWrite));
-  pWrite += sizeof(&pWrite); // 4 or 8 bytes
+  std::copy(reinterpret_cast<const UIID::value_type*>(&p),
+    reinterpret_cast<const UIID::value_type*>(&p + sizeof(&p)),
+    iWrite);
+  //memcpy(iWrite, &pp, sizeof(&iWrite));
+  iWrite += sizeof(&iWrite); // 4 or 8 bytes
 
-  if(pWrite != pEnd)
+  if(iWrite != iEnd)
   {
     // on <64 bit systems, jumble address and append again
-    memcpy(pWrite, &pp, sizeof(&pWrite));
-    std::reverse(pWrite, pWrite + sizeof(&pWrite));
-    UIID::value_type  sum = std::accumulate(pWrite, pWrite + sizeof(&pWrite), 0);
-    std::transform(pWrite, pWrite + sizeof(&pWrite), pWrite,
-      std::bind2nd(std::plus<UIID::value_type>(), sum));
+    std::copy(reinterpret_cast<const UIID::value_type*>(&p),
+      reinterpret_cast<const UIID::value_type*>(&p + sizeof(&p)),
+      iWrite);
+    //memcpy(iWrite, &pp, sizeof(&iWrite));
+    std::reverse(iWrite, iWrite + sizeof(&iWrite));
 
-    pWrite += sizeof(&pWrite); // 4 or 8 bytes
+    UIID::value_type  sum = std::accumulate(iWrite, iWrite + sizeof(&iWrite), 0);
+    std::transform(iWrite, iWrite + sizeof(&iWrite), iWrite,
+      [sum](UIID::value_type& v){ return v += sum; });
+
+    iWrite += sizeof(&iWrite); // 4 or 8 bytes
   }
 
   // scramble digits

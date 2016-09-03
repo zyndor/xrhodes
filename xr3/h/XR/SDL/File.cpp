@@ -1,7 +1,14 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2014. All rights reserved.
+//
+//==============================================================================
+#include <XR/File.hpp>
+#include <XR/HardString.hpp>
 #include <algorithm>
 #include <fstream>
-#include "File.hpp"
-#include "HardString.hpp"
 
 namespace XR
 {

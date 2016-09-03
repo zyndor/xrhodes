@@ -36,7 +36,7 @@ public:
   void                Update(int32 ms);
 
   void                Render();
-  void                Render(XR::UIRenderer& r);
+  void                Render(UIRenderer& r);
 
   void                Shutdown();
   
@@ -49,7 +49,7 @@ protected:
   Screen*             m_pPrevious;  // no ownership
   
   UIContainer         m_container;
-  UIEventNotifier   m_dispatcher;
+  UIEventNotifier     m_notifier;
   
   // internal
   void  _ClearExiting();
@@ -68,7 +68,7 @@ UIContainer&        ScreenManager::GetContainer()
 inline
 UIEventNotifier&  ScreenManager::GetNotifier()
 {
-  return m_dispatcher;
+  return m_notifier;
 }
 
 } // XR

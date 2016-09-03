@@ -3,16 +3,15 @@
 // XRhodes
 //
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    
 //
 // copyright (c) 2011 - 2015. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UINAVIGATOR_HPP
+#ifndef XR_UINAVIGATOR_HPP
 #define XR_UINAVIGATOR_HPP
 
 #include  <map>
-#include  <XR/UIElement.hpp>
+#include  "UIElement.hpp"
 
 namespace XR
 {
@@ -39,20 +38,20 @@ public:
   ~UINavigator();
 
   // general
-  bool  Add(XR::UIElement* pElem, XR::UIElement* pRelative, Direction dir);
-  bool  Remove(XR::UIElement* pElem);
+  bool  Add(UIElement* pElem, UIElement* pRelative, Direction dir);
+  bool  Remove(UIElement* pElem);
   void  Clear();
 
-  XR::UIElement*  Get(XR::UIElement* pRelative, Direction dir);
+  UIElement*  Get(UIElement* pRelative, Direction dir);
 
 protected:
   // types
   struct  Entry
   {
-    XR::UIElement*  arNeighbors[kNumDirections];
+    UIElement*  arNeighbors[kNumDirections];
   };
 
-  typedef std::map<XR::UIElement*, Entry> EntryMap;
+  typedef std::map<UIElement*, Entry> EntryMap;
 
   // data
   EntryMap  m_entries;

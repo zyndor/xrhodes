@@ -1,6 +1,15 @@
-#include "RenderStream.hpp"
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
+#include <XR/RenderStream.hpp>
+#include <SDL_opengl.h>
 #include <algorithm>
-#include <SDL2/SDL_opengl.h>
 
 namespace XR
 {

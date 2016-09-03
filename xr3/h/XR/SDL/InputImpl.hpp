@@ -2,16 +2,15 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// InputImpl.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    15/01/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
-#if !defined XR_INPUTIMPL_HPP
+//==============================================================================
+#ifndef XR_INPUTIMPL_HPP
 #define XR_INPUTIMPL_HPP
 
-#include "Input.hpp"
+#include <XR/Input.hpp>
 
 namespace XR {
 

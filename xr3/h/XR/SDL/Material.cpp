@@ -1,6 +1,13 @@
-#include <algorithm>
-#include "Material.hpp"
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2014. All rights reserved.
+//
+//==============================================================================
 #include "MaterialImpl.hpp"
+#include <XR/Material.hpp>
+#include <algorithm>
 
 #define TO_IMPL()  (static_cast<MaterialImpl*>(GetImpl()))
 #define TO_CONST_IMPL()  (static_cast<const MaterialImpl*>(GetImpl()))

@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// Timer.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    11/09/2013
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TIMER_HPP
+#ifndef XR_TIMER_HPP
 #define XR_TIMER_HPP
 
 #include "types.hpp"

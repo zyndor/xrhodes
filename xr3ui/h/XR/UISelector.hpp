@@ -2,9 +2,7 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// UISelector.hpp
 // @author  Gyorgy Straub
-// @date    25/11/2014
 //
 // copyright (c) 2011 - 2014. All rights reserved.
 //
@@ -55,14 +53,14 @@ protected:
 // implementation
 //==============================================================================
 inline
-XR::UIElement*  UISelector::GetFirst() const
+UIElement*  UISelector::GetFirst() const
 {
   return m_elements.empty() ? 0 : m_elements.begin()->first;
 }
 
 //==============================================================================
 inline
-XR::UIElement*  UISelector::GetLast() const
+UIElement*  UISelector::GetLast() const
 {
   return m_elements.empty() ? 0 : m_elements.rbegin()->first;
 }

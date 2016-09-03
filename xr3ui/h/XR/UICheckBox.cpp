@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include "UICheckBox.hpp"
 #include "UIRenderer.hpp"
 
@@ -16,7 +23,7 @@ UICheckBox::~UICheckBox()
 {}
 
 //==============================================================================
-void XR::UICheckBox::SetSelected( bool isIt )
+void UICheckBox::SetSelected( bool isIt )
 {
   m_state = (m_state & ~MASK_SELECTED) | (MASK_SELECTED * isIt);
 }

@@ -52,7 +52,7 @@ public:
   static Material*      AllocMaterial();
   static RenderStream*  AllocStream(RenderStream::Format fmt, int numVerts);
   
-  static void           SetPerspMatrix(const float arData[kNumPersMatrixElems]);
+  static void           SetPerspMatrix(const float (&arData)[kNumPersMatrixElems]);
 
   ///@brief Sets up orthographic projection.
   ///@param zNear distance of the near viewing plane.

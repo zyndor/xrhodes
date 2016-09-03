@@ -13,6 +13,7 @@
 #define XR_TWEAKBENCH_HPP
 
 #include  <map>
+#include  "types.hpp"
 
 namespace XR
 {

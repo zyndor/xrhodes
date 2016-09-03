@@ -1,4 +1,4 @@
-#include <SDL2/SDL_touch.h>
+#include <SDL_touch.h>
 #include "InputImpl.hpp"
 
 namespace XR

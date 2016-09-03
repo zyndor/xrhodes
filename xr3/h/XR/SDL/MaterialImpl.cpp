@@ -1,6 +1,13 @@
+//
+// Nuclear Heart Interactive
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include "xrgl.hpp"
-#include "Material.hpp"
 #include "MaterialImpl.hpp"
+#include <XR/Material.hpp>
 
 namespace XR
 {

@@ -1,5 +1,14 @@
-#include "Texture.hpp"
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include "TextureImpl.hpp"
+#include <XR/Texture.hpp>
 
 #define TO_IMPL()  (static_cast<TextureImpl*>(GetImpl()))
 #define TO_CONST_IMPL()  (static_cast<const TextureImpl*>(GetImpl()))

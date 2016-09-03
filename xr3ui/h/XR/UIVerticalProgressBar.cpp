@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include "UIVerticalProgressBar.hpp"
 #include "UIRenderer.hpp"
 
@@ -42,12 +49,12 @@ void UIVerticalProgressBar::Render() const
     float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = XR::Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
+      uv1 = Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
         rsSpriteUVs.GetX(Sprite::VI_NW), uv1);
     }
     else
     {
-      uv1 = XR::Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
+      uv1 = Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
         rsSpriteUVs.GetY(Sprite::VI_SW), uv1);
     }
 
@@ -139,12 +146,12 @@ void UIVerticalProgressBar::Render( UIRenderer* pRenderer ) const
     float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = XR::Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
+      uv1 = Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
         rsSpriteUVs.GetX(Sprite::VI_NW), uv1);
     }
     else
     {
-      uv1 = XR::Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
+      uv1 = Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
         rsSpriteUVs.GetY(Sprite::VI_SW), uv1);
     }
 

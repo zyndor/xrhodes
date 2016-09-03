@@ -12,11 +12,11 @@
 #if !defined XR_XRGL_HPP
 #define XR_XRGL_HPP
 
+#include <XR/Log.hpp>
+#include <XR/types.hpp>
 #include <GL/glew.h>
-#include <SDL2/SDL_video.h>
-#include <SDL2/SDL_opengl.h>
-#include "types.hpp"
-#include "Log.hpp"
+#include <SDL_opengl.h>
+#include <SDL_video.h>
 
 namespace XR {
 

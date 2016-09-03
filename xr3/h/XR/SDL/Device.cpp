@@ -1,15 +1,24 @@
-#include <cstdlib>
-#include <SDL2/SDL_events.h>
-#include "Device.hpp"
-#include "JsonReader.hpp"
-#include "JsonWriter.hpp"
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2014. All rights reserved.
+//
+//==============================================================================
 #include "InputImpl.hpp"
-#include "Renderer.hpp"
-#include "utils.hpp"
+#include <XR/Device.hpp>
+#include <XR/JsonReader.hpp>
+#include <XR/JsonWriter.hpp>
+#include <XR/Renderer.hpp>
+#include <XR/utils.hpp>
+#include <SDL_events.h>
+#include <cstdlib>
 
 namespace XR
 {
 
+namespace
+{
 //==============================================================================
 static const char*  kConfigName = "xr.json";
 
@@ -39,6 +48,8 @@ static struct
   bool                  isYielding;
   JSON::Entity*         pConfig;
 } s_deviceImpl;
+
+}
 
 //==============================================================================
 static int  FilterEvents(void* pUser, SDL_Event* pEvent)
@@ -178,7 +189,7 @@ std::string Device::GetConfig(const char* pGroup, const char* pId)
         XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in '%s'.", pId, pGroup));
         if (pEntity != 0)
         {
-          pResult = pEntity->ToValue()->GetValue();
+          result = pEntity->ToValue()->GetValue();
         }
       }
     }
@@ -201,7 +212,7 @@ std::string Device::GetConfig(const char* pGroup, const char* pId)
 int Device::GetConfigInt(const char* pGroup, const char* pId, int defaultValue)
 {
   std::string  value(GetConfig(pGroup, pId).c_str());
-  return value.empty() ? defaultValue : atoi(pValue);
+  return value.empty() ? defaultValue : atoi(value.c_str());
 }
 
 //==============================================================================
@@ -219,7 +230,7 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
     }
   }
 
-  if(isYielding)
+  if(s_deviceImpl.isYielding)
   {
     // check for a postponed add as well
     for(CallbackObject::List::iterator i0(s_deviceImpl.arPostponedAdd[ev].begin()),
@@ -235,7 +246,7 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
   }
   else
   {
-    s_deviceImpl.arCallbacks[ev].push_back(CallbackObject(pCb, pCbData));
+    s_deviceImpl.arCallback[ev].push_back(CallbackObject(pCb, pCbData));
   }
   return true;
 }
@@ -248,8 +259,8 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
   if(s_deviceImpl.isYielding)
   {
     // if got it, add to remove list
-    for(CallbackObject::List::iterator i0(s_deviceImpl.arCallbacks[ev].begin()),
-      i1(s_deviceImpl.arCallbacks[ev].end()); i0 != i1; ++i0)
+    for(CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
+      i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
     {
       if(i0->pCb == pCb)
       {
@@ -272,12 +283,12 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
   else
   {
     // if got it, remove
-    for(CallbackObject::List::iterator i0(s_deviceImpl.arCallbacks[ev].begin()),
-      i1(s_deviceImpl.arCallbacks[ev].end()); i0 != i1; ++i0)
+    for(CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
+      i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
     {
       if(i0->pCb == pCb)
       {
-        s_deviceImpl.arCallbacks[ev].erase(i0);
+        s_deviceImpl.arCallback[ev].erase(i0);
         return true;
       }
     }

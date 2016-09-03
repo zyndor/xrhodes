@@ -15,7 +15,7 @@ ScreenManager::ScreenManager()
 : m_stack(),
   m_pPrevious(0),
   m_container(),
-  m_dispatcher()
+  m_notifier()
 {}
 
 //==============================================================================
@@ -102,7 +102,7 @@ void  ScreenManager::Render()
 }
 
 //==============================================================================
-void  ScreenManager::Render(XR::UIRenderer& r)
+void  ScreenManager::Render(UIRenderer& r)
 {
   m_container.Render(&r);
 }

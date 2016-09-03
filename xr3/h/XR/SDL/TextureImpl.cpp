@@ -1,4 +1,11 @@
-#include <SDL2/SDL_image.h>
+//
+// Nuclear Heart Interactive
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
+#include <SDL_image.h>
 #include "TextureImpl.hpp"
 
 namespace XR
@@ -63,25 +70,25 @@ uint32  TextureImpl::GetFlags() const
 //==============================================================================
 bool  TextureImpl::GetClamping() const
 {
-  return XR_MASK_HAS_ID(m_flags, F_CLAMPING);
+  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_CLAMPING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetFiltering() const
 {
-  return XR_MASK_HAS_ID(m_flags, F_FILTERING);
+  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_FILTERING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetMipMapping() const
 {
-  return XR_MASK_HAS_ID(m_flags, F_MIPMAPPING);
+  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_MIPMAPPING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetModifiable() const
 {
-  return XR_MASK_HAS_ID(m_flags, F_MODIFIABLE);
+  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_MODIFIABLE)) > 0;
 }
 
 //==============================================================================

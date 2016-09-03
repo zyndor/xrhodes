@@ -2,17 +2,16 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// State.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    29/11/2012
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_STATE_HPP
+#ifndef XR_STATE_HPP
 #define XR_STATE_HPP
 
 #include <list>
+#include "types.hpp"
 
 namespace XR
 {

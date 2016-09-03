@@ -30,7 +30,7 @@ public:
   void  SetTimeOut(int ms);
   void  SetMoveTreshold(float hPcnt);
   void  SetKeepAliveTreshold(float hPcnt);
-  void  SetSprite(const XR::Sprite* pSprite);
+  void  SetSprite(const Sprite* pSprite);
   void  SetEnabled(bool state);
   void  SetPosition(int x, int y);
  
@@ -38,7 +38,7 @@ public:
 
   void  Update(int ms);
   void  Render();
-  void  Render(XR::UIRenderer& r);
+  void  Render(UIRenderer& r);
 
 private:
   // static
@@ -47,7 +47,7 @@ private:
 
   // data
   bool        m_isEnabled;
-  XR::UIImage m_image;
+  UIImage m_image;
 
   int         m_timeOut;
   int         m_timer;

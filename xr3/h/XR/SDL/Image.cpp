@@ -5,8 +5,8 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  <SDL2/SDL_image.h>
-#include  "Image.hpp"
+#include  <XR/Image.hpp>
+#include  <SDL_image.h>
 
 namespace XR
 {

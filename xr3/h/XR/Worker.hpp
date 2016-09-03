@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// Worker.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    21/06/2012
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_WORKER_HPP
+#ifndef XR_WORKER_HPP
 #define XR_WORKER_HPP
 
 #include "Queue.hpp"
