@@ -61,7 +61,7 @@ Material::CullMode Material::GetCullMode() const
 //==============================================================================
 bool  Material::GetDepthWriteEnabled() const
 {
-  return TO_CONST_IMPL()->depthWriteEnabled;
+  return TO_CONST_IMPL()->depthWriteEnabled == GL_TRUE;
 }
 
 //==============================================================================
