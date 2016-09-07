@@ -10,6 +10,7 @@
 #include <XR/Renderer.hpp>
 #include <XR/Device.hpp>
 #include <XR/Pool.hpp>
+#include <XR/ProjectionHelpers.hpp>
 
 namespace XR
 {
@@ -82,7 +83,7 @@ void Renderer::Init()
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     width, height, flags);
 
-  flags = 0;
+  flags = SDL_RENDERER_ACCELERATED;
   if (Device::GetConfigInt("GFX", "vsync", false))
   {
     flags |= SDL_RENDERER_PRESENTVSYNC;
@@ -258,8 +259,10 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
   s_rendererImpl.zNear = zNear;
   s_rendererImpl.tanHalfVerticalFov = .0f;
   
-  XR_GL_CALL(glOrtho(left, right, bottom, top, s_rendererImpl.zNear,
-    s_rendererImpl.zFar));
+  float arPerspMatrix[kNumPersMatrixElems];
+  ProjectionHelpers::CalculateOrtho(left, right, bottom, top, zNear, zFar,
+    arPerspMatrix);
+  SetPerspMatrix(arPerspMatrix);
 }
 
 //==============================================================================
@@ -281,11 +284,11 @@ void  Renderer::SetPerspective(float verticalFov, float aspectRatio, float zNear
 //    .0f, .0f, (zNear + zFar) * dz, (2.0f * zNear * zFar) * dz,
 //    .0f, .0f, 1.0f, .0f      
 //  };
-  s_rendererImpl.tanHalfVerticalFov = tanf(verticalFov * .5f);
-  float height = zNear * s_rendererImpl.tanHalfVerticalFov;
-  float width = height * aspectRatio;
 
-  XR_GL_CALL(glFrustum(-width, width, height, -height, zNear, zFar));
+  float arPerspMatrix[kNumPersMatrixElems];
+  ProjectionHelpers::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
+    arPerspMatrix, &s_rendererImpl.tanHalfVerticalFov);
+  SetPerspMatrix(arPerspMatrix);
 }
 
 //==============================================================================
