@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// Image.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    28/05/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_IMAGE_HPP
+#ifndef XR_IMAGE_HPP
 #define XR_IMAGE_HPP
 
 #include "types.hpp"
@@ -34,7 +32,7 @@ public:
   ///@return  Result of operation.
   bool    Load(const char* pFilename);
   
-  ///@brief Copies @A img, overwriting this image.
+  ///@brief Copies @a img, overwriting this image.
   void    Copy(const Image& img);
   
   ///@return  The width of the image in pixels.
