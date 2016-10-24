@@ -79,10 +79,15 @@ void* CrossObject::SwapImpl( void* pImpl )
 } // XR
 
 //==============================================================================
-#define XR_CROSS_OBJECT_USING() public:  using CrossObject::HasImpl; using CrossObject::GetImpl; using CrossObject::SwapImpl;
+#define XR_CROSS_OBJECT_USING() \
+public:\
+  using CrossObject::HasImpl;\
+  using CrossObject::GetImpl;\
+  using CrossObject::SwapImpl;\
+
 
 //==============================================================================
-///@brief Declares the symbols required for CrossObject derivatives.
+///@brief Declares the methods required for CrossObject derivatives.
 ///@param a     Your CrossObject subclass.
 #define XR_CROSS_OBJECT_DECL(a)\
   XR_CROSS_OBJECT_USING()\
