@@ -45,7 +45,7 @@ static void UpdateModelViewMatrix()
   XR_GL_CALL(glMatrixMode(GL_MODELVIEW));
   XR_GL_CALL(glLoadIdentity());
 
-  static float arData[16];
+  static float arData[Renderer::kNumPersMatrixElems];
   Matrix  m(s_rendererImpl.mModel);
   m.RotateBy(s_rendererImpl.mView);
   m.t = s_rendererImpl.mView.RotateVec(m.t - s_rendererImpl.mView.t);
@@ -59,9 +59,14 @@ void Renderer::Init()
 {
   XR_ASSERTMSG(Renderer, !s_rendererImpl.initSuccess, ("Already initialised!"));
 
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+  int openGlVersionMajor = Device::GetConfigInt("GFX", "openGLVersionMajor", 3);
+  int openGlVersionMinor = Device::GetConfigInt("GFX", "openGLVersionMinor", 1);
+  int openGLUseCompatibilityProfile = Device::GetConfigInt("GFX", "openGLUseCompatibility", 0);
+
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, openGlVersionMajor );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, openGlVersionMinor );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, openGLUseCompatibilityProfile > 0 ? 
+    SDL_GL_CONTEXT_PROFILE_COMPATIBILITY : SDL_GL_CONTEXT_PROFILE_CORE);
 
   std::string caption = Device::GetConfig("GFX", "caption");
   if (caption.empty())
@@ -74,7 +79,7 @@ void Renderer::Init()
   int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
   
   uint32 flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-  if (!Device::GetConfigInt("GFX", "windowed", false))
+  if (!bool(Device::GetConfigInt("GFX", "windowed", false)))
   {
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
