@@ -534,22 +534,18 @@ struct Matrix
   }
 
   // general
-  ///@brief Gives you the column vector for X.
-  Vector3 ColumnX() const
+  Vector3 GetColumn(VectorInds i) const
   {
-    return Vector3(xx, yx, zx);
+    XR_ASSERT(Matrix, i < kNumVector3Inds);
+    return Vector3(arRot[i], arRot[i + kNumVector3Inds], arRot[i + 2 * kNumVector3Inds]);
   }
 
-  ///@brief Gives you the column vector for Y.
-  Vector3 ColumnY() const
+  void SetColumn(VectorInds i, Vector3 const& v)
   {
-    return Vector3(xy, yy, zy);
-  }
-
-  ///@brief Gives you the column vector for Z.
-  Vector3 ColumnZ() const
-  {
-    return Vector3(xz, yz, zz);
+    XR_ASSERT(Matrix, i < kNumVector3Inds);
+    arRot[i] = v.x;
+    arRot[i + kNumVector3Inds] = v.y;
+    arRot[i + 2 * kNumVector3Inds] = v.z;
   }
 
   void  ScaleX(float s)
