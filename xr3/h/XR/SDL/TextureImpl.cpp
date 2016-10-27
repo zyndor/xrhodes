@@ -70,25 +70,25 @@ uint32  TextureImpl::GetFlags() const
 //==============================================================================
 bool  TextureImpl::GetClamping() const
 {
-  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_CLAMPING)) > 0;
+  return (m_flags & XR_MASK_ID(F_CLAMPING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetFiltering() const
 {
-  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_FILTERING)) > 0;
+  return (m_flags & XR_MASK_ID(F_FILTERING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetMipMapping() const
 {
-  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_MIPMAPPING)) > 0;
+  return (m_flags & XR_MASK_ID(F_MIPMAPPING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetModifiable() const
 {
-  return (XR_MASK_ID(m_flags) & XR_MASK_ID(F_MODIFIABLE)) > 0;
+  return (m_flags & XR_MASK_ID(F_MODIFIABLE)) > 0;
 }
 
 //==============================================================================
