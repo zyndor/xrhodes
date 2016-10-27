@@ -45,6 +45,8 @@ public:
   
   typedef void(*TweenCallback)(Tweenable& t, void* pUser);
   
+  typedef std::vector<UIElement*> UIElementVector;
+
   // static
   static const char* const    karAnchorName[kNumAnchors];
   
@@ -67,10 +69,10 @@ public:
   void                SetTweenIn(TweenCallback pOnTweenIn, void* pData);
   void                SetTweenOut(TweenCallback pOnTweenIn, void* pData);
   
-  int                 GetNumListeners() const;
-  UIElement* const *  GetListeners() const; // no ownership transfer
-  int                 GetNumTweening() const;
-  UIElement* const *  GetTweening() const; // no ownership transfer
+  size_t              GetNumListeners() const;
+  UIElementVector const&  GetListeners() const; // no ownership transfer
+  size_t              GetNumTweening() const;
+  UIElementVector const&  GetTweening() const; // no ownership transfer
 
   void                MoveTweening(int x, int y);
 
@@ -86,12 +88,9 @@ protected:
   UIBuilder     m_builder;
   int           m_padding;
   
-  int           m_numListeners;
-  UIElement**   m_parpListeners;  // own the array, not the elements
-  
-  int           m_numTweening;
-  UIElement**   m_parpTweening;  // own the array, not the elements
-  
+  std::vector<UIElement*> m_listeners;
+  std::vector<UIElement*> m_tweening;
+
   TweenCallback m_pTweenIn;
   void*         m_pTweenInData;
   
@@ -136,30 +135,30 @@ int UIBuilderScreen::GetPadding() const
 
 //==============================================================================
 inline
-int UIBuilderScreen::GetNumListeners() const
+size_t UIBuilderScreen::GetNumListeners() const
 {
-  return m_numListeners;
+  return m_listeners.size();
 }
 
 //==============================================================================
 inline
-UIElement* const *  UIBuilderScreen::GetListeners() const
+UIBuilderScreen::UIElementVector const& UIBuilderScreen::GetListeners() const
 {
-  return m_parpListeners;
+  return m_listeners;
 }
 
 //==============================================================================
 inline
-int UIBuilderScreen::GetNumTweening() const
+size_t UIBuilderScreen::GetNumTweening() const
 {
-  return m_numTweening;
+  return m_tweening.size();
 }
 
 //==============================================================================
 inline
-UIElement* const *  UIBuilderScreen::GetTweening() const
+UIBuilderScreen::UIElementVector const& UIBuilderScreen::GetTweening() const
 {
-  return m_parpTweening;
+  return m_tweening;
 }
 
 } // XR

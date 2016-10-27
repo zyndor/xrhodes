@@ -1,28 +1,27 @@
 //
-// Nuclear Heart Games
+// Nuclear Heart Interactive
 // XRhodes
 //
-// xrgl.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    14/01/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_XRGL_HPP
+#ifndef XR_XRGL_HPP
 #define XR_XRGL_HPP
 
+#include <XR/Log.hpp>
+#include <XR/types.hpp>
 #include <GL/glew.h>
-#include <SDL2/SDL_video.h>
-#include <SDL2/SDL_opengl.h>
-#include "types.hpp"
-#include "Log.hpp"
+#include <SDL_opengl.h>
+#include <SDL_video.h>
 
-namespace XR {
+namespace XR
+{
 
 //==============================================================================
 inline
-void  CheckGLError(const char* pText)
+GLint  CheckGLError(const char* pText)
 {
   GLint error(glGetError());
   if (error != 0)
@@ -31,11 +30,15 @@ void  CheckGLError(const char* pText)
   }
   XR_ASSERTMSG(GL, error == GL_NONE, ("OpenGL Error: %d (attempting: %s)",
     error, pText));
+  return error;
 }
 
-} // XR
+//==============================================================================
+#define XR_GL_CALL(theCall)  theCall; CheckGLError( #theCall )
 
 //==============================================================================
-#define XR_GL_CALL(theCall)  (theCall); XR::CheckGLError( #theCall )
+#define XR_GL_CALL_RESULT(theCall, result)  theCall; result = CheckGLError( #theCall )
+
+}
 
 #endif // XR_XRGL_HPP

@@ -5,11 +5,12 @@
 // copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#include "xrgl.hpp"
-#include "Renderer.hpp"
-#include "Device.hpp"
-#include "Pool.hpp"
 #include "MaterialImpl.hpp"
+#include "xrgl.hpp"
+#include <XR/Renderer.hpp>
+#include <XR/Device.hpp>
+#include <XR/Pool.hpp>
+#include <XR/ProjectionHelpers.hpp>
 
 namespace XR
 {
@@ -44,7 +45,7 @@ static void UpdateModelViewMatrix()
   XR_GL_CALL(glMatrixMode(GL_MODELVIEW));
   XR_GL_CALL(glLoadIdentity());
 
-  static float arData[16];
+  static float arData[Renderer::kNumPersMatrixElems];
   Matrix  m(s_rendererImpl.mModel);
   m.RotateBy(s_rendererImpl.mView);
   m.t = s_rendererImpl.mView.RotateVec(m.t - s_rendererImpl.mView.t);
@@ -58,14 +59,19 @@ void Renderer::Init()
 {
   XR_ASSERTMSG(Renderer, !s_rendererImpl.initSuccess, ("Already initialised!"));
 
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+  int openGlVersionMajor = Device::GetConfigInt("GFX", "openGLVersionMajor", 3);
+  int openGlVersionMinor = Device::GetConfigInt("GFX", "openGLVersionMinor", 1);
+  int openGLUseCompatibilityProfile = Device::GetConfigInt("GFX", "openGLUseCompatibility", 0);
 
-  const char* pCaption = Device::GetConfig("GFX", "caption");
-  if (pCaption == 0)
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, openGlVersionMajor );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, openGlVersionMinor );
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, openGLUseCompatibilityProfile > 0 ? 
+    SDL_GL_CONTEXT_PROFILE_COMPATIBILITY : SDL_GL_CONTEXT_PROFILE_CORE);
+
+  std::string caption = Device::GetConfig("GFX", "caption");
+  if (caption.empty())
   {
-    pCaption = "XRhodes Application";
+    caption = "XRhodes Application";
   }
     
   int   width(Device::GetConfigInt("GFX", "width", 800));
@@ -73,16 +79,16 @@ void Renderer::Init()
   int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
   
   uint32 flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-  if (!Device::GetConfigInt("GFX", "windowed", false))
+  if (!bool(Device::GetConfigInt("GFX", "windowed", false)))
   {
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
   
-  s_rendererImpl.pMainWindow = SDL_CreateWindow(pCaption,
+  s_rendererImpl.pMainWindow = SDL_CreateWindow(caption.c_str(),
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     width, height, flags);
 
-  flags = 0;
+  flags = SDL_RENDERER_ACCELERATED;
   if (Device::GetConfigInt("GFX", "vsync", false))
   {
     flags |= SDL_RENDERER_PRESENTVSYNC;
@@ -148,8 +154,6 @@ void Renderer::Init()
   s_rendererImpl.mModel = Matrix::s_identity;
   UpdateModelViewMatrix();
 
-  s_rendererImpl.frames = 1;
-  
   s_rendererImpl.initSuccess = true;
 }
 
@@ -228,19 +232,29 @@ RenderStream* Renderer::AllocStream(RenderStream::Format fmt, int numElems)
 }
 
 //==============================================================================
-void Renderer::SetPerspMatrix( const float arData[kNumPersMatrixElems] )
+void Renderer::SetPerspMatrix(const float (&arData)[kNumPersMatrixElems])
 {
   XR_ASSERT(Renderer, arData != 0);
   XR_GL_CALL(glMatrixMode(GL_PROJECTION));
-  XR_GL_CALL(arData != 0 ? glLoadMatrixf(arData) : glLoadIdentity());
+  if(arData)
+  {
+    float arPerspMatrix[kNumPersMatrixElems];
+    memcpy(arPerspMatrix, arData, sizeof(arPerspMatrix));
+    arPerspMatrix[5] *= -1.0f;
+
+    XR_GL_CALL(glLoadMatrixf(arPerspMatrix));
+  }
+  else
+  {
+    XR_GL_CALL(glLoadIdentity());
+  }
 }
 
 //==============================================================================
 void  Renderer::SetOrtho(float left, float right, float bottom, float top,
-    float zFar, float zNear)
+    float zNear, float zFar)
 {
   XR_GL_CALL(glMatrixMode(GL_PROJECTION));
-  XR_GL_CALL(glLoadIdentity());
   
   s_rendererImpl.zFar = zFar;
   if (zNear == .0f)
@@ -250,17 +264,18 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
   s_rendererImpl.zNear = zNear;
   s_rendererImpl.tanHalfVerticalFov = .0f;
   
-  XR_GL_CALL(glOrtho(left, right, bottom, top, s_rendererImpl.zNear,
-    s_rendererImpl.zFar));
+  float arPerspMatrix[kNumPersMatrixElems];
+  ProjectionHelpers::CalculateOrtho(left, right, bottom, top, zNear, zFar,
+    arPerspMatrix);
+  SetPerspMatrix(arPerspMatrix);
 }
 
 //==============================================================================
-void  Renderer::SetPerspective(float verticalFov, float aspect, float zNear, float zFar)
+void  Renderer::SetPerspective(float verticalFov, float aspectRatio, float zNear, float zFar)
 {
   XR_ASSERT(Renderer, zNear < zFar);
-  XR_ASSERT(Renderer, aspect > .0f);
+  XR_ASSERT(Renderer, aspectRatio > .0f);
   XR_GL_CALL(glMatrixMode(GL_PROJECTION));
-  XR_GL_CALL(glLoadIdentity());
 
   s_rendererImpl.zNear = zNear;
   s_rendererImpl.zFar = zFar;
@@ -270,15 +285,15 @@ void  Renderer::SetPerspective(float verticalFov, float aspect, float zNear, flo
 //  float arData[16] =
 //  {
 //    f, .0f, .0f, .0f,
-//    .0f, f / aspect, .0f, .0f,
+//    .0f, f / aspectRatio, .0f, .0f,
 //    .0f, .0f, (zNear + zFar) * dz, (2.0f * zNear * zFar) * dz,
 //    .0f, .0f, 1.0f, .0f      
 //  };
-  s_rendererImpl.tanHalfVerticalFov = tanf(verticalFov * .5f);
-  float height = zNear * s_rendererImpl.tanHalfVerticalFov;
-  float width = height * aspect;
 
-  XR_GL_CALL(glFrustum(-width, width, height, -height, zNear, zFar));
+  float arPerspMatrix[kNumPersMatrixElems];
+  ProjectionHelpers::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
+    arPerspMatrix, &s_rendererImpl.tanHalfVerticalFov);
+  SetPerspMatrix(arPerspMatrix);
 }
 
 //==============================================================================

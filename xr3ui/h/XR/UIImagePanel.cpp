@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include <XR/maths.hpp>
 #include "UIImagePanel.hpp"
 #include "UIRenderer.hpp"
@@ -37,18 +44,18 @@ void UIImagePanel::Render() const
   
   int arXCoords[4] =
   {
-    x + (int)XR::Round(sprite.GetLeftPadding()),
+    x + (int)Round(sprite.GetLeftPadding()),
     x + ixSplit,
     x + w - ixSplit,
-    x + w - (int)XR::Round(sprite.GetRightPadding())
+    x + w - (int)Round(sprite.GetRightPadding())
   };
 
   int arYCoords[4] =
   {
-    y + (int)XR::Round(sprite.GetTopPadding()),
+    y + (int)Round(sprite.GetTopPadding()),
     y + iySplit,
     y + h - iySplit,
-    y + h - (int)XR::Round(sprite.GetBottomPadding())
+    y + h - (int)Round(sprite.GetBottomPadding())
   };
   
   const RenderStream& rsSpriteUVs(sprite.GetUVs());
@@ -212,18 +219,18 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   
   int arXCoords[4] =
   {
-    x + (int)XR::Round(sprite.GetLeftPadding()),
+    x + (int)Round(sprite.GetLeftPadding()),
     x + ixSplit,
     x + w - ixSplit,
-    x + w - (int)XR::Round(sprite.GetRightPadding())
+    x + w - (int)Round(sprite.GetRightPadding())
   };
 
   int arYCoords[4] =
   {
-    y + (int)XR::Round(sprite.GetTopPadding()),
+    y + (int)Round(sprite.GetTopPadding()),
     y + iySplit,
     y + h - iySplit,
-    y + h - (int)XR::Round(sprite.GetBottomPadding())
+    y + h - (int)Round(sprite.GetBottomPadding())
   };
 
   const RenderStream& rsSpriteUVs(sprite.GetUVs());

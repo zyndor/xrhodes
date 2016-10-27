@@ -20,7 +20,7 @@ UINavigator::~UINavigator()
 {}
 
 //==============================================================================
-bool  UINavigator::Add(XR::UIElement* pElem, XR::UIElement* pRelative,
+bool  UINavigator::Add(UIElement* pElem, UIElement* pRelative,
         Direction dir)
 {
   bool  success(true);
@@ -58,7 +58,7 @@ bool  UINavigator::Add(XR::UIElement* pElem, XR::UIElement* pRelative,
 }
 
 //==============================================================================
-bool  UINavigator::Remove(XR::UIElement* pElem)
+bool  UINavigator::Remove(UIElement* pElem)
 {
   EntryMap::iterator  iFind(m_entries.find(pElem));
   bool  success(iFind == m_entries.end());
@@ -118,10 +118,10 @@ void  UINavigator::Clear()
 }
 
 //==============================================================================
-XR::UIElement*  UINavigator::Get(XR::UIElement* pRelative, Direction dir)
+UIElement*  UINavigator::Get(UIElement* pRelative, Direction dir)
 {
   XR_ASSERT(UINavigator, dir < kNumDirections);
-  XR::UIElement*  p(0);
+  UIElement*  p(0);
   EntryMap::iterator  iFind(m_entries.find(pRelative));
   if(iFind != m_entries.end())
   {

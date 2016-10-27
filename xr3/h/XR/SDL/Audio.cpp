@@ -1,7 +1,14 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2014. All rights reserved.
+//
+//==============================================================================
+#include <XR/Audio.hpp>
+#include <XR/Device.hpp>
+#include <SDL_mixer.h>
 #include <string.h>
-#include <SDL2/SDL_mixer.h>
-#include "Audio.hpp"
-#include "Device.hpp"
 
 namespace XR
 {

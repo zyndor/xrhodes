@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include <algorithm>
 #include <XR/functors.hpp>
 #include "UIContainer.hpp"
@@ -19,14 +26,14 @@ UIContainer::~UIContainer()
 void UIContainer::Render() const
 {
   std::for_each(m_lElements.begin(), m_lElements.end(),
-    XR::Caller<const UIElement>(&UIElement::Render));
+    Caller<const UIElement>(&UIElement::Render));
 }
 
 //==============================================================================
 void UIContainer::Render(UIRenderer* pRenderer) const
 {
   std::for_each(m_lElements.begin(), m_lElements.end(),
-    XR::Caller<const UIElement, void, UIRenderer*>(&UIElement::Render, pRenderer));
+    Caller<const UIElement, void, UIRenderer*>(&UIElement::Render, pRenderer));
 }
 
 //==============================================================================

@@ -2,14 +2,12 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// Color.hpp
 // @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    22/03/2014
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_COLOR_HPP
+#ifndef XR_COLOR_HPP
 #define XR_COLOR_HPP
 
 #include "types.hpp"

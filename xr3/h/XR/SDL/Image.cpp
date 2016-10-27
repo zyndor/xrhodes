@@ -5,8 +5,8 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include  <SDL2/SDL_image.h>
-#include  "Image.hpp"
+#include  <XR/Image.hpp>
+#include  <SDL_image.h>
 
 namespace XR
 {
@@ -41,7 +41,6 @@ bool  Image::Load(const char* pFilename)
 //==============================================================================
 void  Image::Copy(const Image& img)
 {
-  DestroyImage(*this);
   SDL_Surface*  pSurf(0);
   if(img.GetPixelData() != 0)
   {
@@ -50,6 +49,8 @@ void  Image::Copy(const Image& img)
       pOther->format->BitsPerPixel, pOther->pitch, pOther->format->Rmask,
       pOther->format->Gmask, pOther->format->Bmask, pOther->format->Amask);
   }
+
+  DestroyImage(*this);
   SwapImpl(pSurf);
 }
 

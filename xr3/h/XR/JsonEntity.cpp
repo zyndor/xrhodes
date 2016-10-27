@@ -2,15 +2,16 @@
 // Nuclear Heart Games
 // XRhodes
 //
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#include <cstring>
-#include <algorithm>
-#include <sstream>
 #include "Hash.hpp"
 #include "JsonEntity.hpp"
 #include "functors.hpp"
+#include <cstring>
+#include <algorithm>
+#include <iterator>
+#include <sstream>
 
 namespace XR
 {

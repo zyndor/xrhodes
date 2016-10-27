@@ -17,7 +17,7 @@
 
 //==============================================================================
 #if defined XR_SDL
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #if !defined NDEBUG || defined XR_DEBUG_PERFORMANCE
 #define XR_DEBUG

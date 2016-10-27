@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include  "Cursor.hpp"
 
 namespace XR
@@ -6,7 +13,7 @@ namespace XR
 //==============================================================================
 void  Cursor::OnMotion(void* pSystem, void* pUser)
 {
-  XR::Input::MouseMotionEvent*  pEvent(static_cast<XR::Input::MouseMotionEvent*>(pSystem));
+  Input::MouseMotionEvent*  pEvent(static_cast<Input::MouseMotionEvent*>(pSystem));
 
   Cursor*  pCursor(static_cast<Cursor*>(pUser));
   int xDelta(abs(pEvent->x - pCursor->m_image.x));
@@ -15,7 +22,7 @@ void  Cursor::OnMotion(void* pSystem, void* pUser)
   yDelta *= yDelta;
   xDelta += yDelta;
   xDelta = sqrtf(xDelta);
-  int hScr(XR::Renderer::GetScreenHeight());
+  int hScr(Renderer::GetScreenHeight());
   if(xDelta >= hScr * pCursor->m_moveTreshold ||
     (pCursor->m_timer > 0 && xDelta >= hScr * pCursor->m_keepAliveTreshold))
   {
@@ -27,7 +34,7 @@ void  Cursor::OnMotion(void* pSystem, void* pUser)
 //==============================================================================
 void  Cursor::OnAction(void* pSystem, void* pUser)
 {
-  XR::Input::MouseActionEvent*  pEvent(static_cast<XR::Input::MouseActionEvent*>(pSystem));
+  Input::MouseActionEvent*  pEvent(static_cast<Input::MouseActionEvent*>(pSystem));
 
   Cursor*  pCursor(static_cast<Cursor*>(pUser));
   pCursor->m_isPressed = pEvent->isPressed;
@@ -71,7 +78,7 @@ void  Cursor::SetKeepAliveTreshold(float hPcnt)
 }
 
 //==============================================================================
-void  Cursor::SetSprite(const XR::Sprite* pSprite)
+void  Cursor::SetSprite(const Sprite* pSprite)
 {
   m_image.SetSprite(pSprite, 1.0f);
 }
@@ -82,13 +89,13 @@ void  Cursor::SetEnabled(bool state)
   m_isEnabled = state;
   if(state)
   {
-    XR::Input::RegisterCallback(XR::Input::EV_MOUSE_MOTION, OnMotion, this);
-    XR::Input::RegisterCallback(XR::Input::EV_MOUSE_ACTION, OnAction, this);
+    Input::RegisterCallback(Input::EV_MOUSE_MOTION, OnMotion, this);
+    Input::RegisterCallback(Input::EV_MOUSE_ACTION, OnAction, this);
   }
   else
   {
-    XR::Input::UnregisterCallback(XR::Input::EV_MOUSE_MOTION, OnMotion);
-    XR::Input::UnregisterCallback(XR::Input::EV_MOUSE_ACTION, OnAction);
+    Input::UnregisterCallback(Input::EV_MOUSE_MOTION, OnMotion);
+    Input::UnregisterCallback(Input::EV_MOUSE_ACTION, OnAction);
     m_isPressed = false;
   }
 }
@@ -114,7 +121,7 @@ void  Cursor::Update(int ms)
     m_timer -= ms;
     if(m_timer < 0xff)
     {
-      m_image.color.a = XR::Saturate(float(m_timer) / 0xff);
+      m_image.color.a = Saturate(float(m_timer) / 0xff);
     }
   }
 }
@@ -129,7 +136,7 @@ void  Cursor::Render()
 }
 
 //==============================================================================
-void  Cursor::Render(XR::UIRenderer& r)
+void  Cursor::Render(UIRenderer& r)
 {
   if(m_isEnabled)
   {

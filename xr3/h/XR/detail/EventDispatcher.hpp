@@ -10,11 +10,11 @@
 #ifndef XR_EVENTDISPATCHER_HPP
 #define XR_EVENTDISPATCHER_HPP
 
+#include <XR/types.hpp>
 #include <list>
 #include <map>
 #include <algorithm>
 #include <functional>
-#include "types.hpp"
 
 namespace XR
 {

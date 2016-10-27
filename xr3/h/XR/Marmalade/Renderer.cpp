@@ -107,7 +107,7 @@ RenderStream* Renderer::AllocStream(RenderStream::Format fmt, int numElems)
 }
 
 //==============================================================================
-void Renderer::SetPerspMatrix( const float arData[kNumPersMatrixElems] )
+void Renderer::SetPerspMatrix( const float (&arData)[kNumPersMatrixElems] )
 {
   IwGxSetPerspectiveMatrix(const_cast<float*>(arData));
 }

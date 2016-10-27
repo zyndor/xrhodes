@@ -1,3 +1,10 @@
+//
+// Nuclear Heart Games
+// XRhodes
+//
+// copyright (c) 2011 - 2016. All rights reserved.
+//
+//==============================================================================
 #include "UIImage.hpp"
 #include "UIRenderer.hpp"
 
@@ -15,7 +22,7 @@ UIImage::~UIImage()
 {}
 
 //==============================================================================
-void  UIImage::SetSprite(const XR::Sprite *pSprite, float scale)
+void  UIImage::SetSprite(const Sprite *pSprite, float scale)
 {
   XR_ASSERT(UIImage, pSprite != 0);
   sprite = *pSprite;

@@ -1,5 +1,5 @@
-#include <SDL2/SDL_thread.h>
-#include "Worker.hpp"
+#include <SDL_thread.h>
+#include <XR/Worker.hpp>
 
 namespace XR
 {

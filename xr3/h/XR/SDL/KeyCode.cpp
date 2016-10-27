@@ -6,8 +6,8 @@
 //
 //==============================================================================
 #include <algorithm>
-#include <SDL2/SDL_scancode.h>
-#include "KeyCode.hpp"
+#include <SDL_scancode.h>
+#include "../KeyCode.hpp"
 
 namespace XR
 {
