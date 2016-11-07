@@ -113,4 +113,10 @@ void  Texture::Upload()
   TO_IMPL()->Upload();
 }
 
+//==============================================================================
+uint32_t Texture::GetOpenGLHandle() const
+{
+  return TO_CONST_IMPL()->m_HWID;
+}
+
 } // XR
