@@ -68,6 +68,8 @@ public:
   
   void    FreeSurface();
 
+  uint32_t GetHandle() const; // no ownership transfer
+
 protected:
   // data
   SDL_Surface*  m_pSurface;

@@ -49,6 +49,8 @@ public:
   void    SetModifiable(bool state);  // pixel data is kept [on] or discarded.
 
   void    Upload();
+
+  uint32_t GetOpenGLHandle() const;
 };
 
 } // XR

@@ -169,4 +169,10 @@ void  TextureImpl::FreeSurface()
   m_pSurface = 0;
 }
 
+//==============================================================================
+uint32_t TextureImpl::GetHandle() const
+{
+  return m_hTexture;
+}
+
 } // XR
