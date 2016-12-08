@@ -99,11 +99,11 @@ Ray Camera::GetViewRay(float nx, float ny) const
 {
   Matrix mView = GetView();
 
-  Vector3 vForward(mView.arRot + MZX);
+  Vector3 vForward(mView.arLinear + MZX);
   //vForward.Normalise();
 
-  Vector3 vRight(mView.arRot + MXX);
-  Vector3 vUp(mView.arRot + MYX);
+  Vector3 vRight(mView.arLinear + MXX);
+  Vector3 vUp(mView.arLinear + MYX);
 
   float hProj(m_zNear * tanf(m_verticalFov * .5f));
   float wProj(hProj * m_aspectRatio);

@@ -43,7 +43,7 @@ struct SVector2
     {
       int16 x, y;
     };
-    int16 arCoord[kNumVector2Inds];
+    int16 arData[kNumVector2Inds];
   };
 
   // structors
@@ -124,7 +124,7 @@ struct Vector2
     {
       float x, y;
     };
-    float arCoord[kNumVector2Inds];
+    float arData[kNumVector2Inds];
   };
 
   // structors
@@ -298,7 +298,7 @@ struct Vector3
     {
       float  x, y, z;
     };
-    float  arCoord[kNumVector3Inds];
+    float  arData[kNumVector3Inds];
   };
 
   // structors
@@ -491,6 +491,8 @@ enum  MatrixInds
 };
 
 //==============================================================================
+///@brief Row-order matrix with a 3x3 linear transformation (rotation, scaling)
+/// and 1x3 translation components.
 struct Matrix 
 {
   // static
@@ -501,7 +503,8 @@ struct Matrix
   // data
   union
   {
-    float  arRot[kNumMatrixInds];
+    float  arLinear[kNumMatrixInds];
+    float  arLinear2D[kNumVector3Inds][kNumVector3Inds];
     struct
     {
       float  xx, xy, xz, // local x axis
@@ -518,34 +521,34 @@ struct Matrix
   explicit Matrix(const Vector3& t_)
   : t(t_)
   {
-    memcpy(arRot, karIdentityData, sizeof(arRot));
+    memcpy(arLinear, karIdentityData, sizeof(arLinear));
   }
 
   explicit Matrix(const float arData[kNumMatrixInds])
   : t()
   {
-    CopyRot(arData);
+    CopyLinear(arData);
   }
 
   Matrix(const Matrix& rhs, const Vector3& t_)
   : t(t_)
   {
-    CopyRot(rhs);
+    CopyLinear(rhs);
   }
 
   // general
   Vector3 GetColumn(VectorInds i) const
   {
     XR_ASSERT(Matrix, i < kNumVector3Inds);
-    return Vector3(arRot[i], arRot[i + kNumVector3Inds], arRot[i + 2 * kNumVector3Inds]);
+    return Vector3(arLinear[i], arLinear[i + kNumVector3Inds], arLinear[i + 2 * kNumVector3Inds]);
   }
 
   void SetColumn(VectorInds i, Vector3 const& v)
   {
     XR_ASSERT(Matrix, i < kNumVector3Inds);
-    arRot[i] = v.x;
-    arRot[i + kNumVector3Inds] = v.y;
-    arRot[i + 2 * kNumVector3Inds] = v.z;
+    arLinear[i] = v.x;
+    arLinear[i + kNumVector3Inds] = v.y;
+    arLinear[i + 2 * kNumVector3Inds] = v.z;
   }
 
   void  ScaleX(float s)
@@ -706,35 +709,36 @@ struct Matrix
     return  atan2f(v.y, v.x);
   }
   
-  ///@brief Copies rotation data from the given array.
-  void  CopyRot(const float parRot[kNumMatrixInds])
+  ///@brief Copies the linear transformation part from the given array.
+  void  CopyLinear(const float parLinear[kNumMatrixInds])
   {
-    memcpy(arRot, parRot, sizeof(arRot));
+    memcpy(arLinear, parLinear, sizeof(arLinear));
   }
   
-  ///@brief Copies rotation data from the given matrix.
-  void  CopyRot(const Matrix& m)
+  ///@brief Copies the linear transformation part of the given matrix.
+  void  CopyLinear(const Matrix& m)
   {
-    CopyRot(m.arRot);
+    CopyLinear(m.arLinear);
   }
   
-  ///@brief Transforms the rotation part of this matrix by the rotation part
-  /// of the other matrix @a m. No translation applied or modified.
+  ///@brief Multiplies the linear transformation component of this Matrix
+  /// by the linear transformation component the other Matrix @a m.
+  /// No translation applied or modified.
   void  RotateBy(const Matrix& m)
   {
     Matrix  n(*this);
-    CalculateComponent(m, n, VX, VX);
-    CalculateComponent(m, n, VX, VY);
-    CalculateComponent(m, n, VX, VZ);
-    CalculateComponent(m, n, VY, VX);
-    CalculateComponent(m, n, VY, VY);
-    CalculateComponent(m, n, VY, VZ);
-    CalculateComponent(m, n, VZ, VX);
-    CalculateComponent(m, n, VZ, VY);
-    CalculateComponent(m, n, VZ, VZ);
+    CalculateComponentProduct(m, n, VX, VX);
+    CalculateComponentProduct(m, n, VX, VY);
+    CalculateComponentProduct(m, n, VX, VZ);
+    CalculateComponentProduct(m, n, VY, VX);
+    CalculateComponentProduct(m, n, VY, VY);
+    CalculateComponentProduct(m, n, VY, VZ);
+    CalculateComponentProduct(m, n, VZ, VX);
+    CalculateComponentProduct(m, n, VZ, VY);
+    CalculateComponentProduct(m, n, VZ, VZ);
   }
   
-  void  CalculateComponent(const Matrix& m, const Matrix& n, int i, int j)
+  void  CalculateComponentProduct(const Matrix& m, const Matrix& n, int i, int j)
   {
     XR_ASSERT(Matrix, i >= 0);
     XR_ASSERT(Matrix, i < kNumVector3Inds);
@@ -742,9 +746,9 @@ struct Matrix
     XR_ASSERT(Matrix, j < kNumVector3Inds);
 
     int y(j * kNumVector3Inds);
-    arRot[y + i] = m.arRot[y] * n.arRot[i] +
-      m.arRot[y + 1] * n.arRot[i + kNumVector3Inds] +
-      m.arRot[y + 2] * n.arRot[i + kNumVector3Inds * 2];
+    arLinear[y + i] = m.arLinear[y] * n.arLinear[i] +
+      m.arLinear[y + 1] * n.arLinear[i + kNumVector3Inds] +
+      m.arLinear[y + 2] * n.arLinear[i + kNumVector3Inds * 2];
   }
 
   ///@brief Transforms this matrix by the matrix @a m, applying its
@@ -787,9 +791,9 @@ struct Matrix
 
     Vector3  vx(up.Cross(vz));  // local x axis
     Vector3  vy(vz.Cross(vx));  // local y axis
-    memcpy(arRot + MXX, &vx, sizeof(vx));
-    memcpy(arRot + MYX, &vy, sizeof(vy));
-    memcpy(arRot + MZX, &vz, sizeof(vz));
+    memcpy(arLinear + MXX, vx.arData, sizeof(vx));
+    memcpy(arLinear + MYX, vy.arData, sizeof(vy));
+    memcpy(arLinear + MZX, vz.arData, sizeof(vz));
   }
 
   ///@brief Calculates a transformation looking from the translation part
@@ -799,35 +803,35 @@ struct Matrix
     LookAt(Vector3(t.x, t.y, t.z), to, up);
   }
 
-  ///@brief Writes data from the matrix into the given array in OpenGL's
-  /// format.
-  void  ToGL(float arData[16]) const
+  ///@brief Writes data from the matrix into the given array in 
+  /// OpenGL's 4x4 column-order format.
+  void  ToGL(float arDataOut[16]) const
   {
-    XR_ASSERT(Matrix, arData != 0);
-    arData[0] = xx;
-    arData[1] = yx;
-    arData[2] = zx;
-    arData[3] = .0f;
-    arData[4] = xy;
-    arData[5] = yy;
-    arData[6] = zy;
-    arData[7] = .0f;
-    arData[8] = xz;
-    arData[9] = yz;
-    arData[10] = zz;
-    arData[11] = .0f;
-    arData[12] = t.x;
-    arData[13] = t.y;
-    arData[14] = t.z;
-    arData[15] = 1.0f;
+    XR_ASSERT(Matrix, arDataOut != 0);
+    arDataOut[0] = xx;
+    arDataOut[1] = yx;
+    arDataOut[2] = zx;
+    arDataOut[3] = .0f;
+    arDataOut[4] = xy;
+    arDataOut[5] = yy;
+    arDataOut[6] = zy;
+    arDataOut[7] = .0f;
+    arDataOut[8] = xz;
+    arDataOut[9] = yz;
+    arDataOut[10] = zz;
+    arDataOut[11] = .0f;
+    arDataOut[12] = t.x;
+    arDataOut[13] = t.y;
+    arDataOut[14] = t.z;
+    arDataOut[15] = 1.0f;
   }
   
-  ///@brief Changes the rotation part of this matrix to its transpose.
+  ///@brief Changes the linear transformation part of this matrix to its transpose.
   Matrix&  Transpose()
   {
-    std::swap(arRot[MXY], arRot[MYX]);
-    std::swap(arRot[MZX], arRot[MXZ]);
-    std::swap(arRot[MYZ], arRot[MZY]);
+    std::swap(arLinear[MXY], arLinear[MYX]);
+    std::swap(arLinear[MZX], arLinear[MXZ]);
+    std::swap(arLinear[MYZ], arLinear[MZY]);
     return *this;
   }
   
@@ -985,9 +989,9 @@ public:
     memcpy(arData, karUnitQuaternionData, sizeof(arData));
   }
 
-  explicit Quaternion(const float arData_[kNumQuaternionInds])
+  explicit Quaternion(const float arDataIn[kNumQuaternionInds])
   {
-    memcpy(arData, arData_, sizeof(arData));
+    memcpy(arData, arDataIn, sizeof(arData));
   }
   
   Quaternion(float i_, float j_, float k_, float w_)
