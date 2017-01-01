@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// TweakBench.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    17/08/2014
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
-// copyright (c) 2011 - 2015. All rights reserved.
-// 
 //==============================================================================
-#if !defined XR_TWEAKBENCH_HPP
+#ifndef XR_TWEAKBENCH_HPP
 #define XR_TWEAKBENCH_HPP
 
 #include  <map>

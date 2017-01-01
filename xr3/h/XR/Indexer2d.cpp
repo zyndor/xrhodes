@@ -1,9 +1,7 @@
 //
-// Nuclear Heart Studios
 // XRhodes
 //
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  15/06/2011
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include "Indexer2d.hpp"

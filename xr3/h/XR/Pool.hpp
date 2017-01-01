@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Pool.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    04/08/2011
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_POOL_HPP
+#ifndef XR_POOL_HPP
 #define XR_POOL_HPP
 
 #include <list>

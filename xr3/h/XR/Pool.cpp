@@ -1,10 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// MemPool.cpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  04/08/2011
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include "Pool.hpp"

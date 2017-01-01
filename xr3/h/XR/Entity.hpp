@@ -1,13 +1,10 @@
 //
-// Nuclear Heart Interactive
 // XRhodes
 //
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_ENTITY_HPP
+#ifndef XR_ENTITY_HPP
 #define XR_ENTITY_HPP
 
 #include <list>

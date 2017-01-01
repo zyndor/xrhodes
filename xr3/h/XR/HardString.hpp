@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// HardString.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    09/30/2013
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_HARDSTRING_HPP
+#ifndef XR_HARDSTRING_HPP
 #define XR_HARDSTRING_HPP
 
 #include <string.h>

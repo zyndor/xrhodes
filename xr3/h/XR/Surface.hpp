@@ -1,14 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Surface.hpp
-// @author  Gyorgy Straub
-// @date    08/10/2013
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
-// copyright (c) 2011 - 2014. All rights reserved.
-//
-#if !defined XR_SURFACE_HPP
+//==============================================================================
+#ifndef XR_SURFACE_HPP
 #define XR_SURFACE_HPP
 
 #include "Texture.hpp"

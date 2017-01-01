@@ -1,12 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// types.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    11/09/2013
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_TYPES_HPP

@@ -1,8 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include <string.h>

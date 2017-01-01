@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Parse.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    30/09/2013
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_PARSE_HPP
+#ifndef XR_PARSE_HPP
 #define XR_PARSE_HPP
 
 #include "vectypes.hpp"

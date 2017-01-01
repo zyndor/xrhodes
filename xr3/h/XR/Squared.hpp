@@ -1,12 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Squared.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    02/05/2014
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_SQUARED_HPP

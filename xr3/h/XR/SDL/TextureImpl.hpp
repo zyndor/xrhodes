@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// TextureImpl`.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    24/11/2013
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TEXTUREIMPL_HPP
+#ifndef XR_TEXTUREIMPL_HPP
 #define XR_TEXTUREIMPL_HPP
 
 #include "xrgl.hpp"

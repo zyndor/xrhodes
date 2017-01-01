@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Studios
 // XRhodes
 //
-// Grid.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  20/06/2011
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_GRID_HPP
+#ifndef XR_GRID_HPP
 #define XR_GRID_HPP
 
 #include "maths.hpp"

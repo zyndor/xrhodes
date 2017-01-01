@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Text.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    04/02/2014
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TEXT_HPP
+#ifndef XR_TEXT_HPP
 #define XR_TEXT_HPP
 
 #include <string>

@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// HardList.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    09/03/2013
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_HARDLIST_HPP
+#ifndef XR_HARDLIST_HPP
 #define XR_HARDLIST_HPP
 
 #include "types.hpp"

@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// ResManager.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    10/14/2012
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_RESMANAGER_HPP
+#ifndef XR_RESMANAGER_HPP
 #define XR_RESMANAGER_HPP
 
 #include <map>

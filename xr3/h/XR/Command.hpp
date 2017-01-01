@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Command.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    30/08/2015
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_COMMAND_HPP
+#ifndef XR_COMMAND_HPP
 #define XR_COMMAND_HPP
 
 namespace	XR

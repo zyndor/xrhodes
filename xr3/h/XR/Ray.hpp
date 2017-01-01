@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Ray.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    01/05/2014
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_RAY_HPP
+#ifndef XR_RAY_HPP
 #define XR_RAY_HPP
 
 #include "vectypes.hpp"

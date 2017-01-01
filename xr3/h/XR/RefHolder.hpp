@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// RefHolder.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    20/03/2016
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_REFHOLDER_HPP
+#ifndef XR_REFHOLDER_HPP
 #define XR_REFHOLDER_HPP
 
 namespace	XR

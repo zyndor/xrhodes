@@ -1,10 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// tweener.cpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  12/07/2011
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include <algorithm>

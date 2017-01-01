@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Sprite.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    12/01/2011
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_SPRITE_HPP
+#ifndef XR_SPRITE_HPP
 #define XR_SPRITE_HPP
 
 #include "Renderer.hpp"

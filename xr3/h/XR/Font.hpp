@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Font.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    21/11/2012
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_FONT_HPP
+#ifndef XR_FONT_HPP
 #define XR_FONT_HPP
 
 #include <map>

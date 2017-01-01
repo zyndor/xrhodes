@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// TweenVarPool.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    25/05/2013
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TWEENVARPOOL_HPP
+#ifndef XR_TWEENVARPOOL_HPP
 #define XR_TWEENVARPOOL_HPP
 
 #include "TweenVar.hpp"
