@@ -213,4 +213,4 @@ struct	MemFnAdaptor<Return, const Callee, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6>
 
 }	// XR
 
-#endif	//XR_MEMFNADAPTOR_HPP
+#endif //XR_MEMFNADAPTOR_HPP

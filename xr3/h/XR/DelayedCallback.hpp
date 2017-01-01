@@ -38,7 +38,6 @@ bool  DelayedCallback::IsActive() const
   return delay > .0f;
 }
 
-
 } // XR
 
 #endif  // XR_DELAYEDCALLBACK_HPP

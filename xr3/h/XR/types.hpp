@@ -78,7 +78,7 @@ typedef SceUInt64       uint64;
 #endif  //platform
 
 //==============================================================================
-#define	XR_RAWTRACE(format)	printf format; fflush(stdout);
+#define XR_RAWTRACE(format)	printf format; fflush(stdout);
 
 //==============================================================================
 #define XR_CRASHTEST(call)  { printf("At: %s\n", #call, __FILE__, __LINE__); fflush(stdout); call; printf("OK.\n"; }

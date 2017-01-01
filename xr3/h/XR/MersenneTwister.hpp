@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #ifndef XR_MERSENNETWISTER_HPP
-#define	XR_MERSENNETWISTER_HPP
+#define XR_MERSENNETWISTER_HPP
 
 namespace XR
 {
@@ -47,5 +47,5 @@ int MersenneTwister::RandSign()
 
 } // XR
 
-#endif	// XR_MERSENNETWISTER_HPP
+#endif // XR_MERSENNETWISTER_HPP
 

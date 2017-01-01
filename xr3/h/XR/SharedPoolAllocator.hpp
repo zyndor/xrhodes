@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #ifndef XR_SHAREDPOOLALLOCATOR_HPP
-#define	XR_SHAREDPOOLALLOCATOR_HPP
+#define XR_SHAREDPOOLALLOCATOR_HPP
 
 #include <stddef.h>
 #include "Pool.hpp"
@@ -214,4 +214,4 @@ bool operator!=(const SharedPoolAllocator<Type>&,
 
 } // XR
 
-#endif	//XR_SHAREDPOOLALLOCATOR_HPP
+#endif //XR_SHAREDPOOLALLOCATOR_HPP

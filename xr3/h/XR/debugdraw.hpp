@@ -11,7 +11,6 @@
 
 namespace XR
 {
-
 namespace DebugDraw
 {
 
@@ -31,7 +30,6 @@ void  FillCircle(float radius, Material* pMaterial = 0);
 //==============================================================================
 
 } // DebugDraw
-
 } // XR
 
 #endif // XR_DEBUGDRAW_HPP

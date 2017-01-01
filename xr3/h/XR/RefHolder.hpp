@@ -46,4 +46,4 @@ RefHolder<T>	MakeRefHolder(T& t)
 
 }	// XR
 
-#endif	//XR_REFHOLDER_HPP
+#endif //XR_REFHOLDER_HPP

@@ -299,4 +299,4 @@ protected:
 
 }	// XR
 
-#endif	//XR_COMMAND_HPP
+#endif //XR_COMMAND_HPP
