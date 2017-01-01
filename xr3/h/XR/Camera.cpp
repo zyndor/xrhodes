@@ -26,7 +26,7 @@ Camera::~Camera()
 Camera* Camera::Clone() const
 {
   Camera* pClone = new Camera();
-  memcpy(&pClone->m_arPerspectiveMatrix, &m_arPerspectiveMatrix, sizeof(Camera) - sizeof(Entity*));
+  memcpy(&pClone->m_arPerspectiveMatrix, &m_arPerspectiveMatrix, sizeof(Camera) - sizeof(Component));
   return pClone;
 }
 
