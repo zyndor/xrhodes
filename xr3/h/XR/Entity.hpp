@@ -263,9 +263,9 @@ template  <class T>
 inline
 T*  Entity::AddComponent()
 {
-  T* pComponent = 0;
+  T* pComponent = nullptr;
   const size_t typeId = Component::GetTypeIdImpl<T>();
-  if(FindComponent(typeId) == 0)
+  if(FindComponent(typeId) == nullptr)
   {
     pComponent = new T();
     _AddComponent(*pComponent, &typeId);
@@ -279,7 +279,7 @@ inline
 void Entity::RemoveComponent()
 {
   Component*  pComponent = FindComponent<T>();
-  if(pComponent != 0 && RemoveComponent(*pComponent))
+  if(pComponent != nullptr && RemoveComponent(*pComponent))
   {
     delete pComponent;
   }
