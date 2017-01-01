@@ -103,7 +103,6 @@
     <ClInclude Include="..\h\XR\SDL\xrgl.hpp" />
     <ClInclude Include="..\h\XR\Serialized.hpp" />
     <ClInclude Include="..\h\XR\SharedPoolAllocator.hpp" />
-    <ClInclude Include="..\h\XR\SphereCollider.hpp" />
     <ClInclude Include="..\h\XR\Sprite.hpp" />
     <ClInclude Include="..\h\XR\SpriteRenderer.hpp" />
     <ClInclude Include="..\h\XR\Squared.hpp" />
