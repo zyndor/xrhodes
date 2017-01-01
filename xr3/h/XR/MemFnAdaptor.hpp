@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// MemFnAdaptor.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    07/08/2015
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_MEMFNADAPTOR_HPP
+#ifndef XR_MEMFNADAPTOR_HPP
 #define XR_MEMFNADAPTOR_HPP
 
 namespace	XR
@@ -218,4 +213,4 @@ struct	MemFnAdaptor<Return, const Callee, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6>
 
 }	// XR
 
-#endif	//XR_MEMFNADAPTOR_HPP
+#endif //XR_MEMFNADAPTOR_HPP

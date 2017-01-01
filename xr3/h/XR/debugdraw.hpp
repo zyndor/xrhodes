@@ -1,22 +1,16 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// debugdraw.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    09/07/2014
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_DEBUGDRAW_HPP
+#ifndef XR_DEBUGDRAW_HPP
 #define XR_DEBUGDRAW_HPP
 
 #include  "Renderer.hpp"
 
 namespace XR
 {
-
 namespace DebugDraw
 {
 
@@ -36,7 +30,6 @@ void  FillCircle(float radius, Material* pMaterial = 0);
 //==============================================================================
 
 } // DebugDraw
-
 } // XR
 
 #endif // XR_DEBUGDRAW_HPP

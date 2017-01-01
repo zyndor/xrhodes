@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// HttpClient.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    17/10/12
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_HTTPCLIENT_HPP
+#ifndef XR_HTTPCLIENT_HPP
 #define XR_HTTPCLIENT_HPP
 
 #include <set>

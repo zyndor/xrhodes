@@ -1,10 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// rectobject.cpp
-// @author Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  28/07/2011
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include "RectObject.hpp"

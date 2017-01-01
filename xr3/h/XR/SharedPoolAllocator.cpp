@@ -1,10 +1,7 @@
 //
-// Nuclear Heart Studios
 // XRhodes
 //
-// SharedPoolAllocator.cpp
-// @author Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  03/12/2011
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include "SharedPoolAllocator.hpp"

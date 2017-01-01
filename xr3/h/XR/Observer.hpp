@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Observer.hpp
-// @author  Gyorgy Straub
-// @date    16/07/2011
-//
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_OBSERVER_HPP
+#ifndef XR_OBSERVER_HPP
 #define XR_OBSERVER_HPP
 
 #include <list>

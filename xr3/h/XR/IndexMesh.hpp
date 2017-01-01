@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// IndexMesh.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    05/02/2014
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_INDEXMESH_HPP
+#ifndef XR_INDEXMESH_HPP
 #define XR_INDEXMESH_HPP
 
 #include "BasicMesh.hpp"

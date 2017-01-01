@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// DelayedCallback.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    25/05/2013
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
-// copyright (c) 2011 - 2014. All rights reserved.
-// 
 //==============================================================================
-#if !defined XR_DELAYEDCALLBACK_HPP
+#ifndef XR_DELAYEDCALLBACK_HPP
 #define XR_DELAYEDCALLBACK_HPP
 
 namespace XR
@@ -42,7 +37,6 @@ bool  DelayedCallback::IsActive() const
 {
   return delay > .0f;
 }
-
 
 } // XR
 

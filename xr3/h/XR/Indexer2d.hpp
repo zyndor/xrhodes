@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Studios
 // XRhodes
 //
-// Indexer2d.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  15/06/2011
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_INDEXER2D_HPP
+#ifndef XR_INDEXER2D_HPP
 #define XR_INDEXER2D_HPP
 
 #include "types.hpp"

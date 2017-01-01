@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// File.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    08/10/2013
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_FILE_HPP
+#ifndef XR_FILE_HPP
 #define XR_FILE_HPP
 
 #include "fundamentals.hpp"

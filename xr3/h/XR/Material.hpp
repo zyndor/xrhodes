@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Studios
 // XRhodes
 //
-// Material.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  2013/09/11
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_MATERIAL_HPP
+#ifndef XR_MATERIAL_HPP
 #define XR_MATERIAL_HPP
 
 #include "Color.hpp"

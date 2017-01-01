@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Studios
 // XRhodes
 //
-// Texture.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  2013/09/11
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_TEXTURE_HPP
+#ifndef XR_TEXTURE_HPP
 #define XR_TEXTURE_HPP
 
 #include "Image.hpp"

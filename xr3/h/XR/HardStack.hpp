@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// HardStack.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    29/11/2012
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_STACK_HPP
+#ifndef XR_STACK_HPP
 #define XR_STACK_HPP
 
 #include "types.hpp"

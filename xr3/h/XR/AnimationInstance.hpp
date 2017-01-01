@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// AnimationInstance.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    23/05/2013
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_ANIMATIONINSTANCE_HPP
+#ifndef XR_ANIMATIONINSTANCE_HPP
 #define XR_ANIMATIONINSTANCE_HPP
 
 #include "Animation.hpp"

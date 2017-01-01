@@ -1,12 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// types.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    16/07/2011
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_TYPESUTILS_HPP
@@ -123,19 +118,19 @@ struct  UnPointer<T*>
 };
 
 //==============================================================================
-///@brief Enforces T to be derived from B via implicit upcasting.
-template  <class T, class B>
+///@brief Enforces Derived to be derived from Base via implicit upcasting.
+template  <class Derived, class Base>
 class AssertBase
 {
-  static void Constraint(T* p)
+  static void Constraint(Derived* p)
   {
-    B* pBase = p;
+    Base* pBase = p;
   }
  
 public:
   AssertBase()
   {
-    void(*p)(T*) = Constraint;
+    void(*p)(Derived*) = Constraint;
   }
 };
 
@@ -154,7 +149,7 @@ size_t  TypeIdImpl()
 
 ///@brief Static typeId based on of address of function-static variable.
 ///@note  TypeId() doesn't persist across executions/platforms.
-///@note	Discards constness and pointerness.
+///@note	Discards constness and pointerness of T.
 template	<typename T>
 inline
 size_t	TypeId()

@@ -1,12 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// types.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    11/09/2013
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_TYPES_HPP
@@ -83,7 +78,7 @@ typedef SceUInt64       uint64;
 #endif  //platform
 
 //==============================================================================
-#define	XR_RAWTRACE(format)	printf format; fflush(stdout);
+#define XR_RAWTRACE(format)	printf format; fflush(stdout);
 
 //==============================================================================
 #define XR_CRASHTEST(call)  { printf("At: %s\n", #call, __FILE__, __LINE__); fflush(stdout); call; printf("OK.\n"; }

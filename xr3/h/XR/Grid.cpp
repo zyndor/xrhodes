@@ -1,10 +1,7 @@
 //
-// Nuclear Heart Studios
 // XRhodes
 //
-// grid.cpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  20/06/2011
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include <cmath>

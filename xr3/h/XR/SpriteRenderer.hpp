@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// SpriteRenderer.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    06/08/2013
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
-// copyright (c) 2011 - 2014. All rights reserved.
-// 
 //==============================================================================
-#if !defined XR_SPRITERENDERER_HPP
+#ifndef XR_SPRITERENDERER_HPP
 #define XR_SPRITERENDERER_HPP
 
 #include <list>
@@ -84,7 +79,7 @@ protected:
   float       m_zNear;
   //float       m_zFar;
 
-#if !defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
+#ifndef XR_SPRITE_RENDERER_PERSISTENT_STREAMS
   typedef std::vector<uint16> Uint16Array;
   
   Uint16Array m_indices;

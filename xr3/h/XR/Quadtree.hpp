@@ -1,13 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_QUADTREE_HPP
+#ifndef XR_QUADTREE_HPP
 #define XR_QUADTREE_HPP
 
 #include <list>

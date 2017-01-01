@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// ButtonState.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    07/06/2014
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_BUTTONSTATE_HPP
+#ifndef XR_BUTTONSTATE_HPP
 #define XR_BUTTONSTATE_HPP
 
 namespace XR

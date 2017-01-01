@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// AutoMatrix.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    24/10/2012
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_AUTOMATRIX_HPP
+#ifndef XR_AUTOMATRIX_HPP
 #define XR_AUTOMATRIX_HPP
 
 #include "Renderer.hpp"

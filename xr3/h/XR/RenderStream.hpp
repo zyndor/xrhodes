@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// RenderStream.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    01/10/2011
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_RENDERSTREAM_HPP
+#ifndef XR_RENDERSTREAM_HPP
 #define XR_RENDERSTREAM_HPP
 
 #include "vectypes.hpp"

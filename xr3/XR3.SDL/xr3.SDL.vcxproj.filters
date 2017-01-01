@@ -246,9 +246,6 @@
     <ClInclude Include="..\h\XR\SharedPoolAllocator.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\h\XR\SphereCollider.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\h\XR\Sprite.hpp">
       <Filter>Headers</Filter>
     </ClInclude>

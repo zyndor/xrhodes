@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// functors.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    15/06/2011
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_FUNCTORS_HPP
+#ifndef XR_FUNCTORS_HPP
 #define XR_FUNCTORS_HPP
 
 #include <algorithm>

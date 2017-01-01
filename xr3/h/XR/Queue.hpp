@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// Queue.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    21/06/2011
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_QUEUE_HPP
+#ifndef XR_QUEUE_HPP
 #define XR_QUEUE_HPP
 
 #include <algorithm>

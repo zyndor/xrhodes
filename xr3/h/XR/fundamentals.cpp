@@ -1,10 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// fundamentals.cpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date  14/07/2011
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include "fundamentals.hpp"

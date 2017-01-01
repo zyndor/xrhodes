@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// BasicMesh.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    04/02/2014
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_BASICMESH_HPP
+#ifndef XR_BASICMESH_HPP
 #define XR_BASICMESH_HPP
 
 #include <vector>

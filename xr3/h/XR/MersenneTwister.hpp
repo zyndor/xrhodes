@@ -1,16 +1,11 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// MersenneTwister.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    29/10/11
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_MERSENNETWISTER_HPP
-#define	XR_MERSENNETWISTER_HPP
+#ifndef XR_MERSENNETWISTER_HPP
+#define XR_MERSENNETWISTER_HPP
 
 namespace XR
 {
@@ -52,5 +47,5 @@ int MersenneTwister::RandSign()
 
 } // XR
 
-#endif	// XR_MERSENNETWISTER_HPP
+#endif // XR_MERSENNETWISTER_HPP
 

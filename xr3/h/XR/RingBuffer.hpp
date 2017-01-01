@@ -1,16 +1,11 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// RingBuffer.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    28/02/2012
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_RINGBUFFER_HPP
-#define	XR_RINGBUFFER_HPP
+#ifndef XR_RINGBUFFER_HPP
+#define XR_RINGBUFFER_HPP
 
 #include <vector>
 #include "types.hpp"
@@ -371,4 +366,4 @@ const Type&  RingBuffer<Type>::operator[](size_t id) const
 
 } // XR
 
-#endif	//XR_RINGBUFFER_HPP
+#endif //XR_RINGBUFFER_HPP

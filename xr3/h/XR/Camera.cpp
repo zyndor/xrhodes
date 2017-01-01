@@ -1,8 +1,7 @@
 //
-// Nuclear Heart Interactive
 // XRhodes
 //
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include "Camera.hpp"
@@ -27,7 +26,7 @@ Camera::~Camera()
 Camera* Camera::Clone() const
 {
   Camera* pClone = new Camera();
-  memcpy(&pClone->m_arPerspectiveMatrix, &m_arPerspectiveMatrix, sizeof(Camera) - sizeof(Entity*));
+  memcpy(&pClone->m_arPerspectiveMatrix, &m_arPerspectiveMatrix, sizeof(Camera) - sizeof(Component));
   return pClone;
 }
 

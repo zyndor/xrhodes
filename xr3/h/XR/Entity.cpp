@@ -1,8 +1,7 @@
 //
-// Nuclear Heart Interactive
 // XRhodes
 //
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #include "Entity.hpp"
@@ -13,7 +12,7 @@ namespace XR {
 
 //==============================================================================
 Entity::Component::Component()
-: m_pOwner(0)
+: m_pOwner(nullptr)
 {}
 
 //==============================================================================
@@ -22,33 +21,21 @@ Entity::Component::~Component()
 
 //==============================================================================
 Entity::Entity(Entity* pParent)
-: translation(),
-  rotation(Quaternion::s_unit),
-  scaling(Vector3::s_one),
-  m_pParent(0),
-  m_xForm(),
-  m_children(),
-  m_components(),
-  m_name()
-{
-  if(pParent != 0)
-  {
-    pParent->AddChild(*this);
-  }
-}
+: Entity(Name(), pParent)
+{}
 
 //==============================================================================
 Entity::Entity(Name n, Entity* pParent)
 : translation(),
   rotation(Quaternion::s_unit),
   scaling(Vector3::s_one),
-  m_pParent(0),
+  m_pParent(nullptr),
   m_xForm(),
   m_children(),
   m_components(),
   m_name(n)
 {
-  if (pParent != 0)
+  if (pParent != nullptr)
   {
     pParent->AddChild(*this);
   }
@@ -87,7 +74,7 @@ void  Entity::UpdateTransform()
 Matrix  Entity::GetWorldTransform() const
 {
   Matrix  m(m_xForm);
-  if (m_pParent != 0)
+  if (m_pParent != nullptr)
   {
     m *= m_pParent->GetWorldTransform();
   }
@@ -97,10 +84,10 @@ Matrix  Entity::GetWorldTransform() const
 //==============================================================================
 void  Entity::DetachFromParent()
 {
-  if (m_pParent != 0)
+  if (m_pParent != nullptr)
   {
     m_pParent->RemoveChild(*this);
-    m_pParent = 0;
+    m_pParent = nullptr;
   }
 }
 
@@ -116,7 +103,7 @@ void  Entity::AddChild(Entity& e)
       ("Adding child creates cyclic dependency."));
     pParent = pParent->GetParent();
   }
-  while (pParent != 0);
+  while (pParent != nullptr);
   
   // check for redundancy or name clash.
   for (List::const_iterator i0(m_children.begin()), i1(m_children.end());
@@ -142,7 +129,7 @@ bool  Entity::RemoveChild(Entity& e)
   if(result)
   {
     m_children.erase(iFind);
-    e.m_pParent = 0;
+    e.m_pParent = nullptr;
   }
   return result;
 }
@@ -150,12 +137,12 @@ bool  Entity::RemoveChild(Entity& e)
 //==============================================================================
 Entity* Entity::FindChild(const char* pName) const
 {
-  XR_ASSERT(Entity, pName != 0);
+  XR_ASSERT(Entity, pName);
 
   const char* pBegin(pName);
   const char* const pEnd(pName + strlen(pName));
   const Entity* pParent = this;
-  Entity* pFound = 0;
+  Entity* pFound = nullptr;
   while(pBegin != pEnd)
   {
     const char* pNext(std::find(pBegin, pEnd, kSeparator));
@@ -164,7 +151,7 @@ Entity* Entity::FindChild(const char* pName) const
     XR_ASSERT(Entity, len > 0);
 
     pFound = pParent->FindChild(Name(pBegin, size_t(len)));
-    XR_ASSERTMSG(Entity, pFound != 0, ("FindChild() failed at %s.", pBegin));
+    XR_ASSERTMSG(Entity, pFound != nullptr, ("FindChild() failed at %s.", pBegin));
     pParent = pFound;
 
     if (pNext != pEnd)
@@ -183,27 +170,27 @@ Entity* Entity::FindChild(Name n) const
   List::const_iterator  iEnd(m_children.end());
   List::const_iterator  iFind(std::find_if(m_children.begin(), iEnd,
     FindPredicate(n)));
-  return iFind != iEnd ? *iFind : 0;
+  return iFind != iEnd ? *iFind : nullptr;
 }
 
 //==============================================================================
 Entity::Component*  Entity::FindComponent(size_t typeId) const
 {
   ComponentMap::const_iterator iFind = m_components.find(typeId);
-  return iFind != m_components.end() ? iFind->second : 0;
+  return iFind != m_components.end() ? iFind->second : nullptr;
 }
 
 //==============================================================================
 bool Entity::AddComponent(Component& component)
 {
   const size_t typeId = component.GetTypeId();
-  const bool result = FindComponent(typeId) == 0;
+  const bool result = FindComponent(typeId) == nullptr;
   if(result)
   {
-    if(component.m_pOwner != 0)
+    if(component.m_pOwner != nullptr)
     {
       component.m_pOwner->RemoveComponent(component);
-      component.m_pOwner = 0;
+      component.m_pOwner = nullptr;
     }
 
     _AddComponent(component, &typeId);
@@ -214,9 +201,9 @@ bool Entity::AddComponent(Component& component)
 //==============================================================================
 void Entity::_AddComponent(Component& component, const size_t* typeIdHint)
 {
-  XR_ASSERT(Entity, component.GetOwner() == 0);
-  const size_t  typeId = typeIdHint != 0 ? *typeIdHint : component.GetTypeId();
-  XR_ASSERT(Entity, FindComponent(typeId) == 0);
+  XR_ASSERT(Entity, component.GetOwner() == nullptr);
+  const size_t  typeId = typeIdHint != nullptr ? *typeIdHint : component.GetTypeId();
+  XR_ASSERT(Entity, FindComponent(typeId) == nullptr);
   m_components.insert(ComponentMap::value_type(typeId, &component));
   component.m_pOwner = this;
 }
@@ -232,7 +219,7 @@ bool Entity::RemoveComponent(Component& component)
     result = i0->second == &component;
     if(result)
     {
-      component.m_pOwner = 0;
+      component.m_pOwner = nullptr;
       m_components.erase(i0);
       break;
     }

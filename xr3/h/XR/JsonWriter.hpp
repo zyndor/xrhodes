@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// JsonReader.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    18/10/2012
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_JSONWRITER_HPP
+#ifndef XR_JSONWRITER_HPP
 #define XR_JSONWRITER_HPP
 
 #include <sstream>

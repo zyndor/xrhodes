@@ -1,13 +1,10 @@
 //
-// Nuclear Heart Interactive
 // XRhodes
 //
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_ENTITY_HPP
+#ifndef XR_ENTITY_HPP
 #define XR_ENTITY_HPP
 
 #include <list>
@@ -266,9 +263,9 @@ template  <class T>
 inline
 T*  Entity::AddComponent()
 {
-  T* pComponent = 0;
+  T* pComponent = nullptr;
   const size_t typeId = Component::GetTypeIdImpl<T>();
-  if(FindComponent(typeId) == 0)
+  if(FindComponent(typeId) == nullptr)
   {
     pComponent = new T();
     _AddComponent(*pComponent, &typeId);
@@ -282,7 +279,7 @@ inline
 void Entity::RemoveComponent()
 {
   Component*  pComponent = FindComponent<T>();
-  if(pComponent != 0 && RemoveComponent(*pComponent))
+  if(pComponent != nullptr && RemoveComponent(*pComponent))
   {
     delete pComponent;
   }

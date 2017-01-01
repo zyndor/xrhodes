@@ -1,3 +1,9 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "JsonReader.hpp"
 #include "FileBuffer.hpp"
 #include "utils.hpp"

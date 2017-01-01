@@ -1,16 +1,11 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// SharedPoolAllocator.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    02/12/2011
-//
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_SHAREDPOOLALLOCATOR_HPP
-#define	XR_SHAREDPOOLALLOCATOR_HPP
+#ifndef XR_SHAREDPOOLALLOCATOR_HPP
+#define XR_SHAREDPOOLALLOCATOR_HPP
 
 #include <stddef.h>
 #include "Pool.hpp"
@@ -219,4 +214,4 @@ bool operator!=(const SharedPoolAllocator<Type>&,
 
 } // XR
 
-#endif	//XR_SHAREDPOOLALLOCATOR_HPP
+#endif //XR_SHAREDPOOLALLOCATOR_HPP

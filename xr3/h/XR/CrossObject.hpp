@@ -1,13 +1,8 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// CrossObject.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    11/09/2013
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
-// copyright (c) 2011 - 2014. All rights reserved.
-// 
 //==============================================================================
 #ifndef XR_CROSSOBJECT_HPP
 #define XR_CROSSOBJECT_HPP
