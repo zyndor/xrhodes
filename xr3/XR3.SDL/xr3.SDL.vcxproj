@@ -287,6 +287,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>XR_SDL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)h;$(SolutionDir)..\external\glew-2.0.0\include;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;$(SolutionDir)..\external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -319,6 +320,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>XR_SDL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)h;$(SolutionDir)..\external\glew-2.0.0\include;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;$(SolutionDir)..\external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
