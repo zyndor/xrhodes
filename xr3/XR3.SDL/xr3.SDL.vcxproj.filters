@@ -261,9 +261,6 @@
     <ClInclude Include="..\h\XR\strings.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\h\XR\Surface.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\h\XR\Text.hpp">
       <Filter>Headers</Filter>
     </ClInclude>

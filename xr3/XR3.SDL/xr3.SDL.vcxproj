@@ -108,7 +108,6 @@
     <ClInclude Include="..\h\XR\Squared.hpp" />
     <ClInclude Include="..\h\XR\State.hpp" />
     <ClInclude Include="..\h\XR\strings.hpp" />
-    <ClInclude Include="..\h\XR\Surface.hpp" />
     <ClInclude Include="..\h\XR\Text.hpp" />
     <ClInclude Include="..\h\XR\Texture.hpp" />
     <ClInclude Include="..\h\XR\TexturePack.hpp" />
