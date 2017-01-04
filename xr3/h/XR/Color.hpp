@@ -37,6 +37,11 @@ public:
   
   // static
   static Color  s_default;
+
+  static float ByteToNormalized(uint8_t value)
+  {
+    return value * (1.0f / 0xff);
+  }
   
   // data
   union
@@ -61,24 +66,18 @@ public:
   {}
   
   Color(float r_, float g_, float b_)
-  : r(r_),
-    g(g_),
-    b(b_),
-    a(1.0f)
+  : Color(r_, g_, b_, 1.0f)
   {}
   
   explicit Color(const float arData[kNumComponents])
-  : r(arData[R]),
-    g(arData[G]),
-    b(arData[B]),
-    a(arData[A])
+  : Color(arData[R], arData[G], arData[B], arData[A])
   {}
 
   explicit Color(uint32 abgr)
-  : r(float(abgr & 0xff) * XR_ONE_OVER_0XFF),
-    g(float((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF),
-    b(float((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF),
-    a(float((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF)
+  : Color(ByteToNormalized(abgr & 0xff),
+      ByteToNormalized((abgr >> kGreenShift) & 0xff),
+      ByteToNormalized((abgr >> kBlueShift) & 0xff),
+      ByteToNormalized((abgr >> kAlphaShift) & 0xff))
   {}
 
   // general
@@ -92,10 +91,10 @@ public:
 
   void  Set(uint32 abgr)
   {
-    r = float(abgr & 0xff) * XR_ONE_OVER_0XFF;
-    g = float((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF;
-    b = float((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF;
-    a = float((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF;
+    r = ByteToNormalized(abgr & 0xff);
+    g = ByteToNormalized((abgr >> kGreenShift) & 0xff);
+    b = ByteToNormalized((abgr >> kBlueShift) & 0xff);
+    a = ByteToNormalized((abgr >> kAlphaShift) & 0xff);
   }
 
   void  Set(float r_, float g_, float b_, float a_)

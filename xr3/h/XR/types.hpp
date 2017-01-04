@@ -84,9 +84,6 @@ typedef SceUInt64       uint64;
 #define XR_CRASHTEST(call)  { printf("At: %s\n", #call, __FILE__, __LINE__); fflush(stdout); call; printf("OK.\n"; }
  
 //==============================================================================
-#define XR_ONE_OVER_0XFF  (1.0f / float(0xff))
-
-//==============================================================================
 #define XR_NONOBJECT_DECL(className) \
   private:\
     className();\
