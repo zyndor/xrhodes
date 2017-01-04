@@ -87,9 +87,6 @@ typedef SceUInt64       uint64;
 #define XR_ONE_OVER_0XFF  (1.0f / float(0xff))
 
 //==============================================================================
-#define XR_MASK_ID(id) (1 << static_cast<size_t>(id))
-
-//==============================================================================
 #define XR_NONOBJECT_DECL(className) \
   private:\
     className();\

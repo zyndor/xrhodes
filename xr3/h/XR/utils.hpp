@@ -11,6 +11,9 @@
 #include <algorithm>
 #include "types.hpp"
 
+//==============================================================================
+#define XR_MASK_ID(id) (1 << static_cast<size_t>(id))
+
 namespace XR
 {
 
