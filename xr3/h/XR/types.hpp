@@ -95,8 +95,6 @@ typedef SceUInt64       uint64;
     className(const className& rhs);\
     className& operator=(const className& rhs);
 
-//==============================================================================
-#define XR_ARR_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 namespace XR
 {
