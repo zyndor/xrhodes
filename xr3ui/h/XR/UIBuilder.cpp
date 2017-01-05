@@ -21,13 +21,13 @@ namespace XR
 {
 
 //==============================================================================
-static const uint32 karDirectionNameHash[] =
+static const uint32_t karDirectionNameHash[] =
 {
   Hash::String("positive"),
   Hash::String("negative")
 };
 
-static const uint32 karHorizontalAlignNameHash[] =
+static const uint32_t karHorizontalAlignNameHash[] =
 {
   Hash::String("left"),
   Hash::String("center"),
@@ -35,7 +35,7 @@ static const uint32 karHorizontalAlignNameHash[] =
   //Hash::String("paragraph")
 };
 
-static const uint32 karVerticalAlignNameHash[] =
+static const uint32_t karVerticalAlignNameHash[] =
 {
   Hash::String("top"),
   Hash::String("middle"),
@@ -93,12 +93,12 @@ static const int karXmlDimensionChars[kNumXmlDimensions] =
   'h'
 };
 
-uint32  GetXmlDimensionMask(TiXmlElement* pXml, const char* pAttribName)
+uint32_t  GetXmlDimensionMask(TiXmlElement* pXml, const char* pAttribName)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
   XR_ASSERT(UIBuilder, pAttribName != 0);
 
-  uint32 value(0);
+  uint32_t value(0);
   const char* pValue(pXml->Attribute(pAttribName));
   if (pValue != 0)
   {
@@ -240,7 +240,7 @@ bool  UIBInitUIColoredElement(TiXmlElement* pXml, UIElement* pUIElem,
     const char* pValue(pXml->Attribute("color"));
     if (pValue != 0)
     {
-      uint32  color(strtoul(pValue, 0, 16));
+      uint32_t  color(strtoul(pValue, 0, 16));
       if (strlen(pValue) <= 6)
       {
         color |= 0xff000000;
@@ -293,7 +293,7 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     pValue = pXml->Attribute("hAlign");
     if (pValue != 0)
     {
-      const uint32* pFind(std::find(karHorizontalAlignNameHash, karHorizontalAlignNameHash + 3, Hash::String(pValue)));
+      const uint32_t* pFind(std::find(karHorizontalAlignNameHash, karHorizontalAlignNameHash + 3, Hash::String(pValue)));
         
       int value(pFind - karHorizontalAlignNameHash);
       if (value < 3)
@@ -306,7 +306,7 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     pValue = pXml->Attribute("vAlign");
     if (pValue != 0)
     {
-      const uint32* pFind(std::find(karVerticalAlignNameHash, karVerticalAlignNameHash + 3, Hash::String(pValue)));
+      const uint32_t* pFind(std::find(karVerticalAlignNameHash, karVerticalAlignNameHash + 3, Hash::String(pValue)));
 
       int value(pFind - karVerticalAlignNameHash);
       if (value < 3)
@@ -345,7 +345,7 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     }
 
     // size to content
-    uint32 sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
+    uint32_t sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
     if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH) | XR_MASK_ID(XD_HEIGHT)))
     {
       pLabel->SetSizeToText();
@@ -511,7 +511,7 @@ bool  UIBInitUIProgressBarBase(TiXmlElement* pXml, UIElement* pUIElem,
       const char* pValue(pXml->Attribute("fillDir"));
       if (pValue != 0)
       {
-        const uint32* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2,
+        const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2,
           Hash::String(pValue)));
 
         int value(pFind - karDirectionNameHash);
@@ -912,7 +912,7 @@ bool  UIBInitUIGrowingLayout(TiXmlElement* pXml, UIElement* pUIElem,
     pValue = pXml->Attribute("growDir");
     if (pValue != 0)
     {
-      const uint32* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2, Hash::String(pValue)));
+      const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2, Hash::String(pValue)));
 
       int value(pFind - karDirectionNameHash);
       success = value < 2;
@@ -1185,7 +1185,7 @@ bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
 //==============================================================================
 const char* const UIBuilder::kInclude = "include";
 
-const uint32  UIBuilder::kIncludeHash = Hash::String(kInclude);
+const uint32_t  UIBuilder::kIncludeHash = Hash::String(kInclude);
 
 const char* const UIBuilder::karpAlignValues[] =
 {
@@ -1195,7 +1195,7 @@ const char* const UIBuilder::karpAlignValues[] =
   "none"
 };
 
-const uint32 UIBuilder::karAlignValueHash[] =
+const uint32_t UIBuilder::karAlignValueHash[] =
 {
   Hash::String(karpAlignValues[XA_LOW]),
   Hash::String(karpAlignValues[XA_CENTER]),
@@ -1432,7 +1432,7 @@ bool UIBuilder::RegisterNamedElement(const char* pName, UIElement* pUIElem)
   XR_ASSERT(UIBuilder, pName != 0);
   XR_ASSERT(UIBuilder, pUIElem != 0);
 
-  uint32                hash(Hash::String(pName));
+  uint32_t              hash(Hash::String(pName));
   ElementMap::iterator  iFind(m_handles.find(hash));
   bool                  success(iFind == m_handles.end());
   if (success)
@@ -1479,7 +1479,7 @@ bool  UIBuilder::_Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth)
   {
     UIElement*  pUIElem(0);
 
-    uint32  hash(Hash::String(pXml->Value()));
+    uint32_t  hash(Hash::String(pXml->Value()));
     CreatorMap::iterator  iFind(m_creators.find(hash));
     if (iFind != m_creators.end())
     {
@@ -1608,7 +1608,7 @@ void UIBuilder::Destroy()
 }
 
 //==============================================================================
-UIElement* UIBuilder::GetElement(uint32 hash) const
+UIElement* UIBuilder::GetElement(uint32_t hash) const
 {
   ElementMap::const_iterator iFind(m_handles.find(hash));
   return (iFind != m_handles.end()) ? iFind->second : 0;
@@ -1633,7 +1633,7 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
   const UIElement*  pParent(pUIElem->GetParent());
   if(pParent != 0)
   {
-    uint32  flags(GetXmlDimensionMask(pXml, "fillParent"));
+    uint32_t  flags(GetXmlDimensionMask(pXml, "fillParent"));
     int   w((flags & XR_MASK_ID(XD_WIDTH)) != 0 ? pParent->w : pUIElem->w);
     int   h((flags & XR_MASK_ID(XD_HEIGHT)) != 0 ? pParent->h : pUIElem->h);
     pUIElem->SetSize(w, h);
@@ -1713,7 +1713,7 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
 //==============================================================================
 void UIBuilder::_PostProcessContainer(TiXmlElement* pXml, UIContainer* pContainer)
 {
-  uint32 sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
+  uint32_t sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
   if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH) | XR_MASK_ID(XD_HEIGHT)))
   {
     pContainer->SetSizeToContent();

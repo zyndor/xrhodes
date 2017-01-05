@@ -44,13 +44,13 @@ void File::Exit()
 }
 
 //==============================================================================
-bool File::SecureSave(void* pBuffer, uint16 size)
+bool File::SecureSave(void* pBuffer, uint16_t size)
 {
   return false;
 }
 
 //==============================================================================
-bool File::SecureLoad(void* pBuffer, uint16 size)
+bool File::SecureLoad(void* pBuffer, uint16_t size)
 {
   return false;
 }

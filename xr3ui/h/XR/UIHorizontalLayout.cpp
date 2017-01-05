@@ -17,7 +17,7 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
 {
   if (m_align != AL_NOALIGN)
   {
-    int16 yElem(y);
+    int16_t yElem(y);
     switch (m_align)
     {
     case  AL_LOW:
@@ -35,7 +35,7 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
     pElem->y = yElem;
   }
 
-  int16 xElem(0);
+  int16_t xElem(0);
   if (m_lElements.size() > 0)
   {
     UIElement*  pLast(m_lElements.back());

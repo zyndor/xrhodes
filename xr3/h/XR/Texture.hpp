@@ -31,7 +31,7 @@ public:
   bool    Load(const char* pName);
   void    CopyImage(const Image& img);
 
-  uint32  GetFlags() const; // know your platform / implementation.
+  uint32_t  GetFlags() const; // know your platform / implementation.
   
   bool    GetClamping() const;  // clamping [on] or wrapping (off)
   bool    GetFiltering() const;  // linear [on] or nearest (off)

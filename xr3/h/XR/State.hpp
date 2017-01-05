@@ -40,7 +40,7 @@ public:
 		void	Change(State& s);	// no ownership transfer
 		void	Pop();
 
-		void	Update(int32 tDelta);
+		void	Update(int32_t tDelta);
 		void	Render();
 
 		void	Clear();
@@ -95,7 +95,7 @@ public:
 	// general
 	virtual void	Init()	{}
 	virtual void	Enter() =0;
-	virtual void	Update(int32 ms, Result& result) =0;
+	virtual void	Update(int32_t ms, Result& result) =0;
 	virtual void	Render() =0;
 	virtual void	Exit() =0;
 	virtual void	Shutdown() {}

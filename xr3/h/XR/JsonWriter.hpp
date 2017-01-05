@@ -62,7 +62,7 @@ public:
   Writer& Start(Type rootType);
 
   Writer& WriteValue(const char* pKey, const char* pValue);
-  Writer& WriteValue(const char* pKey, const int32 value);
+  Writer& WriteValue(const char* pKey, const int32_t value);
   Writer& WriteValue(const char* pKey, const double value);
   Writer& WriteValue(const char* pKey, bool value);
 
@@ -70,7 +70,7 @@ public:
   Writer& WriteArray(const char* pKey);
 
   Writer& WriteArrayElement(const char* pValue);
-  Writer& WriteArrayElement(int32 value);
+  Writer& WriteArrayElement(int32_t value);
   Writer& WriteArrayElement(double value);
   Writer& WriteArrayElement(bool value);
 

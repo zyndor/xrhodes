@@ -37,7 +37,7 @@ void Input::Exit()
 void Input::Update()
 {
   int numKeys;
-  const uint8*  parKeys(SDL_GetKeyboardState(&numKeys));
+  const uint8_t*  parKeys(SDL_GetKeyboardState(&numKeys));
   for (int i = 0; i < kKeyCount; ++i)
   {
     int k(karKeyCodeNative[i]);
@@ -46,18 +46,18 @@ void Input::Update()
       ((parKeys[k] ? 1 : 0) << 1);
   }
   
-  int32 x, y;
-  uint32  mbState(SDL_GetMouseState(&x, &y));
+  int32_t x, y;
+  uint32_t  mbState(SDL_GetMouseState(&x, &y));
   for (int i = 0; i < kMouseButtonCount; ++i)
   {
-    uint32  state(InputImpl::s_pInstance->arMouseButtonState[i] >> 1);
+    uint32_t  state(InputImpl::s_pInstance->arMouseButtonState[i] >> 1);
     InputImpl::s_pInstance->arMouseButtonState[i] = state | 
       (((mbState & SDL_BUTTON(karMouseButtonNative[i])) != 0) << 1);
   }
 }
 
 //==============================================================================
-uint8 Input::GetKeyState(KeyCode k)
+uint8_t Input::GetKeyState(KeyCode k)
 {
   XR_ASSERT(Input, k < kKeyCount);
   return InputImpl::s_pInstance->arKeyState[k];
@@ -72,7 +72,7 @@ SVector2 Input::GetMousePos()
 }
 
 //==============================================================================
-uint8   Input::GetMouseState(MouseButton mb)
+uint8_t Input::GetMouseState(MouseButton mb)
 {
   XR_ASSERT(Input, mb < kMouseButtonCount);
   return InputImpl::s_pInstance->arMouseButtonState[mb];

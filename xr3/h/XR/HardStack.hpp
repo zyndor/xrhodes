@@ -26,7 +26,7 @@ public:
 };
 
 //==============================================================================
-template  <class T, uint32 kMax>
+template  <class T, uint32_t kMax>
 class HardStack:  protected HardStackCore
 {
 public:

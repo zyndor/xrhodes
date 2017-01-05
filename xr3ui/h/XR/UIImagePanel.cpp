@@ -157,8 +157,8 @@ void UIImagePanel::Render() const
     RenderStream* pRsUVs(Renderer::AllocStream(RenderStream::F_VECTOR2, numVertices));
 
     int           numIndices(hQuads * vQuads * Sprite::kNumIndices);
-    uint16*       parIndices(XR_RENDERER_ALLOC(uint16, numIndices));
-    uint16*       pWriteIndex(parIndices);
+    uint16_t*     parIndices(XR_RENDERER_ALLOC(uint16_t, numIndices));
+    uint16_t*     pWriteIndex(parIndices);
 
     int           iWrite(0);
   

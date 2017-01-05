@@ -48,7 +48,7 @@ void  Texture::CopyImage(const Image& img)
 }
 
 //==============================================================================
-uint32  Texture::GetFlags() const
+uint32_t  Texture::GetFlags() const
 {
   return TO_CONST_IMPL()->GetFlags();
 }

@@ -31,11 +31,11 @@ public:
   };
 
   // static
-  static const int32  kNumIndices = 6;
-  static const uint16 karIndices[kNumIndices];
+  static const int32_t  kNumIndices = 6;
+  static const uint16_t karIndices[kNumIndices];
   
-  static const int32  kUVsSize = kNumVertices * sizeof(Vector2);
-  static const int32  kVertsSize = kNumVertices * sizeof(Vector3);
+  static const int32_t  kUVsSize = kNumVertices * sizeof(Vector2);
+  static const int32_t  kVertsSize = kNumVertices * sizeof(Vector3);
   
   static const AABB   kWholeTexture;
   static const AABB   kNullTexture;
@@ -51,7 +51,7 @@ public:
   static void           CopyWholeTextureUVsTo(RenderStream& uvs);
   static void           CopyWholeTextureUVsTo(int offset, RenderStream& uvs);
 
-  static void           CopyIndicesTo(uint16* parInds, int offset);
+  static void           CopyIndicesTo(uint16_t* parInds, int offset);
 
   // structors
   Sprite();
@@ -107,7 +107,7 @@ public:
   ///@brief Copies the vertices to the supplied array.
   void  CopyVerticesTo(int offset, RenderStream& verts) const;
 
-  void  SetHalfSize(int32 hw, int32 hh, bool calculateVertices = true);
+  void  SetHalfSize(int32_t hw, int32_t hh, bool calculateVertices = true);
 
   void  SetUVs(const AABB& uvs);
   void  SetUVsProportional(const AABB& uvs);

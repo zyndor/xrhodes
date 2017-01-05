@@ -26,12 +26,12 @@ public:
   virtual ~UIHorizontalScrollingLayout();
 
   // general use
-  int16         GetXOffset() const;
-  int16&        GetXOffsetRef();
+  int16_t       GetXOffset() const;
+  int16_t&      GetXOffsetRef();
   float         GetSensitivity() const;
   bool          IsTouched() const;
 
-  void          SetXOffset(int16 xOffs);
+  void          SetXOffset(int16_t xOffs);
   void          SetSensitivity(float s);
 
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
@@ -42,11 +42,11 @@ public:
 
 protected:
   // data
-  int16 m_xOffset;
+  int16_t m_xOffset;
   float m_sensitivity;
 
   bool  m_isTouched;
-  int16 m_lastTouchX;
+  int16_t m_lastTouchX;
 
   // internal
   virtual void _AlignElement( UIElement* pElem );
@@ -56,14 +56,14 @@ protected:
 // implementation
 //==============================================================================
 inline
-int16 UIHorizontalScrollingLayout::GetXOffset() const
+int16_t UIHorizontalScrollingLayout::GetXOffset() const
 {
   return m_xOffset;
 }
 
 //==============================================================================
 inline
-int16& UIHorizontalScrollingLayout::GetXOffsetRef()
+int16_t& UIHorizontalScrollingLayout::GetXOffsetRef()
 {
   return m_xOffset;
 }

@@ -62,7 +62,7 @@ void  TextureImpl::CopyImage(const Image& img)
 }
 
 //==============================================================================
-uint32  TextureImpl::GetFlags() const
+uint32_t  TextureImpl::GetFlags() const
 {
   return m_flags;
 }

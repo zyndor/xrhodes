@@ -31,11 +31,11 @@ static struct
   float                 tanHalfVerticalFov;
   Rect                  scissorRect;
   Pool                  framePool;
-  int32                 numVertices;
-  int32                 numTexCoords;
-  int32                 numColors;
-  int32                 numNormals;
-  uint32                flushId;
+  int32_t               numVertices;
+  int32_t               numTexCoords;
+  int32_t               numColors;
+  int32_t               numNormals;
+  uint32_t              flushId;
 } s_rendererImpl;
 
 //==============================================================================
@@ -77,7 +77,7 @@ void Renderer::Init()
   int   height(Device::GetConfigInt("GFX", "height", 600));
   int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
   
-  uint32 flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+  uint32_t flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
   if (!bool(Device::GetConfigInt("GFX", "windowed", false)))
   {
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -179,31 +179,31 @@ void Renderer::Exit()
 }
 
 //==============================================================================
-int32 Renderer::GetScreenWidth()
+int32_t Renderer::GetScreenWidth()
 {
   return s_rendererImpl.screenSize.x;
 }
 
 //==============================================================================
-int32 Renderer::GetScreenHeight()
+int32_t Renderer::GetScreenHeight()
 {
   return s_rendererImpl.screenSize.y;
 }
 
 //==============================================================================
-int32 Renderer::GetDeviceWidth()
+int32_t Renderer::GetDeviceWidth()
 {
   return s_rendererImpl.deviceSize.x;
 }
 
 //==============================================================================
-int32 Renderer::GetDeviceHeight()
+int32_t Renderer::GetDeviceHeight()
 {
   return s_rendererImpl.deviceSize.y;
 }
 
 //==============================================================================
-void* Renderer::Alloc( int32 bytes )
+void* Renderer::Alloc( int32_t bytes )
 {
   XR_ASSERT(Renderer, bytes >= 0);
   return s_rendererImpl.framePool.Allocate(bytes);
@@ -505,7 +505,7 @@ void  Renderer::DrawPrims(PrimType pt)
 }
 
 //==============================================================================
-void  Renderer::DrawPrims( PrimType pt, const uint16* pInds, int numInds)
+void  Renderer::DrawPrims( PrimType pt, const uint16_t* pInds, int numInds)
 {
   XR_ASSERT(Renderer, numInds >= 0);
   XR_ASSERT(Renderer, s_rendererImpl.numVertices > 0);
@@ -536,7 +536,7 @@ void  Renderer::DrawPrims( PrimType pt, const uint16* pInds, int numInds)
 }
 
 //==============================================================================
-void Renderer::PrintString( int16 x, int16 y, const char* pString )
+void Renderer::PrintString( int16_t x, int16_t y, const char* pString )
 {
   //IwGxPrintString(x, y, pString);
 }
@@ -567,7 +567,7 @@ void  Renderer::SetFogRange(float zFar, float zNear)
 }
 
 //==============================================================================
-void Renderer::ClearBuffer(uint32 flags)
+void Renderer::ClearBuffer(uint32_t flags)
 {
   GLbitfield  bitField(((flags & BF_COLOR) ? GL_COLOR_BUFFER_BIT: 0 ) |
     ((flags & BF_DEPTH) ? GL_DEPTH_BUFFER_BIT : 0 ));
@@ -592,7 +592,7 @@ void Renderer::Present()
 }
 
 //==============================================================================
-uint32  Renderer::GetFlushId()
+uint32_t  Renderer::GetFlushId()
 {
   return s_rendererImpl.flushId;
 }

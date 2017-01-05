@@ -19,13 +19,13 @@ IndexMesh::~IndexMesh()
 {}
 
 //==============================================================================
-void  IndexMesh::SetIndexPattern(const uint16* pInds, int numInds, int repeat)
+void  IndexMesh::SetIndexPattern(const uint16_t* pInds, int numInds, int repeat)
 {
   XR_ASSERT(IndexMesh, numInds >= 0);
   XR_ASSERT(IndexMesh, repeat >= 0);
   XR_ASSERT(IndexMesh, pInds != 0);
   
-  uint16  shift(0);
+  uint16_t  shift(0);
   for (int i = 0; i < numInds; ++i)
   {
     if (pInds[i] > shift)
@@ -38,7 +38,7 @@ void  IndexMesh::SetIndexPattern(const uint16* pInds, int numInds, int repeat)
 }
 
 //==============================================================================
-void  IndexMesh::SetIndexPattern(const uint16* pInds, int numInds, uint16 shift,
+void  IndexMesh::SetIndexPattern(const uint16_t* pInds, int numInds, uint16_t shift,
     int repeat)
 {
   XR_ASSERT(IndexMesh, numInds >= 0);

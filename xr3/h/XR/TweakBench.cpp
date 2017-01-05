@@ -19,7 +19,7 @@ TweakBench::~TweakBench()
 {}
 
 //==============================================================================
-bool  TweakBench::Register(uint32 name, float& var)
+bool  TweakBench::Register(uint32_t name, float& var)
 {
   VariableMap::const_iterator iFind(m_variables.find(name));
   bool  success(iFind == m_variables.end());
@@ -32,7 +32,7 @@ bool  TweakBench::Register(uint32 name, float& var)
 }
 
 //==============================================================================
-bool  TweakBench::Register(uint32 name, int& var)
+bool  TweakBench::Register(uint32_t name, int& var)
 {
   VariableMap::const_iterator iFind(m_variables.find(name));
   bool  success(iFind == m_variables.end());
@@ -45,7 +45,7 @@ bool  TweakBench::Register(uint32 name, int& var)
 }
 
 //==============================================================================
-bool  TweakBench::Register(uint32 name, bool& var)
+bool  TweakBench::Register(uint32_t name, bool& var)
 {
   VariableMap::const_iterator iFind(m_variables.find(name));
   bool  success(iFind == m_variables.end());
@@ -58,7 +58,7 @@ bool  TweakBench::Register(uint32 name, bool& var)
 }
 
 //==============================================================================
-bool  TweakBench::Get(uint32 name, float& val) const
+bool  TweakBench::Get(uint32_t name, float& val) const
 {
   VariableMap::const_iterator iFind(m_variables.find(name));
   bool  success(iFind != m_variables.end() &&
@@ -71,7 +71,7 @@ bool  TweakBench::Get(uint32 name, float& val) const
 }
 
 //==============================================================================
-bool  TweakBench::Get(uint32 name, int& val) const
+bool  TweakBench::Get(uint32_t name, int& val) const
 {
   VariableMap::const_iterator iFind(m_variables.find(name));
   bool  success(iFind != m_variables.end() &&
@@ -84,7 +84,7 @@ bool  TweakBench::Get(uint32 name, int& val) const
 }
 
 //==============================================================================
-bool  TweakBench::Get(uint32 name, bool& val) const
+bool  TweakBench::Get(uint32_t name, bool& val) const
 {
   VariableMap::const_iterator iFind(m_variables.find(name));
   bool  success(iFind != m_variables.end() &&
@@ -97,7 +97,7 @@ bool  TweakBench::Get(uint32 name, bool& val) const
 }
 
 //==============================================================================
-bool  TweakBench::Set(uint32 name, float val)
+bool  TweakBench::Set(uint32_t name, float val)
 {
   VariableMap::iterator iFind(m_variables.find(name));
   bool  success(iFind != m_variables.end() &&
@@ -110,7 +110,7 @@ bool  TweakBench::Set(uint32 name, float val)
 }
 
 //==============================================================================
-bool  TweakBench::Set(uint32 name, int val)
+bool  TweakBench::Set(uint32_t name, int val)
 {
   VariableMap::iterator iFind(m_variables.find(name));
   bool  success(iFind != m_variables.end() &&
@@ -123,7 +123,7 @@ bool  TweakBench::Set(uint32 name, int val)
 }
 
 //==============================================================================
-bool  TweakBench::Set(uint32 name, bool val)
+bool  TweakBench::Set(uint32_t name, bool val)
 {
   VariableMap::iterator iFind(m_variables.find(name));
   bool  success(iFind != m_variables.end() &&
@@ -136,7 +136,7 @@ bool  TweakBench::Set(uint32 name, bool val)
 }
 
 //==============================================================================
-TweakBench::Variable::Type TweakBench::GetType(uint32 name) const
+TweakBench::Variable::Type TweakBench::GetType(uint32_t name) const
 {
   VariableMap::const_iterator iFind(m_variables.find(name));
   return iFind != m_variables.end() ? iFind->second.type : Variable::T_INVALID;

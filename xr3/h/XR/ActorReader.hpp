@@ -107,7 +107,7 @@ bool ActorReader<Type>::Read(TiXmlElement* pXml,
 
       if (success)
       {
-        const uint32  hash(XR::Hash::String(pActionName));
+        const uint32_t  hash(XR::Hash::String(pActionName));
         if (actor.actions.find(hash) != actor.actions.end())
         {
           XR_TRACE(ActorReader,

@@ -23,7 +23,7 @@ ScreenManager::~ScreenManager()
 {}
 
 //==============================================================================
-void  ScreenManager::Change(Screen& screen, int32 delayMs)
+void  ScreenManager::Change(Screen& screen, int32_t delayMs)
 {
   _ClearExiting();
 
@@ -41,7 +41,7 @@ void  ScreenManager::Change(Screen& screen, int32 delayMs)
 }
 
 //==============================================================================
-void  ScreenManager::Push(Screen& screen, int32 delayMs)
+void  ScreenManager::Push(Screen& screen, int32_t delayMs)
 {
   Screen* pPrevious(0);
   if (!m_stack.empty())
@@ -56,7 +56,7 @@ void  ScreenManager::Push(Screen& screen, int32 delayMs)
 }
 
 //==============================================================================
-void  ScreenManager::Pop(int32 delayMs)
+void  ScreenManager::Pop(int32_t delayMs)
 {
   XR_ASSERT(ScreenManager, !m_stack.empty());
   _ClearExiting();
@@ -78,7 +78,7 @@ void  ScreenManager::Pop(int32 delayMs)
 }
 
 //==============================================================================
-void  ScreenManager::Update(int32 ms)
+void  ScreenManager::Update(int32_t ms)
 {
   if (!m_stack.empty())
   {

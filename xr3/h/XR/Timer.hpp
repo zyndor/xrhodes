@@ -22,9 +22,9 @@ public:
   static void Init();
   static void Exit();
 
-  static uint64 GetUTC();
-  static uint64 GetUST();
-  static uint64 GetUSTNano();
+  static uint64_t GetUTC();
+  static uint64_t GetUST();
+  static uint64_t GetUSTNano();
 };
 
 } // XR

@@ -16,7 +16,7 @@ static struct
 {
   int     numChannels;
   int     sampleRate;
-  uint8*  parPanning;
+  uint8_t*  parPanning;
 } s_audioImpl;
 
 static int OnChannelGenAudioAdpcm(void* pSystem, void* pUser)
@@ -46,7 +46,7 @@ void Audio::Init()
   }
   
   s_audioImpl.numChannels = Mix_AllocateChannels(channels);
-  s_audioImpl.parPanning = new uint8[channels];
+  s_audioImpl.parPanning = new uint8_t[channels];
 }
 
 void Audio::Exit()

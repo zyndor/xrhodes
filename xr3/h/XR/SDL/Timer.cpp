@@ -16,19 +16,19 @@ void  Timer::Init()
 void  Timer::Exit()
 {}
 
-uint64 Timer::GetUTC()
+uint64_t Timer::GetUTC()
 {
   return 0;
 }
 
-uint64 Timer::GetUST()
+uint64_t Timer::GetUST()
 {
   return SDL_GetTicks();
 }
 
-uint64 Timer::GetUSTNano()
+uint64_t Timer::GetUSTNano()
 {
-  return GetUST() * uint64(1000);
+  return GetUST() * uint64_t(1000);
 }
 
 } // XR

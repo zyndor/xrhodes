@@ -29,7 +29,7 @@ void ActorInstanceCore::Enqueue( const char* pActionName, float timeScale )
 }
 
 //==============================================================================
-void ActorInstanceCore::Enqueue( uint32 nameHashAction, float timeScale )
+void ActorInstanceCore::Enqueue( uint32_t nameHashAction, float timeScale )
 {
   m_nameHashNextAction = nameHashAction;
   m_timeScaleNextAction = timeScale;

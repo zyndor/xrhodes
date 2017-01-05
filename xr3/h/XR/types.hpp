@@ -35,18 +35,7 @@
 
 #define XR_ERROR(msg)                  void(0); // stub
 
-typedef Sint8           int8;
-typedef Sint16          int16;
-typedef Sint32          int32;
-typedef Sint64          int64;
-
-typedef Uint8           uint8;
-typedef Uint16          uint16;
-typedef Uint32          uint32;
-typedef Uint64          uint64;
-
 #elif defined XR_MARMALADE
-#include "s3eTypes.h"
 #include "IwDebug.h"
 
 #if defined IW_DEBUG || defined XR_DEBUG_PERFORMANCE
@@ -61,16 +50,6 @@ typedef Uint64          uint64;
 
 #elif defined XR_PS_VITA
 #include <scetypes.h>
-
-typedef SceInt8         int8;
-typedef SceInt16        int16;
-typedef SceInt32        int32;
-typedef SceInt64        int64;
-
-typedef SceUInt8        uint8;
-typedef SceUInt16       uint16;
-typedef SceUInt32       uint32;
-typedef SceUInt64       uint64;
 
 #define XR_ASSERT(chnl, cond)      assert(cond)
 #define XR_ASSERTMSG(chnl, cond, msg) assert(cond, msg)
@@ -100,31 +79,31 @@ namespace XR
 {
 
 //==============================================================================
-int32 Align(int32 value, int32 alignment);
-int16 ClipToInt16(int32 val);
+int32_t Align(int32_t value, int32_t alignment);
+int16_t ClipToInt16(int32_t val);
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-int16 ClipToInt16(int32 val)
+int16_t ClipToInt16(int32_t val)
 {
-  if (((val - std::numeric_limits<int16>::min()) &
-    ~std::numeric_limits<uint16>::max()) != 0)
+  if (((val - std::numeric_limits<int16_t>::min()) &
+    ~std::numeric_limits<uint16_t>::max()) != 0)
   {
-    bool  over(val > std::numeric_limits<int16>::max());
-    bool  under(val < std::numeric_limits<int16>::min());
+    bool  over(val > std::numeric_limits<int16_t>::max());
+    bool  under(val < std::numeric_limits<int16_t>::min());
     XR_ASSERT(ClipToInt16, over ^ under);
-    val = over * std::numeric_limits<int16>::max() + under *
-      std::numeric_limits<int16>::min();
+    val = over * std::numeric_limits<int16_t>::max() + under *
+      std::numeric_limits<int16_t>::min();
   }
 
-  return static_cast<int16>(val);
+  return static_cast<int16_t>(val);
 }
 
 //==============================================================================
 inline
-int32 Align(int32 value, int32 alignment)
+int32_t Align(int32_t value, int32_t alignment)
 {
   XR_ASSERT(Align, alignment > 0);
   return value + alignment - (value % alignment);

@@ -73,7 +73,7 @@ public:
   : Color(arData[R], arData[G], arData[B], arData[A])
   {}
 
-  explicit Color(uint32 abgr)
+  explicit Color(uint32_t abgr)
   : Color(ByteToNormalized(abgr & 0xff),
       ByteToNormalized((abgr >> kGreenShift) & 0xff),
       ByteToNormalized((abgr >> kBlueShift) & 0xff),
@@ -81,15 +81,15 @@ public:
   {}
 
   // general
-  uint32  GetABGR() const
+  uint32_t  GetABGR() const
   {
-    return uint8(a * 0xff) << kAlphaShift |
-      uint8(b * 0xff) << kBlueShift |
-      uint8(g * 0xff) << kGreenShift |
-      uint8(r * 0xff);
+    return uint8_t(a * 0xff) << kAlphaShift |
+      uint8_t(b * 0xff) << kBlueShift |
+      uint8_t(g * 0xff) << kGreenShift |
+      uint8_t(r * 0xff);
   }
 
-  void  Set(uint32 abgr)
+  void  Set(uint32_t abgr)
   {
     r = ByteToNormalized(abgr & 0xff);
     g = ByteToNormalized((abgr >> kGreenShift) & 0xff);

@@ -39,13 +39,13 @@ public:
   static void           Init();
   static void           Exit();
   
-  static int32          GetScreenWidth();
-  static int32          GetScreenHeight();
+  static int32_t        GetScreenWidth();
+  static int32_t        GetScreenHeight();
   
-  static int32          GetDeviceWidth();
-  static int32          GetDeviceHeight();
+  static int32_t        GetDeviceWidth();
+  static int32_t        GetDeviceHeight();
   
-  static void*          Alloc(int32 bytes);
+  static void*          Alloc(int32_t bytes);
   static Material*      AllocMaterial();
   static RenderStream*  AllocStream(RenderStream::Format fmt, int numVerts);
   
@@ -89,9 +89,9 @@ public:
   static void           SetNormStream(RenderStream& rs = RenderStream::s_zero);
 
   static void           DrawPrims(PrimType pt);
-  static void           DrawPrims(PrimType pt, const uint16* pInds, int numInds);
+  static void           DrawPrims(PrimType pt, const uint16_t* pInds, int numInds);
                   
-  static void           PrintString(int16 x, int16 y, const char* pString);
+  static void           PrintString(int16_t x, int16_t y, const char* pString);
   static void           SetClearColor(Color c);
   static void           SetAmbientColor(Color c);
   
@@ -108,11 +108,11 @@ public:
   static void           SetFogColor(Color c);
   static void           SetFogRange(float zFar, float zNear);
   
-  static void           ClearBuffer(uint32 flags = (BF_COLOR | BF_DEPTH));
+  static void           ClearBuffer(uint32_t flags = (BF_COLOR | BF_DEPTH));
   static void           Flush();
   static void           Present();
 
-  static uint32         GetFlushId();
+  static uint32_t       GetFlushId();
 };
 
 } // XR

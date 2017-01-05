@@ -59,8 +59,8 @@ public:
 protected:
   // data
   mutable Text  m_text;
-  int16         m_oldWidth;
-  int16         m_oldHeight;
+  int16_t       m_oldWidth;
+  int16_t       m_oldHeight;
 };
 
 //==============================================================================

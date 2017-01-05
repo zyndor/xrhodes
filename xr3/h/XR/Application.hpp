@@ -44,30 +44,30 @@ public:
   static void   Init();
   static void   Exit();
     
-  static int32  GetFrameDelayMs();
+  static int32_t  GetFrameDelayMs();
   static bool   IsRunning();
   
   static void   BreakUpdate();
   
-  static void   SetFrameDelayMs(int32 ms);
-  static void   SetFrameCappingMs(int32 ms);
+  static void   SetFrameDelayMs(int32_t ms);
+  static void   SetFrameCappingMs(int32_t ms);
   
   static void   Run(Runner& r);
   
 private:
   // static
-  static int32  m_frameDelayMs;
-  static int32  m_frameCappingMs;
+  static int32_t  m_frameDelayMs;
+  static int32_t  m_frameCappingMs;
   
-  static bool   m_isRunning;
-  static bool   m_breakUpdate;
+  static bool     m_isRunning;
+  static bool     m_breakUpdate;
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-int32 Application::GetFrameDelayMs()
+int32_t Application::GetFrameDelayMs()
 {
   return m_frameDelayMs;
 }

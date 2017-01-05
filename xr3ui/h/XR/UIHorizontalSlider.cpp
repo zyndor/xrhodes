@@ -93,11 +93,11 @@ void UIHorizontalSlider::Render() const
   XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != 0,
     ("Material needs to be set in sliderSprite before Render()"));
 
-  int16 left(x + CalculateValue() + sliderSprite.GetLeftPadding());
-  int16 top(y + h / 2 - Round(sliderSprite.GetHalfHeight() -
+  int16_t left(x + CalculateValue() + sliderSprite.GetLeftPadding());
+  int16_t top(y + h / 2 - Round(sliderSprite.GetHalfHeight() -
     sliderSprite.GetTopPadding()));
-  int16 right(left + sliderSprite.GetQuadWidth());
-  int16 bottom(top + sliderSprite.GetQuadHeight());
+  int16_t right(left + sliderSprite.GetQuadWidth());
+  int16_t bottom(top + sliderSprite.GetQuadHeight());
 
   RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3,
                   Sprite::kNumVertices));
@@ -132,11 +132,11 @@ void UIHorizontalSlider::Render( UIRenderer* pRenderer ) const
   XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != 0,
     ("Material needs to be set in sliderSprite before Render()"));
 
-  int16 left(x + CalculateValue() + sliderSprite.GetLeftPadding());
-  int16 top(y + h / 2 - Round(sliderSprite.GetHalfHeight() -
+  int16_t left(x + CalculateValue() + sliderSprite.GetLeftPadding());
+  int16_t top(y + h / 2 - Round(sliderSprite.GetHalfHeight() -
     sliderSprite.GetTopPadding()));
-  int16 right(left + sliderSprite.GetQuadWidth());
-  int16 bottom(top + sliderSprite.GetQuadHeight());
+  int16_t right(left + sliderSprite.GetQuadWidth());
+  int16_t bottom(top + sliderSprite.GetQuadHeight());
 
   RenderStream  rsVerts(pRenderer->NewSprite(sliderSprite.GetMaterial(),
     sliderSprite.GetUVs(), color));

@@ -27,10 +27,10 @@ public:
   // data
   TextureImpl*  arpTextures[kNumTextureStages];
 
-  uint32        alphaMode;
+  uint32_t      alphaMode;
   GLenum        alphaTestMode;
   GLfloat       alphaTestRefValue;
-  uint32        blendMode;
+  uint32_t      blendMode;
   GLenum        cullMode;
   GLboolean     depthWriteEnabled;
   Color         colAmbient;
@@ -43,7 +43,7 @@ public:
   ~MaterialImpl();
   
   // general
-  TextureImpl*  GetTexture(int32 id) const;
+  TextureImpl*  GetTexture(int32_t id) const;
 
   void  Apply();
   void  Copy(const MaterialImpl& rhs);
@@ -53,7 +53,7 @@ public:
 //  implementation
 //==============================================================================
 inline 
-TextureImpl*  MaterialImpl::GetTexture(int32 id) const
+TextureImpl*  MaterialImpl::GetTexture(int32_t id) const
 {
   XR_ASSERT(Material, id >= 0);
   XR_ASSERT(Material, id < MaterialImpl::kNumTextureStages);

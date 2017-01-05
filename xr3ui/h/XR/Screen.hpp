@@ -48,12 +48,12 @@ public:
   
   void            SetOnBecomeActive(BecomeActiveCallback pCb, void* pData);
 
-  void            Show(ScreenManager& sm, int32 ms);
+  void            Show(ScreenManager& sm, int32_t ms);
   void            Register();
   void            Unregister();
-  void            Hide(uint32 ms);
+  void            Hide(uint32_t ms);
   
-  void            Update(int32 ms);
+  void            Update(int32_t ms);
   
 protected:
   // data
@@ -61,8 +61,8 @@ protected:
   
   // virtual
   virtual void    _AddElements() =0;
-  virtual void    _Show(uint32 ms) =0;
-  virtual void    _Hide(uint32 ms) =0;
+  virtual void    _Show(uint32_t ms) =0;
+  virtual void    _Hide(uint32_t ms) =0;
   virtual void    _RemoveElements() =0;
   
   virtual void    _Register() =0;
@@ -71,7 +71,7 @@ protected:
 private:
   // data
   State           m_state;
-  int32           m_timer;
+  int32_t         m_timer;
   bool            m_isRegistered;
   
   BecomeActiveCallback  m_pOnBecomeActive;

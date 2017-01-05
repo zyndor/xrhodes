@@ -32,7 +32,7 @@ void  Screen::SetOnBecomeActive(BecomeActiveCallback pCb, void *pData)
 }
 
 //==============================================================================
-void  Screen::Show(ScreenManager& sm, int32 ms)
+void  Screen::Show(ScreenManager& sm, int32_t ms)
 {
   XR_ASSERTMSG(Screen, m_state > S_ACTIVE,
     ("Invalid state to Show() screen: %d", m_state));
@@ -69,7 +69,7 @@ void  Screen::Unregister()
 }
 
 //==============================================================================
-void  Screen::Hide(uint32 ms)
+void  Screen::Hide(uint32_t ms)
 {
   XR_ASSERTMSG(Screen, m_state < S_HIDING || (m_state == S_HIDING &&
     ms <= m_timer), ("Invalid state to Hide() screen: %d", m_state));
@@ -91,7 +91,7 @@ void  Screen::Hide(uint32 ms)
 }
 
 //==============================================================================
-void  Screen::Update(int32 ms)
+void  Screen::Update(int32_t ms)
 {
   if (m_timer > 0)
   {

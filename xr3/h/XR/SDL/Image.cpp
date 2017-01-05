@@ -75,7 +75,7 @@ int Image::GetPitch() const
 }
 
 //==============================================================================
-uint32  Image::GetFormatNative() const
+uint32_t  Image::GetFormatNative() const
 {
   const SDL_Surface*  pSurf(TO_CONST_IMPL());
   return pSurf != 0 ? pSurf->format->format : 0;

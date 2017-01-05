@@ -24,7 +24,7 @@ UIID  GenerateUIID()
   UIID::iterator  iEnd(uiid.end());
 
   // append time in millisecs
-  const uint64  tNow = Timer::GetUTC();
+  const uint64_t  tNow = Timer::GetUTC();
 
   const int kOffset = 0;
   std::copy(reinterpret_cast<const UIID::value_type*>(&tNow),

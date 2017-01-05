@@ -15,22 +15,22 @@ namespace XR
 //==============================================================================
 class Hash
 {
-	XR_NONOBJECT_DECL(Hash)
+  XR_NONOBJECT_DECL(Hash)
 
 public:
-	// static
-	static const uint32 kSeed = 61681;
+  // static
+  static const uint32_t kSeed = 61681;
 
-	static void		SetSeed(uint32 seed);
-	
-	static uint32	String(const char* pString);
-	static uint32	String(const char* pString, size_t size);
-	static uint32	Data(const void* pData, size_t size);
+  static void     SetSeed(uint32_t seed);
+  
+  static uint32_t String(const char* pString);
+  static uint32_t String(const char* pString, size_t size);
+  static uint32_t Data(const void* pData, size_t size);
 
-	static void		DebugClearStringLookup();
+  static void     DebugClearStringLookup();
 
 private:
-	static uint32	s_seed;
+  static uint32_t s_seed;
 };
 
 } // XR

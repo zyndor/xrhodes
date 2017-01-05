@@ -27,8 +27,8 @@ public:
   typedef std::vector<std::string>              StringVector;
   typedef std::vector<std::string*>             StringPtrVector;
   typedef std::vector<const std::string*>       ConstStringPtrVector;
-  typedef std::map<uint32, std::string*>        StringMap;
-  typedef std::map<uint32, const std::string*>  ConstStringMap;
+  typedef std::map<uint32_t, std::string*>        StringMap;
+  typedef std::map<uint32_t, const std::string*>  ConstStringMap;
 
   // static
   static void CreateMapping(const ConstStringPtrVector& keys,
@@ -60,7 +60,7 @@ public:
 
 protected:
   // types
-  typedef std::map<uint32, ConstStringPtrVector>  StringPtrVectorMap;
+  typedef std::map<uint32_t, ConstStringPtrVector>  StringPtrVectorMap;
 
   // static
   static bool  WriteString(const char* pString, FileBuffer& file);

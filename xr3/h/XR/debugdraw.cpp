@@ -13,12 +13,12 @@ namespace DebugDraw
 {
 
 //==============================================================================
-static uint32     s_lastFlush(0);
+static uint32_t   s_lastFlush(0);
 static Material*  s_pMaterial(0);
 
 static void SetMaterial()
 {
-  uint32  flushId(Renderer::GetFlushId());
+  uint32_t  flushId(Renderer::GetFlushId());
   if(s_lastFlush < flushId || flushId + INT32_MAX > s_lastFlush + INT32_MAX)
   {
     s_pMaterial = Renderer::AllocMaterial(); 

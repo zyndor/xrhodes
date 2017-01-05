@@ -17,10 +17,10 @@ struct  InputImpl
   static InputImpl* s_pInstance;
   
   // data
-  uint8                 arKeyState[kKeyCount];
+  uint8_t               arKeyState[kKeyCount];
   
   SVector2              mousePosition;
-  uint8                 arMouseButtonState[5];
+  uint8_t               arMouseButtonState[5];
   
   CallbackObject::List  arCallback[Input::kMaxEvents];
 };

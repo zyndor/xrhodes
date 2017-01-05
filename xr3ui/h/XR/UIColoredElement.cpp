@@ -25,10 +25,10 @@ void  UIColoredElement::_CalculateSpriteVerts( const Sprite* pSprite,
 
   float ws(w / (pSprite->GetHalfWidth() * 2.0f));
   float hs(h / (pSprite->GetHalfHeight() * 2.0f));
-  float left(x + static_cast<int16>(Round(pSprite->GetLeftPadding() * ws)));
-  float right(x + w - static_cast<int16>(Round(pSprite->GetRightPadding() * ws)));
-  float top(y + static_cast<int16>(Round(pSprite->GetTopPadding() * hs)));
-  float bottom(y + h - static_cast<int16>(Round(pSprite->GetBottomPadding() * hs)));
+  float left(x + static_cast<int32_t>(Round(pSprite->GetLeftPadding() * ws)));
+  float right(x + w - static_cast<int32_t>(Round(pSprite->GetRightPadding() * ws)));
+  float top(y + static_cast<int32_t>(Round(pSprite->GetTopPadding() * hs)));
+  float bottom(y + h - static_cast<int32_t>(Round(pSprite->GetBottomPadding() * hs)));
 
   rsVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f)); 
   rsVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f)); 

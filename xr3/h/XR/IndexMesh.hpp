@@ -16,7 +16,7 @@ class IndexMesh:  public BasicMesh
 {
 public:
   // types
-  typedef std::vector<uint16> IndexArray;
+  typedef std::vector<uint16_t> IndexArray;
   
   // structors
   IndexMesh();
@@ -26,9 +26,9 @@ public:
   IndexArray&       GetIndices();
   const IndexArray& GetIndices() const;
   
-  void              SetIndexPattern(const uint16* pInds, int numInds, int repeat);
-  void              SetIndexPattern(const uint16* pInds, int numInds,
-                      uint16 shift, int repeat);
+  void              SetIndexPattern(const uint16_t* pInds, int numInds, int repeat);
+  void              SetIndexPattern(const uint16_t* pInds, int numInds,
+                      uint16_t shift, int repeat);
   
   virtual void      Render();
   

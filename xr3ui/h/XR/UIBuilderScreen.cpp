@@ -138,7 +138,7 @@ void  UIBuilderScreen::_AddElements()
 }
 
 //==============================================================================
-void  UIBuilderScreen::_Show(uint32 ms)
+void  UIBuilderScreen::_Show(uint32_t ms)
 {
   if (m_pTweenIn != 0 && !m_tweening.empty())
   {
@@ -155,7 +155,7 @@ void  UIBuilderScreen::_Show(uint32 ms)
 }
 
 //==============================================================================
-void  UIBuilderScreen::_Hide(uint32 ms)
+void  UIBuilderScreen::_Hide(uint32_t ms)
 {
   if (m_pTweenOut != 0 && !m_tweening.empty())
   {

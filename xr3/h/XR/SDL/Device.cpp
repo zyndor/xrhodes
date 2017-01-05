@@ -296,7 +296,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
 }
 
 //==============================================================================
-void  Device::YieldOS(int32 ms)
+void  Device::YieldOS(int32_t ms)
 {
   XR_ASSERT(Device, !s_deviceImpl.isYielding);
   s_deviceImpl.isYielding = true;
@@ -383,8 +383,8 @@ void  Device::YieldOS(int32 ms)
     case  SDL_FINGERUP:
     case  SDL_FINGERDOWN:
     {
-      int16 x((int16)Round(e.tfinger.x * Renderer::GetScreenWidth()));
-      int16 y((int16)Round(e.tfinger.y * Renderer::GetScreenHeight()));
+      int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
+      int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
 
       Input::TouchActionEvent  eTouch =
       {
@@ -400,8 +400,8 @@ void  Device::YieldOS(int32 ms)
     
     case  SDL_FINGERMOTION:
     {
-      int16 x((int16)Round(e.tfinger.x * Renderer::GetScreenWidth()));
-      int16 y((int16)Round(e.tfinger.y * Renderer::GetScreenHeight()));
+      int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
+      int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
       
       Input::TouchMotionEvent eTouch = 
       {

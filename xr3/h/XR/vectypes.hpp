@@ -38,9 +38,9 @@ struct SVector2
   {
     struct
     {
-      int16 x, y;
+      int16_t x, y;
     };
-    int16 arData[kNumVector2Inds];
+    int16_t arData[kNumVector2Inds];
   };
 
   // structors
@@ -48,27 +48,27 @@ struct SVector2
   : x(0), y(0)
   {}
   
-  SVector2(int16 x_, int16 y_)
+  SVector2(int16_t x_, int16_t y_)
   : x(x_), y(y_)
   {}
 
-  explicit SVector2(const int16 parData[2])
+  explicit SVector2(const int16_t parData[2])
   : x(parData[0]),
     y(parData[1])
   {}
 
   // general
-  int16 Magnitude() const
+  int16_t Magnitude() const
   {
-    return int16(sqrtf(Dot()));
+    return int16_t(sqrtf(Dot()));
   }
 
-  int16 Dot() const
+  int16_t Dot() const
   {
     return Dot(*this);
   }
 
-  int16 Dot(const SVector2& rhs) const
+  int16_t Dot(const SVector2& rhs) const
   {
     return x * rhs.x + y * rhs.y;
   }

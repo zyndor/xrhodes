@@ -20,7 +20,7 @@ void CSV::CreateMapping(const ConstStringPtrVector& keys,
   for(ConstStringPtrVector::const_iterator i0(keys.begin()), i1(keys.end());
     i0 != i1; ++i0)
   {
-    uint32  hash(Hash::String((*i0)->c_str()));
+    uint32_t  hash(Hash::String((*i0)->c_str()));
     m[hash] = *iValue;
     ++iValue;
   }
@@ -35,7 +35,7 @@ void CSV::CreateMapping(const ConstStringPtrVector& keys,
   for(ConstStringPtrVector::const_iterator i0(keys.begin()), i1(keys.end());
     i0 != i1; ++i0)
   {
-    uint32  hash(Hash::String((*i0)->c_str()));
+    uint32_t  hash(Hash::String((*i0)->c_str()));
     m[hash] = *iValue;
     ++iValue;
   }

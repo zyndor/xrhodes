@@ -169,7 +169,7 @@ protected:
   struct  Child
   {
     // types
-    typedef std::map<uint32, Child>      Map;
+    typedef std::map<uint32_t, Child>      Map;
 
     struct  GetName
     {

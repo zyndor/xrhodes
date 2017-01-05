@@ -110,7 +110,7 @@ Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* pKey, const int32 value )
+Writer&  Writer::WriteValue( const char* pKey, const int32_t value )
 {
   _WriteKey(pKey);
   m_stream << value;
@@ -168,7 +168,7 @@ Writer&  Writer::WriteArrayElement( const char* pValue )
 }
 
 //==============================================================================
-Writer&  Writer::WriteArrayElement( int32 value )
+Writer&  Writer::WriteArrayElement( int32_t value )
 {
   _WriteComma();
   m_stream << value;

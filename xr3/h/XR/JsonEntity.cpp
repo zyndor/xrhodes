@@ -277,7 +277,7 @@ const char* Object::GetValue() const
 Entity* Object::GetChild(const char* pKey, Type acceptType) const
 {
   XR_ASSERT(Object, pKey != 0);
-  uint32  hash(Hash::String(pKey));
+  uint32_t  hash(Hash::String(pKey));
   Child::Map::const_iterator iFind(m_children.find(hash));
   Entity* pResult = 0;
   if (iFind != m_children.end())
@@ -313,7 +313,7 @@ void  Object::AddChild(const char* pKey, size_t keySize, Entity* pEntity)
 void  Object::AddChild(std::string name, Entity* pEntity)
 {
   XR_ASSERT(Object, pEntity != 0);
-  const uint32  hash(Hash::String(name.c_str()));
+  const uint32_t  hash(Hash::String(name.c_str()));
   Child::Map::iterator iFind(m_children.find(hash));
   if (iFind != m_children.end())
   {

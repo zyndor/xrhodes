@@ -44,31 +44,31 @@ public:
 
   // general
   template  <typename T>
-  uint32  Register(uint32 name, T& var);
+  uint32_t  Register(uint32_t name, T& var);
 
-  bool    Register(uint32 name, float& var);
-  bool    Register(uint32 name, int& var);
-  bool    Register(uint32 name, bool& var);
+  bool    Register(uint32_t name, float& var);
+  bool    Register(uint32_t name, int& var);
+  bool    Register(uint32_t name, bool& var);
   
   template  <typename T>
-  bool    Get(uint32 name, T& val) const;
+  bool    Get(uint32_t name, T& val) const;
 
-  bool    Get(uint32 name, float& val) const;
-  bool    Get(uint32 name, int& val) const;
-  bool    Get(uint32 name, bool& val) const;
+  bool    Get(uint32_t name, float& val) const;
+  bool    Get(uint32_t name, int& val) const;
+  bool    Get(uint32_t name, bool& val) const;
 
   template  <typename T>
-  bool    Set(uint32 name, T val);
+  bool    Set(uint32_t name, T val);
 
-  bool    Set(uint32 name, float val);
-  bool    Set(uint32 name, int val);
-  bool    Set(uint32 name, bool val);
+  bool    Set(uint32_t name, float val);
+  bool    Set(uint32_t name, int val);
+  bool    Set(uint32_t name, bool val);
   
-  Variable::Type  GetType(uint32 name) const;
+  Variable::Type  GetType(uint32_t name) const;
 
 protected:
   // types
-  typedef std::map<uint32, Variable>  VariableMap;
+  typedef std::map<uint32_t, Variable>  VariableMap;
 
   // data
   VariableMap m_variables;
@@ -78,21 +78,21 @@ protected:
 // implementation
 //==============================================================================
 template  <typename T>
-uint32  TweakBench::Register(uint32 name, T& var)
+uint32_t  TweakBench::Register(uint32_t name, T& var)
 {
   return Register(name, var) ? name : INVALID_ID;
 }
 
 //==============================================================================
 template  <typename T>
-bool    TweakBench::Get(uint32 name, T& val) const
+bool    TweakBench::Get(uint32_t name, T& val) const
 {
   return Get(name, val);
 }
 
 //==============================================================================
 template  <typename T>
-bool    TweakBench::Set(uint32 name, T val)
+bool    TweakBench::Set(uint32_t name, T val)
 {
   return Set(name, val);
 }

@@ -12,7 +12,7 @@ namespace XR
 {
 
 //==============================================================================
-const uint16  Sprite::karIndices[] = { 0, 1, 2, 0, 2, 3 };
+const uint16_t  Sprite::karIndices[] = { 0, 1, 2, 0, 2, 3 };
 
 const AABB Sprite::kWholeTexture = { .0f, .0f, 1.0f, 1.0f };
 const AABB Sprite::kNullTexture =  { .0f, .0f, .0f, .0f };
@@ -83,11 +83,11 @@ void Sprite::CopyWholeTextureUVsTo(int offset, RenderStream& uvs)
 }
 
 //==============================================================================
-void Sprite::CopyIndicesTo(uint16* parInds, int offset)
+void Sprite::CopyIndicesTo(uint16_t* parInds, int offset)
 {
   XR_ASSERT(Sprite, parInds != 0);
-  const uint16* i0(karIndices);
-  const uint16* i1(i0 + kNumIndices);
+  const uint16_t* i0(karIndices);
+  const uint16_t* i1(i0 + kNumIndices);
   while (i0 != i1)
   {
     *parInds = *i0 + offset;
@@ -118,7 +118,7 @@ void  Sprite::SetMaterial(Material* pMaterial)
 }
 
 //==============================================================================
-void Sprite::SetHalfSize( int32 hw, int32 hh, bool calculateVertices)
+void Sprite::SetHalfSize( int32_t hw, int32_t hh, bool calculateVertices)
 {
   XR_ASSERT(Sprite, hw >= 0);
   XR_ASSERT(Sprite, hh >= 0);
@@ -153,8 +153,8 @@ void Sprite::SetUVsProportional(const AABB& tc)
 
   SetUVs(tc);
 
-  int32 hw = (tc.right - tc.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
-  int32 hh = (tc.bottom - tc.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
+  int32_t hw = (tc.right - tc.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
+  int32_t hh = (tc.bottom - tc.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
   SetHalfSize(hw, hh, true);
 }
 
@@ -176,8 +176,8 @@ void Sprite::SetUVsRotatedProportional(const AABB& uvs)
 
   SetUVsRotated(uvs);
 
-  int32 hw = (uvs.bottom - uvs.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
-  int32 hh = (uvs.right - uvs.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
+  int32_t hw = (uvs.bottom - uvs.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
+  int32_t hh = (uvs.right - uvs.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
   SetHalfSize(hw, hh, true);
 }
 
