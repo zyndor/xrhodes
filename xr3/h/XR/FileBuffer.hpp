@@ -8,6 +8,7 @@
 #define XR_FILEBUFFER_HPP
 
 #include "File.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

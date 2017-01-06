@@ -8,6 +8,7 @@
 #define XR_MODULE_HPP
 
 #include "types.hpp"
+#include "fundamentals.hpp"
 
 namespace XR {
 

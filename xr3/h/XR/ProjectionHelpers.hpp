@@ -7,7 +7,7 @@
 #ifndef XR_PROJECTIONHELPERS_HPP
 #define XR_PROJECTIONHELPERS_HPP
 
-#include "types.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

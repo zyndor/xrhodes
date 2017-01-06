@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "TweenVarPool.hpp"
+#include "types.hpp"  // XR_ASSERT, temporary
 
 namespace XR
 {

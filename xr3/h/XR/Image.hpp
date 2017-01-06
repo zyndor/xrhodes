@@ -7,7 +7,7 @@
 #ifndef XR_IMAGE_HPP
 #define XR_IMAGE_HPP
 
-#include "types.hpp"
+#include "fundamentals.hpp"
 #include "CrossObject.hpp"
 
 namespace XR

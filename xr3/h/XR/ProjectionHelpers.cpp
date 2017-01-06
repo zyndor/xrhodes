@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "ProjectionHelpers.hpp"
+#include "types.hpp"  // XR_ASSERT, temporary
 #include <cmath>
 #include <cstring>
 

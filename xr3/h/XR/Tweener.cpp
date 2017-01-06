@@ -6,6 +6,7 @@
 //==============================================================================
 #include <algorithm>
 #include "Tweener.hpp"
+#include "types.hpp"  // XR_ASSERT, temporary
 
 namespace XR
 {

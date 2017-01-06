@@ -14,6 +14,7 @@
 #include "Parse.hpp"
 #include "Animation.hpp"
 #include "ParserCore.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

@@ -4,8 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include  <string>
-#include  "FileBuffer.hpp"
+#include <string>
+#include "FileBuffer.hpp"
+#include "types.hpp"  // XR_ASSERT, temporary
 
 namespace XR
 {

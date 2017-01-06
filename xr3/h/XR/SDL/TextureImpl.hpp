@@ -8,6 +8,7 @@
 #define XR_TEXTUREIMPL_HPP
 
 #include "xrgl.hpp"
+#include <XR/fundamentals.hpp>
 #include <XR/Texture.hpp>
 
 namespace XR

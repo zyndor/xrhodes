@@ -8,7 +8,6 @@
 #define XR_FILE_HPP
 
 #include "fundamentals.hpp"
-#include "types.hpp"
 #include <cstdint>
 
 namespace XR

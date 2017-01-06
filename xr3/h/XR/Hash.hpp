@@ -7,7 +7,9 @@
 #ifndef XR_HASH_HPP
 #define XR_HASH_HPP
 
+#include "fundamentals.hpp"
 #include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {

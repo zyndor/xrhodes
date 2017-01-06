@@ -62,19 +62,6 @@
 //==============================================================================
 #define XR_CRASHTEST(call)  { printf("At: %s\n", #call, __FILE__, __LINE__); fflush(stdout); call; printf("OK.\n"; }
  
-//==============================================================================
-#define XR_NONOBJECT_DECL(className) \
-  private:\
-    className();\
-    ~className();
-
-//==============================================================================
-#define XR_NONCOPY_DECL(className) \
-  private:\
-    className(const className& rhs);\
-    className& operator=(const className& rhs);
-
-
 namespace XR
 {
 

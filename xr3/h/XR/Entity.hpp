@@ -12,6 +12,7 @@
 #include "vectypes.hpp"
 #include "Name.hpp"
 #include "typeutils.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

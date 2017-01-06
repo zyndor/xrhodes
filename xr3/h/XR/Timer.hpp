@@ -7,7 +7,7 @@
 #ifndef XR_TIMER_HPP
 #define XR_TIMER_HPP
 
-#include "types.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

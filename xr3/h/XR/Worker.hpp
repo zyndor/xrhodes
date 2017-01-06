@@ -8,7 +8,7 @@
 #define XR_WORKER_HPP
 
 #include "Queue.hpp"
-#include "types.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

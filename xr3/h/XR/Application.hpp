@@ -14,6 +14,7 @@
 #include "Timer.hpp"
 #include "Input.hpp"
 #include "Audio.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {
