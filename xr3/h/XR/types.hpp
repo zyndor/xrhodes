@@ -79,7 +79,6 @@ namespace XR
 {
 
 //==============================================================================
-int32_t Align(int32_t value, int32_t alignment);
 int16_t ClipToInt16(int32_t val);
 
 //==============================================================================
@@ -99,14 +98,6 @@ int16_t ClipToInt16(int32_t val)
   }
 
   return static_cast<int16_t>(val);
-}
-
-//==============================================================================
-inline
-int32_t Align(int32_t value, int32_t alignment)
-{
-  XR_ASSERT(Align, alignment > 0);
-  return value + alignment - (value % alignment);
 }
 
 } // XR
