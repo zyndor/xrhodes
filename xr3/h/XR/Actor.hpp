@@ -8,7 +8,6 @@
 #define XR_ACTOR_HPP
 
 #include <map>
-#include "types.hpp"
 #include "Animation.hpp"
 #include "Hash.hpp"
 

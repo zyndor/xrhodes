@@ -7,8 +7,6 @@
 #ifndef XR_PARSERCORE_HPP
 #define XR_PARSERCORE_HPP
 
-#include "types.hpp"
-
 namespace XR
 {
 

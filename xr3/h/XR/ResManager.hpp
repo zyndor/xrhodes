@@ -7,10 +7,10 @@
 #ifndef XR_RESMANAGER_HPP
 #define XR_RESMANAGER_HPP
 
-#include <map>
-#include "types.hpp"
 #include "Pool.hpp"
 #include "Hash.hpp"
+#include <map>
+#include <cstdint>
 
 namespace XR
 {

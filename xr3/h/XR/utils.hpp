@@ -9,7 +9,7 @@
 
 #include <sstream>
 #include <algorithm>
-#include "types.hpp"
+#include <cstdint>
 
 //==============================================================================
 #define XR_ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))

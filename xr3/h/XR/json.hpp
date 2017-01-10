@@ -7,8 +7,6 @@
 #ifndef XR_JSON_HPP
 #define XR_JSON_HPP
 
-#include "types.hpp"
-
 namespace XR {
 
 namespace JSON  {
@@ -33,7 +31,7 @@ extern const char*  kNull;
 extern const char*  kTrue;
 extern const char*  kFalse;
 
-const int    kMaxParseDepthDefault = 32;
+const int kMaxParseDepthDefault = 32;
 
 } // JSON
 

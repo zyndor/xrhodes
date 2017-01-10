@@ -6,6 +6,7 @@
 //==============================================================================
 #include "JsonParser.hpp"
 #include "debug.hpp"
+#include <limits>
 #include <ctype.h>
 #include <cstring>
 #include <math.h>

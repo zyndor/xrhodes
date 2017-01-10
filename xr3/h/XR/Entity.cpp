@@ -6,7 +6,6 @@
 //==============================================================================
 #include "Entity.hpp"
 #include "functors.hpp"
-#include "types.hpp"
 
 namespace XR {
 

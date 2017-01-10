@@ -28,6 +28,7 @@ files
   XR/Command.hpp
   XR/CrossObject.hpp
   XR/CSV.hpp
+  XR/debug.hpp
   XR/debugdraw.hpp
   XR/DelayedCallback.hpp
   XR/Device.hpp
@@ -97,7 +98,6 @@ files
   XR/Tweener.hpp
   XR/TweenVar.hpp
   XR/TweenVarPool.hpp
-  XR/types.hpp
   XR/typeutils.hpp
   XR/UIID.hpp
   XR/utils.hpp

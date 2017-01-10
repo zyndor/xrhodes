@@ -285,9 +285,6 @@
     <ClInclude Include="..\h\XR\TweenVarPool.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\h\XR\types.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\h\XR\typeutils.hpp">
       <Filter>Headers</Filter>
     </ClInclude>

@@ -9,6 +9,7 @@
 
 #include "fundamentals.hpp"
 #include "CrossObject.hpp"
+#include <cstdint>
 
 namespace XR
 {

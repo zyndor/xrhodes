@@ -7,11 +7,11 @@
 #ifndef XR_RECT_HPP
 #define XR_RECT_HPP
 
-#include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {
-  
+
 //==============================================================================
 class Rect
 {

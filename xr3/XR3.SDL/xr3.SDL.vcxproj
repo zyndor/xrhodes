@@ -116,7 +116,6 @@
     <ClInclude Include="..\h\XR\Tweener.hpp" />
     <ClInclude Include="..\h\XR\TweenVar.hpp" />
     <ClInclude Include="..\h\XR\TweenVarPool.hpp" />
-    <ClInclude Include="..\h\XR\types.hpp" />
     <ClInclude Include="..\h\XR\typeutils.hpp" />
     <ClInclude Include="..\h\XR\UIID.hpp" />
     <ClInclude Include="..\h\XR\utils.hpp" />

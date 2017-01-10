@@ -7,7 +7,7 @@
 #ifndef XR_STACK_HPP
 #define XR_STACK_HPP
 
-#include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {
