@@ -83,9 +83,9 @@ public:
 
   // static
   static const char* const    kInclude;
-  static const uint32         kIncludeHash;
+  static const uint32_t       kIncludeHash;
   static const char* const    karpAlignValues[kNumAlignValues];
-  static const uint32         karAlignValueHash[kNumAlignValues];
+  static const uint32_t       karAlignValueHash[kNumAlignValues];
 
   static const char* const    karpElementName[kNumUIElementTypes];
 
@@ -121,7 +121,7 @@ public:
 
   bool          Build(TiXmlElement* pXml, UIContainer& container);
 
-  UIElement*    GetElement(uint32 hash) const;
+  UIElement*    GetElement(uint32_t hash) const;
   UIElement*    GetElement(const char* pHandle) const;
 
   void          Destroy();
@@ -141,8 +141,8 @@ protected:
 
   typedef std::list<UIElement*> UIElementList;
 
-  typedef std::map<uint32, UICreatorRecord> CreatorMap;
-  typedef std::map<uint32, UIElement*>      ElementMap;
+  typedef std::map<uint32_t, UICreatorRecord> CreatorMap;
+  typedef std::map<uint32_t, UIElement*>      ElementMap;
 
   // internal
   bool  _Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth);

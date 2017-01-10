@@ -8,7 +8,7 @@
 #define XR_HTTPCLIENT_HPP
 
 #include <set>
-#include "types.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {
@@ -40,12 +40,12 @@ public:
     RESP_METHOD_NOT_ALLOWED
   };
 
-  typedef void(*ResponseCallback)(uint32 response, uint32 len, char* pData,
+  typedef void(*ResponseCallback)(uint32_t response, uint32_t len, char* pData,
     void* pCbData);
 
   // static
-  static const uint32 kDefaultChunkSize = 1024;
-  static const uint32 kUriLen = 256;
+  static const uint32_t kDefaultChunkSize = 1024;
+  static const uint32_t kUriLen = 256;
 
   static std::string Urlify(const char** parKeyValues, bool encodeValues);
 
@@ -68,7 +68,7 @@ public:
   void  ResetHeaders();
 
   // static
-  static int32 ReceivedData(void* pSystem, void* pUser);
+  static int32_t ReceivedData(void* pSystem, void* pUser);
 
 protected:
   // types
@@ -92,7 +92,7 @@ public:
   // data
   void*                         pHttpImpl;  // no ownership
   HttpClient*                   pClient;  // no ownership
-  uint32                        bufferLen;
+  uint32_t                      bufferLen;
   char*                         pBuffer;
   HttpClient::ResponseCallback  pResponseCb;
   void*                         pCbData;  // no ownership

@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "Hash.hpp"
+#include "debug.hpp"
 #include <algorithm>
 #include <map>
 #include <string>
@@ -18,7 +19,7 @@ namespace XR
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
 namespace
 {
-typedef std::map<uint32, std::string> StringMap;
+typedef std::map<uint32_t, std::string> StringMap;
 
 StringMap  s_stringLookup;
 
@@ -32,19 +33,19 @@ void SquashCase(std::string& str)
 #endif  //XR_DEBUG
 
 //==============================================================================
-uint32  Hash::s_seed(Hash::kSeed);
+uint32_t  Hash::s_seed(Hash::kSeed);
 
 //==============================================================================
-void  Hash::SetSeed(uint32 seed)
+void  Hash::SetSeed(uint32_t seed)
 {
   s_seed = seed;
 }
 
 //==============================================================================
-uint32  Hash::String(const char* pString)
+uint32_t  Hash::String(const char* pString)
 {
   XR_ASSERT(Hash, pString != 0);
-  uint32 hash = s_seed;
+  uint32_t hash = s_seed;
   int c;
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   std::string squashed(pString);
@@ -71,10 +72,10 @@ uint32  Hash::String(const char* pString)
 }
 
 //==============================================================================
-uint32  Hash::String(const char* pString, size_t size)
+uint32_t  Hash::String(const char* pString, size_t size)
 {
   XR_ASSERT(Hash, pString != 0);
-  uint32 hash = s_seed;
+  uint32_t hash = s_seed;
   int c;
 #if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
   std::string squashed(pString, size);
@@ -103,10 +104,10 @@ uint32  Hash::String(const char* pString, size_t size)
 }
 
 //==============================================================================
-uint32  Hash::Data(const void* pData, size_t size)
+uint32_t  Hash::Data(const void* pData, size_t size)
 {
   XR_ASSERT(Hash, size >= 0);
-  uint32 hash = s_seed;
+  uint32_t hash = s_seed;
   const char* p0(static_cast<const char*>(pData));
   const char* p1(p0 + size);
   while (p0 != p1)

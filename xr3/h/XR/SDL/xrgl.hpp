@@ -8,7 +8,7 @@
 #define XR_XRGL_HPP
 
 #include <XR/Log.hpp>
-#include <XR/types.hpp>
+#include <XR/debug.hpp>
 #include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <SDL_video.h>

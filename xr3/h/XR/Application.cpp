@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "Application.hpp"
+#include "debug.hpp"
 
 namespace XR
 {
@@ -18,8 +19,8 @@ void Application::Runner::OnSecond(SecondEvent const&)
 {}
 
 //==============================================================================
-int32  Application::m_frameDelayMs(0);
-int32  Application::m_frameCappingMs(1000);
+int32_t  Application::m_frameDelayMs(0);
+int32_t  Application::m_frameCappingMs(1000);
 bool   Application::m_isRunning(false);
 bool   Application::m_breakUpdate(false);  
 
@@ -46,11 +47,13 @@ void  Application::Exit()
 }
 
 //==============================================================================
-void Application::SetFrameDelayMs(int32 ms)
+void Application::SetFrameDelayMs(int32_t ms)
 {
   XR_ASSERT(Application, !m_isRunning);
   XR_ASSERT(Application, ms > 0);
   m_frameDelayMs = ms;
+
+  // If the frame capping is smaller than the frame delay, then bump it up.
   if(m_frameCappingMs < ms)
   {
     m_frameCappingMs = ms;
@@ -58,15 +61,10 @@ void Application::SetFrameDelayMs(int32 ms)
 }
 
 //==============================================================================
-void Application::SetFrameCappingMs(int32 ms)
+void Application::SetFrameCappingMs(int32_t ms)
 {
   XR_ASSERT(Application, !m_isRunning);
-  XR_ASSERT(Application, ms > 0);
-  if(ms < m_frameDelayMs)
-  {
-    ms = m_frameDelayMs;
-    XR_ERROR(("Frame capping can't be set lower than frame delay."));
-  }
+  XR_ASSERT(Application, ms >= m_frameDelayMs);
   m_frameCappingMs = ms;
 }
 
@@ -77,10 +75,10 @@ void Application::Run(Runner& runner)
   XR_ASSERT(Application, m_frameDelayMs > 0);
   m_isRunning = true;
   
-  uint64 tLast;
-  uint64 tNow = Timer::GetUST();
-  int64 tAccum(m_frameDelayMs);
-  int64 tSecond(0);
+  uint64_t tLast;
+  uint64_t tNow = Timer::GetUST();
+  int64_t tAccum(m_frameDelayMs);
+  int64_t tSecond(0);
   SecondEvent eSec = { 0, 0 };
   
   while (!Device::IsQuitting())
@@ -97,7 +95,7 @@ void Application::Run(Runner& runner)
     tLast = tNow;
     
     tNow = Timer::GetUST();
-    int64 tDelta(tNow - tLast);
+    int64_t tDelta(tNow - tLast);
     tSecond += tDelta;
 
     // apply frame capping

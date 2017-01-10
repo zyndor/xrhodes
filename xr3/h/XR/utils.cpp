@@ -7,6 +7,7 @@
 #include <cstring>
 #include "utils.hpp"
 #include "Hash.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

@@ -434,7 +434,7 @@ XR::Color Parse::Color( const char* pValue )
   XR::Color col(0xffffffff);
   if (pValue != 0)
   {
-    uint32  rgba;
+    uint32_t  rgba;
     if (sscanf(pValue, "%x", &rgba) > 0)
     {
       if (strlen(pValue) <= 6)

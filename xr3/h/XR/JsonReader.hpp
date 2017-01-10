@@ -7,6 +7,7 @@
 #ifndef XR_JSONREADER_HPP
 #define XR_JSONREADER_HPP
 
+#include "fundamentals.hpp"
 #include "JsonEntity.hpp"
 #include "JsonParser.hpp"
 

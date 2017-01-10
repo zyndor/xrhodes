@@ -7,7 +7,7 @@
 #ifndef XR_STACK_HPP
 #define XR_STACK_HPP
 
-#include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {
@@ -26,7 +26,7 @@ public:
 };
 
 //==============================================================================
-template  <class T, uint32 kMax>
+template  <class T, uint32_t kMax>
 class HardStack:  protected HardStackCore
 {
 public:

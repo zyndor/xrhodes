@@ -9,7 +9,7 @@
 
 #include <algorithm>
 #include <iterator>
-#include "types.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

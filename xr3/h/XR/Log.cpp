@@ -6,13 +6,14 @@
 //==============================================================================
 #include "Log.hpp"
 #include "File.hpp"
+#include "debug.hpp"
 #include <cstring>
 
 namespace XR
 {
 
 //==============================================================================
-static int32  s_hLogFile(File::INVALID_HANDLE);
+static int32_t  s_hLogFile(File::INVALID_HANDLE);
 
 //==============================================================================
 void Log::Init()

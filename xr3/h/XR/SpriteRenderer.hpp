@@ -80,7 +80,7 @@ protected:
   //float       m_zFar;
 
 #ifndef XR_SPRITE_RENDERER_PERSISTENT_STREAMS
-  typedef std::vector<uint16> Uint16Array;
+  typedef std::vector<uint16_t> Uint16Array;
   
   Uint16Array m_indices;
 #endif

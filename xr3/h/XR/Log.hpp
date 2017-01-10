@@ -7,7 +7,7 @@
 #ifndef XR_LOG_HPP
 #define XR_LOG_HPP
 
-#include "types.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

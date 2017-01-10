@@ -49,6 +49,21 @@ enum
 #define FIX_MULT(a, b) (((a) * (b)) >> FIX_POINT)
 #define FIX_DIV(a, b) (((a) << FIX_POINT) / (b))
 
+int16 ClipToInt16(int32 val)
+{
+  if (((val - std::numeric_limits<int16>::min()) &
+    ~std::numeric_limits<uint16>::max()) != 0)
+  {
+    bool  over(val > std::numeric_limits<int16>::max());
+    bool  under(val < std::numeric_limits<int16>::min());
+    XR_ASSERT(ClipToInt16, over ^ under);
+    val = over * std::numeric_limits<int16>::max() + under *
+      std::numeric_limits<int16>::min();
+  }
+
+  return static_cast<int16>(val);
+}
+
 int32 AudioChannelState::GenerateAdpcm( void* pSystem )
 {
   s3eSoundGenAudioInfo* pInfo(static_cast<s3eSoundGenAudioInfo*>(pSystem));

@@ -24,7 +24,7 @@ Name::Name()
 {}
 
 //==============================================================================
-Name::Name(uint32 name)
+Name::Name(uint32_t name)
 : m_value(name)
 #ifdef  XR_DEBUG
   ,
@@ -55,7 +55,7 @@ Name::~Name()
 {}
 
 //==============================================================================
-Name& Name::operator=(uint32 value)
+Name& Name::operator=(uint32_t value)
 {
   m_value = value;
 #ifdef  XR_DEBUG

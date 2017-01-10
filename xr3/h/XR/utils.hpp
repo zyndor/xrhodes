@@ -9,16 +9,22 @@
 
 #include <sstream>
 #include <algorithm>
-#include "types.hpp"
+#include <cstdint>
+
+//==============================================================================
+#define XR_ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+
+//==============================================================================
+#define XR_MASK_ID(id) (1 << static_cast<size_t>(id))
 
 namespace XR
 {
 
 //==============================================================================
 // primitives
-bool IsAllBits(uint32 bits, uint32 mask);
-bool IsFullMask(uint32 bits, uint32 mask);
-bool IsIdMask(uint32 id, uint32 mask);
+bool IsAllBits(uint32_t bits, uint32_t mask);
+bool IsFullMask(uint32_t bits, uint32_t mask);
+bool IsIdMask(uint32_t id, uint32_t mask);
 
 ///@brief Checks is an integer can be fit into 16bits.
 bool  CheckInt16(int value);
@@ -28,11 +34,11 @@ const char* GetStringSafe(const char* pString);
 
 ///@return Index of item in array of values, @a numValues if not found.
 template <typename T>
-int FindItemId(const T* parValues, int numValues, const T* pValue);
+size_t FindItemId(const T* parValues, size_t numValues, const T* pValue);
 
 ///@brief Count number of elements in a null terminated array.
 template <typename T>
-int CountArrayItems(T* pItems);
+size_t CountArrayItems(T* pItems);
 
 // strings
 std::string UrlEncode(const char* pString);
@@ -73,21 +79,21 @@ struct  PtrHash
 // implementation
 //==============================================================================
 inline
-bool IsAllBits(uint32 bits, uint32 mask)
+bool IsAllBits(uint32_t bits, uint32_t mask)
 {
   return (bits & mask) == bits;
 }
 
 //==============================================================================
 inline
-bool IsFullMask(uint32 bits, uint32 mask)
+bool IsFullMask(uint32_t bits, uint32_t mask)
 {
   return (bits & mask) == mask;
 }
 
 //==============================================================================
 inline
-bool IsIdMask(uint32 id, uint32 mask) 
+bool IsIdMask(uint32_t id, uint32_t mask) 
 {
   return IsFullMask(XR_MASK_ID(id), mask);
 }
@@ -109,22 +115,22 @@ const char* GetStringSafe(const char* pString)
 //==============================================================================
 template <typename T>
 inline
-int FindItemId(const T* parValues, int numValues, const T& item)
+size_t FindItemId(const T* parValues, int numValues, const T& item)
 {
-  XR_ASSERT(GetIdFromList, parValues != 0);
-  XR_ASSERT(GetIdFromList, numValues >= 0);
+  XR_ASSERT(FindItemId, parValues != 0);
+  XR_ASSERT(FindItemId, numValues >= 0);
   const T* pFind(std::find(parValues, parValues + numValues, item));
   return pFind - parValues;
 }
 
 //==============================================================================
 template <typename T>
-int CountArrayItems(T* pItems)
+size_t CountArrayItems(T* pItems)
 {
-  XR_ASSERT(CountArrayItems, pItems != 0);
+  XR_ASSERT(CountArrayItems, pItems != nullptr);
 
-  int count(0);
-  while (*pItems != 0)
+  size_t count(0);
+  while (*pItems != nullptr)
   {
     ++pItems;
     ++count;

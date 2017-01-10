@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "ProjectionHelpers.hpp"
+#include "debug.hpp"
 #include <cmath>
 #include <cstring>
 

@@ -133,7 +133,7 @@ void UIHorizontalScrollingLayout::Render( UIRenderer* pRenderer ) const
 }
 
 //==============================================================================
-void UIHorizontalScrollingLayout::SetXOffset( int16 xOffs )
+void UIHorizontalScrollingLayout::SetXOffset( int16_t xOffs )
 {
   if (xOffs > 0)
   {

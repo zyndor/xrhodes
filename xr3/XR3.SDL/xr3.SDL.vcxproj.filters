@@ -261,9 +261,6 @@
     <ClInclude Include="..\h\XR\strings.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\h\XR\Surface.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\h\XR\Text.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -286,9 +283,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\h\XR\TweenVarPool.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\h\XR\types.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\h\XR\typeutils.hpp">

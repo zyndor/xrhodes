@@ -7,24 +7,24 @@
 #ifndef XR_RECT_HPP
 #define XR_RECT_HPP
 
-#include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {
-  
+
 //==============================================================================
 class Rect
 {
 public:
   // data
-  int16 x, y, w, h;
+  int32_t x, y, w, h;
 
   // structors
   Rect()
   : x(0), y(0), w(0), h(0)
   {}
 
-  Rect(int16 x_, int16 y_, int16 w_, int16 h_)
+  Rect(int32_t x_, int32_t y_, int32_t w_, int32_t h_)
   : x(x_), y(y_), w(w_), h(h_)
   {}
 };

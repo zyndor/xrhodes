@@ -10,6 +10,7 @@
 #include "vectypes.hpp"
 #include "utils.hpp"
 #include "Color.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

@@ -4,10 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include  <ctype.h>
-#include  <cstring>
-#include  <math.h>
-#include  "JsonParser.hpp"
+#include "JsonParser.hpp"
+#include "debug.hpp"
+#include <limits>
+#include <ctype.h>
+#include <cstring>
+#include <math.h>
 
 namespace XR
 {
@@ -22,8 +24,8 @@ Parser::Parser(int maxDepth)
   m_pCallback(0),
   m_pCallbackUser(0)
 {
-	XR_ASSERTMSG(Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
-		maxDepth));
+  XR_ASSERTMSG(Json::Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
+    maxDepth));
 }
 
 //==============================================================================
@@ -34,8 +36,8 @@ Parser::~Parser ()
 bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
         void* pUser)
 {
-  XR_ASSERT(Reader, parBuffer != 0);
-  XR_ASSERT(Reader, size >= 0);
+  XR_ASSERT(Json::Parser, parBuffer != 0);
+  XR_ASSERT(Json::Parser, size >= 0);
   m_state.SetBuffer(parBuffer, size);
   m_depth = 0;
   m_pCallback = pCallback;
@@ -136,7 +138,8 @@ bool  Parser::_ParseObject()
         break;
       }
       
-      String  str = { pKey, pKeyEnd - pKey };
+      XR_ASSERT(Json::Parser, pKeyEnd >= pKey);
+      String  str = { pKey, size_t(pKeyEnd - pKey) };
       _DoCallback(E_KEY, &str);
 
       result = !m_state.IsOver(m_state.SkipChar());

@@ -7,8 +7,9 @@
 #ifndef XR_IMAGE_HPP
 #define XR_IMAGE_HPP
 
-#include "types.hpp"
+#include "fundamentals.hpp"
 #include "CrossObject.hpp"
+#include <cstdint>
 
 namespace XR
 {
@@ -43,7 +44,7 @@ public:
   
   ///@return  The native format flag. Know your back-end.
   ///@TODO  Some form of centralised mapping of formats.
-  uint32  GetFormatNative() const;
+  uint32_t  GetFormatNative() const;
 
   ///@return  Number of bytes per pixel.
   int     GetBytesPerPixel() const;

@@ -8,6 +8,7 @@
 #define XR_TEXTUREIMPL_HPP
 
 #include "xrgl.hpp"
+#include <XR/fundamentals.hpp>
 #include <XR/Texture.hpp>
 
 namespace XR
@@ -38,16 +39,16 @@ public:
   ~TextureImpl();
 
   // general
-  int32   GetWidth() const;
-  int32   GetHeight() const;
-  int32   GetPitch() const;
+  int32_t GetWidth() const;
+  int32_t GetHeight() const;
+  int32_t GetPitch() const;
 
   bool    LoadFromFile(const char* pFileName);
   void    CopyImage(const Image& img);
 
   void    Bind(GLenum target);
   
-  uint32  GetFlags() const;
+  uint32_t  GetFlags() const;
   
   bool    GetClamping() const;
   bool    GetFiltering() const;
@@ -70,31 +71,31 @@ protected:
   SDL_Surface*  m_pSurface;
   
   GLuint        m_hTexture;
-  int32         m_width;
-  int32         m_height;
+  int32_t       m_width;
+  int32_t       m_height;
   
-  uint32        m_flags;
+  uint32_t      m_flags;
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-int32 TextureImpl::GetWidth() const
+int32_t TextureImpl::GetWidth() const
 {
   return m_width;
 }
 
 //==============================================================================
 inline
-int32 TextureImpl::GetHeight() const
+int32_t TextureImpl::GetHeight() const
 {
   return m_height;
 }
 
 //==============================================================================
 inline
-int32 TextureImpl::GetPitch() const
+int32_t TextureImpl::GetPitch() const
 {
   XR_ASSERT(TextureImpl, m_pSurface != 0);
   return m_pSurface->pitch;

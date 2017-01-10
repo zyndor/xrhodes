@@ -7,6 +7,7 @@
 #ifndef XR_INPUT_HPP
 #define XR_INPUT_HPP
 
+#include "fundamentals.hpp"
 #include "vectypes.hpp"
 #include "Callback.hpp"
 #include "KeyCode.hpp"
@@ -41,29 +42,29 @@ public:
   
   struct  PointerEvent 
   {
-    int     id;
-    int16   x0;
-    int16   y0;
-    int16   x;
-    int16   y;
-    bool    isPressed;
-    uint64  ustPressed;
+    int       id;
+    int16_t   x0;
+    int16_t   y0;
+    int16_t   x;
+    int16_t   y;
+    bool      isPressed;
+    uint64_t  ustPressed;
   };
   
   struct  MouseActionEvent
   {
     int     device;
     int     button;
-    int16   x;
-    int16   y;
+    int16_t x;
+    int16_t y;
     bool    isPressed;
   };
 
   struct  MouseMotionEvent
   {
     int     device;
-    int16   x;
-    int16   y;
+    int16_t x;
+    int16_t y;
   };
   
   struct  TouchActionEvent
@@ -92,10 +93,10 @@ public:
   static void     Update();
   
   // new
-  static uint8    GetKeyState(KeyCode k);
+  static uint8_t  GetKeyState(KeyCode k);
   
   static SVector2 GetMousePos();
-  static uint8    GetMouseState(MouseButton mb);
+  static uint8_t  GetMouseState(MouseButton mb);
   
   static bool     RegisterCallback(Event ev, Callback pCb, void* pData);
   static bool     UnregisterCallback(Event ev, Callback pCb);

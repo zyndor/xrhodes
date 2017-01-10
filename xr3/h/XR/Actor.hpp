@@ -8,7 +8,6 @@
 #define XR_ACTOR_HPP
 
 #include <map>
-#include "types.hpp"
 #include "Animation.hpp"
 #include "Hash.hpp"
 
@@ -26,7 +25,7 @@ public:
   typedef T               Type;
   typedef Animation<Type> AnimationType;
   
-  typedef std::map<uint32, AnimationType>  MapType;
+  typedef std::map<uint32_t, AnimationType>  MapType;
   
   // data
   MapType actions;
@@ -36,7 +35,7 @@ public:
   ~Actor();
   
   // general
-  const AnimationType*  GetAction(uint32 nameHash) const;
+  const AnimationType*  GetAction(uint32_t nameHash) const;
   const AnimationType*  GetAction(const char* pName) const;
 };
 
@@ -55,7 +54,7 @@ Actor<T>::~Actor()
 
 //==============================================================================
 template <class T>
-const typename Actor<T>::AnimationType* Actor<T>::GetAction( uint32 nameHash ) const
+const typename Actor<T>::AnimationType* Actor<T>::GetAction( uint32_t nameHash ) const
 {
   typename MapType::const_iterator iFind(actions.find(nameHash));
   return iFind != actions.end() ? &iFind->second : 0;

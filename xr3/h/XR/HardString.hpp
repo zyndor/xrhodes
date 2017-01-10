@@ -10,7 +10,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <algorithm>
-#include "types.hpp"
+#include "debug.hpp"
 
 namespace XR
 {
@@ -32,7 +32,7 @@ public:
   HardString();
   HardString(const char* pString);
   HardString(const char* pString, size_t size);
-  explicit HardString(int32 n);
+  explicit HardString(int32_t n);
   
   // general
   size_t          size() const;
@@ -42,13 +42,13 @@ public:
 
   const char*     find(const char* pSub) const;
   char*           find(const char* pSub);
-  const char*     find(int32 c) const;
-  char*           find(int32 c);
+  const char*     find(int32_t c) const;
+  char*           find(int32_t c);
 
   const char*     rfind(const char* pSub) const;
   char*           rfind(const char* pSub);
-  const char*     rfind(int32 c) const;
-  char*           rfind(int32 c);
+  const char*     rfind(int32_t c) const;
+  char*           rfind(int32_t c);
 
   HardString<N>   substr(size_t offs, size_t size) const;
 
@@ -61,15 +61,15 @@ public:
   // operators
   HardString<N>&  operator =(const char* pString);
   HardString<N>&  operator =(const HardString<N>& str);
-  HardString<N>&  operator =(int32 n);
+  HardString<N>&  operator =(int32_t n);
 
   HardString<N>&  operator +=(const char* pString);
   HardString<N>&  operator +=(const HardString<N>& str);
-  HardString<N>&  operator +=(int32 n);
+  HardString<N>&  operator +=(int32_t n);
 
   HardString<N>   operator +(const char* pString) const;
   HardString<N>   operator +(const HardString<N>& str) const;
-  HardString<N>   operator +(int32 n) const;
+  HardString<N>   operator +(int32_t n) const;
 
   const char&     operator[](size_t i) const;
   char&           operator[](size_t i);
@@ -154,7 +154,7 @@ HardString<N>::HardString(const char* pString, size_t size)
 //==============================================================================
 template  <size_t N>
 inline
-HardString<N>::HardString(int32 n)
+HardString<N>::HardString(int32_t n)
 {
   m_arBuffer[0] = '\0';
   operator+=(n);
@@ -211,7 +211,7 @@ char* HardString<N>::find(const char* pSub)
 //==============================================================================
 template  <size_t N>
 inline
-const char* HardString<N>::find(int32 c) const
+const char* HardString<N>::find(int32_t c) const
 {
   return strchr(m_arBuffer, c);
 }
@@ -219,7 +219,7 @@ const char* HardString<N>::find(int32 c) const
 //==============================================================================
 template  <size_t N>
 inline
-char* HardString<N>::find(int32 c)
+char* HardString<N>::find(int32_t c)
 {
   return strchr(m_arBuffer, c);
 }
@@ -243,7 +243,7 @@ char* HardString<N>::rfind(const char* pSub)
 //==============================================================================
 template  <size_t N>
 inline
-const char* HardString<N>::rfind(int32 c) const
+const char* HardString<N>::rfind(int32_t c) const
 {
   return strrchr(m_arBuffer, c);
 }
@@ -251,7 +251,7 @@ const char* HardString<N>::rfind(int32 c) const
 //==============================================================================
 template  <size_t N>
 inline
-char* HardString<N>::rfind(int32 c)
+char* HardString<N>::rfind(int32_t c)
 {
   return strrchr(m_arBuffer, c);
 }
@@ -322,7 +322,7 @@ HardString<N>& HardString<N>::operator =(const HardString<N>& str)
 
 //==============================================================================
 template  <size_t N>
-HardString<N>& HardString<N>::operator =(int32 n)
+HardString<N>& HardString<N>::operator =(int32_t n)
 {
   char  arBuffer[16];
   sprintf(arBuffer, "%d", n);
@@ -351,7 +351,7 @@ HardString<N>& HardString<N>::operator +=(const HardString<N>& str)
   
 //==============================================================================
 template  <size_t N>
-HardString<N>&  HardString<N>::operator +=(int32 n)
+HardString<N>&  HardString<N>::operator +=(int32_t n)
 {
   char  arBuffer[16];
   sprintf(arBuffer, "%d", n);
@@ -380,7 +380,7 @@ HardString<N> HardString<N>::operator +(const HardString<N>& str) const
 //==============================================================================
 template  <size_t N>
 inline
-HardString<N> HardString<N>::operator +(int32 n) const
+HardString<N> HardString<N>::operator +(int32_t n) const
 {
   HardString<N> str(*this);
   return str += n;

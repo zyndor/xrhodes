@@ -6,6 +6,7 @@
 //==============================================================================
 #include <SDL_thread.h>
 #include <XR/Worker.hpp>
+#include <XR/debug.hpp>
 
 namespace XR
 {

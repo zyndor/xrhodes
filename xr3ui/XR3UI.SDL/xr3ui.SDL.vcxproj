@@ -79,7 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\repos\xr3\xr3\h;$(SolutionDir)..\external\tinyxml-2.6.2;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)h;$(SolutionDir)..\xr3\h;$(SolutionDir)..\external\glew-2.0.0\include;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;$(SolutionDir)..\external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>XR_SDL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
@@ -90,6 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)h;$(SolutionDir)..\xr3\h;$(SolutionDir)..\external\glew-2.0.0\include;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;$(SolutionDir)..\external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,7 +100,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\repos\xr3\xr3\h;$(SolutionDir)..\external\tinyxml-2.6.2;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)h;$(SolutionDir)..\xr3\h;$(SolutionDir)..\external\glew-2.0.0\include;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;$(SolutionDir)..\external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>XR_SDL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
@@ -115,6 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)h;$(SolutionDir)..\xr3\h;$(SolutionDir)..\external\glew-2.0.0\include;$(SolutionDir)..\external\SDL2-2.0.4\include;$(SolutionDir)..\external\SDL2_image-2.0.1\include;$(SolutionDir)..\external\SDL2_mixer-2.0.1\include;$(SolutionDir)..\external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

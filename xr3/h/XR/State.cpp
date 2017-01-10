@@ -5,118 +5,118 @@
 //
 //==============================================================================
 #include "State.hpp"
-#include "types.hpp"
+#include "debug.hpp"
 
 namespace XR
 {
 
 //==============================================================================
 State::Manager::Manager()
-:	m_states()
+:  m_states()
 {}
-		
+
 //==============================================================================
 State::Manager::~Manager()
 {}
-		
-//==============================================================================
-void	State::Manager::Push(State& s)
-{
-	if(!m_states.empty())
-	{
-		m_states.back()->Exit();
-	}
-			
-	_Push(s);
-}
-		
-//==============================================================================
-void	State::Manager::Change(State& s)
-{
-	XR_ASSERT(State::Manager, !m_states.empty());
-	_Pop();
-	_Push(s);
-}
-		
-//==============================================================================
-void	State::Manager::Pop()
-{
-	XR_ASSERT(State::Manager, !m_states.empty());
-	_Pop();
-			
-	if(!m_states.empty())
-	{
-		m_states.back()->Enter();
-	}
-}
-		
-//==============================================================================
-void	State::Manager::Update(int32 ms)
-{
-	if(!m_states.empty())
-	{
-		Result	result;
-		m_states.back()->Update(ms, result);
-
-		switch(result.operation)
-		{
-		case	Result::PUSH:
-			XR_ASSERT(State::Manager, result.pState != 0);
-			Push(*result.pState);
-			break;
-
-		case	Result::CHANGE:
-			XR_ASSERT(State::Manager, result.pState != 0);
-			Change(*result.pState);
-			break;
-
-		case	Result::POP:
-			Pop();
-			break;
-		}
-	}
-}
-		
-//==============================================================================
-void	State::Manager::Render()
-{
-	if(!m_states.empty())
-	{
-		m_states.back()->Render();
-	}
-}
 
 //==============================================================================
-void	State::Manager::Clear()
+void  State::Manager::Push(State& s)
 {
-	if(!m_states.empty())
-	{
-		// Exit() and Shutdown() current state only.
-		_Pop();
+  if(!m_states.empty())
+  {
+    m_states.back()->Exit();
+  }
+      
+  _Push(s);
+}
+    
+//==============================================================================
+void  State::Manager::Change(State& s)
+{
+  XR_ASSERT(State::Manager, !m_states.empty());
+  _Pop();
+  _Push(s);
+}
+    
+//==============================================================================
+void  State::Manager::Pop()
+{
+  XR_ASSERT(State::Manager, !m_states.empty());
+  _Pop();
+      
+  if(!m_states.empty())
+  {
+    m_states.back()->Enter();
+  }
+}
+    
+//==============================================================================
+void  State::Manager::Update(int32_t ms)
+{
+  if(!m_states.empty())
+  {
+    Result  result;
+    m_states.back()->Update(ms, result);
 
-		// rest of them, if any, only need to be Shutdown().
-		while(!m_states.empty())
-		{
-			m_states.back()->Shutdown();
-			m_states.pop_back();
-		}
-	}
+    switch(result.operation)
+    {
+    case  Result::PUSH:
+      XR_ASSERT(State::Manager, result.pState != 0);
+      Push(*result.pState);
+      break;
+
+    case  Result::CHANGE:
+      XR_ASSERT(State::Manager, result.pState != 0);
+      Change(*result.pState);
+      break;
+
+    case  Result::POP:
+      Pop();
+      break;
+    }
+  }
+}
+    
+//==============================================================================
+void  State::Manager::Render()
+{
+  if(!m_states.empty())
+  {
+    m_states.back()->Render();
+  }
 }
 
 //==============================================================================
-void	State::Manager::_Push(State& s)
+void  State::Manager::Clear()
 {
-	m_states.push_back(&s);
-	s.Init();
-	s.Enter();
+  if(!m_states.empty())
+  {
+    // Exit() and Shutdown() current state only.
+    _Pop();
+
+    // rest of them, if any, only need to be Shutdown().
+    while(!m_states.empty())
+    {
+      m_states.back()->Shutdown();
+      m_states.pop_back();
+    }
+  }
 }
 
 //==============================================================================
-void	State::Manager::_Pop()
+void  State::Manager::_Push(State& s)
 {
-	m_states.back()->Exit();
-	m_states.back()->Shutdown();
-	m_states.pop_back();
+  m_states.push_back(&s);
+  s.Init();
+  s.Enter();
+}
+
+//==============================================================================
+void  State::Manager::_Pop()
+{
+  m_states.back()->Exit();
+  m_states.back()->Shutdown();
+  m_states.pop_back();
 }
 
 //==============================================================================

@@ -29,11 +29,11 @@ public:
   UIContainer&        GetContainer();
   UIEventNotifier&    GetNotifier();
   
-  void                Change(Screen& screen, int32 delayMs);
-  void                Push(Screen& screen, int32 delayMs);
-  void                Pop(int32 delayMs);
+  void                Change(Screen& screen, int32_t delayMs);
+  void                Push(Screen& screen, int32_t delayMs);
+  void                Pop(int32_t delayMs);
   
-  void                Update(int32 ms);
+  void                Update(int32_t ms);
 
   void                Render();
   void                Render(UIRenderer& r);

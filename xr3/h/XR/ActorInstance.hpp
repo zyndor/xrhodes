@@ -26,14 +26,14 @@ public:
   
   // general
   void  Enqueue(const char* pActionName, float timeScale);
-  void  Enqueue(uint32 nameHashAction, float timeScale);
+  void  Enqueue(uint32_t nameHashAction, float timeScale);
   
 protected:
   // data
-  uint32  m_nameHashNextAction;
-  float   m_timeScaleNextAction;
+  uint32_t  m_nameHashNextAction;
+  float     m_timeScaleNextAction;
 };
-  
+
 //==============================================================================
 template  <class T>
   class ActorInstance:  protected ActorInstanceCore
@@ -63,10 +63,10 @@ public:
   const AnimationInstanceType&  GetAnimation() const;
   
   void  Request(const char* pActionName, float timeScale);
-  void  Request(uint32 nameHashAction, float timeScale);
+  void  Request(uint32_t nameHashAction, float timeScale);
   
   void  RequestChange(const char* pActionName, float timeScale);
-  void  RequestChange(uint32 nameHashAction, float timeScale);
+  void  RequestChange(uint32_t nameHashAction, float timeScale);
 
   void  Update(float tDelta);
   
@@ -142,7 +142,7 @@ void ActorInstance<T>::Request( const char* pActionName, float timeScale )
 
 //==============================================================================
 template  <class T>
-void ActorInstance<T>::Request( uint32 nameHashAction, float timeScale )
+void ActorInstance<T>::Request( uint32_t nameHashAction, float timeScale )
 {
   XR_ASSERT(ActorInstance, m_pActor != 0);
   m_anim.SetAnimation(m_pActor->GetAction(nameHashAction), timeScale);
@@ -158,7 +158,7 @@ void ActorInstance<T>::RequestChange( const char* pActionName, float timeScale )
 
 //==============================================================================
 template  <class T>
-void ActorInstance<T>::RequestChange( uint32 nameHashAction, float timeScale )
+void ActorInstance<T>::RequestChange( uint32_t nameHashAction, float timeScale )
 {
   XR_ASSERT(ActorInstance, m_pActor != 0);
   const Animation<T>*  pAction(m_pActor->GetAction(nameHashAction));

@@ -7,8 +7,6 @@
 #ifndef XR_CROSSOBJECT_HPP
 #define XR_CROSSOBJECT_HPP
 
-#include "types.hpp"
-
 namespace XR
 {
 

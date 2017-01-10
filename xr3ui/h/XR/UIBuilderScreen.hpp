@@ -40,7 +40,7 @@ public:
     UIElement*  pElem;
     int         id;
     float       percent;
-    uint32      delayMs;
+    uint32_t    delayMs;
   };
   
   typedef void(*TweenCallback)(Tweenable& t, void* pUser);
@@ -61,7 +61,7 @@ public:
   
   bool                Build(TiXmlElement* pXml);
   UIElement*          GetElement(const char* pName);
-  UIElement*          GetElement(uint32 hash);
+  UIElement*          GetElement(uint32_t hash);
   
   int                 GetPadding() const;
   void                SetPadding(int padding);
@@ -99,8 +99,8 @@ protected:
   
   // internal
   virtual void  _AddElements();
-  virtual void  _Show(uint32 ms);
-  virtual void  _Hide(uint32 ms);
+  virtual void  _Show(uint32_t ms);
+  virtual void  _Hide(uint32_t ms);
   virtual void  _RemoveElements();
   
   virtual void  _Register();
@@ -121,7 +121,7 @@ UIElement*  UIBuilderScreen::GetElement(const char* pHandle)
 
 //==============================================================================
 inline
-UIElement*  UIBuilderScreen::GetElement(uint32 hash)
+UIElement*  UIBuilderScreen::GetElement(uint32_t hash)
 {
   return m_builder.GetElement(hash);
 }

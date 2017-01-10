@@ -4,14 +4,15 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <cstring>
 #include "JsonWriter.hpp"
+#include "debug.hpp"
+#include <cstring>
 
 namespace XR
 {
 namespace JSON
 {
-    
+
 //==============================================================================
 const char  Writer::kIndent = '\t';
 
@@ -75,7 +76,7 @@ void Writer::SetAutoEscape( bool pref )
 //==============================================================================
 Writer&  Writer::Start(Type rootType)
 {
-  XR_ASSERT(Writer, rootType != INVALID);
+  XR_ASSERT(Json::Writer, rootType != INVALID);
   m_stream.str("");
 
   _PushScope(rootType);
@@ -110,7 +111,7 @@ Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* pKey, const int32 value )
+Writer&  Writer::WriteValue( const char* pKey, const int32_t value )
 {
   _WriteKey(pKey);
   m_stream << value;
@@ -139,7 +140,7 @@ Writer&  Writer::WriteValue( const char* pKey, bool value )
 //==============================================================================
 Writer&  Writer::WriteObject( const char* pKey )
 {
-  XR_ASSERTMSG(Writer, m_parScopes[m_depth].type != ARRAY,
+  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type != ARRAY,
     ("Current scope is an array, named objects are invalid. Use WriteArrayObject() instead."));
   _WriteKey(pKey);
   _PushScope(OBJECT);
@@ -150,7 +151,7 @@ Writer&  Writer::WriteObject( const char* pKey )
 //==============================================================================
 Writer&  Writer::WriteArray( const char* pKey )
 {
-  XR_ASSERTMSG(Writer, m_parScopes[m_depth].type != ARRAY,
+  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type != ARRAY,
     ("Current scope is an array, named arrays are invalid. Use WriteArrayArray() instead."));
   _WriteKey(pKey);
   _PushScope(ARRAY);
@@ -168,7 +169,7 @@ Writer&  Writer::WriteArrayElement( const char* pValue )
 }
 
 //==============================================================================
-Writer&  Writer::WriteArrayElement( int32 value )
+Writer&  Writer::WriteArrayElement( int32_t value )
 {
   _WriteComma();
   m_stream << value;
@@ -197,7 +198,7 @@ Writer&  Writer::WriteArrayElement( bool value )
 //==============================================================================
 Writer&  Writer::WriteArrayObject()
 {
-  XR_ASSERTMSG(Writer, m_parScopes[m_depth].type == ARRAY,
+  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type == ARRAY,
     ("Current scope is not an array, anonymous objects are invalid. Use WriteArrayArray() instead."));
   _WriteComma();
   _PushScope(OBJECT);
@@ -208,7 +209,7 @@ Writer&  Writer::WriteArrayObject()
 //==============================================================================
 Writer& Writer::WriteArrayArray()
 {
-  XR_ASSERTMSG(Writer, m_parScopes[m_depth].type == ARRAY,
+  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type == ARRAY,
     ("Current scope is not an array, anonymous arrays are invalid. Use WriteArrayArray() instead."));
   _WriteComma();
   _PushScope(ARRAY);
@@ -219,7 +220,7 @@ Writer& Writer::WriteArrayArray()
 //==============================================================================
 Writer&  Writer::CloseScope()
 {
-  XR_ASSERT(Writer, m_depth > 0);
+  XR_ASSERT(Json::Writer, m_depth > 0);
 
   const int type(m_parScopes[m_depth].type);
   --m_depth;
@@ -250,7 +251,7 @@ std::string Writer::Finish( bool force )
     }
   }
 
-  XR_ASSERTMSG(Writer, m_depth == 0,
+  XR_ASSERTMSG(Json::Writer, m_depth == 0,
     ("CloseScope() needs to be called for %d scopes (or call Finish(true)).",
     m_depth));
   
@@ -280,7 +281,7 @@ void  Writer::_WriteKey( const char* pKey )
 //==============================================================================
 void  Writer::_WriteComma()
 {
-  XR_ASSERT(Writer, m_depth > 0);
+  XR_ASSERT(Json::Writer, m_depth > 0);
   if (m_parScopes[m_depth].isEmpty)
   {
     m_parScopes[m_depth].isEmpty = false;
@@ -301,9 +302,9 @@ static const char  karScopeBegin[2] =
 
 void  Writer::_PushScope(Type type)
 {
-  XR_ASSERT(Writer, type > INVALID);
-  XR_ASSERT(Writer, type <= ARRAY);
-  XR_ASSERT(Writer, m_depth + 1 < m_maxDepth);
+  XR_ASSERT(Json::Writer, type > INVALID);
+  XR_ASSERT(Json::Writer, type <= ARRAY);
+  XR_ASSERT(Json::Writer, m_depth + 1 < m_maxDepth);
   ++m_depth;
   m_parScopes[m_depth].type = type;
   m_parScopes[m_depth].isEmpty = true;

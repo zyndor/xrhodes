@@ -82,7 +82,7 @@ protected:
   // data
   const Rect*  m_pActiveArea; // no ownership
 
-  uint8 m_state;
+  uint8_t m_state;
   
   SVector2  m_lastTouch;
 };

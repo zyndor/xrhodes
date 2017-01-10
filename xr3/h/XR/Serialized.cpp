@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "Serialized.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

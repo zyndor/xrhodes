@@ -23,7 +23,7 @@ class Name
 public:
   // structors
   Name();
-  explicit Name(uint32 value);
+  explicit Name(uint32_t value);
   explicit Name(const char* pName, size_t length);
   explicit Name(const std::string& name);
   ~Name();
@@ -36,14 +36,14 @@ public:
   // operators
   bool  operator==(const Name& rhs) const;
 
-  Name& operator=(uint32 value);
+  Name& operator=(uint32_t value);
   Name& operator=(const std::string& name);
 
-    operator uint32() const;
+    operator uint32_t() const;
 
 private:
   // data
-  uint32  m_value;
+  uint32_t  m_value;
 
 #ifdef  XR_DEBUG
   std::string m_debugValue;
@@ -61,7 +61,7 @@ bool  Name::operator==(const Name& rhs) const
 
 //==============================================================================
 inline
-  Name::operator uint32() const
+  Name::operator uint32_t() const
 {
   return m_value;
 } 

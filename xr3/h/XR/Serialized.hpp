@@ -20,7 +20,7 @@ class Serialized
 {
 public:
   // types
-  typedef uint32  IdType;
+  typedef uint32_t  IdType;
 
   typedef void(*OnInflateCallback)(Serialized* pObject, void* pUserData);
 

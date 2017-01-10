@@ -6,6 +6,7 @@
 //==============================================================================
 #include <algorithm>
 #include "Tweener.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

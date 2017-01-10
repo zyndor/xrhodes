@@ -13,7 +13,7 @@
 namespace XR
 {
 
-typedef std::vector<uint8>  UIID;
+typedef std::vector<uint8_t>  UIID;
 
 extern const size_t kUIIDSize;
 

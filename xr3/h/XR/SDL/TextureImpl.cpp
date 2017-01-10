@@ -4,8 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <SDL_image.h>
 #include "TextureImpl.hpp"
+#include <XR/utils.hpp>
+#include <SDL_image.h>
 
 namespace XR
 {
@@ -61,7 +62,7 @@ void  TextureImpl::CopyImage(const Image& img)
 }
 
 //==============================================================================
-uint32  TextureImpl::GetFlags() const
+uint32_t  TextureImpl::GetFlags() const
 {
   return m_flags;
 }

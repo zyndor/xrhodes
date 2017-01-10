@@ -18,7 +18,7 @@ class TexturePack
 {
 public:
   // types
-  typedef std::map<uint32, Sprite>  SpriteMap;
+  typedef std::map<uint32_t, Sprite>  SpriteMap;
 
   // structors
   TexturePack();
@@ -35,11 +35,11 @@ public:
 
   Sprite*           Get(const char* pName, bool allowMissing); // no ownership transfer
   Sprite*           Get(const char* pName); // no ownership transfer
-  Sprite*           Get(uint32 hash); // no ownership transfer
+  Sprite*           Get(uint32_t hash); // no ownership transfer
 
   const Sprite*     Get(const char* pName, bool allowMissing) const; // no ownership transfer
   const Sprite*     Get(const char* pName) const;
-  const Sprite*     Get(uint32 hash) const;
+  const Sprite*     Get(uint32_t hash) const;
 
   const SpriteMap&  GetSprites() const;
 
@@ -79,7 +79,7 @@ const TexturePack::SpriteMap& TexturePack::GetSprites() const
 
 //==============================================================================
 inline
-Sprite* TexturePack::Get( uint32 hash )
+Sprite* TexturePack::Get( uint32_t hash )
 {
   SpriteMap::iterator  iFind(m_sprites.find(hash));
   return iFind != m_sprites.end() ? &iFind->second : 0;
@@ -87,7 +87,7 @@ Sprite* TexturePack::Get( uint32 hash )
 
 //==============================================================================
 inline
-const Sprite* TexturePack::Get( uint32 hash ) const
+const Sprite* TexturePack::Get( uint32_t hash ) const
 {
   SpriteMap::const_iterator  iFind(m_sprites.find(hash));
   return iFind != m_sprites.end() ? &iFind->second : 0;

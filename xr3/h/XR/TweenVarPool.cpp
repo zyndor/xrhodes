@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "TweenVarPool.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

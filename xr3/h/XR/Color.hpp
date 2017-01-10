@@ -7,8 +7,8 @@
 #ifndef XR_COLOR_HPP
 #define XR_COLOR_HPP
 
-#include "types.hpp"
 #include "maths.hpp"
+#include "debug.hpp"
 
 namespace XR
 {
@@ -37,6 +37,11 @@ public:
   
   // static
   static Color  s_default;
+
+  static float ByteToNormalized(uint8_t value)
+  {
+    return value * (1.0f / 0xff);
+  }
   
   // data
   union
@@ -61,41 +66,35 @@ public:
   {}
   
   Color(float r_, float g_, float b_)
-  : r(r_),
-    g(g_),
-    b(b_),
-    a(1.0f)
+  : Color(r_, g_, b_, 1.0f)
   {}
   
   explicit Color(const float arData[kNumComponents])
-  : r(arData[R]),
-    g(arData[G]),
-    b(arData[B]),
-    a(arData[A])
+  : Color(arData[R], arData[G], arData[B], arData[A])
   {}
 
-  explicit Color(uint32 abgr)
-  : r(float(abgr & 0xff) * XR_ONE_OVER_0XFF),
-    g(float((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF),
-    b(float((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF),
-    a(float((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF)
+  explicit Color(uint32_t abgr)
+  : Color(ByteToNormalized(abgr & 0xff),
+      ByteToNormalized((abgr >> kGreenShift) & 0xff),
+      ByteToNormalized((abgr >> kBlueShift) & 0xff),
+      ByteToNormalized((abgr >> kAlphaShift) & 0xff))
   {}
 
   // general
-  uint32  GetABGR() const
+  uint32_t  GetABGR() const
   {
-    return uint8(a * 0xff) << kAlphaShift |
-      uint8(b * 0xff) << kBlueShift |
-      uint8(g * 0xff) << kGreenShift |
-      uint8(r * 0xff);
+    return uint8_t(a * 0xff) << kAlphaShift |
+      uint8_t(b * 0xff) << kBlueShift |
+      uint8_t(g * 0xff) << kGreenShift |
+      uint8_t(r * 0xff);
   }
 
-  void  Set(uint32 abgr)
+  void  Set(uint32_t abgr)
   {
-    r = float(abgr & 0xff) * XR_ONE_OVER_0XFF;
-    g = float((abgr >> kGreenShift) & 0xff) * XR_ONE_OVER_0XFF;
-    b = float((abgr >> kBlueShift) & 0xff) * XR_ONE_OVER_0XFF;
-    a = float((abgr >> kAlphaShift) & 0xff) * XR_ONE_OVER_0XFF;
+    r = ByteToNormalized(abgr & 0xff);
+    g = ByteToNormalized((abgr >> kGreenShift) & 0xff);
+    b = ByteToNormalized((abgr >> kBlueShift) & 0xff);
+    a = ByteToNormalized((abgr >> kAlphaShift) & 0xff);
   }
 
   void  Set(float r_, float g_, float b_, float a_)

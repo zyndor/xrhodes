@@ -11,6 +11,7 @@
 #include "Callback.hpp"
 #include "File.hpp"
 #include "Log.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {
@@ -37,9 +38,9 @@ public:
   
   struct ScreenChangeEvent 
   {
-    bool    isOrientationChanged;
-    uint32  width;
-    uint32  height;
+    bool      isOrientationChanged;
+    uint32_t  width;
+    uint32_t  height;
   };
   
   // general
@@ -56,7 +57,7 @@ public:
   static bool         RegisterCallback(Event ev, Callback pCb, void* pCbData);
   static bool         UnregisterCallback(Event ev, Callback pCb);
   
-  static void         YieldOS(int32 ms);
+  static void         YieldOS(int32_t ms);
   static bool         IsYielding();
 };
 

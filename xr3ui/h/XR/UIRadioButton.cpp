@@ -8,7 +8,7 @@ namespace XR
 UIRadioButton::List UIRadioButton::s_lButtons;
 
 //==============================================================================
-void UIRadioButton::GroupClear(uint32 groupHash)
+void UIRadioButton::GroupClear(uint32_t groupHash)
 {
   for (List::iterator i0(s_lButtons.begin()), i1(s_lButtons.end()); i0 != i1; ++i0)
   {
@@ -22,7 +22,7 @@ void UIRadioButton::GroupClear(uint32 groupHash)
 }
 
 //==============================================================================
-void UIRadioButton::GroupClearExcept(uint32 groupHash, const UIRadioButton* pButton)
+void UIRadioButton::GroupClearExcept(uint32_t groupHash, const UIRadioButton* pButton)
 {
   if (pButton != 0 && pButton->m_groupHash == groupHash)
   {
@@ -61,7 +61,7 @@ void UIRadioButton::SetGroup(const char* pGroupName)
 }
 
 //==============================================================================
-void UIRadioButton::SetGroup(uint32 groupHash)
+void UIRadioButton::SetGroup(uint32_t groupHash)
 {
   if (m_groupHash != groupHash)
   {

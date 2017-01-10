@@ -7,7 +7,19 @@
 #ifndef XR_FUNDAMENTALS_HPP
 #define XR_FUNDAMENTALS_HPP
 
-#include "types.hpp"
+//==============================================================================
+///@brief Declares a non-object class, a container for all-static members.
+#define XR_NONOBJECT_DECL(className) \
+  private:\
+    className() = delete;\
+    ~className() = delete;
+
+//==============================================================================
+///@brief Declares a non-copyable class.
+#define XR_NONCOPY_DECL(className) \
+  private:\
+    className(const className& rhs) = delete;\
+    className& operator=(const className& rhs) = delete;
 
 namespace XR
 {

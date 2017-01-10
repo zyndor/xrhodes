@@ -8,7 +8,7 @@
 #define XR_FILE_HPP
 
 #include "fundamentals.hpp"
-#include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {
@@ -64,8 +64,8 @@ public:
   static void         Init();
   static void         Exit();
   
-  static bool         SecureSave(void* pBuffer, uint16 size);
-  static bool         SecureLoad(void* pBuffer, uint16 size);
+  static bool         SecureSave(void* pBuffer, uint16_t size);
+  static bool         SecureLoad(void* pBuffer, uint16_t size);
   static SecureError  SecureGetError();
   static const char*  SecureGetErrorString();
 

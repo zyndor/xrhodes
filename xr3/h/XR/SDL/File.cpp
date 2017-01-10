@@ -6,6 +6,8 @@
 //==============================================================================
 #include <XR/File.hpp>
 #include <XR/HardString.hpp>
+#include <XR/utils.hpp>
+#include <XR/debug.hpp>
 #include <algorithm>
 #include <fstream>
 
@@ -43,13 +45,13 @@ void File::Exit()
 }
 
 //==============================================================================
-bool File::SecureSave(void* pBuffer, uint16 size)
+bool File::SecureSave(void* pBuffer, uint16_t size)
 {
   return false;
 }
 
 //==============================================================================
-bool File::SecureLoad(void* pBuffer, uint16 size)
+bool File::SecureLoad(void* pBuffer, uint16_t size)
 {
   return false;
 }
@@ -161,7 +163,7 @@ char* File::ReadLine(int hFile, size_t bufferSize, char* parBuffer)
   --bufferSize;
   int result(0);
   char* pWrite(parBuffer);
-  for (int i = 0; i < bufferSize; ++i)
+  for (size_t i = 0; i < bufferSize; ++i)
   {
     result = fread(pWrite, 1, 1, s_fileImpl.arpFile[hFile]);
     char  c(*pWrite);
@@ -215,7 +217,7 @@ File::Error File::GetError()
 {
   int error(0);
   return static_cast<Error>(std::find(karErrorMappings,
-    karErrorMappings + XR_ARR_SIZE(karErrorMappings),
+    karErrorMappings + XR_ARRAY_SIZE(karErrorMappings),
     error) - karErrorMappings);
 }
 

@@ -8,6 +8,7 @@
 #define XR_MODULE_HPP
 
 #include "types.hpp"
+#include "fundamentals.hpp"
 
 namespace XR {
 
@@ -22,7 +23,7 @@ public:
   ~Module();
   
   // virtual
-  virtual void  Update(int32 tDelta) =0;
+  virtual void  Update(int32_t tDelta) =0;
   virtual void  Render() =0;
 };
 

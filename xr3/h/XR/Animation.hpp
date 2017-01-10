@@ -8,7 +8,6 @@
 #define XR_ANIMATION_HPP
 
 #include <vector>
-#include "types.hpp"
 #include "ResManager.hpp"
 
 namespace XR

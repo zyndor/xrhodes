@@ -90,13 +90,13 @@ void UILabel::PrepareText( const char* pText )
 //==============================================================================
 void UILabel::SetWidthToText()
 {
-  w = m_text.GetMaxLineWidth();
+  w = int32_t(std::ceilf(m_text.GetMaxLineWidth()));
 }
 
 //==============================================================================
 void UILabel::SetHeightToText()
 {
-  h = m_text.GetHeight();
+  h = int32_t(std::ceilf(m_text.GetHeight()));
 }
 
 //==============================================================================
@@ -109,7 +109,7 @@ void UILabel::SetSizeToText()
 //==============================================================================
 int UILabel::GetLineWidth( int line ) const
 {
-  return m_text.GetLineWidth(line);
+  return int32_t(std::ceilf(m_text.GetLineWidth(line)));
 }
 
 //==============================================================================
