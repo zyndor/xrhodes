@@ -11,6 +11,7 @@
 #include <XR/Renderer.hpp>
 #include <XR/utils.hpp>
 #include <SDL_events.h>
+#include <SDL.h>
 #include <cstdlib>
 
 namespace XR
@@ -28,8 +29,8 @@ static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* pSystem)
   Device::ScreenChangeEvent e =
   {
     false,
-    pEvent->window.data1,
-    pEvent->window.data2
+    uint32_t(pEvent->window.data1),
+    uint32_t(pEvent->window.data2)
   };
 
   CallbackObject::CallList(cbos, &e);

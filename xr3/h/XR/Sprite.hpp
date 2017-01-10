@@ -10,6 +10,7 @@
 #include "Renderer.hpp"
 #include "AABB.hpp"
 #include "BasicMesh.hpp"
+#include "fundamentals.hpp"
 
 namespace XR
 {

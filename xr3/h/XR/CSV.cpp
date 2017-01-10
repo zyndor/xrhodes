@@ -4,9 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include  "CSV.hpp"
-#include  "FileBuffer.hpp"
-#include  "Hash.hpp"
+#include "CSV.hpp"
+#include "FileBuffer.hpp"
+#include "Hash.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

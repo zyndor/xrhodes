@@ -7,6 +7,7 @@
 #include "Hash.hpp"
 #include "JsonEntity.hpp"
 #include "functors.hpp"
+#include "debug.hpp"
 #include <cstring>
 #include <algorithm>
 #include <iterator>
@@ -23,7 +24,7 @@ Entity::Entity(Type t)
   m_pPrevSibling(0),
   m_pNextSibling(0)
 {
-  XR_ASSERT(Entity, t > ANY);
+  XR_ASSERT(Json::Entity, t > ANY);
 }
 
 //==============================================================================
@@ -42,7 +43,7 @@ Entity* Entity::LinkPrevSibling(Entity* p)
   m_pPrevSibling = p;
   if (p != 0)
   {
-    XR_ASSERT(Entity, p->GetNextSibling() == 0);
+    XR_ASSERT(Json::Entity, p->GetNextSibling() == 0);
     p->m_pNextSibling = this;
   }
   return pTemp;
@@ -60,7 +61,7 @@ Entity* Entity::LinkNextSibling(Entity* p)
   m_pNextSibling = p;
   if (p != 0)
   {
-    XR_ASSERT(Entity, p->GetPrevSibling() == 0);
+    XR_ASSERT(Json::Entity, p->GetPrevSibling() == 0);
     p->m_pPrevSibling = this;
   }
   return pTemp;
@@ -169,7 +170,7 @@ void Value::SetValue(const char* pValue)
 //==============================================================================
 void Value::SetValue(const char* pValue, int len)
 {
-  XR_ASSERT(Value, len >= 0);
+  XR_ASSERT(Json::Value, len >= 0);
   delete[] m_parValue;
   
   if (pValue == 0)
@@ -276,13 +277,13 @@ const char* Object::GetValue() const
 //==============================================================================
 Entity* Object::GetChild(const char* pKey, Type acceptType) const
 {
-  XR_ASSERT(Object, pKey != 0);
+  XR_ASSERT(Json::Object, pKey != 0);
   uint32_t  hash(Hash::String(pKey));
   Child::Map::const_iterator iFind(m_children.find(hash));
   Entity* pResult = 0;
   if (iFind != m_children.end())
   {
-    XR_ASSERT(Object, acceptType == ANY ||
+    XR_ASSERT(Json::Object, acceptType == ANY ||
       iFind->second.pEntity->GetType() == acceptType);
     pResult = iFind->second.pEntity;
   }
@@ -298,21 +299,21 @@ Entity* Object::GetElement(int id, Type acceptType) const
 //==============================================================================
 void  Object::AddChild(const char* pKey, Entity* pEntity)
 {
-  XR_ASSERT(Object, pEntity != 0);
+  XR_ASSERT(Json::Object, pEntity != 0);
   AddChild(std::string(pKey), pEntity);
 }
 
 //==============================================================================
 void  Object::AddChild(const char* pKey, size_t keySize, Entity* pEntity)
 {
-  XR_ASSERT(Object, pEntity != 0);
+  XR_ASSERT(Json::Object, pEntity != 0);
   AddChild(std::string(pKey, keySize), pEntity);
 }
 
 //==============================================================================
 void  Object::AddChild(std::string name, Entity* pEntity)
 {
-  XR_ASSERT(Object, pEntity != 0);
+  XR_ASSERT(Json::Object, pEntity != 0);
   const uint32_t  hash(Hash::String(name.c_str()));
   Child::Map::iterator iFind(m_children.find(hash));
   if (iFind != m_children.end())
@@ -336,13 +337,13 @@ void  Object::AddChild(std::string name, Entity* pEntity)
   if (hasPrev)
   {
     --iPrev;
-    XR_ASSERT(Object, hasNext || iPrev->second.pEntity->GetNextSibling() == 0);
+    XR_ASSERT(Json::Object, hasNext || iPrev->second.pEntity->GetNextSibling() == 0);
     iPrev->second.pEntity->LinkNextSibling(pEntity);
   }
   
   if (hasNext)
   {
-    XR_ASSERT(Object, hasPrev || iPrev->second.pEntity->GetPrevSibling() == 0);
+    XR_ASSERT(Json::Object, hasPrev || iPrev->second.pEntity->GetPrevSibling() == 0);
     iNext->second.pEntity->LinkPrevSibling(pEntity);
   }
 }
@@ -436,7 +437,7 @@ int Array::GetValueSize() const
 //==============================================================================
 void Array::AddElement(Entity* pEntity)
 {
-  XR_ASSERT(Object, pEntity != 0);
+  XR_ASSERT(Json::Array, pEntity != 0);
   Entity* pPrev(0);
   if (m_elements.size() > 0)
   {
@@ -456,9 +457,9 @@ Entity* Array::GetChild(const char* pKey, Type acceptType) const
 //==============================================================================
 Entity* Array::GetElement(int id, Type acceptType) const
 {
-  XR_ASSERT(Array, id >= 0);
-  XR_ASSERT(Array, id < static_cast<int>(m_elements.size()));
-  XR_ASSERT(Object, acceptType == ANY ||
+  XR_ASSERT(Json::Array, id >= 0);
+  XR_ASSERT(Json::Array, id < static_cast<int>(m_elements.size()));
+  XR_ASSERT(Json::Array, acceptType == ANY ||
     m_elements[id]->GetType() == acceptType);
   return m_elements[id];
 }

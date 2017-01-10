@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "Hash.hpp"
+#include "debug.hpp"
 #include <algorithm>
 #include <map>
 #include <string>

@@ -8,6 +8,7 @@
 #include "TexturePack.hpp"
 #include "utils.hpp"
 #include "strings.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

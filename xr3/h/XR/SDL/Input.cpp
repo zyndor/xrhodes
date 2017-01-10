@@ -4,8 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <SDL_touch.h>
 #include "InputImpl.hpp"
+#include <SDL_touch.h>
+#include <SDL.h>
 
 namespace XR
 {

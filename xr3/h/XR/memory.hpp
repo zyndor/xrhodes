@@ -7,8 +7,8 @@
 #ifndef XR_MEMORY_HPP
 #define XR_MEMORY_HPP
 
-#include  <stdlib.h>
-#include "types.hpp"  // XR_ASSERT, temporary
+#include <stdlib.h>
+#include "debug.hpp"
 
 namespace XR
 {

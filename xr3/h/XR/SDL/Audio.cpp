@@ -6,6 +6,7 @@
 //==============================================================================
 #include <XR/Audio.hpp>
 #include <XR/Device.hpp>
+#include <XR/debug.hpp>
 #include <SDL_mixer.h>
 #include <string.h>
 

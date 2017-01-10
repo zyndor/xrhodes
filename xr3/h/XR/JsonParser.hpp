@@ -19,49 +19,49 @@ namespace JSON
 class Parser
 {
 public:
-	// types
-	enum	Event
-	{
-		E_KEY,
-		E_VALUE,
-		E_ARRAY_BEGIN,
-		E_ARRAY_END,
-		E_OBJECT_BEGIN,
-		E_OBJECT_END
-	};
-	
-	struct	String
-	{
-		const char*	pString;
-		size_t			length;
-	};
-	
-	typedef void(*Callback)(Event e, const String* data, void* pUser);
-	
-	// structors
-	explicit Parser(int maxDepth = kMaxParseDepthDefault);
-	~Parser();
-	
-	// general
-	///@return The internal state.
-	const ParserCore& GetState() const;
-	
-	///@brief Parses the string in @a parBuffer, 
-	bool	Parse(const char* parBuffer, int size, Callback pCallback, void* pUser);
-	
+  // types
+  enum  Event
+  {
+    E_KEY,
+    E_VALUE,
+    E_ARRAY_BEGIN,
+    E_ARRAY_END,
+    E_OBJECT_BEGIN,
+    E_OBJECT_END
+  };
+  
+  struct  String
+  {
+    const char* pString;
+    size_t      length;
+  };
+  
+  typedef void(*Callback)(Event e, const String* data, void* pUser);
+  
+  // structors
+  explicit Parser(int maxDepth = kMaxParseDepthDefault);
+  ~Parser();
+  
+  // general
+  ///@return The internal state.
+  const ParserCore& GetState() const;
+  
+  ///@brief Parses the string in @a parBuffer, 
+  bool  Parse(const char* parBuffer, int size, Callback pCallback, void* pUser);
+  
 private:
-	// data
-	ParserCore	m_state;
-	int				 m_depth;
-	int				 m_maxDepth;
-	Callback		m_pCallback;
-	void*			 m_pCallbackUser;
-	
-	// internal
-	bool	_ParseArray();
-	bool	_ParseObject();
-	bool	_ParseValue();
-	void	_DoCallback(Event e, const String* pData);
+  // data
+  ParserCore  m_state;
+  int         m_depth;
+  int         m_maxDepth;
+  Callback    m_pCallback;
+  void*       m_pCallbackUser;
+  
+  // internal
+  bool  _ParseArray();
+  bool  _ParseObject();
+  bool  _ParseValue();
+  void  _DoCallback(Event e, const String* pData);
 };
 
 //==============================================================================
@@ -70,7 +70,7 @@ private:
 inline
 const ParserCore& Parser::GetState() const
 {
-	return m_state;
+  return m_state;
 }
 
 } // JSON

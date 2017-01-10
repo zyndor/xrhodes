@@ -7,10 +7,10 @@
 #ifndef XR_VECTYPES_HPP
 #define XR_VECTYPES_HPP
 
+#include "debug.hpp"
+#include "maths.hpp"
 #include <cstring>
 #include <algorithm>
-#include "types.hpp"
-#include "maths.hpp"
 
 namespace XR
 {

@@ -7,11 +7,12 @@
 #ifndef XR_JSONENTITY_HPP
 #define XR_JSONENTITY_HPP
 
+#include "json.hpp"
+#include "debug.hpp"
 #include <map>
 #include <vector>
 #include <list>
 #include <string>
-#include "json.hpp"
 
 namespace XR
 {
@@ -250,7 +251,7 @@ Type Entity::GetType() const
 inline
 Value* Entity::ToValue()
 {
-  XR_ASSERT(Entity, m_type == VALUE);
+  XR_ASSERT(Json::Entity, m_type == VALUE);
   return m_type == VALUE ? static_cast<Value*>(this) : 0;
 }
 
@@ -258,7 +259,7 @@ Value* Entity::ToValue()
 inline
 Array* Entity::ToArray()
 {
-  XR_ASSERT(Entity, m_type == ARRAY);
+  XR_ASSERT(Json::Entity, m_type == ARRAY);
   return m_type == ARRAY ? static_cast<Array*>(this) : 0;
 }
 
@@ -266,7 +267,7 @@ Array* Entity::ToArray()
 inline
 Object* Entity::ToObject()
 {
-  XR_ASSERT(Entity, m_type == OBJECT);
+  XR_ASSERT(Json::Entity, m_type == OBJECT);
   return m_type == OBJECT ? static_cast<Object*>(this) : 0;
 }
 

@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "Application.hpp"
+#include "debug.hpp"
 
 namespace XR
 {
@@ -51,6 +52,8 @@ void Application::SetFrameDelayMs(int32_t ms)
   XR_ASSERT(Application, !m_isRunning);
   XR_ASSERT(Application, ms > 0);
   m_frameDelayMs = ms;
+
+  // If the frame capping is smaller than the frame delay, then bump it up.
   if(m_frameCappingMs < ms)
   {
     m_frameCappingMs = ms;
@@ -61,12 +64,7 @@ void Application::SetFrameDelayMs(int32_t ms)
 void Application::SetFrameCappingMs(int32_t ms)
 {
   XR_ASSERT(Application, !m_isRunning);
-  XR_ASSERT(Application, ms > 0);
-  if(ms < m_frameDelayMs)
-  {
-    ms = m_frameDelayMs;
-    XR_ERROR(("Frame capping can't be set lower than frame delay."));
-  }
+  XR_ASSERT(Application, ms >= m_frameDelayMs);
   m_frameCappingMs = ms;
 }
 

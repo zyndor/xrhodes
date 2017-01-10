@@ -6,7 +6,7 @@
 //==============================================================================
 #include <string>
 #include "FileBuffer.hpp"
-#include "types.hpp"  // XR_ASSERT, temporary
+#include "debug.hpp"
 
 namespace XR
 {

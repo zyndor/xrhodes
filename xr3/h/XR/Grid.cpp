@@ -5,8 +5,8 @@
 //
 //==============================================================================
 #include <cmath>
-#include "types.hpp"
 #include "Grid.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

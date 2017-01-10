@@ -7,6 +7,7 @@
 #include <XR/File.hpp>
 #include <XR/HardString.hpp>
 #include <XR/utils.hpp>
+#include <XR/debug.hpp>
 #include <algorithm>
 #include <fstream>
 

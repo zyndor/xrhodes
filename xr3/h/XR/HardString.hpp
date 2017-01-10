@@ -10,7 +10,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <algorithm>
-#include "types.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

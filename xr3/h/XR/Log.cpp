@@ -6,6 +6,7 @@
 //==============================================================================
 #include "Log.hpp"
 #include "File.hpp"
+#include "debug.hpp"
 #include <cstring>
 
 namespace XR

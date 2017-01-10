@@ -7,7 +7,7 @@
 #ifndef XR_EVENTDISPATCHER_HPP
 #define XR_EVENTDISPATCHER_HPP
 
-#include <XR/types.hpp>
+#include <XR/debug.hpp>
 #include <list>
 #include <map>
 #include <algorithm>

@@ -10,6 +10,8 @@
 #include <XR/Device.hpp>
 #include <XR/Pool.hpp>
 #include <XR/ProjectionHelpers.hpp>
+#include <XR/debug.hpp>
+#include <SDL.h>
 
 namespace XR
 {

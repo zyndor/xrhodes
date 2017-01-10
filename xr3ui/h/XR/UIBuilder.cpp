@@ -1,7 +1,3 @@
-#include <XR/Hash.hpp>
-#include <XR/Parse.hpp>
-#include <XR/Pool.hpp>
-#include <XR/utils.hpp>
 #include "UIBuilder.hpp"
 #include "UISpacer.hpp"
 #include "UIRadioButton.hpp"
@@ -16,6 +12,11 @@
 #include "UIHorizontalScrollingLayout.hpp"
 #include "UIVerticalScrollingLayout.hpp"
 #include "UIGridLayout.hpp"
+#include <XR/debug.hpp>
+#include <XR/Hash.hpp>
+#include <XR/Parse.hpp>
+#include <XR/Pool.hpp>
+#include <XR/utils.hpp>
 
 namespace XR
 {

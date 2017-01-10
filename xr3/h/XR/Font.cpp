@@ -9,6 +9,7 @@
 #include "FileBuffer.hpp"
 #include "Font.hpp"
 #include "utils.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

@@ -7,78 +7,56 @@
 #ifndef XR_DEBUG_HPP
 #define XR_DEBUG_HPP
 
-#include "Timer.hpp"
+#include <cstdio>
 
-#if defined MARMALADE
-#include <IwDebug.h>
+//==============================================================================
+///@brief Printf followed by explicit flush.
+#define XR_RAWTRACE(format)	printf format; fflush(stdout);
 
-#define XR_TRACE(chnl, msg)             IwTrace(chnl, msg)
-#define XR_ASSERT(chnl, cond)           XR_ASSERT(chnl, (cond))
-#define XR_ASSERT_MSG(chnl, cond, msg)  XR_ASSERT(chnl, (cond), msg)
-#define XR_ERROR(msg)                   IwError(msg)
+//==============================================================================
+///@brief Binary debugging aid - wrap call to ascertain whether it causes a crash.
+#define XR_CRASHTEST(call)  { XR_RAWTRACE(("At: %s\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"; }
 
-#elif defined
-#else
-#include <cstring>
+//==============================================================================
+// Platform / backend specific trace / assert functionality.
+//
+#if defined(XR_SDL)
+// SDL -- for now, use printf and SDL_assert.
+#include <SDL_assert.h>
 
-namespace XR
-{
-static char arLogBuffer[256];
+#if !defined(XR_DEBUG) && defined(XR_DEBUG_PERFORMANCE)
+#define XR_DEBUG
+#endif
 
-void xrDebugPrintChannel(const char* pChannel);
-
-// implementation
-*/
-inline
-void __xrDebugPrintChannel(const char* pChannel)
-{
-  int year, month, day, hour, minute, second, milliSec;
-  year %= 9999;
-  month %= 12;
-  day %= 31;
-  hour %= 24;
-  minute %= 60;
-  second %= 60;
-  milliSec %= 1000;
-  printf("%04d-%02d-%02d %02d:%02d:%02d.%03d [%s] ",
-    year, month, day, hour, minute, second, milliSec,
-    pChannel);
-}
-
-} //XR
-
+#if defined(XR_DEBUG)
 #define XR_TRACE(chnl, msg)\
-#if !defined NDEBUG\
-  XR::__DebugPrintChannel(#chnl)\
-  printf msg ;\
-  printf("\n");\
+  printf("[%s]", #chnl); printf msg; XR_RAWTRACE(("\n"));\ // IMPROVE
+#else
+#define XR_TRACE(chnl, msg)
 #endif
 
-#define XR_ASSERT(chnl, cond)\
-#if !defined NDEBUG\
-  if (!cond)\
-  {\
-    XR::__DebugPrintChannel(#chnl)\
-    printf("Condition '%s' failed.\n", #cond);\
-    asm { int 3 };\
-  }\
-#endif
-
-#define XR_ASSERT_MSG(chnl, cond, msg)\
-#if !defined NDEBUG\
-  if (!cond)\
-  {\
-    XR::__DebugPrintChannel(#chnl)\
-    printf("Condition '%s' failed. ", #cond);\
-    printf msg ;\
-    asm { int 3 };\
-  }\
-#endif
+#define XR_ASSERT(chnl, cond)         SDL_assert(cond)
+#define XR_ASSERTMSG(chnl, cond, msg) SDL_assert(cond) // FIXME: chnl, msg use
 
 #define XR_ERROR(msg)\
-  printf msg ;\
-  asm { int 3 };
+  {\
+    XR_RAWTRACE(msg);\
+    SDL_TriggerBreakpoint();\
+  }\
 
+//
+#elif defined(XR_MARMALADE)
+// Marmalade -- just use Marmalade's trace / assert functionality
+#include "IwDebug.h"
+
+#if !defined(XR_DEBUG) && (defined(IW_DEBUG) || defined(XR_DEBUG_PERFORMANCE))
+#define XR_DEBUG
+#endif
+
+#define XR_TRACE(chnl, msg)             IwTrace(chnl, msg)
+#define XR_ASSERT(chnl, cond)           IwAssert(chnl, cond)
+#define XR_ASSERTMSG(chnl, cond, msg)   IwAssertMsg(chnl, cond, msg)
+#define XR_ERROR(msg)                   IwError(msg)
 
 #endif
 

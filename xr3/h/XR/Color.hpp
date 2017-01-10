@@ -7,8 +7,8 @@
 #ifndef XR_COLOR_HPP
 #define XR_COLOR_HPP
 
-#include "types.hpp"
 #include "maths.hpp"
+#include "debug.hpp"
 
 namespace XR
 {
