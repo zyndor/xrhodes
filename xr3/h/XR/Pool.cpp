@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "Pool.hpp"
-#include "types.hpp"
+#include "debug.hpp"
 
 namespace XR
 {
@@ -76,7 +76,7 @@ Byte* Pool::RegainBuffer()
 //==============================================================================
 void  Pool::SetBuffer(size_t size, bool isAuto, Byte* parBuffer)
 {
-  XR_ASSERTMSG(XR::Pool, m_parBuffer == m_pNext,
+  XR_ASSERTMSG(Pool, m_parBuffer == m_pNext,
     ("Already allocated from pool; those objects will be invalidated."));
   if (m_isAuto)
   {
@@ -101,8 +101,8 @@ void  Pool::SetBuffer(size_t size, bool isAuto, Byte* parBuffer)
 //==============================================================================
 void* Pool::Allocate(size_t numBytes)
 {
-  XR_ASSERT(Pool::Pool, numBytes >= 0);
-  XR_ASSERT(Pool::Pool, m_parBuffer != 0);
+  XR_ASSERT(Pool, numBytes >= 0);
+  XR_ASSERT(Pool, m_parBuffer != 0);
 
   Byte  *pNext(m_pNext + numBytes);
   if (pNext <= m_pEnd)
@@ -132,7 +132,7 @@ void  Pool::Push()
 //==============================================================================
 void  Pool::Pop()
 {
-  XR_ASSERT(Pool::Pool, !m_frames.empty());
+  XR_ASSERT(Pool, !m_frames.empty());
   Flush();
   m_frames.pop_back();
 }

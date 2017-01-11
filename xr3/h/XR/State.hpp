@@ -8,7 +8,7 @@
 #define XR_STATE_HPP
 
 #include <list>
-#include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {

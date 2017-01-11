@@ -7,8 +7,9 @@
 #ifndef XR_RINGBUFFER_HPP
 #define XR_RINGBUFFER_HPP
 
+#include "debug.hpp"
 #include <vector>
-#include "types.hpp"
+#include <cstdint>
 
 namespace XR
 {
@@ -54,11 +55,11 @@ public:
   ~RingBuffer();
 
   // general
-  size_t      Size() const;
-  void        Resize(size_t size);
+  size_t            Size() const;
+  void              Resize(size_t size);
   
-  void        PutBack(ValueType d);
-  void        PutFront(ValueType d);
+  void              PutBack(ValueType d);
+  void              PutFront(ValueType d);
 
   ValueType&        GetBack();
   const ValueType&  GetBack() const;

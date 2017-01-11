@@ -7,8 +7,8 @@
 #ifndef XR_UIID_HPP
 #define XR_UIID_HPP
 
-#include  <vector>
-#include  "types.hpp"
+#include <vector>
+#include <cstdint>
 
 namespace XR
 {

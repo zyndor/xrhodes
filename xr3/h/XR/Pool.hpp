@@ -7,8 +7,8 @@
 #ifndef XR_POOL_HPP
 #define XR_POOL_HPP
 
-#include <list>
 #include "memory.hpp"
+#include <list>
 
 namespace XR
 {

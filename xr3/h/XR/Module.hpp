@@ -7,8 +7,8 @@
 #ifndef XR_MODULE_HPP
 #define XR_MODULE_HPP
 
-#include "types.hpp"
 #include "fundamentals.hpp"
+#include <cstdint>
 
 namespace XR {
 

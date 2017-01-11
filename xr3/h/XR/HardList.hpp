@@ -7,8 +7,8 @@
 #ifndef XR_HARDLIST_HPP
 #define XR_HARDLIST_HPP
 
-#include "types.hpp"
 #include "typeutils.hpp"
+#include "debug.hpp"
 
 namespace XR
 {

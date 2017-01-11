@@ -8,7 +8,7 @@
 #define XR_TWEAKBENCH_HPP
 
 #include  <map>
-#include  "types.hpp"
+#include  <cstdint>
 
 namespace XR
 {

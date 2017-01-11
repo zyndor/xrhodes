@@ -9,7 +9,6 @@
 
 #include <list>
 #include <tinyxml.h>
-#include "types.hpp"
 #include "strings.hpp"
 #include "Parse.hpp"
 #include "Animation.hpp"
