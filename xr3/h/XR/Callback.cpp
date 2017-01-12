@@ -20,14 +20,14 @@ void  CallbackObject::CallList(List& l, void* pSystem)
 
 //==============================================================================
 CallbackObject::CallbackObject()
-: pCb(0),
-  pCbData(0)
+: pCallback(0),
+  pUserData(0)
 {}
 
 //==============================================================================
 CallbackObject::CallbackObject(Callback pCb_, void* pCbData_)
-: pCb(pCb_),
-  pCbData(pCbData_)
+: pCallback(pCb_),
+  pUserData(pCbData_)
 {}
 
 //==============================================================================
@@ -37,8 +37,8 @@ CallbackObject::~CallbackObject()
 //==============================================================================
 void  CallbackObject::Set(Callback pCb_, void* pCbData_)
 {
-  pCb = pCb_;
-  pCbData = pCbData_;
+  pCallback = pCb_;
+  pUserData = pCbData_;
 }
 
 } // XR

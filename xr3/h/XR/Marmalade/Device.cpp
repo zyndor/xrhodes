@@ -141,7 +141,7 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
   for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
     i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
   {
-    if(i0->pCb == pCb)
+    if(i0->pCallback == pCb)
     {
       return false;
     }
@@ -153,7 +153,7 @@ bool Device::RegisterCallback( Event ev, Callback pCb, void* pCbData )
     for(CallbackObject::List::iterator i0(s_pDevice->arPostponedAdd[ev].begin()),
       i1(s_pDevice->arPostponedAdd[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCb == pCb)
+      if(i0->pCallback == pCb)
       {
         return false;
       }
@@ -179,7 +179,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
     for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
       i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCb == pCb)
+      if(i0->pCallback == pCb)
       {
         s_pDevice->arPostponedRemove[ev].push_back(*i0);
         return true;
@@ -190,7 +190,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
     for(CallbackObject::List::iterator i0(s_pDevice->arPostponedAdd[ev].begin()),
       i1(s_pDevice->arPostponedAdd[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCb == pCb)
+      if(i0->pCallback == pCb)
       {
         i0 = s_pDevice->arPostponedAdd[ev].erase(i0);
         return true;
@@ -203,7 +203,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCb )
     for(CallbackObject::List::iterator i0(s_pDevice->arCallbacks[ev].begin()),
       i1(s_pDevice->arCallbacks[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCb == pCb)
+      if(i0->pCallback == pCb)
       {
         s_pDevice->arCallbacks[ev].erase(i0);
         return true;
@@ -227,7 +227,7 @@ void  Device::YieldOS(int32 ms)
     CallbackObject::List& lRemove(s_pDevice->arPostponedRemove[i]);
     while(!lRemove.empty())
     {
-      bool  result(UnregisterCallback(e, lRemove.front().pCb));
+      bool  result(UnregisterCallback(e, lRemove.front().pCallback));
       XR_ASSERT(Device, result);
       lRemove.pop_front();
     }
@@ -236,7 +236,7 @@ void  Device::YieldOS(int32 ms)
     while(!lAdd.empty())
     {
       CallbackObject& cbo(lAdd.front());
-      bool  result(RegisterCallback(e, cbo.pCb, cbo.pCbData));
+      bool  result(RegisterCallback(e, cbo.pCallback, cbo.pUserData));
       XR_ASSERT(Device, result);
       lAdd.pop_front();
     }

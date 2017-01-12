@@ -184,7 +184,7 @@ bool Input::RegisterCallback( Event ev, Callback pCb, void* pData )
   for(CallbackObject::List::iterator i0(s_pInput->arCallback[ev].begin()),
     i1(s_pInput->arCallback[ev].end()); i0 != i1; ++i0)
   {
-    if(i0->pCb == pCb)
+    if(i0->pCallback == pCb)
     {
       return false;
     }
@@ -202,7 +202,7 @@ bool Input::UnregisterCallback( Event ev, Callback pCb )
   for(CallbackObject::List::iterator i0(s_pInput->arCallback[ev].begin()),
     i1(s_pInput->arCallback[ev].end()); i0 != i1; ++i0)
   {
-    if(i0->pCb == pCb)
+    if(i0->pCallback == pCb)
     {
       s_pInput->arCallback[ev].erase(i0);
       return true;
