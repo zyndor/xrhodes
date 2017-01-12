@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UISpacer.hpp
-// @author  Gyorgy Straub
-// @date    21/06/2012
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UISPACER_HPP
+#ifndef XR_UISPACER_HPP
 #define XR_UISPACER_HPP
 
 #include "UIElement.hpp"

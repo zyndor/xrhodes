@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIProgressBarBase.hpp
-// @author  Gyorgy Straub
-// @date    07/01/2013
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIPROGRESSBARBASE_HPP
+#ifndef XR_UIPROGRESSBARBASE_HPP
 #define XR_UIPROGRESSBARBASE_HPP
 
 #include "UIImage.hpp"

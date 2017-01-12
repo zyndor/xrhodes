@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIContainer.hpp
-// @author  Gyorgy Straub
-// @date    21/06/2012
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UICONTAINER_HPP
+#ifndef XR_UICONTAINER_HPP
 #define XR_UICONTAINER_HPP
 
 #include "UIElement.hpp"

@@ -1,10 +1,7 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// @author  Gyorgy Straub
-//
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
 #ifndef XR_UIELEMENT_HPP

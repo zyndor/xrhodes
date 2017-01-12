@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIColoredElement.hpp
-// @author  Gyorgy Straub
-// @date    17/07/2012
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UICOLOREDELEMENT_HPP
+#ifndef XR_UICOLOREDELEMENT_HPP
 #define XR_UICOLOREDELEMENT_HPP
 
 #include <XR/maths.hpp>

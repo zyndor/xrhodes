@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UICheckBox.hpp
-// @author  Gyorgy Straub
-// @date    23/08/2013
-//
-// copyright (c) 2011 - 2013. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UICHECKBOX_HPP
+#ifndef XR_UICHECKBOX_HPP
 #define XR_UICHECKBOX_HPP
 
 #include <list>

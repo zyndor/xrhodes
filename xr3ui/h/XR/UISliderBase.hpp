@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UISliderBase.hpp
-// @author  Gyorgy Straub
-// @date    16/07/2012
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UISLIDERBASE_HPP
+#ifndef XR_UISLIDERBASE_HPP
 #define XR_UISLIDERBASE_HPP
 
 #include "UIImage.hpp"

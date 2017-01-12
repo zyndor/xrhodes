@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIImagePanel.hpp
-// @author  Gyorgy Straub
-// @date    22/05/2013
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIIMAGEPANEL_HPP
+#ifndef XR_UIIMAGEPANEL_HPP
 #define XR_UIIMAGEPANEL_HPP
 
 #include "UIImage.hpp"

@@ -1,13 +1,12 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// copyright (c) 2011 - 2016. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Renderer.hpp>
 #include "UIElement.hpp"
 #include "UIEventNotifier.hpp"
+#include <XR/Renderer.hpp>
 
 namespace XR
 {

@@ -1,7 +1,13 @@
-#include <malloc.h>
-#include <string.h>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "UILabel.hpp"
 #include "UIRenderer.hpp"
+#include <string.h>
+#include <malloc.h>
 
 namespace XR
 {

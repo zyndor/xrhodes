@@ -1,6 +1,12 @@
-#include <XR/Renderer.hpp>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "UIHorizontalScrollingLayout.hpp"
 #include "UIRenderer.hpp"
+#include <XR/Renderer.hpp>
 
 namespace XR
 {

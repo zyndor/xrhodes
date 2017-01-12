@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIRenderer.hpp
-// @author  Gyorgy Straub
-// @date    19/08/2013
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIRENDERER_HPP
+#ifndef XR_UIRENDERER_HPP
 #define XR_UIRENDERER_HPP
 
 #include <XR/Sprite.hpp>

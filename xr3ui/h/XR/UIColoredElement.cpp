@@ -1,5 +1,11 @@
-#include <XR/Renderer.hpp>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "UIColoredElement.hpp"
+#include <XR/Renderer.hpp>
 
 namespace XR
 {

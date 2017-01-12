@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIRadioButton.hpp
-// @author  Gyorgy Straub
-// @date    23/08/2013
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIRADIOBUTTON_HPP
+#ifndef XR_UIRADIOBUTTON_HPP
 #define XR_UIRADIOBUTTON_HPP
 
 #include <list>

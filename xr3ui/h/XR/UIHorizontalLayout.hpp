@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIHorizontalLayout.hpp
-// @author  Gyorgy Straub
-// @date    21/06/2012
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIHORIZONTALLAYOUT_HPP
+#ifndef XR_UIHORIZONTALLAYOUT_HPP
 #define XR_UIHORIZONTALLAYOUT_HPP
 
 #include "UIGrowingLayoutBase.hpp"

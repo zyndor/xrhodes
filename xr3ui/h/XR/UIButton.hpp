@@ -1,20 +1,15 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIButton.hpp
-// @author  Gyorgy Straub
-// @date    21/06/2012
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIBUTTON_HPP
+#ifndef XR_UIBUTTON_HPP
 #define XR_UIBUTTON_HPP
 
+#include "UIColoredElement.hpp"
 #include <XR/utils.hpp>
 #include <XR/Sprite.hpp>
-#include "UIColoredElement.hpp"
 
 namespace XR
 {

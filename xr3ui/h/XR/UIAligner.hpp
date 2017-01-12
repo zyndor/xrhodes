@@ -1,15 +1,10 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// UIAligner.hpp
-// @author  Gyorgy Straub
-// @date    25/06/2012
-//
-// copyright (c) 2011 - 2015. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined XR_UIALIGNER_HPP
+#ifndef XR_UIALIGNER_HPP
 #define XR_UIALIGNER_HPP
 
 #include "UIContainer.hpp"
