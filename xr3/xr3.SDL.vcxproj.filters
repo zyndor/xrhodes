@@ -1,0 +1,572 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{0324f9c8-682b-49f6-8ffd-9fa341c351e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Implementation">
+      <UniqueIdentifier>{26647411-58ae-4058-a186-f55f5aad9417}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="h\XR\ActorReader.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Animation.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\AnimationInstance.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\AnimationPlayer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\AnimationReader.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Application.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\BasicMesh.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Callback.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Camera.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Color.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\CrossObject.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\CSV.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\debug.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\debugdraw.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\DelayedCallback.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Entity.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\FileBuffer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Font.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\fundamentals.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Grid.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Hash.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Indexer2d.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\IndexMesh.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\json.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\JsonEntity.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\JsonParser.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\JsonReader.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\JsonWriter.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Log.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\maths.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\MersenneTwister.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\MeshRenderer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Module.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\MouseHandler.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Name.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Parse.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\ParserCore.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Pool.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\ProjectionHelpers.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Quadtree.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Ray.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\RectObject.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\RenderStreamIO.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\RingBuffer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Serialized.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SharedPoolAllocator.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Sprite.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SpriteRenderer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\State.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Text.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\TexturePack.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\TweakBench.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Tweener.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\TweenVar.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\TweenVarPool.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\UIID.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\utils.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\vectypes.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\AABB.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\ActorInstance.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\detail\EventDispatcher.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Audio.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Device.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\File.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Image.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Input.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\InputImpl.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\KeyCode.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Material.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\MaterialImpl.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\MouseButton.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Renderer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\RenderStream.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Sample.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Texture.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\TextureImpl.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Timer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SDL\Worker.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="h\XR\Worker.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\AABB.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Actor.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ActorInstance.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ActorReader.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Animation.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\AnimationInstance.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\AnimationPlayer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\AnimationReader.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Application.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Audio.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\BasicMesh.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ButtonState.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Callback.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Camera.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Collider.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Color.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Command.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\CrossObject.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\CSV.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\debug.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\debugdraw.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\DelayedCallback.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Device.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Entity.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\EventBroadcaster.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\EventNotifier.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\File.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\FileBuffer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\fileutils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Font.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\functors.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\fundamentals.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Grid.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\HardList.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\HardStack.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\HardString.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Hash.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\HttpClient.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Image.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Indexer2d.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\IndexMesh.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Input.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\json.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\JsonEntity.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\JsonParser.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\JsonReader.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\jsonvectypes.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\JsonWriter.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\KeyCode.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Lock.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Log.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Material.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\maths.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\MemFnAdaptor.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\memory.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\MersenneTwister.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\MeshRenderer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Module.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\MouseButton.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\MouseHandler.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Name.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Observer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Parse.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ParserCore.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Pool.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\PrimType.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ProjectionHelpers.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Quadtree.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Queue.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Ray.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Rect.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\RectObject.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\RefCounted.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\RefHolder.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Renderer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\RenderStream.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ResManager.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\RingBuffer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Sample.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SampleFormat.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Serialized.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SharedPoolAllocator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Sprite.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SpriteRenderer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Squared.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\State.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\strings.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Text.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Texture.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\TexturePack.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Timer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\TweakBench.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Tweener.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\TweenVar.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\TweenVarPool.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\typeutils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\UIID.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\utils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\vectypes.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\InputImpl.hpp">
+      <Filter>Implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\MaterialImpl.hpp">
+      <Filter>Implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\TextureImpl.hpp">
+      <Filter>Implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\xrgl.hpp">
+      <Filter>Implementation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="h\XR\detail\CallbackObject.inl">
+      <Filter>Headers</Filter>
+    </None>
+    <None Include="h\XR\detail\EventDispatcher.inl">
+      <Filter>Headers</Filter>
+    </None>
+  </ItemGroup>
+</Project>
