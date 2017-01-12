@@ -1,3 +1,9 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include <algorithm>
 #include <IwGx.h>
 #include "RenderStream.hpp"

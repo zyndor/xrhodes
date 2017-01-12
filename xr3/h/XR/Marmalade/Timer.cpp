@@ -1,5 +1,11 @@
-#include <s3eTimer.h>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "Timer.hpp"
+#include <s3eTimer.h>
 
 namespace XR
 {

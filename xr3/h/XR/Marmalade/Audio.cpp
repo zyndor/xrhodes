@@ -1,6 +1,13 @@
-#include <s3eSound.h>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "Audio.hpp"
 #include "AudioChannelState.hpp"
+#include <XR/debug.hpp>
+#include <s3eSound.h>
 
 namespace XR
 {

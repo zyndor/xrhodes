@@ -1,3 +1,9 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "Sample.hpp"
 #include "File.hpp"
 #include "SampleData.hpp"

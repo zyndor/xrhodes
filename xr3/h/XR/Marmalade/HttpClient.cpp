@@ -1,7 +1,14 @@
-#include <sstream>
-#include <IwHTTP.h>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "HttpClient.hpp"
 #include "utils.hpp"
+#include <XR/debug.hpp>
+#include <IwHTTP.h>
+#include <sstream>
 
 namespace XR
 {
@@ -9,7 +16,7 @@ namespace XR
 struct CIwHttpFix: public CIwHTTP 
 {
   // static
-  static const char*  kPhpSessId;
+  static const char const*  kPhpSessionId;
 
   static int32 ReceivedHeaders(void* pSystem, void* pUser);
   
@@ -18,9 +25,7 @@ struct CIwHttpFix: public CIwHTTP
   ~CIwHttpFix();
 };
 
-
-const char* CIwHttpFix::kPhpSessId = "PHPSESSID=";
-
+const char const* CIwHttpFix::kPhpSessionId = "PHPSESSID=";
 
 int32 CIwHttpFix::ReceivedHeaders( void* pSystem, void* pUser )
 {
@@ -40,7 +45,7 @@ int32 CIwHttpFix::ReceivedHeaders( void* pSystem, void* pUser )
           len = HttpClient::kDefaultChunkSize;
         }
 
-        const char* pPhpSessid(strstr(pHttp->m_response.c_str(), kPhpSessId));
+        const char* pPhpSessid(strstr(pHttp->m_response.c_str(), kPhpSessionId));
         if (pPhpSessid != 0)
         {
           const char* pEnd(strchr(pPhpSessid, ';'));

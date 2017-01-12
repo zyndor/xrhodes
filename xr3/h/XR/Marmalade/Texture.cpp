@@ -1,6 +1,13 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "Texture.hpp"
-#include <IwTexture.h>
 #include "File.hpp"
+#include <XR/debug.hpp>
+#include <IwTexture.h>
 
 //==============================================================================
 #define TO_IMPL()  (static_cast<CIwTexture*>(GetImpl()))

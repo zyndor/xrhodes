@@ -1,8 +1,15 @@
-#include <algorithm>
-#include <s3eSecureStorage.h>
-#include <s3eFile.h>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "File.hpp"
 #include "HardString.hpp"
+#include <XR/debug.hpp>
+#include <s3eSecureStorage.h>
+#include <s3eFile.h>
+#include <algorithm>
 
 namespace XR
 {

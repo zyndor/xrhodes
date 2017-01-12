@@ -1,5 +1,12 @@
-#include <s3eThread.h>
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "Worker.hpp"
+#include <XR/debug.hpp>
+#include <s3eThread.h>
 
 namespace XR
 {

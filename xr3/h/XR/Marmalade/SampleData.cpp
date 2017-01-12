@@ -1,7 +1,14 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include "SampleData.hpp"
 #include "SampleFormat.hpp"
 #include "Adpcm.hpp"
 #include "File.hpp"
+#include <XR/debug.hpp>
 #include <cstring>
 
 namespace XR

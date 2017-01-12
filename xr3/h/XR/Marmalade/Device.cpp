@@ -1,3 +1,9 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
 #include <s3eDevice.h>
 #include <s3eConfig.h>
 #include <IwGx.h>
