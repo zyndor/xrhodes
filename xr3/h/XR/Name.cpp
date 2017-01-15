@@ -4,14 +4,15 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <string.h>
 #include "Name.hpp"
+#include "debug.hpp"
+#include <string.h>
 
 namespace XR
 {
 namespace
 {
-const char* kUndefined = "#UNDEFINED#";
+const char* const kUndefined = "#UNDEFINED#";
 }
 
 //==============================================================================

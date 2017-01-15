@@ -20,7 +20,7 @@ namespace XR
 namespace
 {
 //==============================================================================
-static const char*  kConfigName = "xr.json";
+static const char* const  kConfigName = "xr.json";
 
 //==============================================================================
 static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* pSystem)

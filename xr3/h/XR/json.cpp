@@ -11,9 +11,9 @@ namespace XR
 namespace JSON
 {
 
-const char* kNull = "null";
-const char* kTrue = "true";
-const char* kFalse = "false";
+const char* const kNull = "null";
+const char* const kTrue = "true";
+const char* const kFalse = "false";
 
 } // JSON
 } // XR

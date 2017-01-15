@@ -27,9 +27,9 @@ enum  Char
 };
 
 //==============================================================================
-extern const char*  kNull;
-extern const char*  kTrue;
-extern const char*  kFalse;
+extern const char* const kNull;
+extern const char* const kTrue;
+extern const char* const kFalse;
 
 const int kMaxParseDepthDefault = 32;
 
