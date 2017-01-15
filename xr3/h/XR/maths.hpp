@@ -77,7 +77,7 @@ template  <typename T>
 T  Lerp(T v0, T v1, float blend);
 
 ///@brief 
-template  <typename T, int samples>
+template  <typename T, size_t kNumSamples>
 T Bezier(const T* parSamples, float blend);
 
 ///@return	Interpolated value between @a edge0 and @a edge1.
@@ -167,23 +167,27 @@ T Lerp(T v0, T v1, float blend)
 }
 
 //==============================================================================
-template  <typename T, int samples>
-struct  _BezierImpl
+namespace
 {
+template  <typename T, size_t kNumSamples>
+struct  BezierImpl
+{
+  static_assert(kNumSamples > 0, "Invalid number of samples.B");
+
   static T Calculate(const T* parSamples, float blend)
   {
-    T arResult[samples - 1];
-    for(int i = 1; i < samples; ++i)
+    T arResult[kNumSamples - 1];
+    for(int i = 1; i < kNumSamples; ++i)
     {
-      const int im1(i - 1);
+      const size_t im1(i - 1);
       arResult[im1] = Lerp(parSamples[im1], parSamples[i], blend); 
     }
-    return _BezierImpl<T, samples - 1>::Calculate(arResult, blend);
+    return BezierImpl<T, kNumSamples - 1>::Calculate(arResult, blend);
   }
 };
 
 template  <typename T>
-struct  _BezierImpl<T, 1>
+struct  BezierImpl<T, 1>
 {
   static T Calculate(const T* parSamples, float blend)
   {
@@ -191,11 +195,13 @@ struct  _BezierImpl<T, 1>
   }
 };
 
-template  <typename T, int samples>
+}
+
+template  <typename T, size_t kNumSamples>
 inline
 T Bezier(const T* parSamples, float blend)
 {
-  return _BezierImpl<T, samples>::Calculate(parSamples, blend);
+  return BezierImpl<T, kNumSamples>::Calculate(parSamples, blend);
 }
 
 //==============================================================================
