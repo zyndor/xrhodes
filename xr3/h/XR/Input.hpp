@@ -8,7 +8,7 @@
 #define XR_INPUT_HPP
 
 #include "fundamentals.hpp"
-#include "vectypes.hpp"
+#include "SVector2.hpp"
 #include "Callback.hpp"
 #include "KeyCode.hpp"
 #include "MouseButton.hpp"

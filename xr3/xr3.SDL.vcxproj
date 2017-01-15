@@ -96,7 +96,6 @@
     <ClCompile Include="h\XR\TweenVarPool.cpp" />
     <ClCompile Include="h\XR\UIID.cpp" />
     <ClCompile Include="h\XR\utils.cpp" />
-    <ClCompile Include="h\XR\vectypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\AABB.hpp" />
@@ -153,6 +152,7 @@
     <ClInclude Include="h\XR\Log.hpp" />
     <ClInclude Include="h\XR\Material.hpp" />
     <ClInclude Include="h\XR\maths.hpp" />
+    <ClInclude Include="h\XR\Matrix.hpp" />
     <ClInclude Include="h\XR\MemFnAdaptor.hpp" />
     <ClInclude Include="h\XR\memory.hpp" />
     <ClInclude Include="h\XR\MersenneTwister.hpp" />
@@ -168,6 +168,7 @@
     <ClInclude Include="h\XR\PrimType.hpp" />
     <ClInclude Include="h\XR\ProjectionHelpers.hpp" />
     <ClInclude Include="h\XR\Quadtree.hpp" />
+    <ClInclude Include="h\XR\Quaternion.hpp" />
     <ClInclude Include="h\XR\Queue.hpp" />
     <ClInclude Include="h\XR\Ray.hpp" />
     <ClInclude Include="h\XR\Rect.hpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="h\XR\Squared.hpp" />
     <ClInclude Include="h\XR\State.hpp" />
     <ClInclude Include="h\XR\strings.hpp" />
+    <ClInclude Include="h\XR\SVector2.hpp" />
     <ClInclude Include="h\XR\Text.hpp" />
     <ClInclude Include="h\XR\Texture.hpp" />
     <ClInclude Include="h\XR\TexturePack.hpp" />
@@ -202,7 +204,8 @@
     <ClInclude Include="h\XR\typeutils.hpp" />
     <ClInclude Include="h\XR\UIID.hpp" />
     <ClInclude Include="h\XR\utils.hpp" />
-    <ClInclude Include="h\XR\vectypes.hpp" />
+    <ClInclude Include="h\XR\Vector2.hpp" />
+    <ClInclude Include="h\XR\Vector3.hpp" />
     <ClInclude Include="h\XR\Worker.hpp" />
   </ItemGroup>
   <ItemGroup>

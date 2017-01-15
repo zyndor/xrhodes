@@ -10,6 +10,7 @@
 #include <XR/Device.hpp>
 #include <XR/Pool.hpp>
 #include <XR/ProjectionHelpers.hpp>
+#include <XR/SVector2.hpp>
 #include <XR/debug.hpp>
 #include <SDL.h>
 
@@ -151,8 +152,8 @@ void Renderer::Init()
   // matrices
   SetPerspective(M_PI * .25f, 10.0f, 1000.0f);
 
-  s_rendererImpl.mView = Matrix::s_identity;
-  s_rendererImpl.mModel = Matrix::s_identity;
+  s_rendererImpl.mView = Matrix::Identity();
+  s_rendererImpl.mModel = Matrix::Identity();
   UpdateModelViewMatrix();
 
   s_rendererImpl.initSuccess = true;

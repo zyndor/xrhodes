@@ -7,7 +7,8 @@
 #ifndef XR_RENDERSTREAM_HPP
 #define XR_RENDERSTREAM_HPP
 
-#include "vectypes.hpp"
+#include "Vector2.hpp"
+#include "Vector3.hpp"
 #include "Color.hpp"
 #include "File.hpp"
 

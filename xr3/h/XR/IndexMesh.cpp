@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "IndexMesh.hpp"
+#include "Renderer.hpp"
 
 namespace XR {
 

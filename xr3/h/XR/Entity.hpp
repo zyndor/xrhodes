@@ -9,7 +9,8 @@
 
 #include <list>
 #include <map>
-#include "vectypes.hpp"
+#include "Matrix.hpp"
+#include "Quaternion.hpp"
 #include "Name.hpp"
 #include "typeutils.hpp"
 #include "fundamentals.hpp"

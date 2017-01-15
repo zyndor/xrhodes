@@ -26,8 +26,8 @@ Entity::Entity(Entity* pParent)
 //==============================================================================
 Entity::Entity(Name n, Entity* pParent)
 : translation(),
-  rotation(Quaternion::s_unit),
-  scaling(Vector3::s_one),
+  rotation(Quaternion::Unit()),
+  scaling(Vector3::One()),
   m_pParent(nullptr),
   m_xForm(),
   m_children(),

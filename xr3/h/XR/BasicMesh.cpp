@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "BasicMesh.hpp"
+#include "Renderer.hpp"
 
 namespace XR {
 
@@ -41,7 +42,7 @@ void  BasicMesh::InitStreams(int numVertices)
 //==============================================================================
 Vector3 BasicMesh::CalculateCentre() const
 {
-  Vector3 centre(Vector3::s_zero);
+  Vector3 centre(Vector3::Zero());
   const int n(m_vertices.GetCapacity());
   if(n > 0)
   {
@@ -118,7 +119,7 @@ void  BasicMesh::CalculateExtents(Vector3& minOut, Vector3& maxOut) const
   }
   else
   {
-    minOut = maxOut = Vector3::s_zero;
+    minOut = maxOut = Vector3::Zero();
   }
 }
 

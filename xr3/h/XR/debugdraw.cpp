@@ -32,7 +32,7 @@ static void SetMaterial()
 void  Line(const Vector3& v, Material* pMaterial)
 {
 	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 2));
-	pStream->Set(0, Vector3::s_zero);
+	pStream->Set(0, Vector3::Zero());
 	pStream->Set(1, v);
 
 	if(pMaterial == 0)
@@ -182,7 +182,7 @@ void  FillCircle(float radius, Material* pMaterial)
   numVerts *= 2;
   numVerts += 2;
   RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
-  pStream->Set(0, Vector3::s_zero);
+  pStream->Set(0, Vector3::Zero());
   for(int i = 1; i < numVerts; ++i)
   {
     pStream->Set(i, v);

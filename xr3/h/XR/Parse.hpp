@@ -7,7 +7,6 @@
 #ifndef XR_PARSE_HPP
 #define XR_PARSE_HPP
 
-#include "vectypes.hpp"
 #include "utils.hpp"
 #include "Color.hpp"
 #include "fundamentals.hpp"

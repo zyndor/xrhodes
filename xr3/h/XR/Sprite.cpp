@@ -102,7 +102,7 @@ Sprite::Sprite()
   m_halfWidth(.0f),
   m_halfHeight(.0f),
   m_isUVRotated(false),
-  m_offset(Vector2::s_zero)
+  m_offset(Vector2::Zero())
 {
   InitStreams(kNumVertices);
 }

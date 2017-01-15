@@ -14,6 +14,7 @@
 #include "RenderStream.hpp"
 #include "PrimType.hpp"
 #include "Ray.hpp"
+#include "Matrix.hpp"
 
 namespace XR
 {

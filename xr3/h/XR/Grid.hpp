@@ -7,14 +7,11 @@
 #ifndef XR_GRID_HPP
 #define XR_GRID_HPP
 
-#include "maths.hpp"
-
 namespace XR
 {
 
 //==============================================================================
-///@brief Facilitates conversion from world coordinates
-/// to grid coordinates.
+///@brief Facilitates conversion between world coordinates and grid coordinates.
 class  Grid
 {
 public:
