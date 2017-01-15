@@ -20,16 +20,19 @@ static struct
   uint8_t*  parPanning;
 } s_audioImpl;
 
+//==============================================================================
 static int OnChannelGenAudioAdpcm(void* pSystem, void* pUser)
 {
   return 0;
 }
 
+//==============================================================================
 static int  OnChannelEndSample(void* pSystem, void* pUser)
 {
   return 0;
 }
 
+//==============================================================================
 void Audio::Init()
 {
   XR_ASSERTMSG(Audio, true, ("Already initialised!"));
@@ -50,6 +53,7 @@ void Audio::Init()
   s_audioImpl.parPanning = new uint8_t[channels];
 }
 
+//==============================================================================
 void Audio::Exit()
 {
   StopAll();
@@ -60,11 +64,13 @@ void Audio::Exit()
   Mix_CloseAudio();
 }
 
+//==============================================================================
 int Audio::GetNumChannels()
 {
   return s_audioImpl.numChannels;
 }
 
+//==============================================================================
 int Audio::Play( Sample& s, int times /*= 1*/, int channelHint /*= CHANNEL_ANY*/ )
 {
   XR_ASSERT(Audio, times >= INFINITY_TIMES);
@@ -76,6 +82,7 @@ int Audio::Play( Sample& s, int times /*= 1*/, int channelHint /*= CHANNEL_ANY*/
   return channelHint;
 }
 
+//==============================================================================
 void Audio::PauseChannel( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -86,6 +93,7 @@ void Audio::PauseChannel( int channelId )
   }
 }
 
+//==============================================================================
 void Audio::ResumeChannel( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -96,6 +104,7 @@ void Audio::ResumeChannel( int channelId )
   }
 }
 
+//==============================================================================
 void Audio::StopChannel( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -103,6 +112,25 @@ void Audio::StopChannel( int channelId )
   Mix_HaltChannel(channelId);
 }
 
+//==============================================================================
+void Audio::PauseAll()
+{
+  Mix_Pause(CHANNEL_ALL);
+}
+
+//==============================================================================
+void Audio::ResumeAll()
+{
+  Mix_Resume(CHANNEL_ALL);
+}
+
+//==============================================================================
+void Audio::StopAll()
+{
+  Mix_HaltChannel(CHANNEL_ALL);
+}
+
+//==============================================================================
 bool Audio::IsChannelPlaying( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -110,6 +138,7 @@ bool Audio::IsChannelPlaying( int channelId )
   return Mix_Playing(channelId) != 0;
 }
 
+//==============================================================================
 bool Audio::IsChannelPaused( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -117,6 +146,7 @@ bool Audio::IsChannelPaused( int channelId )
   return Mix_Paused(channelId) != 0;
 }
 
+//==============================================================================
 int Audio::GetChannelVolume( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -124,6 +154,7 @@ int Audio::GetChannelVolume( int channelId )
   return Mix_Volume(channelId, -1);
 }
 
+//==============================================================================
 int Audio::GetChannelPanning( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -131,6 +162,7 @@ int Audio::GetChannelPanning( int channelId )
   return s_audioImpl.parPanning[channelId];
 }
 
+//==============================================================================
 int Audio::GetChannelPitch( int channelId )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -138,6 +170,7 @@ int Audio::GetChannelPitch( int channelId )
   return 1; // todo
 }
 
+//==============================================================================
 void Audio::SetChannelVolume( int channelId, int volume )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -145,6 +178,7 @@ void Audio::SetChannelVolume( int channelId, int volume )
   Mix_Volume(channelId, volume);
 }
 
+//==============================================================================
 void Audio::SetChannelPanning( int channelId, int pan )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -155,6 +189,7 @@ void Audio::SetChannelPanning( int channelId, int pan )
   s_audioImpl.parPanning[channelId] = pan;
 }
 
+//==============================================================================
 void Audio::SetChannelPitch( int channelId, int pitch )
 {
   XR_ASSERT(Audio, channelId >= 0);
@@ -162,24 +197,10 @@ void Audio::SetChannelPitch( int channelId, int pitch )
   // todo
 }
 
-void Audio::PauseAll()
-{
-  Mix_Pause(CHANNEL_ALL);
-}
-
-void Audio::ResumeAll()
-{
-  Mix_Resume(CHANNEL_ALL);
-}
-
-void Audio::StopAll()
-{
-  Mix_HaltChannel(CHANNEL_ALL);
-}
-
+//==============================================================================
 int Audio::GetSampleRate()
 {
-  return s_audioImpl.numChannels;
+  return s_audioImpl.sampleRate;
 }
 
 } // XR
