@@ -205,7 +205,10 @@ struct Vector2
 
 }
 
-#define XR_TRACE_VECTOR2(name, vector)  XR_TRACE(name, ("{ %.3f, %.3f }",\
-  name, vector.x, vector.y))
+#define XR_TRACE_VECTOR2(chnl, vector)\
+{\
+  XR::Vector2 const& v = (vector);\
+  XR_TRACE(chnl, ("%s { %.3f, %.3f }", #vector, v.x, v.y));\
+}\
 
 #endif //XR_VECTOR2_HPP

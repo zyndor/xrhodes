@@ -325,7 +325,10 @@ public:
 
 }
 
-#define XR_TRACE_QUAT(name, quat)  XR_TRACE(name, ("{ %.3f, %.3f, %.3f, %.3f }",\
-  name, quat.i, quat.j, quat.k, quat.w))
+#define XR_TRACE_QUAT(chnl, quat)\
+{\
+  XR::Quaternion const& q = (quat);\
+  XR_TRACE(chnl, ("%s { %.3f, %.3f, %.3f, %.3f }", #quat, q.i, q.j, q.k, q.w));\
+}\
 
 #endif //XR_QUATERNION_HPP

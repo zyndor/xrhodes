@@ -227,7 +227,10 @@ struct Vector3
 
 }
 
-#define XR_TRACE_VECTOR3(name, vector)  XR_TRACE(name, ("{ %.3f, %.3f, %.3f }",\
-  name, vector.x, vector.y, vector.z))
+#define XR_TRACE_VECTOR3(chnl, vector)\
+{\
+  XR::Vector3 const& v = (vector);\
+  XR_TRACE(chnl, ("%s { %.3f, %.3f, %.3f }", #vector, v.x, v.y, v.z));\
+}\
 
 #endif //XR_VECTOR3_HPP

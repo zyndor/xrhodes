@@ -399,7 +399,12 @@ struct Matrix
 
 }
 
-#define XR_TRACE_MATRIX(name, matrix)  XR_TRACE(name, ("{ %.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f } }",\
-  name, matrix.xx, matrix.xy, matrix.xz, matrix.yx, matrix.yy, matrix.yz, matrix.zx, matrix.zy, matrix.zz))
+#define XR_TRACE_MATRIX(chnl, matrix)\
+{\
+  XR::Matrix const& m = (matrix);\
+  XR_TRACE(chnl, ("%s { %.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f } }",\
+    #matrix, m.xx, m.xy, m.xz, m.yx, m.yy, m.yz, m.zx, m.zy, m.zz));\
+}\
+
 
 #endif //XR_MATRIX_HPP
