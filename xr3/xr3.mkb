@@ -86,7 +86,6 @@ files
   TweenVarPool.cpp
   UIID.cpp
   utils.cpp
-  vectypes.cpp
 
   (h/XR/Marmalade)
   Adpcm.cpp
