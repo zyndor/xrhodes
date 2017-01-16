@@ -52,6 +52,7 @@
     <ClCompile Include="h\XR\JsonWriter.cpp" />
     <ClCompile Include="h\XR\Log.cpp" />
     <ClCompile Include="h\XR\maths.cpp" />
+    <ClCompile Include="h\XR\Matrix.cpp" />
     <ClCompile Include="h\XR\MersenneTwister.cpp" />
     <ClCompile Include="h\XR\MeshRenderer.cpp" />
     <ClCompile Include="h\XR\Module.cpp" />

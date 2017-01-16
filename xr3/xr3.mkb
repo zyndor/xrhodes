@@ -59,6 +59,7 @@ files
   JsonWriter.cpp
   Log.cpp
   maths.cpp
+  Matrix.cpp
   MersenneTwister.cpp
   MeshRenderer.cpp
   Module.cpp

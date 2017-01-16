@@ -41,13 +41,7 @@ enum  MatrixInds
 struct Matrix 
 {
   // static
-  static const float  karIdentityData[kNumMatrixInds];
-  
-  static Matrix Identity()
-  {
-    float arData[] = { 1.0f, .0f, .0f, .0f, 1.0f, .0f, .0f, .0f, 1.0f };
-    return Matrix(arData);
-  }
+  static Matrix Identity();
   
   // data
   union
@@ -70,11 +64,7 @@ struct Matrix
   Matrix()
   {}
 
-  explicit Matrix(const Vector3& t_)
-  : t(t_)
-  {
-    memcpy(arLinear, karIdentityData, sizeof(arLinear));
-  }
+  explicit Matrix(const Vector3& t_);
 
   explicit Matrix(const float arData[kNumMatrixInds])
   : t()
