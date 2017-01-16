@@ -449,7 +449,7 @@ void  Device::YieldOS(int32_t ms)
 //==============================================================================
 bool Device::IsYielding()
 {
-  return s_deviceImpl.isYielding = true;
+  return s_deviceImpl.isYielding;
 }
 
 } // XR
