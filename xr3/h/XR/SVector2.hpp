@@ -34,15 +34,15 @@ struct SVector2
 
   // structors
   SVector2()
-    : x(0), y(0)
+  : x(0), y(0)
   {}
 
   SVector2(int16_t x_, int16_t y_)
-    : x(x_), y(y_)
+  : x(x_), y(y_)
   {}
 
   explicit SVector2(const int16_t parData[2])
-    : x(parData[0]),
+  : x(parData[0]),
     y(parData[1])
   {}
 
@@ -98,5 +98,9 @@ struct SVector2
 };
 
 }
+
+
+#define XR_TRACE_SVECTOR2(name, vector)  XR_TRACE(name, ("{ %d, %d }",\
+  name, vector.x, vector.y))
 
 #endif  //XR_SVECTOR2_HPP
