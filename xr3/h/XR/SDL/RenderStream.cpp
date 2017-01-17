@@ -204,10 +204,10 @@ float RenderStream::GetX(int i) const
   switch (m_format)
   {
   case  F_VECTOR2:
-    return *(static_cast<GLfloat*>(m_pData) + i * 2 + VX);
+    return *(static_cast<GLfloat*>(m_pData) + i * 2);
     
   case  F_VECTOR3:
-    return *(static_cast<GLfloat*>(m_pData) + i * 3 + VX);
+    return *(static_cast<GLfloat*>(m_pData) + i * 3);
   }
   
   return std::numeric_limits<float>::quiet_NaN();
@@ -220,10 +220,10 @@ float RenderStream::GetY(int i) const
   switch (m_format)
   {
   case  F_VECTOR2:
-    return *(static_cast<GLfloat*>(m_pData) + (i * 2) + VY);
+    return *(static_cast<GLfloat*>(m_pData) + (i * 2) + 1);
     
   case  F_VECTOR3:
-    return *(static_cast<GLfloat*>(m_pData) + (i * 3) + VY);
+    return *(static_cast<GLfloat*>(m_pData) + (i * 3) + 1);
   }
   
   return std::numeric_limits<float>::quiet_NaN();
@@ -233,7 +233,7 @@ float RenderStream::GetY(int i) const
 float RenderStream::GetZ(int i) const
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR3);
-  return *(static_cast<GLfloat*>(m_pData) + (i * 3) + VZ);
+  return *(static_cast<GLfloat*>(m_pData) + (i * 3) + 2);
 }
 
 //==============================================================================
@@ -276,11 +276,11 @@ void  RenderStream::SetX(int i, float x)
   switch (m_format)
   {
   case  F_VECTOR2:
-    *(static_cast<GLfloat*>(m_pData) + i * 2 + VX) = x;
+    *(static_cast<GLfloat*>(m_pData) + i * 2) = x;
     break;
     
   case  F_VECTOR3:
-    *(static_cast<GLfloat*>(m_pData) + i * 3 + VX) = x;
+    *(static_cast<GLfloat*>(m_pData) + i * 3) = x;
     break;
   }
 }
@@ -292,11 +292,11 @@ void  RenderStream::SetY(int i, float y)
   switch (m_format)
   {
   case  F_VECTOR2:
-    *(static_cast<GLfloat*>(m_pData) + (i * 2) + VY) = y;
+    *(static_cast<GLfloat*>(m_pData) + (i * 2) + 1) = y;
     break;
     
   case  F_VECTOR3:
-    *(static_cast<GLfloat*>(m_pData) + (i * 3) + VY) = y;
+    *(static_cast<GLfloat*>(m_pData) + (i * 3) + 1) = y;
     break;
   }
 }
@@ -305,7 +305,7 @@ void  RenderStream::SetY(int i, float y)
 void  RenderStream::SetZ(int i, float z)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR3);
-  *(static_cast<GLfloat*>(m_pData) + (i * 3) + VZ) = z;
+  *(static_cast<GLfloat*>(m_pData) + (i * 3) + 2) = z;
 }
 
 //==============================================================================
@@ -336,11 +336,11 @@ void  RenderStream::AddX(int i, float x)
   switch (m_format)
   {
   case  F_VECTOR2:
-    *(static_cast<GLfloat*>(m_pData) + i * 2 + VX) += x;
+    *(static_cast<GLfloat*>(m_pData) + i * 2) += x;
     break;
     
   case  F_VECTOR3:
-    *(static_cast<GLfloat*>(m_pData) + i * 3 + VX) += x;
+    *(static_cast<GLfloat*>(m_pData) + i * 3) += x;
     break;
   }
 }
@@ -352,11 +352,11 @@ void  RenderStream::AddY(int i, float y)
   switch (m_format)
   {
   case  F_VECTOR2:
-    *(static_cast<GLfloat*>(m_pData) + (i * 2) + VY) += y;
+    *(static_cast<GLfloat*>(m_pData) + (i * 2) + 1) += y;
     break;
     
   case  F_VECTOR3:
-    *(static_cast<GLfloat*>(m_pData) + (i * 3) + VY) += y;
+    *(static_cast<GLfloat*>(m_pData) + (i * 3) + 1) += y;
     break;
   }
 }
@@ -365,7 +365,7 @@ void  RenderStream::AddY(int i, float y)
 void  RenderStream::AddZ(int i, float z)
 {
   XR_ASSERT(RenderStream, m_format == F_VECTOR3);
-  *(static_cast<GLfloat*>(m_pData) + (i * 3) + VZ) += z;
+  *(static_cast<GLfloat*>(m_pData) + (i * 3) + 2) += z;
 }
 
 //==============================================================================

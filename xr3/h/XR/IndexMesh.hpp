@@ -8,6 +8,7 @@
 #define XR_INDEXMESH_HPP
 
 #include "BasicMesh.hpp"
+#include <vector>
 
 namespace XR {
 

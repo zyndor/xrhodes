@@ -180,9 +180,6 @@
     <ClCompile Include="h\XR\utils.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\vectypes.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\AABB.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -243,6 +240,7 @@
     <ClCompile Include="h\XR\SDL\Worker.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
+    <ClCompile Include="h\XR\Matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -542,9 +540,6 @@
     <ClInclude Include="h\XR\utils.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\vectypes.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -559,6 +554,21 @@
     </ClInclude>
     <ClInclude Include="h\XR\SDL\xrgl.hpp">
       <Filter>Implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SVector2.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Vector2.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Vector3.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Matrix.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Quaternion.hpp">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

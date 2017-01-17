@@ -7,8 +7,8 @@
 #ifndef XR_BASICMESH_HPP
 #define XR_BASICMESH_HPP
 
-#include <vector>
-#include "Renderer.hpp"
+#include "RenderStream.hpp"
+#include "Material.hpp"
 
 namespace XR {
 

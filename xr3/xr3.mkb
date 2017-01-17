@@ -59,6 +59,7 @@ files
   JsonWriter.cpp
   Log.cpp
   maths.cpp
+  Matrix.cpp
   MersenneTwister.cpp
   MeshRenderer.cpp
   Module.cpp
@@ -86,7 +87,6 @@ files
   TweenVarPool.cpp
   UIID.cpp
   utils.cpp
-  vectypes.cpp
 
   (h/XR/Marmalade)
   Adpcm.cpp

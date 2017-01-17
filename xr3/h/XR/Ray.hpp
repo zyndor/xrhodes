@@ -7,7 +7,7 @@
 #ifndef XR_RAY_HPP
 #define XR_RAY_HPP
 
-#include "vectypes.hpp"
+#include "Vector3.hpp"
 
 namespace XR
 {

@@ -59,6 +59,7 @@ files
   XR/Log.hpp
   XR/maths.hpp
   XR/Material.hpp
+  XR/Matrix.hpp
   XR/MemFnAdaptor.hpp
   XR/memory.hpp
   XR/MersenneTwister.hpp
@@ -74,6 +75,7 @@ files
   XR/PrimType.hpp
   XR/RefHolder.hpp
   XR/Quadtree.hpp
+  XR/Quaternion.hpp
   XR/Queue.hpp
   XR/Ray.hpp
   XR/RectObject.hpp
@@ -90,6 +92,7 @@ files
   XR/Squared.hpp
   XR/State.hpp
   XR/strings.hpp
+  XR/SVector2.hpp
   XR/Text.hpp
   XR/Texture.hpp
   XR/TexturePack.hpp
@@ -101,7 +104,8 @@ files
   XR/typeutils.hpp
   XR/UIID.hpp
   XR/utils.hpp
-  XR/vectypes.hpp
+  XR/Vector2.hpp
+  XR/Vector3.hpp
   XR/Worker.hpp
 
   [detail]

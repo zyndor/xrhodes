@@ -4,8 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <limits>
 #include "Ray.hpp"
+#include "maths.hpp"
+#include <limits>
 
 namespace XR
 {

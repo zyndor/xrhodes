@@ -8,7 +8,7 @@
 #define XR_RECTOBJECT_HPP
 
 #include "AABB.hpp"
-#include "vectypes.hpp"
+#include "Vector2.hpp"
 
 namespace XR
 {
@@ -19,8 +19,8 @@ class RectObject
 {
 public:
   // structors
-  RectObject(const Vector2& pos = Vector2::s_zero);
-  RectObject(float hw, float hh, const Vector2& pos = Vector2::s_zero);
+  RectObject(const Vector2& pos = Vector2::Zero());
+  RectObject(float hw, float hh, const Vector2& pos = Vector2::Zero());
   ~RectObject();
 
   // general use
