@@ -182,6 +182,7 @@
     <ClInclude Include="h\XR\RingBuffer.hpp" />
     <ClInclude Include="h\XR\Sample.hpp" />
     <ClInclude Include="h\XR\SampleFormat.hpp" />
+    <ClInclude Include="h\XR\ScopeGuard.hpp" />
     <ClInclude Include="h\XR\SDL\InputImpl.hpp" />
     <ClInclude Include="h\XR\SDL\MaterialImpl.hpp" />
     <ClInclude Include="h\XR\SDL\TextureImpl.hpp" />

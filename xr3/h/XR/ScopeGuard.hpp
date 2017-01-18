@@ -1,0 +1,94 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
+#ifndef XR_SCOPEGUARD_HPP
+#define XR_SCOPEGUARD_HPP
+
+namespace  XR
+{
+namespace
+{
+//==============================================================================
+///@brief Scope Guard provides a lightweight, RAII based facility to execute
+/// cleanup / undo code upon scope exit (the destruction of the scope guard) -
+/// whichever way that might happen. Once this effect is no longer required,
+/// the SCope Guard can be Release()d.
+class  ScopeGuardCore
+{
+public:
+  // structors
+  ScopeGuardCore()
+  :  m_isEngaged(true)
+  {}
+
+  ScopeGuardCore(const ScopeGuardCore& rhs)
+  :  m_isEngaged(rhs.m_isEngaged)
+  {
+    rhs.Release();
+  }
+
+  // general
+  void  Release() const
+  {
+    m_isEngaged = false;
+  }
+
+  // disabled
+  ScopeGuardCore&  operator=(const ScopeGuardCore& other) = delete;
+
+protected:
+  // internal
+  bool  IsEngaged() const { return m_isEngaged; }
+
+private:
+  // data  
+  mutable bool  m_isEngaged;
+};
+
+}
+
+typedef const ScopeGuardCore&  ScopeGuard;
+
+//==============================================================================
+template  <class Func>
+class  ScopeGuardImpl:  public ScopeGuardCore
+{
+public:
+  // structors
+  explicit ScopeGuardImpl(const Func& f)
+  :  ScopeGuardCore(),
+    m_func(f)
+  {}
+
+  ~ScopeGuardImpl()
+  {
+    if(IsEngaged()) try
+    {
+      m_func();
+    }
+    catch(...)
+    {
+      // We cannot guarantee that m_func doesn't throw;
+      // If it does during stack unwinding from a previous exception,
+      // then we cannot do much; we move on.
+    }
+  }
+
+private:
+  // data
+  Func  m_func;
+};
+
+//==============================================================================
+template  <typename Func>
+ScopeGuardImpl<Func>  MakeScopeGuard(Func f)
+{
+  return ScopeGuardImpl<Func>(f);
+}
+
+}  // XR
+
+#endif  //XR_SCOPEGUARD_HPP
