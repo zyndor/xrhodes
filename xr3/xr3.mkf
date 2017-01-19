@@ -85,6 +85,7 @@ files
   XR/RingBuffer.hpp
   XR/Sample.hpp
   XR/SampleFormat.hpp
+  XR/ScopeGuard.hpp
   XR/Serialized.hpp
   XR/SharedPoolAllocator.hpp
   XR/Sprite.hpp
