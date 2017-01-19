@@ -339,6 +339,7 @@ public:
   void  adopt(SelfType& rhs);
   void  adopt(SelfType& rhs, iterator end);
 
+  void  remove(value_type d);
 
   // operator overloads
   SelfType&  operator=(const SelfType& rhs);
@@ -566,6 +567,21 @@ void  Queue<Type, AllocType>::adopt(SelfType& rhs, iterator end)
     _adopt(temp);
 
     m_pTail->pNext = 0;
+  }
+}
+
+//==============================================================================
+template  <typename Type, class AllocType>
+void  Queue<Type, AllocType>::remove(value_type d)
+{
+  auto iEnd = end();
+  auto iFind = std::find(begin(), iEnd, d);
+  if (iFind != iEnd)
+  {
+    auto iBegin = begin();
+    adopt(*this, iFind);
+    pop_front();
+    adopt(*this, iBegin);
   }
 }
 
