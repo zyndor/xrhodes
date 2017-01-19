@@ -339,7 +339,6 @@ public:
   void  adopt(SelfType& rhs);
   void  adopt(SelfType& rhs, iterator end);
 
-  void  swap(SelfType& rhs);
 
   // operator overloads
   SelfType&  operator=(const SelfType& rhs);
@@ -581,15 +580,6 @@ typename Queue<Type, AllocType>::SelfType&  Queue<Type, AllocType>::operator=(co
   m_pTail = temp.m_pTail;
 
   return *this;
-}
-
-//==============================================================================
-///@brief Optimal swapping of this Queue with @a rhs.
-template  <typename Type, class AllocType>
-void  Queue<Type, AllocType>::swap(SelfType& rhs)
-{
-  std::swap(m_pHead, rhs.m_pHead);
-  std::swap(m_pTail, rhs.m_pTail);
 }
 
 //==============================================================================
