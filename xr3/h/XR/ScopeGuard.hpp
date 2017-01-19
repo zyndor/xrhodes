@@ -15,7 +15,9 @@ namespace
 ///@brief Scope Guard provides a lightweight, RAII based facility to execute
 /// cleanup / undo code upon scope exit (the destruction of the scope guard) -
 /// whichever way that might happen. Once this effect is no longer required,
-/// the SCope Guard can be Release()d.
+/// the Scope Guard can be Release()d.
+///@note It is recommended to only create Scope Guards as function locals and
+/// on the stack.
 class  ScopeGuardCore
 {
 public:
@@ -59,7 +61,7 @@ class  ScopeGuardImpl:  public ScopeGuardCore
 public:
   // structors
   explicit ScopeGuardImpl(const Func& f)
-  :  ScopeGuardCore(),
+  : ScopeGuardCore(),
     m_func(f)
   {}
 
@@ -72,8 +74,10 @@ public:
     catch(...)
     {
       // We cannot guarantee that m_func doesn't throw;
-      // If it does during stack unwinding from a previous exception,
-      // then we cannot do much; we move on.
+      // If it does - during stack unwinding due to a previous exception -,
+      // then we cannot do much; we move on. To minimize the chances of
+      // this happening, always strive to guard the operation that's least
+      // likely to throw.
     }
   }
 
@@ -83,6 +87,7 @@ private:
 };
 
 //==============================================================================
+///@brief Facilitates the creation of a ScopeGuard via template deduction.
 template  <typename Func>
 ScopeGuardImpl<Func>  MakeScopeGuard(Func f)
 {
