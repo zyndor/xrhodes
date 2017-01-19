@@ -240,7 +240,9 @@
     <ClCompile Include="h\XR\SDL\Worker.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Matrix.cpp" />
+    <ClCompile Include="h\XR\Matrix.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -579,6 +581,9 @@
       <Filter>Headers</Filter>
     </None>
     <None Include="h\XR\detail\EventDispatcher.inl">
+      <Filter>Headers</Filter>
+    </None>
+    <None Include="h\XR\Queue.inl">
       <Filter>Headers</Filter>
     </None>
   </ItemGroup>

@@ -213,6 +213,7 @@
   <ItemGroup>
     <None Include="h\XR\detail\CallbackObject.inl" />
     <None Include="h\XR\detail\EventDispatcher.inl" />
+    <None Include="h\XR\Queue.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DA8C1785-562F-406A-BB13-1FC58177CFCC}</ProjectGuid>
