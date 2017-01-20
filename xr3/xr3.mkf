@@ -87,6 +87,7 @@ files
   XR/SampleFormat.hpp
   XR/ScopeGuard.hpp
   XR/Serialized.hpp
+  XR/Singleton.hpp
   XR/SharedPoolAllocator.hpp
   XR/Sprite.hpp
   XR/SpriteRenderer.hpp

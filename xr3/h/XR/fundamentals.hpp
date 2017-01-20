@@ -31,27 +31,6 @@ enum  { INVALID_ID = -1 };
 
 //==============================================================================
 ///@brief
-template  <class T>
-class Singleton
-{
-public:
-  // typedef
-  typedef T Type;
-
-  // static
-  static Type* GetInst();
-
-  // structors
-  Singleton();
-  ~Singleton();
-
-private:
-  // static
-  static Type*  s_pInstance;
-};
-
-//==============================================================================
-///@brief
 template  <typename T>
 class InstCounted
 {
@@ -69,33 +48,6 @@ private:
 
 //==============================================================================
 // implementation
-//==============================================================================
-template  <class T>
-T* Singleton<T>::s_pInstance = 0;
-
-//==============================================================================
-template  <class T>
-T* Singleton<T>::GetInst()
-{
-  return s_pInstance;
-}
-
-//==============================================================================
-template  <class T>
-Singleton<T>::Singleton()
-{
-  XR_ASSERTMSG(Singleton, s_pInstance == 0,
-    ("Singleton<> has already been instantiated for thia type"));
-  s_pInstance = static_cast<Type*>(this);
-}
-
-//==============================================================================
-template  <class T>
-Singleton<T>::~Singleton()
-{
-  s_pInstance = 0;
-}
-
 //==============================================================================
 template  <typename T>
 int InstCounted<T>::s_instanceCount = 0;
