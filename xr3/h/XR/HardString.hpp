@@ -56,7 +56,7 @@ public:
   HardString<N>&  toupper();
 
   void            clear();
-  HardString<N>&  assign(const char* p, int len);
+  HardString<N>&  assign(const char* p, size_t len);
 
   // operators
   HardString<N>&  operator =(const char* pString);
@@ -112,12 +112,9 @@ char* strrstr(const char* haystack, const char* needle)
 {
   size_t needleSize = strlen(needle);
   char const* p = haystack + strlen(haystack) - needleSize;
-  while(p >= haystack)
+  while(p >= haystack &&
+    strncmp(p, needle, needleSize) != 0)
   {
-    if(strncmp(p, needle, needleSize) == 0)
-    {
-      break;
-    }
     --p;
   }
   return p < haystack ? 0 : const_cast<char*>(p);
@@ -135,20 +132,18 @@ HardString<N>::HardString()
 template  <size_t N>
 inline
 HardString<N>::HardString(const char* pString)
-{
-  const size_t  size = strlen(pString);
-  XR_ASSERT(HardString<>, size <= capacity());
-  strncpy(m_arBuffer, pString, size);
-  m_arBuffer[size] = '\0';
-}
+: HardString<N>(pString, strlen(pString))
+{}
 
 //==============================================================================
 template  <size_t N>
 inline
 HardString<N>::HardString(const char* pString, size_t size)
 {
+  XR_ASSERT(HardString<>, pString != nullptr);
   XR_ASSERT(HardString<>, size <= capacity());
   strncpy(m_arBuffer, pString, size);
+  m_arBuffer[size] = '\0';
 }
 
 //==============================================================================
@@ -293,7 +288,7 @@ void  HardString<N>::clear()
 
 //==============================================================================
 template  <size_t N>
-HardString<N>&  HardString<N>::assign(const char* pStr, int size)
+HardString<N>&  HardString<N>::assign(const char* pStr, size_t size)
 {
   XR_ASSERT(HardString<N>, pStr != 0);
   XR_ASSERT(HardString<N>, size <= capacity());
