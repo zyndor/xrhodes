@@ -112,12 +112,9 @@ char* strrstr(const char* haystack, const char* needle)
 {
   size_t needleSize = strlen(needle);
   char const* p = haystack + strlen(haystack) - needleSize;
-  while(p >= haystack)
+  while(p >= haystack &&
+    strncmp(p, needle, needleSize) != 0)
   {
-    if(strncmp(p, needle, needleSize) == 0)
-    {
-      break;
-    }
     --p;
   }
   return p < haystack ? 0 : const_cast<char*>(p);
