@@ -83,7 +83,6 @@
     <ClCompile Include="h\XR\SDL\Texture.cpp" />
     <ClCompile Include="h\XR\SDL\TextureImpl.cpp" />
     <ClCompile Include="h\XR\SDL\Timer.cpp" />
-    <ClCompile Include="h\XR\SDL\Worker.cpp" />
     <ClCompile Include="h\XR\Serialized.cpp" />
     <ClCompile Include="h\XR\SharedPoolAllocator.cpp" />
     <ClCompile Include="h\XR\Sprite.cpp" />
@@ -97,6 +96,7 @@
     <ClCompile Include="h\XR\TweenVarPool.cpp" />
     <ClCompile Include="h\XR\UIID.cpp" />
     <ClCompile Include="h\XR\utils.cpp" />
+    <ClCompile Include="h\XR\Worker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\AABB.hpp" />
