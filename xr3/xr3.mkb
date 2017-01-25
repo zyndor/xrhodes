@@ -44,6 +44,7 @@ files
   CSV.cpp
   debugdraw.cpp
   DelayedCallback.cpp
+  Deflator.cpp
   Entity.cpp
   FileBuffer.cpp
   Font.cpp
@@ -52,6 +53,7 @@ files
   Hash.cpp
   Indexer2d.cpp
   IndexMesh.cpp
+  Inflator.cpp
   json.cpp
   JsonEntity.cpp
   JsonParser.cpp

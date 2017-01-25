@@ -45,6 +45,7 @@
     <ClCompile Include="h\XR\Hash.cpp" />
     <ClCompile Include="h\XR\Indexer2d.cpp" />
     <ClCompile Include="h\XR\IndexMesh.cpp" />
+    <ClCompile Include="h\XR\Inflator.cpp" />
     <ClCompile Include="h\XR\json.cpp" />
     <ClCompile Include="h\XR\JsonEntity.cpp" />
     <ClCompile Include="h\XR\JsonParser.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="h\XR\CSV.hpp" />
     <ClInclude Include="h\XR\debug.hpp" />
     <ClInclude Include="h\XR\debugdraw.hpp" />
+    <ClInclude Include="h\XR\Deflator.hpp" />
     <ClInclude Include="h\XR\DelayedCallback.hpp" />
     <ClInclude Include="h\XR\detail\EventDispatcher.hpp" />
     <ClInclude Include="h\XR\Device.hpp" />
@@ -138,9 +140,11 @@
     <ClInclude Include="h\XR\HardString.hpp" />
     <ClInclude Include="h\XR\Hash.hpp" />
     <ClInclude Include="h\XR\HttpClient.hpp" />
+    <ClInclude Include="h\XR\IdGenerator.hpp" />
     <ClInclude Include="h\XR\Image.hpp" />
     <ClInclude Include="h\XR\Indexer2d.hpp" />
     <ClInclude Include="h\XR\IndexMesh.hpp" />
+    <ClInclude Include="h\XR\Inflator.hpp" />
     <ClInclude Include="h\XR\Input.hpp" />
     <ClInclude Include="h\XR\json.hpp" />
     <ClInclude Include="h\XR\JsonEntity.hpp" />
@@ -188,6 +192,7 @@
     <ClInclude Include="h\XR\SDL\TextureImpl.hpp" />
     <ClInclude Include="h\XR\SDL\xrgl.hpp" />
     <ClInclude Include="h\XR\Serialized.hpp" />
+    <ClInclude Include="h\XR\Serializable.hpp" />
     <ClInclude Include="h\XR\SharedPoolAllocator.hpp" />
     <ClInclude Include="h\XR\Singleton.hpp" />
     <ClInclude Include="h\XR\Sprite.hpp" />
