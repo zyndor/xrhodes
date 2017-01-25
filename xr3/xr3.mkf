@@ -89,7 +89,6 @@ files
   XR/Sample.hpp
   XR/SampleFormat.hpp
   XR/ScopeGuard.hpp
-  XR/Serialized.hpp
   XR/Serializable.hpp
   XR/Singleton.hpp
   XR/SharedPoolAllocator.hpp

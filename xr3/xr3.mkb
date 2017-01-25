@@ -76,7 +76,6 @@ files
   RectObject.cpp
   RenderStreamIO.cpp
   RingBuffer.cpp
-  Serialized.cpp
   SharedPoolAllocator.cpp
   Sprite.cpp
   SpriteRenderer.cpp

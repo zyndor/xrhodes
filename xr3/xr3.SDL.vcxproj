@@ -35,6 +35,7 @@
     <ClCompile Include="h\XR\CSV.cpp" />
     <ClCompile Include="h\XR\debug.cpp" />
     <ClCompile Include="h\XR\debugdraw.cpp" />
+    <ClCompile Include="h\XR\Deflator.cpp" />
     <ClCompile Include="h\XR\DelayedCallback.cpp" />
     <ClCompile Include="h\XR\detail\EventDispatcher.cpp" />
     <ClCompile Include="h\XR\Entity.cpp" />
@@ -85,7 +86,6 @@
     <ClCompile Include="h\XR\SDL\TextureImpl.cpp" />
     <ClCompile Include="h\XR\SDL\Timer.cpp" />
     <ClCompile Include="h\XR\SDL\Worker.cpp" />
-    <ClCompile Include="h\XR\Serialized.cpp" />
     <ClCompile Include="h\XR\SharedPoolAllocator.cpp" />
     <ClCompile Include="h\XR\Sprite.cpp" />
     <ClCompile Include="h\XR\SpriteRenderer.cpp" />
@@ -191,7 +191,6 @@
     <ClInclude Include="h\XR\SDL\MaterialImpl.hpp" />
     <ClInclude Include="h\XR\SDL\TextureImpl.hpp" />
     <ClInclude Include="h\XR\SDL\xrgl.hpp" />
-    <ClInclude Include="h\XR\Serialized.hpp" />
     <ClInclude Include="h\XR\Serializable.hpp" />
     <ClInclude Include="h\XR\SharedPoolAllocator.hpp" />
     <ClInclude Include="h\XR\Singleton.hpp" />

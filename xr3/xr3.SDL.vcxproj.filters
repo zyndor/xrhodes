@@ -141,9 +141,6 @@
     <ClCompile Include="h\XR\RingBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Serialized.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\SharedPoolAllocator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -492,9 +489,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\SampleFormat.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Serialized.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\SharedPoolAllocator.hpp">
