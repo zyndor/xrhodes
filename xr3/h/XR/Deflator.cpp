@@ -10,6 +10,10 @@ namespace XR
 {
 
 //==============================================================================
+Deflator::Deflator()
+{}
+
+//==============================================================================
 void Deflator::SetNext(IdType id)
 {
   m_generator.SetNextId(id);
@@ -23,11 +27,25 @@ Deflator::IdType Deflator::RegisterObject(Serializable const& s)
   if (iFind == m_objects.end())
   {
     id = m_generator.Generate();
-    m_objects[&s] = id;
+    if (id == IdGenerator::kInvalidId)
+    {
+      throw std::logic_error("Failed to register object under reserved invalid Id.");
+    }
+    else if(m_ids.insert(id).second)
+    {
+      m_objects[&s] = id;
+    }
+    else
+    {
+      std::ostringstream str;
+      str << "Id range clash detected: Id " << std::hex << id <<
+        " has already been assigned to a different object.";
+      throw std::logic_error(str.str());
+    }
   }
   else
   {
-    XR_TRACE(Deflator, ("Multiple attempts have been made to register object at %p", &s));
+    XR_TRACE(Deflator, ("Object at address %p has already been registered.", &s));
     id = iFind->second;
   }
   return id;

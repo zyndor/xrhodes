@@ -10,6 +10,10 @@ namespace XR
 {
 
 //==============================================================================
+Inflator::Inflator()
+{}
+
+//==============================================================================
 void XR::Inflator::SetNext(IdType id)
 {
   m_generator.SetNextId(id);
@@ -28,19 +32,21 @@ Inflator::IdType Inflator::RegisterObject(Serializable & s)
 //==============================================================================
 void Inflator::ResolveMappings()
 {
-  for (auto& id : m_mappings)
+  for (auto& mapping : m_mappings)
   {
-    auto iFind = m_objects.find(id.first);
+    auto iFind = m_objects.find(mapping.first);
     if (iFind == m_objects.end())
     {
       // This means that we've deserialized an ID to which no object was registered.
-      // TODO: some better exception?
-      throw std::runtime_error("Failed to resolve reference.");
+      std::ostringstream str;
+      str << "Failed to resolve " << mapping.second.size() << " pointers: ";
+      str << "an object with ID " << std::hex << mapping.first << " has not been registered.";
+      throw std::runtime_error(str.str());
     }
 
     // Write the pointer back.
     auto pRestored = iFind->second;
-    for (auto pp : id.second)
+    for (auto pp : mapping.second)
     {
       *static_cast<Serializable**>(pp) = pRestored;
     }

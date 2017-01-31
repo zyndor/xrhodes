@@ -9,6 +9,7 @@
 
 #include "IdGenerator.hpp"
 #include "Serializable.hpp"
+#include "fundamentals.hpp"
 #include "debug.hpp"
 #include <map>
 #include <set>
@@ -27,8 +28,12 @@ namespace XR
 /// play nicely with?
 class Inflator
 {
+  XR_NONCOPY_DECL(Inflator)
+
 public:
   using IdType = IdGenerator::IdType;
+
+  Inflator();
 
   ///@brief Sets the ID that will be assigned to the next object.
   void SetNext(IdType id);

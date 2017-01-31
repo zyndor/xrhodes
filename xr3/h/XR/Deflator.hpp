@@ -9,7 +9,9 @@
 
 #include "IdGenerator.hpp"
 #include "Serializable.hpp"
+#include "fundamentals.hpp"
 #include <map>
+#include <set>
 
 namespace XR
 {
@@ -28,8 +30,12 @@ namespace XR
 /// need multiple passes.
 class Deflator
 {
+  XR_NONCOPY_DECL(Deflator)
+
 public:
   using IdType = IdGenerator::IdType;
+
+  Deflator();
 
   ///@brief Sets the ID that will be assigned to the next object.
   void SetNext(IdType id);
@@ -44,10 +50,13 @@ public:
   IdType GetId(Serializable const* p) const;
 
 private:
-  using IdMap = std::map<Serializable const*, IdType>;
-
   IdGenerator m_generator;
-  IdMap       m_objects;  // no ownership
+
+  using IdMap = std::map<Serializable const*, IdType>;
+  IdMap m_objects;  // no ownership
+
+  using IdSet = std::set<IdType>;
+  IdSet m_ids;
 };
 
 }
