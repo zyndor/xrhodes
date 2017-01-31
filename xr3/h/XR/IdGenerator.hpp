@@ -30,7 +30,7 @@ public:
 
   void SetNextId(IdType id)
   {
-    XR_ASSERT(IdGenerator, id != kInvalidId);
+    XR_ASSERTMSG(IdGenerator, id != kInvalidId, "Cannot set reserved invalid id as next.");
     m_id = id;
   }
 
