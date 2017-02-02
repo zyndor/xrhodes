@@ -171,6 +171,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\DeflatorTests.cpp" />
     <ClCompile Include="src\HardStringTests.cpp" />
     <ClCompile Include="src\QueueTests.cpp" />
     <ClCompile Include="src\ScopeGuardTests.cpp" />
