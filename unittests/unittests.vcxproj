@@ -171,7 +171,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HardStringTests.cpp" />
+    <ClCompile Include="src\HardStringTests.cpp" />
     <ClCompile Include="src\QueueTests.cpp" />
     <ClCompile Include="src\ScopeGuardTests.cpp" />
     <ClCompile Include="stdafx.cpp">
