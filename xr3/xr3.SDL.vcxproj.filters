@@ -246,6 +246,7 @@
     <ClCompile Include="h\XR\Inflator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
+    <ClCompile Include="h\XR\memdebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -591,6 +592,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\streamutils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\memdebug.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

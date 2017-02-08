@@ -55,6 +55,7 @@
     <ClCompile Include="h\XR\Log.cpp" />
     <ClCompile Include="h\XR\maths.cpp" />
     <ClCompile Include="h\XR\Matrix.cpp" />
+    <ClCompile Include="h\XR\memdebug.cpp" />
     <ClCompile Include="h\XR\MersenneTwister.cpp" />
     <ClCompile Include="h\XR\MeshRenderer.cpp" />
     <ClCompile Include="h\XR\Module.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="h\XR\Material.hpp" />
     <ClInclude Include="h\XR\maths.hpp" />
     <ClInclude Include="h\XR\Matrix.hpp" />
+    <ClInclude Include="h\XR\memdebug.hpp" />
     <ClInclude Include="h\XR\MemFnAdaptor.hpp" />
     <ClInclude Include="h\XR\memory.hpp" />
     <ClInclude Include="h\XR\MersenneTwister.hpp" />
