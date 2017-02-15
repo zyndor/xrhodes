@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include <XR/streamutils.hpp>
+#include <XR/memdebug.hpp>
 #include <algorithm>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -23,10 +24,16 @@ namespace XR
       float floats[6];
       B bs[2];
 
+      A()
+      {
+        // The value of padding bytes are undefined. Since we're
+        // taking the memcmp(Whole thing) shortcut, we'll need to
+        // define them here.
+        std::memset(this, 0x69, sizeof(A));
+      }
+
       void Init()
       {
-        std::memset(this, 0x00, sizeof(A)); // value of bytes in padding is undefined, so let's define them for memcmp().
-
         for (int i = 0; i < 256; ++i)
         {
           chars[i] = i;
@@ -52,33 +59,19 @@ namespace XR
       size_t WritePieceWise(std::ostream& os)
       {
         size_t bytesWritten = 0;
-        for (int i = 0; i < 256; ++i)
-        {
-          if (WriteBinaryStream(chars[i], os))
-          {
-            bytesWritten += sizeof(char);
-          }
-        }
+        WriteRangeBinaryStream(chars, chars + 256, os, &bytesWritten);
+
         for (int i = 0; i < 3; ++i)
         {
-          if (WriteBinaryStream(ints[i], os))
-          {
-            bytesWritten += sizeof(int);
-          }
+          WriteBinaryStream(ints[i], os, &bytesWritten);
         }
         for (int i = 0; i < 6; ++i)
         {
-          if (WriteBinaryStream(floats[i], os))
-          {
-            bytesWritten += sizeof(float);
-          }
+          WriteBinaryStream(floats[i], os, &bytesWritten);
         }
         for (int i = 0; i < 2; ++i)
         {
-          if (WriteBinaryStream(bs[i], os))
-          {
-            bytesWritten += sizeof(B);
-          }
+          WriteBinaryStream(bs[i], os, &bytesWritten);
         }
         return bytesWritten;
       }
@@ -88,36 +81,39 @@ namespace XR
         WriteBinaryStream(*this, os);
       }
 
+      template <typename T>
+      struct OutputIterator
+      {
+        OutputIterator(T& value)
+        : m_p(&value)
+        {}
+
+        T& operator*()
+        {
+          T& result = *m_p;
+          ++m_p;
+          return result;
+        }
+
+        T* m_p;
+      };
+
       size_t ReadPiecewise(std::istream& is)
       {
         size_t bytesRead = 0;
-        for (int i = 0; i < 256; ++i)
-        {
-          if (ReadBinaryStream(is, chars[i]))
-          {
-            bytesRead += sizeof(char);
-          }
-        }
+        ReadRangeBinaryStream(is, OutputIterator<char>(chars[0]), &bytesRead);
+
         for (int i = 0; i < 3; ++i)
         {
-          if (ReadBinaryStream(is, ints[i]))
-          {
-            bytesRead += sizeof(int);
-          }
+          ReadBinaryStream(is, ints[i], &bytesRead);
         }
         for (int i = 0; i < 6; ++i)
         {
-          if (ReadBinaryStream(is, floats[i]))
-          {
-            bytesRead += sizeof(float);
-          }
+          ReadBinaryStream(is, floats[i], &bytesRead);
         }
         for (int i = 0; i < 2; ++i)
         {
-          if (ReadBinaryStream(is, bs[i]))
-          {
-            bytesRead += sizeof(B);
-          }
+          ReadBinaryStream(is, bs[i], &bytesRead);
         }
 
         return bytesRead;
@@ -142,6 +138,9 @@ namespace XR
       A a2;
       a2.ReadPiecewise(io);
 
+      Logger::WriteMessage(LogMemory(&a, sizeof(A)).c_str());
+      Logger::WriteMessage(LogMemory(&a2, sizeof(A)).c_str());
+      Logger::WriteMessage(DiffMemory(&a, &a2, sizeof(A)).c_str());
       Assert::IsTrue(memcmp(&a, &a2, sizeof(A)) == 0);
     }
 
@@ -158,6 +157,9 @@ namespace XR
       A a2;
       a2.ReadPiecewise(io);
 
+      Logger::WriteMessage(LogMemory(&a, sizeof(A)).c_str());
+      Logger::WriteMessage(LogMemory(&a2, sizeof(A)).c_str());
+      Logger::WriteMessage(DiffMemory(&a, &a2, sizeof(A)).c_str());
       Assert::IsTrue(memcmp(&a, &a2, sizeof(A)) == 0);
     }
 
