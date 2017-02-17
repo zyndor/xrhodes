@@ -11,6 +11,7 @@
 #include "Serializable.hpp"
 #include "fundamentals.hpp"
 #include "debug.hpp"
+#include "typeutils.hpp"
 #include <map>
 #include <set>
 
@@ -39,23 +40,19 @@ public:
   void SetNext(IdType id);
 
   ///@brief As an ID is read during deserialization, this method
-  /// registers the pointer that the ID should be inflated into.
+  /// registers the reference to the pointer that the ID should
+  /// be inflated into.
   template <class T>
-  bool RegisterMapping(IdType id, T *&p)
+  void  RegisterMapping(IdType id, T *&p)
   {
+    AssertBase<std::decay<T>::type, Serializable>();
 #ifdef XR_DEBUG
     p = nullptr;
 #endif
-    return m_mappings[id].insert(&p).second;
-  }
-
-  template <class T>
-  bool RegisterMapping(IdType id, T const *&p)
-  {
-#ifdef XR_DEBUG
-    p = nullptr;
-#endif
-    return m_mappings[id].insert(&p).second;
+    if (id != IdGenerator::kInvalidId)
+    {
+      m_mappings[id].insert(&p);
+    }
   }
 
   ///@brief Once an object is restored and its mappings are registered,
