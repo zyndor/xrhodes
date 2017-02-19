@@ -20,7 +20,7 @@ void Deflator::SetNext(IdType id)
 }
 
 //==============================================================================
-Deflator::IdType Deflator::RegisterObject(Serializable const& s)
+Deflator::IdType Deflator::RegisterObject(Inflatable const& s)
 {
   auto iFind = m_objects.find(&s);
   IdType id;
@@ -52,7 +52,7 @@ Deflator::IdType Deflator::RegisterObject(Serializable const& s)
 }
 
 //==============================================================================
-Deflator::IdType Deflator::GetId(Serializable const* p) const
+Deflator::IdType Deflator::GetId(Inflatable const* p) const
 {
   auto iFind = m_objects.find(p);
   return iFind != m_objects.end() ? iFind->second : IdGenerator::kInvalidId;

@@ -11,11 +11,11 @@ namespace XR
   {
   public:
 
-    struct A : public XR::Serializable
+    struct A : public XR::Inflatable
     {
       int a;
 
-      // Inherited via Serializable
+      // Inherited via Inflatable
       virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
       {}
 

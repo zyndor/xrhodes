@@ -193,7 +193,7 @@
     <ClInclude Include="h\XR\SDL\MaterialImpl.hpp" />
     <ClInclude Include="h\XR\SDL\TextureImpl.hpp" />
     <ClInclude Include="h\XR\SDL\xrgl.hpp" />
-    <ClInclude Include="h\XR\Serializable.hpp" />
+    <ClInclude Include="h\XR\Inflatable.hpp" />
     <ClInclude Include="h\XR\SharedPoolAllocator.hpp" />
     <ClInclude Include="h\XR\Singleton.hpp" />
     <ClInclude Include="h\XR\Sprite.hpp" />

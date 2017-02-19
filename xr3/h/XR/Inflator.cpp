@@ -20,7 +20,7 @@ void XR::Inflator::SetNext(IdType id)
 }
 
 //==============================================================================
-Inflator::IdType Inflator::RegisterObject(Serializable & s)
+Inflator::IdType Inflator::RegisterObject(Inflatable & s)
 {
   auto id = m_generator.Generate();
   XR_ASSERTMSG(Inflator, m_objects.find(id) == m_objects.end(),
@@ -48,7 +48,7 @@ void Inflator::ResolveMappings()
     auto pRestored = iFind->second;
     for (auto pp : mapping.second)
     {
-      *static_cast<Serializable**>(pp) = pRestored;
+      *static_cast<Inflatable**>(pp) = pRestored;
     }
   }
 

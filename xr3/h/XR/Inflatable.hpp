@@ -16,12 +16,12 @@ class Deflator;
 class Inflator;
 
 //==============================================================================
-///@brief The Serializable interface facilitates the writing and the restoring
-/// of objects' states, including pointers to other Serializable members.
-class Serializable
+///@brief The Inflatable interface facilitates the writing and the restoring
+/// of objects' states, including pointers to other Inflatable members.
+class Inflatable
 {
 public:
-  virtual ~Serializable()
+  virtual ~Inflatable()
   {}
 
   ///@brief Writes the state of the object into a stream. A Deflator is
@@ -42,7 +42,7 @@ public:
   virtual void Restore(std::istream& stream, Inflator& inflator) =0;
 
   ///@brief Provides an opportunity for post-processing after the hierarchy
-  /// of Serializable objects are Restore()d and the references are resolved
+  /// of Inflatable objects are Restore()d and the references are resolved
   /// by the Inflator.
   virtual void  OnInflated()
   {}

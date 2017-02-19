@@ -8,7 +8,7 @@
 #define XR_INFLATOR_HPP
 
 #include "IdGenerator.hpp"
-#include "Serializable.hpp"
+#include "Inflatable.hpp"
 #include "fundamentals.hpp"
 #include "debug.hpp"
 #include "typeutils.hpp"
@@ -45,7 +45,7 @@ public:
   template <class T>
   void  RegisterMapping(IdType id, T *&p)
   {
-    AssertBase<std::decay<T>::type, Serializable>();
+    AssertBase<std::decay<T>::type, Inflatable>();
 #ifdef XR_DEBUG
     p = nullptr;
 #endif
@@ -59,17 +59,17 @@ public:
   /// this method assigns an ID to the object. Once all objects are
   /// restored (and their mappings are registered), the mappings can be
   /// resolved, which completes the deserialization.
-  ///@note A Serializable can be registered as soon as it's an object
+  ///@note A Inflatable can be registered as soon as it's an object
   /// instance with an address, however it's probably better left
   /// until its data is fully read and its mappings are registered.
-  IdType RegisterObject(Serializable& s);
+  IdType RegisterObject(Inflatable& s);
 
   ///@brief Traverses the database of pointer references mapped to IDs
   /// and resolves them, filling out the pointers.
   void ResolveMappings();
 
 private:
-  using IdMap = std::map<IdGenerator::IdType, Serializable*>;
+  using IdMap = std::map<IdGenerator::IdType, Inflatable*>;
   using RefSet = std::set<void*>;
   using RefMap = std::map<IdGenerator::IdType, RefSet>;
 
