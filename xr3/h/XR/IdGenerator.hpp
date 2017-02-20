@@ -30,14 +30,14 @@ public:
 
   void SetNextId(IdType id)
   {
-    XR_ASSERTMSG(IdGenerator, id != kInvalidId, "Cannot set reserved invalid id as next.");
+    //XR_ASSERTMSG(IdGenerator, id != kInvalidId, "Cannot set reserved invalid id as next.");
     m_id = id;
   }
 
   IdType Generate()
   {
     const IdType id = m_id;
-    XR_ASSERT(IdGenerator, id != kInvalidId);
+    //XR_ASSERT(IdGenerator, id != kInvalidId);
     ++m_id;
     return id;
   }
