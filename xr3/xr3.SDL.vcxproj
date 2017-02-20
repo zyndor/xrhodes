@@ -35,6 +35,7 @@
     <ClCompile Include="h\XR\CSV.cpp" />
     <ClCompile Include="h\XR\debug.cpp" />
     <ClCompile Include="h\XR\debugdraw.cpp" />
+    <ClCompile Include="h\XR\Deflator.cpp" />
     <ClCompile Include="h\XR\DelayedCallback.cpp" />
     <ClCompile Include="h\XR\detail\EventDispatcher.cpp" />
     <ClCompile Include="h\XR\Entity.cpp" />
@@ -45,6 +46,7 @@
     <ClCompile Include="h\XR\Hash.cpp" />
     <ClCompile Include="h\XR\Indexer2d.cpp" />
     <ClCompile Include="h\XR\IndexMesh.cpp" />
+    <ClCompile Include="h\XR\Inflator.cpp" />
     <ClCompile Include="h\XR\json.cpp" />
     <ClCompile Include="h\XR\JsonEntity.cpp" />
     <ClCompile Include="h\XR\JsonParser.cpp" />
@@ -53,6 +55,7 @@
     <ClCompile Include="h\XR\Log.cpp" />
     <ClCompile Include="h\XR\maths.cpp" />
     <ClCompile Include="h\XR\Matrix.cpp" />
+    <ClCompile Include="h\XR\memdebug.cpp" />
     <ClCompile Include="h\XR\MersenneTwister.cpp" />
     <ClCompile Include="h\XR\MeshRenderer.cpp" />
     <ClCompile Include="h\XR\Module.cpp" />
@@ -84,7 +87,6 @@
     <ClCompile Include="h\XR\SDL\TextureImpl.cpp" />
     <ClCompile Include="h\XR\SDL\Timer.cpp" />
     <ClCompile Include="h\XR\SDL\Worker.cpp" />
-    <ClCompile Include="h\XR\Serialized.cpp" />
     <ClCompile Include="h\XR\SharedPoolAllocator.cpp" />
     <ClCompile Include="h\XR\Sprite.cpp" />
     <ClCompile Include="h\XR\SpriteRenderer.cpp" />
@@ -120,6 +122,7 @@
     <ClInclude Include="h\XR\CSV.hpp" />
     <ClInclude Include="h\XR\debug.hpp" />
     <ClInclude Include="h\XR\debugdraw.hpp" />
+    <ClInclude Include="h\XR\Deflator.hpp" />
     <ClInclude Include="h\XR\DelayedCallback.hpp" />
     <ClInclude Include="h\XR\detail\EventDispatcher.hpp" />
     <ClInclude Include="h\XR\Device.hpp" />
@@ -138,9 +141,11 @@
     <ClInclude Include="h\XR\HardString.hpp" />
     <ClInclude Include="h\XR\Hash.hpp" />
     <ClInclude Include="h\XR\HttpClient.hpp" />
+    <ClInclude Include="h\XR\IdGenerator.hpp" />
     <ClInclude Include="h\XR\Image.hpp" />
     <ClInclude Include="h\XR\Indexer2d.hpp" />
     <ClInclude Include="h\XR\IndexMesh.hpp" />
+    <ClInclude Include="h\XR\Inflator.hpp" />
     <ClInclude Include="h\XR\Input.hpp" />
     <ClInclude Include="h\XR\json.hpp" />
     <ClInclude Include="h\XR\JsonEntity.hpp" />
@@ -154,6 +159,7 @@
     <ClInclude Include="h\XR\Material.hpp" />
     <ClInclude Include="h\XR\maths.hpp" />
     <ClInclude Include="h\XR\Matrix.hpp" />
+    <ClInclude Include="h\XR\memdebug.hpp" />
     <ClInclude Include="h\XR\MemFnAdaptor.hpp" />
     <ClInclude Include="h\XR\memory.hpp" />
     <ClInclude Include="h\XR\MersenneTwister.hpp" />
@@ -187,13 +193,14 @@
     <ClInclude Include="h\XR\SDL\MaterialImpl.hpp" />
     <ClInclude Include="h\XR\SDL\TextureImpl.hpp" />
     <ClInclude Include="h\XR\SDL\xrgl.hpp" />
-    <ClInclude Include="h\XR\Serialized.hpp" />
+    <ClInclude Include="h\XR\Inflatable.hpp" />
     <ClInclude Include="h\XR\SharedPoolAllocator.hpp" />
     <ClInclude Include="h\XR\Singleton.hpp" />
     <ClInclude Include="h\XR\Sprite.hpp" />
     <ClInclude Include="h\XR\SpriteRenderer.hpp" />
     <ClInclude Include="h\XR\Squared.hpp" />
     <ClInclude Include="h\XR\State.hpp" />
+    <ClInclude Include="h\XR\streamutils.hpp" />
     <ClInclude Include="h\XR\strings.hpp" />
     <ClInclude Include="h\XR\SVector2.hpp" />
     <ClInclude Include="h\XR\Text.hpp" />
@@ -293,7 +300,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Lib>
@@ -308,6 +315,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -341,6 +349,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
