@@ -59,7 +59,7 @@ namespace XR
 
       inflator.ResolveMappings();
 
-      for (size_t i = 0; i < 5; ++i)
+      for (size_t i = 0; i < ids.size(); ++i)
       {
         auto id = ids[i];
         if (id != IdGenerator::kInvalidId)
@@ -73,7 +73,7 @@ namespace XR
       }
     }
 
-    TEST_METHOD(Inflator_Clash)
+    TEST_METHOD(Inflator_IdRangeClash)
     {
       TestObject  obj[2];
       Inflator  inflator;
@@ -97,7 +97,7 @@ namespace XR
       try
       {
         inflator.ResolveMappings();
-        Assert::Fail(L"inflator.ResolveMappings() must throw when resolving an unregistered object.");
+        Assert::Fail(L"inflator.ResolveMappings() must throw when attempting to resolve an unregistered object.");
       }
       catch (std::runtime_error&)
       {}
