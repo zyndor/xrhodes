@@ -22,17 +22,26 @@ void XR::Inflator::SetNext(IdType id)
 //==============================================================================
 Inflator::IdType Inflator::RegisterObject(Inflatable & s)
 {
-  auto id = m_generator.Generate();
-  auto iFind = m_objects.find(id);
-  if (iFind != m_objects.end())
+  IdType id = IdGenerator::kInvalidId;
+  auto iFind = m_ids.find(&s);
+  if (iFind != m_ids.end())
   {
-    XR_ASSERTMSG(Inflator, iFind->second != &s,
-      ("The object %p is already registered.", &s));
-    std::ostringstream str;
-    str << "Clash detected with ID " << id << ".";
-    throw std::runtime_error(str.str());
+    id = iFind->second;
   }
-  m_objects[id] = &s;
+  else
+  {
+    id = m_generator.Generate();
+    auto iFind2 = m_objects.find(id);
+    if (iFind2 != m_objects.end())
+    {
+      std::ostringstream str;
+      str << "Id range clash detected: Id " << std::hex << id <<
+        " has already been assigned to a different object.";
+      throw std::runtime_error(str.str());
+    }
+    m_objects[id] = &s;
+    m_ids[&s] = id;
+  }
   return id;
 }
 

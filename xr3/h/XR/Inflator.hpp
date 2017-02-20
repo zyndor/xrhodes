@@ -69,13 +69,16 @@ public:
   void ResolveMappings();
 
 private:
-  using IdMap = std::map<IdGenerator::IdType, Inflatable*>;
+  using IdMap = std::map<IdType, Inflatable*>;
   using RefSet = std::set<void*>;
-  using RefMap = std::map<IdGenerator::IdType, RefSet>;
+  using RefMap = std::map<IdType, RefSet>;
 
   IdGenerator m_generator;
   IdMap       m_objects; // no ownership
   RefMap      m_mappings;
+
+  using ObjectMap = std::map<Inflatable*, IdType>;
+  ObjectMap m_ids; // no ownership still
 };
 
 }
