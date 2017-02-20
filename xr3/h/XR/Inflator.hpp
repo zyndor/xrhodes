@@ -43,15 +43,15 @@ public:
   /// registers the reference to the pointer that the ID should
   /// be inflated into.
   template <class T>
-  void  RegisterMapping(IdType id, T *&p)
+  void  RegisterMapping(IdType id, T *&refP)
   {
     AssertBase<std::decay<T>::type, Inflatable>();
 #ifdef XR_DEBUG
-    p = nullptr;
+    refP = nullptr;
 #endif
     if (id != IdGenerator::kInvalidId)
     {
-      m_mappings[id].insert(&p);
+      m_mappings[id].insert(&refP);
     }
   }
 
@@ -62,7 +62,7 @@ public:
   ///@note A Inflatable can be registered as soon as it's an object
   /// instance with an address, however it's probably better left
   /// until its data is fully read and its mappings are registered.
-  IdType RegisterObject(Inflatable& s);
+  IdType RegisterObject(Inflatable& obj);
 
   ///@brief Traverses the database of pointer references mapped to IDs
   /// and resolves them, filling out the pointers.

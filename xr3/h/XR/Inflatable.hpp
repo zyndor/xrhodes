@@ -26,16 +26,16 @@ public:
 
   ///@brief Writes the state of the object into a stream. A Deflator is
   /// provided to obtain ids for data members that are pointers to other
-  /// Serialized objects that this doesn't own. These ids are then written
+  /// Inflatable objects that this doesn't own. These ids are then written
   /// instead of the pointers.
   ///@note The higher level implementation needs to make sure that all
-  /// Serialized instances are registered on the Deflator before Serialize() is
+  /// Inflatable instances are registered on the Deflator before Serialize() is
   /// being called.
   virtual void Serialize(Deflator const& deflator, std::ostream& stream) =0;
 
   ///@brief Reads the state of the object from a stream. An Inflator is
   /// provided to register data members that are pointers to other
-  /// Serialized objects that this doesn't own, mapping them to the
+  /// Inflatable objects that this doesn't own, mapping them to the
   /// ids that are being read in place of them.
   ///@note The higher level implementation needs to make sure that
   /// ResolveReferences() is called at the end of deserialization.

@@ -42,12 +42,12 @@ public:
 
   ///@brief Registers an object that will be serialized, and will have
   /// pointers to it serialized.
-  IdType RegisterObject(Inflatable const& s);
+  IdType RegisterObject(Inflatable const& obj);
 
   ///@brief Retrieves the ID associated with a Inflatable.
   ///@note As there's no way to register a nullptr (null reference), this will
   /// return kInvalidId for a nullptr, which is what we want.
-  IdType GetId(Inflatable const* p) const;
+  IdType GetId(Inflatable const* pObj) const;
 
 private:
   IdGenerator m_generator;

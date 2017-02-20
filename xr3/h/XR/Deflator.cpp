@@ -20,9 +20,9 @@ void Deflator::SetNext(IdType id)
 }
 
 //==============================================================================
-Deflator::IdType Deflator::RegisterObject(Inflatable const& s)
+Deflator::IdType Deflator::RegisterObject(Inflatable const& obj)
 {
-  auto iFind = m_objects.find(&s);
+  auto iFind = m_objects.find(&obj);
   IdType id;
   if (iFind == m_objects.end())
   {
@@ -33,7 +33,7 @@ Deflator::IdType Deflator::RegisterObject(Inflatable const& s)
     }
     else if(m_ids.insert(id).second)
     {
-      m_objects[&s] = id;
+      m_objects[&obj] = id;
     }
     else
     {
@@ -45,16 +45,16 @@ Deflator::IdType Deflator::RegisterObject(Inflatable const& s)
   }
   else
   {
-    XR_TRACE(Deflator, ("Object at address %p has already been registered.", &s));
+    XR_TRACE(Deflator, ("Object at address %p has already been registered.", &obj));
     id = iFind->second;
   }
   return id;
 }
 
 //==============================================================================
-Deflator::IdType Deflator::GetId(Inflatable const* p) const
+Deflator::IdType Deflator::GetId(Inflatable const* pObj) const
 {
-  auto iFind = m_objects.find(p);
+  auto iFind = m_objects.find(pObj);
   return iFind != m_objects.end() ? iFind->second : IdGenerator::kInvalidId;
 }
 

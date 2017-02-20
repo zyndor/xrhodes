@@ -20,10 +20,10 @@ void XR::Inflator::SetNext(IdType id)
 }
 
 //==============================================================================
-Inflator::IdType Inflator::RegisterObject(Inflatable & s)
+Inflator::IdType Inflator::RegisterObject(Inflatable& obj)
 {
   IdType id = IdGenerator::kInvalidId;
-  auto iFind = m_ids.find(&s);
+  auto iFind = m_ids.find(&obj);
   if (iFind != m_ids.end())
   {
     id = iFind->second;
@@ -39,8 +39,8 @@ Inflator::IdType Inflator::RegisterObject(Inflatable & s)
         " has already been assigned to a different object.";
       throw std::runtime_error(str.str());
     }
-    m_objects[id] = &s;
-    m_ids[&s] = id;
+    m_objects[id] = &obj;
+    m_ids[&obj] = id;
   }
   return id;
 }
