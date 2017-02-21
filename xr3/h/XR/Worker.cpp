@@ -4,7 +4,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <SDL_thread.h>
 #include <XR/Worker.hpp>
 #include <XR/debug.hpp>
 #include <XR/RefHolder.hpp>
@@ -36,6 +35,8 @@ Worker::~Worker()
 //==============================================================================
 void Worker::SetIdleThreadExpiry(int numAttempts, int sleepIntervalMs)
 {
+  XR_ASSERT(Worker, numAttempts >= 0);
+  XR_ASSERT(Worker, sleepIntervalMs > 0 || (sleepIntervalMs * numAttempts == 0));
   m_numAttempts = numAttempts;
   m_sleepIntervalMs = sleepIntervalMs;
 }
@@ -51,10 +52,7 @@ void  Worker::Enqueue(Job j)
   else
   {
     m_jobs.push_back(j);
-    if (m_thread.joinable())
-    {
-      m_thread.join();
-    }
+    Finalize();
     m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
   }
 }
@@ -72,7 +70,7 @@ void  Worker::Finalize()
 void  Worker::Loop()
 {
   m_isThreadActive = true;
-  auto guard = MakeScopeGuard([this]()
+  auto threadActiveGuard = MakeScopeGuard([this]()
   {
     m_isThreadActive = false;
   });
