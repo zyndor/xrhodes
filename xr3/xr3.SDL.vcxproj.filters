@@ -141,9 +141,6 @@
     <ClCompile Include="h\XR\RingBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Serialized.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\SharedPoolAllocator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -243,6 +240,13 @@
     <ClCompile Include="h\XR\Worker.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
+    <ClCompile Include="h\XR\Deflator.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Inflator.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\memdebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -488,9 +492,6 @@
     <ClInclude Include="h\XR\SampleFormat.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\Serialized.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\SharedPoolAllocator.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -576,6 +577,24 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Singleton.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\IdGenerator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Deflator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Inflator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\streamutils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\memdebug.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Inflatable.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

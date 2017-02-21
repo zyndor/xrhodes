@@ -30,6 +30,7 @@ files
   XR/CSV.hpp
   XR/debug.hpp
   XR/debugdraw.hpp
+  XR/Deflator.hpp
   XR/DelayedCallback.hpp
   XR/Device.hpp
   XR/Entity.hpp
@@ -46,9 +47,11 @@ files
   XR/HardString.hpp
   XR/Hash.hpp
   XR/HttpClient.hpp
+  XR/IdGenerator.hpp
   XR/Image.hpp
   XR/Indexer2d.hpp
   XR/IndexMesh.hpp
+  XR/Inflator.hpp
   XR/Input.hpp
   XR/json.hpp
   XR/JsonEntity.hpp
@@ -86,7 +89,7 @@ files
   XR/Sample.hpp
   XR/SampleFormat.hpp
   XR/ScopeGuard.hpp
-  XR/Serialized.hpp
+  XR/Serializable.hpp
   XR/Singleton.hpp
   XR/SharedPoolAllocator.hpp
   XR/Sprite.hpp
