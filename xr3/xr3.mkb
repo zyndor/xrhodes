@@ -88,6 +88,7 @@ files
   TweenVarPool.cpp
   UIID.cpp
   utils.cpp
+  Worker.cpp
 
   (h/XR/Marmalade)
   Adpcm.cpp
@@ -110,7 +111,6 @@ files
   SampleData.hpp
   Texture.cpp
   Timer.cpp
-  Worker.cpp
 
   [src/detail]
   (h/XR/detail)
