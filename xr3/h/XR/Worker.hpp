@@ -52,6 +52,9 @@ public:
   /// will start it.
   void  Enqueue(Job job);
 
+  ///@brief Removes all jobs that have not been started processing.
+  void  CancelPendingJobs();
+
   ///@brief Finishes the processing of jobs.
   ///@note Blocking call.
   void  Finalize();

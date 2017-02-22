@@ -36,6 +36,7 @@ void Worker::SetIdleThreadExpiry(int numAttempts, int sleepIntervalMs)
 //==============================================================================
 void  Worker::Enqueue(Job j)
 {
+  XR_ASSERT(Worker, j.pJobCb != nullptr);
   if (m_thread.joinable())
   {
     std::unique_lock<std::mutex> lock(m_jobsMutex);
@@ -46,6 +47,13 @@ void  Worker::Enqueue(Job j)
     m_jobs.push_back(j);
     m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
   }
+}
+
+//==============================================================================
+void Worker::CancelPendingJobs()
+{
+  std::unique_lock<std::mutex>  lock(m_jobsMutex);
+  m_jobs.clear();
 }
 
 //==============================================================================
@@ -66,25 +74,20 @@ void  Worker::Loop()
   while (true)
   {
     // check if we have jobs
-    bool hasJob;
+    Job j = { nullptr, nullptr };
     {
       std::unique_lock<std::mutex>  lock(m_jobsMutex);
-      hasJob = !m_jobs.empty();
+      if (!m_jobs.empty())
+      {
+        j = m_jobs.front();
+        m_jobs.pop_front();
+      }
     }
 
-    if (hasJob)
+    if (j.pJobCb)
     {
       // reset number of attemptsLeft
       attemptsLeft = numAttempts;
-
-      // access job
-      auto& j = m_jobs.front();
-      auto jobGuard = MakeScopeGuard([this]()
-      {
-        // remove from queue
-        std::unique_lock<std::mutex>  lock(m_jobsMutex);
-        m_jobs.pop_front();
-      });
 
       // perform job
       (*j.pJobCb)(j.pData);
