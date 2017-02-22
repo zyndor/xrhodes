@@ -25,13 +25,6 @@ Worker::Worker()
 {}
 
 //==============================================================================
-Worker::~Worker()
-{
-  XR_ASSERTMSG(Worker, !m_thread.joinable(),
-    "Jobs must finish processing before you hit the destructor. Try Finalize().");
-}
-
-//==============================================================================
 void Worker::SetIdleThreadExpiry(int numAttempts, int sleepIntervalMs)
 {
   XR_ASSERT(Worker, numAttempts >= 0);

@@ -40,8 +40,7 @@ public:
   };
 
   // structors
-  explicit Worker();
-  ~Worker();
+  Worker();
 
   // general
   ///@brief Sets the number of retries and the interval between them
