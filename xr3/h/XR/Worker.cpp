@@ -20,15 +20,14 @@ void Worker::ThreadFunction(Worker& worker)
 
 //==============================================================================
 Worker::Worker()
-: m_isThreadActive(false),
-  m_numAttempts(100),
+: m_numAttempts(100),
   m_sleepIntervalMs(10)
 {}
 
 //==============================================================================
 Worker::~Worker()
 {
-  XR_ASSERTMSG(Worker, !m_isThreadActive && !m_thread.joinable(),
+  XR_ASSERTMSG(Worker, !m_thread.joinable(),
     "Jobs must finish processing before you hit the destructor. Try Finalize().");
 }
 
@@ -44,7 +43,7 @@ void Worker::SetIdleThreadExpiry(int numAttempts, int sleepIntervalMs)
 //==============================================================================
 void  Worker::Enqueue(Job j)
 {
-  if (m_isThreadActive)
+  if (m_thread.joinable())
   {
     std::unique_lock<std::mutex> lock(m_jobsMutex);
     m_jobs.push_back(j);
@@ -52,7 +51,6 @@ void  Worker::Enqueue(Job j)
   else
   {
     m_jobs.push_back(j);
-    Finalize();
     m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
   }
 }
@@ -69,12 +67,6 @@ void  Worker::Finalize()
 //==============================================================================
 void  Worker::Loop()
 {
-  m_isThreadActive = true;
-  auto threadActiveGuard = MakeScopeGuard([this]()
-  {
-    m_isThreadActive = false;
-  });
-
   const int numAttempts = m_numAttempts;
   const auto sleepInterval = std::chrono::milliseconds(m_sleepIntervalMs);
   int attemptsLeft = m_numAttempts;
@@ -90,7 +82,7 @@ void  Worker::Loop()
     if (hasJob)
     {
       // reset number of attemptsLeft
-      attemptsLeft = m_numAttempts;
+      attemptsLeft = numAttempts;
 
       // access job
       auto& j = m_jobs.front();

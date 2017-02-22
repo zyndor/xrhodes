@@ -65,7 +65,6 @@ private:
   mutable std::mutex  m_jobsMutex;
   JobQueue            m_jobs;
 
-  std::atomic<bool>   m_isThreadActive;
   std::thread         m_thread;
 
   int                 m_numAttempts;
