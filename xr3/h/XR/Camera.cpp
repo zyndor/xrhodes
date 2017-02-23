@@ -18,20 +18,22 @@ Camera::Camera()
 }
 
 //==============================================================================
-Camera::~Camera()
-{
-}
-
-//==============================================================================
 Camera* Camera::Clone() const
 {
   Camera* pClone = new Camera();
-  memcpy(&pClone->m_arPerspectiveMatrix, &m_arPerspectiveMatrix, sizeof(Camera) - sizeof(Component));
+  pClone->m_isPerspective = m_isPerspective;
+  std::memcpy(&pClone->m_arPerspectiveMatrix, &m_arPerspectiveMatrix,
+    sizeof(m_arPerspectiveMatrix));
+  pClone->m_zNear = m_zNear;
+  pClone->m_zFar = m_zFar;
+  pClone->m_verticalFov = m_verticalFov;
+  pClone->m_aspectRatio = m_aspectRatio;
   return pClone;
 }
 
 //==============================================================================
-void Camera::SetPerspective(float verticalFieldOfView, float aspectRatio, float zNear, float zFar)
+void Camera::SetPerspective(float verticalFieldOfView, float aspectRatio,
+  float zNear, float zFar)
 {
   XR_ASSERT(Camera, verticalFieldOfView > .0f);
   XR_ASSERT(Camera, verticalFieldOfView < M_PI);
@@ -43,8 +45,8 @@ void Camera::SetPerspective(float verticalFieldOfView, float aspectRatio, float 
   m_verticalFov = verticalFieldOfView;
   m_aspectRatio = aspectRatio;
 
-  ProjectionHelpers::CalculatePerspective(m_verticalFov, aspectRatio, m_zNear, m_zFar,
-    m_arPerspectiveMatrix);
+  ProjectionHelpers::CalculatePerspective(m_verticalFov, aspectRatio, m_zNear,
+    m_zFar, m_arPerspectiveMatrix);
 }
 
 //==============================================================================

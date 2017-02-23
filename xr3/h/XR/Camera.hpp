@@ -19,7 +19,6 @@ class XR_COMPONENT_DECL(Camera)
 public:
   // structors
   Camera();
-  ~Camera();
 
   // general
   Camera* Clone() const;
@@ -29,7 +28,8 @@ public:
   ///@param aspectRatio The ratio of the projection width to (/ over) height.
   ///@param zNear The distance of the near clipping pane from the camera.
   ///@param zFar The distance of the far clipping pane from the camera.
-  void    SetPerspective(float verticalFov, float aspectRatio, float zNear, float zFar);
+  void    SetPerspective(float verticalFov, float aspectRatio, float zNear,
+            float zFar);
 
   ///@brief Sets up orthographic projection.
   ///@param width The width of the projection.
@@ -58,6 +58,7 @@ public:
   void    Apply();
 
 protected:
+  // data
   bool    m_isPerspective;
   float   m_arPerspectiveMatrix[16];
   float   m_zNear;
