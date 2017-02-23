@@ -5,7 +5,6 @@
 //
 //==============================================================================
 #include "JsonReader.hpp"
-#include "FileBuffer.hpp"
 #include "utils.hpp"
 #include "debug.hpp"
 
@@ -168,36 +167,5 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 }
 
 } // JSON
-
-//==============================================================================
-JSON::Entity* LoadJSON(const char* pFilename, int maxDepth, bool quietErrors)
-{
-  XR_ASSERT(LoadJSON, pFilename != 0);
-  XR::FileBuffer  file;
-  if (!file.Open(pFilename, "rb"))
-  {
-    if(!quietErrors)
-    {
-      XR_ERROR(("Failed to open file '%s'", pFilename));
-    }
-    return 0;
-  }
-  
-  file.Close();
-
-  // parse parse parse
-  JSON::Reader  reader(maxDepth);
-  JSON::Entity* pJson(reader.Read(file.GetData(), file.GetSize()));
-  
-  // done, clean up
-  file.Destroy();
-  if (pJson == 0 && !quietErrors)
-  {
-    XR_ERROR(("Failed to parse '%s': error around row %d char %d",
-      pFilename, reader.GetState().GetRow(), reader.GetState().GetColumn()));
-  }
-  
-  return pJson;
-}
 
 } // XR

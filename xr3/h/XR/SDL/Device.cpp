@@ -9,6 +9,7 @@
 #include <XR/JsonReader.hpp>
 #include <XR/JsonWriter.hpp>
 #include <XR/Renderer.hpp>
+#include <XR/jsonutils.hpp>
 #include <XR/utils.hpp>
 #include <SDL_events.h>
 #include <SDL.h>
@@ -137,7 +138,7 @@ void Device::Init()
     File::Close(hFile);
   }
 
-  s_deviceImpl.pConfig = LoadJSON(kConfigName);
+  s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
   
   SDL_AddEventWatch(FilterEvents, 0);
 

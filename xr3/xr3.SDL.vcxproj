@@ -151,6 +151,7 @@
     <ClInclude Include="h\XR\JsonEntity.hpp" />
     <ClInclude Include="h\XR\JsonParser.hpp" />
     <ClInclude Include="h\XR\JsonReader.hpp" />
+    <ClInclude Include="h\XR\jsonutils.hpp" />
     <ClInclude Include="h\XR\jsonvectypes.hpp" />
     <ClInclude Include="h\XR\JsonWriter.hpp" />
     <ClInclude Include="h\XR\KeyCode.hpp" />
@@ -221,6 +222,7 @@
   <ItemGroup>
     <None Include="h\XR\detail\CallbackObject.inl" />
     <None Include="h\XR\detail\EventDispatcher.inl" />
+    <None Include="h\XR\jsonutils.cpp" />
     <None Include="h\XR\Queue.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
