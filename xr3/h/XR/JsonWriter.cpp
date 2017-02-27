@@ -32,7 +32,7 @@ const char* const Writer::karEscapeSub[] =
 //==============================================================================
 Writer::Writer(int maxDepth)
 : m_stream(),
-  m_parScopes(0),
+  m_parScopes(nullptr),
   m_maxDepth(maxDepth),
   m_depth(0),
   m_allowLinebreaks(false),
@@ -261,7 +261,7 @@ std::string Writer::Finish( bool force )
 //==============================================================================
 void  Writer::_WriteKey( const char* pKey )
 {
-  XR_ASSERT(MG, pKey != 0);
+  XR_ASSERT(MG, pKey != nullptr);
   _WriteComma();
 
   m_stream.put(kQuot);
@@ -351,7 +351,7 @@ void Writer::_AddSpace()
 //==============================================================================
 void Writer::_WriteStringValue( const char* pValue )
 {
-  if (pValue == 0)
+  if (pValue == nullptr)
   {
     m_stream << kNull;
   }
@@ -364,11 +364,11 @@ void Writer::_WriteStringValue( const char* pValue )
 //==============================================================================
 void Writer::_ProcessEscaped( const char* pValue )
 {
-  const char* pEnd(strchr(pValue, 0));
+  const char* pEnd(strchr(pValue, '\0'));
   while (pValue != pEnd)
   {
     const char* pNextEscape = strpbrk(pValue, kEscapeChars);
-    bool  found(pNextEscape != 0);
+    bool  found(pNextEscape != nullptr);
     if (!found)
     {
       pNextEscape = pEnd;
@@ -384,7 +384,7 @@ void Writer::_ProcessEscaped( const char* pValue )
     {
       // process escape
       pNextEscape = strchr(kEscapeChars, pValue[0]);
-      if (pNextEscape != 0)
+      if (pNextEscape != nullptr)
       {
         m_stream << karEscapeSub[pNextEscape - kEscapeChars];
         ++pValue;

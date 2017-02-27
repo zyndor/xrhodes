@@ -35,16 +35,16 @@ Reader::~Reader()
 //==============================================================================
 Entity* Reader::Read(const char* parBuffer, int size)
 {
-  XR_ASSERT(Json::Reader, parBuffer != 0);
+  XR_ASSERT(Json::Reader, parBuffer != nullptr);
   XR_ASSERT(Json::Reader, size >= 0);
-  m_key.pString = 0;
+  m_key.pString = nullptr;
   m_key.length = 0;
   m_entities.clear();
-  m_pRoot = 0;
+  m_pRoot = nullptr;
   if(!m_parser.Parse(parBuffer, size, OnParserEvent, this))
   {
     delete m_pRoot;
-    m_pRoot = 0;
+    m_pRoot = nullptr;
   }
 
   return m_pRoot;
@@ -53,7 +53,7 @@ Entity* Reader::Read(const char* parBuffer, int size)
 //==============================================================================
 void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 {
-  Entity* pParent(m_entities.size() > 0 ? m_entities.back() : 0);
+  Entity* pParent(m_entities.size() > 0 ? m_entities.back() : nullptr);
   switch(e)
   {
   case  Parser::E_KEY:
@@ -62,7 +62,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 
   case  Parser::E_VALUE:
     {
-      XR_ASSERT(Json::Reader, pParent != 0);
+      XR_ASSERT(Json::Reader, pParent != nullptr);
       XR_ASSERT(Json::Reader, pParent->GetType() != VALUE);
       XR_ASSERT(Json::Reader, m_key.length > 0);
       XR_ASSERT(Json::Reader, m_key.pString != 0);
@@ -89,9 +89,9 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
       Object* pObject = new Object();
       m_entities.push_back(pObject);
 
-      if(pParent == 0)
+      if(pParent == nullptr)
       {
-        XR_ASSERT(Json::Reader, m_pRoot == 0);
+        XR_ASSERT(Json::Reader, m_pRoot == nullptr);
         m_pRoot = pObject;
       }
       else
@@ -100,7 +100,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
         {
         case  OBJECT:
           XR_ASSERT(Json::Reader, m_key.length > 0);
-          XR_ASSERT(Json::Reader, m_key.pString != 0);
+          XR_ASSERT(Json::Reader, m_key.pString != nullptr);
           pParent->ToObject()->AddChild(m_key.pString, m_key.length, pObject);
           break;
 
@@ -131,7 +131,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 
       if(pParent == 0)
       {
-        XR_ASSERT(Json::Reader, m_pRoot == 0);
+        XR_ASSERT(Json::Reader, m_pRoot == nullptr);
         m_pRoot = pArray;
       }
       else
@@ -140,7 +140,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
         {
         case  OBJECT:
           XR_ASSERT(Json::Reader, m_key.length > 0);
-          XR_ASSERT(Json::Reader, m_key.pString != 0);
+          XR_ASSERT(Json::Reader, m_key.pString != nullptr);
           pParent->ToObject()->AddChild(m_key.pString, m_key.length, pArray);
           break;
 

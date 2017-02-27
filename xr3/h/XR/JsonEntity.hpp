@@ -252,7 +252,7 @@ inline
 Value* Entity::ToValue()
 {
   XR_ASSERT(Json::Entity, m_type == VALUE);
-  return m_type == VALUE ? static_cast<Value*>(this) : 0;
+  return m_type == VALUE ? static_cast<Value*>(this) : nullptr;
 }
 
 //==============================================================================
@@ -260,7 +260,7 @@ inline
 Array* Entity::ToArray()
 {
   XR_ASSERT(Json::Entity, m_type == ARRAY);
-  return m_type == ARRAY ? static_cast<Array*>(this) : 0;
+  return m_type == ARRAY ? static_cast<Array*>(this) : nullptr;
 }
 
 //==============================================================================
@@ -268,7 +268,7 @@ inline
 Object* Entity::ToObject()
 {
   XR_ASSERT(Json::Entity, m_type == OBJECT);
-  return m_type == OBJECT ? static_cast<Object*>(this) : 0;
+  return m_type == OBJECT ? static_cast<Object*>(this) : nullptr;
 }
 
 //==============================================================================

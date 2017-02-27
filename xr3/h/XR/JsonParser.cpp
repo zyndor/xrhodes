@@ -21,8 +21,8 @@ Parser::Parser(int maxDepth)
 : m_state(),
   m_depth(0),
   m_maxDepth(maxDepth),
-  m_pCallback(0),
-  m_pCallbackUser(0)
+  m_pCallback(nullptr),
+  m_pCallbackUser(nullptr)
 {
   XR_ASSERTMSG(Json::Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
     maxDepth));
@@ -36,7 +36,7 @@ Parser::~Parser ()
 bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
         void* pUser)
 {
-  XR_ASSERT(Json::Parser, parBuffer != 0);
+  XR_ASSERT(Json::Parser, parBuffer != nullptr);
   XR_ASSERT(Json::Parser, size >= 0);
   m_state.SetBuffer(parBuffer, size);
   m_depth = 0;
@@ -64,7 +64,7 @@ bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
 //==============================================================================
 bool  Parser::_ParseArray()
 {
-  _DoCallback(E_ARRAY_BEGIN, 0);
+  _DoCallback(E_ARRAY_BEGIN, nullptr);
   const char* pChar(m_state.ExpectChar()); // look for array end or value
   bool result(!m_state.IsOver(pChar));
   if (result)
@@ -98,14 +98,14 @@ bool  Parser::_ParseArray()
       }
     }
   }
-  _DoCallback(E_ARRAY_END, 0);
+  _DoCallback(E_ARRAY_END, nullptr);
   return result;
 }
 
 //==============================================================================
 bool  Parser::_ParseObject()
 {
-  _DoCallback(E_OBJECT_BEGIN, 0);
+  _DoCallback(E_OBJECT_BEGIN, nullptr);
   const char* pChar(m_state.ExpectChar());
   bool  result(!m_state.IsOver(pChar));
   if (result)
@@ -183,7 +183,7 @@ bool  Parser::_ParseObject()
       }
     }
   }
-  _DoCallback(E_OBJECT_END, 0);
+  _DoCallback(E_OBJECT_END, nullptr);
   return result;
 }
 
@@ -194,7 +194,7 @@ bool  Parser::_ParseValue()
   bool  result(!m_state.IsOver(pChar));
   if (result)
   {
-    const int kBufferSize = 64; // bytes enough for everyone?
+    const int kBufferSize = 64; // bytes enough for everyone? (for conversion of numericals.)
     char  arBuffer[kBufferSize];
 
     if (*pChar == kQuot) // string
@@ -216,8 +216,8 @@ bool  Parser::_ParseValue()
     else if (isdigit(*pChar) || *pChar == '-')
     {
       const char* pValueEnd(m_state.SkipChar());
-      const char* pExponential(0);
-      const char* pDecimal(0);
+      const char* pExponential = nullptr;
+      const char* pDecimal = nullptr;
       while (result && !m_state.IsOver(pValueEnd) &&
         !(*pValueEnd == kComma || *pValueEnd == kObjectEnd || *pValueEnd == kArrayEnd ||
           isspace(*pValueEnd)))
@@ -226,9 +226,9 @@ bool  Parser::_ParseValue()
         const bool  isDecimal(*pValueEnd == kDecimal);
         result = isdigit(*pValueEnd) ||
           // first decimal point
-          (*pValueEnd == kDecimal && pDecimal == 0) ||
+          (*pValueEnd == kDecimal && pDecimal == nullptr) ||
           // first exponential, not straight after a minus sign
-          (isExponential && pExponential == 0 && *(pValueEnd - 1) != '-') ||
+          (isExponential && pExponential == nullptr && *(pValueEnd - 1) != '-') ||
           // minus sign following an exponential
           (*pValueEnd == '-' && pExponential == pValueEnd - 1);
         if(result)
@@ -296,7 +296,7 @@ bool  Parser::_ParseValue()
       }
       else if (strncmp(pChar, kNull, len) == 0)
       {
-        String  str = { 0, 0 };
+        String  str = { nullptr, 0 };
         _DoCallback(E_VALUE, &str);
       }
       else
@@ -333,7 +333,7 @@ bool  Parser::_ParseValue()
 //==============================================================================
 void  Parser::_DoCallback(Event e, const String* pData)
 {
-  if (m_pCallback != 0)
+  if (m_pCallback != nullptr)
   {
     (*m_pCallback)(e, pData, m_pCallbackUser);
   }
