@@ -247,6 +247,9 @@
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\memdebug.cpp" />
+    <ClCompile Include="h\XR\jsonutils.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -610,9 +613,6 @@
     </None>
     <None Include="h\XR\Queue.inl">
       <Filter>Headers</Filter>
-    </None>
-    <None Include="h\XR\jsonutils.cpp">
-      <Filter>Implementation</Filter>
     </None>
   </ItemGroup>
 </Project>
