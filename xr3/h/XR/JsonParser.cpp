@@ -6,10 +6,11 @@
 //==============================================================================
 #include "JsonParser.hpp"
 #include "debug.hpp"
+#include <algorithm>
 #include <limits>
 #include <ctype.h>
 #include <cstring>
-#include <math.h>
+#include <cmath>
 
 namespace XR
 {
@@ -255,20 +256,22 @@ bool  Parser::_ParseValue()
 
       if (result)
       {
-        const int len = pValueEnd - pChar;
+        int len = pValueEnd - pChar;
         
         double  value(atof(pChar));
         double  absValue(std::abs(value));
         if(absValue - std::floor(absValue) < std::numeric_limits<double>::epsilon())
         {
-          snprintf(arBuffer, kBufferSize - 1, "%d", int(value));
+          len = std::snprintf(arBuffer, kBufferSize - 1, "%d", int(value));
         }
         else
         {
-          snprintf(arBuffer, kBufferSize - 1, "%f", value);
+          len = std::min(kBufferSize - 1, len);
+          std::strncpy(arBuffer, pChar, len);
+          arBuffer[len] = '\0';
         }
         
-        String  str = { arBuffer, strlen(arBuffer) };
+        String  str = { arBuffer, len };
         _DoCallback(E_VALUE, &str);
       }
     }
@@ -285,13 +288,13 @@ bool  Parser::_ParseValue()
       const int len = pValueEnd - pChar;
       if (strncmp(pChar, kFalse, len) == 0)
       {
-        snprintf(arBuffer, kBufferSize - 1, "0");
+        std::snprintf(arBuffer, kBufferSize - 1, "0");
         String  str = { arBuffer, strlen(arBuffer) };
         _DoCallback(E_VALUE, &str);
       }
       else if (strncmp(pChar, kTrue, len) == 0)
       {
-        snprintf(arBuffer, kBufferSize - 1, "1");
+        std::snprintf(arBuffer, kBufferSize - 1, "1");
         String  str = { arBuffer, strlen(arBuffer) };
         _DoCallback(E_VALUE, &str);
       }
