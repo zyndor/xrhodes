@@ -51,9 +51,8 @@ bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
     bool  isArray(*pChar == kArrayBegin);
     
     result = (isObject || isArray) && !m_state.IsOver(m_state.SkipChar());
-    if (result && m_depth + 1 < m_maxDepth) // check exceeding max depth (not an error)
+    if (result) // check exceeding max depth (not an error)
     {
-      ++m_depth;
       result = isObject ? _ParseObject() : _ParseArray();
     }
   }
@@ -65,13 +64,14 @@ bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
 bool  Parser::_ParseArray()
 {
   _DoCallback(E_ARRAY_BEGIN, nullptr);
+  _IncreaseDepth();
   const char* pChar(m_state.ExpectChar()); // look for array end or value
   bool result(!m_state.IsOver(pChar));
   if (result)
   {
     if (*pChar == kArrayEnd)
     {
-      --m_depth;
+      _DecreaseDepth();
       m_state.SkipChar();
     }
     else while (result)
@@ -93,7 +93,7 @@ bool  Parser::_ParseArray()
       m_state.SkipChar(); // leave character
       if (*pChar == kArrayEnd)
       {
-        --m_depth;
+        _DecreaseDepth();
         break;
       }
     }
@@ -106,13 +106,14 @@ bool  Parser::_ParseArray()
 bool  Parser::_ParseObject()
 {
   _DoCallback(E_OBJECT_BEGIN, nullptr);
+  _IncreaseDepth();
   const char* pChar(m_state.ExpectChar());
   bool  result(!m_state.IsOver(pChar));
   if (result)
   {
     if (*pChar == kObjectEnd)
     {
-      --m_depth;
+      _DecreaseDepth();
       m_state.SkipChar();
     }
     else while (result)
@@ -178,7 +179,7 @@ bool  Parser::_ParseObject()
       m_state.SkipChar();
       if (*pChar == kObjectEnd)
       {
-        --m_depth;
+        _DecreaseDepth();
         break;
       }
     }
@@ -306,19 +307,15 @@ bool  Parser::_ParseValue()
     }
     else if (*pChar == kObjectBegin)
     {
-      if (!m_state.IsOver(m_state.SkipChar()) &&
-        m_depth + 1 < m_maxDepth)
+      if (!m_state.IsOver(m_state.SkipChar()))
       {
-        ++m_depth;
         result = _ParseObject();
       }
     }
     else if (*pChar == kArrayBegin)
     {
-      if (!m_state.IsOver(m_state.SkipChar()) &&
-        m_depth + 1 < m_maxDepth)
+      if (!m_state.IsOver(m_state.SkipChar()))
       {
-        ++m_depth;
         result = _ParseArray();
       }
     }
@@ -333,9 +330,38 @@ bool  Parser::_ParseValue()
 //==============================================================================
 void  Parser::_DoCallback(Event e, const String* pData)
 {
-  if (m_pCallback != nullptr)
+  if (m_pCallback != nullptr && m_depth <= m_maxDepth)
   {
     (*m_pCallback)(e, pData, m_pCallbackUser);
+  }
+}
+
+//==============================================================================
+void Parser::_IncreaseDepth()
+{
+  ++m_depth;
+  if (m_depth == m_maxDepth + 1)
+  {
+    _DoDepthCallback(true);
+  }
+}
+
+//==============================================================================
+void Parser::_DecreaseDepth()
+{
+  --m_depth;
+  if (m_depth == m_maxDepth)
+  {
+    _DoDepthCallback(false);
+  }
+}
+
+//==============================================================================
+void Parser::_DoDepthCallback(bool entered)
+{
+  if (m_pMaxDepthCallback != nullptr)
+  {
+    (*m_pMaxDepthCallback)(&entered, m_pMaxDepthUserData);
   }
 }
 
