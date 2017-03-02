@@ -1,0 +1,23 @@
+{
+	"intValue": 17753623,
+	"doubleValue": 0.27541829630000001,
+	"stringValue": "lorem ipsum dolor sic amet e pluribus unum veni vidi vici",
+	"array":[
+		false,
+		1.0,
+		"two",
+		3,
+		{
+			"name": "four",
+			"value": 4
+		},
+		[
+			5,
+			6,
+			{
+				"boolean": "true"
+			}
+		]
+	]
+}
+{
