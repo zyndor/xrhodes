@@ -208,7 +208,7 @@ bool  Parser::_ParseValue()
         result = !m_state.IsOver(pValueEnd);
         if (result)
         {
-          String  str = { pChar, pValueEnd - pChar };
+          String  str = { pChar, size_t(pValueEnd - pChar) };
           _DoCallback(E_VALUE, &str);
           m_state.SkipChar();
         }
@@ -258,8 +258,8 @@ bool  Parser::_ParseValue()
         const int len = pValueEnd - pChar;
         
         double  value(atof(pChar));
-        double  absValue(fabs(value));
-        if(absValue - floorf(absValue) < std::numeric_limits<double>::epsilon())
+        double  absValue(std::abs(value));
+        if(absValue - std::floor(absValue) < std::numeric_limits<double>::epsilon())
         {
           snprintf(arBuffer, kBufferSize - 1, "%d", int(value));
         }
