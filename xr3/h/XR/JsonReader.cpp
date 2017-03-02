@@ -5,7 +5,6 @@
 //
 //==============================================================================
 #include "JsonReader.hpp"
-#include "FileBuffer.hpp"
 #include "utils.hpp"
 #include "debug.hpp"
 
@@ -36,16 +35,16 @@ Reader::~Reader()
 //==============================================================================
 Entity* Reader::Read(const char* parBuffer, int size)
 {
-  XR_ASSERT(Json::Reader, parBuffer != 0);
+  XR_ASSERT(Json::Reader, parBuffer != nullptr);
   XR_ASSERT(Json::Reader, size >= 0);
-  m_key.pString = 0;
+  m_key.pString = nullptr;
   m_key.length = 0;
   m_entities.clear();
-  m_pRoot = 0;
+  m_pRoot = nullptr;
   if(!m_parser.Parse(parBuffer, size, OnParserEvent, this))
   {
     delete m_pRoot;
-    m_pRoot = 0;
+    m_pRoot = nullptr;
   }
 
   return m_pRoot;
@@ -54,7 +53,7 @@ Entity* Reader::Read(const char* parBuffer, int size)
 //==============================================================================
 void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 {
-  Entity* pParent(m_entities.size() > 0 ? m_entities.back() : 0);
+  Entity* pParent(m_entities.size() > 0 ? m_entities.back() : nullptr);
   switch(e)
   {
   case  Parser::E_KEY:
@@ -63,7 +62,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 
   case  Parser::E_VALUE:
     {
-      XR_ASSERT(Json::Reader, pParent != 0);
+      XR_ASSERT(Json::Reader, pParent != nullptr);
       XR_ASSERT(Json::Reader, pParent->GetType() != VALUE);
       XR_ASSERT(Json::Reader, m_key.length > 0);
       XR_ASSERT(Json::Reader, m_key.pString != 0);
@@ -90,9 +89,9 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
       Object* pObject = new Object();
       m_entities.push_back(pObject);
 
-      if(pParent == 0)
+      if(pParent == nullptr)
       {
-        XR_ASSERT(Json::Reader, m_pRoot == 0);
+        XR_ASSERT(Json::Reader, m_pRoot == nullptr);
         m_pRoot = pObject;
       }
       else
@@ -101,7 +100,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
         {
         case  OBJECT:
           XR_ASSERT(Json::Reader, m_key.length > 0);
-          XR_ASSERT(Json::Reader, m_key.pString != 0);
+          XR_ASSERT(Json::Reader, m_key.pString != nullptr);
           pParent->ToObject()->AddChild(m_key.pString, m_key.length, pObject);
           break;
 
@@ -132,7 +131,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 
       if(pParent == 0)
       {
-        XR_ASSERT(Json::Reader, m_pRoot == 0);
+        XR_ASSERT(Json::Reader, m_pRoot == nullptr);
         m_pRoot = pArray;
       }
       else
@@ -141,7 +140,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
         {
         case  OBJECT:
           XR_ASSERT(Json::Reader, m_key.length > 0);
-          XR_ASSERT(Json::Reader, m_key.pString != 0);
+          XR_ASSERT(Json::Reader, m_key.pString != nullptr);
           pParent->ToObject()->AddChild(m_key.pString, m_key.length, pArray);
           break;
 
@@ -168,36 +167,5 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 }
 
 } // JSON
-
-//==============================================================================
-JSON::Entity* LoadJSON(const char* pFilename, int maxDepth, bool quietErrors)
-{
-  XR_ASSERT(LoadJSON, pFilename != 0);
-  XR::FileBuffer  file;
-  if (!file.Open(pFilename, "rb"))
-  {
-    if(!quietErrors)
-    {
-      XR_ERROR(("Failed to open file '%s'", pFilename));
-    }
-    return 0;
-  }
-  
-  file.Close();
-
-  // parse parse parse
-  JSON::Reader  reader(maxDepth);
-  JSON::Entity* pJson(reader.Read(file.GetData(), file.GetSize()));
-  
-  // done, clean up
-  file.Destroy();
-  if (pJson == 0 && !quietErrors)
-  {
-    XR_ERROR(("Failed to parse '%s': error around row %d char %d",
-      pFilename, reader.GetState().GetRow(), reader.GetState().GetColumn()));
-  }
-  
-  return pJson;
-}
 
 } // XR
