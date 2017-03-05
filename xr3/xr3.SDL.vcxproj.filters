@@ -243,8 +243,10 @@
     <ClCompile Include="h\XR\Inflator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\memdebug.cpp" />
     <ClCompile Include="h\XR\jsonutils.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\memdebug.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
   </ItemGroup>
