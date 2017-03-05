@@ -111,7 +111,9 @@ protected:
   bool  RemoveListener(void* pListener); // no ownership transfer
 
   void  ProcessPostponed();
-  
+
+  void  FinishTraversal();
+
   void  Clear();
 };
 

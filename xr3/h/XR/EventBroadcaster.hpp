@@ -8,6 +8,7 @@
 #define XR_EVENTBROADCASTER_HPP
 
 #include "detail/EventDispatcher.hpp"
+#include "ScopeGuard.hpp"
 
 namespace XR
 {
@@ -30,19 +31,20 @@ public:
   // general
   void  Broadcast(E eventData)
   {
-    // start traversal
+    // Start traversal
     m_isTraversing = true;
+
+    // Make sure traversal finishes even if an exception occurs.
+    auto traversingGuard = MakeScopeGuard([this]()
+    {
+      FinishTraversal();
+    });
 
     for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
       static_cast<ListenerBase*>(*i0)->Handle(eventData);
     }
-
-    // finish traversal
-    m_isTraversing = false;
-
-    ProcessPostponed();
   }
 };
 
@@ -61,19 +63,20 @@ public:
   // general
   void  Broadcast()
   {
-    // start traversal
+    // Start traversal.
     m_isTraversing = true;
+
+    // Make sure traversal finishes even if an exception occurs.
+    auto traversingGuard = MakeScopeGuard([this]()
+    {
+      FinishTraversal();
+    });
 
     for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
     {
       static_cast<ListenerBase*>(*i0)->Handle();
     }
-
-    // finish traversal
-    m_isTraversing = false;
-
-    ProcessPostponed();
   }
 };
 
