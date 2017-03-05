@@ -177,6 +177,7 @@
   <ItemGroup>
     <ClCompile Include="src\DeflatorTests.cpp" />
     <ClCompile Include="src\EventBroadcasterTests.cpp" />
+    <ClCompile Include="src\EventNotifierTests.cpp" />
     <ClCompile Include="src\HardStringTests.cpp" />
     <ClCompile Include="src\InflatorTests.cpp" />
     <ClCompile Include="src\JsonUtilsTests.cpp" />
