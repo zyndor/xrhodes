@@ -220,7 +220,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="h\XR\detail\CallbackObject.inl" />
-    <None Include="h\XR\detail\EventDispatcher.inl" />
     <ClCompile Include="h\XR\jsonutils.cpp" />
     <None Include="h\XR\Queue.inl" />
   </ItemGroup>
