@@ -41,7 +41,10 @@ enum  MatrixInds
 struct Matrix 
 {
   // static
-  static Matrix Identity();
+  static Matrix Identity()
+  {
+    return Matrix();
+  }
   
   // data
   union
@@ -62,21 +65,26 @@ struct Matrix
   
   // structors
   Matrix()
+  : Matrix(Vector3())
   {}
 
-  explicit Matrix(const Vector3& t_);
+  explicit Matrix(const Vector3& t_)
+  : xx(1.0f), xy(.0f), xz(.0f),
+    yx(.0f), yy(1.0f), yz(.0f),
+    zx(.0f), zy(.0f), zz(1.0f),
+    t(t_)
+  {}
 
-  explicit Matrix(const float arData[kNumMatrixInds])
-  : t()
-  {
-    CopyLinear(arData);
-  }
+  explicit Matrix(const float arData[kNumMatrixInds], const Vector3& t_ = Vector3::Zero())
+  : xx(arData[MXX]), xy(arData[MXY]), xz(arData[MXZ]),
+    yx(arData[MYX]), yy(arData[MYY]), yz(arData[MYZ]),
+    zx(arData[MZX]), zy(arData[MZY]), zz(arData[MZZ]),
+    t(t_)
+  {}
 
   Matrix(const Matrix& rhs, const Vector3& t_)
-  : t(t_)
-  {
-    CopyLinear(rhs);
-  }
+  : Matrix(rhs.arLinear, t_)
+  {}
 
   // general
   Vector3 GetColumn(size_t i) const

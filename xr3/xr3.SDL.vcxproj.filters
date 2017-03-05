@@ -234,9 +234,6 @@
     <ClCompile Include="h\XR\SDL\Timer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Matrix.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\Worker.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
