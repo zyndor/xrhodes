@@ -8,6 +8,7 @@
 #define XR_EVENTNOTIFIER_HPP
 
 #include "detail/EventDispatcher.hpp"
+#include "ScopeGuard.hpp"
 
 namespace XR
 {
@@ -33,6 +34,12 @@ public:
     // start traversal
     m_isTraversing = true;
 
+    // Make sure traversal finishes even if an exception occurs.
+    auto traversingGuard = MakeScopeGuard([this]()
+    {
+      FinishTraversal();
+    });
+
     bool  handled(false);
     for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
@@ -43,11 +50,6 @@ public:
         break;
       }
     }
-
-    // finish traversal
-    m_isTraversing = false;
-
-    ProcessPostponed();
 
     return handled;
   }
@@ -71,6 +73,12 @@ public:
     // start traversal
     m_isTraversing = true;
 
+    // Make sure traversal finishes even if an exception occurs.
+    auto traversingGuard = MakeScopeGuard([this]()
+    {
+      FinishTraversal();
+    });
+
     bool  handled(false);
     for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
       i0 != i1; ++i0)
@@ -81,11 +89,6 @@ public:
         break;
       }
     }
-
-    // finish traversal
-    m_isTraversing = false;
-
-    ProcessPostponed();
 
     return handled;
   }

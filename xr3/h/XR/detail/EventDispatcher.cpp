@@ -81,6 +81,14 @@ void  EventDispatcherCore::ProcessPostponed()
 }
 
 //==============================================================================
+void EventDispatcherCore::FinishTraversal()
+{
+  m_isTraversing = false;
+
+  ProcessPostponed();
+}
+
+//==============================================================================
 void  EventDispatcherCore::Clear()
 {
   if (m_isTraversing)

@@ -607,9 +607,6 @@
     <None Include="h\XR\detail\CallbackObject.inl">
       <Filter>Headers</Filter>
     </None>
-    <None Include="h\XR\detail\EventDispatcher.inl">
-      <Filter>Headers</Filter>
-    </None>
     <None Include="h\XR\Queue.inl">
       <Filter>Headers</Filter>
     </None>
