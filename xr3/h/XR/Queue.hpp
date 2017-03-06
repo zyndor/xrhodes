@@ -240,14 +240,14 @@ void  NodeCore::Hook(NodeCore *p)
 template<typename T>
 inline
 Node<T>::Node(T d)
-: NodeCore(0),
+: NodeCore(nullptr),
   data(d)
 {}
 
 //==============================================================================
 template <typename T>
 Iterator<T>::Iterator()
-: pNode(0)
+: pNode(nullptr)
 {}
 
 //==============================================================================
@@ -317,7 +317,7 @@ bool  Iterator<T>::operator !=(const SelfType& rhs) const
 //==============================================================================
 template <typename T>
 ConstIterator<T>::ConstIterator()
-: pNode(0)
+: pNode(nullptr)
 {}
 
 //==============================================================================
@@ -396,16 +396,16 @@ bool  ConstIterator<T>::operator !=(const SelfType& rhs) const
 template  <typename Type, class AllocType>
 Queue<Type, AllocType>::Queue(allocator a)
 : m_allocator(a),
-  m_pHead(0),
-  m_pTail(0)
+  m_pHead(nullptr),
+  m_pTail(nullptr)
 {}
 
 //==============================================================================
 template  <typename Type, class AllocType>
 Queue<Type, AllocType>::Queue(const SelfType& rhs)
 : m_allocator(rhs.m_allocator),
-  m_pHead(0),
-  m_pTail(0)
+  m_pHead(nullptr),
+  m_pTail(nullptr)
 {
   const_iterator  i0(rhs.begin()), i1(rhs.end());
   while (i0 != i1)
@@ -428,7 +428,7 @@ template  <typename Type, class AllocType>
 inline
 bool  Queue<Type, AllocType>::empty() const
 {
-  return m_pHead == 0;
+  return m_pHead == nullptr;
 }
 
 //==============================================================================
@@ -447,7 +447,7 @@ size_t  Queue<Type, AllocType>::size() const
 {
   size_t  count(0);
   const NodeType  *p(m_pHead);
-  while (p != 0)
+  while (p != nullptr)
   {
     p = static_cast<const NodeType*> (p->pNext);
     ++count;
@@ -476,7 +476,7 @@ template  <typename Type, class AllocType>
 inline
 typename Queue<Type, AllocType>::iterator  Queue<Type, AllocType>::end()
 {
-  return iterator(0);
+  return iterator(nullptr);
 }
 
 //==============================================================================
@@ -484,7 +484,7 @@ template  <typename Type, class AllocType>
 inline
 typename Queue<Type, AllocType>::const_iterator  Queue<Type, AllocType>::end() const
 {
-  return const_iterator(0);
+  return const_iterator(nullptr);
 }
 
 //==============================================================================
@@ -542,7 +542,7 @@ template  <typename Type, class AllocType>
 void  Queue<Type, AllocType>::clear()
 {
   NodeType  *pHead(m_pHead);
-  while (pHead != 0)
+  while (pHead != nullptr)
   {
     NodeType  *pTemp(static_cast<NodeType*>(pHead->pNext));
     m_allocator.destroy(pHead);
@@ -550,7 +550,7 @@ void  Queue<Type, AllocType>::clear()
     pHead = pTemp;
   }
   m_pHead = pHead;
-  //m_pTail = 0;	// not necessary; we're only accessing m_pTail when m_pHead != 0
+  //m_pTail = nullptr;	// not necessary; we're only accessing m_pTail when m_pHead != nullptr
 }
 
 //==============================================================================
@@ -585,7 +585,7 @@ void  Queue<Type, AllocType>::adopt(SelfType& rhs, iterator end)
     rhs.m_pHead = pNode;
     _adopt(temp);
 
-    m_pTail->pNext = 0;
+    m_pTail->pNext = nullptr;
   }
 }
 
@@ -636,10 +636,10 @@ void  Queue<Type, AllocType>::_adopt(SelfType& rhs)
 
   if (!rhs.empty())
   {
-    rhs.m_pHead = 0;
+    rhs.m_pHead = nullptr;
 
     m_pTail = rhs.m_pTail;
-    //rhs.m_pTail = 0;	// not necessary; we're only accessing m_pTail when m_pHead != 0
+    //rhs.m_pTail = nullptr;	// not necessary; we're only accessing m_pTail when m_pHead != nullptr
   }
 }
 
