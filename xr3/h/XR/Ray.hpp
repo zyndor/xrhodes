@@ -30,7 +30,11 @@ public:
   ///@brief Sets the direction of the Ray, normalised (which is what most of XR
   /// will expect it to be).
   void  SetDirection(const Vector3& dir);
-  
+
+  ///@brief Sets the direction of the Ray. Client code has to make sure that
+  /// @a dir is normalised.
+  void  SetDirectionNormalised(const Vector3& dir);
+
   ///@brief Intersects the sphere defined by @a pos and @a radiusSqr, with the
   /// ray.
   ///@return  Whether the ray hits the sphere.

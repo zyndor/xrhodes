@@ -30,7 +30,17 @@ void  Ray::SetDirection(const Vector3& dir)
 {
   float d(dir.Dot());
   XR_ASSERT(Ray, d > .0f);
-  direction = dir / sqrtf(d);
+  SetDirectionNormalised(dir / sqrtf(d));
+}
+
+//==============================================================================
+void  Ray::SetDirectionNormalised(const Vector3& dir)
+{
+#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
+  XR_ASSERTMSG(Ray, fabsf(direction.Dot() - 1.0f) < kEpsilon,
+    ("Ray direction is not normalised."));
+#endif
+  direction = dir;
 }
 
 //==============================================================================
