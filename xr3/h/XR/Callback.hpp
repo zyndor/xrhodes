@@ -93,9 +93,44 @@ public:
   // operators
   ///@brief Shorthand for Call().
   void  operator()(void* pSystem);
+
+  bool  operator==(CallbackObject const& rhs) const;
 };
 
-#include  "detail/CallbackObject.inl"
+//==============================================================================
+// inline
+//==============================================================================
+inline
+void  CallbackObject::Call(void* pSystem)
+{
+  XR_ASSERT(CallbackObject, pCallback);
+  (*pCallback)(pSystem, pUserData);
+}
+
+//==============================================================================
+inline
+void  CallbackObject::CallSafe(void* pSystem)
+{
+  if (pCallback)
+  {
+    (*pCallback)(pSystem, pUserData);
+  }
+}
+
+//==============================================================================
+inline
+void  CallbackObject::operator()(void* pSystem)
+{
+  Call(pSystem);
+}
+
+//==============================================================================
+inline
+bool  CallbackObject::operator==(CallbackObject const& rhs) const
+{
+  return pCallback == rhs.pCallback && pUserData == rhs.pUserData;
+}
+
 
 } // XR
 
