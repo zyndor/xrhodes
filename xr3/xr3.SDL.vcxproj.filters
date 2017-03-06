@@ -603,12 +603,4 @@
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="h\XR\detail\CallbackObject.inl">
-      <Filter>Headers</Filter>
-    </None>
-    <None Include="h\XR\Queue.inl">
-      <Filter>Headers</Filter>
-    </None>
-  </ItemGroup>
 </Project>
