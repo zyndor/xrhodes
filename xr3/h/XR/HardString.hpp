@@ -12,6 +12,12 @@
 #include <algorithm>
 #include "debug.hpp"
 
+#ifdef _MSC_VER
+// Suppress warnings for known safe uses of strcpy(), strncpy(), sprintf() etc.
+#pragma warning(push)
+#pragma warning(disable:4996)
+#endif
+
 namespace XR
 {
 
@@ -474,5 +480,9 @@ bool  operator<(const char* pStr, HardString<N>& s)
 }
 
 } // XR
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // XR_HARDSTRING_HPP
