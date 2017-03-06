@@ -16,7 +16,7 @@ namespace XR
 struct CIwHttpFix: public CIwHTTP 
 {
   // static
-  static const char const*  kPhpSessionId;
+  static const char * const  kPhpSessionId;
 
   static int32 ReceivedHeaders(void* pSystem, void* pUser);
   
@@ -25,7 +25,7 @@ struct CIwHttpFix: public CIwHTTP
   ~CIwHttpFix();
 };
 
-const char const* CIwHttpFix::kPhpSessionId = "PHPSESSID=";
+const char * const CIwHttpFix::kPhpSessionId = "PHPSESSID=";
 
 int32 CIwHttpFix::ReceivedHeaders( void* pSystem, void* pUser )
 {
