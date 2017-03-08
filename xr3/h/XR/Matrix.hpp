@@ -18,28 +18,28 @@ namespace XR
 {
 
 //==============================================================================
-enum  MatrixInds
-{
-  // components of x axis - right
-  MXX,
-  MXY,
-  MXZ,
-  // components of y axis - up
-  MYX,
-  MYY,
-  MYZ,
-  // components of z axis - forward
-  MZX,
-  MZY,
-  MZZ,
-  kNumMatrixInds
-};
-
-//==============================================================================
 ///@brief Row-order matrix with a 3x3 linear transformation (rotation, scaling)
 /// and 1x3 translation components.
 struct Matrix 
 {
+  // types
+  enum
+  {
+    // components of x axis - right
+    XX,
+    XY,
+    XZ,
+    // components of y axis - up
+    YX,
+    YY,
+    YZ,
+    // components of z axis - forward
+    ZX,
+    ZY,
+    ZZ,
+    kNumLinearComponents
+  };
+
   // static
   static Matrix Identity()
   {
@@ -50,9 +50,9 @@ struct Matrix
   union
   {
     // As a 1D array
-    float  arLinear[kNumMatrixInds];
+    float  arLinear[kNumLinearComponents];
     // As a 2D array
-    float  arLinear2D[3][3];
+    float  arLinear2D[Vector3::kNumComponents][Vector3::kNumComponents];
     // As individual components
     struct
     {
@@ -65,49 +65,53 @@ struct Matrix
   
   // structors
   Matrix()
-  : Matrix(Vector3())
+  : Matrix(Vector3::Zero())
   {}
 
-  explicit Matrix(const Vector3& t_)
+  explicit Matrix(Vector3 const& t_)
   : xx(1.0f), xy(.0f), xz(.0f),
     yx(.0f), yy(1.0f), yz(.0f),
     zx(.0f), zy(.0f), zz(1.0f),
     t(t_)
   {}
 
-  explicit Matrix(const float arData[kNumMatrixInds], const Vector3& t_ = Vector3::Zero())
-  : xx(arData[MXX]), xy(arData[MXY]), xz(arData[MXZ]),
-    yx(arData[MYX]), yy(arData[MYY]), yz(arData[MYZ]),
-    zx(arData[MZX]), zy(arData[MZY]), zz(arData[MZZ]),
+  explicit Matrix(const float arData[kNumLinearComponents],
+    Vector3 const& t_ = Vector3::Zero())
+  : xx(arData[XX]), xy(arData[XY]), xz(arData[XZ]),
+    yx(arData[YX]), yy(arData[YY]), yz(arData[YZ]),
+    zx(arData[ZX]), zy(arData[ZY]), zz(arData[ZZ]),
     t(t_)
   {}
 
-  Matrix(const Matrix& rhs, const Vector3& t_)
+  Matrix(Matrix const& rhs, Vector3 const& t_)
   : Matrix(rhs.arLinear, t_)
   {}
 
   // general
   Vector3 GetColumn(size_t i) const
   {
-    XR_ASSERT(Matrix, i < 3);
-    return Vector3(arLinear[i], arLinear[i + 3], arLinear[i + 2 * 3]);
+    XR_ASSERT(Matrix, i < Vector3::kNumComponents);
+    return Vector3(arLinear[i], arLinear[i + Vector3::kNumComponents],
+      arLinear[i + 2 * Vector3::kNumComponents]);
   }
 
   void SetColumn(size_t i, Vector3 const& v)
   {
-    XR_ASSERT(Matrix, i < 3);
+    XR_ASSERT(Matrix, i < Vector3::kNumComponents);
     arLinear[i] = v.x;
-    arLinear[i + 3] = v.y;
-    arLinear[i + 2 * 3] = v.z;
+    arLinear[i + Vector3::kNumComponents] = v.y;
+    arLinear[i + 2 * Vector3::kNumComponents] = v.z;
   }
 
+  ///@brief Scales the x component of the linear transformation by the scalar @a s.
   void  ScaleX(float s)
   {
     xx *= s;
     xy *= s;
     xz *= s;
   }
-  
+
+  ///@brief Scales the y component of the linear transformation by the scalar @a s.
   void  ScaleY(float s)
   {
     yx *= s;
@@ -115,6 +119,7 @@ struct Matrix
     yz *= s;
   }
   
+  ///@brief Scales the z component of the linear transformation by the scalar @a s.
   void  ScaleZ(float s)
   {
     zx *= s;
@@ -122,7 +127,7 @@ struct Matrix
     zz *= s;
   }
   
-  ///@brief Scales the rotation part of this matrix by the scalar @a s.
+  ///@brief Scales the linear transformation part of this Matrix by the scalar @a s.
   void  ScaleRot(float s)
   {
     xx *= s;
@@ -208,7 +213,7 @@ struct Matrix
     xy = -(yx = sinf(theta));
   }
   
-  ///@brief Transform the rotation part of the matrix only, by
+  ///@brief Transform the linear transformation partof the matrix only, by
   /// rotating it @a theta degrees around the X axis.
   void  RotateX(float theta)
   {
@@ -217,7 +222,7 @@ struct Matrix
     RotateBy(m);
   }
 
-  ///@brief Transform the rotation part of the matrix only, by
+  ///@brief Transform the linear transformation partof the matrix only, by
   /// rotating it @a theta degrees around the Y axis.
   void  RotateY(float theta)
   {
@@ -226,7 +231,7 @@ struct Matrix
     RotateBy(m);
   }
 
-  ///@brief Transform the rotation part of the matrix only, by
+  ///@brief Transform the linear transformation partof the matrix only, by
   /// rotating it @a theta degrees around the Z axis.
   void  RotateZ(float theta)
   {
@@ -260,13 +265,13 @@ struct Matrix
   }
   
   ///@brief Copies the linear transformation part from the given array.
-  void  CopyLinear(const float parLinear[kNumMatrixInds])
+  void  CopyLinear(const float parLinear[kNumLinearComponents])
   {
     memcpy(arLinear, parLinear, sizeof(arLinear));
   }
   
   ///@brief Copies the linear transformation part of the given matrix.
-  void  CopyLinear(const Matrix& m)
+  void  CopyLinear(Matrix const& m)
   {
     CopyLinear(m.arLinear);
   }
@@ -274,43 +279,43 @@ struct Matrix
   ///@brief Multiplies the linear transformation component of this Matrix
   /// by the linear transformation component the other Matrix @a m.
   /// No translation applied or modified.
-  void  RotateBy(const Matrix& m)
+  void  RotateBy(Matrix const& m)
   {
     Matrix  n(*this);
-    CalculateComponentProduct(m, n, 0, 0);
-    CalculateComponentProduct(m, n, 0, 1);
-    CalculateComponentProduct(m, n, 0, 2);
-    CalculateComponentProduct(m, n, 1, 0);
-    CalculateComponentProduct(m, n, 1, 1);
-    CalculateComponentProduct(m, n, 1, 2);
-    CalculateComponentProduct(m, n, 2, 0);
-    CalculateComponentProduct(m, n, 2, 1);
-    CalculateComponentProduct(m, n, 2, 2);
+    CalculateComponentProduct(m, n, Vector3::X, Vector3::X);
+    CalculateComponentProduct(m, n, Vector3::X, Vector3::Y);
+    CalculateComponentProduct(m, n, Vector3::X, Vector3::Z);
+    CalculateComponentProduct(m, n, Vector3::Y, Vector3::X);
+    CalculateComponentProduct(m, n, Vector3::Y, Vector3::Y);
+    CalculateComponentProduct(m, n, Vector3::Y, Vector3::Z);
+    CalculateComponentProduct(m, n, Vector3::Z, Vector3::X);
+    CalculateComponentProduct(m, n, Vector3::Z, Vector3::Y);
+    CalculateComponentProduct(m, n, Vector3::Z, Vector3::Z);
   }
   
-  void  CalculateComponentProduct(const Matrix& m, const Matrix& n, int i, int j)
+  void  CalculateComponentProduct(Matrix const& m, Matrix const& n, int i, int j)
   {
     XR_ASSERT(Matrix, i >= 0);
-    XR_ASSERT(Matrix, i < 3);
+    XR_ASSERT(Matrix, i < Vector3::kNumComponents);
     XR_ASSERT(Matrix, j >= 0);
-    XR_ASSERT(Matrix, j < 3);
+    XR_ASSERT(Matrix, j < Vector3::kNumComponents);
 
-    int y(j * 3);
+    int y(j * Vector3::kNumComponents);
     arLinear[y + i] = m.arLinear[y] * n.arLinear[i] +
-      m.arLinear[y + 1] * n.arLinear[i + 3] +
-      m.arLinear[y + 2] * n.arLinear[i + 3 * 2];
+      m.arLinear[y + 1] * n.arLinear[i + Vector3::kNumComponents] +
+      m.arLinear[y + 2] * n.arLinear[i + Vector3::kNumComponents * 2];
   }
 
   ///@brief Transforms this matrix by the matrix @a m, applying its
   /// rotation and translation.
-  void  TransformBy(const Matrix& m)
+  void  TransformBy(Matrix const& m)
   {
     RotateBy(m);
     t = m.TransformVec(t);
   }
 
   ///@brief Rotates the vector by this matrix.
-  Vector3  RotateVec(const Vector3& v) const
+  Vector3  RotateVec(Vector3 const& v) const
   {
     return Vector3(v.x * xx + v.y * yx + v.z * zx,
       v.x * xy + v.y * yy + v.z * zy,
@@ -318,14 +323,14 @@ struct Matrix
   }
   
   ///@brief Transforms the vector by this matrix.
-  Vector3  TransformVec(const Vector3& v) const
+  Vector3  TransformVec(Vector3 const& v) const
   {
     return RotateVec(v) + t;
   }
   
   ///@brief Calculates a transformation looking from the position @a from to
   /// @a to, with the given @a up vector.
-  void  LookAt(const Vector3& from, const Vector3& to, const Vector3& up)
+  void  LookAt(Vector3 const& from, Vector3 const& to, Vector3 const& up)
   {
     Vector3  vz(to - from);
     float dz(vz.Dot(vz));
@@ -341,21 +346,21 @@ struct Matrix
 
     Vector3  vx(up.Cross(vz));  // local x axis
     Vector3  vy(vz.Cross(vx));  // local y axis
-    memcpy(arLinear + MXX, vx.arData, sizeof(vx));
-    memcpy(arLinear + MYX, vy.arData, sizeof(vy));
-    memcpy(arLinear + MZX, vz.arData, sizeof(vz));
+    memcpy(arLinear + XX, vx.arData, sizeof(vx));
+    memcpy(arLinear + YX, vy.arData, sizeof(vy));
+    memcpy(arLinear + ZX, vz.arData, sizeof(vz));
   }
 
   ///@brief Calculates a transformation looking from the translation part
   /// of the matrix used as a position, to @a to, with the given @a up vector.
-  void  LookAt(const Vector3& to, const Vector3& up)
+  void  LookAt(Vector3 const& to, Vector3 const& up)
   {
     LookAt(Vector3(t.x, t.y, t.z), to, up);
   }
 
   ///@brief Writes data from the matrix into the given array in 
   /// OpenGL's 4x4 column-order format.
-  void  ToGL(float arDataOut[16]) const
+  void  ToGL(float(&arDataOut)[16]) const
   {
     XR_ASSERT(Matrix, arDataOut);
     arDataOut[0] = xx;
@@ -379,26 +384,26 @@ struct Matrix
   ///@brief Changes the linear transformation part of this matrix to its transpose.
   Matrix&  Transpose()
   {
-    std::swap(arLinear[MXY], arLinear[MYX]);
-    std::swap(arLinear[MZX], arLinear[MXZ]);
-    std::swap(arLinear[MYZ], arLinear[MZY]);
+    std::swap(arLinear[XY], arLinear[YX]);
+    std::swap(arLinear[ZX], arLinear[XZ]);
+    std::swap(arLinear[YZ], arLinear[ZY]);
     return *this;
   }
   
-  ///@brief Calculates the transpose of the rotation part of this matrix.
+  ///@brief Calculates the transpose of the linear transformation partof this matrix.
   Matrix  Transposed() const
   {
     return Matrix(*this).Transpose();
   }
 
   // operator overloads
-  Matrix&  operator*=(const Matrix& rhs)
+  Matrix&  operator*=(Matrix const& rhs)
   {
     TransformBy(rhs);
     return *this;
   }
 
-  Matrix  operator*(const Matrix& rhs) const
+  Matrix  operator*(Matrix const& rhs) const
   {
     Matrix  product(*this);
     return product *= rhs;

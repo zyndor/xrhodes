@@ -17,6 +17,14 @@ namespace XR
 //==============================================================================
 struct Vector2
 {
+  // types
+  enum
+  {
+    X,
+    Y,
+    kNumComponents
+  };
+
   // static
   static Vector2  Zero()
   {
@@ -45,7 +53,7 @@ struct Vector2
     {
       float x, y;
     };
-    float arData[2];
+    float arData[kNumComponents];
   };
 
   // structors
@@ -57,9 +65,9 @@ struct Vector2
   : x(x_), y(y_)
   {}
 
-  explicit Vector2(const float parData[2])
-  : x(parData[0]),
-    y(parData[1])
+  explicit Vector2(const float parData[kNumComponents])
+  : x(parData[X]),
+    y(parData[Y])
   {}
 
   // general
@@ -76,7 +84,7 @@ struct Vector2
   }
 
   ///@brief Calculates the dot product of this vector with @a rhs.
-  float Dot(const Vector2& rhs) const
+  float Dot(Vector2 const& rhs) const
   {
     return x * rhs.x + y * rhs.y;
   }
@@ -91,13 +99,13 @@ struct Vector2
 
   ///@brief Pseudo-cross product - calculates the dot product of this
   /// vector with the perpendicular of @a rhs.
-  float Cross(const Vector2& rhs) const
+  float Cross(Vector2 const& rhs) const
   {
     return x * rhs.y - y * rhs.x;
   }
 
   ///@brief Linearly interpolates between this vector and @a to, at the given @a t blend factor.
-  Vector2 Lerp(const Vector2& to, float t) const
+  Vector2 Lerp(Vector2 const& to, float t) const
   {
     return Vector2(x + (to.x - x) * t, y + (to.y - y) * t);
   }
@@ -115,26 +123,26 @@ struct Vector2
   }
 
   // operators
-  Vector2& operator +=(const Vector2& rhs)
+  Vector2& operator +=(Vector2 const& rhs)
   {
     x += rhs.x;
     y += rhs.y;
     return *this;
   }
 
-  Vector2  operator +(const Vector2& rhs) const
+  Vector2  operator +(Vector2 const& rhs) const
   {
     return Vector2(x + rhs.x, y + rhs.y);
   }
 
-  Vector2& operator -=(const Vector2& rhs)
+  Vector2& operator -=(Vector2 const& rhs)
   {
     x -= rhs.x;
     y -= rhs.y;
     return *this;
   }
 
-  Vector2  operator -(const Vector2& rhs) const
+  Vector2  operator -(Vector2 const& rhs) const
   {
     return Vector2(x - rhs.x, y - rhs.y);
   }

@@ -18,6 +18,15 @@ namespace XR
 //==============================================================================
 struct Vector3 
 {
+  // types
+  enum
+  {
+    X,
+    Y,
+    Z,
+    kNumComponents
+  };
+
   // static
   static Vector3  Zero()
   {
@@ -51,7 +60,7 @@ struct Vector3
     {
       float  x, y, z;
     };
-    float  arData[3];
+    float  arData[kNumComponents];
   };
 
   // structors
@@ -59,10 +68,10 @@ struct Vector3
   : x(.0f), y(.0f), z(.0f)
   {}
   
-  explicit Vector3(const float arData[3])
-  : x(arData[0]),
-    y(arData[1]),
-    z(arData[2])
+  explicit Vector3(float const kNumComponents[kNumComponents])
+  : x(arData[X]),
+    y(arData[Y]),
+    z(arData[Z])
   {}
   
   Vector3(float x_, float y_, float z_)
@@ -85,7 +94,7 @@ struct Vector3
   }
 
   ///@brief Calculates the dot product of this vector with @a rhs.
-  float Dot(const Vector3& rhs) const
+  float Dot(Vector3 const& rhs) const
   {
     return x * rhs.x + y * rhs.y + z * rhs.z;
   }
@@ -99,14 +108,14 @@ struct Vector3
   }
 
   ///@brief Calculates the cross product of this vector with @a rhs.
-  Vector3  Cross(const Vector3& rhs) const
+  Vector3  Cross(Vector3 const& rhs) const
   {
     return Vector3(y * rhs.z - z * rhs.y, z * rhs.x - x * rhs.z, x * rhs.y -
       y * rhs.x);
   }
 
   ///@brief Linearly interpolates between this vector and @a to, at the given @a t blend factor.
-  Vector3 Lerp(const Vector3& to, float t) const
+  Vector3 Lerp(Vector3 const& to, float t) const
   {
     return Vector3(x + (to.x - x) * t, y + (to.y - y) * t, z + (to.z - z) * t);
   }
@@ -130,7 +139,7 @@ struct Vector3
   }
 
   // operators
-  Vector3& operator +=(const Vector3& rhs)
+  Vector3& operator +=(Vector3 const& rhs)
   {
     x += rhs.x;
     y += rhs.y;
@@ -138,12 +147,12 @@ struct Vector3
     return *this;
   }
 
-  Vector3  operator +(const Vector3& rhs) const
+  Vector3  operator +(Vector3 const& rhs) const
   {
     return Vector3(x + rhs.x, y + rhs.y, z + rhs.z);
   }
 
-  Vector3& operator -=(const Vector3& rhs)
+  Vector3& operator -=(Vector3 const& rhs)
   {
     x -= rhs.x;
     y -= rhs.y;
@@ -151,7 +160,7 @@ struct Vector3
     return *this;
   }
 
-  Vector3  operator -(const Vector3& rhs) const
+  Vector3  operator -(Vector3 const& rhs) const
   {
     return Vector3(x - rhs.x, y - rhs.y, z - rhs.z);
   }

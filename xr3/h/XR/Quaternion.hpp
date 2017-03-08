@@ -32,7 +32,7 @@ public:
   // static
   static Quaternion Unit()
   {
-    return Quaternion(.0f, .0f, .0f, 1.0f);
+    return Quaternion();
   }
 
   ///@brief Creates a quaternion from a vector of pitch, yaw, roll rotations.
@@ -274,7 +274,7 @@ public:
     return temp;
   }
 
-  Quaternion& operator*=(const Quaternion& rhs)
+  Quaternion& operator*=(Quaternion const& rhs)
   {
     const float w0(w);
     const float i0(i);
@@ -293,7 +293,7 @@ public:
     return *this;
   }
   
-  Quaternion  operator*(const Quaternion& rhs) const
+  Quaternion  operator*(Quaternion const& rhs) const
   {
     Quaternion temp(*this);
     return temp *= rhs;
@@ -313,7 +313,7 @@ public:
     const float jSqr(j * j);
     const float kSqr(k * k);
 
-    const float arMatrix[kNumMatrixInds] =
+    const float arMatrix[Matrix::kNumLinearComponents] =
     {
       wSqr + iSqr - jSqr - kSqr, ij - wk, ik + wj,
       ij + wk, wSqr - iSqr + jSqr - kSqr, jk - wi,
