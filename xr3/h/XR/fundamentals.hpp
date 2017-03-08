@@ -7,6 +7,8 @@
 #ifndef XR_FUNDAMENTALS_HPP
 #define XR_FUNDAMENTALS_HPP
 
+#include <memory>
+
 //==============================================================================
 ///@brief Declares a non-object class, a container for all-static members.
 #define XR_NONOBJECT_DECL(className) \
@@ -20,6 +22,12 @@
   private:\
     className(const className& rhs) = delete;\
     className& operator=(const className& rhs) = delete;
+
+//==============================================================================
+///@brief Declares the core of a pImpl idiom based class.
+#define XR_PIMPL_DECL \
+  class Impl;\
+  std::unique_ptr<Impl> const m_impl;\
 
 namespace XR
 {
