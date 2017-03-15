@@ -249,6 +249,9 @@
     <ClCompile Include="h\XR\memdebug.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
+    <ClCompile Include="h\XR\FloatBuffer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -600,6 +603,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\jsonutils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\FloatBuffer.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

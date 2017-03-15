@@ -40,6 +40,7 @@
     <ClCompile Include="h\XR\detail\EventDispatcher.cpp" />
     <ClCompile Include="h\XR\Entity.cpp" />
     <ClCompile Include="h\XR\FileBuffer.cpp" />
+    <ClCompile Include="h\XR\FloatBuffer.cpp" />
     <ClCompile Include="h\XR\Font.cpp" />
     <ClCompile Include="h\XR\fundamentals.cpp" />
     <ClCompile Include="h\XR\Grid.cpp" />
@@ -131,6 +132,7 @@
     <ClInclude Include="h\XR\File.hpp" />
     <ClInclude Include="h\XR\FileBuffer.hpp" />
     <ClInclude Include="h\XR\fileutils.hpp" />
+    <ClInclude Include="h\XR\FloatBuffer.hpp" />
     <ClInclude Include="h\XR\Font.hpp" />
     <ClInclude Include="h\XR\functors.hpp" />
     <ClInclude Include="h\XR\fundamentals.hpp" />
