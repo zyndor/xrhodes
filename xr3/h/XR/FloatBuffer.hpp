@@ -24,7 +24,10 @@ public:
 
   ///@brief Adaptation allows you to have a FloatBuffer object pointing to
   /// the data of another FloatBuffer, e.g. to simplify indexing of a relevant
-  /// part. Adapting instances must not outlive the owner of their data.
+  /// part.
+  /// Adapting instances must not outlive the owner of their data. This means
+  /// that adaptation locks down the original buffer for size changes,
+  /// including destruction and assignment.
   /// An adapting instance can be changed into an owning instance, but not
   /// vice versa - this guarantees to prevent self-adapting.
   static FloatBuffer Adapt(FloatBuffer& other, size_t offset, size_t size = kSizeRest);
@@ -57,10 +60,6 @@ public:
   ///@brief Moves @a other's data to this, releasing previous data. @a other must
   /// not have any dependants.
   void Move(FloatBuffer&& other);
-
-  ///@brief Copies @a other's state to this, releasing previous data. Equivalent
-  /// to assignment operator.
-  void Copy(FloatBuffer const& other);
 
   ///@brief It creates a copy of the contents of this and owns it.
   ///@return Whether anything was done - false if this already owns its buffer.
@@ -143,7 +142,7 @@ public:
     return Get<T>()[i];
   }
 
-  ///@brief
+  ///@brief Passes each element in the buffer, cast to T, to the function @a fn.
   template <typename T>
   void ForEach(std::function<void(T&)> fn)
   {
@@ -167,15 +166,17 @@ private:
   static float* AllocateBuffer(size_t elemSize, size_t numElems);
 
   // data members
-  FloatBuffer const*  m_pDataOwner; // no ownership
-  mutable size_t      m_numDependents;
   size_t              m_elemSize;
   size_t              m_numElems;
-  float*              m_parData;  // ownership
+  float*              m_parData;  // ownership if m_pAdapted == nullptr
+
+  FloatBuffer const*  m_pAdapted; // no ownership
+  mutable size_t      m_numDependents;
 
   // internal
   FloatBuffer(FloatBuffer& other, size_t offset, size_t size = kSizeRest);
 
+  void CopyData(FloatBuffer const& other);
   void ReleaseData();
   void DetachFromOwner();
   size_t ResolveSize(size_t offset, size_t size) const;

@@ -17,38 +17,38 @@ FloatBuffer FloatBuffer::Adapt(FloatBuffer& other, size_t offset, size_t size)
 
 //=============================================================================
 FloatBuffer::FloatBuffer()
-: m_pDataOwner(nullptr),
-  m_numDependents(0),
-  m_elemSize(0),
+: m_elemSize(0),
   m_numElems(0),
-  m_parData(nullptr)
+  m_parData(nullptr),
+  m_pAdapted(nullptr),
+  m_numDependents(0)
 {}
 
 //=============================================================================
 FloatBuffer::FloatBuffer(size_t elemSize, size_t numElems)
-: m_pDataOwner(nullptr),
-  m_numDependents(0),
-  m_elemSize(elemSize),
+: m_elemSize(elemSize),
   m_numElems(numElems),
-  m_parData(AllocateBuffer(elemSize, numElems))
+  m_parData(AllocateBuffer(elemSize, numElems)),
+  m_pAdapted(nullptr),
+  m_numDependents(0)
 {}
 
 //=============================================================================
 FloatBuffer::FloatBuffer(FloatBuffer const & other)  // copy constructor
-: m_pDataOwner(other.m_pDataOwner),
-  m_numDependents(0),
-  m_elemSize(other.m_elemSize),
+: m_elemSize(other.m_elemSize),
   m_numElems(other.m_numElems),
-  m_parData(other.m_parData)
+  m_parData(other.m_parData),
+  m_pAdapted(other.m_pAdapted),
+  m_numDependents(0)
 {
-  if (m_pDataOwner == nullptr)
+  if (m_pAdapted == nullptr)
   {
     m_parData = AllocateBuffer(m_elemSize, m_numElems);
-    std::copy(other.m_parData, other.m_parData + (m_elemSize * m_numElems), m_parData);
+    CopyData(other);
   }
   else
   {
-    ++m_pDataOwner->m_numDependents;
+    ++m_pAdapted->m_numDependents;
   }
 }
 
@@ -73,8 +73,8 @@ void FloatBuffer::Move(FloatBuffer&& other)
   ReleaseData();
 
   XR_ASSERT(FloatBuffer, other.m_numDependents == 0);
-  m_pDataOwner = other.m_pDataOwner;
-  other.m_pDataOwner = nullptr;
+  m_pAdapted = other.m_pAdapted;
+  other.m_pAdapted = nullptr;
 
   m_numDependents = 0;
 
@@ -85,22 +85,15 @@ void FloatBuffer::Move(FloatBuffer&& other)
 }
 
 //=============================================================================
-void FloatBuffer::Copy(FloatBuffer const & other)
-{
-  *this = other;
-}
-
-//=============================================================================
 bool FloatBuffer::Own()
 {
-  const bool result = m_pDataOwner != nullptr;
+  const bool result = m_pAdapted != nullptr;
   if (result)
   {
     FloatBuffer temp(*this);
     ReleaseData();
     SetSize(temp.m_elemSize, temp.m_numElems);
-    std::copy(temp.m_parData, temp.m_parData + temp.m_elemSize * temp.m_numElems,
-      m_parData);
+    CopyData(temp);
   }
   return result;
 }
@@ -119,23 +112,28 @@ float * FloatBuffer::AllocateBuffer(size_t elemSize, size_t numElems)
 
 //=============================================================================
 FloatBuffer::FloatBuffer(FloatBuffer & other, size_t offset, size_t size)  // adapt constructor
-: m_pDataOwner(&other),
+: m_pAdapted(other.m_pAdapted ? other.m_pAdapted : &other),
   m_numDependents(0),
   m_elemSize(other.m_elemSize),
   m_numElems(other.ResolveSize(offset, size)),
   m_parData(other.m_parData + offset * other.m_elemSize)
 {
-  while (m_pDataOwner->m_pDataOwner)
-  {
-    m_pDataOwner = m_pDataOwner->m_pDataOwner;
-  }
-  ++m_pDataOwner->m_numDependents;
+  ++m_pAdapted->m_numDependents;
+}
+
+//=============================================================================
+void FloatBuffer::CopyData(FloatBuffer const & other)
+{
+  XR_ASSERT(FloatBuffer, m_elemSize == other.m_elemSize);
+  XR_ASSERT(FloatBuffer, m_numElems == other.m_numElems);
+  std::copy(other.m_parData, other.m_parData + (other.m_elemSize * other.m_numElems),
+    m_parData);
 }
 
 //=============================================================================
 void FloatBuffer::ReleaseData()
 {
-  if (m_pDataOwner != nullptr)
+  if (m_pAdapted != nullptr)
   {
     DetachFromOwner();
   }
@@ -153,9 +151,9 @@ void FloatBuffer::ReleaseData()
 //=============================================================================
 void FloatBuffer::DetachFromOwner()
 {
-  XR_ASSERT(FloatBuffer, m_pDataOwner != nullptr);
-  --m_pDataOwner->m_numDependents;
-  m_pDataOwner = nullptr;
+  XR_ASSERT(FloatBuffer, m_pAdapted != nullptr);
+  --m_pAdapted->m_numDependents;
+  m_pAdapted = nullptr;
 }
 
 //=============================================================================
