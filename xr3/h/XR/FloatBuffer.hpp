@@ -39,16 +39,15 @@ public:
   ~FloatBuffer();
 
   // general
-  ///@brief Sets the buffer size via setting the size of elements and the number
-  /// of elements. This instance will be the owner of this newly sized buffer.
-  ///@note This is not synonymous with std::vector<>::resize() in that the
-  /// data is released, the pre-existing elements are lost.
-  void SetSize(size_t elemSize, size_t numElems);
+  ///@brief Sets the buffer to the given size. The caller may optionally
+  /// provide a buffer of their allocation, otherwise This instance will
+  /// allocate a buffer and will own it.
+  void SetBuffer(size_t elemSize, size_t numElems, float* parBuffer = nullptr);
 
   template <class T>
-  void SetSize(size_t numElems)
+  void SetBuffer(size_t numElems, T* parBuffer = nullptr)
   {
-    SetSize(sizeof(T), numElems);
+    SetBuffer(sizeof(T), numElems, reinterpret_cast<float*>(parBuffer));
   }
 
   ///@brief Gets the size of the individual elements in this buffer.
@@ -171,7 +170,8 @@ private:
   float*              m_parData;  // ownership if m_pAdapted == nullptr
 
   FloatBuffer const*  m_pAdapted; // no ownership
-  mutable size_t      m_numDependents;
+  bool                m_ownData : 1;
+  mutable size_t      m_numDependents : 31;
 
   // internal
   FloatBuffer(FloatBuffer& other, size_t offset, size_t size = kSizeRest);
