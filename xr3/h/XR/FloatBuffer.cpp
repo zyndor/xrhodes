@@ -113,6 +113,29 @@ bool FloatBuffer::Own()
 }
 
 //=============================================================================
+void FloatBuffer::ReleaseData()
+{
+  if (m_pAdapted != nullptr)
+  {
+    XR_ASSERT(FloatBuffer, !m_ownData);
+    DetachFromOwner();
+  }
+  else
+  {
+    XR_ASSERT(FloatBuffer, m_numDependents == 0);
+    if (m_ownData)
+    {
+      delete[] m_parData;
+      m_ownData = false;
+    }
+  }
+
+  m_numElems = 0;
+  m_elemSize = 0;
+  m_parData = nullptr;
+}
+
+//=============================================================================
 float * FloatBuffer::AllocateBuffer(size_t elemSize, size_t numElems)
 {
   float* buffer = nullptr;
@@ -143,29 +166,6 @@ void FloatBuffer::CopyData(FloatBuffer const & other)
   XR_ASSERT(FloatBuffer, m_numElems == other.m_numElems);
   std::copy(other.m_parData, other.m_parData + (other.m_elemSize * other.m_numElems),
     m_parData);
-}
-
-//=============================================================================
-void FloatBuffer::ReleaseData()
-{
-  if (m_pAdapted != nullptr)
-  {
-    XR_ASSERT(FloatBuffer, !m_ownData);
-    DetachFromOwner();
-  }
-  else
-  {
-    XR_ASSERT(FloatBuffer, m_numDependents == 0);
-    if (m_ownData)
-    {
-      delete[] m_parData;
-      m_ownData = false;
-    }
-  }
-
-  m_numElems = 0;
-  m_elemSize = 0;
-  m_parData = nullptr;
 }
 
 //=============================================================================

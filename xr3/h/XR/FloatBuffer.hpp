@@ -64,6 +64,10 @@ public:
   ///@return Whether anything was done - false if this already owns its buffer.
   bool Own();
 
+  ///@brief Releases - and if this had ownership, deallocates - the the buffer
+  /// of floats this was holding. Releases reference to adapted buffers.
+  void ReleaseData();
+
   ///@brief Sets @a numElems elements of @a pData in this, starting at
   /// @a offset (as T).
   ///@note This is indexed as an array of T.
@@ -177,7 +181,6 @@ private:
   FloatBuffer(FloatBuffer& other, size_t offset, size_t size = kSizeRest);
 
   void CopyData(FloatBuffer const& other);
-  void ReleaseData();
   void DetachFromOwner();
   size_t ResolveSize(size_t offset, size_t size) const;
 
