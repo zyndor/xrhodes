@@ -6,6 +6,7 @@
 //==============================================================================
 #ifndef XR_FLOATBUFFER_HPP
 #define XR_FLOATBUFFER_HPP
+
 #include <XR/Vector3.hpp>
 #include <XR/Vector2.hpp>
 #include <XR/Color.hpp>
@@ -16,6 +17,9 @@ namespace XR
 {
 
 //=============================================================================
+///@brief A buffer of floats, usually for renderer data. Provides convenience
+/// functionality for buffer ownership management, indexing and casting to the
+/// relevant vector type.
 class FloatBuffer
 {
 public:
@@ -40,15 +44,12 @@ public:
 
   // general
   ///@brief Sets the buffer to the given size. The caller may optionally
-  /// provide a buffer of their allocation, otherwise This instance will
+  /// provide a buffer of their allocation, otherwise this instance will
   /// allocate a buffer and will own it.
   void SetBuffer(size_t elemSize, size_t numElems, float* parBuffer = nullptr);
 
   template <class T>
-  void SetBuffer(size_t numElems, T* parBuffer = nullptr)
-  {
-    SetBuffer(sizeof(T), numElems, reinterpret_cast<float*>(parBuffer));
-  }
+  void SetBuffer(size_t numElems, T* parBuffer = nullptr);
 
   ///@brief Gets the size of the individual elements in this buffer.
   size_t GetElementSize() const { return m_elemSize; }
@@ -72,97 +73,44 @@ public:
   /// @a offset (as T).
   ///@note This is indexed as an array of T.
   template <typename T>
-  void Set(size_t numElems, T const* pData, size_t offset = 0)
-  {
-    XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize);
-    XR_ASSERT(FloatBuffer, m_parData != nullptr);
-    XR_ASSERT(FloatBuffer, offset + numElems <= m_numElems);
-    T const* pEnd = pData + numElems;
-    while(pData != pEnd)
-    {
-      SetInternal(offset * m_elemSize, *pData);
-      ++offset;
-      ++pData;
-    }
-  }
+  void Set(size_t numElems, T const* pData, size_t offset = 0);
 
   ///@brief Sets the @a i-th element in this as T, to a@ value. The
   /// buffer must contain @a m_elemSize items of type T, and sizeof(T).
   ///@note This is indexed as an array of T.
   template <typename T>
-  void Set(size_t i, T const& value)
-  {
-    XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize * sizeof(float));
-    XR_ASSERT(FloatBuffer, m_parData != nullptr);
-    XR_ASSERT(FloatBuffer, i < m_numElems);
-    SetInternal(i * m_elemSize, value);
-  }
+  void Set(size_t i, T const& value);
 
   ///@brief Gets the underlying raw buffer of floats.
   ///@note Does not transfer ownership.
-  float* GetRaw()
-  {
-    return m_parData;
-  }
+  float* GetRaw();
 
   ///@brief Gets the underlying raw buffer of floats.
   ///@note Does not transfer ownership.
-  float const* GetRaw() const
-  {
-    return m_parData;
-  }
+  float const* GetRaw() const;
 
   ///@brief Gets the underlying buffer as an array of const T.
   template <typename T>
-  T const*  Get() const
-  {
-    XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize * sizeof(float));
-    const T* p;
-    GetInternal(p);
-    return p;
-  }
+  T const*  Get() const;
 
   ///@brief Gets the underlying buffer as an array of T.
   template <typename T>
-  T*  Get()
-  {
-    XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize * sizeof(float));
-    FloatBuffer const* ct = this;
-    return const_cast<T*>(ct->Get<T>());
-  }
+  T*  Get();
 
   ///@brief Indexes into the buffer as an array of const T. 
   template <typename T>
-  T const& Get(size_t i) const
-  {
-    return Get<T>()[i];
-  }
+  T const& Get(size_t i) const;
 
   ///@brief Indexes into the buffer as an array of T. 
   template <typename T>
-  T& Get(size_t i)
-  {
-    return Get<T>()[i];
-  }
+  T& Get(size_t i);
 
   ///@brief Passes each element in the buffer, cast to T, to the function @a fn.
   template <typename T>
-  void ForEach(std::function<void(T&)> fn)
-  {
-    XR_ASSERT(FloatBuffer, m_elemSize == sizeof(T));
-    auto parElems = Get<T>();
-    std::for_each(parElems, parElems + m_numElems, fn);
-  }
+  void ForEach(std::function<void(T&)> fn);
 
   // operator overloads
-  FloatBuffer& operator=(FloatBuffer const& rhs)
-  {
-    FloatBuffer temp(rhs);
-    ReleaseData();
-    Move(std::move(temp));
-
-    return *this;
-  }
+  FloatBuffer& operator=(FloatBuffer const& rhs);
 
 private:
   // static
@@ -184,37 +132,114 @@ private:
   void DetachFromOwner();
   size_t ResolveSize(size_t offset, size_t size) const;
 
-  void SetInternal(size_t i, Vector2 const& v)
-  {
-    std::copy(v.arData, v.arData + Vector2::kNumComponents, m_parData + i);
-  }
+  void SetInternal(size_t i, Vector2 const& v);
+  void SetInternal(size_t i, Vector3 const& v);
+  void SetInternal(size_t i, Color const& c);
 
-  void SetInternal(size_t i, Vector3 const& v)
-  {
-    std::copy(v.arData, v.arData + Vector3::kNumComponents, m_parData + i);
-  }
-
-  void SetInternal(size_t i, Color const& c)
-  {
-    std::copy(c.arData, c.arData + Color::kNumComponents, m_parData + i);
-  }
-
-  void GetInternal(Vector2 const*& v) const
-  {
-    v = reinterpret_cast<Vector2 const*>(m_parData);
-  }
-
-  void GetInternal(Vector3 const*& v) const
-  {
-    v = reinterpret_cast<Vector3 const*>(m_parData);
-  }
-
-  void GetInternal(Color const*& c) const
-  {
-    c = reinterpret_cast<Color const*>(m_parData);
-  }
+  void GetInternal(Vector2 const*& v) const;
+  void GetInternal(Vector3 const*& v) const;
+  void GetInternal(Color const*& c) const;
 };
 
+//=============================================================================
+// inline implementation
+//=============================================================================
+template<class T>
+inline
+void FloatBuffer::SetBuffer(size_t numElems, T * parBuffer)
+{
+  SetBuffer(sizeof(T), numElems, reinterpret_cast<float*>(parBuffer));
 }
+
+//=============================================================================
+template<typename T>
+inline
+void FloatBuffer::Set(size_t numElems, T const * pData, size_t offset)
+{
+  XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize);
+  XR_ASSERT(FloatBuffer, m_parData != nullptr);
+  XR_ASSERT(FloatBuffer, offset + numElems <= m_numElems);
+  T const* pEnd = pData + numElems;
+  while (pData != pEnd)
+  {
+    SetInternal(offset * m_elemSize, *pData);
+    ++offset;
+    ++pData;
+  }
+}
+
+//=============================================================================
+template<typename T>
+inline
+void FloatBuffer::Set(size_t i, T const & value)
+{
+  XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize * sizeof(float));
+  XR_ASSERT(FloatBuffer, m_parData != nullptr);
+  XR_ASSERT(FloatBuffer, i < m_numElems);
+  SetInternal(i * m_elemSize, value);
+}
+
+//=============================================================================
+inline
+float * FloatBuffer::GetRaw()
+{
+  return m_parData;
+}
+
+//=============================================================================
+inline
+float const * FloatBuffer::GetRaw() const
+{
+  return m_parData;
+}
+
+//=============================================================================
+template<typename T>
+inline
+T * FloatBuffer::Get()
+{
+  XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize * sizeof(float));
+  FloatBuffer const* ct = this;
+  return const_cast<T*>(ct->Get<T>());
+}
+
+//=============================================================================
+template<typename T>
+inline
+T const * FloatBuffer::Get() const
+{
+  XR_ASSERT(FloatBuffer, sizeof(T) == m_elemSize * sizeof(float));
+  const T* p;
+  GetInternal(p);
+  return p;
+}
+
+//=============================================================================
+template<typename T>
+inline
+T const & FloatBuffer::Get(size_t i) const
+{
+  return Get<T>()[i];
+}
+
+//=============================================================================
+template<typename T>
+inline
+T & FloatBuffer::Get(size_t i)
+{
+  return Get<T>()[i];
+}
+
+//=============================================================================
+template<typename T>
+inline
+void FloatBuffer::ForEach(std::function<void(T&)> fn)
+{
+  XR_ASSERT(FloatBuffer, m_elemSize == sizeof(T));
+  auto parElems = Get<T>();
+  std::for_each(parElems, parElems + m_numElems, fn);
+}
+
+} // XR
 
 #endif //XR_FLOATBUFFER_HPP
