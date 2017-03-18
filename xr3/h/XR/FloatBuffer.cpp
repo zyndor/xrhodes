@@ -26,14 +26,19 @@ FloatBuffer::FloatBuffer()
 {}
 
 //=============================================================================
-FloatBuffer::FloatBuffer(size_t elemSize, size_t numElems)
+FloatBuffer::FloatBuffer(size_t elemSize, size_t numElems, float* parBuffer)
 : m_elemSize(elemSize),
   m_numElems(numElems),
-  m_parData(AllocateBuffer(elemSize, numElems)),
+  m_parData(parBuffer),
   m_pAdapted(nullptr),
-  m_ownData(true),
+  m_ownData(parBuffer == nullptr),
   m_numDependents(0)
-{}
+{
+  if (parBuffer == nullptr)
+  {
+    m_parData = AllocateBuffer(elemSize, numElems);
+  }
+}
 
 //=============================================================================
 FloatBuffer::FloatBuffer(FloatBuffer const & other)  // copy constructor

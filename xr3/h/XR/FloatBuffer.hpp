@@ -38,7 +38,7 @@ public:
 
   // structors
   FloatBuffer();
-  FloatBuffer(size_t elemSize, size_t numElems);
+  FloatBuffer(size_t elemSize, size_t numElems, float* parBuffer = nullptr);
   FloatBuffer(FloatBuffer const& other);
   ~FloatBuffer();
 
