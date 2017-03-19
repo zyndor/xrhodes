@@ -68,7 +68,6 @@
     <ClCompile Include="h\XR\Quadtree.cpp" />
     <ClCompile Include="h\XR\Ray.cpp" />
     <ClCompile Include="h\XR\RectObject.cpp" />
-    <ClCompile Include="h\XR\RenderStreamIO.cpp" />
     <ClCompile Include="h\XR\RingBuffer.cpp" />
     <ClCompile Include="h\XR\SDL\Audio.cpp" />
     <ClCompile Include="h\XR\SDL\Device.cpp" />
@@ -81,7 +80,6 @@
     <ClCompile Include="h\XR\SDL\MaterialImpl.cpp" />
     <ClCompile Include="h\XR\SDL\MouseButton.cpp" />
     <ClCompile Include="h\XR\SDL\Renderer.cpp" />
-    <ClCompile Include="h\XR\SDL\RenderStream.cpp" />
     <ClCompile Include="h\XR\SDL\Sample.cpp" />
     <ClCompile Include="h\XR\SDL\Texture.cpp" />
     <ClCompile Include="h\XR\SDL\TextureImpl.cpp" />
@@ -185,7 +183,6 @@
     <ClInclude Include="h\XR\RefCounted.hpp" />
     <ClInclude Include="h\XR\RefHolder.hpp" />
     <ClInclude Include="h\XR\Renderer.hpp" />
-    <ClInclude Include="h\XR\RenderStream.hpp" />
     <ClInclude Include="h\XR\ResManager.hpp" />
     <ClInclude Include="h\XR\RingBuffer.hpp" />
     <ClInclude Include="h\XR\Sample.hpp" />

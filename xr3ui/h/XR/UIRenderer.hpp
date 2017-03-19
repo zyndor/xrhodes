@@ -38,27 +38,27 @@ public:
   
   ///@brief   Records the material and copies the uvs and color as passed.
   /// The internal sprite counter is then incremented.
-  ///@return  A pointer to the RenderStream that you can write the 4 vertices to.
+  ///@return  A FloatBuffer that you can write the 4 vertices to.
   ///@note    An assertion is tripped when any combination of NewSprite()
   /// methods are called more than the renderer's capacity without Clear().
-  RenderStream  NewSprite(Material* pMaterial, const RenderStream& rsUV, Color color);
+  FloatBuffer  NewSprite(Material* pMaterial, const FloatBuffer& fbUV, Color color);
     
-  ///@brief   Records the material and the color as passed. Writes a
-  /// pointer to the 4 uvs to @a parUV, which you can subsequently fill out.
+  ///@brief   Records the material and the color as passed. @a fbUV will be
+  /// set to a buffer of 4 UVs, which you can subsequently fill out.
   /// The internal sprite counter is then incremented.
-  ///@return  A pointer to the RenderStream that you can write the 4 vertices to.
+  ///@return  A FloatBuffer that you can write the 4 vertices to.
   ///@note    An assertion is tripped when any combination of NewSprite()
   /// methods are called more than the renderer's capacity without Clear().
-  RenderStream  NewSprite(Material* pMaterial, Color color, RenderStream& rsUV);
+  FloatBuffer  NewSprite(Material* pMaterial, Color color, FloatBuffer& fbUV);
 
-  ///@brief   Records the material, then writes a pointer to the 4 uvs to
-  /// @a parUV and 4 colours to @a parCol, which you can subsequently fill out.
+  ///@brief   Records the material, @a fbUVs and @a fbColor sill be set to
+  /// buffers of 4 UVs and Colors, which you can subsequently fill out.
   /// The internal sprite counter is then incremented.
-  ///@return  A pointer to the RenderStream vectors that you can write the 4 vertices to.
+  ///@return  A FloatBuffer that you can write the 4 vertices to.
   ///@note    An assertion is tripped when any combination of NewSprite()
   /// methods are called more than the renderer's capacity without Clear().
-  RenderStream  NewSprite(Material* pMaterial, RenderStream& rsUV,
-    RenderStream& rsColor);
+  FloatBuffer  NewSprite(Material* pMaterial, FloatBuffer& fbUV,
+    FloatBuffer& fbColor);
 
   ///@brief   Renders all unrendered sprites and marks them as rendered.
   ///@note    To render every sprite repeatedly, ResetRendering() when
@@ -79,7 +79,7 @@ protected:
   // data
   int           m_numSprites;
   Material**    m_parpMaterial;
-  RenderStream  m_colors;
+  FloatBuffer   m_colors;
   
   int           m_numSpritesConsumed;
   int           m_numSpritesRendered;

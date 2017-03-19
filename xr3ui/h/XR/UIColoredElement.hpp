@@ -28,7 +28,7 @@ public:
 
 protected:
   // internal
-  void _CalculateSpriteVerts(const Sprite* pSprite, RenderStream& rsVerts) const;
+  void _CalculateSpriteVerts(const Sprite* pSprite, FloatBuffer& fbVerts) const;
 };
 
 } // XR

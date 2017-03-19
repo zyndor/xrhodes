@@ -143,7 +143,7 @@ void Renderer::Init()
   // initialise frame pool
   s_rendererImpl.framePool.SetBuffer(poolSize, true, 0);
   
-  // renderstreams
+  // FloatBuffers
   s_rendererImpl.numVertices = 0;
   s_rendererImpl.numColors = 0;
   s_rendererImpl.numTexCoords = 0;
@@ -206,7 +206,7 @@ int32_t Renderer::GetDeviceHeight()
 }
 
 //==============================================================================
-void* Renderer::Alloc( int32_t bytes )
+void* Renderer::Alloc(size_t bytes)
 {
   XR_ASSERT(Renderer, bytes >= 0);
   return s_rendererImpl.framePool.Allocate(bytes);
@@ -222,15 +222,15 @@ Material* Renderer::AllocMaterial()
 }
 
 //==============================================================================
-RenderStream* Renderer::AllocStream(RenderStream::Format fmt, int numElems)
+FloatBuffer* Renderer::AllocBuffer(size_t elemSize, size_t numElems)
 {
   XR_ASSERT(Renderer, numElems >= 0);
 
-  int   bufferBytes(RenderStream::CalculateByteSize(fmt, numElems));
-  void* pMem(Alloc(sizeof(RenderStream) + bufferBytes));
-  RenderStream* pStream(new (pMem) RenderStream(fmt, numElems,
-    static_cast<RenderStream*>(pMem) + 1, false));
-  return pStream;
+  size_t bufferBytes(elemSize * numElems);
+  void* pMem(Alloc(sizeof(FloatBuffer) + bufferBytes));
+  FloatBuffer* pBuffer(new (pMem) FloatBuffer());
+  pBuffer->SetBuffer(elemSize, numElems, reinterpret_cast<float*>(pBuffer + 1));
+  return pBuffer;
 }
 
 //==============================================================================
@@ -371,20 +371,20 @@ void Renderer::SetMaterial( Material* pMat )
 }
 
 //==============================================================================
-void  Renderer::SetVertStream(RenderStream& rs)
+void  Renderer::SetVertStream(FloatBuffer const& fb)
 {
-  XR_ASSERT(Renderer::SetVertStream, rs.GetFormat() == RenderStream::F_VECTOR3);
+  XR_ASSERT(Renderer::SetVertStream, fb.GetElementSize() == sizeof(Vector3));
   XR_GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
-  XR_GL_CALL(glVertexPointer(3, GL_FLOAT, 0, rs.GetData()));
-  s_rendererImpl.numVertices = rs.GetCapacity();
+  XR_GL_CALL(glVertexPointer(3, GL_FLOAT, 0, fb.GetRaw()));
+  s_rendererImpl.numVertices = fb.GetNumElements();
 }
 
 //==============================================================================
-void  Renderer::SetUVStream(RenderStream& rs, int id)
+void  Renderer::SetUVStream(FloatBuffer const& fb, int id)
 {
-  XR_ASSERT(Renderer::SetUVStream, rs.GetFormat() == RenderStream::F_VECTOR2 ||
-    rs.GetCapacity() == 0);
-  if (rs.GetCapacity() > 0)
+  XR_ASSERT(Renderer::SetUVStream, fb.GetElementSize() == sizeof(Vector2) ||
+    fb.GetNumElements() == 0);
+  if (fb.GetNumElements() > 0)
   {
     XR_GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
   }
@@ -392,16 +392,16 @@ void  Renderer::SetUVStream(RenderStream& rs, int id)
   {
     XR_GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
   }
-  XR_GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, rs.GetData()));
-  s_rendererImpl.numTexCoords = rs.GetCapacity();
+  XR_GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, fb.GetRaw()));
+  s_rendererImpl.numTexCoords = fb.GetNumElements();
 }
 
 //==============================================================================
-void  Renderer::SetColStream(RenderStream& rs)
+void  Renderer::SetColStream(FloatBuffer const& fb)
 {
-  XR_ASSERT(Renderer::SetColStream, rs.GetFormat() == RenderStream::F_COLOR ||
-    rs.GetCapacity() == 0); // stub
-  if (rs.GetCapacity() > 0)
+  XR_ASSERT(Renderer::SetColStream, fb.GetElementSize() == sizeof(Color) ||
+    fb.GetNumElements() == 0);
+  if (fb.GetNumElements() > 0)
   {
     XR_GL_CALL(glEnableClientState(GL_COLOR_ARRAY));
   }
@@ -409,16 +409,16 @@ void  Renderer::SetColStream(RenderStream& rs)
   {
     XR_GL_CALL(glDisableClientState(GL_COLOR_ARRAY));
   }
-  XR_GL_CALL(glColorPointer(4, GL_FLOAT, 0, rs.GetData()));
-  s_rendererImpl.numColors = rs.GetCapacity();
+  XR_GL_CALL(glColorPointer(2, GL_FLOAT, 0, fb.GetRaw()));
+  s_rendererImpl.numColors = fb.GetNumElements();
 }
 
 //==============================================================================
-void  Renderer::SetNormStream(RenderStream& rs)
+void  Renderer::SetNormStream(FloatBuffer const& fb)
 {
-  XR_ASSERT(Renderer::SetNormStream, rs.GetFormat() == RenderStream::F_VECTOR3 ||
-    rs.GetCapacity() == 0); // stub
-  if (rs.GetCapacity() > 0)
+  XR_ASSERT(Renderer::SetNormStream, fb.GetElementSize() == sizeof(Vector3) ||
+    fb.GetNumElements() == 0);
+  if (fb.GetNumElements() > 0)
   {
     XR_GL_CALL(glEnableClientState(GL_NORMAL_ARRAY));
   }
@@ -426,8 +426,8 @@ void  Renderer::SetNormStream(RenderStream& rs)
   {
     XR_GL_CALL(glDisableClientState(GL_NORMAL_ARRAY));
   }
-  XR_GL_CALL(glNormalPointer(3, 0, rs.GetData()));
-  s_rendererImpl.numNormals = rs.GetCapacity();
+  XR_GL_CALL(glNormalPointer(3, 0, fb.GetRaw()));
+  s_rendererImpl.numNormals = fb.GetNumElements();
 }
 
 //==============================================================================

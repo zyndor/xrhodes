@@ -31,14 +31,14 @@ static void SetMaterial()
 //==============================================================================
 void  Line(const Vector3& v, Material* pMaterial)
 {
-	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 2));
-	pStream->Set(0, Vector3::Zero());
-	pStream->Set(1, v);
+  FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), 2));
+  pStream->Set(0, Vector3::Zero());
+  pStream->Set(1, v);
 
-	if(pMaterial == 0)
-	{
-		SetMaterial();
-	}
+  if(pMaterial == 0)
+  {
+    SetMaterial();
+  }
   else
   {
     Renderer::SetMaterial(pMaterial);
@@ -51,17 +51,17 @@ void  Line(const Vector3& v, Material* pMaterial)
 //==============================================================================
 void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
 {
-	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
-	for(int i = 0; i < numVerts; ++i)
-	{
-		pStream->Set(i, *parVerts);
-		++parVerts;
-	}
+  FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
+  for(int i = 0; i < numVerts; ++i)
+  {
+    pStream->Set(i, *parVerts);
+    ++parVerts;
+  }
 
-	if(pMaterial == 0)
-	{
-		SetMaterial();
-	}
+  if(pMaterial == 0)
+  {
+    SetMaterial();
+  }
   else
   {
     Renderer::SetMaterial(pMaterial);
@@ -74,17 +74,17 @@ void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
 //==============================================================================
 void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial)
 {
-	RenderStream*	pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
-	for(int i = 0; i < numVerts; ++i)
-	{
-		pStream->Set(i, *parVerts);
-		++parVerts;
-	}
+  FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
+  for(int i = 0; i < numVerts; ++i)
+  {
+    pStream->Set(i, *parVerts);
+    ++parVerts;
+  }
 
-	if(pMaterial == 0)
-	{
-		SetMaterial();
-	}
+  if(pMaterial == 0)
+  {
+    SetMaterial();
+  }
   else
   {
     Renderer::SetMaterial(pMaterial);
@@ -97,12 +97,12 @@ void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial)
 //==============================================================================
 void  Rect(float hw, float hh, Material* pMaterial)
 {
-  RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 5));
+  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), 5));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
   pStream->Set(1, Vector3(-hw, hh, .0f));
   pStream->Set(2, Vector3(hw, hh, .0f));
   pStream->Set(3, Vector3(hw, -hh, .0f));
-  pStream->Set(4, pStream->GetVector3(0));
+  pStream->Set(4, pStream->Get<Vector3>(0));
 
   if(pMaterial == 0)
   {
@@ -120,7 +120,7 @@ void  Rect(float hw, float hh, Material* pMaterial)
 //==============================================================================
 void  FillRect(float hw, float hh, Material* pMaterial)
 {
-  RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, 4));
+  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), 4));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
   pStream->Set(1, Vector3(-hw, hh, .0f));
   pStream->Set(2, Vector3(hw, hh, .0f));
@@ -150,7 +150,7 @@ void  Circle(float radius, Material* pMaterial)
 
   numVerts *= 2;
   ++numVerts;
-  RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
+  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
   for(int i = 0; i < numVerts; ++i)
   {
     pStream->Set(i, v);
@@ -181,7 +181,7 @@ void  FillCircle(float radius, Material* pMaterial)
 
   numVerts *= 2;
   numVerts += 2;
-  RenderStream* pStream(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
+  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
   pStream->Set(0, Vector3::Zero());
   for(int i = 1; i < numVerts; ++i)
   {

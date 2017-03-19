@@ -43,25 +43,25 @@ void UIHorizontalProgressBar::Render() const
     float top(y + sprite.GetTopPadding() * hs);
     float bottom(y + h - sprite.GetBottomPadding() * hs);
 
-    const RenderStream& rsSpriteUVs(sprite.GetUVs());
+    const FloatBuffer& fbSpriteUVs(sprite.GetUVs());
     const float wRatio(wSprite / sprite.GetQuadWidth());
     float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * wRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = Lerp(rsSpriteUVs.GetY(Sprite::VI_SW),
-        rsSpriteUVs.GetY(Sprite::VI_SE), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_SE).y, uv1);
     }
     else
     {
-      uv1 = Lerp(rsSpriteUVs.GetX(Sprite::VI_NW),
-        rsSpriteUVs.GetX(Sprite::VI_NE), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_NE).x, uv1);
     }
 
-    RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3,
+    FloatBuffer* pfbVerts(Renderer::AllocBuffer(sizeof(Vector3),
                     Sprite::kNumVertices));
-    RenderStream* pRsUVs(Renderer::AllocStream(RenderStream::F_VECTOR2,
+    FloatBuffer* pfbUVs(Renderer::AllocBuffer(sizeof(Vector2),
                     Sprite::kNumVertices));
-    sprite.CopyUVsTo(0, *pRsUVs);
+    sprite.CopyUVsTo(0, *pfbUVs);
 
     x1 += x;
 
@@ -71,19 +71,19 @@ void UIHorizontalProgressBar::Render() const
 
       if (sprite.IsUVRotated())
       {
-        pRsUVs->SetY(Sprite::VI_SE, uv1);
-        pRsUVs->SetY(Sprite::VI_NE, uv1);
+        pfbUVs->Get<Vector2>(Sprite::VI_SE).y = uv1;
+        pfbUVs->Get<Vector2>(Sprite::VI_NE).y = uv1;
       }
       else
       {
-        pRsUVs->SetX(Sprite::VI_SE, uv1);
-        pRsUVs->SetX(Sprite::VI_NE, uv1);
+        pfbUVs->Get<Vector2>(Sprite::VI_SE).x = uv1;
+        pfbUVs->Get<Vector2>(Sprite::VI_NE).x = uv1;
       }
 
-      pRsVerts->Set(Sprite::VI_NW, Vector3(left, top, .0f));
-      pRsVerts->Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-      pRsVerts->Set(Sprite::VI_SE, Vector3(x1, bottom, .0f));
-      pRsVerts->Set(Sprite::VI_NE, Vector3(x1, top, .0f));
+      pfbVerts->Set(Sprite::VI_NW, Vector3(left, top, .0f));
+      pfbVerts->Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
+      pfbVerts->Set(Sprite::VI_SE, Vector3(x1, bottom, .0f));
+      pfbVerts->Set(Sprite::VI_NE, Vector3(x1, top, .0f));
     }
     else
     {
@@ -91,26 +91,26 @@ void UIHorizontalProgressBar::Render() const
 
       if (sprite.IsUVRotated())
       {
-        pRsUVs->SetY(Sprite::VI_NW, uv1);
-        pRsUVs->SetY(Sprite::VI_SW, uv1);
+        pfbUVs->Get<Vector2>(Sprite::VI_NW).x = uv1;
+        pfbUVs->Get<Vector2>(Sprite::VI_SW).x = uv1;
       }
       else
       {
-        pRsUVs->SetX(Sprite::VI_NW, uv1);
-        pRsUVs->SetX(Sprite::VI_SW, uv1);
+        pfbUVs->Get<Vector2>(Sprite::VI_NW).x = uv1;
+        pfbUVs->Get<Vector2>(Sprite::VI_SW).x = uv1;
       }
 
-      pRsVerts->Set(Sprite::VI_NW, Vector3(x1, top, .0f));
-      pRsVerts->Set(Sprite::VI_SW, Vector3(x1, bottom, .0f));
-      pRsVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-      pRsVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
+      pfbVerts->Set(Sprite::VI_NW, Vector3(x1, top, .0f));
+      pfbVerts->Set(Sprite::VI_SW, Vector3(x1, bottom, .0f));
+      pfbVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
+      pfbVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
     }
 
     Renderer::SetMaterial(sprite.GetMaterial());
     Renderer::SetAmbientColor(color);
 
-    Renderer::SetVertStream(*pRsVerts);
-    Renderer::SetUVStream(*pRsUVs);
+    Renderer::SetVertStream(*pfbVerts);
+    Renderer::SetUVStream(*pfbUVs);
 
     Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
   }
@@ -140,23 +140,23 @@ void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
     float top(y + sprite.GetTopPadding() * hs);
     float bottom(y + h - sprite.GetBottomPadding() * hs);
 
-    const RenderStream& rsSpriteUVs(sprite.GetUVs());
+    const FloatBuffer& fbSpriteUVs(sprite.GetUVs());
     const float wRatio(wSprite / sprite.GetQuadWidth());
     float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * wRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = Lerp(rsSpriteUVs.GetY(Sprite::VI_SW),
-        rsSpriteUVs.GetY(Sprite::VI_SE), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_SE).y, uv1);
     }
     else
     {
-      uv1 = Lerp(rsSpriteUVs.GetX(Sprite::VI_NW),
-        rsSpriteUVs.GetX(Sprite::VI_NE), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_NE).x, uv1);
     }
 
-    RenderStream  rsUVs;
-    RenderStream  rsVerts(pRenderer->NewSprite(sprite.GetMaterial(), color, rsUVs));
-    sprite.CopyUVsTo(0, rsUVs);
+    FloatBuffer  fbUVs;
+    FloatBuffer  fbVerts(pRenderer->NewSprite(sprite.GetMaterial(), color, fbUVs));
+    sprite.CopyUVsTo(0, fbUVs);
 
     x1 += x;
 
@@ -166,19 +166,19 @@ void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
 
       if (sprite.IsUVRotated())
       {
-        rsUVs.SetY(Sprite::VI_SE, uv1);
-        rsUVs.SetY(Sprite::VI_NE, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_SE).y = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_NE).y = uv1;
       }
       else
       {
-        rsUVs.SetX(Sprite::VI_SE, uv1);
-        rsUVs.SetX(Sprite::VI_NE, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_SE).x = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_NE).x = uv1;
       }
 
-      rsVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f));
-      rsVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-      rsVerts.Set(Sprite::VI_SE, Vector3(x1, bottom, .0f));
-      rsVerts.Set(Sprite::VI_NE, Vector3(x1, top, .0f));
+      fbVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f));
+      fbVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
+      fbVerts.Set(Sprite::VI_SE, Vector3(x1, bottom, .0f));
+      fbVerts.Set(Sprite::VI_NE, Vector3(x1, top, .0f));
     }
     else
     {
@@ -186,19 +186,19 @@ void UIHorizontalProgressBar::Render( UIRenderer* pRenderer ) const
 
       if (sprite.IsUVRotated())
       {
-        rsUVs.SetY(Sprite::VI_NW, uv1);
-        rsUVs.SetY(Sprite::VI_SW, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_NW).y = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_SW).y = uv1;
       }
       else
       {
-        rsUVs.SetX(Sprite::VI_NW, uv1);
-        rsUVs.SetX(Sprite::VI_SW, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_NW).x = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_SW).x = uv1;
       }
 
-      rsVerts.Set(Sprite::VI_NW, Vector3(x1, top, .0f));
-      rsVerts.Set(Sprite::VI_SW, Vector3(x1, bottom, .0f));
-      rsVerts.Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-      rsVerts.Set(Sprite::VI_NE, Vector3(right, top, .0f));
+      fbVerts.Set(Sprite::VI_NW, Vector3(x1, top, .0f));
+      fbVerts.Set(Sprite::VI_SW, Vector3(x1, bottom, .0f));
+      fbVerts.Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
+      fbVerts.Set(Sprite::VI_NE, Vector3(right, top, .0f));
     }
   }
 }

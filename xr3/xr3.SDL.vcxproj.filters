@@ -135,9 +135,6 @@
     <ClCompile Include="h\XR\RectObject.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\RenderStreamIO.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\RingBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -217,9 +214,6 @@
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\SDL\Renderer.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\SDL\RenderStream.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\SDL\Sample.cpp">
@@ -480,9 +474,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Renderer.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\RenderStream.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\ResManager.hpp">

@@ -107,17 +107,17 @@ void UIButton::Render() const
     ("Material needs to be set in UIButton::arSprites[%d] before Render()",
     GetSpriteId()));
 
-  RenderStream* pRsVerts = Renderer::AllocStream(RenderStream::F_VECTOR3,
+  FloatBuffer* pFbVerts = Renderer::AllocBuffer(sizeof(Vector3),
     Sprite::kNumVertices);
-  _CalculateSpriteVerts(pSprite, *pRsVerts);
+  _CalculateSpriteVerts(pSprite, *pFbVerts);
 
-  RenderStream* pRsUVs = pSprite->CopyUVs();
+  FloatBuffer* pFbUVs = pSprite->CopyUVs();
 
   Renderer::SetMaterial(pSprite->GetMaterial());
   Renderer::SetAmbientColor(color);
 
-  Renderer::SetVertStream(*pRsVerts);
-  Renderer::SetUVStream(*pRsUVs);
+  Renderer::SetVertStream(*pFbVerts);
+  Renderer::SetUVStream(*pFbUVs);
 
   Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
 }
@@ -130,9 +130,9 @@ void UIButton::Render( UIRenderer* pRenderer ) const
     ("Material needs to be set in UIButton::arSprites[%d] before Render()",
     GetSpriteId()));
 
-  RenderStream  rsVerts = pRenderer->NewSprite(pSprite->GetMaterial(),
+  FloatBuffer  fbVerts = pRenderer->NewSprite(pSprite->GetMaterial(),
     pSprite->GetUVs(), color);
-  _CalculateSpriteVerts(pSprite, rsVerts);
+  _CalculateSpriteVerts(pSprite, fbVerts);
 }
 
 //==============================================================================

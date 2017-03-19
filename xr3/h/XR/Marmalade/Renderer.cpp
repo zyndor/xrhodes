@@ -81,7 +81,7 @@ int32 Renderer::GetScreenHeight()
 }
 
 //==============================================================================
-void* Renderer::Alloc( int32 bytes )
+void* Renderer::Alloc(size_t bytes)
 {
   XR_ASSERT(Renderer, bytes >= 0);
   return IwGxDataAlloc(bytes);
@@ -94,15 +94,15 @@ Material* Renderer::AllocMaterial()
 }
 
 //==============================================================================
-RenderStream* Renderer::AllocStream(RenderStream::Format fmt, int numElems)
+FloatBuffer* Renderer::AllocBuffer(size_t elemSize, size_t numElems)
 {
-  IwAssert(Renderer, numElems >= 0);
+  XR_ASSERT(Renderer, numElems >= 0);
 
-  int   bufferBytes(RenderStream::CalculateByteSize(fmt, numElems));
-  void* pMemStream(Alloc(sizeof(RenderStream) + bufferBytes));
-  void* pMemBuffer(static_cast<char*>(pMemStream) + sizeof(RenderStream));
-  
-  return new (pMemStream) RenderStream(fmt, numElems, pMemBuffer, false);
+  size_t bufferBytes(elemSize * numElems);
+  void* pMem(Alloc(sizeof(FloatBuffer) + bufferBytes));
+  FloatBuffer* pBuffer(new (pMem) FloatBuffer());
+  pBuffer->SetBuffer(elemSize, numElems, reinterpret_cast<float*>(pBuffer + 1));
+  return pStream;
 }
 
 //==============================================================================
@@ -167,7 +167,7 @@ void Renderer::SetPerspective(float verticalFov, float zNear, float zFar)
 //==============================================================================
 void Renderer::SetFarNearZ( float zFar, float zNear )
 {
-  IwAssert(Renderer, zFar > zNear);
+  XR_ASSERT(Renderer, zFar > zNear);
   s_pRenderer->zFar = zFar;
   s_pRenderer->zNear = zNear;
 }
@@ -228,35 +228,35 @@ void Renderer::SetMaterial( Material* pMat )
 }
 
 //==============================================================================
-void  Renderer::SetVertStream(RenderStream& rs)
+void  Renderer::SetVertStream(FloatBuffer& fb)
 {
-  IwAssert(Renderer::SetVertStream, rs.GetFormat() == RenderStream::F_VECTOR3); // stub
-  s_pRenderer->numVertices = rs.GetCapacity();
-  IwGxSetVertStream(static_cast<CIwFVec3*>(rs.GetData()), rs.GetCapacity());
+  XR_ASSERT(Renderer::SetVertStream, fb.GetElementSize() == sizeof(Vector3)); // stub
+  s_pRenderer->numVertices = fb.GetNumElements();
+  IwGxSetVertStream(static_cast<CIwFVec3*>(fb.GetRaw()), fb.GetNumElements());
 }
 
 //==============================================================================
-void  Renderer::SetUVStream(RenderStream& rs, int id)
+void  Renderer::SetUVStream(FloatBuffer& fb, int id)
 {
-  IwAssert(Renderer::SetVertStream, rs.GetFormat() == RenderStream::F_VECTOR2 ||
-    rs.GetCapacity() == 0);
-  IwGxSetUVStream(static_cast<CIwFVec2*>(rs.GetData()), id);
+  XR_ASSERT(Renderer::SetVertStream, fb.GetElementSize() == sizeof(Vector2) ||
+    fb.GetNumElements() == 0);
+  IwGxSetUVStream(static_cast<CIwFVec2*>(fb.GetRaw()), id);
 }
 
 //==============================================================================
-void  Renderer::SetColStream(RenderStream& rs)
+void  Renderer::SetColStream(FloatBuffer& fb)
 {
-  IwAssert(Renderer::SetVertStream, rs.GetFormat() == RenderStream::F_COLOR ||
-    rs.GetCapacity() == 0);
-  IwGxSetColStream(static_cast<CIwColour*>(rs.GetData()), rs.GetCapacity());
+  XR_ASSERT(Renderer::SetVertStream, fb.GetElementSize() == sizeof(Color) ||
+    fb.GetNumElements() == 0);
+  IwGxSetColStream(static_cast<CIwColour*>(fb.GetRaw()), fb.GetNumElements());
 }
 
 //==============================================================================
-void  Renderer::SetNormStream(RenderStream& rs)
+void  Renderer::SetNormStream(FloatBuffer& fb)
 {
-  IwAssert(Renderer::SetVertStream, rs.GetFormat() == RenderStream::F_VECTOR3 ||
-    rs.GetCapacity() == 0);
-  IwGxSetNormStream(static_cast<CIwFVec3*>(rs.GetData()), rs.GetCapacity());
+  XR_ASSERT(Renderer::SetVertStream, fb.GetElementSize() == sizeof(Vector3) ||
+    fb.GetNumElements() == 0);
+  IwGxSetNormStream(static_cast<CIwFVec3*>(fb.GetRaw()), fb.GetNumElements());
 }
 
 //==============================================================================

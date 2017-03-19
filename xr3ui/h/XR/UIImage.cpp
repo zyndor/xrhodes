@@ -43,17 +43,17 @@ void UIImage::Render() const
   XR_ASSERTMSG(UIImage, sprite.GetMaterial() != 0,
     ("Material needs to be set in UIImage::sprite before Render()"));
 
-  RenderStream* pRsVerts = Renderer::AllocStream(RenderStream::F_VECTOR3,
+  FloatBuffer* pFbVerts = Renderer::AllocBuffer(sizeof(Vector3),
     Sprite::kNumVertices);
-  _CalculateSpriteVerts(&sprite, *pRsVerts);
+  _CalculateSpriteVerts(&sprite, *pFbVerts);
 
-  RenderStream* pRsUVs = sprite.CopyUVs();
+  FloatBuffer* pFbUVs = sprite.CopyUVs();
 
   Renderer::SetMaterial(sprite.GetMaterial());
   Renderer::SetAmbientColor(color);
 
-  Renderer::SetVertStream(*pRsVerts);
-  Renderer::SetUVStream(*pRsUVs);
+  Renderer::SetVertStream(*pFbVerts);
+  Renderer::SetUVStream(*pFbUVs);
 
   Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
 }
@@ -64,9 +64,9 @@ void UIImage::Render( UIRenderer* pRenderer ) const
   XR_ASSERTMSG(UIImage, sprite.GetMaterial() != 0,
     ("Material needs to be set in UIImage::sprite before Render()"));
 
-  RenderStream rsVerts = pRenderer->NewSprite(sprite.GetMaterial(),
+  FloatBuffer fbVerts = pRenderer->NewSprite(sprite.GetMaterial(),
     sprite.GetUVs(), color);
-  _CalculateSpriteVerts(&sprite, rsVerts);
+  _CalculateSpriteVerts(&sprite, fbVerts);
 }
 
 } // XR

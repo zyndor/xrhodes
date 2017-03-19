@@ -28,7 +28,7 @@ void UIImagePanel::Render() const
   XR_ASSERTMSG(UIImagePanel, sprite.GetMaterial() != 0,
     ("Material needs to be set in UIImagePanel::sprite before Render()"));
 
-  const RenderStream rsSpriteVerts(sprite.GetVertices());
+  const FloatBuffer fbSpriteVerts(sprite.GetVertices());
 
   float hwSprite(sprite.GetHalfWidth());
   float wSprite(hwSprite * 2.0f);
@@ -57,17 +57,17 @@ void UIImagePanel::Render() const
     y + h - (int)Round(sprite.GetBottomPadding())
   };
   
-  const RenderStream& rsSpriteUVs(sprite.GetUVs());
+  const FloatBuffer& fbSpriteUVs(sprite.GetUVs());
   float arU[4];
   if (sprite.IsUVRotated())
   {
-    arU[0] = rsSpriteUVs.GetX(Sprite::VI_SW);
-    arU[3] = rsSpriteUVs.GetX(Sprite::VI_NW);
+    arU[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).x;
+    arU[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x;
   }
   else
   {
-    arU[0] = rsSpriteUVs.GetX(Sprite::VI_NW);
-    arU[3] = rsSpriteUVs.GetX(Sprite::VI_NE);
+    arU[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x;
+    arU[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NE).x;
   }
 
   arU[1] = Lerp(arU[0], arU[3], hSplit);
@@ -76,13 +76,13 @@ void UIImagePanel::Render() const
   float arV[4];
   if (sprite.IsUVRotated())
   {
-    arV[0] = rsSpriteUVs.GetY(Sprite::VI_SW);
-    arV[3] = rsSpriteUVs.GetY(Sprite::VI_SE);
+    arV[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y;
+    arV[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SE).y;
   }
   else
   {
-    arV[0] = rsSpriteUVs.GetY(Sprite::VI_NW);
-    arV[3] = rsSpriteUVs.GetY(Sprite::VI_SW);
+    arV[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).y;
+    arV[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y;
   }
 
   arV[1] = Lerp(arV[0], arV[3], vSplit);
@@ -94,8 +94,8 @@ void UIImagePanel::Render() const
   {
     // scale sprite to ui
     float scale(w / wSprite);
-    arXCoords[0] = x + Round(scale * (rsSpriteVerts.GetX(Sprite::VI_NW) + hwSprite));
-    arXCoords[1] = x + Round(scale * (rsSpriteVerts.GetX(Sprite::VI_NE) + hwSprite));
+    arXCoords[0] = x + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_NW).x + hwSprite));
+    arXCoords[1] = x + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_NE).x + hwSprite));
     
     arU[1] = arU[3];
     ix1 = 1;
@@ -123,8 +123,8 @@ void UIImagePanel::Render() const
   {
     // scale sprite to ui
     float scale(h / hSprite);
-    arYCoords[0] = y + Round(scale * (rsSpriteVerts.GetY(Sprite::VI_NW) + hhSprite));
-    arYCoords[1] = y + Round(scale * (rsSpriteVerts.GetY(Sprite::VI_SW) + hhSprite));
+    arYCoords[0] = y + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_NW).y + hhSprite));
+    arYCoords[1] = y + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_SW).y + hhSprite));
 
     arV[1] = arV[3];
     iy1 = 1;
@@ -152,8 +152,8 @@ void UIImagePanel::Render() const
   int numVertices(hQuads * vQuads * Sprite::kNumVertices);
   if (numVertices > 0)
   {
-    RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3, numVertices));
-    RenderStream* pRsUVs(Renderer::AllocStream(RenderStream::F_VECTOR2, numVertices));
+    FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(Vector3), numVertices));
+    FloatBuffer* pFbUVs(Renderer::AllocBuffer(sizeof(Vector2), numVertices));
 
     int           numIndices(hQuads * vQuads * Sprite::kNumIndices);
     uint16_t*     parIndices(XR_RENDERER_ALLOC(uint16_t, numIndices));
@@ -166,15 +166,15 @@ void UIImagePanel::Render() const
     {
       for (int j = ix0; j < ix1; ++j)
       {
-        pRsVerts->Set(iWrite + 0, Vector3(arXCoords[j], arYCoords[i], .0f));
-        pRsVerts->Set(iWrite + 1, Vector3(arXCoords[j], arYCoords[i + 1], .0f));
-        pRsVerts->Set(iWrite + 2, Vector3(arXCoords[j + 1], arYCoords[i + 1], .0f));
-        pRsVerts->Set(iWrite + 3, Vector3(arXCoords[j + 1], arYCoords[i], .0f));
+        pFbVerts->Set(iWrite + 0, Vector3(arXCoords[j], arYCoords[i], .0f));
+        pFbVerts->Set(iWrite + 1, Vector3(arXCoords[j], arYCoords[i + 1], .0f));
+        pFbVerts->Set(iWrite + 2, Vector3(arXCoords[j + 1], arYCoords[i + 1], .0f));
+        pFbVerts->Set(iWrite + 3, Vector3(arXCoords[j + 1], arYCoords[i], .0f));
         
-        pRsUVs->Set(iWrite + 0, Vector2(arU[j], arV[i]));
-        pRsUVs->Set(iWrite + 1, Vector2(arU[j], arV[i + 1]));
-        pRsUVs->Set(iWrite + 2, Vector2(arU[j + 1], arV[i + 1]));
-        pRsUVs->Set(iWrite + 3, Vector2(arU[j + 1], arV[i]));
+        pFbUVs->Set(iWrite + 0, Vector2(arU[j], arV[i]));
+        pFbUVs->Set(iWrite + 1, Vector2(arU[j], arV[i + 1]));
+        pFbUVs->Set(iWrite + 2, Vector2(arU[j + 1], arV[i + 1]));
+        pFbUVs->Set(iWrite + 3, Vector2(arU[j + 1], arV[i]));
         
         iWrite += Sprite::kNumVertices;
 
@@ -187,8 +187,8 @@ void UIImagePanel::Render() const
     Renderer::SetMaterial(sprite.GetMaterial());
     Renderer::SetAmbientColor(color);
     
-    Renderer::SetVertStream(*pRsVerts);
-    Renderer::SetUVStream(*pRsUVs);
+    Renderer::SetVertStream(*pFbVerts);
+    Renderer::SetUVStream(*pFbUVs);
     
     // todo: calculate indices for all quads!
     Renderer::DrawPrims(PRIM_TRI_LIST, parIndices, numIndices);
@@ -201,7 +201,7 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   XR_ASSERTMSG(UIImagePanel, sprite.GetMaterial() != 0,
     ("Material needs to be set in UIImagePanel::sprite before Render()"));
 
-  const RenderStream& rsSpriteVerts(sprite.GetVertices());
+  const FloatBuffer& fbSpriteVerts(sprite.GetVertices());
 
   SVector2* pVerts(0);
 
@@ -232,17 +232,17 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
     y + h - (int)Round(sprite.GetBottomPadding())
   };
 
-  const RenderStream& rsSpriteUVs(sprite.GetUVs());
+  const FloatBuffer& fbSpriteUVs(sprite.GetUVs());
   float arU[4];
   if (sprite.IsUVRotated())
   {
-    arU[0] = rsSpriteUVs.GetX(Sprite::VI_SW);
-    arU[3] = rsSpriteUVs.GetX(Sprite::VI_NW);
+    arU[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).x;
+    arU[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x;
   }
   else
   {
-    arU[0] = rsSpriteUVs.GetX(Sprite::VI_NW);
-    arU[3] = rsSpriteUVs.GetX(Sprite::VI_NE);
+    arU[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x;
+    arU[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NE).x;
   }
 
   arU[1] = Lerp(arU[0], arU[3], hSplit);
@@ -251,13 +251,13 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   float arV[4];
   if (sprite.IsUVRotated())
   {
-    arV[0] = rsSpriteUVs.GetY(Sprite::VI_SW);
-    arV[3] = rsSpriteUVs.GetY(Sprite::VI_SE);
+    arV[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y;
+    arV[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SE).y;
   }
   else
   {
-    arV[0] = rsSpriteUVs.GetY(Sprite::VI_NW);
-    arV[3] = rsSpriteUVs.GetY(Sprite::VI_SW);
+    arV[0] = fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).y;
+    arV[3] = fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y;
   }
 
   arV[1] = Lerp(arV[0], arV[3], vSplit);
@@ -269,8 +269,8 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   {
     // scale sprite to ui
     float scale(w / wSprite);
-    arXCoords[0] = x + Round(scale * (rsSpriteVerts.GetX(Sprite::VI_NW) + hwSprite));
-    arXCoords[1] = x + Round(scale * (rsSpriteVerts.GetX(Sprite::VI_NE) + hwSprite));
+    arXCoords[0] = x + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_NW).x + hwSprite));
+    arXCoords[1] = x + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_NE).x + hwSprite));
 
     arU[1] = arU[3];
     ix1 = 1;
@@ -298,8 +298,8 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   {
     // scale sprite to ui
     float scale(h / hSprite);
-    arYCoords[0] = y + Round(scale * (rsSpriteVerts.GetY(Sprite::VI_NW) + hhSprite));
-    arYCoords[1] = y + Round(scale * (rsSpriteVerts.GetY(Sprite::VI_SW) + hhSprite));
+    arYCoords[0] = y + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_NW).y + hhSprite));
+    arYCoords[1] = y + Round(scale * (fbSpriteVerts.Get<Vector3>(Sprite::VI_SW).y + hhSprite));
 
     arV[1] = arV[3];
     iy1 = 1;
@@ -327,22 +327,22 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
   int numVertices(hQuads * vQuads * Sprite::kNumVertices);
   if (numVertices > 0)
   {
-    RenderStream  rsUVs;
+    FloatBuffer  fbUVs;
     for (int i = iy0; i < iy1; ++i)
     {
       for (int j = ix0; j < ix1; ++j)
       {
-        RenderStream  rsVerts(pRenderer->NewSprite(sprite.GetMaterial(), color, rsUVs));
+        FloatBuffer  fbVerts(pRenderer->NewSprite(sprite.GetMaterial(), color, fbUVs));
 
-        rsVerts.Set(0, Vector3(arXCoords[j], arYCoords[i], .0f));
-        rsVerts.Set(1, Vector3(arXCoords[j], arYCoords[i + 1], .0f));
-        rsVerts.Set(2, Vector3(arXCoords[j + 1], arYCoords[i + 1], .0f));
-        rsVerts.Set(3, Vector3(arXCoords[j + 1], arYCoords[i], .0f));
+        fbVerts.Set(0, Vector3(arXCoords[j], arYCoords[i], .0f));
+        fbVerts.Set(1, Vector3(arXCoords[j], arYCoords[i + 1], .0f));
+        fbVerts.Set(2, Vector3(arXCoords[j + 1], arYCoords[i + 1], .0f));
+        fbVerts.Set(3, Vector3(arXCoords[j + 1], arYCoords[i], .0f));
 
-        rsUVs.Set(0, Vector2(arU[j], arV[i]));
-        rsUVs.Set(1, Vector2(arU[j], arV[i + 1]));
-        rsUVs.Set(2, Vector2(arU[j + 1], arV[i + 1]));
-        rsUVs.Set(3, Vector2(arU[j + 1], arV[i]));
+        fbUVs.Set(0, Vector2(arU[j], arV[i]));
+        fbUVs.Set(1, Vector2(arU[j], arV[i + 1]));
+        fbUVs.Set(2, Vector2(arU[j + 1], arV[i + 1]));
+        fbUVs.Set(3, Vector2(arU[j + 1], arV[i]));
       }
     }
   }

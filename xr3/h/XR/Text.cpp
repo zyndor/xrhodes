@@ -298,10 +298,10 @@ float Text::GetMaxLineWidth() const
 }
 
 //==============================================================================
-RenderStream*  Text::CreateColStream(const Color& c) const
+FloatBuffer*  Text::CreateColStream(const Color& c) const
 {
-  const int n(GetVertices().GetCapacity());
-  RenderStream* pCols(Renderer::AllocStream(RenderStream::F_COLOR, n));
+  const int n(GetVertices().GetNumElements());
+  FloatBuffer* pCols(Renderer::AllocBuffer(sizeof(Color), n));
   for(int i = 0; i < n; ++i)
   {
     pCols->Set(i, c);

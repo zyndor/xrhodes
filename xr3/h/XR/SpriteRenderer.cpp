@@ -174,22 +174,22 @@ void  SpriteRenderer::Render()
   }
   numVerts *= XR::Sprite::kNumVertices;
   
-  RenderStream* pCols(Renderer::AllocStream(RenderStream::F_COLOR, numVerts));
+  FloatBuffer* pCols(Renderer::AllocBuffer(sizeof(Color), numVerts));
   XR_ASSERT(SpriteRenderer, pCols != 0);
 #if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
-  RenderStream* pUVs(&m_uvs);
-  RenderStream* pVerts(&m_vertices);
+  FloatBuffer* pUVs(&m_uvs);
+  FloatBuffer* pVerts(&m_vertices);
 #else
-  RenderStream* pUVs(Renderer::AllocStream(RenderStream::F_VECTOR2, numVerts));
+  FloatBuffer* pUVs(Renderer::AllocBuffer(sizeof(Vector2), numVerts));
   XR_ASSERT(SpriteRenderer, pUVs != 0);
-  RenderStream* pVerts(Renderer::AllocStream(RenderStream::F_VECTOR3, numVerts));
+  FloatBuffer* pVerts(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
   XR_ASSERT(SpriteRenderer, pVerts != 0);
 #endif
   
-  int           vertexOffset(0);
-  RenderStream  colBatch;
-  RenderStream  uvBatch;
-  RenderStream  vertBatch;
+  int         vertexOffset(0);
+  FloatBuffer colBatch;
+  FloatBuffer uvBatch;
+  FloatBuffer vertBatch;
 
   for (RecordList::const_iterator i0(m_pRecords->begin()),
     i1(m_pRecords->end()); i0 != i1;)
@@ -212,9 +212,9 @@ void  SpriteRenderer::Render()
     // calculate number of vertices
     numVerts = numSprites * XR::Sprite::kNumVertices;
 
-    colBatch.Adapt(*pCols, vertexOffset, numVerts);
-    uvBatch.Adapt(*pUVs, vertexOffset, numVerts);
-    vertBatch.Adapt(*pVerts, vertexOffset, numVerts);
+    colBatch = FloatBuffer::Adapt(*pCols, vertexOffset, numVerts);
+    uvBatch = FloatBuffer::Adapt(*pUVs, vertexOffset, numVerts);
+    vertBatch = FloatBuffer::Adapt(*pVerts, vertexOffset, numVerts);
 
     // set the material
     Renderer::SetMaterial(i0->pSprite->GetMaterial());
@@ -231,8 +231,9 @@ void  SpriteRenderer::Render()
 
       for (int i = 0; i < XR::Sprite::kNumVertices; ++i)
       {
+        // TODO: optimize
         pVerts->Set(vertexOffset + i,
-          i0->xForm.TransformVec(i0->pSprite->GetVertices().GetVector3(i)));
+          i0->xForm.TransformVec(i0->pSprite->GetVertices().Get<Vector3>(i)));
       }
 
       vertexOffset += XR::Sprite::kNumVertices;

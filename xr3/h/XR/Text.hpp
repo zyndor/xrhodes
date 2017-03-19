@@ -55,7 +55,7 @@ public:
   float         GetMaxLineWidth() const;
   float         GetHeight() const;
   
-  RenderStream* CreateColStream(const Color& c) const;
+  FloatBuffer*  CreateColStream(const Color& c) const;
 
   void          Clear();
   

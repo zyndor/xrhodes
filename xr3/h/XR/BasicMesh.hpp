@@ -7,7 +7,7 @@
 #ifndef XR_BASICMESH_HPP
 #define XR_BASICMESH_HPP
 
-#include "RenderStream.hpp"
+#include "FloatBuffer.hpp"
 #include "Material.hpp"
 
 namespace XR {
@@ -22,11 +22,11 @@ public:
   virtual ~BasicMesh();
   
   // general
-  RenderStream&       GetVertices();
-  const RenderStream& GetVertices() const;
+  FloatBuffer&        GetVertices();
+  const FloatBuffer&  GetVertices() const;
 
-  RenderStream&       GetUVs();
-  const RenderStream& GetUVs() const;
+  FloatBuffer&        GetUVs();
+  const FloatBuffer&  GetUVs() const;
   
   Material*           GetMaterial() const;
   void                SetMaterial(Material* pMaterial); // no transfer
@@ -37,44 +37,44 @@ public:
   float               CalculateRadius() const;
   void                CalculateExtents(Vector3& minOut, Vector3& maxOut) const;
   
-  virtual void        Render(); //const?
+  virtual void        Render() const;
   
 protected:
   // data
   Material*     m_pMaterial;  // no ownership
-  RenderStream  m_vertices;
-  RenderStream  m_uvs;
+  FloatBuffer   m_vertices;
+  FloatBuffer   m_uvs;
   
   // internal
-  void  _PrepareRender();
+  void  _PrepareRender() const;
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-RenderStream& BasicMesh::GetVertices()
+FloatBuffer& BasicMesh::GetVertices()
 {
   return  m_vertices;
 }
 
 //==============================================================================
 inline
-const RenderStream& BasicMesh::GetVertices() const
+const FloatBuffer& BasicMesh::GetVertices() const
 {
   return  m_vertices;
 }
 
 //==============================================================================
 inline
-RenderStream& BasicMesh::GetUVs()
+FloatBuffer& BasicMesh::GetUVs()
 {
   return  m_uvs;
 }
 
 //==============================================================================
 inline
-const RenderStream& BasicMesh::GetUVs() const
+const FloatBuffer& BasicMesh::GetUVs() const
 {
   return  m_uvs;
 }
