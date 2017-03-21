@@ -175,6 +175,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FloatBufferTests.cpp" />
     <ClCompile Include="src\DeflatorTests.cpp" />
     <ClCompile Include="src\EventBroadcasterTests.cpp" />
     <ClCompile Include="src\EventNotifierTests.cpp" />

@@ -278,7 +278,7 @@ FloatBuffer* Sprite::CopyVertices() const
 inline
 void Sprite::CopyUVsTo(size_t offset, FloatBuffer& uvs) const
 {
-  XR_ASSERT(Sprite, uvs.GetElementSize() == sizeof(Vector2));
+  XR_ASSERT(Sprite, uvs.GetElementSizeBytes() == sizeof(Vector2));
   XR_ASSERT(Sprite, uvs.GetNumElements() >= offset + kNumVertices);
   uvs.Set<Vector2>(kNumVertices, m_uvs.Get<Vector2>(), offset);
 }
@@ -287,7 +287,7 @@ void Sprite::CopyUVsTo(size_t offset, FloatBuffer& uvs) const
 inline
 void Sprite::CopyVerticesTo(size_t offset, FloatBuffer& verts) const
 {
-  XR_ASSERT(Sprite, verts.GetElementSize() == sizeof(Vector3));
+  XR_ASSERT(Sprite, verts.GetElementSizeBytes() == sizeof(Vector3));
   XR_ASSERT(Sprite, verts.GetNumElements() >= offset + kNumVertices);
   verts.Set<Vector3>(kNumVertices, m_uvs.Get<Vector3>());
 }

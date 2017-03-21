@@ -373,7 +373,7 @@ void Renderer::SetMaterial( Material* pMat )
 //==============================================================================
 void  Renderer::SetVertStream(FloatBuffer const& fb)
 {
-  XR_ASSERT(Renderer::SetVertStream, fb.GetElementSize() == sizeof(Vector3));
+  XR_ASSERT(Renderer::SetVertStream, fb.GetElementSizeBytes() == sizeof(Vector3));
   XR_GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
   XR_GL_CALL(glVertexPointer(3, GL_FLOAT, 0, fb.GetRaw()));
   s_rendererImpl.numVertices = fb.GetNumElements();
@@ -382,7 +382,7 @@ void  Renderer::SetVertStream(FloatBuffer const& fb)
 //==============================================================================
 void  Renderer::SetUVStream(FloatBuffer const& fb, int id)
 {
-  XR_ASSERT(Renderer::SetUVStream, fb.GetElementSize() == sizeof(Vector2) ||
+  XR_ASSERT(Renderer::SetUVStream, fb.GetElementSizeBytes() == sizeof(Vector2) ||
     fb.GetNumElements() == 0);
   if (fb.GetNumElements() > 0)
   {
@@ -399,7 +399,7 @@ void  Renderer::SetUVStream(FloatBuffer const& fb, int id)
 //==============================================================================
 void  Renderer::SetColStream(FloatBuffer const& fb)
 {
-  XR_ASSERT(Renderer::SetColStream, fb.GetElementSize() == sizeof(Color) ||
+  XR_ASSERT(Renderer::SetColStream, fb.GetElementSizeBytes() == sizeof(Color) ||
     fb.GetNumElements() == 0);
   if (fb.GetNumElements() > 0)
   {
@@ -416,7 +416,7 @@ void  Renderer::SetColStream(FloatBuffer const& fb)
 //==============================================================================
 void  Renderer::SetNormStream(FloatBuffer const& fb)
 {
-  XR_ASSERT(Renderer::SetNormStream, fb.GetElementSize() == sizeof(Vector3) ||
+  XR_ASSERT(Renderer::SetNormStream, fb.GetElementSizeBytes() == sizeof(Vector3) ||
     fb.GetNumElements() == 0);
   if (fb.GetNumElements() > 0)
   {

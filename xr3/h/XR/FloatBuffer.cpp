@@ -12,12 +12,13 @@ namespace XR
 //=============================================================================
 FloatBuffer FloatBuffer::Adapt(FloatBuffer& other, size_t offset, size_t size)
 {
+  XR_ASSERT(FloatBuffer, offset < other.m_numElems);
   return FloatBuffer(other, offset, size);
 }
 
 //=============================================================================
 FloatBuffer::FloatBuffer()
-: m_elemSize(0),
+: m_elemSizeFloats(0),
   m_numElems(0),
   m_parData(nullptr),
   m_pAdapted(nullptr),
@@ -27,7 +28,7 @@ FloatBuffer::FloatBuffer()
 
 //=============================================================================
 FloatBuffer::FloatBuffer(size_t elemSize, size_t numElems, float* parBuffer)
-: m_elemSize(elemSize),
+: m_elemSizeFloats(elemSize),
   m_numElems(numElems),
   m_parData(parBuffer),
   m_pAdapted(nullptr),
@@ -42,7 +43,7 @@ FloatBuffer::FloatBuffer(size_t elemSize, size_t numElems, float* parBuffer)
 
 //=============================================================================
 FloatBuffer::FloatBuffer(FloatBuffer const & other)  // copy constructor
-: m_elemSize(other.m_elemSize),
+: m_elemSizeFloats(other.m_elemSizeFloats),
   m_numElems(other.m_numElems),
   m_parData(other.m_parData),
   m_pAdapted(other.m_pAdapted),
@@ -57,7 +58,7 @@ FloatBuffer::FloatBuffer(FloatBuffer const & other)  // copy constructor
   {
     if (m_ownData)
     {
-      m_parData = AllocateBuffer(m_elemSize, m_numElems);
+      m_parData = AllocateBuffer(m_elemSizeFloats, m_numElems);
       CopyData(other);
     }
   }
@@ -72,8 +73,9 @@ FloatBuffer::~FloatBuffer()
 //=============================================================================
 void FloatBuffer::SetBuffer(size_t elemSize, size_t numElems, float* parBuffer)
 {
+  XR_ASSERT(FloatBuffer, elemSize % sizeof(float) == 0);
   ReleaseData();
-  m_elemSize = elemSize;
+  m_elemSizeFloats = elemSize / sizeof(float);
   m_numElems = numElems;
 
   const bool ownData = parBuffer == nullptr;
@@ -97,7 +99,7 @@ void FloatBuffer::Move(FloatBuffer&& other)
 
   m_numDependents = 0;
 
-  m_elemSize = other.m_elemSize;
+  m_elemSizeFloats = other.m_elemSizeFloats;
   m_numElems = other.m_numElems;
   m_parData = other.m_parData;
   other.m_parData = nullptr;
@@ -111,7 +113,7 @@ bool FloatBuffer::Own()
   {
     FloatBuffer temp(*this);
     ReleaseData();
-    SetBuffer(temp.m_elemSize, temp.m_numElems);
+    SetBuffer(temp.m_elemSizeFloats, temp.m_numElems);
     CopyData(temp);
   }
   return result;
@@ -136,7 +138,7 @@ void FloatBuffer::ReleaseData()
   }
 
   m_numElems = 0;
-  m_elemSize = 0;
+  m_elemSizeFloats = 0;
   m_parData = nullptr;
 }
 
@@ -164,9 +166,9 @@ float * FloatBuffer::AllocateBuffer(size_t elemSize, size_t numElems)
 
 //=============================================================================
 FloatBuffer::FloatBuffer(FloatBuffer & other, size_t offset, size_t size)  // adapt constructor
-: m_elemSize(other.m_elemSize),
+: m_elemSizeFloats(other.m_elemSizeFloats),
   m_numElems(other.ResolveSize(offset, size)),
-  m_parData(other.m_parData + offset * other.m_elemSize),
+  m_parData(other.m_parData + offset * other.m_elemSizeFloats),
   m_pAdapted(other.m_pAdapted ? other.m_pAdapted : &other),
   m_ownData(false),
   m_numDependents(0)
@@ -177,9 +179,9 @@ FloatBuffer::FloatBuffer(FloatBuffer & other, size_t offset, size_t size)  // ad
 //=============================================================================
 void FloatBuffer::CopyData(FloatBuffer const & other)
 {
-  XR_ASSERT(FloatBuffer, m_elemSize == other.m_elemSize);
+  XR_ASSERT(FloatBuffer, m_elemSizeFloats == other.m_elemSizeFloats);
   XR_ASSERT(FloatBuffer, m_numElems == other.m_numElems);
-  std::copy(other.m_parData, other.m_parData + (other.m_elemSize * other.m_numElems),
+  std::copy(other.m_parData, other.m_parData + (other.m_elemSizeFloats * other.m_numElems),
     m_parData);
 }
 
@@ -195,26 +197,26 @@ void FloatBuffer::DetachFromOwner()
 size_t FloatBuffer::ResolveSize(size_t offset, size_t size) const
 {
   XR_ASSERT(FloatBuffer, offset <= m_numElems);
-  XR_ASSERT(FloatBuffer, size <= m_numElems - offset);
+  XR_ASSERT(FloatBuffer, size == kSizeRest || offset + size <= m_numElems);
   return size == kSizeRest ? m_numElems - offset : size;
 }
 
 //=============================================================================
 void FloatBuffer::SetInternal(size_t i, Vector2 const & v)
 {
-  std::copy(v.arData, v.arData + Vector2::kNumComponents, m_parData + i);
+  std::copy(v.arData, v.arData + Vector2::kNumComponents, m_parData + i * m_elemSizeFloats);
 }
 
 //=============================================================================
 void FloatBuffer::SetInternal(size_t i, Vector3 const & v)
 {
-  std::copy(v.arData, v.arData + Vector3::kNumComponents, m_parData + i);
+  std::copy(v.arData, v.arData + Vector3::kNumComponents, m_parData + i * m_elemSizeFloats);
 }
 
 //=============================================================================
 void FloatBuffer::SetInternal(size_t i, Color const & c)
 {
-  std::copy(c.arData, c.arData + Color::kNumComponents, m_parData + i);
+  std::copy(c.arData, c.arData + Color::kNumComponents, m_parData + i * m_elemSizeFloats);
 }
 
 //=============================================================================
