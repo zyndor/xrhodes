@@ -105,12 +105,12 @@ void UIHorizontalSlider::Render() const
   int16_t right(left + sliderSprite.GetQuadWidth());
   int16_t bottom(top + sliderSprite.GetQuadHeight());
 
-  RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3,
+  FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(Vector3),
                   Sprite::kNumVertices));
-  pRsVerts->Set(Sprite::VI_NW, Vector3(left, top, .0f));
-  pRsVerts->Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-  pRsVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-  pRsVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
+  pFbVerts->Set(Sprite::VI_NW, Vector3(left, top, .0f));
+  pFbVerts->Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
+  pFbVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
+  pFbVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
 
   if (sliderSprite.GetMaterial() != sprite.GetMaterial())
   {
@@ -120,7 +120,7 @@ void UIHorizontalSlider::Render() const
   Renderer::SetAmbientColor(color);
 
   Renderer::SetUVStream(*sliderSprite.CopyUVs());
-  Renderer::SetVertStream(*pRsVerts);
+  Renderer::SetVertStream(*pFbVerts);
   Renderer::SetColStream();
   Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
 }
@@ -144,12 +144,12 @@ void UIHorizontalSlider::Render( UIRenderer* pRenderer ) const
   int16_t right(left + sliderSprite.GetQuadWidth());
   int16_t bottom(top + sliderSprite.GetQuadHeight());
 
-  RenderStream  rsVerts(pRenderer->NewSprite(sliderSprite.GetMaterial(),
+  FloatBuffer  fbVerts(pRenderer->NewSprite(sliderSprite.GetMaterial(),
     sliderSprite.GetUVs(), color));
-  rsVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f));
-  rsVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-  rsVerts.Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-  rsVerts.Set(Sprite::VI_NE, Vector3(right, top, .0f));
+  fbVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f));
+  fbVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
+  fbVerts.Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
+  fbVerts.Set(Sprite::VI_NE, Vector3(right, top, .0f));
 }
 
 } // XR

@@ -10,6 +10,7 @@
 #include "xrgl.hpp"
 #include <XR/fundamentals.hpp>
 #include <XR/Texture.hpp>
+#include <SDL_video.h>
 
 namespace XR
 {

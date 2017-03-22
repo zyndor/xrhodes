@@ -36,14 +36,14 @@ void UIRenderer::Init( int numSprites )
   int numVertices(numSprites * Sprite::kNumVertices);
   InitStreams(numVertices);
   SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numSprites);
-  m_colors.Create(RenderStream::F_COLOR, numVertices);
+  m_colors.SetBuffer(sizeof(Color), numVertices);
 
   m_numSprites = numSprites;
 }
 
 //==============================================================================
-RenderStream  UIRenderer::NewSprite( Material* pMaterial,
-  const RenderStream& rsUV, Color color )
+FloatBuffer  UIRenderer::NewSprite( Material* pMaterial,
+  const FloatBuffer& fbUV, Color color )
 {
   XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
     ("UIRenderer must be initialized before calling NewSprite()."));
@@ -56,19 +56,21 @@ RenderStream  UIRenderer::NewSprite( Material* pMaterial,
   m_parpMaterial[iSprite] = pMaterial;
 
   iSprite *= Sprite::kNumVertices;
-  m_uvs.Copy(rsUV, 0, rsUV.GetCapacity(), iSprite);
+
+  XR_ASSERT(UIRenderer, fbUV.GetNumElements() == Sprite::kNumVertices);
+  m_uvs.Set(Sprite::kNumVertices, fbUV.Get<Vector2>(), iSprite);
 
   for (int i = 0; i < Sprite::kNumVertices; ++i)
   {
     m_colors.Set(iSprite + i, color);
   }
 
-  return m_vertices.SubStream(iSprite, Sprite::kNumVertices);
+  return FloatBuffer::Adapt(m_vertices, iSprite, Sprite::kNumVertices);
 }
 
 //==============================================================================
-RenderStream  UIRenderer::NewSprite( Material* pMaterial, Color color,
-  RenderStream& rsUV)
+FloatBuffer  UIRenderer::NewSprite( Material* pMaterial, Color color,
+  FloatBuffer& fbUV)
 {
   XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
     ("UIRenderer must be initialized before calling NewSprite()."));
@@ -81,19 +83,19 @@ RenderStream  UIRenderer::NewSprite( Material* pMaterial, Color color,
   m_parpMaterial[iSprite] = pMaterial;
 
   iSprite *= Sprite::kNumVertices;
-  rsUV.Adapt(m_uvs, iSprite, Sprite::kNumVertices);
+  fbUV = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
 
   for (int i = 0; i < Sprite::kNumVertices; ++i)
   {
     m_colors.Set(iSprite + i, color);
   }
 
-  return m_vertices.SubStream(iSprite, Sprite::kNumVertices);
+  return FloatBuffer::Adapt(m_vertices, iSprite, Sprite::kNumVertices);
 }
 
 //==============================================================================
-RenderStream  UIRenderer::NewSprite( Material* pMaterial,
-  RenderStream& rsUV, RenderStream& rsColor)
+FloatBuffer  UIRenderer::NewSprite( Material* pMaterial,
+  FloatBuffer& fbUV, FloatBuffer& fbColor)
 {
   XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
     ("UIRenderer must be initialized before calling NewSprite()."));
@@ -106,19 +108,19 @@ RenderStream  UIRenderer::NewSprite( Material* pMaterial,
   m_parpMaterial[iSprite] = pMaterial;
 
   iSprite *= Sprite::kNumVertices;
-  rsUV.Adapt(m_uvs, iSprite, Sprite::kNumVertices);
-  rsColor.Adapt(m_uvs, iSprite, Sprite::kNumVertices);
+  fbUV = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
+  fbColor = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
 
-  return m_vertices.SubStream(iSprite, Sprite::kNumVertices);
+  return FloatBuffer::Adapt(m_vertices, iSprite, Sprite::kNumVertices);
 }
 
 //==============================================================================
 void UIRenderer::Render()
 {
   int i(m_numSpritesRendered);
-  RenderStream  rsUVs;
-  RenderStream  rsCols;
-  RenderStream  rsVerts;
+  FloatBuffer  fbUVs;
+  FloatBuffer  fbCols;
+  FloatBuffer  fbVerts;
   while (i < m_numSpritesConsumed)
   {
     Material*  pMaterial(m_parpMaterial[i]);
@@ -136,14 +138,14 @@ void UIRenderer::Render()
 
     int iStart(i * Sprite::kNumVertices);
     
-    rsUVs.Adapt(m_uvs, iStart, numVertices);
-    rsCols.Adapt(m_colors, iStart, numVertices);
-    rsVerts.Adapt(m_vertices, iStart, numVertices);
+    fbUVs = FloatBuffer::Adapt(m_uvs, iStart, numVertices);
+    fbCols = FloatBuffer::Adapt(m_colors, iStart, numVertices);
+    fbVerts = FloatBuffer::Adapt(m_vertices, iStart, numVertices);
 
     Renderer::SetMaterial(pMaterial);
-    Renderer::SetUVStream(rsUVs, 0);
-    Renderer::SetColStream(rsCols);
-    Renderer::SetVertStream(rsVerts);
+    Renderer::SetUVStream(fbUVs, 0);
+    Renderer::SetColStream(fbCols);
+    Renderer::SetVertStream(fbVerts);
     Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], numSprites *
       Sprite::kNumIndices);
 
@@ -168,9 +170,9 @@ void UIRenderer::Shutdown()
   delete[] m_parpMaterial;
   m_parpMaterial = 0;
 
-  m_vertices.Destroy();
-  m_uvs.Destroy();
-  m_colors.Destroy();
+  m_vertices.ReleaseData();
+  m_uvs.ReleaseData();
+  m_colors.ReleaseData();
   IndexArray().swap(m_indices);
 
   m_numSprites = 0;

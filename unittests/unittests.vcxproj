@@ -100,7 +100,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;XR_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;XR_SDL;XR_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
     <Link>
@@ -117,7 +117,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>XR_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XR_SDL;XR_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
     <Link>
@@ -136,7 +136,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;XR_SDL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
     <Link>
@@ -157,7 +157,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XR_SDL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
     <Link>
@@ -175,6 +175,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FloatBufferTests.cpp" />
     <ClCompile Include="src\DeflatorTests.cpp" />
     <ClCompile Include="src\EventBroadcasterTests.cpp" />
     <ClCompile Include="src\EventNotifierTests.cpp" />

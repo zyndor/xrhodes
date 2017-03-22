@@ -63,7 +63,7 @@ void  IndexMesh::SetIndexPattern(const uint16_t* pInds, int numInds, uint16_t sh
 //==============================================================================
 void  IndexMesh::Render()
 {
-  if (m_vertices.GetCapacity() > 0)
+  if (m_vertices.GetNumElements() > 0)
   {
     _PrepareRender();
     Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], m_indices.size());

@@ -40,6 +40,7 @@
     <ClCompile Include="h\XR\detail\EventDispatcher.cpp" />
     <ClCompile Include="h\XR\Entity.cpp" />
     <ClCompile Include="h\XR\FileBuffer.cpp" />
+    <ClCompile Include="h\XR\FloatBuffer.cpp" />
     <ClCompile Include="h\XR\Font.cpp" />
     <ClCompile Include="h\XR\fundamentals.cpp" />
     <ClCompile Include="h\XR\Grid.cpp" />
@@ -67,7 +68,6 @@
     <ClCompile Include="h\XR\Quadtree.cpp" />
     <ClCompile Include="h\XR\Ray.cpp" />
     <ClCompile Include="h\XR\RectObject.cpp" />
-    <ClCompile Include="h\XR\RenderStreamIO.cpp" />
     <ClCompile Include="h\XR\RingBuffer.cpp" />
     <ClCompile Include="h\XR\SDL\Audio.cpp" />
     <ClCompile Include="h\XR\SDL\Device.cpp" />
@@ -80,7 +80,6 @@
     <ClCompile Include="h\XR\SDL\MaterialImpl.cpp" />
     <ClCompile Include="h\XR\SDL\MouseButton.cpp" />
     <ClCompile Include="h\XR\SDL\Renderer.cpp" />
-    <ClCompile Include="h\XR\SDL\RenderStream.cpp" />
     <ClCompile Include="h\XR\SDL\Sample.cpp" />
     <ClCompile Include="h\XR\SDL\Texture.cpp" />
     <ClCompile Include="h\XR\SDL\TextureImpl.cpp" />
@@ -131,6 +130,7 @@
     <ClInclude Include="h\XR\File.hpp" />
     <ClInclude Include="h\XR\FileBuffer.hpp" />
     <ClInclude Include="h\XR\fileutils.hpp" />
+    <ClInclude Include="h\XR\FloatBuffer.hpp" />
     <ClInclude Include="h\XR\Font.hpp" />
     <ClInclude Include="h\XR\functors.hpp" />
     <ClInclude Include="h\XR\fundamentals.hpp" />
@@ -183,7 +183,6 @@
     <ClInclude Include="h\XR\RefCounted.hpp" />
     <ClInclude Include="h\XR\RefHolder.hpp" />
     <ClInclude Include="h\XR\Renderer.hpp" />
-    <ClInclude Include="h\XR\RenderStream.hpp" />
     <ClInclude Include="h\XR\ResManager.hpp" />
     <ClInclude Include="h\XR\RingBuffer.hpp" />
     <ClInclude Include="h\XR\Sample.hpp" />
@@ -297,7 +296,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
-      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -311,7 +310,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -326,7 +325,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
-      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -345,7 +344,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>

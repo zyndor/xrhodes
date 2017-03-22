@@ -43,25 +43,25 @@ void UIVerticalProgressBar::Render() const
     float left(x + sprite.GetLeftPadding() * ws);
     float right(x + w - sprite.GetRightPadding() * ws);
 
-    const RenderStream& rsSpriteUVs(sprite.GetUVs());
+    const FloatBuffer& fbSpriteUVs(sprite.GetUVs());
     const float hRatio(hSprite / sprite.GetQuadHeight());
     float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
-        rsSpriteUVs.GetX(Sprite::VI_NW), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).x,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x, uv1);
     }
     else
     {
-      uv1 = Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
-        rsSpriteUVs.GetY(Sprite::VI_SW), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).y,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y, uv1);
     }
 
-    RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3,
+    FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(Vector3),
       Sprite::kNumVertices));
-    RenderStream* pRsUVs(Renderer::AllocStream(RenderStream::F_VECTOR2,
+    FloatBuffer* pFbUVs(Renderer::AllocBuffer(sizeof(Vector2),
       Sprite::kNumVertices));
-    sprite.CopyUVsTo(0, *pRsUVs);
+    sprite.CopyUVsTo(0, *pFbUVs);
 
     y1 += y;
 
@@ -71,19 +71,19 @@ void UIVerticalProgressBar::Render() const
 
       if (sprite.IsUVRotated())
       {
-        pRsUVs->SetX(Sprite::VI_SW, uv1);
-        pRsUVs->SetX(Sprite::VI_SE, uv1);
+        pFbUVs->Get<Vector2>(Sprite::VI_SW).x = uv1;
+        pFbUVs->Get<Vector2>(Sprite::VI_SE).x = uv1;
       }
       else
       {
-        pRsUVs->SetY(Sprite::VI_SW, uv1);
-        pRsUVs->SetY(Sprite::VI_SE, uv1);
+        pFbUVs->Get<Vector2>(Sprite::VI_SW).y = uv1;
+        pFbUVs->Get<Vector2>(Sprite::VI_SE).y = uv1;
       }
 
-      pRsVerts->Set(Sprite::VI_NW, Vector3(left, top, .0f));
-      pRsVerts->Set(Sprite::VI_SW, Vector3(left, y1, .0f));
-      pRsVerts->Set(Sprite::VI_SE, Vector3(right, y1, .0f));
-      pRsVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
+      pFbVerts->Set(Sprite::VI_NW, Vector3(left, top, .0f));
+      pFbVerts->Set(Sprite::VI_SW, Vector3(left, y1, .0f));
+      pFbVerts->Set(Sprite::VI_SE, Vector3(right, y1, .0f));
+      pFbVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
     }
     else
     {
@@ -91,26 +91,26 @@ void UIVerticalProgressBar::Render() const
 
       if (sprite.IsUVRotated())
       {
-        pRsUVs->SetX(Sprite::VI_SW, uv1);
-        pRsUVs->SetX(Sprite::VI_SE, uv1);
+        pFbUVs->Get<Vector2>(Sprite::VI_SW).x = uv1;
+        pFbUVs->Get<Vector2>(Sprite::VI_SE).x = uv1;
       }
       else
       {
-        pRsUVs->SetY(Sprite::VI_NW, uv1);
-        pRsUVs->SetY(Sprite::VI_NE, uv1);
+        pFbUVs->Get<Vector2>(Sprite::VI_NW).y = uv1;
+        pFbUVs->Get<Vector2>(Sprite::VI_NE).y = uv1;
       }
 
-      pRsVerts->Set(Sprite::VI_NW, Vector3(left, y1, .0f));
-      pRsVerts->Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-      pRsVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-      pRsVerts->Set(Sprite::VI_NE, Vector3(right, y1, .0f));
+      pFbVerts->Set(Sprite::VI_NW, Vector3(left, y1, .0f));
+      pFbVerts->Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
+      pFbVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
+      pFbVerts->Set(Sprite::VI_NE, Vector3(right, y1, .0f));
     }
 
     Renderer::SetMaterial(sprite.GetMaterial());
     Renderer::SetAmbientColor(color);
 
-    Renderer::SetVertStream(*pRsVerts);
-    Renderer::SetUVStream(*pRsUVs);
+    Renderer::SetVertStream(*pFbVerts);
+    Renderer::SetUVStream(*pFbUVs);
 
     Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
   }
@@ -140,23 +140,23 @@ void UIVerticalProgressBar::Render( UIRenderer* pRenderer ) const
     float left(x + sprite.GetLeftPadding() * ws);
     float right(x + w - sprite.GetRightPadding() * ws);
 
-    const RenderStream&  rsSpriteUVs(sprite.GetUVs());
+    const FloatBuffer&  fbSpriteUVs(sprite.GetUVs());
     const float hRatio(hSprite / sprite.GetQuadHeight());
     float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio);
     if (sprite.IsUVRotated())
     {
-      uv1 = Lerp(rsSpriteUVs.GetX(Sprite::VI_SW),
-        rsSpriteUVs.GetX(Sprite::VI_NW), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).x,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).x, uv1);
     }
     else
     {
-      uv1 = Lerp(rsSpriteUVs.GetY(Sprite::VI_NW),
-        rsSpriteUVs.GetY(Sprite::VI_SW), uv1);
+      uv1 = Lerp(fbSpriteUVs.Get<Vector2>(Sprite::VI_NW).y,
+        fbSpriteUVs.Get<Vector2>(Sprite::VI_SW).y, uv1);
     }
 
-    RenderStream  rsUVs;
-    RenderStream  rsVerts(pRenderer->NewSprite(sprite.GetMaterial(), color, rsUVs));
-    sprite.CopyUVsTo(0, rsUVs);
+    FloatBuffer  fbUVs;
+    FloatBuffer  fbVerts(pRenderer->NewSprite(sprite.GetMaterial(), color, fbUVs));
+    sprite.CopyUVsTo(0, fbUVs);
 
     y1 += y;
 
@@ -166,19 +166,19 @@ void UIVerticalProgressBar::Render( UIRenderer* pRenderer ) const
 
       if (sprite.IsUVRotated())
       {
-        rsUVs.SetX(Sprite::VI_SW, uv1);
-        rsUVs.SetX(Sprite::VI_SE, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_SW).x = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_SE).x = uv1;
       }
       else
       {
-        rsUVs.SetY(Sprite::VI_SW, uv1);
-        rsUVs.SetY(Sprite::VI_SE, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_SW).y = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_SE).y = uv1;
       }
 
-      rsVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f));
-      rsVerts.Set(Sprite::VI_SW, Vector3(left, y1, .0f));
-      rsVerts.Set(Sprite::VI_SE, Vector3(right, y1, .0f));
-      rsVerts.Set(Sprite::VI_NE, Vector3(right, top, .0f));
+      fbVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f));
+      fbVerts.Set(Sprite::VI_SW, Vector3(left, y1, .0f));
+      fbVerts.Set(Sprite::VI_SE, Vector3(right, y1, .0f));
+      fbVerts.Set(Sprite::VI_NE, Vector3(right, top, .0f));
     }
     else
     {
@@ -186,19 +186,19 @@ void UIVerticalProgressBar::Render( UIRenderer* pRenderer ) const
 
       if (sprite.IsUVRotated())
       {
-        rsUVs.SetX(Sprite::VI_SW, uv1);
-        rsUVs.SetX(Sprite::VI_SE, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_SW).x = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_SE).x = uv1;
       }
       else
       {
-        rsUVs.SetY(Sprite::VI_NW, uv1);
-        rsUVs.SetY(Sprite::VI_NE, uv1);
+        fbUVs.Get<Vector2>(Sprite::VI_NW).y = uv1;
+        fbUVs.Get<Vector2>(Sprite::VI_NE).y = uv1;
       }
 
-      rsVerts.Set(Sprite::VI_NW, Vector3(left, y1, .0f));
-      rsVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-      rsVerts.Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-      rsVerts.Set(Sprite::VI_NE, Vector3(right, y1, .0f));
+      fbVerts.Set(Sprite::VI_NW, Vector3(left, y1, .0f));
+      fbVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
+      fbVerts.Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
+      fbVerts.Set(Sprite::VI_NE, Vector3(right, y1, .0f));
     }
   }
 }

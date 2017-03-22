@@ -48,11 +48,11 @@ public:
   static void Slice(AABB base, int across, int down, int maxSlices,
     Material* pMaterial, Sprite* parSprites);
 
-  static RenderStream*  CopyWholeTextureUVs();
-  static void           CopyWholeTextureUVsTo(RenderStream& uvs);
-  static void           CopyWholeTextureUVsTo(int offset, RenderStream& uvs);
+  static FloatBuffer*   CopyWholeTextureUVs();
+  static void           CopyWholeTextureUVsTo(FloatBuffer& uvs);
+  static void           CopyWholeTextureUVsTo(size_t offset, FloatBuffer& uvs);
 
-  static void           CopyIndicesTo(uint16_t* parInds, int offset);
+  static void           CopyIndicesTo(uint16_t* parInds, size_t offset);
 
   // structors
   Sprite();
@@ -91,22 +91,21 @@ public:
   const Vector2& GetOffset() const;
 
   ///@return  The array of UVs that make up the Sprite.
-  const RenderStream& GetUVs() const;
+  const FloatBuffer& GetUVs() const;
   
   ///@return  The array of vertices that make up the Sprite.
-  const RenderStream& GetVertices() const;
-
   ///@return  An IW_GX_ALLOCated copy of the UVs' array.
-  RenderStream* CopyUVs() const;
+  FloatBuffer* CopyUVs() const;
 
   ///@return  An IW_GX_ALLOCated copy of the vertices' array.
-  RenderStream* CopyVertices() const;
+  FloatBuffer* CopyVertices() const;
+  const FloatBuffer& GetVertices() const;
 
   ///@brief Copies the UVs to the supplied array.
-  void  CopyUVsTo(int offset, RenderStream& uvs) const;
+  void  CopyUVsTo(size_t offset, FloatBuffer& uvs) const;
 
   ///@brief Copies the vertices to the supplied array.
-  void  CopyVerticesTo(int offset, RenderStream& verts) const;
+  void  CopyVerticesTo(size_t offset, FloatBuffer& verts) const;
 
   void  SetHalfSize(int32_t hw, int32_t hh, bool calculateVertices = true);
 
@@ -151,9 +150,9 @@ protected:
 //implementation
 //==============================================================================
 inline
-RenderStream* Sprite::CopyWholeTextureUVs()
+FloatBuffer* Sprite::CopyWholeTextureUVs()
 {
-  RenderStream* pUVs(Renderer::AllocStream(RenderStream::F_VECTOR2, kNumVertices));
+  FloatBuffer* pUVs(Renderer::AllocBuffer(sizeof(Vector2), kNumVertices));
   CopyWholeTextureUVsTo(0, *pUVs);
   return pUVs;
 }
@@ -191,54 +190,54 @@ float Sprite::GetHalfHeight() const
 inline
 float Sprite::GetQuadWidth() const
 {
-  return m_vertices.GetVector3(VI_NE).x - m_vertices.GetVector3(VI_NW).x;
+  return m_vertices.Get<Vector3>(VI_NE).x - m_vertices.Get<Vector3>(VI_NW).x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetQuadHeight() const
 {
-  return m_vertices.GetVector3(VI_SW).y - m_vertices.GetVector3(VI_NW).y;
+  return m_vertices.Get<Vector3>(VI_SW).y - m_vertices.Get<Vector3>(VI_NW).y;
 }
 
 //==============================================================================
 inline
 float Sprite::GetLeftPadding() const
 {
-  return m_halfWidth + m_vertices.GetVector3(VI_NW).x;
+  return m_halfWidth + m_vertices.Get<Vector3>(VI_NW).x;
 }
   
 //==============================================================================
 inline
 float Sprite::GetTopPadding() const
 {
-  return m_halfHeight + m_vertices.GetVector3(VI_NW).y;
+  return m_halfHeight + m_vertices.Get<Vector3>(VI_NW).y;
 }
 
 //==============================================================================
 inline
 float Sprite::GetRightPadding() const
 {
-  return m_halfWidth - m_vertices.GetVector3(VI_NE).x;
+  return m_halfWidth - m_vertices.Get<Vector3>(VI_NE).x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetBottomPadding() const
 {
-  return m_halfHeight - m_vertices.GetVector3(VI_SW).y;
+  return m_halfHeight - m_vertices.Get<Vector3>(VI_SW).y;
 }
   
 //==============================================================================
 inline
-const RenderStream& Sprite::GetUVs() const
+const FloatBuffer& Sprite::GetUVs() const
 {
   return m_uvs;
 }
 
 //==============================================================================
 inline
-const RenderStream& Sprite::GetVertices() const
+const FloatBuffer& Sprite::GetVertices() const
 {
   return m_vertices;
 }
@@ -259,36 +258,38 @@ const Vector2&  Sprite::GetOffset() const
 
 //==============================================================================
 inline
-RenderStream* Sprite::CopyUVs() const
+FloatBuffer* Sprite::CopyUVs() const
 {
-  RenderStream* pRsUVs(Renderer::AllocStream(RenderStream::F_VECTOR2, kNumVertices));
-  CopyUVsTo(0, *pRsUVs);
-  return pRsUVs;
+  FloatBuffer* pFbUVs(Renderer::AllocBuffer(sizeof(Vector2), kNumVertices));
+  CopyUVsTo(0, *pFbUVs);
+  return pFbUVs;
 }
 
 //==============================================================================
 inline
-RenderStream* Sprite::CopyVertices() const
+FloatBuffer* Sprite::CopyVertices() const
 {
-  RenderStream* pRsVerts(Renderer::AllocStream(RenderStream::F_VECTOR3, kNumVertices));
-  CopyVerticesTo(0, *pRsVerts);
-  return pRsVerts;
+  FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(Vector2), kNumVertices));
+  CopyVerticesTo(0, *pFbVerts);
+  return pFbVerts;
 }
 
 //==============================================================================
 inline
-void Sprite::CopyUVsTo(int offset, RenderStream& uvs) const
+void Sprite::CopyUVsTo(size_t offset, FloatBuffer& uvs) const
 {
-  XR_ASSERT(Sprite, uvs.GetFormat() == RenderStream::F_VECTOR2);
-  uvs.Copy(m_uvs, 0, Sprite::kNumVertices, offset);
+  XR_ASSERT(Sprite, uvs.GetElementSizeBytes() == sizeof(Vector2));
+  XR_ASSERT(Sprite, uvs.GetNumElements() >= offset + kNumVertices);
+  uvs.Set<Vector2>(kNumVertices, m_uvs.Get<Vector2>(), offset);
 }
 
 //==============================================================================
 inline
-void Sprite::CopyVerticesTo(int offset, RenderStream& verts) const
+void Sprite::CopyVerticesTo(size_t offset, FloatBuffer& verts) const
 {
-  XR_ASSERT(Sprite, verts.GetFormat() == RenderStream::F_VECTOR3);
-  verts.Copy(m_vertices, 0, Sprite::kNumVertices, offset);
+  XR_ASSERT(Sprite, verts.GetElementSizeBytes() == sizeof(Vector3));
+  XR_ASSERT(Sprite, verts.GetNumElements() >= offset + kNumVertices);
+  verts.Set<Vector3>(kNumVertices, m_uvs.Get<Vector3>());
 }
 
 } // XR

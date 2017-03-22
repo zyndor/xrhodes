@@ -11,7 +11,7 @@
 #include "Callback.hpp"
 #include "Rect.hpp"
 #include "Material.hpp"
-#include "RenderStream.hpp"
+#include "FloatBuffer.hpp"
 #include "PrimType.hpp"
 #include "Ray.hpp"
 #include "Matrix.hpp"
@@ -47,9 +47,9 @@ public:
   static int32_t        GetDeviceWidth();
   static int32_t        GetDeviceHeight();
   
-  static void*          Alloc(int32_t bytes);
+  static void*          Alloc(size_t bytes);
   static Material*      AllocMaterial();
-  static RenderStream*  AllocStream(RenderStream::Format fmt, int numVerts);
+  static FloatBuffer*   AllocBuffer(size_t elemSize, size_t numElems);
   
   static void           SetPerspMatrix(const float (&arData)[kNumPersMatrixElems]);
 
@@ -85,10 +85,10 @@ public:
 
   static void           SetMaterial(Material* pMat);
 
-  static void           SetVertStream(RenderStream& rs);
-  static void           SetUVStream(RenderStream& rs = RenderStream::s_zero, int id = 0);
-  static void           SetColStream(RenderStream& rs = RenderStream::s_zero);
-  static void           SetNormStream(RenderStream& rs = RenderStream::s_zero);
+  static void           SetVertStream(FloatBuffer const& fb);
+  static void           SetUVStream(FloatBuffer const& fb = FloatBuffer(), int id = 0);
+  static void           SetColStream(FloatBuffer const& fb = FloatBuffer());
+  static void           SetNormStream(FloatBuffer const& fb = FloatBuffer());
 
   static void           DrawPrims(PrimType pt);
   static void           DrawPrims(PrimType pt, const uint16_t* pInds, int numInds);
