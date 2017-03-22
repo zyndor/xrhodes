@@ -44,7 +44,7 @@ void Audio::Init()
   // todo - attempt to read from config
   
   int result(Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, chunkSize));
-  if (result == 0)
+  if (result == -1)
   {
     XR_ERROR(("Error initialising Audio."));
   }
