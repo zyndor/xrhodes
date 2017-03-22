@@ -68,10 +68,10 @@ struct Vector3
   : x(.0f), y(.0f), z(.0f)
   {}
   
-  explicit Vector3(float const kNumComponents[kNumComponents])
-  : x(arData[X]),
-    y(arData[Y]),
-    z(arData[Z])
+  explicit Vector3(float const parData[kNumComponents])
+  : x(parData[X]),
+    y(parData[Y]),
+    z(parData[Z])
   {}
   
   Vector3(float x_, float y_, float z_)
