@@ -409,7 +409,7 @@ void  Renderer::SetColStream(FloatBuffer const& fb)
   {
     XR_GL_CALL(glDisableClientState(GL_COLOR_ARRAY));
   }
-  XR_GL_CALL(glColorPointer(2, GL_FLOAT, 0, fb.GetRaw()));
+  XR_GL_CALL(glColorPointer(4, GL_FLOAT, 0, fb.GetRaw()));
   s_rendererImpl.numColors = fb.GetNumElements();
 }
 
