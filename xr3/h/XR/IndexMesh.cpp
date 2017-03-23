@@ -66,7 +66,7 @@ void  IndexMesh::Render()
   if (m_vertices.GetNumElements() > 0)
   {
     _PrepareRender();
-    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], m_indices.size());
+    Renderer::DrawPrims(PrimType::TRI_LIST, &m_indices[0], m_indices.size());
   }
 }
 

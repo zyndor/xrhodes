@@ -146,7 +146,7 @@ void UIRenderer::Render()
     Renderer::SetUVStream(fbUVs, 0);
     Renderer::SetColStream(fbCols);
     Renderer::SetVertStream(fbVerts);
-    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], numSprites *
+    Renderer::DrawPrims(PrimType::TRI_LIST, &m_indices[0], numSprites *
       Sprite::kNumIndices);
 
     i = i1;

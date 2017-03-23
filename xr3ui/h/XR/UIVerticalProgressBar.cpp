@@ -112,7 +112,7 @@ void UIVerticalProgressBar::Render() const
     Renderer::SetVertStream(*pFbVerts);
     Renderer::SetUVStream(*pFbUVs);
 
-    Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
+    Renderer::DrawPrims(PrimType::TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
   }
 }
 

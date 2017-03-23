@@ -319,7 +319,7 @@ void  Sprite::RenderRaw()
   // the material is already set
   Renderer::SetUVStream(m_uvs, 0);
   Renderer::SetVertStream(m_vertices);
-  Renderer::DrawPrims(PRIM_TRI_LIST, karIndices, kNumIndices);
+  Renderer::DrawPrims(PrimType::TRI_LIST, karIndices, kNumIndices);
 }
 
 } // XR

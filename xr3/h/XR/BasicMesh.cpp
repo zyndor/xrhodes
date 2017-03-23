@@ -129,7 +129,7 @@ void  BasicMesh::Render() const
   if (m_vertices.GetNumElements() > 0)
   {
     _PrepareRender();
-    Renderer::DrawPrims(PRIM_TRI_STRIP);
+    Renderer::DrawPrims(PrimType::TRI_STRIP);
   }
 }
 

@@ -100,7 +100,7 @@ void UICheckBox::Render() const
     Renderer::SetVertStream(*parVerts);
     Renderer::SetUVStream(*pUVs);
 
-    Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
+    Renderer::DrawPrims(PrimType::TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
   }
 }
 

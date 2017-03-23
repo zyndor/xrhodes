@@ -191,7 +191,7 @@ void UIImagePanel::Render() const
     Renderer::SetUVStream(*pFbUVs);
     
     // todo: calculate indices for all quads!
-    Renderer::DrawPrims(PRIM_TRI_LIST, parIndices, numIndices);
+    Renderer::DrawPrims(PrimType::TRI_LIST, parIndices, numIndices);
   }
 }
 

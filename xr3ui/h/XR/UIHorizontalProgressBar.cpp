@@ -112,7 +112,7 @@ void UIHorizontalProgressBar::Render() const
     Renderer::SetVertStream(*pfbVerts);
     Renderer::SetUVStream(*pfbUVs);
 
-    Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
+    Renderer::DrawPrims(PrimType::TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
   }
 }
 
