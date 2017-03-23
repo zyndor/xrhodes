@@ -13,8 +13,8 @@ namespace DebugDraw
 {
 
 //==============================================================================
-static uint32_t   s_lastFlush(0);
-static Material*  s_pMaterial(0);
+static uint32_t   s_lastFlush = -1;
+static Material*  s_pMaterial = nullptr;
 
 static void SetMaterial()
 {
@@ -35,7 +35,7 @@ void  Line(const Vector3& v, Material* pMaterial)
   pStream->Set(0, Vector3::Zero());
   pStream->Set(1, v);
 
-  if(pMaterial == 0)
+  if(pMaterial == nullptr)
   {
     SetMaterial();
   }
@@ -58,7 +58,7 @@ void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
     ++parVerts;
   }
 
-  if(pMaterial == 0)
+  if(pMaterial == nullptr)
   {
     SetMaterial();
   }
@@ -81,7 +81,7 @@ void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial)
     ++parVerts;
   }
 
-  if(pMaterial == 0)
+  if (pMaterial == nullptr)
   {
     SetMaterial();
   }
@@ -104,7 +104,7 @@ void  Rect(float hw, float hh, Material* pMaterial)
   pStream->Set(3, Vector3(hw, -hh, .0f));
   pStream->Set(4, pStream->Get<Vector3>(0));
 
-  if(pMaterial == 0)
+  if (pMaterial == nullptr)
   {
     SetMaterial();
   }
@@ -126,7 +126,7 @@ void  FillRect(float hw, float hh, Material* pMaterial)
   pStream->Set(2, Vector3(hw, -hh, .0f));
   pStream->Set(3, Vector3(hw, hh, .0f));
 
-  if(pMaterial == 0)
+  if (pMaterial == nullptr)
   {
     SetMaterial();
   }
@@ -157,7 +157,7 @@ void  Circle(float radius, Material* pMaterial)
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
   }
   
-  if(pMaterial == 0)
+  if (pMaterial == nullptr)
   {
     SetMaterial();
   }
@@ -196,7 +196,7 @@ void  FillCircle(float radius, Material* pMaterial)
 
   *pWrite = Vector3(-radius, .0f, .0f);
 
-  if(pMaterial == 0)
+  if (pMaterial == nullptr)
   {
     SetMaterial();
   }
