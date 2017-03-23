@@ -140,9 +140,15 @@ void  FillRect(float hw, float hh, Material* pMaterial)
 }
 
 //==============================================================================
+int GetCircleNumVerts(float radius)
+{
+  XR_ASSERT(GetCircleNumVerts, radius >= .0f);
+  return std::ceil(kPi * radius * .333f);
+}
+
 void  Circle(float radius, Material* pMaterial)
 {
-  int numVerts(floorf(radius * .666f));
+  int numVerts(GetCircleNumVerts(radius));
   float theta(M_PI / numVerts);
   float c(cosf(theta));
   float s(sinf(theta));
@@ -173,7 +179,7 @@ void  Circle(float radius, Material* pMaterial)
 //==============================================================================
 void  FillCircle(float radius, Material* pMaterial)
 {
-  int numVerts(floorf(radius * .666f));
+  int numVerts(GetCircleNumVerts(radius));
   float theta(M_PI / numVerts);
   float c(cosf(theta));
   float s(sinf(theta));
