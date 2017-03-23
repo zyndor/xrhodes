@@ -10,13 +10,14 @@
 namespace XR {
 
 //==============================================================================
-enum  PrimType
+enum class PrimType
 {
-  PRIM_LINE_LIST,
-  PRIM_LINE_STRIP,
-  PRIM_TRI_LIST,
-  PRIM_TRI_STRIP,
-  PRIM_TRI_FAN,
+  LINE_LIST,
+  LINE_STRIP,
+  TRI_LIST,
+  TRI_STRIP,
+  QUAD_LIST,
+  QUAD_STRIP,
 };
 
 } // XR

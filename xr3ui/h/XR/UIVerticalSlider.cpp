@@ -122,7 +122,7 @@ void UIVerticalSlider::Render() const
   Renderer::SetUVStream(*sliderSprite.CopyUVs());
   Renderer::SetVertStream(*pFbVerts);
   Renderer::SetColStream();
-  Renderer::DrawPrims(PRIM_TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
+  Renderer::DrawPrims(PrimType::TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
 }
 
 //==============================================================================

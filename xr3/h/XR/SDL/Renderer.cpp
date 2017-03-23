@@ -487,11 +487,12 @@ static const GLenum arPrimTypeMappings[] =
   GL_LINE_STRIP,
   GL_TRIANGLES,
   GL_TRIANGLE_STRIP,
-  GL_TRIANGLE_FAN,
+  GL_QUADS,
+  GL_QUAD_STRIP
 };
 
 //==============================================================================
-void  Renderer::DrawPrims(PrimType pt)
+void  Renderer::DrawPrims(PrimType prim)
 {
   XR_ASSERT(Renderer, s_rendererImpl.numVertices > 0);
   XR_ASSERT(Renderer, s_rendererImpl.numColors == 0 ||
@@ -500,7 +501,7 @@ void  Renderer::DrawPrims(PrimType pt)
     s_rendererImpl.numTexCoords >= s_rendererImpl.numVertices);
   XR_ASSERT(Renderer, s_rendererImpl.numNormals == 0 ||
     s_rendererImpl.numNormals >= s_rendererImpl.numVertices);
-  XR_GL_CALL(glDrawArrays(arPrimTypeMappings[pt], 0, s_rendererImpl.numVertices));
+  XR_GL_CALL(glDrawArrays(arPrimTypeMappings[int(prim)], 0, s_rendererImpl.numVertices));
 
   XR_GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
   XR_GL_CALL(glDisableClientState(GL_COLOR_ARRAY));
@@ -508,7 +509,7 @@ void  Renderer::DrawPrims(PrimType pt)
 }
 
 //==============================================================================
-void  Renderer::DrawPrims( PrimType pt, const uint16_t* pInds, int numInds)
+void  Renderer::DrawPrims( PrimType prim, const uint16_t* pInds, int numInds)
 {
   XR_ASSERT(Renderer, numInds >= 0);
   XR_ASSERT(Renderer, s_rendererImpl.numVertices > 0);
@@ -519,17 +520,17 @@ void  Renderer::DrawPrims( PrimType pt, const uint16_t* pInds, int numInds)
   XR_ASSERT(Renderer, s_rendererImpl.numNormals == 0 ||
     s_rendererImpl.numNormals >= s_rendererImpl.numVertices);
   //glIndexPointer(GL_UNSIGNED_SHORT, 0, pInds);
-  //glDrawArrays(arPrimTypeMappings[pt], 0, numInds);
+  //glDrawArrays(arPrimTypeMappings[prim], 0, numInds);
   if (pInds != 0)
   {
     XR_GL_CALL(glEnableClientState(GL_INDEX_ARRAY));
-    XR_GL_CALL(glDrawElements(arPrimTypeMappings[pt], numInds,
+    XR_GL_CALL(glDrawElements(arPrimTypeMappings[int(prim)], numInds,
       GL_UNSIGNED_SHORT, pInds));
   }
   else
   {
     XR_ASSERT(Renderer, numInds <= s_rendererImpl.numVertices);
-    XR_GL_CALL(glDrawArrays(arPrimTypeMappings[pt], 0, numInds));
+    XR_GL_CALL(glDrawArrays(arPrimTypeMappings[int(prim)], 0, numInds));
   }
   
   XR_GL_CALL(glDisableClientState(GL_INDEX_ARRAY));

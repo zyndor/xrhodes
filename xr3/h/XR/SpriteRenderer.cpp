@@ -247,7 +247,7 @@ void  SpriteRenderer::Render()
     Renderer::SetColStream(colBatch);
     Renderer::SetUVStream(uvBatch, 0);
     Renderer::SetVertStream(vertBatch);
-    Renderer::DrawPrims(PRIM_TRI_LIST, &m_indices[0], numIndices);
+    Renderer::DrawPrims(PrimType::TRI_LIST, &m_indices[0], numIndices);
   }
 }
 

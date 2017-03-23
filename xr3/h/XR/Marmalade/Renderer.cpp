@@ -309,19 +309,20 @@ static const IwGxPrimType arPrimTypeMappings[] =
   IW_GX_LINE_STRIP,
   IW_GX_TRI_LIST,
   IW_GX_TRI_STRIP,
-  IW_GX_TRI_FAN,
+  IW_GX_QUAD_LIST,
+  IW_GX_QUAD_STRIP,
 };
 
 //==============================================================================
-void  Renderer::DrawPrims(PrimType pt)
+void  Renderer::DrawPrims(PrimType prim)
 {
-  IwGxDrawPrims(arPrimTypeMappings[pt], 0, s_pRenderer->numVertices);
+  IwGxDrawPrims(arPrimTypeMappings[int(prim)], 0, s_pRenderer->numVertices);
 }
 
 //==============================================================================
-void  Renderer::DrawPrims(PrimType pt, const uint16* pInds, int numInds)
+void  Renderer::DrawPrims(PrimType prim, const uint16* pInds, int numInds)
 {
-  IwGxDrawPrims(arPrimTypeMappings[pt], const_cast<uint16*>(pInds), numInds);
+  IwGxDrawPrims(arPrimTypeMappings[int(prim)], const_cast<uint16*>(pInds), numInds);
 }
 
 //==============================================================================
