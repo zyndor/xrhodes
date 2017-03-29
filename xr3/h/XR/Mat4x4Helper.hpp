@@ -8,6 +8,7 @@
 #define XR_MAT4X4HELPER_HPP
 
 #include "Vector3.hpp"
+#include "Matrix.hpp"
 
 namespace XR
 {
@@ -68,6 +69,29 @@ public:
   static Vector3 GetTranslation(float const(&arMat)[kNumElems])
   {
     return Vector3(arMat[12], arMat[13], arMat[14]);
+  }
+
+  ///@brief Writes data from the matrix @a m into the given array in 
+  /// OpenGL's 4x4 column-major format.
+  static void ExportToGL(Matrix const& m, float (&arDataOut)[kNumElems])
+  {
+    XR_ASSERT(Mat4x4Helper, arDataOut);
+    arDataOut[0] = m.xx;
+    arDataOut[1] = m.yx;
+    arDataOut[2] = m.zx;
+    arDataOut[3] = .0f;
+    arDataOut[4] = m.xy;
+    arDataOut[5] = m.yy;
+    arDataOut[6] = m.zy;
+    arDataOut[7] = .0f;
+    arDataOut[8] = m.xz;
+    arDataOut[9] = m.yz;
+    arDataOut[10] = m.zz;
+    arDataOut[11] = .0f;
+    arDataOut[12] = m.t.x;
+    arDataOut[13] = m.t.y;
+    arDataOut[14] = m.t.z;
+    arDataOut[15] = 1.0f;
   }
 };
 
