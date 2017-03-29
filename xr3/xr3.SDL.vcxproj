@@ -191,6 +191,7 @@
     <ClInclude Include="h\XR\ScopeGuard.hpp" />
     <ClInclude Include="h\XR\SDL\InputImpl.hpp" />
     <ClInclude Include="h\XR\SDL\MaterialImpl.hpp" />
+    <ClInclude Include="h\XR\SDL\RenderingResource.hpp" />
     <ClInclude Include="h\XR\SDL\TextureImpl.hpp" />
     <ClInclude Include="h\XR\SDL\xrgl.hpp" />
     <ClInclude Include="h\XR\Inflatable.hpp" />
