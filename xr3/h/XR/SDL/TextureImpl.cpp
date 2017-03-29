@@ -15,21 +15,28 @@ namespace XR
 static const int  kNumMipMapLevels = 4;
 
 //==============================================================================
+GLuint TextureImpl::New()
+{
+  GLuint name;
+  XR_GL_CALL(glGenTextures(1, &name));
+  return name;
+}
+
+//==============================================================================
 TextureImpl::TextureImpl()
-: m_pSurface(0),
-  m_hTexture(INVALID_HANDLE),
+: RenderingResource(New()),
+  m_pSurface(nullptr),
   m_width(0),
   m_height(0),
   m_flags(XR_MASK_ID(F_CLAMPING))
 {
-  XR_GL_CALL(glGenTextures(1, &m_hTexture));
-  XR_GL_CALL(glBindTexture(GL_TEXTURE_2D, m_hTexture));
+  XR_GL_CALL(glBindTexture(GL_TEXTURE_2D, m_name));
 }
 
 //==============================================================================
 TextureImpl::~TextureImpl()
 {
-  XR_GL_CALL(glDeleteTextures(1, &m_hTexture));
+  XR_GL_CALL(glDeleteTextures(1, &m_name));
 
   FreeSurface();
 }
@@ -40,7 +47,7 @@ bool  TextureImpl::LoadFromFile(const char* pFileName)
   FreeSurface();
   m_pSurface = IMG_Load(pFileName);
 
-  bool  result(m_pSurface != 0);
+  bool  result(m_pSurface != nullptr);
   if (result)
   {
     m_width = m_pSurface->w;
@@ -58,7 +65,7 @@ void  TextureImpl::CopyImage(const Image& img)
   Image temp;
   temp.Copy(img);
   
-  m_pSurface = static_cast<SDL_Surface*>(temp.SwapImpl(0));
+  m_pSurface = static_cast<SDL_Surface*>(temp.SwapImpl(nullptr));
 }
 
 //==============================================================================
@@ -124,7 +131,7 @@ void  TextureImpl::Upload()
 {
   XR_ASSERT(TextureImpl, m_pSurface != 0);
 
-  XR_GL_CALL(glBindTexture(GL_TEXTURE_2D, m_hTexture));
+  XR_GL_CALL(glBindTexture(GL_TEXTURE_2D, m_name));
 
   GLenum  clampGl(GetClamping() ? GL_CLAMP_TO_EDGE : GL_REPEAT);
   XR_GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, clampGl));
@@ -166,13 +173,13 @@ void  TextureImpl::Upload()
 void  TextureImpl::FreeSurface()
 {
   SDL_FreeSurface(m_pSurface);
-  m_pSurface = 0;
+  m_pSurface = nullptr;
 }
 
 //==============================================================================
 uint32_t TextureImpl::GetHandle() const
 {
-  return m_hTexture;
+  return m_name;
 }
 
 } // XR
