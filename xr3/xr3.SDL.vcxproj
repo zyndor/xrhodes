@@ -156,6 +156,7 @@
     <ClInclude Include="h\XR\KeyCode.hpp" />
     <ClInclude Include="h\XR\Lock.hpp" />
     <ClInclude Include="h\XR\Log.hpp" />
+    <ClInclude Include="h\XR\Mat4x4Helper.hpp" />
     <ClInclude Include="h\XR\Material.hpp" />
     <ClInclude Include="h\XR\maths.hpp" />
     <ClInclude Include="h\XR\Matrix.hpp" />

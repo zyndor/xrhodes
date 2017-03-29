@@ -358,29 +358,6 @@ struct Matrix
     LookAt(Vector3(t.x, t.y, t.z), to, up);
   }
 
-  ///@brief Writes data from the matrix into the given array in 
-  /// OpenGL's 4x4 column-order format.
-  void  ToGL(float(&arDataOut)[16]) const
-  {
-    XR_ASSERT(Matrix, arDataOut);
-    arDataOut[0] = xx;
-    arDataOut[1] = yx;
-    arDataOut[2] = zx;
-    arDataOut[3] = .0f;
-    arDataOut[4] = xy;
-    arDataOut[5] = yy;
-    arDataOut[6] = zy;
-    arDataOut[7] = .0f;
-    arDataOut[8] = xz;
-    arDataOut[9] = yz;
-    arDataOut[10] = zz;
-    arDataOut[11] = .0f;
-    arDataOut[12] = t.x;
-    arDataOut[13] = t.y;
-    arDataOut[14] = t.z;
-    arDataOut[15] = 1.0f;
-  }
-  
   ///@brief Changes the linear transformation part of this matrix to its transpose.
   Matrix&  Transpose()
   {

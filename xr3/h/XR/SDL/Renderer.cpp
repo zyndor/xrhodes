@@ -10,6 +10,7 @@
 #include <XR/Device.hpp>
 #include <XR/Pool.hpp>
 #include <XR/ProjectionHelpers.hpp>
+#include <XR/Mat4x4Helper.hpp>
 #include <XR/SVector2.hpp>
 #include <XR/debug.hpp>
 #include <SDL.h>
@@ -51,7 +52,7 @@ static void UpdateModelViewMatrix()
   Matrix  m(s_rendererImpl.mModel);
   m.RotateBy(s_rendererImpl.mView);
   m.t = s_rendererImpl.mView.RotateVec(m.t - s_rendererImpl.mView.t);
-  m.ToGL(arData);
+  Mat4x4Helper::ExportToGL(m, arData);
   
   XR_GL_CALL(glLoadMatrixf(arData));
 }

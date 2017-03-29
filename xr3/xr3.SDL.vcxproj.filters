@@ -599,5 +599,8 @@
     <ClInclude Include="h\XR\FloatBuffer.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="h\XR\Mat4x4Helper.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
