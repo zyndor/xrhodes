@@ -7,12 +7,10 @@
 #include "TextureImpl.hpp"
 #include <XR/utils.hpp>
 #include <SDL_image.h>
+#include <cmath>
 
 namespace XR
 {
-
-//==============================================================================
-static const int  kNumMipMapLevels = 4;
 
 //==============================================================================
 GLuint TextureImpl::New()
@@ -129,7 +127,7 @@ void  TextureImpl::SetModifiable(bool state)
 //==============================================================================
 void  TextureImpl::Upload()
 {
-  XR_ASSERT(TextureImpl, m_pSurface != 0);
+  XR_ASSERT(TextureImpl, m_pSurface != nullptr);
 
   XR_GL_CALL(glBindTexture(GL_TEXTURE_2D, m_name));
 
@@ -156,7 +154,8 @@ void  TextureImpl::Upload()
     break;
   }
 
-  int mipMapLevels(GetMipMapping() ? kNumMipMapLevels : 1);
+  int mipMapLevels(GetMipMapping() ?
+    int(std::log2(std::min(m_pSurface->w, m_pSurface->h))): 1);
   for (int i = 0; i < mipMapLevels; ++i)
   {
     XR_GL_CALL(glTexImage2D(GL_TEXTURE_2D, i, bytesPerPixel, m_width, m_height,
