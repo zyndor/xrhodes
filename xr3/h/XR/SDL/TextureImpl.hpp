@@ -8,6 +8,7 @@
 #define XR_TEXTUREIMPL_HPP
 
 #include "xrgl.hpp"
+#include "RenderingResource.hpp"
 #include <XR/fundamentals.hpp>
 #include <XR/Texture.hpp>
 #include <SDL_video.h>
@@ -16,10 +17,8 @@ namespace XR
 {
 
 //==============================================================================
-class TextureImpl
+class TextureImpl: RenderingResource
 {
-  XR_NONCOPY_DECL(TextureImpl)
-
 public:
   // types
   enum
@@ -67,11 +66,12 @@ public:
 
   uint32_t GetHandle() const; // no ownership transfer
 
-protected:
+private:
+  // static
+  static GLuint New();
   // data
   SDL_Surface*  m_pSurface;
   
-  GLuint        m_hTexture;
   int32_t       m_width;
   int32_t       m_height;
   
@@ -98,7 +98,7 @@ int32_t TextureImpl::GetHeight() const
 inline
 int32_t TextureImpl::GetPitch() const
 {
-  XR_ASSERT(TextureImpl, m_pSurface != 0);
+  XR_ASSERT(TextureImpl, m_pSurface != nullptr);
   return m_pSurface->pitch;
 }
 
@@ -106,8 +106,8 @@ int32_t TextureImpl::GetPitch() const
 inline
 void  TextureImpl::Bind(GLenum target)
 {
-  XR_ASSERT(TextureImpl, m_hTexture != INVALID_HANDLE);
-  XR_GL_CALL(glBindTexture(target, m_hTexture));
+  XR_ASSERT(TextureImpl, m_name != INVALID_HANDLE);
+  XR_GL_CALL(glBindTexture(target, m_name));
 }
 
 } // XR

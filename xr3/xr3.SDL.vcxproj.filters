@@ -7,6 +7,12 @@
     <Filter Include="Implementation">
       <UniqueIdentifier>{26647411-58ae-4058-a186-f55f5aad9417}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Private Headers">
+      <UniqueIdentifier>{c570735e-1a1a-4e86-b783-98c021477359}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\detail">
+      <UniqueIdentifier>{aadf22c3-a5a1-48ab-a7a0-670d0d142bc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="h\XR\ActorReader.cpp">
@@ -539,21 +545,6 @@
     <ClInclude Include="h\XR\utils.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\SDL\InputImpl.hpp">
-      <Filter>Implementation</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\SDL\MaterialImpl.hpp">
-      <Filter>Implementation</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\SDL\TextureImpl.hpp">
-      <Filter>Implementation</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\SDL\xrgl.hpp">
-      <Filter>Implementation</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\SVector2.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -601,6 +592,24 @@
     </ClInclude>
     <ClInclude Include="h\XR\Mat4x4Helper.hpp">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\MaterialImpl.hpp">
+      <Filter>Private Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\xrgl.hpp">
+      <Filter>Private Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\InputImpl.hpp">
+      <Filter>Private Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\RenderingResource.hpp">
+      <Filter>Private Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SDL\TextureImpl.hpp">
+      <Filter>Private Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
+      <Filter>Headers\detail</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
