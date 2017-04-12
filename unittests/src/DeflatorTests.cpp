@@ -57,9 +57,14 @@ namespace XR
         deflator.RegisterObject(a);
         Assert::Fail(L"Registering under invalid ID shall fail.");
       }
+      catch (std::logic_error&)
+      {}
       catch (...)
       {
+        Assert::Fail(L"Wrong exception type");
       }
+
+      // Failed registration does not result in the object being registered.
       Assert::IsTrue(deflator.GetId(&a) == IdGenerator::kInvalidId);
     }
 
@@ -74,11 +79,16 @@ namespace XR
       try
       {
         deflator.RegisterObject(a[1]);
-        Assert::IsTrue(false, L"Registration that causes ID range clash shall fail.");
+        Assert::Fail(L"Registration that causes ID range clash shall fail.");
       }
+      catch (std::logic_error&)
+      {}
       catch (...)
       {
+        Assert::Fail(L"Wrong exception type");
       }
+
+      // Failed registration does not result in the object being registered.
       Assert::IsTrue(deflator.GetId(&a[1]) == IdGenerator::kInvalidId);
     }
   };

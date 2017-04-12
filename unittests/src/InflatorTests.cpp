@@ -86,6 +86,10 @@ namespace XR
       }
       catch (std::runtime_error&)
       {}
+      catch (...)
+      {
+        Assert::Fail(L"Wrong exception type");
+      }
     }
 
     TEST_METHOD(Inflator_MappingRegistered)
@@ -101,6 +105,10 @@ namespace XR
       }
       catch (std::runtime_error&)
       {}
+      catch (...)
+      {
+        Assert::Fail(L"Wrong exception type");
+      }
     }
   };
 }
