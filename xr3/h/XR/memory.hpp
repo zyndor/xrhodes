@@ -26,7 +26,9 @@ inline
 int32_t Align(int32_t value, int32_t alignment)
 {
   XR_ASSERT(Align, alignment > 0);
-  return value + alignment - (value % alignment);
+  const int alignmentLess1 = alignment - 1;
+  XR_ASSERT(Align, (alignment & alignmentLess1) == 0);
+  return value + alignment - (value & alignmentLess1);
 }
 
 } // XR
