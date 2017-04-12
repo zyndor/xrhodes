@@ -180,6 +180,7 @@
     <ClCompile Include="src\EventBroadcasterTests.cpp" />
     <ClCompile Include="src\EventNotifierTests.cpp" />
     <ClCompile Include="src\HardStringTests.cpp" />
+    <ClCompile Include="src\IndexServerTests.cpp" />
     <ClCompile Include="src\InflatorTests.cpp" />
     <ClCompile Include="src\JsonUtilsTests.cpp" />
     <ClCompile Include="src\QueueTests.cpp" />
