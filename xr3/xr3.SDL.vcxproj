@@ -47,6 +47,7 @@
     <ClCompile Include="h\XR\Hash.cpp" />
     <ClCompile Include="h\XR\Indexer2d.cpp" />
     <ClCompile Include="h\XR\IndexMesh.cpp" />
+    <ClCompile Include="h\XR\IndexServer.cpp" />
     <ClCompile Include="h\XR\Inflator.cpp" />
     <ClCompile Include="h\XR\json.cpp" />
     <ClCompile Include="h\XR\JsonEntity.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="h\XR\Collider.hpp" />
     <ClInclude Include="h\XR\Color.hpp" />
     <ClInclude Include="h\XR\Command.hpp" />
+    <ClInclude Include="h\XR\IndexServer.hpp" />
     <ClInclude Include="h\XR\CrossObject.hpp" />
     <ClInclude Include="h\XR\CSV.hpp" />
     <ClInclude Include="h\XR\debug.hpp" />

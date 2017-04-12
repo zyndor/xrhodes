@@ -252,6 +252,7 @@
     <ClCompile Include="h\XR\FloatBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
+    <ClCompile Include="h\XR\IndexServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -610,6 +611,9 @@
     </ClInclude>
     <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
       <Filter>Headers\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\IndexServer.hpp">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
