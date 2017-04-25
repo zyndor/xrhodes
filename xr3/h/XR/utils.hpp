@@ -13,7 +13,12 @@
 #include <cstdint>
 
 //==============================================================================
-#define XR_ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+namespace
+{
+template <typename T, size_t N>
+char(&ArraySizeHelper(T (&)[N]))[N];
+}
+#define XR_ARRAY_SIZE(a) (sizeof(ArraySizeHelper(a)))
 
 //==============================================================================
 #define XR_MASK_ID(id) (1 << static_cast<size_t>(id))
