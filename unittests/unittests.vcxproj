@@ -186,6 +186,7 @@
     <ClCompile Include="src\QueueTests.cpp" />
     <ClCompile Include="src\ScopeGuardTests.cpp" />
     <ClCompile Include="src\StreamUtilsTests.cpp" />
+    <ClCompile Include="src\StringFormatterTests.cpp" />
     <ClCompile Include="src\WorkerTests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
