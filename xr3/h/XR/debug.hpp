@@ -15,7 +15,7 @@
 
 //==============================================================================
 ///@brief Binary debugging aid - wrap call to ascertain whether it causes a crash.
-#define XR_CRASHTEST(call)  { XR_RAWTRACE(("At: %s\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"; }
+#define XR_SURVIVE(call)  { XR_RAWTRACE(("SURVIVE: %s (%s:%d)\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"); }
 
 //==============================================================================
 // Platform / backend specific trace / assert functionality.
@@ -30,7 +30,7 @@
 
 #if defined(XR_DEBUG)
 #define XR_TRACE(chnl, msg)\
-  printf("[%s]", #chnl); printf msg; XR_RAWTRACE(("\n"));\ // IMPROVE
+  printf("[%s]", #chnl); printf msg; XR_RAWTRACE(("\n")); // IMPROVE
 #else
 #define XR_TRACE(chnl, msg)
 #endif
