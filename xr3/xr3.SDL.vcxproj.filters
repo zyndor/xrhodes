@@ -615,5 +615,8 @@
     <ClInclude Include="h\XR\IndexServer.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="h\XR\StringFormatter.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
