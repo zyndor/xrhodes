@@ -17,7 +17,7 @@ namespace  XR
 ///@brief Provides string formatting capabilities reminiscent of printf()'s
 /// style but with reorderable, type-agnostic tokens that may occur multiple
 /// times. Tokens may also generate subsequent tokens. Up to 9 substitutors
-/// are supported at this time (%1 - %9).
+/// are supported (%1 - %9).
 class  StringFormatter
 {
 public:
@@ -55,11 +55,13 @@ public:
 
       // NOTE: we should start looking for the next token at the end of this
       // substitution to avoid the fatal and unrealistic scenario of a token
-      // being replaced with itself (part or whole), i.e. "%1 morning!" % "Good %1".
-      // Note that "%1 morning!" % "Good %2" is fine.
+      // being replaced with itself (part or whole).
+      // i.e. in "%1 morning!" % "Good %1" we should not look to replace the
+      // %1 generated in the substitution. Note that "%1 morning!" % "Good %2"
+      // will work as expected.
       const auto oldStringSize = stringSize;
       stringSize = m_string.size();
-      iFind = m_string.find(sub.buffer, afterSub + stringSize - oldStringSize);
+      iFind = m_string.find(sub.buffer, afterSub + ptrdiff_t(stringSize - oldStringSize));
     }
 
     return *this;
