@@ -204,6 +204,7 @@
     <ClInclude Include="h\XR\Squared.hpp" />
     <ClInclude Include="h\XR\State.hpp" />
     <ClInclude Include="h\XR\streamutils.hpp" />
+    <ClInclude Include="h\XR\StringFormatter.hpp" />
     <ClInclude Include="h\XR\strings.hpp" />
     <ClInclude Include="h\XR\SVector2.hpp" />
     <ClInclude Include="h\XR\Text.hpp" />
