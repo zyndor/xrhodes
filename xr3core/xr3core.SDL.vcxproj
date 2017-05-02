@@ -19,80 +19,48 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="h\XR\Cursor.hpp" />
-    <ClInclude Include="h\XR\Screen.hpp" />
-    <ClInclude Include="h\XR\ScreenManager.hpp" />
-    <ClInclude Include="h\XR\UIAligner.hpp" />
-    <ClInclude Include="h\XR\UIBuilder.hpp" />
-    <ClInclude Include="h\XR\UIBuilderScreen.hpp" />
-    <ClInclude Include="h\XR\UIButton.hpp" />
-    <ClInclude Include="h\XR\UICascader.hpp" />
-    <ClInclude Include="h\XR\UICheckBox.hpp" />
-    <ClInclude Include="h\XR\UIColoredElement.hpp" />
-    <ClInclude Include="h\XR\UIContainer.hpp" />
-    <ClInclude Include="h\XR\UIElement.hpp" />
-    <ClInclude Include="h\XR\UIEventNotifier.hpp" />
-    <ClInclude Include="h\XR\UIGridLayout.hpp" />
-    <ClInclude Include="h\XR\UIGrowingLayoutBase.hpp" />
-    <ClInclude Include="h\XR\UIHorizontalLayout.hpp" />
-    <ClInclude Include="h\XR\UIHorizontalProgressBar.hpp" />
-    <ClInclude Include="h\XR\UIHorizontalScrollingLayout.hpp" />
-    <ClInclude Include="h\XR\UIHorizontalSlider.hpp" />
-    <ClInclude Include="h\XR\UIImage.hpp" />
-    <ClInclude Include="h\XR\UIImagePanel.hpp" />
-    <ClInclude Include="h\XR\UILabel.hpp" />
-    <ClInclude Include="h\XR\UINavigator.hpp" />
-    <ClInclude Include="h\XR\UIProgressBarBase.hpp" />
-    <ClInclude Include="h\XR\UIRadioButton.hpp" />
-    <ClInclude Include="h\XR\UIRenderer.hpp" />
-    <ClInclude Include="h\XR\UISelector.hpp" />
-    <ClInclude Include="h\XR\UISliderBase.hpp" />
-    <ClInclude Include="h\XR\UISpacer.hpp" />
-    <ClInclude Include="h\XR\UITreeListItem.hpp" />
-    <ClInclude Include="h\XR\UIVerticalLayout.hpp" />
-    <ClInclude Include="h\XR\UIVerticalProgressBar.hpp" />
-    <ClInclude Include="h\XR\UIVerticalScrollingLayout.hpp" />
-    <ClInclude Include="h\XR\UIVerticalSlider.hpp" />
+    <ClCompile Include="h\XR\Deflator.cpp" />
+    <ClCompile Include="h\XR\Inflator.cpp" />
+    <ClCompile Include="h\XR\detail\EventDispatcher.cpp" />
+    <ClCompile Include="h\XR\IndexServer.cpp" />
+    <ClCompile Include="h\XR\memdebug.cpp" />
+    <ClCompile Include="h\XR\ParserCore.cpp" />
+    <ClCompile Include="h\XR\Pool.cpp" />
+    <ClCompile Include="h\XR\RingBuffer.cpp" />
+    <ClCompile Include="h\XR\SharedPoolAllocator.cpp" />
+    <ClCompile Include="h\XR\TweakBench.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="h\XR\Cursor.cpp" />
-    <ClCompile Include="h\XR\Screen.cpp" />
-    <ClCompile Include="h\XR\ScreenManager.cpp" />
-    <ClCompile Include="h\XR\UIAligner.cpp" />
-    <ClCompile Include="h\XR\UIBuilder.cpp" />
-    <ClCompile Include="h\XR\UIBuilderScreen.cpp" />
-    <ClCompile Include="h\XR\UIButton.cpp" />
-    <ClCompile Include="h\XR\UICascader.cpp" />
-    <ClCompile Include="h\XR\UICheckBox.cpp" />
-    <ClCompile Include="h\XR\UIColoredElement.cpp" />
-    <ClCompile Include="h\XR\UIContainer.cpp" />
-    <ClCompile Include="h\XR\UIElement.cpp" />
-    <ClCompile Include="h\XR\UIEventNotifier.cpp" />
-    <ClCompile Include="h\XR\UIGridLayout.cpp" />
-    <ClCompile Include="h\XR\UIGrowingLayoutBase.cpp" />
-    <ClCompile Include="h\XR\UIHorizontalLayout.cpp" />
-    <ClCompile Include="h\XR\UIHorizontalProgressBar.cpp" />
-    <ClCompile Include="h\XR\UIHorizontalScrollingLayout.cpp" />
-    <ClCompile Include="h\XR\UIHorizontalSlider.cpp" />
-    <ClCompile Include="h\XR\UIImage.cpp" />
-    <ClCompile Include="h\XR\UIImagePanel.cpp" />
-    <ClCompile Include="h\XR\UILabel.cpp" />
-    <ClCompile Include="h\XR\UINavigator.cpp" />
-    <ClCompile Include="h\XR\UIProgressBarBase.cpp" />
-    <ClCompile Include="h\XR\UIRadioButton.cpp" />
-    <ClCompile Include="h\XR\UIRenderer.cpp" />
-    <ClCompile Include="h\XR\UISelector.cpp" />
-    <ClCompile Include="h\XR\UISliderBase.cpp" />
-    <ClCompile Include="h\XR\UISpacer.cpp" />
-    <ClCompile Include="h\XR\UITreeListItem.cpp" />
-    <ClCompile Include="h\XR\UIVerticalLayout.cpp" />
-    <ClCompile Include="h\XR\UIVerticalProgressBar.cpp" />
-    <ClCompile Include="h\XR\UIVerticalScrollingLayout.cpp" />
-    <ClCompile Include="h\XR\UIVerticalSlider.cpp" />
+    <ClInclude Include="h\XR\Deflator.hpp" />
+    <ClInclude Include="h\XR\Inflatable.hpp" />
+    <ClInclude Include="h\XR\Inflator.hpp" />
+    <ClInclude Include="h\XR\debug.hpp" />
+    <ClInclude Include="h\XR\detail\EventDispatcher.hpp" />
+    <ClInclude Include="h\XR\EventBroadcaster.hpp" />
+    <ClInclude Include="h\XR\EventNotifier.hpp" />
+    <ClInclude Include="h\XR\fundamentals.hpp" />
+    <ClInclude Include="h\XR\HardString.hpp" />
+    <ClInclude Include="h\XR\IdGenerator.hpp" />
+    <ClInclude Include="h\XR\IndexServer.hpp" />
+    <ClInclude Include="h\XR\memdebug.hpp" />
+    <ClInclude Include="h\XR\MemFnAdaptor.hpp" />
+    <ClInclude Include="h\XR\memory.hpp" />
+    <ClInclude Include="h\XR\ParserCore.hpp" />
+    <ClInclude Include="h\XR\Pool.hpp" />
+    <ClInclude Include="h\XR\Queue.hpp" />
+    <ClInclude Include="h\XR\RefHolder.hpp" />
+    <ClInclude Include="h\XR\RingBuffer.hpp" />
+    <ClInclude Include="h\XR\ScopeGuard.hpp" />
+    <ClInclude Include="h\XR\SharedPoolAllocator.hpp" />
+    <ClInclude Include="h\XR\Singleton.hpp" />
+    <ClInclude Include="h\XR\streamutils.hpp" />
+    <ClInclude Include="h\XR\StringFormatter.hpp" />
+    <ClInclude Include="h\XR\TweakBench.hpp" />
+    <ClInclude Include="h\XR\typeutils.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C81BCA7D-B4D9-4124-8B8E-F112848E251A}</ProjectGuid>
-    <RootNamespace>xr3uiSDL</RootNamespace>
+    <ProjectGuid>{1F3D6A4D-7649-4BCD-9739-1749FC16B9F3}</ProjectGuid>
+    <RootNamespace>xr3coreSDL</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -141,12 +109,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetExt>.lib</TargetExt>
     <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)\temp_$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetExt>.lib</TargetExt>
     <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)\temp_$(ProjectName)\</IntDir>
   </PropertyGroup>
@@ -163,10 +129,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>XR_SDL;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalIncludeDirectories>$(ProjectDir)h</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -174,9 +138,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>XR_SDL;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)h</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -186,9 +149,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>XR_SDL;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)h</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -202,9 +164,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>XR_SDL;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)h</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>XR_SDL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

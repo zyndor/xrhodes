@@ -7,13 +7,13 @@
 #ifndef XR_ENTITY_HPP
 #define XR_ENTITY_HPP
 
-#include <list>
-#include <map>
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
 #include "Name.hpp"
-#include "typeutils.hpp"
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
+#include <XR/typeutils.hpp>
+#include <list>
+#include <map>
 
 namespace XR
 {

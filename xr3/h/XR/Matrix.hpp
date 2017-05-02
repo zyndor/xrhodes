@@ -8,7 +8,7 @@
 #define XR_MATRIX_HPP
 
 #include "Vector3.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 #include <algorithm>
 #include <cstring>
 #include <cstdint>

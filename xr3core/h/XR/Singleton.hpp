@@ -7,6 +7,8 @@
 #ifndef XR_SINGLETON_HPP
 #define XR_SINGLETON_HPP
 
+#include "debug.hpp"
+
 namespace XR
 {
 

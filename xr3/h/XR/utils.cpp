@@ -5,9 +5,9 @@
 //
 //==============================================================================
 #include <cstring>
+#include <XR/debug.hpp>
 #include "utils.hpp"
 #include "Hash.hpp"
-#include "debug.hpp"
 
 namespace XR
 {

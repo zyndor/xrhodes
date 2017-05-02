@@ -8,7 +8,7 @@
 #define XR_JSONENTITY_HPP
 
 #include "json.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 #include <map>
 #include <vector>
 #include <list>

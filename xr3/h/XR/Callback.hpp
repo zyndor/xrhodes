@@ -8,7 +8,7 @@
 #define XR_CALLBACK_HPP
 
 #include <list>
-#include "debug.hpp"
+#include <XR/debug.hpp>
 
 namespace XR
 {

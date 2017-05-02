@@ -7,13 +7,12 @@
 #ifndef XR_ANIMATIONREADER_HPP
 #define XR_ANIMATIONREADER_HPP
 
-#include <list>
-#include <tinyxml.h>
-#include "strings.hpp"
 #include "Parse.hpp"
 #include "Animation.hpp"
-#include "ParserCore.hpp"
-#include "fundamentals.hpp"
+#include <XR/ParserCore.hpp>
+#include <XR/fundamentals.hpp>
+#include <tinyxml.h>
+#include <list>
 
 namespace XR
 {

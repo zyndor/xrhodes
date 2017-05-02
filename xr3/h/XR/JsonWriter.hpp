@@ -9,7 +9,7 @@
 
 #include <sstream>
 #include "json.hpp"
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 
 namespace XR
 {

@@ -6,8 +6,8 @@
 //==============================================================================
 #include "Hash.hpp"
 #include "JsonEntity.hpp"
-#include "functors.hpp"
-#include "debug.hpp"
+#include <XR/functors.hpp>
+#include <XR/debug.hpp>
 #include <cstring>
 #include <algorithm>
 #include <iterator>

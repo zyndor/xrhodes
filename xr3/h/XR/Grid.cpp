@@ -6,7 +6,7 @@
 //==============================================================================
 #include <cmath>
 #include "Grid.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 
 namespace XR
 {

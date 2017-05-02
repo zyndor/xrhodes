@@ -7,7 +7,7 @@
 #ifndef XR_INPUT_HPP
 #define XR_INPUT_HPP
 
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 #include "SVector2.hpp"
 #include "Callback.hpp"
 #include "KeyCode.hpp"

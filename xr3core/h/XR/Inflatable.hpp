@@ -7,7 +7,7 @@
 #ifndef XR_SERIALIZABLE_HPP
 #define XR_SERIALIZABLE_HPP
 
-#include <sstream>
+#include <iostream>
 
 namespace XR
 {

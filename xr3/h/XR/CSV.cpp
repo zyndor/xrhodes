@@ -7,7 +7,7 @@
 #include "CSV.hpp"
 #include "FileBuffer.hpp"
 #include "Hash.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 
 namespace XR
 {

@@ -7,8 +7,8 @@
 #ifndef XR_WORKER_HPP
 #define XR_WORKER_HPP
 
-#include "Queue.hpp"
-#include "fundamentals.hpp"
+#include <XR/Queue.hpp>
+#include <XR/fundamentals.hpp>
 #include <thread>
 #include <mutex>
 #include <atomic>

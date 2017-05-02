@@ -8,7 +8,7 @@
 #define XR_HARDLIST_HPP
 
 #include "typeutils.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 
 namespace XR
 {

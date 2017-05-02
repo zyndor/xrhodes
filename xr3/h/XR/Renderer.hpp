@@ -7,7 +7,7 @@
 #ifndef XR_RENDERER_HPP
 #define XR_RENDERER_HPP
 
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 #include "Callback.hpp"
 #include "Rect.hpp"
 #include "Material.hpp"

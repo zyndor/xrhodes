@@ -11,7 +11,7 @@
 #include "Callback.hpp"
 #include "File.hpp"
 #include "Log.hpp"
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 
 namespace XR
 {

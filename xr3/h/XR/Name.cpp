@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "Name.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 #include <string.h>
 
 namespace XR

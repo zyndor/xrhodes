@@ -7,7 +7,7 @@
 #ifndef XR_VECTOR2_HPP
 #define XR_VECTOR2_HPP
 
-#include "debug.hpp"
+#include <XR/debug.hpp>
 #include <cstdint>
 #include <cmath>
 
