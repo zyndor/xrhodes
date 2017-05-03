@@ -7,6 +7,7 @@
 #ifndef XR_DEBUG_HPP
 #define XR_DEBUG_HPP
 
+#include "platform.hpp"
 #include <cstdio>
 
 //==============================================================================
@@ -18,16 +19,25 @@
 #define XR_SURVIVE(call)  { XR_RAWTRACE(("SURVIVE: %s (%s:%d)\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"); }
 
 //==============================================================================
-// Platform / backend specific trace / assert functionality.
-//
-#if defined(XR_SDL)
-// SDL -- for now, use printf and SDL_assert.
-#include <SDL_assert.h>
-
 #if !defined(XR_DEBUG) && defined(XR_DEBUG_PERFORMANCE)
 #define XR_DEBUG
 #endif
 
+#if defined(XR_DEBUG)
+#if defined(XR_COMPILER_MSVC)
+#define XR_TRAP __debugbreak();
+#elif defined(XR_CPU_ARM)
+#define XR_TRAP __builtin_trap();
+#elif !defined(XR_PLATFORM_NACL)
+#define XR_TRAP __asm__ ("int $3");
+#else
+#define XR_TRAP { int* const trap = (int*)3L; *trap = 3; }
+#endif
+#else
+#define XR_TRAP
+#endif
+
+//==============================================================================
 #if defined(XR_DEBUG)
 #define XR_TRACE(chnl, msg)\
   printf("[%s]", #chnl); printf msg; XR_RAWTRACE(("\n")); // IMPROVE
@@ -35,29 +45,35 @@
 #define XR_TRACE(chnl, msg)
 #endif
 
-#define XR_ASSERT(chnl, cond)         SDL_assert(cond)
-#define XR_ASSERTMSG(chnl, cond, msg) SDL_assert(cond) // FIXME: chnl, msg use
+//==============================================================================
+#if defined(XR_DEBUG)
+#define XR_ASSERTMSG(chnl, cond, msg)\
+  if(!(cond))\
+  {\
+    XR_TRACE(chnl, ("Assertion failure: %s (%s:%d)", #cond, __FILE__, __LINE__));\
+    XR_TRAP\
+  }
+#else
+#define XR_ASSERTMSG(chnl, cond, msg)
+#endif
 
+//==============================================================================
+#if defined(XR_DEBUG)
+#define XR_ASSERT(chnl, cond)\
+  if(!(cond))\
+  {\
+    XR_TRACE(chnl, ("Assertion failed: %s (%s:%d)", #cond, __FILE__, __LINE__));\
+    XR_TRAP\
+  }
+#else
+#define XR_ASSERT(chnl, cond)
+#endif
+
+//==============================================================================
 #define XR_ERROR(msg)\
   {\
     XR_RAWTRACE(msg);\
-    SDL_TriggerBreakpoint();\
+    XR_TRAP\
   }\
-
-//
-#elif defined(XR_MARMALADE)
-// Marmalade -- just use Marmalade's trace / assert functionality
-#include "IwDebug.h"
-
-#if !defined(XR_DEBUG) && (defined(IW_DEBUG) || defined(XR_DEBUG_PERFORMANCE))
-#define XR_DEBUG
-#endif
-
-#define XR_TRACE(chnl, msg)             IwTrace(chnl, msg)
-#define XR_ASSERT(chnl, cond)           IwAssert(chnl, cond)
-#define XR_ASSERTMSG(chnl, cond, msg)   IwAssertMsg(chnl, cond, msg)
-#define XR_ERROR(msg)                   IwError(msg)
-
-#endif
 
 #endif  //XR_DEBUG_HPP
