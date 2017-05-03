@@ -1,0 +1,34 @@
+includepath
+{
+  h/XR
+}
+
+options
+{
+  lib
+}
+
+subproject
+{
+  xr3core
+}
+
+files
+{
+  xr3core.mkf
+  
+  (h/XR)
+  Deflator.cpp
+  IndexServer.cpp
+  Inflator.cpp
+  memdebug.cpp
+  ParserCore.cpp
+  Pool.cpp
+  RingBuffer.cpp
+  SharedPoolAllocator.cpp
+  TweakBench.cpp
+
+  [src/detail]
+  (h/XR/detail)
+  EventDispatcher.cpp
+}

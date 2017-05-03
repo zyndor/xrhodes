@@ -1,0 +1,39 @@
+
+includepath h
+
+library
+{
+  ".,xr3core"
+}
+
+files
+{
+  (h)
+  XR/debug.hpp
+  XR/Deflator.hpp
+  XR/EventBroadcaster.hpp
+  XR/EventNotifier.hpp
+  XR/functors.hpp
+  XR/fundamentals.hpp
+  XR/HardString.hpp
+  XR/IdGenerator.hpp
+  XR/IndexServer.hpp
+  XR/Inflatable.hpp
+  XR/Inflator.hpp
+  XR/MemFnAdaptor.hpp
+  XR/memory.hpp
+  XR/ParserCore.hpp
+  XR/Pool.hpp
+  XR/Queue.hpp
+  XR/RefHolder.hpp
+  XR/RingBuffer.hpp
+  XR/ScopeGuard.hpp
+  XR/SharedPoolAllocator.hpp
+  XR/Singleton.hpp
+  XR/streamutils.hpp
+  XR/StringFormatter.hpp
+  XR/TweakBench.hpp
+  XR/typeutils.hpp
+  
+  XR/detail/EventDispatcher.hpp
+}

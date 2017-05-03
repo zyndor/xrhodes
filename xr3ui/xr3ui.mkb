@@ -1,8 +1,3 @@
-defines
-{
-  XR_MARMALADE
-}
-
 options
 {
   lib
@@ -10,6 +5,7 @@ options
 
 subproject
 {
+  xr3core
   xr3
   xr3ui
   
