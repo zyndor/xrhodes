@@ -7,12 +7,12 @@
 #ifndef XR_INPUT_HPP
 #define XR_INPUT_HPP
 
-#include <XR/fundamentals.hpp>
 #include "SVector2.hpp"
-#include "Callback.hpp"
 #include "KeyCode.hpp"
 #include "MouseButton.hpp"
 #include "ButtonState.hpp"
+#include <XR/fundamentals.hpp>
+#include <XR/Callback.hpp>
 
 namespace XR
 {

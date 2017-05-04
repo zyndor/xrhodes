@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "ActorInstance.hpp"
-#include "Hash.hpp"
+#include <XR/Hash.hpp>
 
 namespace XR
 {

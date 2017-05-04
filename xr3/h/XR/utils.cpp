@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <cstring>
-#include <XR/debug.hpp>
 #include "utils.hpp"
-#include "Hash.hpp"
+#include <XR/debug.hpp>
+#include <XR/Hash.hpp>
+#include <cstring>
 
 namespace XR
 {

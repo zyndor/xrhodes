@@ -36,9 +36,6 @@
     <ClCompile Include="h\XR\BasicMesh.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Callback.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\Camera.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -67,9 +64,6 @@
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\Grid.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\Hash.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\Indexer2d.cpp">
@@ -257,9 +251,6 @@
     <ClInclude Include="h\XR\ButtonState.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\Callback.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Camera.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -267,9 +258,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Color.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Command.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\CrossObject.hpp">
@@ -309,9 +297,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Grid.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Hash.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\HttpClient.hpp">

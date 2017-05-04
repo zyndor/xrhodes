@@ -7,14 +7,14 @@
 #ifndef XR_RENDERER_HPP
 #define XR_RENDERER_HPP
 
-#include <XR/fundamentals.hpp>
-#include "Callback.hpp"
 #include "Rect.hpp"
 #include "Material.hpp"
 #include "FloatBuffer.hpp"
 #include "PrimType.hpp"
 #include "Ray.hpp"
 #include "Matrix.hpp"
+#include <XR/fundamentals.hpp>
+#include <XR/Callback.hpp>
 
 namespace XR
 {

@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="h\XR\Callback.cpp" />
     <ClCompile Include="h\XR\Deflator.cpp" />
+    <ClCompile Include="h\XR\Hash.cpp" />
     <ClCompile Include="h\XR\Inflator.cpp" />
     <ClCompile Include="h\XR\detail\EventDispatcher.cpp" />
     <ClCompile Include="h\XR\IndexServer.cpp" />
@@ -31,7 +33,10 @@
     <ClCompile Include="h\XR\TweakBench.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="h\XR\Callback.hpp" />
+    <ClInclude Include="h\XR\Command.hpp" />
     <ClInclude Include="h\XR\Deflator.hpp" />
+    <ClInclude Include="h\XR\Hash.hpp" />
     <ClInclude Include="h\XR\Inflatable.hpp" />
     <ClInclude Include="h\XR\Inflator.hpp" />
     <ClInclude Include="h\XR\debug.hpp" />

@@ -23,9 +23,7 @@ files
   XR/BasicMesh.hpp
   XR/ButtonState.hpp
   XR/Camera.hpp
-  XR/Callback.hpp
   XR/Color.hpp
-  XR/Command.hpp
   XR/CrossObject.hpp
   XR/CSV.hpp
   XR/debugdraw.hpp
@@ -37,7 +35,6 @@ files
   XR/fileutils.hpp
   XR/Font.hpp
   XR/Grid.hpp
-  XR/Hash.hpp
   XR/HttpClient.hpp
   XR/Image.hpp
   XR/Indexer2d.hpp

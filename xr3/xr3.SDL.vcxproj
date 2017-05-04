@@ -28,7 +28,6 @@
     <ClCompile Include="h\XR\AnimationReader.cpp" />
     <ClCompile Include="h\XR\Application.cpp" />
     <ClCompile Include="h\XR\BasicMesh.cpp" />
-    <ClCompile Include="h\XR\Callback.cpp" />
     <ClCompile Include="h\XR\Camera.cpp" />
     <ClCompile Include="h\XR\Color.cpp" />
     <ClCompile Include="h\XR\CrossObject.cpp" />
@@ -40,7 +39,6 @@
     <ClCompile Include="h\XR\FloatBuffer.cpp" />
     <ClCompile Include="h\XR\Font.cpp" />
     <ClCompile Include="h\XR\Grid.cpp" />
-    <ClCompile Include="h\XR\Hash.cpp" />
     <ClCompile Include="h\XR\Indexer2d.cpp" />
     <ClCompile Include="h\XR\IndexMesh.cpp" />
     <ClCompile Include="h\XR\json.cpp" />
@@ -99,11 +97,9 @@
     <ClInclude Include="h\XR\Audio.hpp" />
     <ClInclude Include="h\XR\BasicMesh.hpp" />
     <ClInclude Include="h\XR\ButtonState.hpp" />
-    <ClInclude Include="h\XR\Callback.hpp" />
     <ClInclude Include="h\XR\Camera.hpp" />
     <ClInclude Include="h\XR\Collider.hpp" />
     <ClInclude Include="h\XR\Color.hpp" />
-    <ClInclude Include="h\XR\Command.hpp" />
     <ClInclude Include="h\XR\CrossObject.hpp" />
     <ClInclude Include="h\XR\CSV.hpp" />
     <ClInclude Include="h\XR\debugdraw.hpp" />
@@ -119,7 +115,6 @@
     <ClInclude Include="h\XR\FloatBuffer.hpp" />
     <ClInclude Include="h\XR\Font.hpp" />
     <ClInclude Include="h\XR\Grid.hpp" />
-    <ClInclude Include="h\XR\Hash.hpp" />
     <ClInclude Include="h\XR\HttpClient.hpp" />
     <ClInclude Include="h\XR\Image.hpp" />
     <ClInclude Include="h\XR\Indexer2d.hpp" />

@@ -18,7 +18,9 @@ files
   xr3core.mkf
   
   (h/XR)
+  Callback.cpp
   Deflator.cpp
+  Hash.cpp
   IndexServer.cpp
   Inflator.cpp
   memdebug.cpp

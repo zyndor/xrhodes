@@ -36,7 +36,6 @@ files
   AnimationReader.cpp
   Application.cpp
   BasicMesh.cpp
-  Callback.cpp
   Camera.cpp
   Color.cpp
   CrossObject.cpp
@@ -47,7 +46,6 @@ files
   FileBuffer.cpp
   Font.cpp
   Grid.cpp
-  Hash.cpp
   Indexer2d.cpp
   IndexMesh.cpp
   json.cpp

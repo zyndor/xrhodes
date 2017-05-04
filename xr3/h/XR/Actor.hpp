@@ -7,9 +7,9 @@
 #ifndef XR_ACTOR_HPP
 #define XR_ACTOR_HPP
 
-#include <map>
 #include "Animation.hpp"
-#include "Hash.hpp"
+#include <XR/Hash.hpp>
+#include <map>
 
 namespace XR
 {
