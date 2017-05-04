@@ -99,9 +99,6 @@
     <ClCompile Include="h\XR\maths.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\MersenneTwister.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\MeshRenderer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -314,12 +311,6 @@
     <ClInclude Include="h\XR\Grid.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\HardList.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\HardStack.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Hash.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -366,9 +357,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\maths.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\MersenneTwister.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\MeshRenderer.hpp">

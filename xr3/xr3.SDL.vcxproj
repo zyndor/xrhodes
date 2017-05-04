@@ -50,7 +50,6 @@
     <ClCompile Include="h\XR\JsonWriter.cpp" />
     <ClCompile Include="h\XR\Log.cpp" />
     <ClCompile Include="h\XR\maths.cpp" />
-    <ClCompile Include="h\XR\MersenneTwister.cpp" />
     <ClCompile Include="h\XR\MeshRenderer.cpp" />
     <ClCompile Include="h\XR\Module.cpp" />
     <ClCompile Include="h\XR\MouseHandler.cpp" />
@@ -120,8 +119,6 @@
     <ClInclude Include="h\XR\FloatBuffer.hpp" />
     <ClInclude Include="h\XR\Font.hpp" />
     <ClInclude Include="h\XR\Grid.hpp" />
-    <ClInclude Include="h\XR\HardList.hpp" />
-    <ClInclude Include="h\XR\HardStack.hpp" />
     <ClInclude Include="h\XR\Hash.hpp" />
     <ClInclude Include="h\XR\HttpClient.hpp" />
     <ClInclude Include="h\XR\Image.hpp" />
@@ -141,7 +138,6 @@
     <ClInclude Include="h\XR\Material.hpp" />
     <ClInclude Include="h\XR\maths.hpp" />
     <ClInclude Include="h\XR\Matrix.hpp" />
-    <ClInclude Include="h\XR\MersenneTwister.hpp" />
     <ClInclude Include="h\XR\MeshRenderer.hpp" />
     <ClInclude Include="h\XR\Module.hpp" />
     <ClInclude Include="h\XR\MouseButton.hpp" />

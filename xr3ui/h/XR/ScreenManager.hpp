@@ -7,7 +7,6 @@
 #ifndef XR_SCREENMANAGER_HPP
 #define XR_SCREENMANAGER_HPP
 
-#include <XR/HardStack.hpp>
 #include "Screen.hpp"
 #include "UIRenderer.hpp"
 

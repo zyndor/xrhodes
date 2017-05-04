@@ -37,7 +37,6 @@ files
   XR/fileutils.hpp
   XR/Font.hpp
   XR/Grid.hpp
-  XR/HardList.hpp
   XR/Hash.hpp
   XR/HttpClient.hpp
   XR/Image.hpp
