@@ -33,7 +33,6 @@
     <ClCompile Include="h\XR\CrossObject.cpp" />
     <ClCompile Include="h\XR\CSV.cpp" />
     <ClCompile Include="h\XR\debugdraw.cpp" />
-    <ClCompile Include="h\XR\DelayedCallback.cpp" />
     <ClCompile Include="h\XR\Entity.cpp" />
     <ClCompile Include="h\XR\FileBuffer.cpp" />
     <ClCompile Include="h\XR\FloatBuffer.cpp" />
@@ -103,12 +102,8 @@
     <ClInclude Include="h\XR\CrossObject.hpp" />
     <ClInclude Include="h\XR\CSV.hpp" />
     <ClInclude Include="h\XR\debugdraw.hpp" />
-    <ClInclude Include="h\XR\DelayedCallback.hpp" />
-    <ClInclude Include="h\XR\detail\EventDispatcher.hpp" />
     <ClInclude Include="h\XR\Device.hpp" />
     <ClInclude Include="h\XR\Entity.hpp" />
-    <ClInclude Include="h\XR\EventBroadcaster.hpp" />
-    <ClInclude Include="h\XR\EventNotifier.hpp" />
     <ClInclude Include="h\XR\File.hpp" />
     <ClInclude Include="h\XR\FileBuffer.hpp" />
     <ClInclude Include="h\XR\fileutils.hpp" />

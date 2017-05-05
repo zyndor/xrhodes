@@ -41,7 +41,6 @@ files
   CrossObject.cpp
   CSV.cpp
   debugdraw.cpp
-  DelayedCallback.cpp
   Entity.cpp
   FileBuffer.cpp
   Font.cpp

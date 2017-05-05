@@ -27,7 +27,6 @@ files
   XR/CrossObject.hpp
   XR/CSV.hpp
   XR/debugdraw.hpp
-  XR/DelayedCallback.hpp
   XR/Device.hpp
   XR/Entity.hpp
   XR/File.hpp

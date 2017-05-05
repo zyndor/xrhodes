@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Headers\detail">
+      <UniqueIdentifier>{2421137d-f268-4f47-9537-730513e6309e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="h\XR\Pool.cpp">
@@ -112,9 +115,6 @@
     <ClInclude Include="h\XR\typeutils.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\debug.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -135,6 +135,9 @@
     </ClInclude>
     <ClInclude Include="h\XR\Hash.hpp">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
+      <Filter>Headers\detail</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
