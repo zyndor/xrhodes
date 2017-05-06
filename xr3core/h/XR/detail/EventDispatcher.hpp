@@ -101,7 +101,7 @@ protected:
   ~EventDispatcherCore();
   
   // internal
-  void  _AddListener(ListenerBaseBase* p);
+  void  AddListenerImpl(ListenerBaseBase* p);
   
   ListenerList::iterator  GetAdded(ListenerBaseBase* p);
   
@@ -118,6 +118,9 @@ protected:
   void  FinishTraversal();
 
   void  Clear();
+
+  template <class Listener>
+  bool  AddListenerInternal(Listener& l);
 };
 
 //==============================================================================
@@ -176,26 +179,8 @@ protected:
   template  <class T>
   bool  AddListener(T& listener, typename Listener<T>::Callback pCallback)  // no ownership transfer
   {
-    Listener<T>  l(&listener, pCallback);
-    
-    bool  result(!IsAdded(&l)); // || *iInsert != pListener;
-    if (result)  // if not added
-    {
-      if (m_isTraversing)  // traversing
-      {
-        result = !IsPostponedAdded(&l);
-        if (result)  // if unique - postpone add
-        {
-          m_postponed.push_back(Postponed(Postponed::ADD, l.Clone()));
-        }
-        // else ignore
-      }
-      else  // not traversing - add instantly
-      {
-        _AddListener(l.Clone());
-      }
-    }
-    return result;
+    Listener<T>  l(&listener, pCallback);    
+    return AddListenerInternal(l);
   }
 };
 
@@ -249,31 +234,13 @@ protected:
   bool  AddListener(T& listener, typename Listener<T>::Callback pCallback)  // no ownership transfer
   {
     Listener<T>  l(&listener, pCallback);
-    
-    bool  result(!IsAdded(&l)); // || *iInsert != pListener;
-    if (result)  // if not added
-    {
-      if (m_isTraversing)  // traversing
-      {
-        result = !IsPostponedAdded(&l);
-        if (result)  // if unique - postpone add
-        {
-          m_postponed.push_back(Postponed(Postponed::ADD, l.Clone()));
-        }
-        // else ignore
-      }
-      else  // not traversing - add instantly
-      {
-        _AddListener(l.Clone());
-      }
-    }
-    return result;
+    return AddListenerInternal(l);
   }
 };
 
 //==============================================================================
 inline
-void  EventDispatcherCore::_AddListener(ListenerBaseBase* p)
+void  EventDispatcherCore::AddListenerImpl(ListenerBaseBase* p)
 {
   XR_ASSERT(EventDispatcherCore, !IsAdded(p));
   m_listeners.push_back(p);
@@ -313,6 +280,30 @@ bool  EventDispatcherCore::IsPostponedAdded(ListenerBaseBase* p) const
   Postponed  op(Postponed::ADD, p);
   PostponedList::const_reverse_iterator  iEnd(m_postponed.rend());
   return std::find(m_postponed.rbegin(), iEnd, op) != iEnd;
+}
+
+//==============================================================================
+template <class Listener>
+bool  EventDispatcherCore::AddListenerInternal(Listener& l)
+{
+  bool  result(!IsAdded(&l)); // || *iInsert != pListener;
+  if (result)  // if not added
+  {
+    if (m_isTraversing)  // traversing
+    {
+      result = !IsPostponedAdded(&l);
+      if (result)  // if unique - postpone add
+      {
+        m_postponed.push_back(Postponed(Postponed::ADD, l.Clone()));
+      }
+      // else ignore
+    }
+    else  // not traversing - add instantly
+    {
+      AddListenerImpl(l.Clone());
+    }
+  }
+  return result;
 }
 
 } // XR

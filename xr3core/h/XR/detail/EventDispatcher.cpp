@@ -64,7 +64,7 @@ void  EventDispatcherCore::ProcessPostponed()
     switch(i.type)
     {
     case Postponed::ADD:
-      _AddListener(static_cast<ListenerBaseBase*>(i.pData));
+      AddListenerImpl(static_cast<ListenerBaseBase*>(i.pData));
       break;
 
     case Postponed::REMOVE:
