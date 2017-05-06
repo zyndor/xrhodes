@@ -41,10 +41,9 @@ public:
     });
 
     bool  handled(false);
-    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
-      i0 != i1; ++i0)
+    for (auto& i: m_listeners)
     {
-      if (static_cast<ListenerBase*>(*i0)->Handle(eventData))
+      if (static_cast<ListenerBase*>(i)->Handle(eventData))
       {
         handled = true;
         break;
@@ -80,10 +79,9 @@ public:
     });
 
     bool  handled(false);
-    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
-      i0 != i1; ++i0)
+    for (auto& i: m_listeners)
     {
-      if (static_cast<ListenerBase*>(*i0)->Handle())
+      if (static_cast<ListenerBase*>(i)->Handle())
       {
         handled = true;
         break;

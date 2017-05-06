@@ -66,8 +66,8 @@ bool  UIEventNotifier::Unregister()
 //==============================================================================
 bool  UIEventNotifier::AddListener(UIElement* pListener)
 {
-  m_actionNotifier.AddListener(pListener, &UIElement::OnMouseAction);
-  m_motionNotifier.AddListener(pListener, &UIElement::OnMouseMotion);
+  m_actionNotifier.AddListener(*pListener, &UIElement::OnMouseAction);
+  m_motionNotifier.AddListener(*pListener, &UIElement::OnMouseMotion);
   return true;
 }
 
