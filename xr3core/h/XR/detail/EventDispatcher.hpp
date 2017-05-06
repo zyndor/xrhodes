@@ -174,9 +174,9 @@ protected:
   
   // general
   template  <class T>
-  bool  AddListener(T* pListener, typename Listener<T>::Callback pCallback)  // no ownership transfer
+  bool  AddListener(T& listener, typename Listener<T>::Callback pCallback)  // no ownership transfer
   {
-    Listener<T>  l(pListener, pCallback);
+    Listener<T>  l(&listener, pCallback);
     
     bool  result(!IsAdded(&l)); // || *iInsert != pListener;
     if (result)  // if not added
@@ -246,9 +246,9 @@ protected:
   
   // general
   template  <class T>
-  bool  AddListener(T* pListener, typename Listener<T>::Callback pCallback)  // no ownership transfer
+  bool  AddListener(T& listener, typename Listener<T>::Callback pCallback)  // no ownership transfer
   {
-    Listener<T>  l(pListener, pCallback);
+    Listener<T>  l(&listener, pCallback);
     
     bool  result(!IsAdded(&l)); // || *iInsert != pListener;
     if (result)  // if not added

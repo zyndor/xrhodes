@@ -37,13 +37,13 @@ namespace XR
       EventBroadcaster<int> onMultiplied;
 
       Int a;
-      Assert::IsTrue(onAdded.AddListener(&a, &Int::OnAdd)); // successful add
-      Assert::IsFalse(onAdded.AddListener(&a, &Int::OnAdd));  // already added - unsuccessful
-      onMultiplied.AddListener(&a, &Int::OnMultiply);
+      Assert::IsTrue(onAdded.AddListener(a, &Int::OnAdd)); // successful add
+      Assert::IsFalse(onAdded.AddListener(a, &Int::OnAdd));  // already added - unsuccessful
+      onMultiplied.AddListener(a, &Int::OnMultiply);
 
       Int b;
       b.value = 2;
-      onAdded.AddListener(&b, &Int::OnAdd);
+      onAdded.AddListener(b, &Int::OnAdd);
 
       onAdded.Broadcast(10);
       Assert::IsTrue(a == 10);
@@ -87,7 +87,7 @@ namespace XR
 
       void OnAdd()
       {
-        bool r = pBroadcaster->AddListener(&counter, &EventCounter::OnEvent);
+        bool r = pBroadcaster->AddListener(counter, &EventCounter::OnEvent);
         result.reset(new bool(r));
         OnEvent();
       }
@@ -112,7 +112,7 @@ namespace XR
       EventCounterHolder addTester;
       addTester.SetBroadcaster(onEvent);
 
-      onEvent.AddListener(&addTester, &EventCounterHolder::OnAdd);
+      onEvent.AddListener(addTester, &EventCounterHolder::OnAdd);
 
       onEvent.Broadcast();
       Assert::IsTrue(addTester.eventsReceived == 1);  // did receive event
@@ -131,8 +131,8 @@ namespace XR
       EventCounterHolder removeTester;
       removeTester.SetBroadcaster(onEvent);
 
-      onEvent.AddListener(&removeTester, &EventCounterHolder::OnRemove);
-      onEvent.AddListener(&removeTester.counter, &EventCounter::OnEvent);
+      onEvent.AddListener(removeTester, &EventCounterHolder::OnRemove);
+      onEvent.AddListener(removeTester.counter, &EventCounter::OnEvent);
 
       onEvent.Broadcast();
       Assert::IsTrue(removeTester.eventsReceived == 1);  // did receive event
@@ -151,8 +151,8 @@ namespace XR
       EventCounterHolder clearTester;
       clearTester.SetBroadcaster(onEvent);
 
-      onEvent.AddListener(&clearTester, &EventCounterHolder::OnClear);
-      onEvent.AddListener(&clearTester.counter, &EventCounter::OnEvent);
+      onEvent.AddListener(clearTester, &EventCounterHolder::OnClear);
+      onEvent.AddListener(clearTester.counter, &EventCounter::OnEvent);
 
       onEvent.Broadcast();
       Assert::IsTrue(clearTester.eventsReceived == 1);  // did receive event
