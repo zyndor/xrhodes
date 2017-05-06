@@ -7,7 +7,7 @@
 #ifndef XR_ADPCM_HPP
 #define XR_ADPCM_HPP
 
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 #include <cstdint>
 
 namespace XR

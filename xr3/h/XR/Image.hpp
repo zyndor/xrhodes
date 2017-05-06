@@ -7,7 +7,7 @@
 #ifndef XR_IMAGE_HPP
 #define XR_IMAGE_HPP
 
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 #include "CrossObject.hpp"
 #include <cstdint>
 

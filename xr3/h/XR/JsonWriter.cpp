@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "JsonWriter.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 #include <cstring>
 
 namespace XR

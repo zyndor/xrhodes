@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <tinyxml.h>
 #include "TexturePack.hpp"
 #include "utils.hpp"
-#include "strings.hpp"
-#include "debug.hpp"
+#include <XR/HardString.hpp>
+#include <XR/debug.hpp>
+#include <tinyxml.h>
 
 namespace XR
 {
@@ -97,7 +97,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 
   if (success)
   {
-    LString buffer(pTextureName);
+    HardString<256> buffer(pTextureName);
     char* pPeriod(buffer.rfind('.'));
     if (pPeriod != 0)
     {
@@ -153,7 +153,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
   {
     pElem = pElem->FirstChildElement(karTag[TAG_SPRITE]);
 
-    LString buffer;
+    HardString<256> buffer;
     int x, y; // position of top left corner on sprite sheet
     int w, h; // size on sprite sheet
     int xOffs, yOffs; // amount of translation left and down

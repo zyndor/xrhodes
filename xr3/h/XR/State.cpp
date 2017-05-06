@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "State.hpp"
-#include "debug.hpp"
+#include <XR/debug.hpp>
 
 namespace XR
 {

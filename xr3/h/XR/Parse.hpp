@@ -9,7 +9,7 @@
 
 #include "utils.hpp"
 #include "Color.hpp"
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 
 namespace XR
 {

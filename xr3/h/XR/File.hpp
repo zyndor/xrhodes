@@ -7,7 +7,7 @@
 #ifndef XR_FILE_HPP
 #define XR_FILE_HPP
 
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 #include <cstdint>
 
 namespace XR

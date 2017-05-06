@@ -7,10 +7,10 @@
 #ifndef XR_QUADTREE_HPP
 #define XR_QUADTREE_HPP
 
-#include <list>
 #include "RectObject.hpp"
-#include "Queue.hpp"
-#include "functors.hpp"
+#include <XR/functors.hpp>
+#include <XR/Queue.hpp>
+#include <list>
 
 #if defined  _MSC_VER
 #pragma warning(push)

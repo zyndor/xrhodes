@@ -7,8 +7,8 @@
 #ifndef XR_RESMANAGER_HPP
 #define XR_RESMANAGER_HPP
 
-#include "Pool.hpp"
-#include "Hash.hpp"
+#include <XR/Hash.hpp>
+#include <XR/Pool.hpp>
 #include <map>
 #include <cstdint>
 

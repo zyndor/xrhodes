@@ -10,9 +10,6 @@
     <Filter Include="Private Headers">
       <UniqueIdentifier>{c570735e-1a1a-4e86-b783-98c021477359}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\detail">
-      <UniqueIdentifier>{aadf22c3-a5a1-48ab-a7a0-670d0d142bc1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="h\XR\ActorReader.cpp">
@@ -36,9 +33,6 @@
     <ClCompile Include="h\XR\BasicMesh.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Callback.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\Camera.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -51,13 +45,7 @@
     <ClCompile Include="h\XR\CSV.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\debug.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\debugdraw.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\DelayedCallback.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\Entity.cpp">
@@ -69,13 +57,7 @@
     <ClCompile Include="h\XR\Font.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\fundamentals.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\Grid.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\Hash.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\Indexer2d.cpp">
@@ -105,9 +87,6 @@
     <ClCompile Include="h\XR\maths.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\MersenneTwister.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\MeshRenderer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -123,12 +102,6 @@
     <ClCompile Include="h\XR\Parse.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\ParserCore.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\Pool.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\ProjectionHelpers.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -139,12 +112,6 @@
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\RectObject.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\RingBuffer.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\SharedPoolAllocator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\Sprite.cpp">
@@ -160,9 +127,6 @@
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\TexturePack.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\TweakBench.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\Tweener.cpp">
@@ -184,9 +148,6 @@
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\ActorInstance.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\detail\EventDispatcher.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\SDL\Audio.cpp">
@@ -237,22 +198,12 @@
     <ClCompile Include="h\XR\Worker.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Deflator.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\Inflator.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\jsonutils.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\memdebug.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
     <ClCompile Include="h\XR\FloatBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\IndexServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Worker.hpp">
@@ -294,9 +245,6 @@
     <ClInclude Include="h\XR\ButtonState.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\Callback.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Camera.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -306,34 +254,19 @@
     <ClInclude Include="h\XR\Color.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\Command.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\CrossObject.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\CSV.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\debug.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\debugdraw.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\DelayedCallback.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Device.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Entity.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\EventBroadcaster.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\EventNotifier.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\File.hpp">
@@ -348,25 +281,7 @@
     <ClInclude Include="h\XR\Font.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\functors.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\fundamentals.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Grid.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\HardList.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\HardStack.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\HardString.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Hash.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\HttpClient.hpp">
@@ -405,9 +320,6 @@
     <ClInclude Include="h\XR\KeyCode.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\Lock.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Log.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -415,15 +327,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\maths.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\MemFnAdaptor.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\memory.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\MersenneTwister.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\MeshRenderer.hpp">
@@ -447,12 +350,6 @@
     <ClInclude Include="h\XR\Parse.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\ParserCore.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Pool.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\PrimType.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -460,9 +357,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Quadtree.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Queue.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Ray.hpp">
@@ -474,28 +368,16 @@
     <ClInclude Include="h\XR\RectObject.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\RefCounted.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\RefHolder.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Renderer.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\ResManager.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\RingBuffer.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Sample.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\SampleFormat.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\SharedPoolAllocator.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Sprite.hpp">
@@ -510,9 +392,6 @@
     <ClInclude Include="h\XR\State.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\strings.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Text.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -525,9 +404,6 @@
     <ClInclude Include="h\XR\Timer.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\TweakBench.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\Tweener.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -537,13 +413,7 @@
     <ClInclude Include="h\XR\TweenVarPool.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\typeutils.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="h\XR\UIID.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\utils.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\SVector2.hpp">
@@ -559,30 +429,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Quaternion.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\ScopeGuard.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Singleton.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\IdGenerator.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Deflator.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Inflator.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\streamutils.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\memdebug.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\Inflatable.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\jsonutils.hpp">
@@ -609,13 +455,7 @@
     <ClInclude Include="h\XR\SDL\TextureImpl.hpp">
       <Filter>Private Headers</Filter>
     </ClInclude>
-    <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
-      <Filter>Headers\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\IndexServer.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\StringFormatter.hpp">
+    <ClInclude Include="h\XR\utils.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,7 @@
 #ifndef XR_UTILS_HPP
 #define XR_UTILS_HPP
 
-#include "debug.hpp"
+#include <XR/debug.hpp>
 #include <sstream>
 #include <algorithm>
 #include <cstdint>

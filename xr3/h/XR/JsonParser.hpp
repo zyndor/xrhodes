@@ -8,8 +8,8 @@
 #define XR_JSONPARSER_HPP
 
 #include "json.hpp"
-#include "ParserCore.hpp"
-#include "Callback.hpp"
+#include <XR/Callback.hpp>
+#include <XR/ParserCore.hpp>
 
 namespace XR
 {

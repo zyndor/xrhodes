@@ -1,9 +1,7 @@
-define
+includepath
 {
-  XR_MARMALADE
+	h/XR
 }
-
-includepath h/XR
 
 options
 {
@@ -12,6 +10,7 @@ options
 
 subproject
 {
+  xr3core
   xr3
 
   iwgx
@@ -37,23 +36,17 @@ files
   AnimationReader.cpp
   Application.cpp
   BasicMesh.cpp
-  Callback.cpp
   Camera.cpp
   Color.cpp
   CrossObject.cpp
   CSV.cpp
   debugdraw.cpp
-  DelayedCallback.cpp
-  Deflator.cpp
   Entity.cpp
   FileBuffer.cpp
   Font.cpp
-  fundamentals.cpp
   Grid.cpp
-  Hash.cpp
   Indexer2d.cpp
   IndexMesh.cpp
-  Inflator.cpp
   json.cpp
   JsonEntity.cpp
   JsonParser.cpp
@@ -62,27 +55,21 @@ files
   Log.cpp
   maths.cpp
   Matrix.cpp
-  MersenneTwister.cpp
   MeshRenderer.cpp
   Module.cpp
   MouseHandler.cpp
   Name.cpp
   Parse.cpp
-  ParserCore.cpp
   ProjectionHelpers.cpp
-  Pool.cpp
   Quadtree.cpp
   Ray.cpp
   RectObject.cpp
   RenderStreamIO.cpp
-  RingBuffer.cpp
-  SharedPoolAllocator.cpp
   Sprite.cpp
   SpriteRenderer.cpp
   State.cpp
   Text.cpp
   TexturePack.cpp
-  TweakBench.cpp
   Tweener.cpp
   TweenVar.cpp
   TweenVarPool.cpp
@@ -111,8 +98,4 @@ files
   SampleData.hpp
   Texture.cpp
   Timer.cpp
-
-  [src/detail]
-  (h/XR/detail)
-  EventDispatcher.cpp
 }

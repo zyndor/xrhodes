@@ -8,7 +8,7 @@
 #define XR_AUDIO_HPP
 
 #include "Sample.hpp"
-#include "fundamentals.hpp"
+#include <XR/fundamentals.hpp>
 
 namespace XR
 {

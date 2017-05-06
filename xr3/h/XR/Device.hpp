@@ -7,11 +7,11 @@
 #ifndef XR_DEVICE_HPP
 #define XR_DEVICE_HPP
 
-#include <string>
-#include "Callback.hpp"
 #include "File.hpp"
 #include "Log.hpp"
-#include "fundamentals.hpp"
+#include <XR/Callback.hpp>
+#include <XR/fundamentals.hpp>
+#include <string>
 
 namespace XR
 {

@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Implementation">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Headers\detail">
+      <UniqueIdentifier>{2421137d-f268-4f47-9537-730513e6309e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="h\XR\Pool.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\RingBuffer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\SharedPoolAllocator.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\TweakBench.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\IndexServer.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\memdebug.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\ParserCore.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\detail\EventDispatcher.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Inflator.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Deflator.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Callback.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="h\XR\Hash.cpp">
+      <Filter>Implementation</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="h\XR\EventBroadcaster.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\EventNotifier.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\fundamentals.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\HardString.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\IdGenerator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\IndexServer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\memdebug.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\MemFnAdaptor.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\memory.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ParserCore.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Pool.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Queue.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\RefHolder.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\RingBuffer.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\ScopeGuard.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\SharedPoolAllocator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Singleton.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\streamutils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\StringFormatter.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\TweakBench.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\typeutils.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\debug.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Deflator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Inflator.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Inflatable.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Callback.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Command.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\Hash.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="h\XR\detail\EventDispatcher.hpp">
+      <Filter>Headers\detail</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

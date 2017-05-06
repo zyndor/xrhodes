@@ -7,9 +7,9 @@
 #ifndef XR_DEFLATOR_HPP
 #define XR_DEFLATOR_HPP
 
-#include "IdGenerator.hpp"
 #include "Inflatable.hpp"
-#include "fundamentals.hpp"
+#include <XR/IdGenerator.hpp>
+#include <XR/fundamentals.hpp>
 #include <map>
 #include <set>
 

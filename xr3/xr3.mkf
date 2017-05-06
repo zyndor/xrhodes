@@ -23,35 +23,21 @@ files
   XR/BasicMesh.hpp
   XR/ButtonState.hpp
   XR/Camera.hpp
-  XR/Callback.hpp
   XR/Color.hpp
-  XR/Command.hpp
   XR/CrossObject.hpp
   XR/CSV.hpp
-  XR/debug.hpp
   XR/debugdraw.hpp
-  XR/Deflator.hpp
-  XR/DelayedCallback.hpp
   XR/Device.hpp
   XR/Entity.hpp
-  XR/EventBroadcaster.hpp
-  XR/EventNotifier.hpp
   XR/File.hpp
   XR/FileBuffer.hpp
   XR/fileutils.hpp
   XR/Font.hpp
-  XR/functors.hpp
-  XR/fundamentals.hpp
   XR/Grid.hpp
-  XR/HardList.hpp
-  XR/HardString.hpp
-  XR/Hash.hpp
   XR/HttpClient.hpp
-  XR/IdGenerator.hpp
   XR/Image.hpp
   XR/Indexer2d.hpp
   XR/IndexMesh.hpp
-  XR/Inflator.hpp
   XR/Input.hpp
   XR/json.hpp
   XR/JsonEntity.hpp
@@ -63,35 +49,23 @@ files
   XR/maths.hpp
   XR/Material.hpp
   XR/Matrix.hpp
-  XR/MemFnAdaptor.hpp
-  XR/memory.hpp
-  XR/MersenneTwister.hpp
   XR/MeshRenderer.hpp
   XR/Module.hpp
   XR/MouseButton.hpp
   XR/MouseHandler.hpp
   XR/Name.hpp
   XR/Parse.hpp
-  XR/ParserCore.hpp
   XR/ProjectionHelpers.hpp
-  XR/Pool.hpp
   XR/PrimType.hpp
-  XR/RefHolder.hpp
   XR/Quadtree.hpp
   XR/Quaternion.hpp
-  XR/Queue.hpp
   XR/Ray.hpp
   XR/RectObject.hpp
   XR/Renderer.hpp
   XR/RenderStream.hpp
   XR/ResManager.hpp
-  XR/RingBuffer.hpp
   XR/Sample.hpp
   XR/SampleFormat.hpp
-  XR/ScopeGuard.hpp
-  XR/Serializable.hpp
-  XR/Singleton.hpp
-  XR/SharedPoolAllocator.hpp
   XR/Sprite.hpp
   XR/SpriteRenderer.hpp
   XR/Squared.hpp
@@ -102,11 +76,9 @@ files
   XR/Texture.hpp
   XR/TexturePack.hpp
   XR/Timer.hpp
-  XR/TweakBench.hpp
   XR/Tweener.hpp
   XR/TweenVar.hpp
   XR/TweenVarPool.hpp
-  XR/typeutils.hpp
   XR/UIID.hpp
   XR/utils.hpp
   XR/Vector2.hpp
