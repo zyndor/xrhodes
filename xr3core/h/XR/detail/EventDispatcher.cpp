@@ -59,16 +59,16 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
 //==============================================================================
 void  EventDispatcherCore::ProcessPostponed()
 {
-  for(PostponedList::iterator i0 = m_postponed.begin(), i1 = m_postponed.end(); i0 != i1; ++i0)
+  for(auto& i: m_postponed)
   {
-    switch(i0->type)
+    switch(i.type)
     {
     case Postponed::ADD:
-      _AddListener(static_cast<ListenerBaseBase*>(i0->pData));
+      AddListenerImpl(static_cast<ListenerBaseBase*>(i.pData));
       break;
 
     case Postponed::REMOVE:
-      RemoveListener(i0->pData);
+      RemoveListener(i.pData);
       break;
 
     case Postponed::CLEAR:
@@ -94,11 +94,11 @@ void  EventDispatcherCore::Clear()
   if (m_isTraversing)
   {
     // clear all postponed adds
-    for (PostponedList::iterator i0 = m_postponed.begin(), i1 = m_postponed.end(); i0 != i1;)
+    for (auto& i: m_postponed)
     {
-      if (i0->type == Postponed::ADD)
+      if (i.type == Postponed::ADD)
       {
-        delete static_cast<ListenerBaseBase*>(i0->pData);
+        delete static_cast<ListenerBaseBase*>(i.pData);
       }
     }
     m_postponed.clear();
@@ -109,10 +109,9 @@ void  EventDispatcherCore::Clear()
   else
   {
     // clear listeners straight away
-    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
-      i0 != i1; ++i0)
+    for (auto& i: m_listeners)
     {
-      delete *i0;
+      delete i;
     }
     m_listeners.clear();
   }

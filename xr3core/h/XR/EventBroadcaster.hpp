@@ -40,10 +40,9 @@ public:
       FinishTraversal();
     });
 
-    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
-      i0 != i1; ++i0)
+    for (auto& i: m_listeners)
     {
-      static_cast<ListenerBase*>(*i0)->Handle(eventData);
+      static_cast<ListenerBase*>(i)->Handle(eventData);
     }
   }
 };
@@ -72,10 +71,9 @@ public:
       FinishTraversal();
     });
 
-    for (ListenerList::iterator i0(m_listeners.begin()), i1(m_listeners.end());
-      i0 != i1; ++i0)
+    for (auto& i: m_listeners)
     {
-      static_cast<ListenerBase*>(*i0)->Handle();
+      static_cast<ListenerBase*>(i)->Handle();
     }
   }
 };

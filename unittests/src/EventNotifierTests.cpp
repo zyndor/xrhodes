@@ -41,13 +41,13 @@ namespace XR
       // Successful registration.
       for (auto& t : testers)
       {
-        Assert::IsTrue(notifier.AddListener(&t, &Tester::OnEvent));
+        Assert::IsTrue(notifier.AddListener(t, &Tester::OnEvent));
       }
 
       // Unsuccessful registration -- already registered.
       for (auto& t : testers)
       {
-        Assert::IsFalse(notifier.AddListener(&t, &Tester::OnEvent));
+        Assert::IsFalse(notifier.AddListener(t, &Tester::OnEvent));
       }
 
       // Check notification. All testers should be notified up to and including #2.
