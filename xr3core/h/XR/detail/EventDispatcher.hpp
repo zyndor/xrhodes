@@ -8,6 +8,7 @@
 #define XR_EVENTDISPATCHER_HPP
 
 #include <XR/debug.hpp>
+#include <XR/fundamentals.hpp>
 #include <list>
 #include <map>
 #include <algorithm>
@@ -19,6 +20,8 @@ namespace XR
 //==============================================================================
 class EventDispatcherCore
 {
+  XR_NONCOPY_DECL(EventDispatcherCore)
+
 protected:
   // types
   class ListenerBaseBase
