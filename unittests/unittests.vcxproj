@@ -196,7 +196,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\xr3core\xr3core.SDL.vcxproj">
+    <ProjectReference Include="..\xr3core\xr3core.vcxproj">
       <Project>{1f3d6a4d-7649-4bcd-9739-1749fc16b9f3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\xr3json\xr3json.vcxproj">
