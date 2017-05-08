@@ -40,11 +40,6 @@
     <ClCompile Include="h\XR\Grid.cpp" />
     <ClCompile Include="h\XR\Indexer2d.cpp" />
     <ClCompile Include="h\XR\IndexMesh.cpp" />
-    <ClCompile Include="h\XR\json.cpp" />
-    <ClCompile Include="h\XR\JsonEntity.cpp" />
-    <ClCompile Include="h\XR\JsonParser.cpp" />
-    <ClCompile Include="h\XR\JsonReader.cpp" />
-    <ClCompile Include="h\XR\JsonWriter.cpp" />
     <ClCompile Include="h\XR\Log.cpp" />
     <ClCompile Include="h\XR\maths.cpp" />
     <ClCompile Include="h\XR\MeshRenderer.cpp" />
@@ -115,13 +110,7 @@
     <ClInclude Include="h\XR\Indexer2d.hpp" />
     <ClInclude Include="h\XR\IndexMesh.hpp" />
     <ClInclude Include="h\XR\Input.hpp" />
-    <ClInclude Include="h\XR\json.hpp" />
-    <ClInclude Include="h\XR\JsonEntity.hpp" />
-    <ClInclude Include="h\XR\JsonParser.hpp" />
-    <ClInclude Include="h\XR\JsonReader.hpp" />
     <ClInclude Include="h\XR\jsonutils.hpp" />
-    <ClInclude Include="h\XR\jsonvectypes.hpp" />
-    <ClInclude Include="h\XR\JsonWriter.hpp" />
     <ClInclude Include="h\XR\KeyCode.hpp" />
     <ClInclude Include="h\XR\Log.hpp" />
     <ClInclude Include="h\XR\Mat4x4Helper.hpp" />
@@ -245,7 +234,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)xr3core\h;$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>XR_DEBUG;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -263,7 +252,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>XR_DEBUG;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -274,7 +263,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)xr3core\h;$(ProjectDir)h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -297,7 +286,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>

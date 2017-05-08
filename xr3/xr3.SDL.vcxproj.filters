@@ -66,21 +66,6 @@
     <ClCompile Include="h\XR\IndexMesh.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\json.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\JsonEntity.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\JsonParser.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\JsonReader.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
-    <ClCompile Include="h\XR\JsonWriter.cpp">
-      <Filter>Implementation</Filter>
-    </ClCompile>
     <ClCompile Include="h\XR\Log.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
@@ -297,24 +282,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\Input.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\json.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\JsonEntity.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\JsonParser.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\JsonReader.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\jsonvectypes.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="h\XR\JsonWriter.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="h\XR\KeyCode.hpp">
