@@ -5,8 +5,8 @@
 //
 //==============================================================================
 #include "jsonutils.hpp"
-#include "JsonReader.hpp"
 #include "FileBuffer.hpp"
+#include <XR/JsonReader.hpp>
 #include <XR/debug.hpp>
 
 namespace XR

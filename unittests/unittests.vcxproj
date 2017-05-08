@@ -99,7 +99,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;XR_SDL;XR_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
@@ -116,7 +116,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>XR_SDL;XR_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
@@ -135,7 +135,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;XR_SDL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
@@ -156,7 +156,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)h;$(SolutionDir)xr3core\h;$(SolutionDir)xr3json\h;$(SolutionDir)xr3\h;$(SolutionDir)external\glew-2.0.0\include;$(SolutionDir)external\SDL2-2.0.4\include;$(SolutionDir)external\SDL2_image-2.0.1\include;$(SolutionDir)external\SDL2_mixer-2.0.1\include;$(SolutionDir)external\tinyxml-2.6.2;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>XR_SDL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
@@ -196,8 +196,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\xr3core\xr3core.SDL.vcxproj">
+    <ProjectReference Include="..\xr3core\xr3core.vcxproj">
       <Project>{1f3d6a4d-7649-4bcd-9739-1749fc16b9f3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\xr3json\xr3json.vcxproj">
+      <Project>{9ec9037a-38f7-41c7-8fec-96e58b31d4b0}</Project>
     </ProjectReference>
     <ProjectReference Include="..\xr3ui\xr3ui.SDL.vcxproj">
       <Project>{c81bca7d-b4d9-4124-8b8e-f112848e251a}</Project>

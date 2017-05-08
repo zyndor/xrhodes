@@ -9,7 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xr3ui.SDL", "xr3ui\xr3ui.SD
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittests", "unittests\unittests.vcxproj", "{F2451359-70E1-4E97-A651-71317D74713C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xr3core.SDL", "xr3core\xr3core.SDL.vcxproj", "{1F3D6A4D-7649-4BCD-9739-1749FC16B9F3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xr3json", "xr3json\xr3json.vcxproj", "{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xr3core", "xr3core\xr3core.vcxproj", "{1F3D6A4D-7649-4BCD-9739-1749FC16B9F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,14 @@ Global
 		{F2451359-70E1-4E97-A651-71317D74713C}.Release|x64.Build.0 = Release|x64
 		{F2451359-70E1-4E97-A651-71317D74713C}.Release|x86.ActiveCfg = Release|Win32
 		{F2451359-70E1-4E97-A651-71317D74713C}.Release|x86.Build.0 = Release|Win32
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Debug|x64.ActiveCfg = Debug|x64
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Debug|x64.Build.0 = Debug|x64
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Debug|x86.ActiveCfg = Debug|Win32
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Debug|x86.Build.0 = Debug|Win32
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Release|x64.ActiveCfg = Release|x64
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Release|x64.Build.0 = Release|x64
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Release|x86.ActiveCfg = Release|Win32
+		{9EC9037A-38F7-41C7-8FEC-96E58B31D4B0}.Release|x86.Build.0 = Release|Win32
 		{1F3D6A4D-7649-4BCD-9739-1749FC16B9F3}.Debug|x64.ActiveCfg = Debug|x64
 		{1F3D6A4D-7649-4BCD-9739-1749FC16B9F3}.Debug|x64.Build.0 = Debug|x64
 		{1F3D6A4D-7649-4BCD-9739-1749FC16B9F3}.Debug|x86.ActiveCfg = Debug|Win32
