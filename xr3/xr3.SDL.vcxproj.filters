@@ -12,181 +12,181 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="h\XR\ActorReader.cpp">
+    <ClCompile Include="src\ActorReader.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Animation.cpp">
+    <ClCompile Include="src\Animation.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\AnimationInstance.cpp">
+    <ClCompile Include="src\AnimationInstance.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\AnimationPlayer.cpp">
+    <ClCompile Include="src\AnimationPlayer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\AnimationReader.cpp">
+    <ClCompile Include="src\AnimationReader.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Application.cpp">
+    <ClCompile Include="src\Application.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\BasicMesh.cpp">
+    <ClCompile Include="src\BasicMesh.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Camera.cpp">
+    <ClCompile Include="src\Camera.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Color.cpp">
+    <ClCompile Include="src\Color.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\CrossObject.cpp">
+    <ClCompile Include="src\CrossObject.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\CSV.cpp">
+    <ClCompile Include="src\CSV.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\debugdraw.cpp">
+    <ClCompile Include="src\debugdraw.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Entity.cpp">
+    <ClCompile Include="src\Entity.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\FileBuffer.cpp">
+    <ClCompile Include="src\FileBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Font.cpp">
+    <ClCompile Include="src\Font.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Grid.cpp">
+    <ClCompile Include="src\Grid.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Indexer2d.cpp">
+    <ClCompile Include="src\Indexer2d.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\IndexMesh.cpp">
+    <ClCompile Include="src\IndexMesh.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Log.cpp">
+    <ClCompile Include="src\Log.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\maths.cpp">
+    <ClCompile Include="src\maths.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\MeshRenderer.cpp">
+    <ClCompile Include="src\MeshRenderer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Module.cpp">
+    <ClCompile Include="src\Module.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\MouseHandler.cpp">
+    <ClCompile Include="src\MouseHandler.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Name.cpp">
+    <ClCompile Include="src\Name.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Parse.cpp">
+    <ClCompile Include="src\Parse.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\ProjectionHelpers.cpp">
+    <ClCompile Include="src\ProjectionHelpers.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Quadtree.cpp">
+    <ClCompile Include="src\Quadtree.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Ray.cpp">
+    <ClCompile Include="src\Ray.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\RectObject.cpp">
+    <ClCompile Include="src\RectObject.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Sprite.cpp">
+    <ClCompile Include="src\Sprite.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SpriteRenderer.cpp">
+    <ClCompile Include="src\SpriteRenderer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\State.cpp">
+    <ClCompile Include="src\State.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Text.cpp">
+    <ClCompile Include="src\Text.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\TexturePack.cpp">
+    <ClCompile Include="src\TexturePack.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Tweener.cpp">
+    <ClCompile Include="src\Tweener.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\TweenVar.cpp">
+    <ClCompile Include="src\TweenVar.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\TweenVarPool.cpp">
+    <ClCompile Include="src\TweenVarPool.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\UIID.cpp">
+    <ClCompile Include="src\UIID.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\utils.cpp">
+    <ClCompile Include="src\utils.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\AABB.cpp">
+    <ClCompile Include="src\AABB.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\ActorInstance.cpp">
+    <ClCompile Include="src\ActorInstance.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Audio.cpp">
+    <ClCompile Include="src\SDL\Audio.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Device.cpp">
+    <ClCompile Include="src\SDL\Device.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\File.cpp">
+    <ClCompile Include="src\SDL\File.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Image.cpp">
+    <ClCompile Include="src\SDL\Image.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Input.cpp">
+    <ClCompile Include="src\SDL\Input.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\InputImpl.cpp">
+    <ClCompile Include="src\SDL\InputImpl.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\KeyCode.cpp">
+    <ClCompile Include="src\SDL\KeyCode.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Material.cpp">
+    <ClCompile Include="src\SDL\Material.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\MaterialImpl.cpp">
+    <ClCompile Include="src\SDL\MaterialImpl.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\MouseButton.cpp">
+    <ClCompile Include="src\SDL\MouseButton.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Renderer.cpp">
+    <ClCompile Include="src\SDL\Renderer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Sample.cpp">
+    <ClCompile Include="src\SDL\Sample.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Texture.cpp">
+    <ClCompile Include="src\SDL\Texture.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\TextureImpl.cpp">
+    <ClCompile Include="src\SDL\TextureImpl.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SDL\Timer.cpp">
+    <ClCompile Include="src\SDL\Timer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Worker.cpp">
+    <ClCompile Include="src\Worker.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\jsonutils.cpp">
+    <ClCompile Include="src\jsonutils.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\FloatBuffer.cpp">
+    <ClCompile Include="src\FloatBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
   </ItemGroup>

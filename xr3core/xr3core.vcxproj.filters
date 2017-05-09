@@ -14,40 +14,40 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="h\XR\Pool.cpp">
+    <ClCompile Include="src\Pool.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\RingBuffer.cpp">
+    <ClCompile Include="src\RingBuffer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\SharedPoolAllocator.cpp">
+    <ClCompile Include="src\SharedPoolAllocator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\TweakBench.cpp">
+    <ClCompile Include="src\TweakBench.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\IndexServer.cpp">
+    <ClCompile Include="src\IndexServer.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\memdebug.cpp">
+    <ClCompile Include="src\memdebug.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\ParserCore.cpp">
+    <ClCompile Include="src\ParserCore.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\detail\EventDispatcher.cpp">
+    <ClCompile Include="src\EventDispatcher.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Inflator.cpp">
+    <ClCompile Include="src\Inflator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Deflator.cpp">
+    <ClCompile Include="src\Deflator.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Callback.cpp">
+    <ClCompile Include="src\Callback.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\Hash.cpp">
+    <ClCompile Include="src\Hash.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
   </ItemGroup>

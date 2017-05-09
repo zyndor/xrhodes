@@ -28,19 +28,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="h\XR\json.cpp">
+    <ClCompile Include="src\json.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\JsonEntity.cpp">
+    <ClCompile Include="src\JsonEntity.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\JsonParser.cpp">
+    <ClCompile Include="src\JsonParser.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\JsonReader.cpp">
+    <ClCompile Include="src\JsonReader.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
-    <ClCompile Include="h\XR\JsonWriter.cpp">
+    <ClCompile Include="src\JsonWriter.cpp">
       <Filter>Implementation</Filter>
     </ClCompile>
   </ItemGroup>

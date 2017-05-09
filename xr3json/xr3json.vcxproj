@@ -141,11 +141,11 @@
     <ClInclude Include="h\XR\JsonWriter.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="h\XR\json.cpp" />
-    <ClCompile Include="h\XR\JsonEntity.cpp" />
-    <ClCompile Include="h\XR\JsonParser.cpp" />
-    <ClCompile Include="h\XR\JsonReader.cpp" />
-    <ClCompile Include="h\XR\JsonWriter.cpp" />
+    <ClCompile Include="src\json.cpp" />
+    <ClCompile Include="src\JsonEntity.cpp" />
+    <ClCompile Include="src\JsonParser.cpp" />
+    <ClCompile Include="src\JsonReader.cpp" />
+    <ClCompile Include="src\JsonWriter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

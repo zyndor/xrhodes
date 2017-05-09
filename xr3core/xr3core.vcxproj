@@ -19,18 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="h\XR\Callback.cpp" />
-    <ClCompile Include="h\XR\Deflator.cpp" />
-    <ClCompile Include="h\XR\Hash.cpp" />
-    <ClCompile Include="h\XR\Inflator.cpp" />
-    <ClCompile Include="h\XR\detail\EventDispatcher.cpp" />
-    <ClCompile Include="h\XR\IndexServer.cpp" />
-    <ClCompile Include="h\XR\memdebug.cpp" />
-    <ClCompile Include="h\XR\ParserCore.cpp" />
-    <ClCompile Include="h\XR\Pool.cpp" />
-    <ClCompile Include="h\XR\RingBuffer.cpp" />
-    <ClCompile Include="h\XR\SharedPoolAllocator.cpp" />
-    <ClCompile Include="h\XR\TweakBench.cpp" />
+    <ClCompile Include="src\Callback.cpp" />
+    <ClCompile Include="src\Deflator.cpp" />
+    <ClCompile Include="src\Hash.cpp" />
+    <ClCompile Include="src\Inflator.cpp" />
+    <ClCompile Include="src\EventDispatcher.cpp" />
+    <ClCompile Include="src\IndexServer.cpp" />
+    <ClCompile Include="src\memdebug.cpp" />
+    <ClCompile Include="src\ParserCore.cpp" />
+    <ClCompile Include="src\Pool.cpp" />
+    <ClCompile Include="src\RingBuffer.cpp" />
+    <ClCompile Include="src\SharedPoolAllocator.cpp" />
+    <ClCompile Include="src\TweakBench.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\XR\Callback.hpp" />
