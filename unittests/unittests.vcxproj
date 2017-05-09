@@ -108,7 +108,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)external\tinyxml-2.6.2\lib\$(Platform)\Release;$(SolutionDir)external\SDL2-2.0.4\lib\$(PlatformShortName)\;$(SolutionDir)external\SDL2_image-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\SDL2_mixer-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\glew-2.0.0\lib\Release\$(PlatformShortName);$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>tinyxml.lib;SDL2.lib;SDL2_image.lib;SDL2_mixer.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,7 +124,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)external\tinyxml-2.6.2\lib\$(Platform)\Release;$(SolutionDir)external\SDL2-2.0.4\lib\$(PlatformShortName)\;$(SolutionDir)external\SDL2_image-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\SDL2_mixer-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\glew-2.0.0\lib\Release\$(PlatformShortName)\;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>tinyxml.lib;SDL2.lib;SDL2_image.lib;SDL2_mixer.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,7 +144,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)external\tinyxml-2.6.2\lib\$(Platform)\Release;$(SolutionDir)external\SDL2-2.0.4\lib\$(PlatformShortName)\;$(SolutionDir)external\SDL2_image-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\SDL2_mixer-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\glew-2.0.0\lib\Release\$(PlatformShortName);$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>tinyxml.lib;SDL2.lib;SDL2_image.lib;SDL2_mixer.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,7 +164,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)external\tinyxml-2.6.2\lib\$(Platform)\Release;$(SolutionDir)external\SDL2-2.0.4\lib\$(PlatformShortName)\;$(SolutionDir)external\SDL2_image-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\SDL2_mixer-2.0.1\lib\$(PlatformShortName);$(SolutionDir)external\glew-2.0.0\lib\Release\$(PlatformShortName)\;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>tinyxml.lib;SDL2.lib;SDL2_image.lib;SDL2_mixer.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
