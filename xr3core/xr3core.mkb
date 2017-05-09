@@ -17,9 +17,10 @@ files
 {
   xr3core.mkf
   
-  (h/XR)
+  (src)
   Callback.cpp
   Deflator.cpp
+  EventDispatcher.cpp
   Hash.cpp
   IndexServer.cpp
   Inflator.cpp
@@ -29,8 +30,4 @@ files
   RingBuffer.cpp
   SharedPoolAllocator.cpp
   TweakBench.cpp
-
-  [src/detail]
-  (h/XR/detail)
-  EventDispatcher.cpp
 }

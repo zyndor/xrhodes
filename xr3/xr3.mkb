@@ -1,6 +1,6 @@
 includepath
 {
-	h/XR
+  h/XR
 }
 
 options
@@ -11,6 +11,7 @@ options
 subproject
 {
   xr3core
+  xr3json
   xr3
 
   iwgx
@@ -26,7 +27,7 @@ files
   xr3.mkf
 
   [src]
-  (h/XR)
+  (src)
   AABB.cpp
   ActorInstance.cpp
   ActorReader.cpp
@@ -77,7 +78,7 @@ files
   utils.cpp
   Worker.cpp
 
-  (h/XR/Marmalade)
+  (src/Marmalade)
   Adpcm.cpp
   Adpcm.hpp
   Audio.cpp
