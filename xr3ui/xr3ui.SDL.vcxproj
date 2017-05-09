@@ -142,21 +142,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
-    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(OutDir)\temp_$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)lib\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\build\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.lib</TargetExt>
-    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(OutDir)\temp_$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)lib\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\build\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(OutDir)\temp_$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)lib\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\build\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(OutDir)\temp_$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)lib\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\build\$(ProjectName)\$(PlatformShortName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
