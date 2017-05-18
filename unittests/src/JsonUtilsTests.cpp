@@ -15,7 +15,7 @@ namespace XR
   public:
     TEST_METHOD(JsonUtils_LoadJson)
     {
-      auto json = LoadJSON("../../data/loadjson.json", 3, false);
+      auto json = LoadJSON(DATA_PATH "/loadjson.json", 3, false);
       Assert::IsTrue(json);
 
       Assert::IsTrue(json->GetType() == JSON::OBJECT);
