@@ -7,8 +7,8 @@
 #ifndef XR_UINAVIGATOR_HPP
 #define XR_UINAVIGATOR_HPP
 
-#include  <map>
-#include  "UIElement.hpp"
+#include <map>
+#include "UIElement.hpp"
 
 namespace XR
 {

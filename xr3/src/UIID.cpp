@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include  <algorithm>
-#include  <numeric>
+#include <algorithm>
+#include <numeric>
 #include <XR/UIID.hpp>
 #include <XR/Timer.hpp>
 

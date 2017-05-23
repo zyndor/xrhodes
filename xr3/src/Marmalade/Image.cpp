@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include  "File.hpp"
-#include  "Image.hpp"
-#include  <IwImage.h>
+#include "File.hpp"
+#include "Image.hpp"
+#include <IwImage.h>
 
 namespace XR
 {

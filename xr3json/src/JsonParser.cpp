@@ -11,6 +11,7 @@
 #include <ctype.h>
 #include <cstring>
 #include <cmath>
+#include <cstdio>
 
 namespace XR
 {

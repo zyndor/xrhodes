@@ -7,7 +7,7 @@
 #ifndef XR_DEBUGDRAW_HPP
 #define XR_DEBUGDRAW_HPP
 
-#include  "Renderer.hpp"
+#include "Renderer.hpp"
 
 namespace XR
 {

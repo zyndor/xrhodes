@@ -7,8 +7,8 @@
 #ifndef XR_UISELECTOR_HPP
 #define XR_UISELECTOR_HPP
 
-#include  <map>
-#include  "UIElement.hpp"
+#include <map>
+#include "UIElement.hpp"
 
 namespace XR
 {
