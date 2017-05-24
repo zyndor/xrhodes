@@ -25,7 +25,7 @@ ParserCore::~ParserCore()
 {}
 
 //==============================================================================
-void  ParserCore::SetBuffer(const char* parBuffer, int size)
+void  ParserCore::SetBuffer(const char* parBuffer, size_t size)
 {
   XR_ASSERT(ParserCore, parBuffer != 0);
   XR_ASSERT(ParserCore, size >= 0);
@@ -41,34 +41,13 @@ void  ParserCore::SetBuffer(const char* parBuffer, int size)
 }
 
 //==============================================================================
-bool  ParserCore::IsNewLine() const
-{
-  XR_ASSERT(ParserCore, m_p0 != 0);
-  return *m_p0 == '\n' || *m_p0 == '\r';
-}
-
-//==============================================================================
 const char* ParserCore::ExpectChar()
 {
   XR_ASSERT(ParserCore, m_p0 != 0);
-  int col(m_column);
-  int row(m_row);
-  
-  while (m_p0 != m_p1 && iswspace(*m_p0))
+  while (m_p0 != m_p1 && isspace(*m_p0))
   {
-    if (IsNewLine())
-    {
-      col = 1;
-      ++row;
-    }
-    else
-    {
-      ++col;
-    }
-    ++m_p0;
+    SkipChar();
   }
-  m_row = row;
-  m_column = col;
   return m_p0;
 }
 
@@ -76,34 +55,35 @@ const char* ParserCore::ExpectChar()
 const char* ParserCore::RequireChar(int c)
 {
   XR_ASSERT(ParserCore, m_p0 != 0);
-  int col(m_column);
-  int row(m_row);
-  
   while (m_p0 != m_p1 && *m_p0 != c)
   {
-    if (IsNewLine())
-    {
-      col = 1;
-      ++row;
-    }
-    else
-    {
-      ++col;
-    }
-    ++m_p0;
+    SkipChar();
   }
-  m_row = row;
-  m_column = col;
   return m_p0;
 }
 
 //==============================================================================
 const char* ParserCore::SkipChar()
 {
-  XR_ASSERT(ParserCore, m_p0 != 0);
-  if (m_p0 != m_p1)
+  XR_ASSERT(ParserCore, m_p0 != nullptr);
+  const char* p0 = m_p0;
+  if (p0 != m_p1)
   {
-    if (IsNewLine())
+    // check for new line. CR or LF
+    const bool isCR = *p0 == '\r';
+    const bool isNewLine = isCR || *p0 == '\n';
+    if (isCR) // CR might be CRLF in the making, which we'll handle as one line break.
+    {
+      auto pNext = p0 + 1;
+      if (pNext != m_p1 && *pNext == '\n')
+      {
+        p0 = pNext;
+      }
+    }
+    ++p0;
+
+    // update the cursor
+    if (isNewLine)
     {
       m_column = 1;
       ++m_row;
@@ -112,9 +92,11 @@ const char* ParserCore::SkipChar()
     {
       ++m_column;
     }
-    ++m_p0;
+
+    // update m_p0
+    m_p0 = p0;
   }
-  return m_p0;
+  return p0;
 }
 
 //==============================================================================

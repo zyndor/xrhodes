@@ -23,7 +23,7 @@ public:
   // general
   ///@brief Resets the internal state and sets up to read @a size characters
   /// from @a parBuffer. If @a size is 0, it will set it to strlen(parBuffer).
-  void        SetBuffer(const char* parBuffer, int size);
+  void        SetBuffer(const char* parBuffer, size_t size);
   
   int         GetRow() const;
   int         GetColumn() const;
@@ -33,22 +33,26 @@ public:
   
   ///@brief   Moves to the next non-whitespace character, if any.
   ///@return  Pointer to the character we've ended up at.
+  ///@note    Doesn't move past the end of the buffer.
   const char* ExpectChar();
   
   ///@brief   Moves to the next character that matches @a c, if any.
   ///@return  Pointer to the character we've ended up at.
+  ///@note    Doesn't move past the end of the buffer.
   const char* RequireChar(int c);
   
   ///@brief   Moves to the next character, if any.
   ///@return  Pointer to the character we've ended up at.
+  ///@note    Doesn't move past the end of the buffer.
   const char* SkipChar();
   
   ///@brief   SkipChar()s @a numChars times, but not past the end.
   ///@return  Pointer to the character we've ended up at.
+  ///@note    Doesn't move past the end of the buffer.
   const char* FastForward(int numChars);
   
   ///@return  Number of characters left.
-  int         GetNumCharsLeft() const;
+  size_t      GetNumCharsLeft() const;
   
   ///@return  Whether @a p is at or past the end of the buffer.
   bool        IsOver(const char* p) const;
@@ -59,9 +63,6 @@ protected:
   const char*   m_p1; // end of buffer, not processed; no ownership
   int           m_row; // 1-based, human readable
   int           m_column; // 1-based, human readable
-  
-  // internal
-  bool  IsNewLine() const;
 };
 
 //==============================================================================
@@ -89,7 +90,7 @@ const char* ParserCore::GetChar() const
 
 //==============================================================================
 inline
-int ParserCore::GetNumCharsLeft() const
+size_t  ParserCore::GetNumCharsLeft() const
 {
   return m_p1 - m_p0;
 }
