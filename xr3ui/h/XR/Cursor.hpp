@@ -7,8 +7,8 @@
 #ifndef XR_POINTER_HPP
 #define XR_POINTER_HPP
 
-#include  <XR/Input.hpp>
-#include  "UIImage.hpp"
+#include <XR/Input.hpp>
+#include "UIImage.hpp"
 
 namespace XR
 {

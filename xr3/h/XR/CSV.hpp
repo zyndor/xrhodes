@@ -7,10 +7,11 @@
 #ifndef XR_CSV_HPP
 #define XR_CSV_HPP
 
-#include  <list>
-#include  <vector>
-#include  <string>
-#include  <map>
+#include <list>
+#include <vector>
+#include <string>
+#include <map>
+#include <stdint.h>
 
 namespace XR
 {

@@ -1,0 +1,17 @@
+
+includepath h
+
+library
+{
+  ".,xr3json"
+}
+
+files
+{
+  (h)
+  XR\json.hpp
+  XR\JsonEntity.hpp
+  XR\JsonParser.hpp
+  XR\JsonReader.hpp
+  XR\JsonWriter.hpp
+}

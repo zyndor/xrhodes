@@ -84,11 +84,4 @@ files
   XR/Vector2.hpp
   XR/Vector3.hpp
   XR/Worker.hpp
-
-  [detail]
-  (h/XR/detail)
-  CallbackAdaptor.inl
-  CallbackObject.inl
-  EventDispatcher.hpp
-  EventDispatcher.inl
 }

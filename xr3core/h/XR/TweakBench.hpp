@@ -7,8 +7,8 @@
 #ifndef XR_TWEAKBENCH_HPP
 #define XR_TWEAKBENCH_HPP
 
-#include  <map>
-#include  <cstdint>
+#include <map>
+#include <cstdint>
 
 namespace XR
 {

@@ -1,0 +1,28 @@
+includepath
+{
+  h/XR
+}
+
+options
+{
+  lib
+}
+
+subproject
+{
+  xr3core
+  xr3json
+}
+
+files
+{
+  xr3json.mkf
+  
+  [src]
+  (src)
+  json.cpp
+  JsonEntity.cpp
+  JsonParser.cpp
+  JsonReader.cpp
+  JsonWriter.cpp
+}
