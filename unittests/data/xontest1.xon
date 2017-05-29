@@ -1,0 +1,31 @@
+# comment before root object
+
+{
+	value	# comment before comma
+	,	# comment after value and comma
+	key:value,
+	"key": value2,	# will override the previous definition, but value will still be accessible via an index
+	more_keys: "more values",
+	{
+		object_value,
+		key	# comment between key and colon
+		: value,
+		"{}ther key" : "{}ther_va:ue",
+		a_nested_object:	# comment between colon and value
+		# another comment
+		{	# comment between object begin and first value
+			# another comment
+			nested: true,
+			"escaped \"quot\"",
+			"",
+			# comment between unnecessary comma and object end
+		},
+		another_value,
+		a_value_that's_"quoted",	# no need to escape; in fact no need to match - but cannot use special characters in string
+	},	# comment after object end
+	null,	# a null value
+	"null" # the string "null"
+	,	# spurious end comma is not a problem
+}
+
+# comment after root object
