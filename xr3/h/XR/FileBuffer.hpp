@@ -34,7 +34,7 @@ public:
   bool        Open(const char* pName, const char* pMode);
   bool        HasFlag(uint32_t flags) const;
 
-  int         GetSize() const;
+  size_t      GetSize() const;
   const char* GetData() const;
 
   bool        Write(const void* pBuffer, size_t size, size_t numElems);
@@ -46,7 +46,7 @@ private:
   // data
   int       m_handle;
   uint32_t  m_flags;
-  int       m_size;
+  size_t    m_size;
   char*     m_pData;
 };
 
@@ -61,7 +61,7 @@ bool  FileBuffer::HasFlag(uint32_t flags) const
 
 //==============================================================================
 inline
-int FileBuffer::GetSize() const
+size_t FileBuffer::GetSize() const
 {
   return m_size;
 }
