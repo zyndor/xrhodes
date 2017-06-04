@@ -73,18 +73,21 @@ public:
   /// destructed properly beforehand.
   void  Flush();
 
+  ///@return  The total capacity of the pool, in bytes.
+  size_t CalculateSize() const;
+
   ///@return  The size of all allocations made from the Pool, in bytes.
-  int CalculateSize() const;
+  size_t CalculateUsed() const;
 
   ///@return  The size of all allocations made from the current frame, in
   /// bytes.
-  int CalculateFrameSize() const;
+  size_t CalculateFrameSize() const;
 
   ///@return  The amount of free memory in the Pool, in bytes.
-  int CalculateFree() const;
+  size_t CalculateFree() const;
 
   ///@return  The number of frames on the Pool.
-  int GetNumFrames() const;
+  size_t GetNumFrames() const;
   
   ///@brief Creates a frame beginning at the point of the next allocation.
   void  Push();
@@ -121,30 +124,37 @@ bool  Pool::HasBuffer() const
 
 //==============================================================================
 inline
-int Pool::CalculateSize() const
+size_t Pool::CalculateSize() const
 {
   return m_pEnd - m_parBuffer;
 }
 
 //==============================================================================
 inline
-int Pool::CalculateFrameSize() const
+size_t Pool::CalculateUsed() const
 {
-  return m_pEnd - (m_frames.empty() ? m_parBuffer : m_frames.back());
+  return m_pNext - m_parBuffer;
 }
 
 //==============================================================================
 inline
-int Pool::CalculateFree() const
+size_t Pool::CalculateFrameSize() const
+{
+  return m_pNext - (m_frames.empty() ? m_parBuffer : m_frames.back());
+}
+
+//==============================================================================
+inline
+size_t Pool::CalculateFree() const
 {
   return m_pEnd - m_pNext;
 }
 
 //==============================================================================
 inline
-int Pool::GetNumFrames() const
+size_t Pool::GetNumFrames() const
 {
-  return int(m_frames.size());
+  return m_frames.size();
 }
 
 } // XR
