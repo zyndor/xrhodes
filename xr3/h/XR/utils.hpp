@@ -35,9 +35,6 @@ bool IsIdMask(uint32_t id, uint32_t mask);
 ///@brief Checks is an integer can be fit into 16bits.
 bool  CheckInt16(int value);
 
-///@brief
-const char* GetStringSafe(const char* pString);
-
 ///@return Index of item in array of values, @a numValues if not found.
 template <typename T>
 size_t FindItemId(const T* parValues, size_t numValues, const T* pValue);
@@ -45,13 +42,6 @@ size_t FindItemId(const T* parValues, size_t numValues, const T* pValue);
 ///@brief Count number of elements in a null terminated array.
 template <typename T>
 size_t CountArrayItems(T* pItems);
-
-// strings
-std::string UrlEncode(const char* pString);
-std::string Char2Hex(char c);
-
-template  <typename T>
-bool  StringTo(const char* pString, T& to);
 
 // resources
 //==============================================================================
@@ -112,13 +102,6 @@ bool  CheckInt16(int value)
 }
 
 //==============================================================================
-inline
-const char* GetStringSafe(const char* pString)
-{
-  return pString != 0 ? pString : "";
-}
-
-//==============================================================================
 template <typename T>
 inline
 size_t FindItemId(const T* parValues, int numValues, const T& item)
@@ -143,15 +126,6 @@ size_t CountArrayItems(T* pItems)
   }
 
   return count;
-}
-
-//==============================================================================
-template  <typename T>
-bool  StringTo(const char* pString, T& to)
-{
-  std::istringstream  iss(pString);
-
-  return !(iss >> std::ws >> to).fail() && (iss >> std::ws).eof();
 }
 
 } // XR

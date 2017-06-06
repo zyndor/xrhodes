@@ -95,5 +95,20 @@ namespace XR
       Assert::IsTrue(result == buffer.data());
       Assert::IsTrue(std::string(buffer.data(), replacedSize) == "and a");
     }
+
+    TEST_METHOD(StringUtils_Char2Hex)
+    {
+      char arBuffer[8];
+      char* write = arBuffer;
+
+      write = Char2Hex(0x0f, write);
+      Assert::IsTrue(write == arBuffer + 2);
+
+      write = Char2Hex(0xf0, write);
+      write = Char2Hex(0x77, write);
+      write = Char2Hex(0x00, write);
+
+      Assert::IsTrue(std::string(arBuffer, sizeof(arBuffer)) == "0ff07700");
+    }
   };
 }
