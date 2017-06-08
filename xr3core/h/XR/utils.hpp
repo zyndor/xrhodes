@@ -16,44 +16,38 @@
 namespace
 {
 template <typename T, size_t N>
-char(&ArraySizeHelper(T (&)[N]))[N];
+char(&ArraySizeHelper(T (&)[N]))[N];  // not defined, never actually called; sizeof(function call) tells size of return type.
 }
 #define XR_ARRAY_SIZE(a) (sizeof(ArraySizeHelper(a)))
 
 //==============================================================================
+///@brief Converts @a id into a mask with the @a id'th bit set.
 #define XR_MASK_ID(id) (1 << static_cast<size_t>(id))
 
 namespace XR
 {
 
 //==============================================================================
-// primitives
+///@return Whether @a mask covers all bits of @a bits?
 bool IsAllBits(uint32_t bits, uint32_t mask);
+
+///@return Whether all bits of @a mask are set in @a bits?
 bool IsFullMask(uint32_t bits, uint32_t mask);
+
+///@return Whether the @a id-th bit matches @a mask?
 bool IsIdMask(uint32_t id, uint32_t mask);
 
-///@brief Checks is an integer can be fit into 16bits.
+///@return Whether @a value can be fit into 16 bits.
 bool  CheckInt16(int value);
-
-///@brief
-const char* GetStringSafe(const char* pString);
 
 ///@return Index of item in array of values, @a numValues if not found.
 template <typename T>
-size_t FindItemId(const T* parValues, size_t numValues, const T* pValue);
+size_t FindItemId(T const* parValues, size_t numValues, T const& pValue);
 
 ///@brief Count number of elements in a null terminated array.
 template <typename T>
-size_t CountArrayItems(T* pItems);
+size_t CountArrayItems(T const* pItems);
 
-// strings
-std::string UrlEncode(const char* pString);
-std::string Char2Hex(char c);
-
-template  <typename T>
-bool  StringTo(const char* pString, T& to);
-
-// resources
 //==============================================================================
 ///@brief For find_if ()ing an object based on the pointer to it.
 template  <typename T>
@@ -75,9 +69,9 @@ struct  PtrFindPredicate
 ///@brief For using pointers as keys in maps.
 struct  PtrHash
 {
-  size_t  operator()(const void* p) const
+  size_t  operator()(void const* p) const
   {
-    return (size_t)((const char*)p);
+    return reinterpret_cast<size_t>(reinterpret_cast<char const*>(p));
   }
 };
 
@@ -112,16 +106,9 @@ bool  CheckInt16(int value)
 }
 
 //==============================================================================
-inline
-const char* GetStringSafe(const char* pString)
-{
-  return pString != 0 ? pString : "";
-}
-
-//==============================================================================
 template <typename T>
 inline
-size_t FindItemId(const T* parValues, int numValues, const T& item)
+size_t FindItemId(T const* parValues, size_t numValues, T const& item)
 {
   XR_ASSERT(FindItemId, parValues != 0);
   XR_ASSERT(FindItemId, numValues >= 0);
@@ -131,27 +118,17 @@ size_t FindItemId(const T* parValues, int numValues, const T& item)
 
 //==============================================================================
 template <typename T>
-size_t CountArrayItems(T* pItems)
+size_t CountArrayItems(T const* pItems)
 {
   XR_ASSERT(CountArrayItems, pItems != nullptr);
-
-  size_t count(0);
-  while (*pItems != nullptr)
+  T const* pCursor = pItems;
+  while (*pCursor != nullptr)
   {
-    ++pItems;
-    ++count;
+    ++pCursor;
   }
 
+  size_t count(pCursor - pItems);
   return count;
-}
-
-//==============================================================================
-template  <typename T>
-bool  StringTo(const char* pString, T& to)
-{
-  std::istringstream  iss(pString);
-
-  return !(iss >> std::ws >> to).fail() && (iss >> std::ws).eof();
 }
 
 } // XR
