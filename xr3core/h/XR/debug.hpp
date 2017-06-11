@@ -7,6 +7,7 @@
 #ifndef XR_DEBUG_HPP
 #define XR_DEBUG_HPP
 
+#include "detail/debugd.hpp"
 #include "platform.hpp"
 #include <cstdio>
 
@@ -28,7 +29,7 @@
 #if defined(XR_DEBUG)
 #define XR_DEBUG_ONLY(op) op
 #else
-#define XR_DEBUG_ONLY(op)
+#define XR_DEBUG_ONLY(op) void(0)
 #endif
 
 //==============================================================================
@@ -38,33 +39,27 @@
 #elif defined(XR_CPU_ARM)
 #define XR_TRAP __builtin_trap();
 #else
-#define XR_TRAP { int* const trap = (int*)3L; *trap = 3; }
+#define XR_TRAP __asm__ ("int $3");
 #endif
 #else
 #define XR_TRAP
 #endif
 
 //==============================================================================
-#define XR__TRACE_IMPL(chnl, msg)\
-  printf("[%s]", #chnl);\
-  printf msg;\
-  XR_RAWTRACE(("\n"))  // IMPROVE
-
-//==============================================================================
-#define XR_TRACE(chnl, msg)\
-  XR_DEBUG_ONLY(XR__TRACE_IMPL(chnl, msg)) // IMPROVE
+#define XR_TRACE(chnl, msg) XR_DEBUG_ONLY(if(XR::Debug::Channel::IsEnabled(#chnl)){ XR::Debug::Channel(#chnl).Trace msg; })
 
 //==============================================================================
 #define XR_ASSERTMSG(chnl, cond, msg)\
-  XR_DEBUG_ONLY(if (!(cond)) {\
-      XR__TRACE_IMPL(chnl, msg); XR_TRAP\
-    }) // IMPROVE
+  XR_DEBUG_ONLY({ XR__ASSERT_STATE_INIT if (XR__ASSERT_STATE_CHECK(#chnl) && !(cond)){\
+      switch(XR::Debug::Channel(#chnl).Assert msg) {\
+        case XR::Debug::AssertAction::Break: XR_TRAP break;\
+        case XR::Debug::AssertAction::Continue: break;\
+        case XR::Debug::AssertAction::Ignore: XR__ASSERT_STATE_DISABLE; break;\
+        case XR::Debug::AssertAction::IgnoreChannel: XR::Debug::Channel::SetEnabled(#chnl, false); break;\
+    }}})
 
 //==============================================================================
-#define XR_ASSERT(chnl, cond)\
-  XR_DEBUG_ONLY(if (!(cond)) {\
-      XR__TRACE_IMPL(chnl, ("Assertion failed: %s (%s:%d)", #cond, __FILE__, __LINE__));\
-    }) // IMPROVE
+#define XR_ASSERT(chnl, cond) XR_ASSERTMSG(chnl, cond, ("Assertion failed: %s (%s:%d)", #cond, __FILE__, __LINE__))
 
 //==============================================================================
 #define XR_ERROR(msg)\
