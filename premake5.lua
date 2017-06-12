@@ -39,6 +39,10 @@ workspace "xr3.SDL"
 	sln_location = ".projects/"..target_env
 	location(sln_location)
 	
+	if isVS() then
+		startproject("unittests")
+	end
+	
 	-- platforms setup
 	tbl_platforms = {}
 	if target_env == "windows" then
@@ -67,6 +71,11 @@ workspace "xr3.SDL"
 	characterset("MBCS")
 
 	-- optimization
+	filter("not Release")
+		optimize "Debug"
+		flags {
+			"Symbols"
+		}
 	filter{ "Release" }
 		optimize "Full"
 	filter{}
@@ -110,6 +119,7 @@ workspace "xr3.SDL"
 	-- Windows
 	filter {}
 	if target_env == "windows" then
+		system("windows")
 		systemversion "8.1"
 	end
 
