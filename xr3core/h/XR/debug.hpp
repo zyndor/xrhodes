@@ -7,6 +7,7 @@
 #ifndef XR_DEBUG_HPP
 #define XR_DEBUG_HPP
 
+#include "detail/debugd.hpp"
 #include "platform.hpp"
 #include <cstdio>
 
@@ -15,7 +16,8 @@
 #define XR_RAWTRACE(format)	printf format; fflush(stdout);
 
 //==============================================================================
-///@brief Binary debugging aid - wrap call to ascertain whether it causes a crash.
+///@brief Binary debugging aid - wrap call to ascertain whether it causes a
+/// crash / exception.
 #define XR_SURVIVE(call)  { XR_RAWTRACE(("SURVIVE: %s (%s:%d)\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"); }
 
 //==============================================================================
@@ -23,51 +25,41 @@
 #define XR_DEBUG
 #endif
 
+//==============================================================================
+#if defined(XR_DEBUG)
+#define XR_DEBUG_ONLY(op) op
+#else
+#define XR_DEBUG_ONLY(op) void(0)
+#endif
+
+//==============================================================================
 #if defined(XR_DEBUG)
 #if defined(XR_COMPILER_MSVC)
 #define XR_TRAP __debugbreak();
 #elif defined(XR_CPU_ARM)
 #define XR_TRAP __builtin_trap();
-#elif !defined(XR_PLATFORM_NACL)
-#define XR_TRAP __asm__ ("int $3");
 #else
-#define XR_TRAP { int* const trap = (int*)3L; *trap = 3; }
+#define XR_TRAP __asm__ ("int $3");
 #endif
 #else
 #define XR_TRAP
 #endif
 
 //==============================================================================
-#if defined(XR_DEBUG)
-#define XR_TRACE(chnl, msg)\
-  printf("[%s]", #chnl); printf msg; XR_RAWTRACE(("\n")); // IMPROVE
-#else
-#define XR_TRACE(chnl, msg)
-#endif
+#define XR_TRACE(chnl, msg) XR_DEBUG_ONLY(if(XR::Debug::Channel::IsEnabled(#chnl)){ XR::Debug::Channel(#chnl).Trace msg; })
 
 //==============================================================================
-#if defined(XR_DEBUG)
 #define XR_ASSERTMSG(chnl, cond, msg)\
-  if(!(cond))\
-  {\
-    XR_TRACE(chnl, ("Assertion failure: %s (%s:%d)", #cond, __FILE__, __LINE__));\
-    XR_TRAP\
-  }
-#else
-#define XR_ASSERTMSG(chnl, cond, msg)
-#endif
+  XR_DEBUG_ONLY({ XR__ASSERT_STATE_INIT if (XR__ASSERT_STATE_CHECK(#chnl) && !(cond)){\
+      switch(XR::Debug::Channel(#chnl).Assert msg) {\
+        case XR::Debug::AssertAction::Break: XR_TRAP break;\
+        case XR::Debug::AssertAction::Continue: break;\
+        case XR::Debug::AssertAction::Ignore: XR__ASSERT_STATE_DISABLE; break;\
+        case XR::Debug::AssertAction::IgnoreChannel: XR::Debug::Channel::SetEnabled(#chnl, false); break;\
+    }}})
 
 //==============================================================================
-#if defined(XR_DEBUG)
-#define XR_ASSERT(chnl, cond)\
-  if(!(cond))\
-  {\
-    XR_TRACE(chnl, ("Assertion failed: %s (%s:%d)", #cond, __FILE__, __LINE__));\
-    XR_TRAP\
-  }
-#else
-#define XR_ASSERT(chnl, cond)
-#endif
+#define XR_ASSERT(chnl, cond) XR_ASSERTMSG(chnl, cond, ("Assertion failed: %s (%s:%d)", #cond, __FILE__, __LINE__))
 
 //==============================================================================
 #define XR_ERROR(msg)\
