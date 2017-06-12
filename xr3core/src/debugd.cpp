@@ -36,7 +36,7 @@ AssertAction DefaultAssertHandler(char const* channel, char const* message)
 {
 #if defined(XR_DEBUG)
   // TODO: platform-specific implementation allowing to continue, ignore or break.
-  XR_RAWTRACE(("[%s] %s", channel, message));
+  XR_RAWTRACE(("[%s] %s\n", channel, message));
   return AssertAction::Break;
 #else
   return AssertAction::Continue;
@@ -83,7 +83,7 @@ void Channel::Trace(char const* format, ...)
   vsnprintf(message, sizeof(message), format, vl);
   va_end(vl);
 
-  XR_RAWTRACE(("[%s] %s", m_name, message));
+  XR_RAWTRACE(("[%s] %s\n", m_name, message));
 #endif
 }
 
