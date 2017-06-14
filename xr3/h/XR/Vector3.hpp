@@ -53,6 +53,11 @@ struct Vector3
     return Vector3(.0f, .0f, 1.0f);
   }
 
+  static Vector3 UnpackNormal(Vector2 const& v)
+  {
+    return Vector3(v.x, v.y, 1.0f - v.Magnitude());
+  }
+
   // data
   union
   {
@@ -114,13 +119,16 @@ struct Vector3
       y * rhs.x);
   }
 
-  ///@brief Linearly interpolates between this vector and @a to, at the given @a t blend factor.
+  ///@brief Linearly interpolates between this vector and @a to, at the given
+  /// @a t blend factor.
   Vector3 Lerp(Vector3 const& to, float t) const
   {
     return Vector3(x + (to.x - x) * t, y + (to.y - y) * t, z + (to.z - z) * t);
   }
 
   ///@brief Provides a Vector2 using the x and y components of this vector.
+  ///@note This method can be used to pack a normal into a Vector2. I.e. if
+  /// this is unit length then UnpackNormal(this.XY()) == this.
   Vector2 XY() const
   {
     return Vector2(x, y);
