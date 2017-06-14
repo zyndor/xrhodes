@@ -65,8 +65,9 @@ UIGridLayout::~UIGridLayout()
 //==============================================================================
 void UIGridLayout::_AlignElement( UIElement* pElem )
 {
-  int column(m_lElements.size() % m_numColumns);
-  int row(m_lElements.size() / m_numColumns);
+  const size_t numElements = m_lElements.size();
+  int row = numElements / m_numColumns;
+  int column = numElements - (row * m_numColumns);
 
   if (m_hAlign != AL_NOALIGN)
   {

@@ -188,8 +188,8 @@ void  UIBuilderScreen::Reposition(int width, int height)
     UIElement*  p(m_builder.GetElement(karAnchorName[i]));
     if(p != 0)
     {
-      int x(i % 3);
       int y(i / 3);
+      int x(i - (y * 3));
       p->Align(arX[x], arY[y],
         static_cast<UIElement::Alignment>(x + UIElement::AL_LOW),
         static_cast<UIElement::Alignment>(y + UIElement::AL_LOW));

@@ -70,8 +70,8 @@ int  Indexer2D::ToIndex(int x, int y) const
 void  Indexer2D::ToCoordinates(int i, int& x, int& y) const
 {
   XR_ASSERT(Indexer2D, m_width > 0);
-  x = i % m_width;
   y = i / m_width;
+  x = i - (y * m_width);
 }
 
 }  // end namespace XR
