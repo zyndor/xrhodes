@@ -33,24 +33,26 @@
 #define XR_CPU_ARM
 #else
 #error "Unsupported cpu!"
-#endif
+#endif // cpus
 
-// architecture
+// architectures
 #if\
-  defined(_M_IX86)||\
-  defined(_M_ARM)||\
-  defined(__i386__)||\
-  defined(__arm__)
-#define XR_ARCH_32
-#elif\
   defined(_M_X64)||\
   defined(__x86_64__)||\
   defined(__amd64__)||\
   defined(__aarch64__)
 #define XR_ARCH_64
-#endif
+#elif\
+  defined(_M_IX86)||\
+  defined(_M_ARM)||\
+  defined(__i386__)||\
+  defined(__arm__)
+#define XR_ARCH_32
+#else
+#error "Unsupported architecture!"
+#endif // architectures
 
-// platform
+// platforms
 // Windows
 #if\
   defined(_WIN32)||\
@@ -68,9 +70,6 @@
 // Android
 #elif defined(__ANDROID__)
 #define XR_PLATFORM_ANDROID
-// NaCl
-#elif defined(__native_client__)
-#define XR_PLATFORM_NACL
 // Emscripten
 #elif defined(__EMSCRIPTEN__)
 #define XR_PLATFORM_EMSCRIPTEN
@@ -79,6 +78,8 @@
   defined(__linux__)||\
   defined(__riscv__)
 #define XR_PLATFORM_LINUX
-#endif
+#else
+#error "Unsupported platform!"
+#endif // platforms
 
 #endif //XR_PLATFORM_HPP
