@@ -44,7 +44,7 @@ public:
   };
   
   // general
-  static void         Init();
+  static void         Init(char const* caption);
 
   ///@brief Gets native window representation of the main window; primarily for
   /// context creation in Renderer - obviously, Device and Renderer

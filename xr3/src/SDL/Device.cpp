@@ -82,7 +82,7 @@ static int  FilterEvents(void* pUser, SDL_Event* pEvent)
 }
 
 //==============================================================================
-void Device::Init()
+void Device::Init(char const* caption)
 {
   File::Init();
 
@@ -112,7 +112,6 @@ void Device::Init()
       CloseScope();
     
     writer.WriteObject("Display").
-      WriteValue("caption", "XRhodes Application").
       WriteValue("width", 800).
       WriteValue("height", 600).
       WriteValue("windowed", true).
@@ -146,8 +145,7 @@ void Device::Init()
   s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
 
   // create window
-  std::string caption = Device::GetConfig("Display", "caption");
-  if (caption.empty())
+  if (!caption)
   {
     caption = "XRhodes Application";
   }
@@ -161,7 +159,7 @@ void Device::Init()
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
 
-  s_deviceImpl.mainWindow = SDL_CreateWindow(caption.c_str(),
+  s_deviceImpl.mainWindow = SDL_CreateWindow(caption,
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     width, height, flags);
 
