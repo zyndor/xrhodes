@@ -84,8 +84,6 @@ static int  FilterEvents(void* pUser, SDL_Event* pEvent)
 //==============================================================================
 void Device::Init(char const* caption)
 {
-  File::Init();
-
   bool  result(SDL_Init(SDL_INIT_EVERYTHING) == 0);
   if (!result)
   {

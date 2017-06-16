@@ -27,8 +27,8 @@ bool   Application::m_breakUpdate(false);
 //==============================================================================
 void  Application::Init(char const* caption)
 {
-  Device::Init();
   File::Init();
+  Device::Init(caption);
 
   Renderer::Init(Device::GetMainWindow());
   Input::Init();
