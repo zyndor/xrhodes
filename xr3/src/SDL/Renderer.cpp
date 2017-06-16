@@ -23,9 +23,9 @@ static struct
 {
   // data
   bool                  initSuccess;
-  SDL_Window*           pMainWindow;
-  SDL_Renderer*         pRenderer;
-  SDL_GLContext         pGlContext;
+  SDL_Window*           mainWindow; // no ownership
+  SDL_Renderer*         pRenderer;  // yes ownership
+  SDL_GLContext         glContext;  // yes ownership
   SVector2              screenSize;
   SVector2              deviceSize;
   Matrix                mModel;
@@ -58,9 +58,10 @@ static void UpdateModelViewMatrix()
 }
 
 //==============================================================================
-void Renderer::Init()
+void Renderer::Init(void* mainWindow)
 {
   XR_ASSERTMSG(Renderer, !s_rendererImpl.initSuccess, ("Already initialised!"));
+  XR_ASSERTMSG(Renderer, mainWindow, ("Main window must not be null!"));
 
   int openGlVersionMajor = Device::GetConfigInt("GFX", "openGLVersionMajor", 3);
   int openGlVersionMinor = Device::GetConfigInt("GFX", "openGLVersionMinor", 1);
@@ -71,39 +72,25 @@ void Renderer::Init()
   SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, openGLUseCompatibilityProfile > 0 ? 
     SDL_GL_CONTEXT_PROFILE_COMPATIBILITY : SDL_GL_CONTEXT_PROFILE_CORE);
 
-  std::string caption = Device::GetConfig("GFX", "caption");
-  if (caption.empty())
-  {
-    caption = "XRhodes Application";
-  }
-    
-  int   width(Device::GetConfigInt("GFX", "width", 800));
-  int   height(Device::GetConfigInt("GFX", "height", 600));
-  int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
-  
-  uint32_t flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-  if (!bool(Device::GetConfigInt("GFX", "windowed", false)))
-  {
-    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-  }
-  
-  s_rendererImpl.pMainWindow = SDL_CreateWindow(caption.c_str(),
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    width, height, flags);
-
-  flags = SDL_RENDERER_ACCELERATED;
-  if (Device::GetConfigInt("GFX", "vsync", false))
+  // Window must be created at this point. In SDL, we do it in Device.
+  uint32_t flags = SDL_RENDERER_ACCELERATED;
+  if (Device::GetConfigInt("Display", "vsync", false))
   {
     flags |= SDL_RENDERER_PRESENTVSYNC;
   }
-  s_rendererImpl.pRenderer = SDL_CreateRenderer(s_rendererImpl.pMainWindow,
-    -1, flags);
+
+  s_rendererImpl.mainWindow = static_cast<SDL_Window*>(mainWindow);
+  s_rendererImpl.pRenderer = SDL_CreateRenderer(s_rendererImpl.mainWindow, -1,
+    flags);
+
+  int width, height;
+  SDL_GL_GetDrawableSize(s_rendererImpl.mainWindow, &width, &height);
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
   SDL_RenderSetLogicalSize(s_rendererImpl.pRenderer, width, height);
 
-  s_rendererImpl.pGlContext = SDL_GL_CreateContext(s_rendererImpl.pMainWindow);
-  SDL_GL_MakeCurrent(s_rendererImpl.pMainWindow, s_rendererImpl.pGlContext);
+  s_rendererImpl.glContext = SDL_GL_CreateContext(s_rendererImpl.mainWindow);
+  SDL_GL_MakeCurrent(s_rendererImpl.mainWindow, s_rendererImpl.glContext);
   
   SDL_RendererInfo  info;
   SDL_GetRendererInfo(s_rendererImpl.pRenderer, &info);
@@ -115,8 +102,6 @@ void Renderer::Init()
   SDL_GetCurrentDisplayMode(0, &dm);
   
   s_rendererImpl.deviceSize = SVector2(dm.w, dm.h);
-
-  SDL_GL_GetDrawableSize(s_rendererImpl.pMainWindow, &width, &height);
   s_rendererImpl.screenSize = SVector2(width, height); 
   
   // init OpenGL
@@ -142,6 +127,7 @@ void Renderer::Init()
   s_rendererImpl.scissorRect.h = arVal[3];
 
   // initialise frame pool
+  int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
   s_rendererImpl.framePool.SetBuffer(poolSize, true, 0);
   
   // FloatBuffers
@@ -165,11 +151,8 @@ void Renderer::Exit()
 {
   XR_ASSERTMSG(Renderer, s_rendererImpl.initSuccess, ("Not initialised."));
   
-  SDL_GL_DeleteContext(s_rendererImpl.pGlContext);
-  SDL_DestroyWindow(s_rendererImpl.pMainWindow);
+  SDL_GL_DeleteContext(s_rendererImpl.glContext);
   SDL_DestroyRenderer(s_rendererImpl.pRenderer);
-
-  SDL_VideoQuit();
 
   s_rendererImpl.numVertices = -1;
   s_rendererImpl.numColors = -1;
@@ -592,7 +575,7 @@ void Renderer::Flush()
 void Renderer::Present()
 {
   Flush();
-  SDL_GL_SwapWindow(s_rendererImpl.pMainWindow);
+  SDL_GL_SwapWindow(s_rendererImpl.mainWindow);
   ++s_rendererImpl.flushId;
 }
 

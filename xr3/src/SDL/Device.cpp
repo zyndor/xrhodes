@@ -49,6 +49,7 @@ static struct
   bool                  isPauseRequested;
   bool                  isYielding;
   JSON::Entity*         pConfig;
+  SDL_Window*           mainWindow;
 } s_deviceImpl;
 
 }
@@ -81,10 +82,8 @@ static int  FilterEvents(void* pUser, SDL_Event* pEvent)
 }
 
 //==============================================================================
-void Device::Init()
+void Device::Init(char const* title)
 {
-  File::Init();
-
   bool  result(SDL_Init(SDL_INIT_EVERYTHING) == 0);
   if (!result)
   {
@@ -110,12 +109,14 @@ void Device::Init()
       WriteValue("logging", true).
       CloseScope();
     
-    writer.WriteObject("GFX").
-      WriteValue("caption", "XRhodes Application").
-      WriteValue("windowed", true).
-      WriteValue("vsync", true).
+    writer.WriteObject("Display").
       WriteValue("width", 800).
       WriteValue("height", 600).
+      WriteValue("windowed", true).
+      WriteValue("vsync", true).
+      CloseScope();
+
+    writer.WriteObject("GFX").
       WriteValue("framePoolSize", 256000).
       CloseScope();
     
@@ -140,17 +141,56 @@ void Device::Init()
   }
 
   s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
-  
+
+  // create window
+  if (!title)
+  {
+    title = "XRhodes Application";
+  }
+
+  int   width(Device::GetConfigInt("Display", "width", 800));
+  int   height(Device::GetConfigInt("Display", "height", 600));
+
+  uint32_t flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+  if (!bool(Device::GetConfigInt("Display", "windowed", false)))
+  {
+    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+  }
+
+  s_deviceImpl.mainWindow = SDL_CreateWindow(title,
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+    width, height, flags);
+
+  // start listening to events
   SDL_AddEventWatch(FilterEvents, 0);
 
   Log::Init();
 }
 
 //==============================================================================
+void * Device::GetMainWindow()
+{
+  return s_deviceImpl.mainWindow;
+}
+
+//==============================================================================
+void Device::SetMainWindowTitle(char const* title)
+{
+  XR_ASSERT(Device, title != nullptr);
+  XR_ASSERT(Device, s_deviceImpl.mainWindow != nullptr);
+  SDL_SetWindowTitle(s_deviceImpl.mainWindow, title);
+}
+
+//==============================================================================
 void Device::Exit()
 {
   XR_ASSERT(Device, !s_deviceImpl.isYielding);
-  
+
+  SDL_DestroyWindow(s_deviceImpl.mainWindow);
+  s_deviceImpl.mainWindow = nullptr;
+
+  SDL_VideoQuit();
+
   SDL_Quit();
   
   delete s_deviceImpl.pConfig;

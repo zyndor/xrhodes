@@ -44,7 +44,16 @@ public:
   };
   
   // general
-  static void         Init();
+  static void         Init(char const* title = nullptr);
+
+  ///@brief Gets native window representation of the main window; primarily for
+  /// context creation in Renderer - obviously, Device and Renderer
+  /// implementations still need to match. This window only exists between
+  /// calls to Init() and Exit().
+  static void*        GetMainWindow();
+
+  static void         SetMainWindowTitle(char const* title);
+
   static void         Exit();
   
   static bool         IsQuitting();

@@ -42,7 +42,7 @@ public:
   };
   
   // static
-  static void   Init();
+  static void   Init(char const* title = nullptr);
   static void   Exit();
     
   static int32_t  GetFrameDelayMs();
