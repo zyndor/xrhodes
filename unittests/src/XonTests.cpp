@@ -64,6 +64,8 @@ namespace XR
         XonParser::Event::Value,
         XonParser::Event::Value,
         XonParser::Event::ObjectEnd,
+        XonParser::Event::ObjectBegin,
+        XonParser::Event::ObjectEnd,
         XonParser::Event::Value,
         XonParser::Event::Value,
         XonParser::Event::ObjectEnd,
@@ -192,7 +194,7 @@ namespace XR
 
       XonEntity& v4((*root)[4]);
       Assert::IsTrue(v4.GetType() == XonEntity::Type::Object);
-      Assert::IsTrue(v4.GetNumElements() == 6);
+      Assert::IsTrue(v4.GetNumElements() == 7);
 
       XonEntity& v4_0(v4[0]);
       Assert::IsTrue(v4_0.GetType() == XonEntity::Type::Value);
@@ -228,12 +230,16 @@ namespace XR
       Assert::IsTrue(v4_3_2.GetValue() == std::string(""));
 
       XonEntity& v4_4(v4[4]);
-      Assert::IsTrue(v4_4.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_4.GetValue() == std::string("another_value"));
+      Assert::IsTrue(v4_4.GetType() == XonEntity::Type::Object);
+      Assert::IsTrue(v4_4.GetNumElements() == 0);
 
       XonEntity& v4_5(v4[5]);
       Assert::IsTrue(v4_5.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_5.GetValue() == std::string("a_value_that's_\"quoted\""));
+      Assert::IsTrue(v4_5.GetValue() == std::string("another_value"));
+
+      XonEntity& v4_6(v4[6]);
+      Assert::IsTrue(v4_6.GetType() == XonEntity::Type::Value);
+      Assert::IsTrue(v4_6.GetValue() == std::string("a_value_that's_\"quoted\""));
 
       XonEntity& v5((*root)[5]);
       Assert::IsTrue(v5.GetType() == XonEntity::Type::Value);

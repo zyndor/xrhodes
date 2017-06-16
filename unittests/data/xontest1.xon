@@ -6,8 +6,7 @@
 	key:value,
 	"key": value2,	# will override the previous definition, but value will still be accessible via an index
 	more_keys: "more values",
-	{
-		object_value,
+	{object_value,
 		key	# comment between key and colon
 		: value,
 		"{}ther key" : "{}ther_va:ue",
@@ -20,8 +19,8 @@
 			"",
 			# comment between unnecessary comma and object end
 		},
-		another_value,
-		a_value_that's_"quoted",	# no need to escape; in fact no need to match - but cannot use special characters in string
+		{},#empty object
+		another_value,a_value_that's_"quoted",	# no need to escape; in fact no need to match - but cannot use special characters in string
 	},	# comment after object end
 	null,	# a null value
 	"null" # the string "null"
