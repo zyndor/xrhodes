@@ -25,10 +25,10 @@ bool   Application::m_isRunning(false);
 bool   Application::m_breakUpdate(false);  
 
 //==============================================================================
-void  Application::Init(char const* caption)
+void  Application::Init(char const* title)
 {
   File::Init();
-  Device::Init(caption);
+  Device::Init(title);
 
   Renderer::Init(Device::GetMainWindow());
   Input::Init();

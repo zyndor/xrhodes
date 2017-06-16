@@ -82,7 +82,7 @@ static int  FilterEvents(void* pUser, SDL_Event* pEvent)
 }
 
 //==============================================================================
-void Device::Init(char const* caption)
+void Device::Init(char const* title)
 {
   bool  result(SDL_Init(SDL_INIT_EVERYTHING) == 0);
   if (!result)
@@ -143,9 +143,9 @@ void Device::Init(char const* caption)
   s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
 
   // create window
-  if (!caption)
+  if (!title)
   {
-    caption = "XRhodes Application";
+    title = "XRhodes Application";
   }
 
   int   width(Device::GetConfigInt("Display", "width", 800));
@@ -157,7 +157,7 @@ void Device::Init(char const* caption)
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
 
-  s_deviceImpl.mainWindow = SDL_CreateWindow(caption,
+  s_deviceImpl.mainWindow = SDL_CreateWindow(title,
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     width, height, flags);
 
@@ -171,6 +171,14 @@ void Device::Init(char const* caption)
 void * Device::GetMainWindow()
 {
   return s_deviceImpl.mainWindow;
+}
+
+//==============================================================================
+void Device::SetMainWindowTitle(char const* title)
+{
+  XR_ASSERT(Device, title != nullptr);
+  XR_ASSERT(Device, s_deviceImpl.mainWindow != nullptr);
+  SDL_SetWindowTitle(s_deviceImpl.mainWindow, title);
 }
 
 //==============================================================================
