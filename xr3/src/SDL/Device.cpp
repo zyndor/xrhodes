@@ -49,6 +49,7 @@ static struct
   bool                  isPauseRequested;
   bool                  isYielding;
   JSON::Entity*         pConfig;
+  SDL_Window*           mainWindow;
 } s_deviceImpl;
 
 }
@@ -110,12 +111,15 @@ void Device::Init()
       WriteValue("logging", true).
       CloseScope();
     
-    writer.WriteObject("GFX").
+    writer.WriteObject("Display").
       WriteValue("caption", "XRhodes Application").
-      WriteValue("windowed", true).
-      WriteValue("vsync", true).
       WriteValue("width", 800).
       WriteValue("height", 600).
+      WriteValue("windowed", true).
+      WriteValue("vsync", true).
+      CloseScope();
+
+    writer.WriteObject("GFX").
       WriteValue("framePoolSize", 256000).
       CloseScope();
     
@@ -140,17 +144,49 @@ void Device::Init()
   }
 
   s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
-  
+
+  // create window
+  std::string caption = Device::GetConfig("Display", "caption");
+  if (caption.empty())
+  {
+    caption = "XRhodes Application";
+  }
+
+  int   width(Device::GetConfigInt("Display", "width", 800));
+  int   height(Device::GetConfigInt("Display", "height", 600));
+
+  uint32_t flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+  if (!bool(Device::GetConfigInt("Display", "windowed", false)))
+  {
+    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+  }
+
+  s_deviceImpl.mainWindow = SDL_CreateWindow(caption.c_str(),
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+    width, height, flags);
+
+  // start listening to events
   SDL_AddEventWatch(FilterEvents, 0);
 
   Log::Init();
 }
 
 //==============================================================================
+void * Device::GetMainWindow()
+{
+  return s_deviceImpl.mainWindow;
+}
+
+//==============================================================================
 void Device::Exit()
 {
   XR_ASSERT(Device, !s_deviceImpl.isYielding);
-  
+
+  SDL_DestroyWindow(s_deviceImpl.mainWindow);
+  s_deviceImpl.mainWindow = nullptr;
+
+  SDL_VideoQuit();
+
   SDL_Quit();
   
   delete s_deviceImpl.pConfig;

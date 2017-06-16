@@ -29,7 +29,8 @@ void  Application::Init()
 {
   Device::Init();
   File::Init();
-  Renderer::Init();
+
+  Renderer::Init(Device::GetMainWindow());
   Input::Init();
   Audio::Init();
 }

@@ -38,7 +38,7 @@ public:
   };
   
   // static
-  static void           Init();
+  static void           Init(void* mainWindow);
   static void           Exit();
   
   static int32_t        GetScreenWidth();
