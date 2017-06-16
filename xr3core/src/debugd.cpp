@@ -100,7 +100,7 @@ AssertAction Channel::Assert(char const* format, ...)
 
   return (*s_assertHandler)(m_name, message);
 #else
-  return Action::Continue;
+  return AssertAction::Continue;
 #endif
 }
 

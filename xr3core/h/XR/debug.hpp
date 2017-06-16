@@ -50,7 +50,7 @@
 
 //==============================================================================
 #define XR_ASSERTMSG(chnl, cond, msg)\
-  XR_DEBUG_ONLY({ XR__ASSERT_STATE_INIT if (XR__ASSERT_STATE_CHECK(#chnl) && !(cond)){\
+  XR_DEBUG_ONLY({ XR__ASSERT_STATE_INIT if (!(cond) && XR__ASSERT_STATE_CHECK(#chnl)){\
       switch(XR::Debug::Channel(#chnl).Assert msg) {\
         case XR::Debug::AssertAction::Break: XR_TRAP break;\
         case XR::Debug::AssertAction::Continue: break;\
