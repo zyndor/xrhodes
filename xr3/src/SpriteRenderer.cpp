@@ -45,8 +45,8 @@ void  SpriteRenderer::Init(int numRecords)
   // Size of Record + 2 pointers assumed, 4 bytes aligned, otherwise,
   // based on compiler and libc++ implementation, the use of RecordList::_Node,
   // std::__detail::_List_node<Record> or other abomination would be required.
-  int nodeSize(Align((sizeof(Record) + 2 * sizeof(void*)), 4));
-  int memSize(Align(sizeof(RecordList), 4) + nodeSize * (2 * numRecords + 1));
+  int nodeSize(Align<size_t>((sizeof(Record) + 2 * sizeof(void*)), 4));
+  int memSize(Align<size_t>(sizeof(RecordList), 4) + nodeSize * (2 * numRecords + 1));
   m_pool.SetBuffer(memSize, true, 0);
 
   // place list at the beginning of pool memory. this includes the initial
