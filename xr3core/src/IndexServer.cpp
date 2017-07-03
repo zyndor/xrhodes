@@ -67,4 +67,16 @@ void IndexServer::Release(size_t i)
   }
 }
 
+//==============================================================================
+size_t IndexServer::GetNumActive() const
+{
+  return m_ids.size();
+}
+
+//==============================================================================
+size_t IndexServer::GetNumAcquired() const
+{
+  return m_iReleased;
+}
+
 } // XR
