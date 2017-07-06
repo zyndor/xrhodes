@@ -49,7 +49,7 @@ GLint  CheckError(char const* pText)
   GLint error = glGetError();
   if (error != GL_NO_ERROR)
   {
-    XR_ERROR(("OpenGL error %d occurred attempting '%s'.", error, pText));
+    XR_ERROR(("OpenGL error 0x%x occurred attempting '%s'.", error, pText));
   }
   return error;
 }

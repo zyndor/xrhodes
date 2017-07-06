@@ -17,6 +17,15 @@ namespace XR
 namespace Gfx
 {
 
+//=============================================================================
+enum class AttachmentType : uint8_t
+{
+  Color,
+  Depth,
+  Stencil,
+  DepthStencil
+};
+
 //==============================================================================
 template <typename T, size_t n>
 struct ServicedArray

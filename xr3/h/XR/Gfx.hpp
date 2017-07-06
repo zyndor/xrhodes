@@ -211,7 +211,7 @@ struct HandleCore : HandleCoreCore
 GFX_HANDLE_DECL(VertexFormatHandle);
 GFX_HANDLE_DECL(VertexBufferHandle);
 GFX_HANDLE_DECL(TextureHandle);
-//GFX_HANDLE_DECL(RenderTargetHandle);  // TODO: render targets
+GFX_HANDLE_DECL(FrameBufferHandle);
 GFX_HANDLE_DECL(ShaderHandle);
 GFX_HANDLE_DECL(ProgramHandle);
 GFX_HANDLE_DECL(UniformHandle);
@@ -254,7 +254,16 @@ TextureInfo const& GetTextureInfo(TextureHandle h);
 /// deletes it.
 void Destroy(TextureHandle h);
 
-// Uniforms
+///@brief Creates a render target, attaching the given textures.
+FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
+  uint32_t flags);
+
+///@brief Creates a render target, attaching the given textures. If
+/// @a ownTextures is set, the render target assumes ownership, i.e.
+/// the refcount of the textures is not incremented (but will be
+/// decremented when the render target is destroyed).
+FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures);
+
 ///@brief Creates a Uniform, to be recognized in shaders to be loaded. This
 /// means that a uniform of a given name should always have the same type
 /// and array size across the board. Note that the maximum array size
@@ -296,6 +305,10 @@ void SetState(uint32_t flags = F_STATE_NONE);
 
 ///@brief Sets a shader program to be used for the subsequent Draw calls.
 void SetProgram(ProgramHandle h);
+
+///@brief Sets a render target to render to. To set the default render target,
+/// pass invalid handle.
+void SetFrameBuffer(FrameBufferHandle h);
 
 ///@brief Draws the contents of the given vertex buffer.
 void Draw(VertexBufferHandle vbh, PrimType primitiveType, uint32_t offset, uint32_t count);

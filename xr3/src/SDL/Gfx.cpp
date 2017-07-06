@@ -62,6 +62,15 @@ const GLenum kPrimitiveTypes[] =
 };
 
 //=============================================================================
+const GLenum kAttachmentTypes[] =
+{
+  GL_COLOR_ATTACHMENT0,
+  GL_DEPTH_ATTACHMENT,
+  GL_STENCIL_ATTACHMENT,
+  GL_DEPTH_STENCIL_ATTACHMENT
+};
+
+//=============================================================================
 struct ExtensionGL
 {
   enum Name
@@ -124,6 +133,8 @@ struct Texture: ResourceGL
     GLenum srgbInternal;
     GLenum format;
     GLenum type;
+    // 2 bits for attachment type, then 6 bits for bit size each component.
+    uint16_t colorDepthStencilBits;
     bool compressed;
   };
 
@@ -137,7 +148,7 @@ struct Texture: ResourceGL
   }
 };
 
-#define PACK_TEX_COMP(size, component) ((size) & 0x3f) << (((component) * 6) + 2)
+#define PACK_TEX_COMP(size, component) ((size) & 0x3f) << (2 + ((component) * 6))
 
 const Texture::Format kTextureFormats[] =
 {
@@ -154,12 +165,30 @@ const Texture::Format kTextureFormats[] =
 
   // compressed
   // depth/stencil
-  { GL_DEPTH_COMPONENT32, GL_ZERO, GL_UNSIGNED_INT, false },
-  { GL_DEPTH24_STENCIL8, GL_ZERO, GL_UNSIGNED_INT_24_8, false },
-  { GL_STENCIL_INDEX, GL_ZERO, GL_UNSIGNED_BYTE, false },
+  { GL_DEPTH_COMPONENT32, GL_ZERO, GL_UNSIGNED_INT,
+    uint8_t(AttachmentType::Depth) | PACK_TEX_COMP(32, 0), false },
+  { GL_DEPTH24_STENCIL8, GL_ZERO, GL_UNSIGNED_INT_24_8,
+    uint8_t(AttachmentType::DepthStencil) | PACK_TEX_COMP(24, 0) | PACK_TEX_COMP(8, 1), false },
+  { GL_STENCIL_INDEX, GL_ZERO, GL_UNSIGNED_BYTE,
+    uint8_t(AttachmentType::Stencil) | PACK_TEX_COMP(8, 0), false },
 };
 static_assert(XR_ARRAY_SIZE(kTextureFormats) == size_t(TextureFormat::kCount),
   "Count of texture formats / definition must match.");
+
+#undef PACK_TEX_COMP
+
+//=============================================================================
+struct FrameBuffer : ResourceGL
+{
+  TextureHandle hTextures[8];
+  uint8_t numTextures;
+  bool    ownTextures;
+
+  void Bind()
+  {
+    XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, name));
+  }
+};
 
 //=============================================================================
 struct Shader : ResourceGL
@@ -747,6 +776,89 @@ struct Context
     }
   }
 
+  FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures)
+  {
+    XR_ASSERT(Gfx, textureCount < XR_ARRAY_SIZE(FrameBuffer::hTextures));
+    FrameBuffer rt;
+
+    XR_GL_CALL(glGenFramebuffers(1, &rt.name));
+    rt.Bind();
+
+    rt.numTextures = textureCount;
+    uint8_t colorAttachments[XR_ARRAY_SIZE(FrameBuffer::hTextures)];
+    int numColorAttachments = 0;
+    for (uint8_t i = 0; i < textureCount; ++i)
+    {
+      rt.hTextures[i] = hTextures[i];
+
+      Texture& texture = m_textures[hTextures[i].id];
+      XR_ASSERT(Gfx, texture.info.format != TextureFormat::kCount);
+      uint16_t bits = kTextureFormats[uint8_t(texture.info.format)].colorDepthStencilBits;
+      GLenum attachmentType = kAttachmentTypes[bits & 0x3];
+      if (attachmentType == GL_COLOR_ATTACHMENT0)
+      {
+        attachmentType += numColorAttachments;
+        colorAttachments[numColorAttachments] = attachmentType;
+        ++numColorAttachments;
+      }
+
+      // TODO: support for cubemap sides (and mip levels?)
+      XR_GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType,
+        texture.target, texture.name, 0));
+
+      if (!ownTextures)
+      {
+        ++texture.refCount;
+      }
+    }
+
+    FrameBufferHandle h;
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (GL_FRAMEBUFFER_COMPLETE == status)
+    {
+      h.id = uint16_t(m_renderTargets.server.Acquire());
+
+      m_renderTargets[h.id] = rt;
+    }
+    else
+    {
+      XR_TRACE(Gfx, ("Failed to create framebuffer, status: 0x%x", status));
+
+      if (!ownTextures)
+      {
+        for (uint8_t i = 0; i < textureCount; ++i)
+        {
+          Destroy(hTextures[i]);
+        }
+      }
+    }
+
+    return h;
+  }
+
+  FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
+    uint32_t flags)
+  {
+    Buffer buffer = { 0, 0 };
+    TextureHandle h = CreateTexture(format, width, height, 0, flags, &buffer, 1);
+    return CreateFrameBuffer(1, &h, true);
+  }
+
+  void Destroy(FrameBufferHandle h)
+  {
+    FrameBuffer& rt = m_renderTargets[h.id];
+    rt.Bind();
+
+    for (uint8_t i = 0; i < rt.numTextures; ++i)
+    {
+      Destroy(rt.hTextures[i]);
+    }
+    std::memset(&rt, 0x00, sizeof(FrameBuffer));
+
+    XR_GL_CALL(glDeleteFramebuffers(1, &rt.name));
+    m_renderTargets.server.Release(h.id);
+  }
+
   UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize)
   {
     // TODO: reserved uniforms
@@ -1106,6 +1218,12 @@ struct Context
     m_activeProgram = h;
   }
 
+  void SetFrameBuffer(FrameBufferHandle h)
+  {
+    GLint name = h.IsValid() ? m_renderTargets[h.id].name : 0;
+    XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, name));
+  }
+
   void Draw(VertexBufferHandle vbh, PrimType pt, uint32_t offset, uint32_t count)
   {
     XR_ASSERT(Gfx, m_activeProgram.id != INVALID_ID);
@@ -1151,6 +1269,7 @@ private:
   ServicedArray<VertexBufferObject, 4096> m_vbos;
   ServicedArray<IndexBufferObject, 4096> m_ibos;
   ServicedArray<Texture, 1024> m_textures;
+  ServicedArray<FrameBuffer, 256> m_renderTargets;
 
   ServicedArray<Uniform, 1024> m_uniforms;
   std::unordered_map<uint32_t, UniformHandle> m_uniformHandles;
@@ -1246,6 +1365,25 @@ void Destroy(TextureHandle h)
 }
 
 //=============================================================================
+FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
+  uint32_t flags)
+{
+  return s_impl->CreateFrameBuffer(format, width, height, flags);
+}
+
+//=============================================================================
+FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures)
+{
+  return s_impl->CreateFrameBuffer(textureCount, hTextures, ownTextures);
+}
+
+//=============================================================================
+void Destroy(FrameBufferHandle h)
+{
+  s_impl->Destroy(h);
+}
+
+//=============================================================================
 UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize)
 {
   return s_impl->CreateUniform(name, type, arraySize);
@@ -1316,6 +1454,12 @@ void SetState(uint32_t flags)
 void SetProgram(ProgramHandle h)
 {
   s_impl->SetProgram(h);
+}
+
+//==============================================================================
+void SetFrameBuffer(FrameBufferHandle h)
+{
+  s_impl->SetFrameBuffer(h);
 }
 
 //==============================================================================
