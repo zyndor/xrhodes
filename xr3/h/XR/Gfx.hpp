@@ -158,6 +158,17 @@ enum class TextureFormat
 };
 
 //=============================================================================
+struct TextureInfo
+{
+  TextureFormat format = TextureFormat::kCount;
+  uint16_t width = 0;
+  uint16_t height = 0;
+  uint16_t depth = 0;
+  uint8_t mipCount = 0;
+  uint32_t flags = F_TEXTURE_NONE;
+};
+
+//=============================================================================
 enum class ShaderType: uint8_t
 {
   Vertex,
@@ -235,6 +246,7 @@ TextureHandle CreateTexture(TextureFormat hFormat, uint32_t width,
   uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
   size_t numBuffers = 1);
 
+TextureInfo const& GetTextureInfo(TextureHandle h);
 
 // TODO: texture read.
 

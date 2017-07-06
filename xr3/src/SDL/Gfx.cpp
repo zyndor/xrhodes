@@ -127,14 +127,8 @@ struct Texture: ResourceGL
     bool compressed;
   };
 
-  TextureFormat format = TextureFormat::kCount;
+  TextureInfo info;
   GLenum target = GL_NONE;
-  uint16_t width = 0;
-  uint16_t height = 0;
-  uint16_t depth = 0;
-  uint8_t mipCount = 0;
-  size_t sizeBytes = 0;
-  uint32_t flags = F_TEXTURE_NONE;
   uint16_t refCount = 0;
 
   void Bind()
@@ -655,12 +649,12 @@ struct Context
 
     Texture& t = m_textures[h.id];
     XR_GL_CALL(glGenTextures(1, &t.name));
-    t.format = format;
-    t.width = width;
-    t.height = height;
-    t.depth = depth;
-    t.flags = flags;
-
+    t.info.format = format;
+    t.info.width = width;
+    t.info.height = height;
+    t.info.depth = depth;
+    t.info.flags = flags;
+    
     // determine target
     t.target = IsFullMask(flags, F_TEXTURE_CUBE) ? GL_TEXTURE_CUBE_MAP : 
       (depth > 0 ? GL_TEXTURE_3D : GL_TEXTURE_2D);
@@ -732,6 +726,12 @@ struct Context
     }
 
     return h;
+  }
+
+  TextureInfo const& GetTextureInfo(TextureHandle h)
+  {
+    XR_ASSERT(Gfx, h.id < m_textures.server.GetNumActive());
+    return m_textures[h.id].info;
   }
 
   void Destroy(TextureHandle h)
@@ -1227,6 +1227,13 @@ TextureHandle CreateTexture(TextureFormat format, uint32_t width,
 {
   return s_impl->CreateTexture(format, width, height, depth, flags, buffer, numBuffers);
 }
+
+//=============================================================================
+TextureInfo const& GetTextureInfo(TextureHandle h)
+{
+  return s_impl->GetTextureInfo(h);
+}
+
 
 //=============================================================================
 void Destroy(TextureHandle h)
