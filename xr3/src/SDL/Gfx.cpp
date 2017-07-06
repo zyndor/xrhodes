@@ -533,8 +533,7 @@ struct Context
     // initialise extensions
     InitExtensions(openGlVersionMajor * 10 + openGlVersionMinor);
 
-    XR_GL_CALL(glViewport(0, 0, (GLsizei)m_logicalSize.x,
-      (GLsizei)m_logicalSize.y));
+    SetViewport(0, 0, m_logicalSize.x, m_logicalSize.y);
 
     XR_GL_CALL(glDepthFunc(GL_LEQUAL)); // TODO: give it to state
 
@@ -1031,6 +1030,11 @@ struct Context
     XR_GL_CALL(glClear(flagls));
   }
 
+  void SetViewport(int16_t x, int16_t y, uint16_t width, uint16_t height)
+  {
+    XR_GL_CALL(glViewport(x, y, width, height));
+  }
+
   void SetUniform(UniformHandle h, uint8_t num, void const* data)
   {
     Uniform& u = m_uniforms[h.id];
@@ -1281,6 +1285,12 @@ void Destroy(ProgramHandle h)
 void Clear(uint32_t flags, Color color, float depth, uint8_t stencil)
 {
   s_impl->ClearBuffer(flags, color, depth, stencil);
+}
+
+//==============================================================================
+void SetViewport(int16_t x, int16_t y, uint16_t width, uint16_t height)
+{
+  s_impl->SetViewport(x, y, width, height);
 }
 
 //==============================================================================

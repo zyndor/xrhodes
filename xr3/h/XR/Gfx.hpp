@@ -282,6 +282,9 @@ ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment);
 void Destroy(ProgramHandle h);
 
 // State and drawing
+///@brief Sets the viewport.
+void SetViewport(int16_t x, int16_t y, uint16_t width, uint16_t height);
+
 ///@brief Sets a value for the given uniform.
 void SetUniform(UniformHandle h, uint8_t num, void const* data);
 
