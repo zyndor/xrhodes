@@ -1205,49 +1205,68 @@ struct Context
 
   void SetState(uint32_t flags)
   {
+    const uint32_t deltaFlags = flags ^ m_activeState;
+
     // depth test
-    GL::SwitchEnabledState(GL_DEPTH_TEST, IsFullMask(flags, F_STATE_DEPTH_TEST));
+    if (IsFullMask(deltaFlags, F_STATE_DEPTH_TEST))
+    {
+      GL::SwitchEnabledState(GL_DEPTH_TEST, IsFullMask(flags, F_STATE_DEPTH_TEST));
+    }
 
     // depth write
-    XR_GL_CALL(glDepthMask(IsFullMask(flags, F_STATE_DEPTH_WRITE)));
+    if (IsFullMask(deltaFlags, F_STATE_DEPTH_WRITE))
+    {
+      XR_GL_CALL(glDepthMask(IsFullMask(flags, F_STATE_DEPTH_WRITE)));
+    }
 
     // blending
-    bool alphaBlend = IsFullMask(flags, F_STATE_ALPHA_BLEND);
-    GL::SwitchEnabledState(GL_BLEND, alphaBlend);
-    if (alphaBlend)
+    if (IsFullMask(deltaFlags, F_STATE_ALPHA_BLEND))
     {
-      // TODO: improved blend func support
-      XR_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+      bool alphaBlend = IsFullMask(flags, F_STATE_ALPHA_BLEND);
+      GL::SwitchEnabledState(GL_BLEND, alphaBlend);
+      if (alphaBlend)
+      {
+        // TODO: improved blend func support
+        XR_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+      }
     }
 
     // culling
-    uint32_t culling = flags & (F_STATE_CULL_BACK | F_STATE_CULL_FRONT);
-    bool hasCulling = culling != 0;
-    GL::SwitchEnabledState(GL_CULL_FACE, hasCulling);
-    if (hasCulling)
+    if ((deltaFlags & (F_STATE_CULL_BACK | F_STATE_CULL_FRONT)) != 0)
     {
-      GLenum cullMode;
-      switch (culling)
+      uint32_t culling = flags & (F_STATE_CULL_BACK | F_STATE_CULL_FRONT);
+      bool hasCulling = culling != 0;
+      GL::SwitchEnabledState(GL_CULL_FACE, hasCulling);
+      if (hasCulling)
       {
-      case F_STATE_CULL_BACK:
-        cullMode = GL_BACK;
-        break;
+        GLenum cullMode;
+        switch (culling)
+        {
+        case F_STATE_CULL_BACK:
+          cullMode = GL_BACK;
+          break;
 
-      case F_STATE_CULL_FRONT:
-        cullMode = GL_FRONT;
-        break;
+        case F_STATE_CULL_FRONT:
+          cullMode = GL_FRONT;
+          break;
 
-      default:
-        cullMode = GL_FRONT_AND_BACK;
-        break;
+        default:
+          cullMode = GL_FRONT_AND_BACK;
+          break;
+        }
+
+        XR_GL_CALL(glCullFace(cullMode));
       }
-
-      XR_GL_CALL(glCullFace(cullMode));
     }
 
     // wireframe
-    XR_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK,
-      IsFullMask(flags, F_STATE_WIREFRAME) ? GL_LINE : GL_FILL));
+    if (IsFullMask(deltaFlags, F_STATE_WIREFRAME))
+    {
+      XR_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK,
+        IsFullMask(flags, F_STATE_WIREFRAME) ? GL_LINE : GL_FILL));
+    }
+
+    m_activeState = flags;
   }
 
   void SetProgram(ProgramHandle h)
@@ -1340,6 +1359,7 @@ private:
   ServicedArray<Program, 512> m_programs;
 
   GLuint m_vao = 0;
+  uint32_t m_activeState = F_STATE_NONE;
   ProgramHandle m_activeProgram;
 
   Pool m_framePool;
