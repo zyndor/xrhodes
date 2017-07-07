@@ -115,13 +115,26 @@ struct ResourceGL
 struct VertexBufferObject : ResourceGL
 {
   VertexFormatHandle hFormat;
-  GLenum  target;
   uint32_t flags = F_BUFFER_NONE;
+  GLenum  target;
+
+  void Bind() const
+  {
+    XR_GL_CALL(glBindBuffer(target, name));
+  }
 };
 
 //=============================================================================
 struct IndexBufferObject : ResourceGL
 {
+  uint8_t indexSize = 0;
+  uint32_t flags = F_BUFFER_NONE;
+  GLenum type;
+
+  void Bind() const
+  {
+    XR_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, name));
+  }
 };
 
 //=============================================================================
@@ -641,14 +654,14 @@ struct Context
     VertexBufferObject& vbo = m_vbos[h.id];
     XR_GL_CALL(glGenBuffers(1, &vbo.name));
 
-    GLenum target = IsFullMask(flags, F_BUFFER_INDIRECT_DRAW) ?
+    vbo.target = IsFullMask(flags, F_BUFFER_INDIRECT_DRAW) ?
       GL_DRAW_INDIRECT_BUFFER : GL_ARRAY_BUFFER;  // TODO: indirect draw support
-    XR_GL_CALL(glBindBuffer(target, vbo.name));
-    XR_GL_CALL(glBufferData(target, buffer.size, buffer.data,
-      buffer.data ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW));
-    XR_GL_CALL(glBindBuffer(target, 0));
+    vbo.Bind();
 
-    vbo.target = target;
+    XR_GL_CALL(glBufferData(vbo.target, buffer.size, buffer.data,
+      buffer.data ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW));
+    XR_GL_CALL(glBindBuffer(vbo.target, 0));
+
     vbo.hFormat = hFormat;
     vbo.flags = flags;
 
@@ -662,6 +675,33 @@ struct Context
     XR_GL_CALL(glDeleteBuffers(1, &vbo.name));
 
     std::memset(&vbo, 0x00, sizeof(vbo));
+    // TODO: invalidate vaos.
+  }
+
+  IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
+  {
+    IndexBufferHandle h;
+    h.id = m_ibos.server.Acquire();
+
+    IndexBufferObject& ibo = m_ibos[h.id];
+    XR_GL_CALL(glGenBuffers(1, &ibo.name));
+    ibo.Bind();
+    XR_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer.size, buffer.data,
+      buffer.data ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW));
+
+    ibo.indexSize = IsFullMask(flags, F_BUFFER_INDEX_32BITS) ? sizeof(uint32_t) : sizeof(uint16_t);
+    ibo.flags = flags;
+
+    return h;
+  }
+
+  void Destroy(IndexBufferHandle h)
+  {
+    IndexBufferObject& ibo = m_ibos[h.id];
+    XR_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    XR_GL_CALL(glDeleteBuffers(1, &ibo.name));
+
+    std::memset(&ibo, 0x00, sizeof(ibo));
     // TODO: invalidate vaos.
   }
 
@@ -1234,10 +1274,32 @@ struct Context
 
     VertexBufferObject const& vbo = m_vbos[vbh.id];
     VertexFormatRef const& vf = m_vertexFormats[vbo.hFormat.id];
-    XR_GL_CALL(glBindBuffer(vbo.target, vbo.name));
+    vbo.Bind();
     program.BindAttributes(vf.format, 0);
 
     XR_GL_CALL(glDrawArrays(kPrimitiveTypes[uint8_t(pt)], offset, count));
+    program.UnbindAttributes();
+  }
+
+  void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType pt, uint32_t offset, uint32_t count)
+  {
+    XR_ASSERT(Gfx, m_activeProgram.id != INVALID_ID);
+    Program& program = m_programs[m_activeProgram.id];
+    XR_ASSERT(Gfx, program.linked == true);
+
+    program.ResetAttribBindings();
+
+    VertexBufferObject const& vbo = m_vbos[vbh.id];
+    VertexFormatRef const& vf = m_vertexFormats[vbo.hFormat.id];
+    vbo.Bind();
+    program.BindAttributes(vf.format, 0);
+
+    IndexBufferObject const& ibo = m_ibos[ibh.id];
+    ibo.Bind();
+    GLenum types[] = { GL_UNSIGNED_SHORT, GL_UNSIGNED_INT };
+    XR_GL_CALL(glDrawElementsInstanced(kPrimitiveTypes[uint8_t(pt)], count,
+      types[(ibo.flags & F_BUFFER_INDEX_32BITS) != 0],
+      reinterpret_cast<void*>(uintptr_t(offset * ibo.indexSize)), 1)); // TODO: instanced drawing
     program.UnbindAttributes();
   }
 
@@ -1339,6 +1401,18 @@ VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const &
 
 //=============================================================================
 void Destroy(VertexBufferHandle h)
+{
+  s_impl->Destroy(h);
+}
+
+//=============================================================================
+IndexBufferHandle CreateIndexBuffer(Buffer const & buffer, uint32_t flags)
+{
+  return s_impl->CreateIndexBuffer(buffer, flags);
+}
+
+//=============================================================================
+void Destroy(IndexBufferHandle h)
 {
   s_impl->Destroy(h);
 }
@@ -1466,6 +1540,12 @@ void SetFrameBuffer(FrameBufferHandle h)
 void Draw(VertexBufferHandle vbh, PrimType primitiveType, uint32_t offset, uint32_t count)
 {
   s_impl->Draw(vbh, primitiveType, offset, count);
+}
+
+//=============================================================================
+void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType primitiveType, uint32_t offset, uint32_t count)
+{
+  s_impl->Draw(vbh, ibh, primitiveType, offset, count);
 }
 
 //==============================================================================

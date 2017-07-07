@@ -34,6 +34,7 @@ enum Flags
 {
   F_BUFFER_NONE = 0,
   F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(0),
+  F_BUFFER_INDEX_32BITS = XR_MASK_ID(1),
 
   F_TEXTURE_NONE = 0,
   F_TEXTURE_WRAP = XR_MASK_ID(0), // clamp is default
@@ -210,6 +211,7 @@ struct HandleCore : HandleCoreCore
 #define GFX_HANDLE_DECL(name) struct name: HandleCore<name> {}
 GFX_HANDLE_DECL(VertexFormatHandle);
 GFX_HANDLE_DECL(VertexBufferHandle);
+GFX_HANDLE_DECL(IndexBufferHandle);
 GFX_HANDLE_DECL(TextureHandle);
 GFX_HANDLE_DECL(FrameBufferHandle);
 GFX_HANDLE_DECL(ShaderHandle);
@@ -240,6 +242,11 @@ void Destroy(VertexFormatHandle h);
 VertexBufferHandle  CreateVertexBuffer(VertexFormatHandle hFormat,
   Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
 void Destroy(VertexBufferHandle h);
+
+///@brief Creates a vertex buffer with the given format, data and
+/// options.
+IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
+void Destroy(IndexBufferHandle h);
 
 ///@brief Uploads texture. Texel data isn't kept around by Gfx.
 TextureHandle CreateTexture(TextureFormat hFormat, uint32_t width,
@@ -310,10 +317,13 @@ void SetProgram(ProgramHandle h);
 /// pass invalid handle.
 void SetFrameBuffer(FrameBufferHandle h);
 
-///@brief Draws the contents of the given vertex buffer.
+///@brief Draws the contents of the given vertex buffer; @a count vertices
+/// starting from @a offset.
 void Draw(VertexBufferHandle vbh, PrimType primitiveType, uint32_t offset, uint32_t count);
 
-// TODO: indexed drawing
+///@brief Draws the contents of the given vertex buffer, using @a count indices
+/// starting from @a offset.
+void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType primitiveType, uint32_t offset, uint32_t count);
 
 void Clear(uint32_t flags, Color color = Color(0xff000000), float depth = 1.0f,
   uint8_t stencil = 0x00);
