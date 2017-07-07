@@ -645,7 +645,7 @@ struct Context
       GL_DRAW_INDIRECT_BUFFER : GL_ARRAY_BUFFER;  // TODO: indirect draw support
     XR_GL_CALL(glBindBuffer(target, vbo.name));
     XR_GL_CALL(glBufferData(target, buffer.size, buffer.data,
-      buffer.data ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+      buffer.data ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW));
     XR_GL_CALL(glBindBuffer(target, 0));
 
     vbo.target = target;
