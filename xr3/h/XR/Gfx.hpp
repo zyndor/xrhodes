@@ -49,7 +49,8 @@ enum Flags
   F_STATE_ALPHA_BLEND = XR_MASK_ID(2), // off by default
   F_STATE_CULL_BACK = XR_MASK_ID(3),  // no culling by default
   F_STATE_CULL_FRONT = XR_MASK_ID(4), // only points and lines drawn when F_STATE_CULL_BACK | F_STATE_CULL_FRONT set
-  F_STATE_WIREFRAME = XR_MASK_ID(5),
+  F_STATE_SCISSOR_TEST = XR_MASK_ID(5),
+  F_STATE_WIREFRAME = XR_MASK_ID(6),
 
   F_CLEAR_NONE = 0,
   F_CLEAR_COLOR = XR_MASK_ID(0),
@@ -188,6 +189,15 @@ enum class UniformType: uint8_t
 };
 
 //=============================================================================
+struct Rect
+{
+  int16_t x;
+  int16_t y;
+  uint16_t width;
+  uint16_t height;
+};
+
+//=============================================================================
 namespace
 {
 struct HandleCoreCore {
@@ -299,7 +309,10 @@ void Destroy(ProgramHandle h);
 
 // State and drawing
 ///@brief Sets the viewport.
-void SetViewport(int16_t x, int16_t y, uint16_t width, uint16_t height);
+void SetViewport(Rect const& rect);
+
+///@brief Sets rectangle for scissor testing; if null, disables scissor test.
+void SetScissor(Rect const& rect);
 
 ///@brief Sets a value for the given uniform.
 void SetUniform(UniformHandle h, uint8_t num, void const* data);
