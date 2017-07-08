@@ -522,8 +522,9 @@ struct Context
 
   Context(SDL_Window* window)
   {
+    XR_TRACE(Gfx, ("Gfx init start..."));
     XR_ASSERTMSG(Renderer, window, ("Window must not be null!"));
-    m_window = window; // static_cast<SDL_Window*>(mainWindow);
+    m_window = window;
 
     // Window must be created at this point. In SDL, we do it in Device.
     // Create SDL renderer.
@@ -589,19 +590,32 @@ struct Context
     // initialise frame pool
     int poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
     m_framePool.SetBuffer(poolSize, true, 0);
+
+    XR_TRACE(Gfx, ("Gfx init complete."));
   }
 
   ~Context()
   {
+    XR_TRACE(Gfx, ("Gfx shutting down."));
     if (m_vao != 0)
     {
       XR_GL_CALL(glDeleteVertexArrays(1, &m_vao));
     }
 
-    // TODO: report resource leaks.
+#define REPORT_LEAKS(name) XR_TRACEIF(Gfx, m_##name##s.server.GetNumAcquired() > 0, ("WARNING: "#name##" leak detected: %d", m_##name##s.server.GetNumAcquired()))
+    REPORT_LEAKS(vertexFormat);
+    REPORT_LEAKS(vbo);
+    REPORT_LEAKS(ibo);
+    REPORT_LEAKS(texture);
+    REPORT_LEAKS(renderTarget);
+    REPORT_LEAKS(uniform);
+    REPORT_LEAKS(shader);
+    REPORT_LEAKS(program);
+#undef REPORT_LEAKS
 
     SDL_GL_DeleteContext(m_ownContext);
     SDL_DestroyRenderer(m_ownRenderer);
+    XR_TRACE(Gfx, ("Gfx shutdown complete."));
   }
 
   uint16_t GetWidth() const
