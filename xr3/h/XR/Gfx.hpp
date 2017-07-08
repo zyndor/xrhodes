@@ -295,6 +295,9 @@ FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount, TextureHandle const* 
 /// decremented when the render target is destroyed).
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* attachments, bool ownTextures);
 
+///@brief Deletes framebuffer, decrementing the refcount of all attached textures.
+void Destroy(FrameBufferHandle h);
+
 ///@brief Creates a Uniform, to be recognized in shaders to be loaded. This
 /// means that a uniform of a given name should always have the same type
 /// and array size across the board. Note that the maximum array size
