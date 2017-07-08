@@ -230,6 +230,14 @@ GFX_HANDLE_DECL(UniformHandle);
 #undef GFX_HANDLE_DECL
 
 //=============================================================================
+struct FrameBufferAttachment
+{
+  TextureHandle hTexture;
+  uint8_t mipLevel;
+  uint8_t side;
+};
+
+//=============================================================================
 ///@brief Initialises Gfx with the given window handle, which must match the
 /// implementation of Device.
 void Init(void* window, Allocator* alloc = nullptr);
@@ -275,11 +283,17 @@ void Destroy(TextureHandle h);
 FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
   uint32_t flags);
 
-///@brief Creates a render target, attaching the given textures. If
+///@brief Creates a render target, attaching the given @a hTextures. If
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures);
+
+///@brief Creates a render target with the given @a attachments. If
+/// @a ownTextures is set, the render target assumes ownership, i.e.
+/// the refcount of the textures is not incremented (but will be
+/// decremented when the render target is destroyed).
+FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* attachments, bool ownTextures);
 
 ///@brief Creates a Uniform, to be recognized in shaders to be loaded. This
 /// means that a uniform of a given name should always have the same type

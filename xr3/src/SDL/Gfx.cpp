@@ -45,6 +45,15 @@ static_assert(XR_ARRAY_SIZE(kAttributeName) == size_t(Attribute::kCount),
   "Count of attribute types / names must match.");
 
 //=============================================================================
+const GLenum kAttachmentTypes[] =
+{
+  GL_COLOR_ATTACHMENT0,
+  GL_DEPTH_ATTACHMENT,
+  GL_STENCIL_ATTACHMENT,
+  GL_DEPTH_STENCIL_ATTACHMENT
+};
+
+//=============================================================================
 const GLenum kShaderTypes[] = {
   GL_VERTEX_SHADER,
   GL_FRAGMENT_SHADER,
@@ -59,15 +68,6 @@ const GLenum kPrimitiveTypes[] =
   GL_TRIANGLE_STRIP,
   GL_QUADS,
   GL_QUAD_STRIP
-};
-
-//=============================================================================
-const GLenum kAttachmentTypes[] =
-{
-  GL_COLOR_ATTACHMENT0,
-  GL_DEPTH_ATTACHMENT,
-  GL_STENCIL_ATTACHMENT,
-  GL_DEPTH_STENCIL_ATTACHMENT
 };
 
 //=============================================================================
@@ -818,6 +818,17 @@ struct Context
 
   FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures)
   {
+    std::vector<FrameBufferAttachment>  attachments(textureCount);
+    std::generate(attachments.begin(), attachments.end(), [&hTextures]() {
+      FrameBufferAttachment a = { *hTextures, 0, 0 };
+      ++hTextures;
+      return a;
+    });
+    return CreateFrameBuffer(textureCount, attachments.data(), ownTextures);
+  }
+
+  FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* attachments, bool ownTextures)
+  {
     XR_ASSERT(Gfx, textureCount < XR_ARRAY_SIZE(FrameBuffer::hTextures));
     FrameBuffer rt;
 
@@ -829,9 +840,10 @@ struct Context
     int numColorAttachments = 0;
     for (uint8_t i = 0; i < textureCount; ++i)
     {
-      rt.hTextures[i] = hTextures[i];
+      FrameBufferAttachment const& att = attachments[i];
+      rt.hTextures[i] = att.hTexture;
 
-      Texture& texture = m_textures[hTextures[i].id];
+      Texture& texture = m_textures[att.hTexture.id];
       XR_ASSERT(Gfx, texture.info.format != TextureFormat::kCount);
       uint16_t bits = kTextureFormats[uint8_t(texture.info.format)].colorDepthStencilBits;
       GLenum attachmentType = kAttachmentTypes[bits & 0x3];
@@ -842,9 +854,14 @@ struct Context
         ++numColorAttachments;
       }
 
-      // TODO: support for cubemap sides (and mip levels?)
-      XR_GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType,
-        texture.target, texture.name, 0));
+      GLenum target = texture.target;
+      if (GL_TEXTURE_CUBE_MAP == target)
+      {
+        target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + att.side;
+      }
+
+      XR_GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, target,
+        texture.name, att.mipLevel));
 
       if (!ownTextures)
       {
@@ -868,7 +885,7 @@ struct Context
       {
         for (uint8_t i = 0; i < textureCount; ++i)
         {
-          Destroy(hTextures[i]);
+          Destroy(attachments[i].hTexture);
         }
       }
     }
@@ -1481,6 +1498,12 @@ FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32
 FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures)
 {
   return s_impl->CreateFrameBuffer(textureCount, hTextures, ownTextures);
+}
+
+//=============================================================================
+FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const * attachments, bool ownTextures)
+{
+  return s_impl->CreateFrameBuffer(textureCount, attachments, ownTextures);
 }
 
 //=============================================================================
