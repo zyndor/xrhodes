@@ -178,11 +178,11 @@ const Texture::Format kTextureFormats[] =
 
   // compressed
   // depth/stencil
-  { GL_DEPTH_COMPONENT32, GL_ZERO, GL_UNSIGNED_INT,
+  { GL_DEPTH_COMPONENT32, GL_ZERO, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,
     uint8_t(AttachmentType::Depth) | PACK_TEX_COMP(32, 0), false },
-  { GL_DEPTH24_STENCIL8, GL_ZERO, GL_UNSIGNED_INT_24_8,
+  { GL_DEPTH24_STENCIL8, GL_ZERO, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8,
     uint8_t(AttachmentType::DepthStencil) | PACK_TEX_COMP(24, 0) | PACK_TEX_COMP(8, 1), false },
-  { GL_STENCIL_INDEX, GL_ZERO, GL_UNSIGNED_BYTE,
+  { GL_STENCIL_INDEX8, GL_ZERO, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE,
     uint8_t(AttachmentType::Stencil) | PACK_TEX_COMP(8, 0), false },
 };
 static_assert(XR_ARRAY_SIZE(kTextureFormats) == size_t(TextureFormat::kCount),
