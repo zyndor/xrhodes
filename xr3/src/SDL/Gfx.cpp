@@ -736,6 +736,7 @@ struct Context
     t.info.height = height;
     t.info.depth = depth;
     t.info.flags = flags;
+    t.refCount = 1;
     
     // determine target
     t.target = IsFullMask(flags, F_TEXTURE_CUBE) ? GL_TEXTURE_CUBE_MAP : 
@@ -824,7 +825,7 @@ struct Context
     if (texture.refCount == 0)
     {
       XR_GL_CALL(glDeleteTextures(1, &texture.name));
-      texture.name = 0;
+      std::memset(&texture, 0x00, sizeof(Texture));
 
       m_textures.server.Release(h.id);
     }
