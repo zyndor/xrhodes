@@ -1394,7 +1394,14 @@ private:
   Pool m_framePool;
 };
 
-std::unique_ptr<Context, std::function<void(void*)> > s_impl(nullptr, GfxDeallocate);
+//==============================================================================
+void ContextDeleter(Context* ctx)
+{
+  ctx->~Context();
+  g_allocator->Deallocate(ctx);
+};
+
+std::unique_ptr<Context, std::function<void(Context*)> > s_impl(nullptr, ContextDeleter);
 
 //=============================================================================
 void Init(void * window, Allocator* alloc)

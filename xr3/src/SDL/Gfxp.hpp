@@ -73,12 +73,6 @@ static_assert(XR_ARRAY_SIZE(kUniformTypeSize) == size_t(UniformType::kCount) + 1
 Allocator* g_allocator = nullptr; // extern
 
 //==============================================================================
-void GfxDeallocate(void* mem)
-{
-  g_allocator->Deallocate(mem);
-};
-
-//==============================================================================
 struct Uniform
 {
   void*       data;
