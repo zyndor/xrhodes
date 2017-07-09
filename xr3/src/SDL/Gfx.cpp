@@ -99,11 +99,7 @@ static_assert(XR_ARRAY_SIZE(s_extensions) == size_t(ExtensionGL::Name::kCount),
   "Count of extension names / definitions must match.");
 
 //=============================================================================
-struct VertexFormatRef
-{
-  VertexFormat format;
-  uint16_t refCount = 0;
-};
+using VertexFormatRef = Ref<VertexFormat>;
 
 //=============================================================================
 struct ResourceGL
@@ -153,13 +149,14 @@ struct Texture: ResourceGL
 
   TextureInfo info;
   GLenum target = GL_NONE;
-  uint16_t refCount = 0;
 
   void Bind()
   {
     XR_GL_CALL(glBindTexture(target, name));
   }
 };
+
+using TextureRef = Ref<Texture>;
 
 #define PACK_TEX_COMP(size, component) ((size) & 0x3f) << (2 + ((component) * 6))
 
@@ -207,8 +204,9 @@ struct FrameBuffer : ResourceGL
 struct Shader : ResourceGL
 {
   ShaderType type;
-  uint16_t refCount = 0;
 };
+
+using ShaderRef = Ref<Shader>;
 
 //=============================================================================
 struct Program: ResourceGL
@@ -223,7 +221,7 @@ struct Program: ResourceGL
   ConstBuffer*  uniforms = nullptr;
   // TODO: latest update timestamp
 
-  void UpdateUniforms(size_t numUniforms, Uniform const* uniformData)
+  void UpdateUniforms(size_t numUniforms, void const* const* uniformData)
   {
     if (uniforms)
     {
@@ -240,7 +238,7 @@ struct Program: ResourceGL
         uniforms->Read(loc);
 
         XR_ASSERT(Gfx, numUniforms > hUniform.id);
-        void const* value = uniformData[hUniform.id].data;
+        void const* value = uniformData[hUniform.id];
         switch (type)
         {
         case UniformType::Int1:
@@ -263,7 +261,7 @@ struct Program: ResourceGL
     }
   }
 
-  void ReleaseUniforms(size_t numUniforms, Uniform* uniformData)
+  void ReleaseUniforms(size_t numUniforms, UniformRef* uniformData)
   {
     uniforms->Reset();
 
@@ -641,9 +639,9 @@ struct Context
     else
     {
       hFormat.id = uint16_t(m_vertexFormats.server.Acquire());
-      VertexFormatRef& vf = m_vertexFormats[hFormat.id];
-      vf.format = format;
-      vf.refCount = 1;
+      VertexFormatRef& vfr = m_vertexFormats[hFormat.id];
+      vfr.inst = format;
+      vfr.refCount = 1;
     }
     return hFormat;
   }
@@ -655,7 +653,7 @@ struct Context
     --vfr.refCount;
     if (vfr.refCount == 0)
     {
-      uint32_t hash = vfr.format.CalculateHash();
+      uint32_t hash = vfr.inst.CalculateHash();
       m_vertexFormatHandles.erase(hash);
     }
   }
@@ -726,17 +724,14 @@ struct Context
     XR_ASSERT(Gfx, width > 0);
     XR_ASSERT(Gfx, height > 0);
     XR_ASSERT(Gfx, numBuffers > 0);
-    TextureHandle h;
-    h.id = uint16_t(m_textures.server.Acquire());
 
-    Texture& t = m_textures[h.id];
+    Texture t;
     XR_GL_CALL(glGenTextures(1, &t.name));
     t.info.format = format;
     t.info.width = width;
     t.info.height = height;
     t.info.depth = depth;
     t.info.flags = flags;
-    t.refCount = 1;
     
     // determine target
     t.target = IsFullMask(flags, F_TEXTURE_CUBE) ? GL_TEXTURE_CUBE_MAP : 
@@ -808,24 +803,29 @@ struct Context
       height /= 2;
     }
 
+    TextureHandle h;
+    h.id = uint16_t(m_textures.server.Acquire());
+
+    TextureRef& tr = m_textures[h.id];
+    tr.inst = t;
+    tr.refCount = 1;
     return h;
   }
 
   TextureInfo const& GetTextureInfo(TextureHandle h)
   {
-    XR_ASSERT(Gfx, h.id < m_textures.server.GetNumActive());
-    return m_textures[h.id].info;
+    return m_textures[h.id].inst.info;
   }
 
   void Destroy(TextureHandle h)
   {
-    Texture& texture = m_textures[h.id];
+    TextureRef& texture = m_textures[h.id];
     XR_ASSERT(Gfx, texture.refCount > 0);
     --texture.refCount;
     if (texture.refCount == 0)
     {
-      XR_GL_CALL(glDeleteTextures(1, &texture.name));
-      std::memset(&texture, 0x00, sizeof(Texture));
+      XR_GL_CALL(glDeleteTextures(1, &texture.inst.name));
+      std::memset(&texture.inst, 0x00, sizeof(Texture));
 
       m_textures.server.Release(h.id);
     }
@@ -858,9 +858,9 @@ struct Context
       FrameBufferAttachment const& att = attachments[i];
       rt.hTextures[i] = att.hTexture;
 
-      Texture& texture = m_textures[att.hTexture.id];
-      XR_ASSERT(Gfx, texture.info.format != TextureFormat::kCount);
-      uint16_t bits = kTextureFormats[uint8_t(texture.info.format)].colorDepthStencilBits;
+      TextureRef& texture = m_textures[att.hTexture.id];
+      XR_ASSERT(Gfx, texture.inst.info.format != TextureFormat::kCount);
+      uint16_t bits = kTextureFormats[uint8_t(texture.inst.info.format)].colorDepthStencilBits;
       GLenum attachmentType = kAttachmentTypes[bits & 0x3];
       if (attachmentType == GL_COLOR_ATTACHMENT0)
       {
@@ -869,14 +869,14 @@ struct Context
         ++numColorAttachments;
       }
 
-      GLenum target = texture.target;
+      GLenum target = texture.inst.target;
       if (GL_TEXTURE_CUBE_MAP == target)
       {
         target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + att.side;
       }
 
       XR_GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, target,
-        texture.name, att.mipLevel));
+        texture.inst.name, att.mipLevel));
 
       if (!ownTextures)
       {
@@ -949,25 +949,28 @@ struct Context
       h.id = uint16_t(m_uniforms.server.Acquire());
     }
 
-    Uniform& u = m_uniforms[h.id];
-    XR_ASSERTMSG(Gfx, !existing || type == u.type, ("Uniform already registered as %d; mismatched type: %d", u.type, type));
-    XR_ASSERTMSG(Gfx, !existing || arraySize == u.arraySize, ("Uniform already registered as %d; mismatched size: %d", u.arraySize, arraySize));
+    UniformRef& ur = m_uniforms[h.id];
+    XR_ASSERTMSG(Gfx, !existing || type == ur.inst.type, ("Uniform already registered as %d; mismatched type: %d", ur.inst.type, type));
+    XR_ASSERTMSG(Gfx, !existing || arraySize == ur.inst.arraySize, ("Uniform already registered as %d; mismatched size: %d", ur.inst.arraySize, arraySize));
     if (!existing)
     {
-      u.refCount = 1;
+      Uniform u;
       u.name = name;
       u.type = type;
       u.arraySize = std::max(arraySize, uint8_t(1));
 
       size_t requiredBytes = u.arraySize * kUniformTypeSize[uint8_t(u.type)];
-      u.data = g_allocator->Allocate(requiredBytes);
-      std::memset(u.data, 0x00, requiredBytes);
+      void*& data = m_uniformData[h.id];
+      data = g_allocator->Allocate(requiredBytes);
+      std::memset(data, 0x00, requiredBytes);
 
+      ur.inst = u;
+      ur.refCount = 1;
       m_uniformHandles[hash] = h;
     }
     else
     {
-      ++u.refCount;
+      ++ur.refCount;
     }
 
     return h;
@@ -975,13 +978,15 @@ struct Context
 
   void Destroy(UniformHandle h)
   {
-    Uniform& u = m_uniforms[h.id];
-    XR_ASSERT(Gfx, u.refCount > 0);
-    --u.refCount;
-    if (u.refCount == 0)
+    UniformRef& ur = m_uniforms[h.id];
+    XR_ASSERT(Gfx, ur.refCount > 0);
+    --ur.refCount;
+    if (ur.refCount == 0)
     {
-      g_allocator->Deallocate(m_uniforms[h.id].data);
-      std::memset(&u, 0x00, sizeof(Uniform));
+      g_allocator->Deallocate(m_uniformData[h.id]);
+      m_uniformData[h.id] = nullptr;
+
+      std::memset(&ur.inst, 0x00, sizeof(Uniform));
 
       m_uniforms.server.Release(h.id);
     }
@@ -1003,10 +1008,11 @@ struct Context
     ShaderHandle h;
     if (success)
     {
-      shader.refCount = 1;
-
       h.id = uint16_t(m_shaders.server.Acquire());
-      m_shaders[h.id] = shader;
+
+      ShaderRef& sr = m_shaders[h.id];
+      sr.inst = shader;
+      sr.refCount = 1;
     }
     else
     {
@@ -1021,13 +1027,13 @@ struct Context
 
   void Destroy(ShaderHandle h)
   {
-    Shader& shader = m_shaders[h.id];
-    XR_ASSERT(Gfx, shader.refCount > 0);
-    --shader.refCount;
-    if (shader.refCount == 0)
+    ShaderRef& sr = m_shaders[h.id];
+    XR_ASSERT(Gfx, sr.refCount > 0);
+    --sr.refCount;
+    if (sr.refCount == 0)
     {
-      XR_GL_CALL(glDeleteShader(shader.name));
-      std::memset(&shader, 0x00, sizeof(Shader));
+      XR_GL_CALL(glDeleteShader(sr.inst.name));
+      std::memset(&sr.inst, 0x00, sizeof(Shader));
 
       m_shaders.server.Release(h.id);
     }
@@ -1035,23 +1041,20 @@ struct Context
 
   ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment)
   {
-    XR_ASSERT(Gfx, hVertex.id < m_shaders.server.GetNumActive());
-    XR_ASSERT(Gfx, hFragment.id < m_shaders.server.GetNumActive());
-
     // Create program
     Program program;
     XR_GL_CALL(program.name = glCreateProgram());
 
-    Shader& shdVert = m_shaders[hVertex.id];
-    Shader& shdFrag = m_shaders[hFragment.id];
+    ShaderRef& shdVert = m_shaders[hVertex.id];
+    ShaderRef& shdFrag = m_shaders[hFragment.id];
 
     // attempt to attach shaders
     GLint attachResult;
-    XR_GL_CALL_RESULT(glAttachShader(program.name, shdVert.name), attachResult);
+    XR_GL_CALL_RESULT(glAttachShader(program.name, shdVert.inst.name), attachResult);
     if (attachResult == GL_NO_ERROR)
     {
       program.hVertex = hVertex;
-      XR_GL_CALL_RESULT(glAttachShader(program.name, shdFrag.name), attachResult);
+      XR_GL_CALL_RESULT(glAttachShader(program.name, shdFrag.inst.name), attachResult);
     }
 
     bool result = attachResult == GL_NO_ERROR;
@@ -1120,14 +1123,14 @@ struct Context
         auto iFind = m_uniformHandles.find(XR::Hash::String(nameBuffer));
         if (iFind != m_uniformHandles.end())
         {
-          Uniform& u = m_uniforms[iFind->second.id];
-          ++u.refCount;
+          UniformRef& ur = m_uniforms[iFind->second.id];
+          ++ur.refCount;
 
           if (!program.uniforms)
           {
             program.uniforms = ConstBuffer::Create(1024);
           }
-          program.uniforms->WriteHandle(u.type, u.arraySize, 0, iFind->second);
+          program.uniforms->WriteHandle(ur.inst.type, ur.inst.arraySize, 0, iFind->second);
           program.uniforms->Write(loc);
         }
 
@@ -1154,8 +1157,8 @@ struct Context
     else
     {
       // failure - delete program
-      glDetachShader(program.name, shdVert.name);
-      glDetachShader(program.name, shdFrag.name);
+      glDetachShader(program.name, shdVert.inst.name);
+      glDetachShader(program.name, shdFrag.inst.name);
       XR_GL_IGNORE_ERROR;
 
       if(program.uniforms)
@@ -1226,18 +1229,18 @@ struct Context
 
   void SetUniform(UniformHandle h, uint8_t num, void const* data)
   {
-    Uniform& u = m_uniforms[h.id];
-    XR_ASSERT(GFX, u.refCount > 0);
-    //m_uniformBuffer->WriteData(u.type, std::min(u.arraySize, num), h.id, data);
-    std::memcpy(u.data, data, kUniformTypeSize[uint8_t(u.type)] * std::min(u.arraySize, num));
+    UniformRef& ur = m_uniforms[h.id];
+    XR_ASSERT(GFX, ur.refCount > 0);
+    size_t bytes = kUniformTypeSize[uint8_t(ur.inst.type)] * std::min(ur.inst.arraySize, num);
+    std::memcpy(m_uniformData[h.id], data, bytes);
     // TODO: update timestamp
   }
 
   void SetTexture(TextureHandle h, uint32_t stage)
   {
     XR_GL_CALL(glActiveTexture(GL_TEXTURE0 + stage));
-    Texture& t = m_textures[h.id];
-    t.Bind();
+    TextureRef& t = m_textures[h.id];
+    t.inst.Bind();
   }
 
   void SetState(uint32_t flags)
@@ -1317,7 +1320,7 @@ struct Context
   {
     Program& program = m_programs[h.id];
     XR_GL_CALL(glUseProgram(program.name)); // TODO: fixed pipeline with program 0 / invalid handle?
-    program.UpdateUniforms(m_uniforms.server.GetNumActive(), m_uniforms.data);
+    program.UpdateUniforms(m_uniforms.server.GetNumActive(), m_uniformData);
     m_activeProgram = h;
   }
 
@@ -1336,9 +1339,9 @@ struct Context
     program.ResetAttribBindings();
 
     VertexBufferObject const& vbo = m_vbos[vbh.id];
-    VertexFormatRef const& vf = m_vertexFormats[vbo.hFormat.id];
+    VertexFormatRef const& vfr = m_vertexFormats[vbo.hFormat.id];
     vbo.Bind();
-    program.BindAttributes(vf.format, 0);
+    program.BindAttributes(vfr.inst, 0);
 
     XR_GL_CALL(glDrawArrays(kPrimitiveTypes[uint8_t(pt)], offset, count));
     program.UnbindAttributes();
@@ -1353,9 +1356,9 @@ struct Context
     program.ResetAttribBindings();
 
     VertexBufferObject const& vbo = m_vbos[vbh.id];
-    VertexFormatRef const& vf = m_vertexFormats[vbo.hFormat.id];
+    VertexFormatRef const& vfr = m_vertexFormats[vbo.hFormat.id];
     vbo.Bind();
-    program.BindAttributes(vf.format, 0);
+    program.BindAttributes(vfr.inst, 0);
 
     IndexBufferObject const& ibo = m_ibos[ibh.id];
     ibo.Bind();
@@ -1393,13 +1396,14 @@ private:
 
   ServicedArray<VertexBufferObject, 4096> m_vbos;
   ServicedArray<IndexBufferObject, 4096> m_ibos;
-  ServicedArray<Texture, 1024> m_textures;
+  ServicedArray<TextureRef, 1024> m_textures;
   ServicedArray<FrameBuffer, 256> m_renderTargets;
 
-  ServicedArray<Uniform, 1024> m_uniforms;
+  ServicedArray<UniformRef, 1024> m_uniforms;
+  void* m_uniformData[decltype(m_uniforms)::kSize];
   std::unordered_map<uint32_t, UniformHandle> m_uniformHandles;
 
-  ServicedArray<Shader, 512> m_shaders;
+  ServicedArray<ShaderRef, 512> m_shaders;
   ServicedArray<Program, 512> m_programs;
 
   GLuint m_vao = 0;

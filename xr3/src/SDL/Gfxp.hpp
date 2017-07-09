@@ -27,19 +27,29 @@ enum class AttachmentType : uint8_t
 };
 
 //==============================================================================
+template <typename T, typename SizeType = uint16_t>
+struct Ref
+{
+  T inst;
+  SizeType refCount;
+};
+
+//==============================================================================
 template <typename T, size_t n>
 struct ServicedArray
 {
+  static const size_t kSize = n;
+
   static size_t size()
   {
-    return n;
+    return kSize;
   }
 
-  T data[n];
+  T data[kSize];
   IndexServer server;
 
   ServicedArray()
-  : server(n)
+  : server(kSize)
   {}
 
   T& operator[](size_t i)
@@ -75,13 +85,13 @@ Allocator* g_allocator = nullptr; // extern
 //==============================================================================
 struct Uniform
 {
-  void*       data;
   UniformType type;
   uint8_t     arraySize;
-  uint16_t    refCount; // in programs
   // TODO: update timestamp
   std::string name;
 };
+
+using UniformRef = Ref<Uniform>;
 
 //==============================================================================
 class ConstBuffer
