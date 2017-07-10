@@ -1343,7 +1343,7 @@ struct Context
     vbo.Bind();
     program.BindAttributes(vfr.inst, 0);
 
-    XR_GL_CALL(glDrawArrays(kPrimitiveTypes[uint8_t(pt)], offset, count));
+    XR_GL_CALL(glDrawArraysInstanced(kPrimitiveTypes[uint8_t(pt)], offset, count, 1)); // TODO: instanced drawing
     program.UnbindAttributes();
   }
 
