@@ -96,6 +96,7 @@ public:
   void Add(Attribute attrib, uint8_t numComponents, bool normalize)
   {
     XR_ASSERT(VertexFormat, numComponents > 0 && numComponents < 4);
+    XR_ASSERT(VertexFormat, !Has(attrib));
     const uint8_t iAttrib = uint8_t(attrib);
     // n(ccccc)cc - 1 bit normalized, 7 bits numComponents (2 actually used)
     m_attributes[iAttrib] = (numComponents - 1) | ((normalize ? 1 : 0) << 7);
@@ -280,20 +281,22 @@ TextureInfo const& GetTextureInfo(TextureHandle h);
 void Destroy(TextureHandle h);
 
 ///@brief Creates a render target, attaching the given textures.
-FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
-  uint32_t flags);
+FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width,
+  uint32_t height, uint32_t flags);
 
 ///@brief Creates a render target, attaching the given @a hTextures. If
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
-FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures);
+FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
+  TextureHandle const* hTextures, bool ownTextures);
 
 ///@brief Creates a render target with the given @a attachments. If
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
-FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* attachments, bool ownTextures);
+FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
+  FrameBufferAttachment const* attachments, bool ownTextures);
 
 ///@brief Deletes framebuffer, decrementing the refcount of all attached textures.
 void Destroy(FrameBufferHandle h);

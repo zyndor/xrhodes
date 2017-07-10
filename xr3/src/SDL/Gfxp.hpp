@@ -7,7 +7,7 @@
 #ifndef XR_GFXP_HPP
 #define XR_GFXP_HPP
 
-#include <XR/GFX.hpp>
+#include <XR/Gfx.hpp>
 #include <XR/IndexServer.hpp>
 
 #define XR_ALIGN16(val) XR::Align<uint32_t>(val, 16)
@@ -136,7 +136,7 @@ public:
   {
     bool ref;
     Read(t, arraySize, loc, ref);
-    XR_ASSERT(ConstBuffer, ref);
+    XR_ASSERTMSG(ConstBuffer, ref, ("Expected handle - got copy."));
     Read(h);
   }
 
@@ -211,7 +211,7 @@ private:
 
   uint32_t m_pos;
   uint32_t m_size;
-  char     m_buffer[16 - (sizeof(uint32_t) + sizeof(uint32_t))];
+  char     m_buffer[16 - (sizeof(uint32_t) + sizeof(uint32_t))]; // char* + padding to 16 bytes.
 };
 
 }

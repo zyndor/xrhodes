@@ -215,7 +215,7 @@ struct Program: ResourceGL
   ShaderHandle  hFragment;
   bool          linked = false;
   int           numActiveAttribs = 0;
-  uint8_t       activeAttribs[XR_ARRAY_SIZE(kAttributeName)]; // order to XR attrib id
+  uint8_t       activeAttribs[XR_ARRAY_SIZE(kAttributeName)]; // ordinal to XR attrib id
   GLint         attribLoc[XR_ARRAY_SIZE(kAttributeName)]; // XR attrib id to GLSL location
   uint8_t       unboundAttribs[XR_ARRAY_SIZE(kAttributeName)]; // bound from VertexFormat
   ConstBuffer*  uniforms = nullptr;
@@ -600,12 +600,12 @@ struct Context
       XR_GL_CALL(glDeleteVertexArrays(1, &m_vao));
     }
 
-#define REPORT_LEAKS(name) XR_TRACEIF(Gfx, m_##name##s.server.GetNumAcquired() > 0, ("WARNING: "#name##" leak detected: %d", m_##name##s.server.GetNumAcquired()))
+#define REPORT_LEAKS(name) XR_TRACEIF(Gfx, m_##name##s.server.GetNumAcquired() > 0, ("WARNING: %d "#name##" handles leaked.", m_##name##s.server.GetNumAcquired()))
     REPORT_LEAKS(vertexFormat);
     REPORT_LEAKS(vbo);
     REPORT_LEAKS(ibo);
     REPORT_LEAKS(texture);
-    REPORT_LEAKS(renderTarget);
+    REPORT_LEAKS(fbo);
     REPORT_LEAKS(uniform);
     REPORT_LEAKS(shader);
     REPORT_LEAKS(program);
@@ -693,7 +693,7 @@ struct Context
   IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
   {
     IndexBufferHandle h;
-    h.id = m_ibos.server.Acquire();
+    h.id = uint16_t(m_ibos.server.Acquire());
 
     IndexBufferObject& ibo = m_ibos[h.id];
     XR_GL_CALL(glGenBuffers(1, &ibo.name));
@@ -845,18 +845,18 @@ struct Context
   FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* attachments, bool ownTextures)
   {
     XR_ASSERT(Gfx, textureCount < XR_ARRAY_SIZE(FrameBuffer::hTextures));
-    FrameBuffer rt;
+    FrameBuffer fbo;
 
-    XR_GL_CALL(glGenFramebuffers(1, &rt.name));
-    rt.Bind();
+    XR_GL_CALL(glGenFramebuffers(1, &fbo.name));
+    fbo.Bind();
 
-    rt.numTextures = textureCount;
+    fbo.numTextures = textureCount;
     uint8_t colorAttachments[XR_ARRAY_SIZE(FrameBuffer::hTextures)];
     int numColorAttachments = 0;
     for (uint8_t i = 0; i < textureCount; ++i)
     {
       FrameBufferAttachment const& att = attachments[i];
-      rt.hTextures[i] = att.hTexture;
+      fbo.hTextures[i] = att.hTexture;
 
       TextureRef& texture = m_textures[att.hTexture.id];
       XR_ASSERT(Gfx, texture.inst.info.format != TextureFormat::kCount);
@@ -888,9 +888,9 @@ struct Context
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (GL_FRAMEBUFFER_COMPLETE == status)
     {
-      h.id = uint16_t(m_renderTargets.server.Acquire());
+      h.id = uint16_t(m_fbos.server.Acquire());
 
-      m_renderTargets[h.id] = rt;
+      m_fbos[h.id] = fbo;
     }
     else
     {
@@ -918,17 +918,17 @@ struct Context
 
   void Destroy(FrameBufferHandle h)
   {
-    FrameBuffer& rt = m_renderTargets[h.id];
-    rt.Bind();
+    FrameBuffer& fbo = m_fbos[h.id];
+    fbo.Bind();
 
-    for (uint8_t i = 0; i < rt.numTextures; ++i)
+    for (uint8_t i = 0; i < fbo.numTextures; ++i)
     {
-      Destroy(rt.hTextures[i]);
+      Destroy(fbo.hTextures[i]);
     }
-    std::memset(&rt, 0x00, sizeof(FrameBuffer));
+    std::memset(&fbo, 0x00, sizeof(FrameBuffer));
 
-    XR_GL_CALL(glDeleteFramebuffers(1, &rt.name));
-    m_renderTargets.server.Release(h.id);
+    XR_GL_CALL(glDeleteFramebuffers(1, &fbo.name));
+    m_fbos.server.Release(h.id);
   }
 
   UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize)
@@ -1095,8 +1095,8 @@ struct Context
       GLenum type;
 
       std::memset(program.attribLoc, 0xff, sizeof(program.attribLoc));
-      std::fill(program.activeAttribs, program.activeAttribs + XR_ARRAY_SIZE(program.activeAttribs),
-        uint8_t(Attribute::kCount));
+      std::fill(program.activeAttribs, program.activeAttribs +
+        XR_ARRAY_SIZE(program.activeAttribs), uint8_t(Attribute::kCount));
       program.ResetAttribBindings();
       //XR_GL_CALL(glGetProgramiv(program.name, GL_ACTIVE_ATTRIBUTES, &program.numActiveAttribs));
       for (int i = 0; i < uint8_t(Attribute::kCount); ++i)
@@ -1132,10 +1132,15 @@ struct Context
           }
           program.uniforms->WriteHandle(ur.inst.type, ur.inst.arraySize, 0, iFind->second);
           program.uniforms->Write(loc);
-        }
 
-        XR_TRACE(Gfx, ("Uniform %s: %s[%d] at location %d", nameBuffer, GetGLSLTypeName(type),
-          arraySize, loc));
+          XR_TRACE(Gfx, ("Uniform %s: %s[%d] at location %d", nameBuffer, GetGLSLTypeName(type),
+            arraySize, loc));
+        }
+        else
+        {
+          XR_TRACE(Gfx, ("WARNING: ignored unregistered uniform '%s' (%s[%d]).", nameBuffer,
+            GetGLSLTypeName(type), arraySize));
+        }
       }
     }
 
@@ -1183,7 +1188,6 @@ struct Context
     p.linked = false;
     p.hVertex = ShaderHandle();
     p.hFragment = ShaderHandle();
-    m_programs.server.Release(h.id);
 
     if (p.uniforms)
     {
@@ -1191,6 +1195,8 @@ struct Context
       ConstBuffer::Destroy(p.uniforms);
     }
     p.uniforms = 0;
+
+    m_programs.server.Release(h.id);
   }
 
   void ClearBuffer(uint32_t flags, Color const& color, float depth, uint8_t stencil)
@@ -1326,7 +1332,7 @@ struct Context
 
   void SetFrameBuffer(FrameBufferHandle h)
   {
-    GLint name = h.IsValid() ? m_renderTargets[h.id].name : 0;
+    GLint name = h.IsValid() ? m_fbos[h.id].name : 0;
     XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, name));
   }
 
@@ -1397,7 +1403,7 @@ private:
   ServicedArray<VertexBufferObject, 4096> m_vbos;
   ServicedArray<IndexBufferObject, 4096> m_ibos;
   ServicedArray<TextureRef, 1024> m_textures;
-  ServicedArray<FrameBuffer, 256> m_renderTargets;
+  ServicedArray<FrameBuffer, 256> m_fbos;
 
   ServicedArray<UniformRef, 1024> m_uniforms;
   void* m_uniformData[decltype(m_uniforms)::kSize];
