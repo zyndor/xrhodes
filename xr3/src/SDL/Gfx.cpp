@@ -448,7 +448,7 @@ UniformType ImportGLSLType(GLenum type)
     return UniformType::Vec4;
 
   case GL_FLOAT_MAT3:
-    return UniformType::Mat4;
+    return UniformType::Mat3;
 
   case GL_FLOAT_MAT4:
     return UniformType::Mat4;
