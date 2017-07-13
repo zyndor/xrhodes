@@ -30,11 +30,12 @@ struct Buffer
 };
 
 //=============================================================================
-enum Flags
+enum Flags: uint32_t
 {
   F_BUFFER_NONE = 0,
   F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(0),
   F_BUFFER_INDEX_32BITS = XR_MASK_ID(1),
+  F_BUFFER_INSTANCE_DATA = XR_MASK_ID(XR_BITSIZEOF(Flags) - 1),
 
   F_TEXTURE_NONE = 0,
   F_TEXTURE_WRAP = XR_MASK_ID(0), // clamp is default
@@ -223,6 +224,7 @@ struct HandleCore : HandleCoreCore
 GFX_HANDLE_DECL(VertexFormatHandle);
 GFX_HANDLE_DECL(VertexBufferHandle);
 GFX_HANDLE_DECL(IndexBufferHandle);
+GFX_HANDLE_DECL(InstanceDataBufferHandle);
 GFX_HANDLE_DECL(TextureHandle);
 GFX_HANDLE_DECL(FrameBufferHandle);
 GFX_HANDLE_DECL(ShaderHandle);
@@ -260,7 +262,14 @@ void Destroy(VertexFormatHandle h);
 /// options.
 VertexBufferHandle  CreateVertexBuffer(VertexFormatHandle hFormat,
   Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
+
 void Destroy(VertexBufferHandle h);
+
+///@brief Creates an instance data buffer.
+InstanceDataBufferHandle  CreateInstanceDataBuffer(Buffer const& buffer,
+  uint16_t stride);
+
+void Destroy(InstanceDataBufferHandle h);
 
 ///@brief Creates a vertex buffer with the given format, data and
 /// options.
@@ -342,6 +351,9 @@ void SetTexture(TextureHandle h, uint32_t stage = 0);
 
 ///@brief Sets render state. See the F_STATE_... flags.
 void SetState(uint32_t flags = F_STATE_NONE);
+
+///@brief Sets instance data to be used for the subsequent Draw calls.
+void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count);
 
 ///@brief Sets a shader program to be used for the subsequent Draw calls.
 void SetProgram(ProgramHandle h);

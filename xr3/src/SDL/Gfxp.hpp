@@ -67,6 +67,7 @@ struct ServicedArray
 
 //==============================================================================
 const uint32_t kMaxTextureStages = 8;
+const uint32_t kMaxInstanceData = 4;
 
 const uint32_t kUniformTypeSize[] =
 {

@@ -23,6 +23,8 @@ namespace XR
 namespace Gfx
 {
 
+#define UINT_PTR_CAST(x) reinterpret_cast<void*>(static_cast<uintptr_t>(x))
+
 //=============================================================================
 char const *const  kAttributeName[] =
 {
@@ -42,6 +44,17 @@ char const *const  kAttributeName[] =
 	"aUV7",
 };
 static_assert(XR_ARRAY_SIZE(kAttributeName) == size_t(Attribute::kCount),
+  "Count of attribute types / names must match.");
+
+//=============================================================================
+char const *const  kInstanceDataName[] =
+{
+  "iData0",
+  "iData1",
+  "iData2",
+  "iData3",
+};
+static_assert(XR_ARRAY_SIZE(kInstanceDataName) == kMaxInstanceData,
   "Count of attribute types / names must match.");
 
 //=============================================================================
@@ -218,6 +231,7 @@ struct Program: ResourceGL
   uint8_t       activeAttribs[XR_ARRAY_SIZE(kAttributeName)]; // ordinal to XR attrib id
   GLint         attribLoc[XR_ARRAY_SIZE(kAttributeName)]; // XR attrib id to GLSL location
   uint8_t       unboundAttribs[XR_ARRAY_SIZE(kAttributeName)]; // bound from VertexFormat
+  GLint         instanceData[XR_ARRAY_SIZE(kInstanceDataName) + 1]; // additional space for -1 terminator
   ConstBuffer*  uniforms = nullptr;
   // TODO: latest update timestamp
 
@@ -302,15 +316,14 @@ struct Program: ResourceGL
         XR_GL_CALL(glVertexAttribDivisor(loc, 0));
 
         uint32_t attribBase = baseVertex * stride + offset;;
-        XR_GL_CALL(glVertexAttribPointer(loc, numComponents, GL_FLOAT, normalized, format.GetStride(),
-          reinterpret_cast<void*>(uintptr_t(attribBase))));
+        XR_GL_CALL(glVertexAttribPointer(loc, numComponents, GL_FLOAT, normalized, format.GetStride(), UINT_PTR_CAST(attribBase)));
 
         unboundAttribs[i] = uint8_t(Attribute::kCount);
       }
     }
   }
 
-  void UnbindAttributes() const
+  void UnbindUnusedAttributes() const
   {
     for (int i = 0; i < numActiveAttribs; ++i)
     {
@@ -321,6 +334,29 @@ struct Program: ResourceGL
 
         XR_GL_CALL(glDisableVertexAttribArray(loc));
       }
+    }
+  }
+
+  void BindInstanceData(uint16_t stride, uint16_t baseInstance) const
+  {
+    uint16_t offset = baseInstance * stride;
+    for (int i = 0; instanceData[i] != -1; ++i)
+    {
+      GLint loc = instanceData[i];
+      XR_GL_CALL(glEnableVertexAttribArray(loc));
+      XR_GL_CALL(glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, stride,
+        UINT_PTR_CAST(offset)));
+      XR_GL_CALL(glVertexAttribDivisor(loc, 1));
+      offset += 4 * sizeof(float);
+    }
+  }
+
+  void UnbindInstanceData() const
+  {
+    for (int i = 0; instanceData[i] != -1; ++i)
+    {
+      GLint loc = instanceData[i];
+      XR_GL_CALL(glDisableVertexAttribArray(loc));
     }
   }
 };
@@ -660,24 +696,7 @@ struct Context
 
   VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
   {
-    VertexBufferHandle h;
-    h.id = uint16_t(m_vbos.server.Acquire());
-
-    VertexBufferObject& vbo = m_vbos[h.id];
-    XR_GL_CALL(glGenBuffers(1, &vbo.name));
-
-    vbo.target = IsFullMask(flags, F_BUFFER_INDIRECT_DRAW) ?
-      GL_DRAW_INDIRECT_BUFFER : GL_ARRAY_BUFFER;  // TODO: indirect draw support
-    vbo.Bind();
-
-    XR_GL_CALL(glBufferData(vbo.target, buffer.size, buffer.data,
-      buffer.data ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW));
-    XR_GL_CALL(glBindBuffer(vbo.target, 0));
-
-    vbo.hFormat = hFormat;
-    vbo.flags = flags;
-
-    return h;
+    return CreateVertexBufferInternal(hFormat, buffer, flags & ~F_BUFFER_INSTANCE_DATA);
   }
 
   void Destroy(VertexBufferHandle h)
@@ -715,6 +734,31 @@ struct Context
 
     std::memset(&ibo, 0x00, sizeof(ibo));
     // TODO: invalidate vaos.
+  }
+
+  InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
+  {
+    XR_ASSERT(Gfx, buffer.data);
+    XR_ASSERT(Gfx, (stride & 0xf) == 0);
+
+    // Invalid vertexformat (and GL_ARRAY_BUFFER target) signify a vbo used
+    // for instance data.
+
+    // Encode stride in flags.
+    uint32_t flags = F_BUFFER_INSTANCE_DATA |
+      (stride << (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(stride))));
+
+    InstanceDataBufferHandle h;
+    h.id = CreateVertexBufferInternal(VertexFormatHandle(), buffer, flags).id;
+      
+    return h;
+  }
+
+  void Destroy(InstanceDataBufferHandle h)
+  {
+    VertexBufferHandle hConv;
+    hConv.id = h.id;
+    Destroy(hConv);
   }
 
   TextureHandle CreateTexture(TextureFormat format, uint32_t width,
@@ -1106,11 +1150,25 @@ struct Context
         {
           program.attribLoc[i] = loc;
           program.activeAttribs[program.numActiveAttribs] = i;
+          XR_TRACE(Gfx, ("Attribute %s at location %d", kAttributeName[i], loc));
+
           ++program.numActiveAttribs;
         }
       }
 
-      // TODO: instance data support
+      size_t used = 0;
+      for (int i = 0; i < kMaxInstanceData; ++i)
+      {
+        XR_GL_CALL(GLint loc = glGetAttribLocation(program.name, kInstanceDataName[i]));
+        if (loc != -1)
+        {
+          program.instanceData[used] = loc;
+          XR_TRACE(Gfx, ("Attribute %s at location %d", kInstanceDataName[i], loc));
+
+          ++used;
+        }
+      }
+      program.instanceData[used] = -1;
 
       // process uniforms
       GLint num, loc;
@@ -1322,6 +1380,20 @@ struct Context
     m_activeState = flags;
   }
 
+  void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count)
+  {
+    m_hActiveInstDataBuffer = h;
+    if (h.IsValid())
+    {
+      VertexBufferObject& idbo = m_vbos[h.id];
+      XR_ASSERT(Gfx, IsFullMask(idbo.flags, F_BUFFER_INSTANCE_DATA));
+      m_activeInstDataBufferStride = (idbo.flags & ~F_BUFFER_INSTANCE_DATA) >>
+        (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(uint16_t)));
+      m_instanceOffset = offset;
+      m_instanceCount = count;
+    }
+  }
+
   void SetProgram(ProgramHandle h)
   {
     Program& program = m_programs[h.id];
@@ -1349,8 +1421,13 @@ struct Context
     vbo.Bind();
     program.BindAttributes(vfr.inst, 0);
 
-    XR_GL_CALL(glDrawArraysInstanced(kPrimitiveTypes[uint8_t(pt)], offset, count, 1)); // TODO: instanced drawing
-    program.UnbindAttributes();
+    uint16_t instCount;
+    ApplyInstanceData(program, instCount);
+
+    program.UnbindUnusedAttributes();
+
+    XR_GL_CALL(glDrawArraysInstanced(kPrimitiveTypes[uint8_t(pt)], offset, count,
+      instCount));
   }
 
   void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType pt, uint32_t offset, uint32_t count)
@@ -1368,11 +1445,16 @@ struct Context
 
     IndexBufferObject const& ibo = m_ibos[ibh.id];
     ibo.Bind();
+
+    uint16_t instCount;
+    ApplyInstanceData(program, instCount);
+
+    program.UnbindUnusedAttributes();
+
     GLenum types[] = { GL_UNSIGNED_SHORT, GL_UNSIGNED_INT };
     XR_GL_CALL(glDrawElementsInstanced(kPrimitiveTypes[uint8_t(pt)], count,
       types[(ibo.flags & F_BUFFER_INDEX_32BITS) != 0],
-      reinterpret_cast<void*>(uintptr_t(offset * ibo.indexSize)), 1)); // TODO: instanced drawing
-    program.UnbindAttributes();
+      UINT_PTR_CAST(offset * ibo.indexSize), instCount));
   }
 
   void Flush()
@@ -1414,9 +1496,56 @@ private:
 
   GLuint m_vao = 0;
   uint32_t m_activeState = F_STATE_NONE;
+
+  InstanceDataBufferHandle m_hActiveInstDataBuffer;
+  uint16_t m_activeInstDataBufferStride;
+  uint16_t m_instanceOffset;
+  uint16_t m_instanceCount;
+
   ProgramHandle m_activeProgram;
 
   Pool m_framePool;
+
+  // internal
+  VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
+  {
+    VertexBufferHandle h;
+    h.id = uint16_t(m_vbos.server.Acquire());
+
+    VertexBufferObject& vbo = m_vbos[h.id];
+    XR_GL_CALL(glGenBuffers(1, &vbo.name));
+
+    vbo.target = IsFullMask(flags, F_BUFFER_INDIRECT_DRAW) ?
+      GL_DRAW_INDIRECT_BUFFER : GL_ARRAY_BUFFER;  // TODO: indirect draw support
+    vbo.Bind();
+
+    XR_GL_CALL(glBufferData(vbo.target, buffer.size, buffer.data,
+      buffer.data ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW));
+    XR_GL_CALL(glBindBuffer(vbo.target, 0));
+
+    vbo.hFormat = hFormat;
+    vbo.flags = flags;
+
+    return h;
+  }
+
+  void ApplyInstanceData(Program const& program, uint16_t& instCount)
+  {
+    bool isUsingInstanceData = m_hActiveInstDataBuffer.IsValid();
+    instCount = isUsingInstanceData ? m_instanceCount : 1;
+    if (isUsingInstanceData)
+    {
+      VertexBufferObject const& instBuffer = m_vbos[m_hActiveInstDataBuffer.id];
+      instBuffer.Bind();
+      program.BindInstanceData(m_activeInstDataBufferStride, m_instanceOffset);
+
+      m_hActiveInstDataBuffer = InstanceDataBufferHandle();
+    }
+    else
+    {
+      program.UnbindInstanceData();
+    }
+  }
 };
 
 //==============================================================================
@@ -1494,6 +1623,18 @@ IndexBufferHandle CreateIndexBuffer(Buffer const & buffer, uint32_t flags)
 
 //=============================================================================
 void Destroy(IndexBufferHandle h)
+{
+  s_impl->Destroy(h);
+}
+
+//=============================================================================
+InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
+{
+  return s_impl->CreateInstanceDataBuffer(buffer, stride);
+}
+
+//=============================================================================
+void Destroy(InstanceDataBufferHandle h)
 {
   s_impl->Destroy(h);
 }
@@ -1615,6 +1756,12 @@ void SetTexture(TextureHandle h, uint32_t stage)
 void SetState(uint32_t flags)
 {
   s_impl->SetState(flags);
+}
+
+//==============================================================================
+void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count)
+{
+  s_impl->SetInstanceData(h, offset, count);
 }
 
 //==============================================================================
