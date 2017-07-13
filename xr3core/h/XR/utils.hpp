@@ -24,6 +24,8 @@ char(&ArraySizeHelper(T (&)[N]))[N];  // not defined, never actually called; siz
 ///@brief Converts @a id into a mask with the @a id'th bit set.
 #define XR_MASK_ID(id) (1 << static_cast<size_t>(id))
 
+#define XR_BITSIZEOF(x) (sizeof(x) * 8)
+
 namespace XR
 {
 
