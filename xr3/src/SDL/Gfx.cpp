@@ -895,7 +895,7 @@ struct Context
     fbo.Bind();
 
     fbo.numTextures = textureCount;
-    uint8_t colorAttachments[XR_ARRAY_SIZE(FrameBuffer::hTextures)];
+    GLenum colorAttachments[XR_ARRAY_SIZE(FrameBuffer::hTextures)];
     int numColorAttachments = 0;
     for (uint8_t i = 0; i < textureCount; ++i)
     {
@@ -927,6 +927,8 @@ struct Context
         ++texture.refCount;
       }
     }
+
+    XR_GL_CALL(glDrawBuffers(numColorAttachments, colorAttachments));
 
     FrameBufferHandle h;
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
