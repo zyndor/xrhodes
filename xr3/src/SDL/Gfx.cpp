@@ -206,6 +206,7 @@ struct FrameBuffer : ResourceGL
 {
   TextureHandle hTextures[8];
   uint8_t numTextures;
+  uint8_t numColorAttachments;
   bool    ownTextures;
 
   void Bind()
@@ -876,6 +877,14 @@ struct Context
     }
   }
 
+  FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
+    uint32_t flags)
+  {
+    Buffer buffer = { 0, 0 };
+    TextureHandle h = CreateTexture(format, width, height, 0, flags, &buffer, 1);
+    return CreateFrameBuffer(1, &h, true);
+  }
+
   FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures)
   {
     std::vector<FrameBufferAttachment>  attachments(textureCount);
@@ -930,6 +939,7 @@ struct Context
     }
 
     XR_GL_CALL(glDrawBuffers(numColorAttachments, colorAttachments));
+    fbo.numColorAttachments = numColorAttachments;
 
     FrameBufferHandle h;
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -955,12 +965,23 @@ struct Context
     return h;
   }
 
-  FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
-    uint32_t flags)
+  void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+    TextureFormat format, void* mem)
   {
-    Buffer buffer = { 0, 0 };
-    TextureHandle h = CreateTexture(format, width, height, 0, flags, &buffer, 1);
-    return CreateFrameBuffer(1, &h, true);
+    ReadFrameBuffer(x, y, width, height, format, 0, mem);
+  }
+
+  void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+    TextureFormat format, uint16_t colorAttachment, void* mem)
+  {
+    XR_ASSERT(Gfx, !m_activeFrameBuffer.IsValid() ||
+      m_fbos[m_activeFrameBuffer.id].numColorAttachments > colorAttachment);
+    Texture::Format const& texFormat = kTextureFormats[int(format)];
+    GLenum formatGl = texFormat.format;
+    GLenum type = texFormat.type;
+    XR_GL_CALL(glReadBuffer(m_activeFrameBuffer.IsValid() ?
+      GL_COLOR_ATTACHMENT0 + colorAttachment : GL_BACK));
+    XR_GL_CALL(glReadPixels(x, y, width, height, formatGl, type, mem));
   }
 
   void Destroy(FrameBufferHandle h)
@@ -1407,6 +1428,7 @@ struct Context
 
   void SetFrameBuffer(FrameBufferHandle h)
   {
+    m_activeFrameBuffer = h;
     GLint name = h.IsValid() ? m_fbos[h.id].name : 0;
     XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, name));
   }
@@ -1506,6 +1528,7 @@ private:
   uint16_t m_instanceCount;
 
   ProgramHandle m_activeProgram;
+  FrameBufferHandle m_activeFrameBuffer;
 
   Pool m_framePool;
 
@@ -1680,6 +1703,20 @@ FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* h
 FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const * attachments, bool ownTextures)
 {
   return s_impl->CreateFrameBuffer(textureCount, attachments, ownTextures);
+}
+
+//=============================================================================
+void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+  TextureFormat format, void* mem)
+{
+  s_impl->ReadFrameBuffer(x, y, width, height, format, mem);
+}
+
+//=============================================================================
+void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+  TextureFormat format, uint16_t colorAttachment, void * mem)
+{
+  s_impl->ReadFrameBuffer(x, y, width, height, format, colorAttachment, mem);
 }
 
 //=============================================================================

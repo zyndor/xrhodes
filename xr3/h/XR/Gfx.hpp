@@ -283,8 +283,6 @@ TextureHandle CreateTexture(TextureFormat hFormat, uint32_t width,
 
 TextureInfo const& GetTextureInfo(TextureHandle h);
 
-// TODO: texture read.
-
 ///@brief Decrements refcount of a texture, and if it has reached 0 zero,
 /// deletes it.
 void Destroy(TextureHandle h);
@@ -306,6 +304,20 @@ FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
 /// decremented when the render target is destroyed).
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   FrameBufferAttachment const* attachments, bool ownTextures);
+
+///@brief Reads the content of the first colour attachment of the currently
+/// set framebuffer, within the boundaries of the given rectangle and in the
+/// given format. The texture format of the default framebuffer is RGBA8.
+///@note The buffer pointed to by @a mem must be large enough to hold
+/// the data.
+void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+  TextureFormat format, void* mem);
+
+///@brief Reads given colour attachment of currently set framebuffer; if
+/// this is the default one then @a colorAttachment is ignored and simply the
+/// backbuffer is read. 
+void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+  TextureFormat format, uint16_t colorAttachment, void* mem);
 
 ///@brief Deletes framebuffer, decrementing the refcount of all attached textures.
 void Destroy(FrameBufferHandle h);
