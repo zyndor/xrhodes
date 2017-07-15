@@ -156,7 +156,7 @@ struct Texture: ResourceGL
     GLenum format;
     GLenum type;
     // 2 bits for attachment type, then 6 bits for bit size each component.
-    uint16_t colorDepthStencilBits;
+    uint16_t attachmentTypeBits;
     bool compressed;
   };
 
@@ -171,29 +171,30 @@ struct Texture: ResourceGL
 
 using TextureRef = Ref<Texture>;
 
-#define PACK_TEX_COMP(size, component) ((size) & 0x3f) << (2 + ((component) * 6))
+// Pack color / depth / stencil bits.
+#define PACK_TEX_COMP(component, size) ((size) & 0x3f) << (2 + ((component) * 6))
 
 const Texture::Format kTextureFormats[] =
 {
   { GL_R8, GL_ZERO, GL_RED, GL_UNSIGNED_BYTE,
-    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(8, 0), false },
+    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 8), false },
   { GL_RGB565, GL_ZERO, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
-    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(16, 0), false },
+    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 16), false },
   { GL_RGB8, GL_SRGB8, GL_RGB, GL_UNSIGNED_BYTE,
-    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(24, 0), false },
+    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 24), false },
   { GL_RGBA8, GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE,
-    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(32, 0), false },
+    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 32), false },
   { GL_RGBA8, GL_SRGB8_ALPHA8, GL_BGRA, GL_UNSIGNED_BYTE,
-    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(32, 0), false },
+    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 32), false },
 
   // compressed
   // depth/stencil
   { GL_DEPTH_COMPONENT32, GL_ZERO, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,
-    uint8_t(AttachmentType::Depth) | PACK_TEX_COMP(32, 0), false },
+    uint8_t(AttachmentType::Depth) | PACK_TEX_COMP(0, 32), false },
   { GL_DEPTH24_STENCIL8, GL_ZERO, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8,
-    uint8_t(AttachmentType::DepthStencil) | PACK_TEX_COMP(24, 0) | PACK_TEX_COMP(8, 1), false },
+    uint8_t(AttachmentType::DepthStencil) | PACK_TEX_COMP(0, 24) | PACK_TEX_COMP(1, 8), false },
   { GL_STENCIL_INDEX8, GL_ZERO, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE,
-    uint8_t(AttachmentType::Stencil) | PACK_TEX_COMP(8, 0), false },
+    uint8_t(AttachmentType::Stencil) | PACK_TEX_COMP(0, 8), false },
 };
 static_assert(XR_ARRAY_SIZE(kTextureFormats) == size_t(TextureFormat::kCount),
   "Count of texture formats / definition must match.");
@@ -904,7 +905,7 @@ struct Context
 
       TextureRef& texture = m_textures[att.hTexture.id];
       XR_ASSERT(Gfx, texture.inst.info.format != TextureFormat::kCount);
-      uint16_t bits = kTextureFormats[uint8_t(texture.inst.info.format)].colorDepthStencilBits;
+      uint16_t bits = kTextureFormats[uint8_t(texture.inst.info.format)].attachmentTypeBits;
       GLenum attachmentType = kAttachmentTypes[bits & 0x3];
       if (attachmentType == GL_COLOR_ATTACHMENT0)
       {
