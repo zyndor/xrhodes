@@ -181,7 +181,7 @@ const Texture::Format kTextureFormats[] =
     uint8_t(AttachmentType::Color) | PACK_TEX_COMP(16, 0), false },
   { GL_RGB8, GL_SRGB8, GL_RGB, GL_UNSIGNED_BYTE,
     uint8_t(AttachmentType::Color) | PACK_TEX_COMP(24, 0), false },
-  { GL_RGBA8, GL_SRGB8_ALPHA8, GL_RGBA8, GL_UNSIGNED_BYTE,
+  { GL_RGBA8, GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE,
     uint8_t(AttachmentType::Color) | PACK_TEX_COMP(32, 0), false },
   { GL_RGBA8, GL_SRGB8_ALPHA8, GL_BGRA, GL_UNSIGNED_BYTE,
     uint8_t(AttachmentType::Color) | PACK_TEX_COMP(32, 0), false },
