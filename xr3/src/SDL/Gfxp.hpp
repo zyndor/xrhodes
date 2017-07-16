@@ -88,7 +88,6 @@ struct Uniform
 {
   UniformType type;
   uint8_t     arraySize;
-  // TODO: update timestamp
   std::string name;
 };
 
@@ -144,16 +143,16 @@ public:
   template <typename T>
   void Read(T& val)
   {
-    union { char* c; T* val; } p;
+    union { uint8_t* c; T* val; } p;
     p.c = ReadBytes(sizeof(T));
     val = *p.val;
   }
 
-  char* ReadBytes(uint32_t size)
+  uint8_t* ReadBytes(uint32_t size)
   {
     XR_ASSERTMSG(ConstBuffer, m_pos + size < m_size,
       ("Reading past end in ConstBuffer %p: overflow by %d bytes", this, m_pos + size - m_size));
-    char* p = GetPtr();
+    uint8_t* p = GetPtr();
     m_pos += size;
     return p;
   }
@@ -188,7 +187,7 @@ public:
   void WriteBytes(void const* data, size_t size)
   {
     XR_ASSERT(ConstBuffer, m_pos + size < m_size);
-    char* p = GetPtr();
+    uint8_t* p = GetPtr();
     std::memcpy(p, data, size);
     m_pos += size;
   }
@@ -205,15 +204,16 @@ private:
     m_size(size - sizeof(m_pos) - sizeof(m_size))
   {}
 
-  char* GetPtr()
+  uint8_t* GetPtr()
   {
     return m_buffer + m_pos;
   }
 
   uint32_t m_pos;
   uint32_t m_size;
-  char     m_buffer[16 - (sizeof(uint32_t) + sizeof(uint32_t))]; // char* + padding to 16 bytes.
+  uint8_t  m_buffer[16 - (sizeof(uint32_t) + sizeof(uint32_t))]; // buffer includes padding to 16 bytes - actual size will vary.
 };
+static_assert(sizeof(ConstBuffer) == 16, "sizeof(ConstBuffer) must be 16 bytes.");
 
 }
 }

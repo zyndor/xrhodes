@@ -8,9 +8,6 @@
 #define XR_GFX_HPP
 
 #include <XR/Color.hpp>
-#include <XR/Matrix.hpp>
-#include <XR/Quaternion.hpp>
-#include <XR/Mat4x4Helper.hpp>
 #include <XR/memory.hpp>
 #include <XR/utils.hpp>
 #include <XR/Hash.hpp>
@@ -33,7 +30,7 @@ struct Buffer
 enum Flags: uint32_t
 {
   F_BUFFER_NONE = 0,
-  F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(0),
+  F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(0), // TODO: implement support
   F_BUFFER_INDEX_32BITS = XR_MASK_ID(1),
   F_BUFFER_INSTANCE_DATA = XR_MASK_ID(XR_BITSIZEOF(Flags) - 1),
 
@@ -281,7 +278,7 @@ TextureHandle CreateTexture(TextureFormat hFormat, uint32_t width,
   uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
   size_t numBuffers = 1);
 
-TextureInfo const& GetTextureInfo(TextureHandle h);
+TextureInfo GetTextureInfo(TextureHandle h);
 
 ///@brief Decrements refcount of a texture, and if it has reached 0 zero,
 /// deletes it.

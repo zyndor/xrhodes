@@ -235,7 +235,6 @@ struct Program: ResourceGL
   uint8_t       unboundAttribs[XR_ARRAY_SIZE(kAttributeName)]; // bound from VertexFormat
   GLint         instanceData[XR_ARRAY_SIZE(kInstanceDataName) + 1]; // additional space for -1 terminator
   ConstBuffer*  uniforms = nullptr;
-  // TODO: latest update timestamp
 
   void UpdateUniforms(size_t numUniforms, void const* const* uniformData)
   {
@@ -605,6 +604,11 @@ struct Context
     m_physicalSize = SVector2(dm.w, dm.h);
     m_logicalSize = SVector2(width, height);
 
+    // log vendor, renderer, driver version
+    XR_TRACE(Gfx, ("Vendor: %s", glGetString(GL_VENDOR)));
+    XR_TRACE(Gfx, ("Renderer: %s", glGetString(GL_RENDERER)));
+    XR_TRACE(Gfx, ("Version: %s", glGetString(GL_VERSION)));
+
     // Init GLEW.
     glewExperimental = GL_TRUE;
     XR_GL_CALL(glewInit());
@@ -698,6 +702,8 @@ struct Context
 
   VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
   {
+    XR_TRACEIF(Gfx, IsFullMask(flags, F_BUFFER_INSTANCE_DATA),
+      ("Ignored instance data buffer request in CreateVertexBuffer()."));
     return CreateVertexBufferInternal(hFormat, buffer, flags & ~F_BUFFER_INSTANCE_DATA);
   }
 
@@ -708,7 +714,6 @@ struct Context
     XR_GL_CALL(glDeleteBuffers(1, &vbo.name));
 
     std::memset(&vbo, 0x00, sizeof(vbo));
-    // TODO: invalidate vaos.
   }
 
   IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
@@ -735,13 +740,13 @@ struct Context
     XR_GL_CALL(glDeleteBuffers(1, &ibo.name));
 
     std::memset(&ibo, 0x00, sizeof(ibo));
-    // TODO: invalidate vaos.
   }
 
   InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
   {
     XR_ASSERT(Gfx, buffer.data);
-    XR_ASSERT(Gfx, (stride & 0xf) == 0);
+    XR_ASSERTMSG(Gfx, (stride & 0xf) == 0,
+      ("16x bytes required for stride, got: %d", stride));
 
     // Invalid vertexformat (and GL_ARRAY_BUFFER target) signify a vbo used
     // for instance data.
@@ -816,8 +821,8 @@ struct Context
           switch (t.target)
           {
           case GL_TEXTURE_3D:
-            XR_GL_CALL(glCompressedTexImage3D(target, i, fmtInternal, width, height, depth,
-              0, buffer->size, buffer->data));
+            XR_GL_CALL(glCompressedTexImage3D(target, i, fmtInternal, width, height,
+              depth, 0, buffer->size, buffer->data));
             break;
 
           case GL_TEXTURE_2D:
@@ -858,7 +863,7 @@ struct Context
     return h;
   }
 
-  TextureInfo const& GetTextureInfo(TextureHandle h)
+  TextureInfo GetTextureInfo(TextureHandle h)
   {
     return m_textures[h.id].inst.info;
   }
@@ -1018,8 +1023,12 @@ struct Context
     }
 
     UniformRef& ur = m_uniforms[h.id];
-    XR_ASSERTMSG(Gfx, !existing || type == ur.inst.type, ("Uniform already registered as %d; mismatched type: %d", ur.inst.type, type));
-    XR_ASSERTMSG(Gfx, !existing || arraySize == ur.inst.arraySize, ("Uniform already registered as %d; mismatched size: %d", ur.inst.arraySize, arraySize));
+    XR_ASSERTMSG(Gfx, !existing || type == ur.inst.type,
+      ("Uniform '%s' type (%d) mismatches already registered type (%d)", name,
+        ur.inst.type, type));
+    XR_ASSERTMSG(Gfx, !existing || arraySize <= ur.inst.arraySize,
+      ("Uniform '%s' array size (%d) exceeds registered size (%d).", name, arraySize,
+        ur.inst.arraySize));
     if (!existing)
     {
       Uniform u;
@@ -1284,19 +1293,19 @@ struct Context
   void ClearBuffer(uint32_t flags, Color const& color, float depth, uint8_t stencil)
   {
     GLbitfield flagls = 0;
-    if (flags & F_CLEAR_COLOR)
+    if (IsFullMask(flags, F_CLEAR_COLOR))
     {
       XR_GL_CALL(glClearColor(color.r, color.g, color.b, color.a));
       flagls |= GL_COLOR_BUFFER_BIT;
     }
 
-    if (flags & F_CLEAR_DEPTH)
+    if (IsFullMask(flags, F_CLEAR_DEPTH))
     {
       XR_GL_CALL(glClearDepth(depth));
       flagls |= GL_DEPTH_BUFFER_BIT;
     }
 
-    if (flags & F_CLEAR_STENCIL)
+    if (IsFullMask(flags, F_CLEAR_STENCIL))
     {
       XR_GL_CALL(glClearStencil(stencil));
       flagls |= GL_STENCIL_BUFFER_BIT;
@@ -1321,7 +1330,6 @@ struct Context
     XR_ASSERT(GFX, ur.refCount > 0);
     size_t bytes = kUniformTypeSize[uint8_t(ur.inst.type)] * std::min(ur.inst.arraySize, num);
     std::memcpy(m_uniformData[h.id], data, bytes);
-    // TODO: update timestamp
   }
 
   void SetTexture(TextureHandle h, uint32_t stage)
@@ -1421,7 +1429,7 @@ struct Context
   void SetProgram(ProgramHandle h)
   {
     Program& program = m_programs[h.id];
-    XR_GL_CALL(glUseProgram(program.name)); // TODO: fixed pipeline with program 0 / invalid handle?
+    XR_GL_CALL(glUseProgram(program.name));
     program.UpdateUniforms(m_uniforms.server.GetNumActive(), m_uniformData);
     m_activeProgram = h;
   }
@@ -1618,7 +1626,7 @@ void Exit()
 }
 
 //=============================================================================
-VertexFormatHandle RegisterVertexFormat(VertexFormat const & format)
+VertexFormatHandle RegisterVertexFormat(VertexFormat const& format)
 {
   return s_impl->RegisterVertexFormat(format);
 }
@@ -1630,7 +1638,7 @@ void Destroy(VertexFormatHandle h)
 }
 
 //=============================================================================
-VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const & buffer, uint32_t flags)
+VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
 {
   return s_impl->CreateVertexBuffer(hFormat, buffer, flags);
 }
@@ -1642,7 +1650,7 @@ void Destroy(VertexBufferHandle h)
 }
 
 //=============================================================================
-IndexBufferHandle CreateIndexBuffer(Buffer const & buffer, uint32_t flags)
+IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
 {
   return s_impl->CreateIndexBuffer(buffer, flags);
 }
@@ -1674,11 +1682,10 @@ TextureHandle CreateTexture(TextureFormat format, uint32_t width,
 }
 
 //=============================================================================
-TextureInfo const& GetTextureInfo(TextureHandle h)
+TextureInfo GetTextureInfo(TextureHandle h)
 {
   return s_impl->GetTextureInfo(h);
 }
-
 
 //=============================================================================
 void Destroy(TextureHandle h)
@@ -1738,7 +1745,7 @@ void Destroy(UniformHandle h)
 }
 
 //=============================================================================
-ShaderHandle CreateShader(ShaderType t, Buffer const & buffer)
+ShaderHandle CreateShader(ShaderType t, Buffer const& buffer)
 {
   return s_impl->CreateShader(t, buffer);
 }
@@ -1823,7 +1830,8 @@ void Draw(VertexBufferHandle vbh, PrimType primitiveType, uint32_t offset, uint3
 }
 
 //=============================================================================
-void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType primitiveType, uint32_t offset, uint32_t count)
+void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType primitiveType,
+  uint32_t offset, uint32_t count)
 {
   s_impl->Draw(vbh, ibh, primitiveType, offset, count);
 }
