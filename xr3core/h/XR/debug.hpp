@@ -49,6 +49,9 @@
 #define XR_TRACE(chnl, msg) XR_DEBUG_ONLY(if(XR::Debug::Channel::IsEnabled(#chnl)){ XR::Debug::Channel(#chnl).Trace msg; })
 
 //==============================================================================
+#define XR_TRACEIF(chnl, cond, msg) XR_DEBUG_ONLY(if((cond) && XR::Debug::Channel::IsEnabled(#chnl)){ XR::Debug::Channel(#chnl).Trace msg; })
+
+//==============================================================================
 #define XR_ASSERTMSG(chnl, cond, msg)\
   XR_DEBUG_ONLY({ XR__ASSERT_STATE_INIT if (!(cond) && XR__ASSERT_STATE_CHECK(#chnl)){\
       switch(XR::Debug::Channel(#chnl).Assert msg) {\

@@ -33,6 +33,12 @@ public:
   ///@note Throws std::logic_error if the index has already been released.
   void    Release(size_t i);
 
+  ///@return Number of active indices, i.e. the maximum number ever allocated.
+  size_t  GetNumActive() const;
+
+  ///@return Number of acquired indices. Useful for leaks checking.
+  size_t  GetNumAcquired() const;
+
 private:
   // data
   std::vector<size_t> m_ids;

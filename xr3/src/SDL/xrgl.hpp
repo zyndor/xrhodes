@@ -32,6 +32,9 @@ void SwitchEnabledState(GLenum name, bool state);
   result = XR::GL::CheckError( #theCall )
 
 //==============================================================================
+#define XR_GL_IGNORE_ERROR (void)glGetError();
+
+//==============================================================================
 // inline
 //==============================================================================
 namespace XR
@@ -46,7 +49,7 @@ GLint  CheckError(char const* pText)
   GLint error = glGetError();
   if (error != GL_NO_ERROR)
   {
-    XR_ERROR(("OpenGL error %d occurred attempting '%s'.", error, pText));
+    XR_ERROR(("OpenGL error 0x%x occurred attempting '%s'.", error, pText));
   }
   return error;
 }
