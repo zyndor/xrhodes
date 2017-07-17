@@ -20,33 +20,20 @@ void Worker::ThreadFunction(Worker& worker)
 
 //==============================================================================
 Worker::Worker()
-: m_numAttempts(100),
-  m_sleepIntervalMs(10)
+: m_finalized(false),
+  m_thread(ThreadFunction, MakeRefHolder(*this))
 {}
-
-//==============================================================================
-void Worker::SetIdleThreadExpiry(int numAttempts, int sleepIntervalMs)
-{
-  XR_ASSERT(Worker, numAttempts >= 0);
-  XR_ASSERT(Worker, sleepIntervalMs > 0 || (sleepIntervalMs * numAttempts == 0));
-  m_numAttempts = numAttempts;
-  m_sleepIntervalMs = sleepIntervalMs;
-}
 
 //==============================================================================
 void  Worker::Enqueue(Job j)
 {
+  XR_ASSERT(Worker, !m_finalized);
   XR_ASSERT(Worker, j.pJobCb != nullptr);
-  if (m_thread.joinable())
   {
     std::unique_lock<std::mutex> lock(m_jobsMutex);
     m_jobs.push_back(j);
   }
-  else
-  {
-    m_jobs.push_back(j);
-    m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
-  }
+  m_workSemaphore.Post();
 }
 
 //==============================================================================
@@ -59,6 +46,7 @@ void Worker::CancelPendingJobs()
 //==============================================================================
 void  Worker::Finalize()
 {
+  m_finalized = true;
   if (m_thread.joinable())
   {
     m_thread.join();
@@ -68,44 +56,18 @@ void  Worker::Finalize()
 //==============================================================================
 void  Worker::Loop()
 {
-  const int numAttempts = m_numAttempts;
-  const auto sleepInterval = std::chrono::milliseconds(m_sleepIntervalMs);
-  int attemptsLeft = m_numAttempts;
-  while (true)
+  while (!m_finalized)
   {
-    // check if we have jobs
     Job j = { nullptr, nullptr };
+    m_workSemaphore.Wait();
+
     {
       std::unique_lock<std::mutex>  lock(m_jobsMutex);
-      if (!m_jobs.empty())
-      {
-        j = m_jobs.front();
-        m_jobs.pop_front();
-      }
+      j = m_jobs.front();
+      m_jobs.pop_front();
     }
 
-    if (j.pJobCb)
-    {
-      // reset number of attemptsLeft
-      attemptsLeft = numAttempts;
-
-      // perform job
-      (*j.pJobCb)(j.pData);
-    }
-    else
-    {
-      // decrease number of attemptsLeft.
-      --attemptsLeft;
-      if (attemptsLeft > 0)
-      {
-        std::this_thread::sleep_for(sleepInterval);
-      }
-      else
-      {
-        // we've been idle for too long, thread's going to finish now.
-        break;
-      }
-    }
+    (*j.pJobCb)(j.pData);
   }
 }
 
