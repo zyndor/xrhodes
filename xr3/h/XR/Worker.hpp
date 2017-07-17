@@ -9,49 +9,12 @@
 
 #include <XR/Queue.hpp>
 #include <XR/fundamentals.hpp>
+#include <XR/Semaphore.hpp>
 #include <thread>
 #include <mutex>
-#include <condition_variable>
 
 namespace XR
 {
-
-class Semaphore
-{
-public:
-  void Post() {
-    std::unique_lock<decltype(m_mutex)> lock(m_mutex);
-    ++m_counter;
-    m_cv.notify_one();
-  }
-
-  void Wait() {
-    std::unique_lock<decltype(m_mutex)> lock(m_mutex);
-    while (!m_counter)
-    {
-      // Handle spurious wake-ups.
-      m_cv.wait(lock);
-    }
-    --m_counter;
-  }
-
-  bool TryWait()
-  {
-    std::unique_lock<decltype(m_mutex)> lock(m_mutex);
-    if (m_counter)
-    {
-      --m_counter;
-      return true;
-    }
-    return false;
-  }
-
-private:
-  // data
-  std::mutex m_mutex;
-  std::condition_variable m_cv;
-  uint32_t m_counter = 0; // Initialized as locked.
-};
 
 //==============================================================================
 ///@brief Worker is a generic producer / consumer abstraction; it runs a thread
