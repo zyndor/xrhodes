@@ -12,6 +12,7 @@
 #include <XR/Semaphore.hpp>
 #include <thread>
 #include <mutex>
+#include <atomic>
 
 namespace XR
 {
@@ -63,6 +64,8 @@ private:
 
   bool        m_finalized;
   std::thread m_thread;
+
+  std::atomic<bool> m_isRunning;
 
   // static
   static void ThreadFunction(Worker& worker);
