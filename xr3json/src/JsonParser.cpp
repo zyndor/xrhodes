@@ -24,7 +24,9 @@ Parser::Parser(int maxDepth)
   m_depth(0),
   m_maxDepth(maxDepth),
   m_pCallback(nullptr),
-  m_pCallbackUser(nullptr)
+  m_pCallbackUser(nullptr),
+  m_pMaxDepthCallback(nullptr),
+  m_pMaxDepthCallbackUser(nullptr)
 {
   XR_ASSERTMSG(Json::Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
     maxDepth));
@@ -365,7 +367,7 @@ void Parser::_DoDepthCallback(bool entered)
 {
   if (m_pMaxDepthCallback != nullptr)
   {
-    (*m_pMaxDepthCallback)(&entered, m_pMaxDepthUserData);
+    (*m_pMaxDepthCallback)(&entered, m_pMaxDepthCallbackUser);
   }
 }
 

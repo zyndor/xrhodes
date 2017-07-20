@@ -64,7 +64,7 @@ private:
   Callback      m_pCallback;
   void*         m_pCallbackUser; // no ownership
   XR::Callback  m_pMaxDepthCallback;
-  void*         m_pMaxDepthUserData; // no ownership
+  void*         m_pMaxDepthCallbackUser; // no ownership
   
   // internal
   bool  _ParseArray();
