@@ -33,7 +33,8 @@ public:
 
   struct Job 
   {
-    JobCallback pJobCb;
+    JobCallback pExecuteCb;
+    JobCallback pCancelCb;
     void*       pData;
   };
 

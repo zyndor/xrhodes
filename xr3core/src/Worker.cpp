@@ -32,7 +32,7 @@ Worker::Worker()
 //==============================================================================
 void  Worker::Enqueue(Job j)
 {
-  XR_ASSERT(Worker, j.pJobCb != nullptr);
+  XR_ASSERT(Worker, j.pExecuteCb != nullptr);
   if (!m_isRunning)
   {
     m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
@@ -62,6 +62,13 @@ void Worker::CancelPendingJobs()
     }
     XR_ASSERT(Worker, posts == q.size());
   }
+
+  std::for_each(q.begin(), q.end(), [](Job& j) {
+    if (j.pCancelCb)
+    {
+      (*j.pCancelCb)(j.pData);
+    }
+  });
 }
 
 //==============================================================================
@@ -100,7 +107,7 @@ void  Worker::Loop()
       m_jobs.pop_front();
     }
 
-    (*j.pJobCb)(j.pData);
+    (*j.pExecuteCb)(j.pData);
   }
 }
 
