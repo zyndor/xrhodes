@@ -9,6 +9,7 @@
 
 #include <XR/Queue.hpp>
 #include <XR/fundamentals.hpp>
+#include <XR/Semaphore.hpp>
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -17,11 +18,8 @@ namespace XR
 {
 
 //==============================================================================
-///@brief Worker runs a thread to perform Jobs on. The thread is only started
-/// when jobs are enqueued, and once the queue of jobs have finished processing,
-/// the Worker thread will check for new jobs a given number of times with a
-/// given interval between each before it's terminated (Default is 100 times
-/// with 10 milliseconds).
+///@brief Worker is a generic producer / consumer abstraction; it runs a thread
+/// to perform Jobs on.
 ///@note The user must make sure that all jobs have finished processing before
 /// the execution reaches the Worker destructor. Finalize() helps facilitate
 /// this.
@@ -35,7 +33,8 @@ public:
 
   struct Job 
   {
-    JobCallback pJobCb;
+    JobCallback pExecuteCb;
+    JobCallback pCancelCb;
     void*       pData;
   };
 
@@ -43,11 +42,6 @@ public:
   Worker();
 
   // general
-  ///@brief Sets the number of retries and the interval between them
-  /// for when the thread has no jobs.
-  ///@note Changes will take place after the thread (re-)launch.
-  void  SetIdleThreadExpiry(int numAttempts, int sleepIntervalMs);
-
   ///@brief Adds a job to the queue. If the thread wasn't running, this
   /// will start it.
   void  Enqueue(Job job);
@@ -64,13 +58,15 @@ private:
   typedef XR::Queue<Job>  JobQueue;
 
   // data
-  mutable std::mutex  m_jobsMutex;
-  JobQueue            m_jobs;
 
-  std::thread         m_thread;
+  std::mutex  m_jobsMutex;
+  Semaphore::Core m_workSemaphore;
+  JobQueue    m_jobs;
 
-  int                 m_numAttempts;
-  int                 m_sleepIntervalMs;
+  bool        m_finalized;
+  std::thread m_thread;
+
+  std::atomic<bool> m_isRunning;
 
   // static
   static void ThreadFunction(Worker& worker);
