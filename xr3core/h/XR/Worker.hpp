@@ -57,9 +57,9 @@ private:
   typedef XR::Queue<Job>  JobQueue;
 
   // data
-  Semaphore   m_workSemaphore;
 
   std::mutex  m_jobsMutex;
+  Semaphore::Core m_workSemaphore;
   JobQueue    m_jobs;
 
   bool        m_finalized;

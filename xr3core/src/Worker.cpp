@@ -42,22 +42,36 @@ void  Worker::Enqueue(Job j)
   {
     std::unique_lock<std::mutex> lock(m_jobsMutex);
     m_jobs.push_back(j);
+    m_workSemaphore.Post();
   }
-  m_workSemaphore.Post();
 }
 
 //==============================================================================
 void Worker::CancelPendingJobs()
 {
-  std::unique_lock<std::mutex>  lock(m_jobsMutex);
-  m_jobs.clear();
+  JobQueue  q;
+  {
+    std::unique_lock<std::mutex>  lock(m_jobsMutex);
+    q.adopt(m_jobs);
+
+    // Consume posts. There should be as many posts as items cancelled.
+    size_t posts = 0;
+    while(m_workSemaphore.TryWait())
+    {
+      ++posts;
+    }
+    XR_ASSERT(Worker, posts == q.size());
+  }
 }
 
 //==============================================================================
 void  Worker::Finalize()
 {
-  m_finalized = true;
-  m_workSemaphore.Post();
+  {
+    std::unique_lock<std::mutex>  lock(m_jobsMutex);
+    m_finalized = true;
+    m_workSemaphore.Post();
+  }
 
   if (m_thread.joinable())
   {
@@ -71,24 +85,16 @@ void  Worker::Loop()
   Job j;
   while (true)
   {
-    m_workSemaphore.Wait();
-
     {
       std::unique_lock<std::mutex>  lock(m_jobsMutex);
-      if (m_jobs.empty())
+      m_workSemaphore.Wait(lock);
+
+      if (m_jobs.empty() && m_finalized)
       {
-        if (m_finalized)
-        {
-          break;
-        }
-        else
-        {
-          continue;
-          // TODO: some more elegant solution would be great;
-        }
+        break;
       }
 
-      // Take next job
+      // Take the next job
       XR_ASSERT(Worker, !m_jobs.empty());
       j = m_jobs.front();
       m_jobs.pop_front();
