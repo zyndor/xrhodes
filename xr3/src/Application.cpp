@@ -38,8 +38,6 @@ void  Application::Init(char const* title)
 //==============================================================================
 void  Application::Exit()
 {
-  Hash::DebugClearStringLookup();
-  
   Audio::Exit();
   Input::Exit();
   Renderer::Exit();

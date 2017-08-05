@@ -34,8 +34,6 @@ public:
   static uint64_t String(const char* pString, bool assertUnique = true);
   static uint64_t String(const char* pString, size_t size, bool assertUnique = true);
   static uint64_t Data(const void* pData, size_t size);
-
-  static void     DebugClearStringLookup();
 };
 
 } // XR

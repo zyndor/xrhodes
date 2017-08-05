@@ -110,20 +110,6 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
 } 
 
 #undef PREPROCESS_BYTES
-
-//==============================================================================
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-typedef std::map<uint64_t, std::string> StringMap;
-
-StringMap  s_stringLookup;
-
-void SquashCase(std::string& str) // TODO: move to stringutils
-{
-  std::transform(str.begin(), str.end(), str.begin(), [](std::string::value_type c)
-    { return tolower(c); });
-}
-
-#endif  //XR_DEBUG
 }
 
 //==============================================================================
@@ -162,42 +148,13 @@ uint64_t  Hash::String(const char* pString, bool assertUnique)
 //==============================================================================
 uint64_t  Hash::String(const char* pString, size_t size, bool assertUnique)
 {
-  uint64_t hash = MurmurHash64B<ToLower>(pString, size, s_seed);
-
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  if (assertUnique)
-  {
-    XR_ASSERT(Hash, pString != 0);
-    std::string squashed(pString, size);
-    SquashCase(squashed);
-    StringMap::iterator iFind(s_stringLookup.find(hash));
-    // look for index of first non matching character being @a size
-    const bool notFound = iFind == s_stringLookup.end();
-    XR_ASSERTMSG(Hash, notFound || squashed == iFind->second,
-      ("Hash collision - %s vs %s (%d)", squashed.c_str(), iFind->second.c_str(), hash));
-    if (notFound)
-    {
-      s_stringLookup[hash] = squashed;
-    }
-  }
-#endif  //XR_DEBUG
-
-  return hash;
+  return MurmurHash64B<ToLower>(pString, size, s_seed);
 }
 
 //==============================================================================
 uint64_t  Hash::Data(const void* pData, size_t size)
 {
-  XR_ASSERT(Hash, size >= 0);
   return MurmurHash64B<ByteNoOp>(pData, size, s_seed);
-}
-
-//==============================================================================
-void  Hash::DebugClearStringLookup()
-{
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  s_stringLookup.clear();
-#endif
 }
 
 } // XR
