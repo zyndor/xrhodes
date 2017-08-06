@@ -16,7 +16,7 @@
 #define XR_RAWTRACE(format)	printf format; fflush(stdout);
 
 //==============================================================================
-///@brief Binary debugging aid - wrap call to ascertain whether it causes a
+///@brief Binary debugging aid - wrap call to help determine whether it causes a
 /// crash / exception.
 #define XR_SURVIVE(call)  { XR_RAWTRACE(("SURVIVE: %s (%s:%d)\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"); }
 
@@ -29,7 +29,7 @@
 #if defined(XR_DEBUG)
 #define XR_DEBUG_ONLY(op) op
 #else
-#define XR_DEBUG_ONLY(op) void(0)
+#define XR_DEBUG_ONLY(op)
 #endif
 
 //==============================================================================
