@@ -14,116 +14,147 @@
 
 namespace XR
 {
-
-//==============================================================================
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
 namespace
 {
-typedef std::map<uint32_t, std::string> StringMap;
 
-StringMap  s_stringLookup;
-
-void SquashCase(std::string& str)
+uint8_t ByteNoOp(uint8_t c)
 {
-  std::transform(str.begin(), str.end(), str.begin(), [](std::string::value_type c)
-    { return tolower(c); });
+  return c;
 }
 
+uint8_t ToLower(uint8_t c)
+{
+  return (c >= 'A' && c <= 'Z') ? c + 'a' - 'A' : c;
 }
-#endif  //XR_DEBUG
 
 //==============================================================================
-uint32_t  Hash::s_seed(Hash::kSeed);
+template <uint8_t(*byteOp)(uint8_t)>
+uint32_t Hash32(const void* data, size_t size, uint32_t seed)
+{
+  uint32_t hash = seed;
+  auto p = static_cast<uint8_t const*>(data);
+  auto endp = p + size;
+  uint32_t prev;
+  while (p != endp)
+  {
+    prev = hash >> 31;
+    hash += (hash << 5) + (hash + byteOp(*p));
+    hash ^= prev;
+    ++p;
+  }
+  return hash;
+}
+
+#define PREPROCESS_BYTES(x, byteOp)\
+  (uint32_t(byteOp((x) >> 24)) << 24) |\
+  (uint32_t(byteOp(((x) >> 16) & 0xff)) << 16) |\
+  (uint32_t(byteOp(((x) >> 8) & 0xff)) << 8) |\
+  (uint32_t(byteOp((x) & 0xff)))
 
 //==============================================================================
-void  Hash::SetSeed(uint32_t seed)
+// Based on MurmurHash2, written and placed in public domain by Austin Appleby.
+// The author hereby disclaims copyright to this source code.
+template <uint8_t (*byteOp)(uint8_t)>
+uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
+{
+  const uint32_t m = 0x5bd1e995;
+  const int r = 24;
+
+  uint32_t h1 = uint32_t(seed) ^ len;
+  uint32_t h2 = uint32_t(seed >> 32);
+
+  const uint32_t * data = (const uint32_t *)key;
+
+  while(len >= 8)
+  {
+    uint32_t k1 = *data++;
+    k1 = PREPROCESS_BYTES(k1, byteOp);
+    k1 *= m; k1 ^= k1 >> r; k1 *= m;
+    h1 *= m; h1 ^= k1;
+    len -= 4;
+
+    uint32_t k2 = *data++;
+    k2 = PREPROCESS_BYTES(k2, byteOp);
+    k2 *= m; k2 ^= k2 >> r; k2 *= m;
+    h2 *= m; h2 ^= k2;
+    len -= 4;
+  }
+
+  if(len >= 4)
+  {
+    uint32_t k1 = *data++;
+    k1 = PREPROCESS_BYTES(k1, byteOp);
+    k1 *= m; k1 ^= k1 >> r; k1 *= m;
+    h1 *= m; h1 ^= k1;
+    len -= 4;
+  }
+
+  switch(len)
+  {
+  case 3: h2 ^= uint32_t(byteOp(((unsigned char*)data)[2])) << 16;
+  case 2: h2 ^= uint32_t(byteOp(((unsigned char*)data)[1])) << 8;
+  case 1: h2 ^= uint32_t(byteOp(((unsigned char*)data)[0]));
+      h2 *= m;
+  };
+
+  h1 ^= h2 >> 18; h1 *= m;
+  h2 ^= h1 >> 22; h2 *= m;
+  h1 ^= h2 >> 17; h1 *= m;
+  h2 ^= h1 >> 19; h2 *= m;
+
+  uint64_t h = h1;
+
+  h = (h << 32) | h2;
+
+  return h;
+} 
+
+#undef PREPROCESS_BYTES
+}
+
+//==============================================================================
+uint64_t  s_seed(Hash::kSeed);
+
+//==============================================================================
+void  Hash::SetSeed(uint64_t seed)
 {
   s_seed = seed;
 }
 
 //==============================================================================
-uint32_t  Hash::String(const char* pString)
+uint32_t Hash::String32(const char* str)
 {
-  XR_ASSERT(Hash, pString != 0);
-  uint32_t hash = s_seed;
-  int c;
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  std::string squashed(pString);
-  SquashCase(squashed);
-#endif  //XR_DEBUG
-  while ((c = *pString) != 0)
-  {
-    hash += (hash << 5) + (hash + tolower(c));
-    ++pString;
-  }
-
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  StringMap::iterator iFind(s_stringLookup.find(hash));
-  const bool notFound = iFind == s_stringLookup.end();
-  XR_ASSERTMSG(Hash, notFound || squashed == iFind->second,
-    ("Hash collision - %s vs %s (%d)", squashed.c_str(), iFind->second.c_str(), hash));
-  if (notFound)
-  {
-    s_stringLookup[hash] = squashed;
-  }
-#endif  //XR_DEBUG
-
-  return hash;
+  return String32(str, strlen(str));
 }
 
 //==============================================================================
-uint32_t  Hash::String(const char* pString, size_t size)
+uint32_t Hash::String32(const char* str, size_t size)
 {
-  XR_ASSERT(Hash, pString != 0);
-  uint32_t hash = s_seed;
-  int c;
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  std::string squashed(pString, size);
-  SquashCase(squashed);
-#endif  //XR_DEBUG
-  while (size > 0 && (c = *pString) != 0)
-  {
-    hash += (hash << 5) + (hash + tolower(c));
-    ++pString;
-    --size;
-  }
-
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  StringMap::iterator iFind(s_stringLookup.find(hash));
-  // look for index of first non matching character being @a size
-  const bool notFound = iFind == s_stringLookup.end();
-  XR_ASSERTMSG(Hash, notFound || squashed == iFind->second,
-    ("Hash collision - %s vs %s (%d)", squashed.c_str(), iFind->second.c_str(), hash));
-  if (notFound)
-  {
-    s_stringLookup[hash] = squashed;
-  }
-#endif  //XR_DEBUG
-
-  return hash;
+  return Hash32<ToLower>(str, size, s_seed);
 }
 
 //==============================================================================
-uint32_t  Hash::Data(const void* pData, size_t size)
+uint32_t Hash::Data32(const void* data, size_t size)
 {
-  XR_ASSERT(Hash, size >= 0);
-  uint32_t hash = s_seed;
-  const char* p0(static_cast<const char*>(pData));
-  const char* p1(p0 + size);
-  while (p0 != p1)
-  {
-    hash += (hash << 5) + (hash + *p0);
-    ++p0;
-  }
-  return hash;
+  return Hash32<ByteNoOp>(data, size, s_seed);
 }
 
 //==============================================================================
-void  Hash::DebugClearStringLookup()
+uint64_t  Hash::String(const char* pString, bool assertUnique)
 {
-#if defined XR_DEBUG && !defined XR_DEBUG_PERFORMANCE
-  s_stringLookup.clear();
-#endif
+  return String(pString, strlen(pString), assertUnique);
+}
+
+//==============================================================================
+uint64_t  Hash::String(const char* pString, size_t size, bool assertUnique)
+{
+  return MurmurHash64B<ToLower>(pString, size, s_seed);
+}
+
+//==============================================================================
+uint64_t  Hash::Data(const void* pData, size_t size)
+{
+  return MurmurHash64B<ByteNoOp>(pData, size, s_seed);
 }
 
 } // XR
