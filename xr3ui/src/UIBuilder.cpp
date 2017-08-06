@@ -1255,7 +1255,7 @@ int UIBuilder::GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName)
   const char* pValue(pXml->Attribute(pAttribName));
   if (pValue != 0)
   {
-    value = FindItemId(karAlignValueHash, kNumAlignValues, Hash::String(pValue));
+    value = FindItemId(karAlignValueHash, kNumAlignValues, Hash::String32(pValue));
     if (value >= kNumAlignValues) // if not found, default to none
     {
       XR_TRACE(UIBuilder, ("The value of '%s' is not a valid alignment.", pAttribName));
