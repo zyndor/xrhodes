@@ -22,6 +22,8 @@ static struct
   size_t romPathSize;
 } s_file;
 
+#define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
+
 //==============================================================================
 void AppendSlash(File::Path& path)
 {
@@ -131,7 +133,7 @@ File::Handle File::Open(Path const& name, const char* mode)
 //===============-===============================================================
 size_t File::GetSize(Handle hFile)
 {
-  XR_ASSERT(File, hFile);
+  XR_ASSERT_HANDLE_VALID(hFile);
   const size_t offset = Tell(hFile);
   size_t result = 0;
   if (0 == Seek(hFile, 0, SeekFrom::End))
@@ -146,7 +148,7 @@ size_t File::GetSize(Handle hFile)
 //==============================================================================
 size_t File::Read(Handle hFile, size_t elemSize, size_t numElems, void* parBuffer)
 {
-  XR_ASSERT(File, hFile);
+  XR_ASSERT_HANDLE_VALID(hFile);
   FILE* f = static_cast<FILE*>(hFile);
   return fread(parBuffer, elemSize, numElems, f);
 }
@@ -172,7 +174,7 @@ void File::Close(Handle hFile)
 //==============================================================================
 size_t File::Tell(Handle hFile)
 {
-  XR_ASSERT(File, hFile);
+  XR_ASSERT_HANDLE_VALID(hFile);
   FILE* f = static_cast<FILE*>(hFile);
   const size_t tell = ftell(f);
   return tell;
@@ -188,7 +190,7 @@ static const int  karSeekOriginMappings[] =
 
 bool File::Seek(Handle hFile, size_t offset, SeekFrom sf)
 {
-  XR_ASSERT(File, hFile);
+  XR_ASSERT_HANDLE_VALID(hFile);
   FILE* f = static_cast<FILE*>(hFile);
   return fseek(f, offset, karSeekOriginMappings[static_cast<int>(sf)]) == 0;
 }
