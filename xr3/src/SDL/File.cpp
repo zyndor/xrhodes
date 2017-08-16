@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include <XR/File.hpp>
-#include <XR/HardString.hpp>
+#include <XR/stringutils.hpp>
 #include <XR/utils.hpp>
 #include <XR/debug.hpp>
 #include <algorithm>
@@ -14,221 +14,167 @@
 namespace XR
 {
 
-//==============================================================================
-typedef HardString<128>  Filename;
-
-//==============================================================================
-static const int  kMaxFileHandles = 32;
-
-//==============================================================================
-static struct 
+static struct
 {
-  int           secureError;
-  FILE*         arpFile[kMaxFileHandles];
-  Filename      arFilename[kMaxFileHandles];
-  int           nextHandle;
-} s_fileImpl;
+  bool init = false;
+  File::System system;
+  size_t ramPathSize;
+  size_t romPathSize;
+} s_file;
 
 //==============================================================================
-void File::Init()
+void AppendSlash(File::Path& path)
 {
-  memset(&s_fileImpl, 0x00, sizeof(s_fileImpl));
+  char* writep = path.data() + path.size() - 1;
+  if (*writep != '/')
+  {
+    path += "/";
+  }
+}
+
+//==============================================================================
+void File::Init(System const& filesys)
+{
+  XR_ASSERTMSG(File, !s_file.init, ("Already initialised!"));
+  size_t length;
+  if (!filesys.ramPath.empty())
+  {
+    Replace(filesys.ramPath.c_str(), "\\", "/", s_file.system.ramPath.capacity(),
+      s_file.system.ramPath.data(), length);
+    AppendSlash(s_file.system.ramPath);
+  }
+  s_file.ramPathSize = s_file.system.ramPath.size();
+
+  if (!filesys.romPath.empty())
+  {
+    Replace(filesys.romPath.c_str(), "\\", "/", s_file.system.romPath.capacity(),
+      s_file.system.romPath.data(), length);
+    AppendSlash(s_file.system.romPath);
+  }
+  s_file.romPathSize = s_file.system.romPath.size();
+
+  s_file.init = true;
 }
 
 //==============================================================================
 void File::Exit()
 {
-  for (int i = 0; i < kMaxFileHandles; ++i)
+  XR_ASSERTMSG(File, s_file.init, ("Not initialised!"));
+  s_file.init = false;
+}
+
+//==============================================================================
+File::Path const& File::GetRamPath()
+{
+  return s_file.system.ramPath;
+}
+
+//==============================================================================
+File::Path const& File::GetRomPath()
+{
+  return s_file.system.romPath;
+}
+
+//==============================================================================
+bool File::CheckExists(Path const& name)
+{
+  Handle h = Open(name, "rb");
+  if (h)
   {
-    Close(i);
+    Close(h);
   }
+  return h != nullptr;
 }
 
 //==============================================================================
-bool File::SecureSave(void* pBuffer, uint16_t size)
+File::Handle File::Open(Path const& name, const char* mode)
 {
-  return false;
-}
+  FILE*  file = fopen(name.c_str(), mode);
 
-//==============================================================================
-bool File::SecureLoad(void* pBuffer, uint16_t size)
-{
-  return false;
-}
-
-//==============================================================================
-static const int  karSecureErrorMappings[] =
-{
-  0  // stub
-};
-
-File::SecureError File::SecureGetError()
-{
-  return SERR_NONE; // stub
-}
-
-//==============================================================================
-const char* File::SecureGetErrorString()
-{
-  return ""; // stub
-}
-
-//==============================================================================
-bool File::CheckExists(const char* pName)
-{
-  FILE* pFile(fopen(pName, "r"));
-  bool  result = pFile != 0;
-  if (result)
+  if (!file)
   {
-    fclose(pFile);
+    // Skip any heading slashes.
+    char const* nameChars = name.c_str();
+    if (nameChars[0] == '/')
+    {
+      ++nameChars;
+    }
+    const size_t nameLen = strlen(nameChars);
+
+    // Try ramPath.
+    if (!GetRamPath().empty() &&
+      nameLen + s_file.ramPathSize <= Path::kCapacity &&
+      strncmp(nameChars, GetRamPath().c_str(), s_file.ramPathSize) != 0)
+    {
+      Path path = s_file.system.ramPath;
+      path += nameChars;
+
+      file = fopen(path.c_str(), mode);
+    }
+
+    // If we still haven't found our file in ramPath, and we only want to read,
+    // then we may try romPath.
+    if (!file && !GetRomPath().empty() &&
+      nameLen + s_file.romPathSize <= Path::kCapacity &&
+      strncmp(nameChars, GetRomPath().c_str(), s_file.romPathSize) != 0 &&
+      strchr(mode, 'r') && !strchr(mode, 'w'))
+    {
+      Path path = s_file.system.romPath;
+      path += nameChars;
+
+      file = fopen(path.c_str(), mode);
+    }
   }
+  return file;
+}
+
+//===============-===============================================================
+size_t File::GetSize(Handle hFile)
+{
+  XR_ASSERT(File, hFile);
+  const size_t offset = Tell(hFile);
+  size_t result = 0;
+  if (0 == Seek(hFile, 0, SeekFrom::End))
+  {
+    result = Tell(hFile);
+    Seek(hFile, offset, SeekFrom::Start);
+  }
+  
   return result;
 }
 
 //==============================================================================
-int File::Open(const char* pName, const char* pMode)
+size_t File::Read(Handle hFile, size_t elemSize, size_t numElems, void* parBuffer)
 {
-  int hFile(INVALID_HANDLE);
-  for (int i = 0; i < kMaxFileHandles; ++i)
+  XR_ASSERT(File, hFile);
+  FILE* f = static_cast<FILE*>(hFile);
+  return fread(parBuffer, elemSize, numElems, f);
+}
+
+//==============================================================================
+size_t File::Write(void const* parBuffer, size_t elemSize, size_t numElems, Handle hFile)
+{
+  XR_ASSERT(File, hFile);
+  FILE* f = static_cast<FILE*>(hFile);
+  return fwrite(parBuffer, elemSize, numElems, f);
+}
+
+//==============================================================================
+void File::Close(Handle hFile)
+{
+  FILE* f = static_cast<FILE*>(hFile);
+  if (f)
   {
-    int hTemp((s_fileImpl.nextHandle + i) % kMaxFileHandles);
-    if (s_fileImpl.arpFile[hTemp] == 0)
-    {
-      hFile = hTemp;
-      break;
-    }
-  }
-  
-  if (hFile != INVALID_HANDLE)
-  {
-    FILE*  pFile = fopen(pName, pMode);
-    if (pFile != 0)
-    {
-      s_fileImpl.arpFile[hFile] = pFile;
-      s_fileImpl.arFilename[hFile] = pName;
-      s_fileImpl.nextHandle = hFile + 1;
-    }
-    else
-    {
-      hFile = INVALID_HANDLE;
-    }
-  }
-  return hFile;
-}
-
-//==============================================================================
-size_t File::GetSize(int hFile)
-{
-  XR_ASSERT(File, hFile >= 0);
-  XR_ASSERT(File, hFile < kMaxFileHandles);
-  XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  
-  size_t offset(ftell(s_fileImpl.arpFile[hFile]));
-  size_t result(0);
-  if (0 == fseek(s_fileImpl.arpFile[hFile], 0, SEEK_END))
-  {
-    result = ftell(s_fileImpl.arpFile[hFile]);
-  }
-  
-  fseek(s_fileImpl.arpFile[hFile], offset, SEEK_SET);
-
-  return result;
-}
-
-//==============================================================================
-const char* File::GetName(int hFile)
-{
-  XR_ASSERT(File, hFile >= 0);
-  XR_ASSERT(File, hFile < kMaxFileHandles);
-  XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  return s_fileImpl.arFilename[hFile].c_str();
-}
-
-//==============================================================================
-size_t File::Read(int hFile, size_t elemSize, size_t numElems, void* parBuffer)
-{
-  XR_ASSERT(File, hFile >= 0);
-  XR_ASSERT(File, hFile < kMaxFileHandles);
-  XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  return fread(parBuffer, elemSize, numElems, s_fileImpl.arpFile[hFile]);
-}
-
-//==============================================================================
-char* File::ReadLine(int hFile, size_t bufferSize, char* parBuffer)
-{
-  XR_ASSERT(File, hFile >= 0);
-  XR_ASSERT(File, hFile < kMaxFileHandles);
-  XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  XR_ASSERT(File, parBuffer != 0);
-  --bufferSize;
-  int result(0);
-  char* pWrite(parBuffer);
-  for (size_t i = 0; i < bufferSize; ++i)
-  {
-    result = fread(pWrite, 1, 1, s_fileImpl.arpFile[hFile]);
-    char  c(*pWrite);
-    bool  success(result == 1);
-    if(success)
-    {
-      ++pWrite;
-    }
-    
-    if (!success || c == '\r' || c == '\n')
-    {
-      break;
-    }
-  }
-  
-  *pWrite = '\0';
-
-  return parBuffer;
-}
-
-//==============================================================================
-size_t File::Write(const void* parBuffer, size_t elemSize, size_t numElems, int hFile)
-{
-  XR_ASSERT(File, hFile >= 0);
-  XR_ASSERT(File, hFile < kMaxFileHandles);
-  XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  return fwrite(parBuffer, elemSize, numElems, s_fileImpl.arpFile[hFile]);
-}
-
-//==============================================================================
-void File::Close(int hFile)
-{
-  XR_ASSERT(File, hFile >= 0);
-  XR_ASSERT(File, hFile < kMaxFileHandles);
-  FILE*&  pFile = s_fileImpl.arpFile[hFile];
-  if (pFile != 0)
-  {
-    fclose(pFile);
-    pFile = 0;
-    s_fileImpl.nextHandle = hFile;
+    fclose(f);
   }
 }
 
 //==============================================================================
-static const int  karErrorMappings[] =
+size_t File::Tell(Handle hFile)
 {
-  0
-};
-
-File::Error File::GetError()
-{
-  int error(0);
-  return static_cast<Error>(std::find(karErrorMappings,
-    karErrorMappings + XR_ARRAY_SIZE(karErrorMappings),
-    error) - karErrorMappings);
-}
-
-//==============================================================================
-size_t  File::Tell(int hFile)
-{
-  XR_ASSERT(File, hFile >= 0);
-  XR_ASSERT(File, hFile < kMaxFileHandles);
-  XR_ASSERT(File, s_fileImpl.arpFile[hFile] != 0);
-  
-  size_t  tell(ftell(s_fileImpl.arpFile[hFile]));
+  XR_ASSERT(File, hFile);
+  FILE* f = static_cast<FILE*>(hFile);
+  const size_t tell = ftell(f);
   return tell;
 }
 
@@ -240,15 +186,11 @@ static const int  karSeekOriginMappings[] =
   SEEK_END,
 };
 
-bool File::Seek(int hFile, size_t offset, SeekFrom sf)
+bool File::Seek(Handle hFile, size_t offset, SeekFrom sf)
 {
-  return fseek(s_fileImpl.arpFile[hFile], offset, karSeekOriginMappings[sf]) == 0;
-}
-
-//==============================================================================
-const char* File::GetErrorString()
-{
-  return 0; //s3eFileGetErrorString();
+  XR_ASSERT(File, hFile);
+  FILE* f = static_cast<FILE*>(hFile);
+  return fseek(f, offset, karSeekOriginMappings[static_cast<int>(sf)]) == 0;
 }
 
 } // XR
