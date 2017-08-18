@@ -31,8 +31,8 @@ public:
   ~FileBuffer();
 
   // general
-  bool        Open(const char* pName, const char* pMode);
   bool        HasFlag(uint32_t flags) const;
+  bool            Open(File::Path const& path, const char* mode);
 
   size_t      GetSize() const;
   const char* GetData() const;
@@ -44,10 +44,10 @@ public:
 
 private:
   // data
-  int       m_handle;
   uint32_t  m_flags;
   size_t    m_size;
   char*     m_pData;
+  File::Handle  m_handle;
 };
 
 //==============================================================================

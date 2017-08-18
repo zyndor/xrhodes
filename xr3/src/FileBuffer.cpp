@@ -13,7 +13,7 @@ namespace XR
 
 //==============================================================================
 FileBuffer::FileBuffer()
-: m_handle(File::INVALID_HANDLE),
+: m_handle(nullptr),
   m_flags(0),
   m_size(0),
   m_pData(0)
@@ -27,26 +27,25 @@ FileBuffer::~FileBuffer()
 }
 
 //==============================================================================
-bool  FileBuffer::Open(const char* pName, const char* pMode)
+bool  FileBuffer::Open(File::Path const& path, const char* mode)
 {
-  XR_ASSERT(FileBuffer, pName != 0);
-  XR_ASSERT(FileBuffer, pMode != 0);
-  m_handle = File::Open(pName, pMode);
-  bool  success(m_handle != File::INVALID_HANDLE);
-  if(success)
+  XR_ASSERT(FileBuffer, mode);
+  m_handle = File::Open(path, mode);
+  bool  success = m_handle != nullptr;
+  if (success)
   {
     m_flags = 0;
-    if(strchr(pMode, 'r') != 0)
+    if (strchr(mode, 'r') != nullptr)
     {
       m_flags |= READ_F;
     }
 
-    if(strchr(pMode, 'w') != 0)
+    if (strchr(mode, 'w') != nullptr)
     {
       m_flags |= WRITE_F;
     }
 
-    if(strchr(pMode, 'b') != 0)
+    if (strchr(mode, 'b') != nullptr)
     {
       m_flags |= BINARY_F;
     }
@@ -72,10 +71,10 @@ bool  FileBuffer::Write(const void* pBuffer, size_t size, size_t numElems)
 //==============================================================================
 void  FileBuffer::Close()
 {
-  if(m_handle != File::INVALID_HANDLE)
+  if (m_handle)
   {
     File::Close(m_handle);
-    m_handle = File::INVALID_HANDLE;
+    m_handle = nullptr;
   }
 }
 

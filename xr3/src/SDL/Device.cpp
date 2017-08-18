@@ -133,8 +133,8 @@ void Device::Init(char const* title)
     
     std::string json(writer.Finish(true));
     
-    int hFile(File::Open(kConfigName, "wb"));
-    result = hFile != File::INVALID_HANDLE &&
+    File::Handle hFile(File::Open(kConfigName, "wb"));
+    result = hFile != nullptr &&
       File::Write(json.c_str(), json.size(), 1, hFile) > 0;
     
     File::Close(hFile);
