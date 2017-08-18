@@ -9,56 +9,47 @@
 
 #include "File.hpp"
 #include <XR/fundamentals.hpp>
+#include <stdint.h>
 
 namespace XR
 {
 
 //==============================================================================
+///@brief Facilitates the reading of the whole of a file.
 class FileBuffer
 {
 	XR_NONCOPY_DECL(FileBuffer)
 
 public:
-  enum  Flags
-  {
-    READ_F = 0x01,
-    WRITE_F = 0x02,
-    BINARY_F = 0x04
-  };
-
   // structors
   FileBuffer();
   ~FileBuffer();
 
   // general
-  bool        HasFlag(uint32_t flags) const;
-  bool            Open(File::Path const& path, const char* mode);
+  bool            Open(File::Path const& path, bool text);
 
-  size_t      GetSize() const;
-  const char* GetData() const;
+  size_t          GetSize() const;
+  uint8_t const*  GetData() const;
 
-  bool        Write(const void* pBuffer, size_t size, size_t numElems);
-  void        Close();
+  template <typename T>
+  T const*        CastData() const;
 
-  void        Destroy();
+  ///@brief Transfers ownership of the buffer.
+  ///@note GetSize() beforehand; the size will be 0 afterwards.
+  uint8_t*        DisownData();
+
+  void            Close();
+  void            Destroy();
 
 private:
   // data
-  uint32_t  m_flags;
-  size_t    m_size;
-  char*     m_pData;
   File::Handle  m_handle;
+  size_t        m_size;
+  uint8_t*      m_data;
 };
 
 //==============================================================================
 // implementation
-//==============================================================================
-inline
-bool  FileBuffer::HasFlag(uint32_t flags) const
-{
-  return (m_flags & flags) == flags;
-}
-
 //==============================================================================
 inline
 size_t FileBuffer::GetSize() const
@@ -68,9 +59,17 @@ size_t FileBuffer::GetSize() const
 
 //==============================================================================
 inline
-const char* FileBuffer::GetData() const
+const uint8_t* FileBuffer::GetData() const
 {
-  return m_pData;
+  return m_data;
+}
+
+//==============================================================================
+template <typename T>
+inline
+T const* FileBuffer::CastData() const
+{
+  return reinterpret_cast<T const*>(m_data);
 }
 
 } // XR
