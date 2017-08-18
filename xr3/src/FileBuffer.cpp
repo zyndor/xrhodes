@@ -22,13 +22,16 @@ FileBuffer::FileBuffer()
 //==============================================================================
 FileBuffer::~FileBuffer()
 {
-  Close();
   Destroy();
+  Close();
 }
 
 //==============================================================================
 bool  FileBuffer::Open(File::Path const& path, const char* mode)
 {
+  Destroy();
+  Close();
+
   XR_ASSERT(FileBuffer, mode);
   m_handle = File::Open(path, mode);
   bool  success = m_handle != nullptr;
@@ -85,6 +88,7 @@ void  FileBuffer::Destroy()
   {
     delete[] m_pData;
     m_pData = 0;
+    m_size = 0;
   }
 }
 
