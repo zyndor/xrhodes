@@ -119,7 +119,7 @@ File::Handle File::Open(Path const& name, const char* mode)
     if (!file && !GetRomPath().empty() &&
       nameLen + s_file.romPathSize <= Path::kCapacity &&
       strncmp(nameChars, GetRomPath().c_str(), s_file.romPathSize) != 0 &&
-      strchr(mode, 'r') && !strchr(mode, 'w'))
+      strchr(mode, 'r') && !strchr(mode, '+'))
     {
       Path path = s_file.system.romPath;
       path += nameChars;
