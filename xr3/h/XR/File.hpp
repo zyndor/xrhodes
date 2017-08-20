@@ -7,6 +7,7 @@
 #ifndef XR_FILE_HPP
 #define XR_FILE_HPP
 
+#include <XR/HardString.hpp>
 #include <XR/fundamentals.hpp>
 #include <cstdint>
 
@@ -20,68 +21,58 @@ class File
 
 public:
   // types
-  enum
+  using Handle = void*;
+
+  enum class SeekFrom
   {
-    INVALID_HANDLE = -1
+    Start,
+    Current,
+    End
   };
-  
-  enum  SecureError
+
+  using Path = HardString<256>;
+
+  struct System
   {
-    SERR_NONE,
-    SERR_PARAM,
-    SERR_NOT_FOUND,
-    SERR_INSUFFICIENT,
-    SERR_DEVICE,
-    SERR_CORRUPT,
-    SERR_UNKNOWN
-  };
-  
-  enum  Error
-  {
-    ERR_NONE,
-    ERR_PARAM,
-    ERR_NOT_FOUND,
-    ERR_DEVICE,
-    ERR_OS_MEMORY,
-    ERR_IO,
-    ERR_UNKNOWN,
-    
-    ERR_INVALID_MODE,
-    ERR_EXISTS,
-    ERR_NOT_EMPTY,
-    ERR_ACCESS,
-    ERR_EOF
-  };
-  
-  enum  SeekFrom
-  {
-    SF_START,
-    SF_CURRENT,
-    SF_END
+    Path ramPath;
+    Path romPath;
   };
   
   // static
-  static void         Init();
-  static void         Exit();
-  
-  static bool         SecureSave(void* pBuffer, uint16_t size);
-  static bool         SecureLoad(void* pBuffer, uint16_t size);
-  static SecureError  SecureGetError();
-  static const char*  SecureGetErrorString();
+  ///@brief Initialises the file system with the given paths. Backslashes will
+  /// be converted to slashes and for the paths that don't end in a slash, one
+  /// will be appended.
+  static void   Init(System const& filesys);
+  static void   Exit();
 
-  static bool         CheckExists(const char* pName);
-  static int          Open(const char* pName, const char* pMode);
-  static size_t       GetSize(int hFile);
-  static const char*  GetName(int hFile);
-  static size_t       Read(int hFile, size_t elemSize, size_t numElems, void* parBuffer);
-  static char*        ReadLine(int hFile, size_t bufferSize, char* parBuffer);
-  static size_t       Write(const void* parBuffer, size_t elemSize, size_t numElems, int hFile);
-  static size_t       Tell(int hFile);
-  static bool         Seek(int hFile, size_t offset, SeekFrom sf);
-  static void         Close(int hFile);
-  
-  static Error        GetError();
-  static const char*  GetErrorString();
+  static Path const& GetRamPath();
+  static Path const& GetRomPath();
+
+  static bool   CheckExists(Path const& name);
+
+  ///@brief Attempts to open a file in the given @a mode (standard fopen flags
+  /// apply) and return a handle to it. If a file in the given path was not 
+  /// found, then attempts will be made to locate the file in the ram and rom
+  /// paths (given to Init()) by prepending @a name with them if possible
+  /// (i.e. within the capacity of Path), in this order.
+  static Handle Open(Path const& name, const char* mode);
+
+  static size_t GetSize(Handle hFile);
+
+  ///@brief Number of elements actually written.
+  static size_t Read(Handle hFile, size_t elemSize, size_t numElems, void* parBuffer);
+
+  ///@brief Number of elements actually written.
+  static size_t Write(const void* parBuffer, size_t elemSize, size_t numElems, Handle hFile);
+
+  static size_t Tell(Handle hFile);
+
+  ///@brief Repositions the position indicator for the given file handle.
+  ///@return Boolean to indicate the success of the operation. Note how this is
+  /// contrary to fseek(), which returns 0 on success.
+  static bool   Seek(Handle hFile, size_t offset, SeekFrom sf);
+
+  static void   Close(Handle hFile);
 };
 
 } // XR

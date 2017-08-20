@@ -41,6 +41,7 @@ public:
   explicit HardString(int32_t n);
   
   // general
+  bool            empty() const;
   size_t          size() const;
   size_t          capacity() const;
   const char*     c_str() const;
@@ -161,6 +162,14 @@ HardString<N>::HardString(int32_t n)
   operator+=(n);
 }
   
+//==============================================================================
+template <size_t N>
+inline
+bool HardString<N>::empty() const
+{
+  return m_arBuffer[0] == '\0';
+}
+
 //==============================================================================
 template  <size_t N>
 inline

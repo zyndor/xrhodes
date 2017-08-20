@@ -25,9 +25,9 @@ bool   Application::m_isRunning(false);
 bool   Application::m_breakUpdate(false);  
 
 //==============================================================================
-void  Application::Init(char const* title)
+void  Application::Init(File::System const& filesys, char const* title)
 {
-  File::Init();
+  File::Init(filesys);
   Device::Init(title);
 
   Renderer::Init(Device::GetMainWindow());

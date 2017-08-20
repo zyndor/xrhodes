@@ -6,6 +6,7 @@
 //==============================================================================
 #include "InputImpl.hpp"
 #include <XR/Device.hpp>
+#include <XR/FileWriter.hpp>
 #include <XR/JsonReader.hpp>
 #include <XR/JsonWriter.hpp>
 #include <XR/Renderer.hpp>
@@ -133,11 +134,9 @@ void Device::Init(char const* title)
     
     std::string json(writer.Finish(true));
     
-    int hFile(File::Open(kConfigName, "wb"));
-    result = hFile != File::INVALID_HANDLE &&
-      File::Write(json.c_str(), json.size(), 1, hFile) > 0;
-    
-    File::Close(hFile);
+    FileWriter file;
+    result = file.Open(kConfigName, FileWriter::Mode::Truncate, false) &&
+      file.Write(json.c_str(), json.size(), 1) == 1;
   }
 
   s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
