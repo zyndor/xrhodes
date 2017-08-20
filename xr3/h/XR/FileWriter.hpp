@@ -28,6 +28,7 @@ public:
   };
 
   // structors
+  FileWriter() = default;
   ~FileWriter();
 
   // general
