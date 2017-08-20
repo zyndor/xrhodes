@@ -113,7 +113,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
   XR_ASSERT(Font, pName != 0);
   FileBuffer  file;
-  bool  success(file.Open(pName, "rb"));
+  bool  success(file.Open(pName, false));
   if (!success)
   {
     return false;
@@ -122,7 +122,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
   file.Close();
   if (success)
   {
-    const char* pRead(file.GetData());
+    const char* pRead(file.CastData<char>());
     const char* pTempRead;
     const char* pValue;
 

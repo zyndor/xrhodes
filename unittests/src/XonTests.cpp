@@ -34,13 +34,13 @@ namespace XR
     TEST_METHOD(Xon_ParseValid) // Parse a XON file that tries to capture all sorts of scenarios.
     {
       XR::FileBuffer  buffer;
-      buffer.Open(DATA_PATH "/xontest1.xon", "rb");
+      buffer.Open(DATA_PATH "/xontest1.xon", false);
 
       XR::XonParser parser;
       EventSequencer seq;
-      bool success = parser.Parse(buffer.GetData(), buffer.GetSize(), SimpleEventHandler, &seq);
+      bool success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), SimpleEventHandler, &seq);
       Assert::IsTrue(success);
-      Assert::IsTrue(parser.GetState().pCurrent == buffer.GetData() + buffer.GetSize());
+      Assert::IsTrue(parser.GetState().pCurrent == buffer.CastData<char>() + buffer.GetSize());
 
       std::list<XonParser::Event> testEvents = {
         XonParser::Event::ObjectBegin,
@@ -133,9 +133,9 @@ namespace XR
         XR::FileBuffer  buffer;
 
         sprintf(arBuffer, "%s/invalid%d.xon", DATA_PATH, i + 1);
-        buffer.Open(arBuffer, "rb");
+        buffer.Open(arBuffer, false);
 
-        bool success = parser.Parse(buffer.GetData(), buffer.GetSize(), XonNoopHandler, nullptr);
+        bool success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
         Assert::IsFalse(success);
       }
     }
@@ -148,13 +148,13 @@ namespace XR
       for (int i = 0; i < 2; ++i)
       {
         XR::FileBuffer  buffer;
-        buffer.Open(DATA_PATH "/xontest1.xon", "rb");
-        success = parser.Parse(buffer.GetData(), buffer.GetSize(), XonNoopHandler, nullptr);
+        buffer.Open(DATA_PATH "/xontest1.xon", false);
+        success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
         Assert::IsTrue(success);
-        Assert::IsTrue(parser.GetState().pCurrent == buffer.GetData() + buffer.GetSize());
+        Assert::IsTrue(parser.GetState().pCurrent == buffer.CastData<char>() + buffer.GetSize());
 
-        buffer.Open(DATA_PATH "/invalid1.xon", "rb");
-        success = parser.Parse(buffer.GetData(), buffer.GetSize(), XonNoopHandler, nullptr);
+        buffer.Open(DATA_PATH "/invalid1.xon", false);
+        success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
         Assert::IsFalse(success);
         Assert::IsTrue(parser.GetState().row == 4);
         Assert::IsTrue(parser.GetState().column == 1);
@@ -164,12 +164,12 @@ namespace XR
     TEST_METHOD(Xon_ReadValid) // Read xon and construct tree.
     {
       XR::FileBuffer  buffer;
-      buffer.Open(DATA_PATH "/xontest1.xon", "rb");
+      buffer.Open(DATA_PATH "/xontest1.xon", false);
 
       XonParser::State  readState;
-      std::unique_ptr<XonObject> root(XonBuildTree(buffer.GetData(), buffer.GetSize(), &readState));
+      std::unique_ptr<XonObject> root(XonBuildTree(buffer.CastData<char>(), buffer.GetSize(), &readState));
       Assert::IsTrue(root != nullptr);
-      Assert::IsTrue(readState.pCurrent == buffer.GetData() + buffer.GetSize());
+      Assert::IsTrue(readState.pCurrent == buffer.CastData<char>() + buffer.GetSize());
 
       Assert::IsTrue(root->GetNumElements() == 7);
 
@@ -258,9 +258,9 @@ namespace XR
         XR::FileBuffer  buffer;
 
         sprintf(arBuffer, "%s/invalid%d.xon", DATA_PATH, i + 1);
-        buffer.Open(arBuffer, "rb");
+        buffer.Open(arBuffer, false);
 
-        XonObject* pRoot = XonBuildTree(buffer.GetData(), buffer.GetSize());
+        XonObject* pRoot = XonBuildTree(buffer.CastData<char>(), buffer.GetSize());
         Assert::IsTrue(!pRoot);
       }
     }
@@ -286,10 +286,10 @@ namespace XR
     TEST_METHOD(Xon_Errors) // Test for entity errors.
     {
       XR::FileBuffer  buffer;
-      buffer.Open(DATA_PATH "/xontest1.xon", "rb");
+      buffer.Open(DATA_PATH "/xontest1.xon", false);
 
       XonParser::State  readState;
-      std::unique_ptr<XonObject> root(XonBuildTree(buffer.GetData(), buffer.GetSize(), &readState));
+      std::unique_ptr<XonObject> root(XonBuildTree(buffer.CastData<char>(), buffer.GetSize(), &readState));
 
       // index out of bounds
       TestXonError([&root]() { (*root)[-1]; }, XonEntity::Exception::Type::IndexOutOfBounds);

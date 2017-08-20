@@ -17,6 +17,7 @@ namespace XR
 {
 
 class FileBuffer;
+class FileWriter;
 
 //==============================================================================
 class CSV
@@ -63,7 +64,7 @@ protected:
   typedef std::map<uint32_t, ConstStringPtrVector>  StringPtrVectorMap;
 
   // static
-  static bool  WriteString(const char* pString, FileBuffer& file);
+  static bool  WriteString(const char* pString, FileWriter& file);
 
   // data
   int                 m_numColumns;

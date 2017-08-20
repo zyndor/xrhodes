@@ -3,7 +3,6 @@
 #include <XR/jsonutils.hpp>
 
 #include <XR/JsonReader.hpp>
-#include <XR/FileBuffer.hpp>
 #include <XR/debug.hpp>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

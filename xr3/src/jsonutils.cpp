@@ -17,7 +17,7 @@ JSON::Entity* LoadJSON(const char * pFilename, int maxDepth, bool quietErrors)
 {
   XR_ASSERT(LoadJSON, pFilename != nullptr);
   XR::FileBuffer  file;
-  if (!file.Open(pFilename, "rb"))
+  if (!file.Open(pFilename, false))
   {
     if (!quietErrors)
     {
@@ -30,7 +30,7 @@ JSON::Entity* LoadJSON(const char * pFilename, int maxDepth, bool quietErrors)
 
   // parse parse parse
   JSON::Reader  reader(maxDepth);
-  JSON::Entity* pJson(reader.Read(file.GetData(), file.GetSize()));
+  JSON::Entity* pJson = reader.Read(file.CastData<char>(), file.GetSize());
 
   // done, clean up
   file.Destroy();

@@ -6,6 +6,7 @@
 //==============================================================================
 #include <XR/CSV.hpp>
 #include <XR/FileBuffer.hpp>
+#include <XR/FileWriter.hpp>
 #include <XR/Hash.hpp>
 #include <XR/debug.hpp>
 
@@ -43,7 +44,7 @@ void CSV::CreateMapping(const ConstStringPtrVector& keys,
 }
 
 //==============================================================================
-bool  CSV::WriteString(const char* pString, FileBuffer& file)
+bool  CSV::WriteString(const char* pString, FileWriter& file)
 {
   int   len(strlen(pString));
   const char* pComma(strchr(pString, ','));
@@ -83,10 +84,10 @@ bool  CSV::Load(const char* pFileName)
   Clear();
 
   FileBuffer  file;
-  bool  success(file.Open(pFileName, "rb"));
+  bool  success(file.Open(pFileName, false));
   if(success)
   {
-    const char* pRead(file.GetData());
+    const char* pRead(file.CastData<char>());
     const char* pEnd(pRead + file.GetSize());
     StringList  sl;
     while(pRead < pEnd && success)
@@ -124,8 +125,8 @@ bool  CSV::Load(const char* pFileName)
 //==============================================================================
 bool  CSV::Save(const char* pFileName, bool overwrite) const
 {
-  FileBuffer  file;
-  bool  success(file.Open(pFileName, "wb"));
+  FileWriter file;
+  bool  success(file.Open(pFileName, FileWriter::Mode::Truncate, false));
   if(success)
   {
     StringVector::const_iterator  iter(m_data.begin());
