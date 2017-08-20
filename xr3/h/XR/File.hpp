@@ -60,7 +60,12 @@ public:
   static size_t Read(Handle hFile, size_t elemSize, size_t numElems, void* parBuffer);
   static size_t Write(const void* parBuffer, size_t elemSize, size_t numElems, Handle hFile);
   static size_t Tell(Handle hFile);
+
+  ///@brief Repositions the position indicator for the given file handle.
+  ///@return Boolean to indicate the success of the operation. Note how this is 
+  /// contrary to fseek(), which returns 0 on success.
   static bool   Seek(Handle hFile, size_t offset, SeekFrom sf);
+
   static void   Close(Handle hFile);
 };
 

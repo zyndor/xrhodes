@@ -136,7 +136,7 @@ size_t File::GetSize(Handle hFile)
   XR_ASSERT_HANDLE_VALID(hFile);
   const size_t offset = Tell(hFile);
   size_t result = 0;
-  if (0 == Seek(hFile, 0, SeekFrom::End))
+  if (Seek(hFile, 0, SeekFrom::End))
   {
     result = Tell(hFile);
     Seek(hFile, offset, SeekFrom::Start);
