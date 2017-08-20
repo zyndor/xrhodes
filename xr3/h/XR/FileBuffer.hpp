@@ -22,7 +22,7 @@ class FileBuffer
 
 public:
   // structors
-  FileBuffer();
+  FileBuffer() = default;
   ~FileBuffer();
 
   // general
@@ -43,9 +43,9 @@ public:
 
 private:
   // data
-  File::Handle  m_handle;
-  size_t        m_size;
-  uint8_t*      m_data;
+  File::Handle  m_handle = nullptr;
+  size_t        m_size = 0;
+  uint8_t*      m_data = nullptr;
 };
 
 //==============================================================================
