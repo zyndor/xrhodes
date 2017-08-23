@@ -10,7 +10,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace XR
 {
   char const* caseCmpString1 = "OnE - oF My 962946 CrAzY_CasE StRiNgs!?.";
-  char const* caseCmpString2 = "OnE - oF My 962946 CrAzY_CasE StRiNgs!?.";
+  char const* caseCmpString2 = "oNe - Of mY 962946 cRaZy_cASe sTrInGS!?.";
 
   char const* strings[] =
   {
@@ -61,15 +61,54 @@ namespace XR
       return buf.str();
     }
 
+    void Format(char const* name, uint32_t hash, char(&buffer)[64])
+    {
+      sprintf(buffer, "%s:  %x", name, hash);
+    }
+
+    void Format(char const* name, uint64_t hash, char(&buffer)[64])
+    {
+      sprintf(buffer, "%s:  %llx", name, hash);
+    }
+
     template <typename T>
     void DumpHashes(std::map<T, std::string> const& hashes)
     {
+      std::map<unsigned char, int> occurences;
+
+      char arBuffer[64];
       for (auto const& i : hashes)
       {
-        StringFormatter fmt("%1 : %2");
-        fmt % i.second % i.first;
-        Logger::WriteMessage(fmt.GetString().c_str());
+        ++occurences[(i.first >> (XR_BITSIZEOF(T) - 8)) & 0xff];
+        Format(i.second.c_str(), i.first, arBuffer);
+        Logger::WriteMessage(arBuffer);
       }
+
+      int max = 0;
+      unsigned char cMax = 0;
+      int min = 9999;
+      unsigned char cMin = 0;
+      for (auto const& i : occurences)
+      {
+        if (i.second > max)
+        {
+          max = i.second;
+          cMax = i.first;
+        }
+        if (i.second < min)
+        {
+          min = i.second;
+          cMin = i.first;
+        }
+        sprintf(arBuffer, "%x : %d", i.first, i.second);
+        Logger::WriteMessage(arBuffer);
+      }
+
+      sprintf(arBuffer, "min: %d (%x)", min, cMin);
+      Logger::WriteMessage(arBuffer);
+
+      sprintf(arBuffer, "max: %d (%x)", max, cMax);
+      Logger::WriteMessage(arBuffer);
     }
 
     void DoStringUniqueness(bool dump)
