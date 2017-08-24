@@ -7,9 +7,8 @@
 #ifndef XR_COUNTER_HPP
 #define XR_COUNTER_HPP
 
-#include "debug.hpp"
-#include "ScopeGuard.hpp"
 #include "fundamentals.hpp"
+#include "debug.hpp"
 #include <mutex>
 
 namespace XR
