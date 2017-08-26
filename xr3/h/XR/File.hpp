@@ -49,6 +49,7 @@ public:
   static Path const& GetRomPath();
 
   static bool   CheckExists(Path const& name);
+  static time_t GetModifiedTime(Path const& name);
 
   ///@brief Attempts to open a file in the given @a mode (standard fopen flags
   /// apply) and return a handle to it. If a file in the given path was not 

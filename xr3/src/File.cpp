@@ -8,6 +8,7 @@
 #include <XR/stringutils.hpp>
 #include <XR/utils.hpp>
 #include <XR/debug.hpp>
+#include <sys/stat.h>
 #include <algorithm>
 #include <fstream>
 
@@ -86,6 +87,26 @@ bool File::CheckExists(Path const& name)
     Close(h);
   }
   return h != nullptr;
+}
+
+//==============================================================================
+time_t File::GetModifiedTime(Path const & name)
+{
+  struct stat statBuffer;
+  time_t modTime = 0;
+  if (stat(name.c_str(), &statBuffer) == 0)
+  {
+#if defined(XR_PLATFORM_OSX) || defined(XR_PLATFORM_IOS)
+#define XR_MTIME_OVERRIDE
+#define st_mtime st_mtimespec.tv_sec
+#endif
+    modTime = statBuffer.st_mtime;
+#ifdef XR_MTIME_OVERRIDE
+#undef XR_MTIME_OVERRIDE
+#undef st_mtime st_mtimespec.tv_sec
+#endif
+  }
+  return modTime;
 }
 
 //==============================================================================
