@@ -7,7 +7,7 @@
 #ifndef XR_FILE_HPP
 #define XR_FILE_HPP
 
-#include <XR/HardString.hpp>
+#include <XR/FilePath.hpp>
 #include <XR/fundamentals.hpp>
 #include <cstdint>
 
@@ -30,12 +30,10 @@ public:
     End
   };
 
-  using Path = HardString<256>;
-
   struct System
   {
-    Path ramPath;
-    Path romPath;
+    FilePath ramPath;
+    FilePath romPath;
   };
   
   // static
@@ -45,18 +43,18 @@ public:
   static void   Init(System const& filesys);
   static void   Exit();
 
-  static Path const& GetRamPath();
-  static Path const& GetRomPath();
+  static FilePath const& GetRamPath();
+  static FilePath const& GetRomPath();
 
-  static bool   CheckExists(Path const& name);
-  static time_t GetModifiedTime(Path const& name);
+  static bool   CheckExists(FilePath const& name);
+  static time_t GetModifiedTime(FilePath const& name);
 
   ///@brief Attempts to open a file in the given @a mode (standard fopen flags
   /// apply) and return a handle to it. If a file in the given path was not 
   /// found, then attempts will be made to locate the file in the ram and rom
   /// paths (given to Init()) by prepending @a name with them if possible
   /// (i.e. within the capacity of Path), in this order.
-  static Handle Open(Path const& name, const char* mode);
+  static Handle Open(FilePath const& name, const char* mode);
 
   static size_t GetSize(Handle hFile);
 

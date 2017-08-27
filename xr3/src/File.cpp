@@ -26,33 +26,20 @@ static struct
 #define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
 
 //==============================================================================
-void AppendSlash(File::Path& path)
-{
-  char* writep = path.data() + path.size() - 1;
-  if (*writep != '/')
-  {
-    path += "/";
-  }
-}
-
-//==============================================================================
 void File::Init(System const& filesys)
 {
   XR_ASSERTMSG(File, !s_file.init, ("Already initialised!"));
-  size_t length;
   if (!filesys.ramPath.empty())
   {
-    Replace(filesys.ramPath.c_str(), "\\", "/", s_file.system.ramPath.capacity(),
-      s_file.system.ramPath.data(), length);
-    AppendSlash(s_file.system.ramPath);
+    s_file.system.ramPath = filesys.ramPath;
+    s_file.system.ramPath.AppendDirSeparator();
   }
   s_file.ramPathSize = s_file.system.ramPath.size();
 
   if (!filesys.romPath.empty())
   {
-    Replace(filesys.romPath.c_str(), "\\", "/", s_file.system.romPath.capacity(),
-      s_file.system.romPath.data(), length);
-    AppendSlash(s_file.system.romPath);
+    s_file.system.romPath = filesys.romPath;
+    s_file.system.romPath.AppendDirSeparator();
   }
   s_file.romPathSize = s_file.system.romPath.size();
 
@@ -67,19 +54,19 @@ void File::Exit()
 }
 
 //==============================================================================
-File::Path const& File::GetRamPath()
+FilePath const& File::GetRamPath()
 {
   return s_file.system.ramPath;
 }
 
 //==============================================================================
-File::Path const& File::GetRomPath()
+FilePath const& File::GetRomPath()
 {
   return s_file.system.romPath;
 }
 
 //==============================================================================
-bool File::CheckExists(Path const& name)
+bool File::CheckExists(FilePath const& name)
 {
   Handle h = Open(name, "rb");
   if (h)
@@ -90,7 +77,7 @@ bool File::CheckExists(Path const& name)
 }
 
 //==============================================================================
-time_t File::GetModifiedTime(Path const & name)
+time_t File::GetModifiedTime(FilePath const & name)
 {
   struct stat statBuffer;
   time_t modTime = 0;
@@ -110,7 +97,7 @@ time_t File::GetModifiedTime(Path const & name)
 }
 
 //==============================================================================
-File::Handle File::Open(Path const& name, const char* mode)
+File::Handle File::Open(FilePath const& name, const char* mode)
 {
   FILE*  file = fopen(name.c_str(), mode);
 
@@ -126,10 +113,10 @@ File::Handle File::Open(Path const& name, const char* mode)
 
     // Try ramPath.
     if (!GetRamPath().empty() &&
-      nameLen + s_file.ramPathSize <= Path::kCapacity &&
+      nameLen + s_file.ramPathSize <= FilePath::kCapacity &&
       strncmp(nameChars, GetRamPath().c_str(), s_file.ramPathSize) != 0)
     {
-      Path path = s_file.system.ramPath;
+      FilePath path = s_file.system.ramPath;
       path += nameChars;
 
       file = fopen(path.c_str(), mode);
@@ -138,11 +125,11 @@ File::Handle File::Open(Path const& name, const char* mode)
     // If we still haven't found our file in ramPath, and we only want to read,
     // then we may try romPath.
     if (!file && !GetRomPath().empty() &&
-      nameLen + s_file.romPathSize <= Path::kCapacity &&
+      nameLen + s_file.romPathSize <= FilePath::kCapacity &&
       strncmp(nameChars, GetRomPath().c_str(), s_file.romPathSize) != 0 &&
       strchr(mode, 'r') && !strchr(mode, '+'))
     {
-      Path path = s_file.system.romPath;
+      FilePath path = s_file.system.romPath;
       path += nameChars;
 
       file = fopen(path.c_str(), mode);

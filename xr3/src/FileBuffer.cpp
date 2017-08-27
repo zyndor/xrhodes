@@ -19,7 +19,7 @@ FileBuffer::~FileBuffer()
 }
 
 //==============================================================================
-bool  FileBuffer::Open(File::Path const& path, bool text)
+bool  FileBuffer::Open(FilePath const& path, bool text)
 {
   Destroy();
   Close();
