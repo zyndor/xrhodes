@@ -40,4 +40,17 @@ char const* FilePath::GetNameExt() const
   return p;
 }
 
+//==============================================================================
+void FilePath::Up()
+{
+  if (char* p = rfind(kDirSeparator))
+  {
+    *p = '\0';
+    if (p - m_arBuffer < kCapacity && p[1] == '\0')
+    {
+      Up();
+    }
+  }
+}
+
 } // XR

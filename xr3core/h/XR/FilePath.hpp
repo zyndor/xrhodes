@@ -48,6 +48,8 @@ public:
     return StartsWith(str, strlen(str));
   }
 
+  void Up();
+
   // operators
   FilePath& operator=(char const* path)
   {
