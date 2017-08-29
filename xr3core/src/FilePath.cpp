@@ -38,6 +38,10 @@ char const* FilePath::GetNameExt() const
   {
     ++p;
   }
+  else
+  {
+    p = m_arBuffer;
+  }
   return p;
 }
 
