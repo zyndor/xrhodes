@@ -46,6 +46,13 @@ char const* FilePath::GetNameExt() const
 }
 
 //==============================================================================
+char const * FilePath::GetExt() const
+{
+  auto nameExt = GetNameExt();
+  return nameExt ? strchr(nameExt, kExtSeparator) : nullptr;
+}
+
+//==============================================================================
 void FilePath::Up()
 {
   if (char* p = rfind(kDirSeparator))

@@ -23,6 +23,7 @@ public:
 
   // static
   static char const kDirSeparator = '/';
+  static char const kExtSeparator = '.';
 
   // structors
   FilePath(char const* path = "")
@@ -37,6 +38,7 @@ public:
   void AppendDirSeparator();
 
   char const* GetNameExt() const;
+  char const* GetExt() const;
 
   bool StartsWith(char const* str, size_t strSize) const
   {
