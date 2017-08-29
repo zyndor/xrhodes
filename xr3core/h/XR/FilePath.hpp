@@ -60,11 +60,21 @@ public:
     return *this;
   }
 
-  FilePath& operator/(char const* path)
+  FilePath& operator/=(char const* path)
   {
     AppendDirSeparator();
+    if (*path == kDirSeparator)
+    {
+      ++path;
+    }
     *this += path;
     return *this;
+  }
+
+  FilePath operator/(char const* path) const
+  {
+    FilePath newPath(*this);
+    return newPath /= path;
   }
 };
 
