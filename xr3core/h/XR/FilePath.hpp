@@ -50,6 +50,11 @@ public:
     return StartsWith(str, strlen(str));
   }
 
+  bool StartsWith(FilePath const& other) const
+  {
+    return StartsWith(other.m_arBuffer);
+  }
+
   void Up();
 
   // operators
