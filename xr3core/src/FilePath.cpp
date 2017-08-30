@@ -46,10 +46,14 @@ char const* FilePath::GetNameExt() const
 }
 
 //==============================================================================
-char const * FilePath::GetExt() const
+char const* FilePath::GetExt() const
 {
-  auto nameExt = GetNameExt();
-  return nameExt ? strchr(nameExt, kExtSeparator) : nullptr;
+  auto ext = GetNameExt();
+  while (auto newExt = strchr(ext, kExtSeparator))
+  {
+    ext = newExt + 1;
+  }
+  return ext;
 }
 
 //==============================================================================
