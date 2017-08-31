@@ -80,12 +80,6 @@ public:
 
   const char&     operator[](size_t i) const;
   char&           operator[](size_t i);
-  
-  bool            operator==(const char* pString) const;
-  bool            operator==(const HardString<N>& str) const;
-
-  bool            operator<(const char* pString) const;
-  bool            operator<(const HardString<N>& str) const;
 
 protected:
   // data
@@ -96,20 +90,35 @@ template  <>
 class HardString<0>
 {};
 
+// operator==
 template  <size_t N>
-bool  operator!=(const HardString<N>& s, const char* pStr);
+bool  operator==(HardString<N> const& s, char const* pStr);
 
 template  <size_t N>
-bool  operator!=(const HardString<N>& s0, const HardString<N>& s1);
+bool  operator==(char const* pStr, HardString<N> const& s);
+
+template  <size_t N, size_t M>
+bool  operator==(HardString<N> const& s0, HardString<M> const& s1);
+
+// operator!=
+template  <size_t N>
+bool  operator!=(HardString<N> const& s, char const* pStr);
 
 template  <size_t N>
-bool  operator==(const char* pStr, const HardString<N>& s);
+bool  operator!=(char const* pStr, HardString<N> const& s);
+
+template  <size_t N, size_t M>
+bool  operator!=(HardString<N> const& s0, HardString<M> const& s1);
+
+// operator<
+template  <size_t N>
+bool  operator<(HardString<N> const& s, char const* pStr);
 
 template  <size_t N>
-bool  operator!=(const char* pStr, const HardString<N>& s);
+bool  operator<(char const* pStr, HardString<N> const& s);
 
-template  <size_t N>
-bool  operator<(const char* pStr, const HardString<N>& s);
+template  <size_t N, size_t M>
+bool  operator<(HardString<N> const& s0, HardString<M> const& s1);
 
 //==============================================================================
 // implementation
@@ -419,63 +428,31 @@ char&  HardString<N>::operator[](size_t i)
 //==============================================================================
 template  <size_t N>
 inline
-bool  HardString<N>::operator==(const char* pString) const
+bool  operator==(HardString<N> const& s, char const* pStr)
 {
-  return strcmp(m_arBuffer, pString) == 0;
+  return strcmp(s.c_str(), pStr) == 0;
 }
 
 //==============================================================================
 template  <size_t N>
 inline
-bool  HardString<N>::operator==(const HardString<N>& str) const
-{
-  return *this == str.c_str();
-}
-
-//==============================================================================
-template  <size_t N>
-inline
-bool  HardString<N>::operator<(const char* pString) const
-{
-  return strcmp(m_arBuffer, pString) < 0;
-}
-
-//==============================================================================
-template  <size_t N>
-inline
-bool  HardString<N>::operator<(const HardString<N>& str) const
-{
-  return *this < str.c_str();
-}
-
-//==============================================================================
-template  <size_t N>
-inline
-bool  operator!=(HardString<N>& s, const char* pStr)
-{
-  return !(s == pStr);
-}
-
-//==============================================================================
-template  <size_t N>
-inline
-bool  operator!=(HardString<N>& s0, HardString<N>& s1)
-{
-  return !(s0 == s1);
-}
-
-//==============================================================================
-template  <size_t N>
-inline
-bool  operator==(const char* pStr, HardString<N>& s)
+bool  operator==(char const* pStr, HardString<N> const& s)
 {
   return s == pStr;
 }
 
 //==============================================================================
+template  <size_t N, size_t M>
+inline
+bool  operator==(HardString<N> const& s0, HardString<M> const& s1)
+{
+  return s0 == s1.c_str();
+}
+
+//==============================================================================
 template  <size_t N>
 inline
-bool  operator!=(const char* pStr, HardString<N>& s)
+bool  operator!=(HardString<N> const& s, char const* pStr)
 {
   return !(s == pStr);
 }
@@ -483,9 +460,41 @@ bool  operator!=(const char* pStr, HardString<N>& s)
 //==============================================================================
 template  <size_t N>
 inline
-bool  operator<(const char* pStr, HardString<N>& s)
+bool  operator!=(char const* pStr, HardString<N> const& s)
+{
+  return s != pStr;
+}
+
+//==============================================================================
+template  <size_t N, size_t M>
+inline
+bool  operator!=(HardString<N> const& s0, HardString<M> const& s1)
+{
+  return s0 != s1.c_str();
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  operator<(HardString<N> const& s, char const* pStr)
+{
+  return strcmp(s.c_str(), pStr) < 0;
+}
+
+//==============================================================================
+template  <size_t N>
+inline
+bool  operator<(char const* pStr, HardString<N> const& s)
 {
   return strcmp(pStr, s.c_str()) < 0;
+}
+
+//==============================================================================
+template  <size_t N, size_t M>
+inline
+bool  operator<(HardString<N> const& s0, HardString<M> const& s1)
+{
+  return s0 < s1.c_str();
 }
 
 } // XR
