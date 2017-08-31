@@ -66,6 +66,20 @@ FilePath const& File::GetRomPath()
 }
 
 //==============================================================================
+FilePath File::StripRoots(FilePath path)
+{
+  if (path.StartsWith(s_file.system.ramPath))
+  {
+    path = path.data() + s_file.ramPathSize;
+  }
+  else if (path.StartsWith(s_file.system.romPath))
+  {
+    path = path.data() + s_file.romPathSize;
+  }
+  return path;
+}
+
+//==============================================================================
 bool File::CheckExists(FilePath const& name)
 {
   Handle h = Open(name, "rb");

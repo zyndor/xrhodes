@@ -46,6 +46,8 @@ public:
   static FilePath const& GetRamPath();
   static FilePath const& GetRomPath();
 
+  static FilePath StripRoots(FilePath path);
+
   static bool   CheckExists(FilePath const& name);
   static time_t GetModifiedTime(FilePath const& name);
 
