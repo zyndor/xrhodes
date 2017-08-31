@@ -32,7 +32,7 @@ public:
   ~FileWriter();
 
   // general
-  bool Open(File::Path const& path, Mode mode, bool text);
+  bool Open(FilePath const& path, Mode mode, bool text);
   bool Write(void const* buffer, size_t elemSize, size_t numElems);
   size_t GetSize() const;
 

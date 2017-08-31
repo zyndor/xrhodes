@@ -26,7 +26,7 @@ public:
   ~FileBuffer();
 
   // general
-  bool            Open(File::Path const& path, bool text);
+  bool            Open(FilePath const& path, bool text);
 
   size_t          GetSize() const;
   uint8_t const*  GetData() const;

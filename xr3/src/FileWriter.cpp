@@ -24,7 +24,7 @@ char const* kMode[] =
   "a"
 };
 
-bool FileWriter::Open(File::Path const& path, Mode mode, bool text)
+bool FileWriter::Open(FilePath const& path, Mode mode, bool text)
 {
   Close();
 
