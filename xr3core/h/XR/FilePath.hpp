@@ -72,7 +72,7 @@ public:
     {
       ++path;
     }
-    *this += path;
+    *this += FilePath(path);
     return *this;
   }
 
