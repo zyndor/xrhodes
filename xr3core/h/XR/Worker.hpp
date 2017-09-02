@@ -29,22 +29,25 @@ class Worker
 
 public:
   // types
-  typedef void (*JobCallback)(void*);
-
   struct Job 
   {
-    JobCallback pExecuteCb;
-    JobCallback pCancelCb;
-    void*       pData;
+    virtual ~Job() {}
+
+    ///@brief Executes part or whole of a job.
+    ///@return Whether the work is complete. It will be called again by
+    /// Worker until it returns true.
+    virtual bool Process() = 0;
+
+    ///@brief Notifies the job of cancellation.
+    virtual void Cancel() = 0;
   };
 
   // structors
   Worker();
 
   // general
-  ///@brief Adds a job to the queue. If the thread wasn't running, this
-  /// will start it.
-  void  Enqueue(Job job);
+  ///@brief Adds a job to the queue.
+  void  Enqueue(Job& job);  // no ownership transfer
 
   ///@brief Removes all jobs that have not been started processing.
   void  CancelPendingJobs();
@@ -55,7 +58,7 @@ public:
 
 private:
   // types
-  typedef XR::Queue<Job>  JobQueue;
+  typedef XR::Queue<Job*>  JobQueue;
 
   // data
 

@@ -30,9 +30,8 @@ Worker::Worker()
 {}
 
 //==============================================================================
-void  Worker::Enqueue(Job j)
+void  Worker::Enqueue(Job& j)
 {
-  XR_ASSERT(Worker, j.pExecuteCb != nullptr);
   if (!m_isRunning)
   {
     m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
@@ -41,7 +40,7 @@ void  Worker::Enqueue(Job j)
 
   {
     std::unique_lock<std::mutex> lock(m_jobsMutex);
-    m_jobs.push_back(j);
+    m_jobs.push_back(&j);
     m_workSemaphore.Post();
   }
 }
@@ -63,11 +62,8 @@ void Worker::CancelPendingJobs()
     XR_ASSERT(Worker, posts == q.size());
   }
 
-  std::for_each(q.begin(), q.end(), [](Job& j) {
-    if (j.pCancelCb)
-    {
-      (*j.pCancelCb)(j.pData);
-    }
+  std::for_each(q.begin(), q.end(), [](Job* j) {
+    j->Cancel();
   });
 }
 
@@ -89,7 +85,7 @@ void  Worker::Finalize()
 //==============================================================================
 void  Worker::Loop()
 {
-  Job j;
+  Job* j;
   while (true)
   {
     {
@@ -107,7 +103,12 @@ void  Worker::Loop()
       m_jobs.pop_front();
     }
 
-    (*j.pExecuteCb)(j.pData);
+    bool done = false;
+    do
+    {
+      done = j->Process();
+    }
+    while (!done);
   }
 }
 
