@@ -7,7 +7,6 @@
 #ifndef XR_SPINLOCK_HPP
 #define XR_SPINLOCK_HPP
 
-#include "fundamentals.hpp"
 #include <atomic>
 
 namespace XR
@@ -15,15 +14,10 @@ namespace XR
 
 //==============================================================================
 ///@brief Synchronisation primitive for that provides non-recursive mutual
-/// exclusion between threads of the same process.
+/// exclusion between threads of the same process. Satisfies the Lockable
+/// concept.
 struct Spinlock
 {
-  XR_NONCOPY_DECL(Spinlock)
-
-public:
-  // structors
-  Spinlock() = default;
-
   // general
   ///@brief Busy waits for the first opportunity to lock.
   /// Lets flow through once it has locked.
