@@ -138,22 +138,12 @@ public:
     return *this;
   }
 
-  T const& operator*() const
+  T& operator*() const
   {
     return *static_cast<T*>(m_p);
   }
 
-  T& operator*()
-  {
-    return *static_cast<T*>(m_p);
-  }
-
-  T const* operator->() const
-  {
-    return static_cast<T*>(m_p);
-  }
-
-  T* operator->()
+  T* operator->() const
   {
     return static_cast<T*>(m_p);
   }
