@@ -9,6 +9,7 @@
 
 #include "fundamentals.hpp"
 #include "debug.hpp"
+#include "Spinlock.hpp"
 #include <mutex>
 
 namespace XR
@@ -19,6 +20,23 @@ struct SingleThreaded
 {
   void Lock() {}
   void Unlock() {}
+};
+
+struct Spinlocked
+{
+public:
+  void Lock()
+  {
+    m_lock.lock();
+  }
+
+  void Unlock()
+  {
+    m_lock.unlock();
+  }
+
+private:
+  Spinlock m_lock;
 };
 
 struct Mutexed
