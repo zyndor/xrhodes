@@ -7,7 +7,6 @@
 #include <XR/Worker.hpp>
 #include <XR/debug.hpp>
 #include <XR/RefHolder.hpp>
-#include <XR/ScopeGuard.hpp>
 
 namespace XR
 {
@@ -15,34 +14,26 @@ namespace XR
 //==============================================================================
 void Worker::ThreadFunction(Worker& worker)
 {
-  auto& isRunning = worker.m_isRunning;
-  isRunning = true;
-  auto guard = MakeScopeGuard([&isRunning] { isRunning = false; });
-
   worker.Loop();
 }
 
 //==============================================================================
 Worker::Worker()
-: m_finalized(false),
-  m_isRunning(false),
-  m_thread()
+: m_finishing(false),
+  m_thread(std::thread(ThreadFunction, MakeRefHolder(*this)))
 {}
 
 //==============================================================================
-void  Worker::Enqueue(Job& j)
+bool  Worker::Enqueue(Job& j)
 {
-  if (!m_isRunning)
+  std::unique_lock<std::mutex> lock(m_jobsMutex);
+  bool result = !m_finishing;
+  if (result)
   {
-    m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
-    m_finalized = false;
-  }
-
-  {
-    std::unique_lock<std::mutex> lock(m_jobsMutex);
     m_jobs.push_back(&j);
     m_workSemaphore.Post();
   }
+  return result;
 }
 
 //==============================================================================
@@ -72,8 +63,15 @@ void  Worker::Finalize()
 {
   {
     std::unique_lock<std::mutex>  lock(m_jobsMutex);
-    m_finalized = true;
-    m_workSemaphore.Post();
+    if (!m_finishing)
+    {
+      m_finishing = true;
+      m_workSemaphore.Post();
+    }
+    else
+    {
+      XR_TRACE(Worker, ("Worker %p already finalized.", this));
+    }
   }
 
   if (m_thread.joinable())
@@ -92,7 +90,7 @@ void  Worker::Loop()
       std::unique_lock<std::mutex>  lock(m_jobsMutex);
       m_workSemaphore.Wait(lock);
 
-      if (m_jobs.empty() && m_finalized)
+      if (m_jobs.empty() && m_finishing)
       {
         break;
       }

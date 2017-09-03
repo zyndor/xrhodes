@@ -46,14 +46,15 @@ public:
   Worker();
 
   // general
-  ///@brief Adds a job to the queue.
-  void  Enqueue(Job& job);  // no ownership transfer
+  ///@brief Adds a job to the queue, if the thread has not yet been finalized.
+  ///@return Whether the job has been added.
+  bool  Enqueue(Job& job);  // no ownership transfer
 
   ///@brief Removes all jobs that have not been started processing.
   void  CancelPendingJobs();
 
   ///@brief Finishes the processing of jobs.
-  ///@note Blocking call.
+  ///@note Must be called before reaching the destructor. Blocking call.
   void  Finalize();
 
 private:
@@ -62,14 +63,12 @@ private:
 
   // data
 
-  std::mutex  m_jobsMutex;
+  std::mutex      m_jobsMutex;
   Semaphore::Core m_workSemaphore;
-  JobQueue    m_jobs;
+  JobQueue        m_jobs;
 
-  bool        m_finalized;
-  std::thread m_thread;
-
-  std::atomic<bool> m_isRunning;
+  std::thread     m_thread;
+  bool                    m_finishing;
 
   // static
   static void ThreadFunction(Worker& worker);
