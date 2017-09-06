@@ -19,7 +19,8 @@ void Worker::ThreadFunction(Worker& worker)
 
 //==============================================================================
 Worker::Worker()
-: m_finishing(false),
+: m_isSuspended(false),
+  m_finishing(false),
   m_thread(std::thread(ThreadFunction, MakeRefHolder(*this)))
 {}
 
@@ -34,6 +35,23 @@ bool  Worker::Enqueue(Job& j)
     m_workSemaphore.Post();
   }
   return result;
+}
+
+//==============================================================================
+void Worker::Suspend()
+{
+  std::unique_lock<std::mutex> lock(m_suspendMutex);
+  m_isSuspended = true;
+}
+
+//==============================================================================
+void Worker::Resume()
+{
+  {
+    std::unique_lock<std::mutex> lock(m_suspendMutex);
+    m_isSuspended = false;
+  }
+  m_suspendCV.notify_one();
 }
 
 //==============================================================================
@@ -86,26 +104,51 @@ void  Worker::Loop()
   Job* job;
   while (true)
   {
+    // Tick the queue.
     {
       std::unique_lock<std::mutex>  lock(m_jobsMutex);
       m_workSemaphore.Wait(lock);
 
+      // If there's no more jobs and the flag is set, we're done.
       if (m_jobs.empty() && m_finishing)
       {
         break;
       }
 
-      // Take the next job
+      // Take the next job.
       XR_ASSERT(Worker, !m_jobs.empty());
       job = m_jobs.front();
       m_jobs.pop_front();
     }
 
+    // Start the job.
     job->Start();
 
     bool done = false;
+    bool wasSuspended = false;  // This is intentional; we're only checking for suspend between the execution of chunks.
     do
     {
+      // Handle suspend / resume.
+      {
+        std::unique_lock<std::mutex> lock(m_suspendMutex);
+        if (m_isSuspended && !wasSuspended)
+        {
+          job->Suspend();
+        }
+        wasSuspended = m_isSuspended;
+
+        m_suspendCV.wait(lock, [this] {
+          return !m_isSuspended;
+        });
+
+        if (wasSuspended && !m_isSuspended)
+        {
+          job->Resume();
+        }
+        wasSuspended = m_isSuspended;
+      }
+
+      // Process one chunk of work.
       done = job->Process();
     }
     while (!done);
