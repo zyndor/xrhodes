@@ -7,7 +7,6 @@
 #include <XR/Worker.hpp>
 #include <XR/debug.hpp>
 #include <XR/RefHolder.hpp>
-#include <XR/ScopeGuard.hpp>
 
 namespace XR
 {
@@ -15,35 +14,44 @@ namespace XR
 //==============================================================================
 void Worker::ThreadFunction(Worker& worker)
 {
-  auto& isRunning = worker.m_isRunning;
-  isRunning = true;
-  auto guard = MakeScopeGuard([&isRunning] { isRunning = false; });
-
   worker.Loop();
 }
 
 //==============================================================================
 Worker::Worker()
-: m_finalized(false),
-  m_isRunning(false),
-  m_thread()
+: m_isSuspended(false),
+  m_finishing(false),
+  m_thread(std::thread(ThreadFunction, MakeRefHolder(*this)))
 {}
 
 //==============================================================================
-void  Worker::Enqueue(Job j)
+bool  Worker::Enqueue(Job& j)
 {
-  XR_ASSERT(Worker, j.pExecuteCb != nullptr);
-  if (!m_isRunning)
+  std::unique_lock<std::mutex> lock(m_jobsMutex);
+  bool result = !m_finishing;
+  if (result)
   {
-    m_thread = std::thread(ThreadFunction, MakeRefHolder(*this));
-    m_finalized = false;
-  }
-
-  {
-    std::unique_lock<std::mutex> lock(m_jobsMutex);
-    m_jobs.push_back(j);
+    m_jobs.push_back(&j);
     m_workSemaphore.Post();
   }
+  return result;
+}
+
+//==============================================================================
+void Worker::Suspend()
+{
+  std::unique_lock<std::mutex> lock(m_suspendMutex);
+  m_isSuspended = true;
+}
+
+//==============================================================================
+void Worker::Resume()
+{
+  {
+    std::unique_lock<std::mutex> lock(m_suspendMutex);
+    m_isSuspended = false;
+  }
+  m_suspendCV.notify_one();
 }
 
 //==============================================================================
@@ -63,11 +71,8 @@ void Worker::CancelPendingJobs()
     XR_ASSERT(Worker, posts == q.size());
   }
 
-  std::for_each(q.begin(), q.end(), [](Job& j) {
-    if (j.pCancelCb)
-    {
-      (*j.pCancelCb)(j.pData);
-    }
+  std::for_each(q.begin(), q.end(), [](Job* j) {
+    j->Cancel();
   });
 }
 
@@ -76,8 +81,15 @@ void  Worker::Finalize()
 {
   {
     std::unique_lock<std::mutex>  lock(m_jobsMutex);
-    m_finalized = true;
-    m_workSemaphore.Post();
+    if (!m_finishing)
+    {
+      m_finishing = true;
+      m_workSemaphore.Post();
+    }
+    else
+    {
+      XR_TRACE(Worker, ("Worker %p already finalized.", this));
+    }
   }
 
   if (m_thread.joinable())
@@ -89,25 +101,57 @@ void  Worker::Finalize()
 //==============================================================================
 void  Worker::Loop()
 {
-  Job j;
+  Job* job;
   while (true)
   {
+    // Tick the queue.
     {
       std::unique_lock<std::mutex>  lock(m_jobsMutex);
       m_workSemaphore.Wait(lock);
 
-      if (m_jobs.empty() && m_finalized)
+      // If there's no more jobs and the flag is set, we're done.
+      if (m_jobs.empty() && m_finishing)
       {
         break;
       }
 
-      // Take the next job
+      // Take the next job.
       XR_ASSERT(Worker, !m_jobs.empty());
-      j = m_jobs.front();
+      job = m_jobs.front();
       m_jobs.pop_front();
     }
 
-    (*j.pExecuteCb)(j.pData);
+    // Start the job.
+    job->Start();
+
+    bool done = false;
+    bool wasSuspended = false;  // This is intentional; we're only checking for suspend between the execution of chunks.
+    do
+    {
+      // Handle suspend / resume.
+      {
+        std::unique_lock<std::mutex> lock(m_suspendMutex);
+        if (m_isSuspended && !wasSuspended)
+        {
+          job->Suspend();
+        }
+        wasSuspended = m_isSuspended;
+
+        m_suspendCV.wait(lock, [this] {
+          return !m_isSuspended;
+        });
+
+        if (wasSuspended && !m_isSuspended)
+        {
+          job->Resume();
+        }
+        wasSuspended = m_isSuspended;
+      }
+
+      // Process one chunk of work.
+      done = job->Process();
+    }
+    while (!done);
   }
 }
 
