@@ -101,6 +101,8 @@ void  Worker::Loop()
       m_jobs.pop_front();
     }
 
+    job->Start();
+
     bool done = false;
     do
     {

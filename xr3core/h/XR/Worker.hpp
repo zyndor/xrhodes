@@ -36,6 +36,9 @@ public:
     ///@brief Executes part or whole of a job.
     ///@return Whether the work is complete. It will be called again by
     /// Worker until it returns true.
+    ///@brief The job may perform lazy initialisation, or reset its state
+    /// if the instance is reused, in this method.
+    virtual void Start() {}
     virtual bool Process() = 0;
 
     ///@brief Notifies the job of cancellation.
