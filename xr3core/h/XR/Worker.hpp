@@ -50,7 +50,7 @@ public:
   ///@return Whether the job has been added.
   bool  Enqueue(Job& job);  // no ownership transfer
 
-  ///@brief Removes all jobs that have not been started processing.
+  ///@brief Removes all jobs whose processing has not started.
   void  CancelPendingJobs();
 
   ///@brief Finishes the processing of jobs.
@@ -63,12 +63,13 @@ private:
 
   // data
 
-  std::mutex      m_jobsMutex;
-  Semaphore::Core m_workSemaphore;
-  JobQueue        m_jobs;
+  std::mutex              m_jobsMutex;
+  Semaphore::Core         m_workSemaphore;
+  JobQueue                m_jobs;
 
-  std::thread     m_thread;
+
   bool                    m_finishing;
+  std::thread             m_thread;
 
   // static
   static void ThreadFunction(Worker& worker);

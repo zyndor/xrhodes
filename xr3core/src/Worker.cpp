@@ -83,7 +83,7 @@ void  Worker::Finalize()
 //==============================================================================
 void  Worker::Loop()
 {
-  Job* j;
+  Job* job;
   while (true)
   {
     {
@@ -97,14 +97,14 @@ void  Worker::Loop()
 
       // Take the next job
       XR_ASSERT(Worker, !m_jobs.empty());
-      j = m_jobs.front();
+      job = m_jobs.front();
       m_jobs.pop_front();
     }
 
     bool done = false;
     do
     {
-      done = j->Process();
+      done = job->Process();
     }
     while (!done);
   }
