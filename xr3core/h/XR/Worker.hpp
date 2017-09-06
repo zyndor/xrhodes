@@ -59,7 +59,7 @@ public:
     virtual void Resume() {}
 
     ///@brief Notifies the job of cancellation.
-    virtual void Cancel() = 0;
+    virtual void Cancel() {}
   };
 
   // structors
