@@ -1,13 +1,7 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include <XR/Counted.hpp>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
 namespace XR
-{
-
-TEST_CLASS(CountedTests)
 {
   struct NoopDeleter
   {
@@ -32,49 +26,48 @@ TEST_CLASS(CountedTests)
     int count = 0;
   };
 
-  using Counted = Counted<MockCountable, NoopDeleter>;
+  using MockCounted = Counted<MockCountable, NoopDeleter>;
 
   MockCountable o;
 
-  TEST_METHOD(Counted_CtorResetDtor)
+  TEST(Counted, CtorResetDtor)
   {
     {
-      Counted c(&o);
-      Assert::IsTrue(o.count == 1);
-      Assert::IsTrue(c);
+      MockCounted c(&o);
+      ASSERT_EQ(o.count, 1);
+      ASSERT_NE(c.Get(), nullptr);
 
       c.Reset(&o);
-      Assert::IsTrue(o.count == 1);
+      ASSERT_EQ(o.count, 1);
 
       c.Reset(nullptr);
-      Assert::IsTrue(o.count == 0);
-      Assert::IsTrue(!c);
+      ASSERT_EQ(o.count, 0);
+      ASSERT_EQ(c.Get(), nullptr);
 
       c.Reset(&o);
     }
 
-    Assert::IsTrue(o.count == 0);
+    ASSERT_EQ(o.count, 0);
   }
 
-  TEST_METHOD(Counted_Copy)
+  TEST(Counted, Copy)
   {
-    Counted c(&o);
-    Counted c2(c);
+    MockCounted c(&o);
+    MockCounted c2(c);
 
-    Assert::IsTrue(o.count == 2);
-    Assert::IsTrue(c);
-    Assert::IsTrue(c2);
+    ASSERT_EQ(o.count, 2);
+    ASSERT_NE(c.Get(), nullptr);
+    ASSERT_NE(c2.Get(), nullptr);
   }
 
-  TEST_METHOD(Counted_Move)
+  TEST(Counted, Move)
   {
-    Counted c(&o);
-    Counted c2(std::move(c));
+    MockCounted c(&o);
+    MockCounted c2(std::move(c));
 
-    Assert::IsTrue(o.count == 1);
-    Assert::IsTrue(!c);
-    Assert::IsTrue(c2);
+    ASSERT_EQ(o.count, 1);
+    ASSERT_EQ(c.Get(), nullptr);
+    ASSERT_NE(c2.Get(), nullptr);
   }
-};
 
 }

@@ -1,16 +1,10 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include <XR/Worker.hpp>
 #include <XR/ScopeGuard.hpp>
 #include <chrono>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
 namespace XR
 {
-  TEST_CLASS(WorkerTests)
-  {
-  public:
     static void BusyWait(int ms)
     {
       const auto until = std::chrono::system_clock::now() + std::chrono::milliseconds(ms);
@@ -52,7 +46,7 @@ namespace XR
       mutable std::mutex mutex; // we're operating on the same instance, might be executing and cancelling at the same time.
     };
 
-    TEST_METHOD(Worker_SuspendResume)
+    TEST(Worker, SuspendResume)
     {
       auto worker = std::make_unique<Worker>();
       auto guard = MakeScopeGuard([&] {
@@ -66,7 +60,8 @@ namespace XR
       worker->Suspend();
       worker->Enqueue(j);
       BusyWait(j.durationMs * 2);
-      Assert::IsTrue(j.GetExecutedCount() == 0, L"Expected to not start any while suspended.");
+      // don't start while suspended
+      ASSERT_EQ(j.GetExecutedCount(), 0);
 
       worker->Resume();
       BusyWait(j.durationMs * 8);
@@ -74,23 +69,28 @@ namespace XR
       worker->Suspend();
 
       const int testExec = j.GetExecutedCount();
-      Assert::IsTrue(testExec < j.chunks, L"Expected to suspend before finish.");
+      // suspend before finishing
+      ASSERT_LT(testExec, j.chunks);
 
       BusyWait(j.durationMs * 8);
 
-      Assert::IsTrue(j.GetExecutedCount() == testExec, L"Expected to have not progressed with the suspended job.");
+      // don't progress while suspended
+      ASSERT_EQ(j.GetExecutedCount(), testExec);
       worker->Resume();
 
       guard.Release();
       worker->Finalize();
 
-      Assert::IsTrue(j.GetExecutedCount() == j.chunks, L"Expected to have finished at this point.");
+      // have it finished by now.
+      ASSERT_EQ(j.GetExecutedCount(), j.chunks);
     }
-
-
-    TEST_METHOD(Worker_CancelPendingJobs)
+    TEST(Worker, CancelPendingJobs)
     {
       auto worker = std::make_unique<Worker>();
+      auto workerGuard = MakeScopeGuard([&worker]()
+      {
+        worker->Finalize();
+      });
 
       Job j;
       j.durationMs = 100;
@@ -101,21 +101,18 @@ namespace XR
       }
 
       worker->CancelPendingJobs();
-      auto workerGuard = MakeScopeGuard([&worker]()
-      {
-        worker->Finalize();
-      });
 
       // We don't know how many it will manage to get through, but it can't be all of them.
-      Assert::IsTrue(j.cancelled > 0);
+      ASSERT_GT(j.cancelled, 0);
 
-      wchar_t buffer[256];
       const int testExec = j.GetExecutedCount();
-      swprintf(buffer, L"%d enqueued, %d executed, %d cancelled does not add up.", kNumIterations, testExec, j.cancelled);
-      Assert::IsTrue(testExec + j.cancelled == kNumIterations, buffer);
+      const auto executedPlusCancelled = testExec + j.cancelled;
+      XR_TRACEIF(WorkerTests, executedPlusCancelled != kNumIterations,
+        ("%d enqueued, %d executed, %d cancelled does not add up.", kNumIterations, testExec, j.cancelled));
+      ASSERT_EQ(executedPlusCancelled, kNumIterations);
     }
 
-    TEST_METHOD(Worker_JobDone_Finalize)
+    TEST(Worker_JobDone, Finalize)
     {
       auto worker = std::make_unique<Worker>();
 
@@ -125,7 +122,6 @@ namespace XR
       worker->Finalize();
       worker.reset();
 
-      Assert::IsTrue(j.GetExecutedCount() == 1);
+      ASSERT_EQ(j.GetExecutedCount(), 1);
     }
-  };
 }
