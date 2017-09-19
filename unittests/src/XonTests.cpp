@@ -1,18 +1,12 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include <XR/XonParser.hpp>
 #include <XR/XonBuildTree.hpp>
 #include <XR/FileBuffer.hpp>
 #include <list>
 #include <functional>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
 namespace XR
 {
-  TEST_CLASS(XonTests)
-  {
-  public:
     struct EventSequencer
     {
       std::list<XonParser::Event>   events;
@@ -31,7 +25,7 @@ namespace XR
       return true;
     }
 
-    TEST_METHOD(Xon_ParseValid) // Parse a XON file that tries to capture all sorts of scenarios.
+    TEST(Xon, ParseValid) // Parse a XON file that tries to capture all sorts of scenarios.
     {
       XR::FileBuffer  buffer;
       buffer.Open(DATA_PATH "/xontest1.xon", false);
@@ -39,8 +33,8 @@ namespace XR
       XR::XonParser parser;
       EventSequencer seq;
       bool success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), SimpleEventHandler, &seq);
-      Assert::IsTrue(success);
-      Assert::IsTrue(parser.GetState().pCurrent == buffer.CastData<char>() + buffer.GetSize());
+      ASSERT_TRUE(success);
+      ASSERT_EQ(parser.GetState().pCurrent, buffer.CastData<char>() + buffer.GetSize());
 
       std::list<XonParser::Event> testEvents = {
         XonParser::Event::ObjectBegin,
@@ -74,11 +68,11 @@ namespace XR
         XonParser::Event::ObjectEnd,
       };
 
-      Assert::IsTrue(seq.events.size() == testEvents.size());
+      ASSERT_EQ(seq.events.size(), testEvents.size());
       auto iEvents = testEvents.begin();
       for (auto& i : seq.events)
       {
-        Assert::IsTrue(i == *iEvents);
+        ASSERT_EQ(i, *iEvents);
         ++iEvents;
       }
 
@@ -107,13 +101,13 @@ namespace XR
         { "null", true },
       };
 
-      Assert::IsTrue(seq.strings.size() == testStrings.size());
+      ASSERT_EQ(seq.strings.size(), testStrings.size());
       auto iStrings = testStrings.begin();
       for (auto& i : seq.strings)
       {
-        Assert::IsTrue(i.pStart == nullptr ? i.pStart == iStrings->first :
+        ASSERT_TRUE(i.pStart == nullptr ? i.pStart == iStrings->first :
           strncmp(i.pStart, iStrings->first, i.length) == 0);
-        Assert::IsTrue(i.isQuoted == iStrings->second);
+        ASSERT_EQ(i.isQuoted, iStrings->second);
         ++iStrings;
       }
     }
@@ -123,7 +117,7 @@ namespace XR
       return true;
     }
 
-    TEST_METHOD(Xon_ParseInvalid)  // Parsing a number of invalid XON files. Should all fail.
+    TEST(Xon, ParseInvalid)  // Parsing a number of invalid XON files. Should all fail.
     {
       char arBuffer[256];
       XR::XonParser parser;
@@ -136,11 +130,11 @@ namespace XR
         buffer.Open(arBuffer, false);
 
         bool success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
-        Assert::IsFalse(success);
+        ASSERT_FALSE(success);
       }
     }
 
-    TEST_METHOD(Xon_ParserReuse)  // The same parser instance can be reused; the state from one parse shall not affect the result of a subsequent parse.
+    TEST(Xon, ParserReuse)  // The same parser instance can be reused; the state from one parse shall not affect the result of a subsequent parse.
     {
       XR::XonParser parser;
       bool success;
@@ -150,107 +144,107 @@ namespace XR
         XR::FileBuffer  buffer;
         buffer.Open(DATA_PATH "/xontest1.xon", false);
         success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
-        Assert::IsTrue(success);
-        Assert::IsTrue(parser.GetState().pCurrent == buffer.CastData<char>() + buffer.GetSize());
+        ASSERT_TRUE(success);
+        ASSERT_EQ(parser.GetState().pCurrent, buffer.CastData<char>() + buffer.GetSize());
 
         buffer.Open(DATA_PATH "/invalid1.xon", false);
         success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
-        Assert::IsFalse(success);
-        Assert::IsTrue(parser.GetState().row == 4);
-        Assert::IsTrue(parser.GetState().column == 1);
+        ASSERT_FALSE(success);
+        ASSERT_EQ(parser.GetState().row, 4);
+        ASSERT_EQ(parser.GetState().column, 1);
       }
     }
 
-    TEST_METHOD(Xon_ReadValid) // Read xon and construct tree.
+    TEST(Xon, ReadValid) // Read xon and construct tree.
     {
       XR::FileBuffer  buffer;
       buffer.Open(DATA_PATH "/xontest1.xon", false);
 
       XonParser::State  readState;
       std::unique_ptr<XonObject> root(XonBuildTree(buffer.CastData<char>(), buffer.GetSize(), &readState));
-      Assert::IsTrue(root != nullptr);
-      Assert::IsTrue(readState.pCurrent == buffer.CastData<char>() + buffer.GetSize());
+      ASSERT_NE(root, nullptr);
+      ASSERT_EQ(readState.pCurrent, buffer.CastData<char>() + buffer.GetSize());
 
-      Assert::IsTrue(root->GetNumElements() == 7);
+      ASSERT_EQ(root->GetNumElements(), 7);
 
       XonEntity& v0((*root)[0]);
-      Assert::IsTrue(v0.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v0.GetValue() == std::string("value"));
+      ASSERT_EQ(v0.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v0.GetValue(), std::string("value"));
 
       XonEntity& v1((*root)[1]);
-      Assert::IsTrue(v1.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v1.GetValue() == std::string("value"));
-      Assert::IsTrue(&v1 != &root->Find("key"));
+      ASSERT_EQ(v1.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v1.GetValue(), std::string("value"));
+      ASSERT_NE(&v1, &root->Find("key"));
 
       XonEntity& v2((*root)[2]);
-      Assert::IsTrue(v2.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v2.GetValue() == std::string("value2"));
-      Assert::IsTrue(&v2 == &root->Find("key"));
+      ASSERT_EQ(v2.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v2.GetValue(), std::string("value2"));
+      ASSERT_EQ(&v2, &root->Find("key"));
 
       XonEntity& v3((*root)[3]);
-      Assert::IsTrue(v3.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v3.GetValue() == std::string("more values"));
-      Assert::IsTrue(&v3 == &root->Find("more_keys"));
+      ASSERT_EQ(v3.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v3.GetValue(), std::string("more values"));
+      ASSERT_EQ(&v3, &root->Find("more_keys"));
 
       XonEntity& v4((*root)[4]);
-      Assert::IsTrue(v4.GetType() == XonEntity::Type::Object);
-      Assert::IsTrue(v4.GetNumElements() == 7);
+      ASSERT_EQ(v4.GetType(), XonEntity::Type::Object);
+      ASSERT_EQ(v4.GetNumElements(), 7);
 
       XonEntity& v4_0(v4[0]);
-      Assert::IsTrue(v4_0.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_0.GetValue() == std::string("object_value"));
+      ASSERT_EQ(v4_0.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_0.GetValue(), std::string("object_value"));
 
       XonEntity& v4_1(v4[1]);
-      Assert::IsTrue(v4_1.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_1.GetValue() == std::string("value"));
-      Assert::IsTrue(&v4_1 == &v4.Find("key"));
+      ASSERT_EQ(v4_1.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_1.GetValue(), std::string("value"));
+      ASSERT_EQ(&v4_1, &v4.Find("key"));
 
       XonEntity& v4_2(v4[2]);
-      Assert::IsTrue(v4_2.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_2.GetValue() == std::string("{}ther_va:ue"));
-      Assert::IsTrue(&v4_2 == &v4.Find("{}ther key"));
+      ASSERT_EQ(v4_2.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_2.GetValue(), std::string("{}ther_va:ue"));
+      ASSERT_EQ(&v4_2, &v4.Find("{}ther key"));
 
       XonEntity& v4_3(v4[3]);
-      Assert::IsTrue(v4_3.GetType() == XonEntity::Type::Object);
-      Assert::IsTrue(v4_3.GetNumElements() == 3);
-      Assert::IsTrue(&v4_3 == &v4.Find("a_nested_object"));
+      ASSERT_EQ(v4_3.GetType(), XonEntity::Type::Object);
+      ASSERT_EQ(v4_3.GetNumElements(), 3);
+      ASSERT_EQ(&v4_3, &v4.Find("a_nested_object"));
 
       XonEntity& v4_3_0(v4_3[0]);
-      Assert::IsTrue(v4_3_0.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_3_0.GetValue() == std::string("true"));
-      Assert::IsTrue(&v4_3_0 == &v4_3.Find("nested"));
+      ASSERT_EQ(v4_3_0.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_3_0.GetValue(), std::string("true"));
+      ASSERT_EQ(&v4_3_0, &v4_3.Find("nested"));
 
       XonEntity& v4_3_1(v4_3[1]);
-      Assert::IsTrue(v4_3_1.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_3_1.GetValue() == std::string("escaped \"quot\""));
-      //Assert::IsTrue(v4_3_1.GetValue() == std::string("escaped \\\"quot\\\""));
+      ASSERT_EQ(v4_3_1.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_3_1.GetValue(), std::string("escaped \"quot\""));
+      //ASSERT_EQ(v4_3_1.GetValue(), std::string("escaped \\\"quot\\\""));
 
       XonEntity& v4_3_2(v4_3[2]);
-      Assert::IsTrue(v4_3_2.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_3_2.GetValue() == std::string(""));
+      ASSERT_EQ(v4_3_2.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_3_2.GetValue(), std::string(""));
 
       XonEntity& v4_4(v4[4]);
-      Assert::IsTrue(v4_4.GetType() == XonEntity::Type::Object);
-      Assert::IsTrue(v4_4.GetNumElements() == 0);
+      ASSERT_EQ(v4_4.GetType(), XonEntity::Type::Object);
+      ASSERT_EQ(v4_4.GetNumElements(), 0);
 
       XonEntity& v4_5(v4[5]);
-      Assert::IsTrue(v4_5.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_5.GetValue() == std::string("another_value"));
+      ASSERT_EQ(v4_5.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_5.GetValue(), std::string("another_value"));
 
       XonEntity& v4_6(v4[6]);
-      Assert::IsTrue(v4_6.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v4_6.GetValue() == std::string("a_value_that's_\"quoted\""));
+      ASSERT_EQ(v4_6.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v4_6.GetValue(), std::string("a_value_that's_\"quoted\""));
 
       XonEntity& v5((*root)[5]);
-      Assert::IsTrue(v5.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v5.GetValue() == nullptr);
+      ASSERT_EQ(v5.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v5.GetValue(), nullptr);
 
       XonEntity& v6((*root)[6]);
-      Assert::IsTrue(v6.GetType() == XonEntity::Type::Value);
-      Assert::IsTrue(v6.GetValue() == std::string("null"));
+      ASSERT_EQ(v6.GetType(), XonEntity::Type::Value);
+      ASSERT_EQ(v6.GetValue(), std::string("null"));
     }
 
-    TEST_METHOD(Xon_ReadInvalid)  // Read a bunch of invalid xon files. All should fail.
+    TEST(Xon, ReadInvalid)  // Read a bunch of invalid xon files. All should fail.
     {
       char arBuffer[256];
       for (int i = 0; i < 5; ++i)
@@ -261,29 +255,30 @@ namespace XR
         buffer.Open(arBuffer, false);
 
         XonObject* pRoot = XonBuildTree(buffer.CastData<char>(), buffer.GetSize());
-        Assert::IsTrue(!pRoot);
+        ASSERT_EQ(pRoot, nullptr);
       }
     }
 
     void TestXonError(std::function<void()> fn, XonEntity::Exception::Type testType)
     {
+      ASSERT_THROW(fn(), XonEntity::Exception);
       try
       {
         fn();
-        Assert::Fail(L"Must throw.");
+        ASSERT_FALSE(true, "Must throw.");
       }
       catch (XonEntity::Exception& x)
       {
-        Logger::WriteMessage(x.what());
-        Assert::IsTrue(x.type == testType);
+        XR_TRACE(XonTests, (x.what()));
+        ASSERT_EQ(x.type, testType);
       }
       catch (...)
       {
-        Assert::Fail(L"Wrong exception type.");
+        ASSERT_FALSE(true, "Wrong exception type.");
       }
     }
 
-    TEST_METHOD(Xon_Errors) // Test for entity errors.
+    TEST(Xon, Errors) // Test for entity errors.
     {
       XR::FileBuffer  buffer;
       buffer.Open(DATA_PATH "/xontest1.xon", false);
@@ -302,11 +297,10 @@ namespace XR
       TestXonError([&root]() { root->GetValue(); }, XonEntity::Exception::Type::InvalidType);
 
       XonEntity& v0((*root)[0]);
-      Assert::IsTrue(v0.GetType() == XonEntity::Type::Value);
+      ASSERT_EQ(v0.GetType(), XonEntity::Type::Value);
 
       TestXonError([&v0]() { v0.GetNumElements(); }, XonEntity::Exception::Type::InvalidType);
       TestXonError([&v0]() { v0[0]; }, XonEntity::Exception::Type::InvalidType);
       TestXonError([&v0]() { v0.Find(""); }, XonEntity::Exception::Type::InvalidType);
     }
-  };
 }

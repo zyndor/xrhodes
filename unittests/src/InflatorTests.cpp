@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include <XR/Deflator.hpp>
 #include <XR/Inflator.hpp>
 #include <XR/streamutils.hpp>
@@ -8,33 +7,27 @@
 #include <algorithm>
 #include <iterator>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
 namespace XR
 {
-  TEST_CLASS(InflatorTests)
+  struct TestObject : public Inflatable
   {
-  public:
- 
-    struct TestObject : public Inflatable
+    TestObject const* pOther = nullptr;
+
+    virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
+    {}
+
+    virtual void Restore(std::istream & stream, Inflator & inflator) override
     {
-      TestObject const* pOther = nullptr;
-
-      virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
-      {}
-
-      virtual void Restore(std::istream & stream, Inflator & inflator) override
+      Inflator::IdType  idOther;
+      if (ReadBinaryStream(stream, idOther))
       {
-        Inflator::IdType  idOther;
-        if (ReadBinaryStream(stream, idOther))
-        {
-          inflator.RegisterMapping(idOther, pOther);
-          inflator.RegisterObject(*this);
-        }
+        inflator.RegisterMapping(idOther, pOther);
+        inflator.RegisterObject(*this);
       }
-    };
+    }
+  };
 
-    TEST_METHOD(Inflator_Basics)
+    TEST(Inflator, Basics)
     {
       std::stringstream stream;
       std::vector<Inflator::IdType> ids = {
@@ -64,51 +57,32 @@ namespace XR
         auto id = ids[i];
         if (id != IdGenerator::kInvalidId)
         {
-          Assert::IsTrue(testObjects[i].pOther == &testObjects[id]);
+          ASSERT_EQ(testObjects[i].pOther, &testObjects[id]);
         }
         else
         {
-          Assert::IsTrue(testObjects[i].pOther == nullptr);
+          ASSERT_EQ(testObjects[i].pOther, nullptr);
         }
       }
     }
 
-    TEST_METHOD(Inflator_IdRangeClash)
+    TEST(Inflator, IdRangeClash)
     {
       TestObject  obj[2];
       Inflator  inflator;
       inflator.SetNext(inflator.RegisterObject(obj[0]));
       
-      try
-      {
-        inflator.RegisterObject(obj[1]);
-        Assert::Fail(L"inflator.RegisterObject() must throw for clashing id ranges.");
-      }
-      catch (std::runtime_error&)
-      {}
-      catch (...)
-      {
-        Assert::Fail(L"Wrong exception type");
-      }
+      // Clashing ID range.
+      ASSERT_THROW(inflator.RegisterObject(obj[1]), std::runtime_error);
     }
 
-    TEST_METHOD(Inflator_MappingRegistered)
+    TEST(Inflator, MappingRegistered)
     {
       TestObject  obj;
       Inflator inflator;
       inflator.RegisterMapping(1000, obj.pOther);
 
-      try
-      {
-        inflator.ResolveMappings();
-        Assert::Fail(L"inflator.ResolveMappings() must throw when attempting to resolve an unregistered object.");
-      }
-      catch (std::runtime_error&)
-      {}
-      catch (...)
-      {
-        Assert::Fail(L"Wrong exception type");
-      }
+      // attempting to resolve unregistered object.
+      ASSERT_THROW(inflator.ResolveMappings(), std::runtime_error);
     }
-  };
 }

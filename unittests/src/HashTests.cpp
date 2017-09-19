@@ -1,11 +1,9 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include <XR/StringFormatter.hpp>
 #include <XR/Hash.hpp>
 #include <XR/utils.hpp>
 #include <map>
-
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+#include <set>
 
 namespace XR
 {
@@ -36,28 +34,25 @@ namespace XR
     "interact",
   };
 
-  TEST_CLASS(HashTests)
-  {
-  public:
-    TEST_METHOD(Hash_StringCaseInsensitive)
+    TEST(Hash, StringCaseInsensitive)
     {
       auto hash1 = Hash::String(caseCmpString1);
       auto hash2 = Hash::String(caseCmpString2);
-      Assert::IsTrue(hash1 == hash2);
+      ASSERT_EQ(hash1, hash2);
     }
 
-    TEST_METHOD(Hash_String32CaseInsensitive)
+    TEST(Hash, String32CaseInsensitive)
     {
       auto hash1 = Hash::String32(caseCmpString1);
       auto hash2 = Hash::String32(caseCmpString2);
-      Assert::IsTrue(hash1 == hash2);
+      ASSERT_EQ(hash1, hash2);
     }
 
     template <typename T>
     std::wstring MakeAssertMsg(char const* s0, char const* s1, T hash)
     {
       std::wostringstream buf;
-      buf << s0 << " vs " << s1 << " (" << std::ios::hex << hash << ") clash.";
+      buf << s0 << " vs " << s1 << " (" << std::hex << hash << ") clash.";
       return buf.str();
     }
 
@@ -81,7 +76,7 @@ namespace XR
       {
         ++occurences[(i.first >> (XR_BITSIZEOF(T) - 8)) & 0xff];
         Format(i.second.c_str(), i.first, arBuffer);
-        Logger::WriteMessage(arBuffer);
+        XR_TRACE(HashTests, (arBuffer));
       }
 
       int max = 0;
@@ -101,14 +96,14 @@ namespace XR
           cMin = i.first;
         }
         sprintf(arBuffer, "%x : %d", i.first, i.second);
-        Logger::WriteMessage(arBuffer);
+        XR_TRACE(HashTests, (arBuffer));
       }
 
       sprintf(arBuffer, "min: %d (%x)", min, cMin);
-      Logger::WriteMessage(arBuffer);
+      XR_TRACE(HashTests, (arBuffer));
 
       sprintf(arBuffer, "max: %d (%x)", max, cMax);
-      Logger::WriteMessage(arBuffer);
+      XR_TRACE(HashTests, (arBuffer));
     }
 
     void DoStringUniqueness(bool dump)
@@ -125,8 +120,9 @@ namespace XR
             auto hash = Hash::String(arBuffer, false);
 
             auto iFind = hashes.find(hash);
-            bool assertion = iFind == hashes.end();
-            Assert::IsTrue(assertion, assertion ? nullptr : MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str());
+            bool hashNotClashing = iFind == hashes.end();
+            XR_TRACEIF(HashTests, !hashNotClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
+            ASSERT_TRUE(hashNotClashing);
             hashes[hash] = arBuffer;
           }
         }
@@ -135,7 +131,7 @@ namespace XR
       if(dump) DumpHashes(hashes);
     }
 
-    TEST_METHOD(Hash_StringUniqueness)
+    TEST(Hash, StringUniqueness)
     {
       Hash::SetSeed(Hash::kSeed);
       DoStringUniqueness(true);
@@ -161,8 +157,9 @@ namespace XR
             auto hash = Hash::String32(arBuffer, len);
 
             auto iFind = hashes.find(hash);
-            bool assertion = iFind == hashes.end();
-            Assert::IsTrue(assertion, assertion ? nullptr : MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str());
+            bool hashNotClashing = iFind == hashes.end();
+            XR_TRACEIF(HashTests, !hashNotClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
+            ASSERT_TRUE(hashNotClashing);
             hashes[hash] = arBuffer;
           }
         }
@@ -171,7 +168,7 @@ namespace XR
       if (dump) DumpHashes(hashes);
     }
 
-    TEST_METHOD(Hash_String32Uniqueness)
+    TEST(Hash, String32Uniqueness)
     {
       Hash::SetSeed(Hash::kSeed);
       DoString32Uniqueness(true);
@@ -183,5 +180,37 @@ namespace XR
       }
     }
 
-  };
+    //TEST(Hash, ShortString32Uniqueness)
+    //{
+    //  char const kAlphabet[] = "abcdefghijklmnopqrstuvwxyz";// 0123456789";
+    //  const auto kAlphaSize = XR_ARRAY_SIZE(kAlphabet) - 1;
+    //  char buffer[6];
+    //  char logBuffer[64];
+    //  std::map<uint32_t, std::string> hashes;
+    //  //std::set<uint32_t> hashes;
+    //  for (int k = 2; k < kAlphaSize; ++k)
+    //  {
+    //    int target = pow(kAlphaSize, k);
+    //    for (int j = 0; j < target; ++j)
+    //    {
+    //      int jj = j;
+    //      for (int i = k - 1; i >= 0; --i)
+    //      {
+    //        buffer[i] = kAlphabet[jj % kAlphaSize];
+    //        jj /= kAlphaSize;
+    //      }
+
+    //      auto hash = Hash::String32(buffer, k);
+    //      auto iFind = hashes.find(hash);
+    //      bool assertion = iFind == hashes.end();
+    //      ASSERT_TRUE(assertion, assertion ? nullptr : MakeAssertMsg(buffer, iFind->second.c_str(), hash).c_str());
+    //      hashes.insert(iFind, { hash, std::string(buffer, k) });
+    //      //ASSERT_TRUE(assertion, assertion ? nullptr : MakeAssertMsg(buffer, buffer, hash).c_str());
+    //      //hashes.insert(hash);
+    //      //
+    //      //Format(buffer, hash, logBuffer);
+    //      //XR_TRACE(HashTests, (logBuffer));
+    //    }
+    //  }
+    //}
 }

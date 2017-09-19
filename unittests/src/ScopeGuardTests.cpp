@@ -1,81 +1,76 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include <XR/ScopeGuard.hpp>
 #include <list>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
 namespace XR
 {
-  TEST_CLASS(ScopeGuardTests)
+  TEST(ScopeGuard, Guard)
   {
-  public:
+    std::list<int>  ints{ 0, 1, 2 };
 
-    TEST_METHOD(ScopeGuard_Guard)
+    try
     {
-      std::list<int>  ints{ 0, 1, 2 };
-
-      try
+      ints.push_back(3);
+      auto intsPushGuard = MakeScopeGuard([&ints]()
       {
-        ints.push_back(3);
-        auto intsPushGuard = MakeScopeGuard([&ints]()
-        {
-          ints.pop_back();
-        });
+        ints.pop_back();
+      });
 
-        throw std::logic_error("Test logic error.");
-      }
-      catch (...)
-      {
-      }
-
-      Assert::IsTrue(ints == decltype(ints){ 0, 1, 2 });
+      throw std::logic_error("Test logic error.");
+    }
+    catch (...)
+    {
     }
 
-    TEST_METHOD(ScopeGuard_Release)
+    bool cool = ints == decltype(ints){ 0, 1, 2 };
+    ASSERT_TRUE(cool);
+  }
+
+  TEST(ScopeGuard, Release)
+  {
+    std::list<int>  ints{ 0, 1, 2 };
+
+    try
     {
-      std::list<int>  ints{ 0, 1, 2 };
-
-      try
+      ints.push_back(3);
+      auto intsPushGuard = MakeScopeGuard([&ints]()
       {
-        ints.push_back(3);
-        auto intsPushGuard = MakeScopeGuard([&ints]()
-        {
-          ints.pop_back();
-        });
+        ints.pop_back();
+      });
 
-        intsPushGuard.Release();
-        throw std::logic_error("Test logic error.");
-      }
-      catch (...)
-      {
-      }
-
-      Assert::IsTrue(ints == decltype(ints){ 0, 1, 2, 3 });
+      intsPushGuard.Release();
+      throw std::logic_error("Test logic error.");
+    }
+    catch (...)
+    {
     }
 
-    TEST_METHOD(ScopeGuard_Transfer)
+    bool cool = ints == decltype(ints){ 0, 1, 2, 3 };
+    ASSERT_TRUE(cool);
+  }
+
+  TEST(ScopeGuard, Transfer)
+  {
+    std::list<int>  ints{ 0, 1, 2 };
+
+    try
     {
-      std::list<int>  ints{ 0, 1, 2 };
-
-      try
+      ints.push_back(3);
+      auto intsPushGuard = MakeScopeGuard([&ints]()
       {
-        ints.push_back(3);
-        auto intsPushGuard = MakeScopeGuard([&ints]()
-        {
-          ints.pop_back();
-        });
+        ints.pop_back();
+      });
 
-        auto otherGuard = intsPushGuard;
+      auto otherGuard = intsPushGuard;
 
-        intsPushGuard.Release();
-        throw std::logic_error("Test logic error.");
-      }
-      catch (...)
-      {
-      }
-
-      Assert::IsTrue(ints == decltype(ints){ 0, 1, 2 });
+      intsPushGuard.Release();
+      throw std::logic_error("Test logic error.");
     }
-  };
+    catch (...)
+    {
+    }
+
+    bool cool = ints == decltype(ints){ 0, 1, 2 };
+    ASSERT_TRUE(cool);
+  }
 }

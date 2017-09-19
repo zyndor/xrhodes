@@ -1,68 +1,60 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
+#include <gtest/gtest.h>
 #include <XR/HardString.hpp>
-
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace XR
 {
-  TEST_CLASS(HardStringTests)
+  using TestString = HardString<65536>;
+
+  TEST(HardString, Basics)
   {
-  public:
+    TestString  str;
+    ASSERT_EQ(str, "");
 
-    using TestString = HardString<65536>;
+    str = TestString(123);
+    ASSERT_EQ(str, "123");
+    ASSERT_EQ(str.size(), 3);
 
-    TEST_METHOD(HardString_Basics)
+    str += 456;
+    ASSERT_EQ(str, "123456");
+    ASSERT_EQ(str.size(), 6);
+
     {
-      TestString  str;
-      Assert::IsTrue(str == "");
-
-      str = TestString(123);
-      Assert::IsTrue(str == "123");
-      Assert::IsTrue(str.size() == 3);
-
-      str += 456;
-      Assert::IsTrue(str == "123456");
-      Assert::IsTrue(str.size() == 6);
-
-      {
-        auto p = str.find("34");
-        Assert::IsTrue(p == str.c_str() + 2);
-      }
-
-      {
-        auto p = str.find("35");
-        Assert::IsTrue(p == nullptr);
-      }
-
-      {
-        auto p = str.find('4');
-        Assert::IsTrue(p == str.c_str() + 3);
-      }
-
-      str += 456;
-      Assert::IsTrue(str.size() == 9);
-
-      {
-        auto p = str.rfind("45");
-        Assert::IsTrue(p == str.c_str() + 6);
-      }
-
-      {
-        auto p = str.rfind("46");
-        Assert::IsTrue(p == nullptr);
-      }
-
-      {
-        auto p = str.rfind('4');
-        Assert::IsTrue(p == str.c_str() + 6);
-      }
-
-      {
-        auto str2 = str.substr(4, 4);
-        Assert::IsTrue(str2 == "5645");
-        Assert::IsTrue(str2.size() == 4);
-      }
+      auto p = str.find("34");
+      ASSERT_EQ(p, str.c_str() + 2);
     }
-  };
+
+    {
+      auto p = str.find("35");
+      ASSERT_EQ(p, nullptr);
+    }
+
+    {
+      auto p = str.find('4');
+      ASSERT_EQ(p, str.c_str() + 3);
+    }
+
+    str += 456;
+    ASSERT_EQ(str.size(), 9);
+
+    {
+      auto p = str.rfind("45");
+      ASSERT_EQ(p, str.c_str() + 6);
+    }
+
+    {
+      auto p = str.rfind("46");
+      ASSERT_EQ(p, nullptr);
+    }
+
+    {
+      auto p = str.rfind('4');
+      ASSERT_EQ(p, str.c_str() + 6);
+    }
+
+    {
+      auto str2 = str.substr(4, 4);
+      ASSERT_EQ(str2, "5645");
+      ASSERT_EQ(str2.size(), 4);
+    }
+  }
 }
