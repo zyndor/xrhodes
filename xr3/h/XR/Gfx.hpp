@@ -128,7 +128,7 @@ public:
 
   uint32_t CalculateHash() const
   {
-    return XR::Hash::Data(m_attributes, sizeof(m_attributes) + sizeof(m_offset));
+    return XR::Hash::Data32(m_attributes, sizeof(m_attributes) + sizeof(m_offset));
   }
 
 private:
