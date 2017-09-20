@@ -48,10 +48,10 @@ char const* FilePath::GetNameExt() const
 //==============================================================================
 char const* FilePath::GetExt() const
 {
-  auto ext = GetNameExt();
-  while (auto newExt = strchr(ext, kExtSeparator))
+  auto ext = strrchr(GetNameExt(), kExtSeparator);
+  if(ext)
   {
-    ext = newExt + 1;
+    ++ext;
   }
   return ext;
 }
