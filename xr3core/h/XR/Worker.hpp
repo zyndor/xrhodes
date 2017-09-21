@@ -31,10 +31,6 @@ public:
     // structors
     virtual ~Job() {}
 
-    // friends
-    friend class Worker;
-
-  protected:
     // virtual
     ///@brief The job may perform lazy initialisation, or reset its state
     /// if the instance is reused, in this method.
@@ -42,7 +38,7 @@ public:
 
     ///@brief Executes part (or whole) of the a job.
     ///@return Whether the job is complete. The Worker will call Process()
-    /// repeatedly until it is.
+    /// repeatedly until it returns true.
     virtual bool Process() = 0;
 
     ///@brief Provides an opportunity to suspend the processing. The same
@@ -55,7 +51,9 @@ public:
     /// call it concurrent to the execusion of Process().
     virtual void Resume() {}
 
-    ///@brief Notifies the job of cancellation.
+    ///@brief Notifies the job of cancellation. Currently this may only
+    /// happen instead of starting and processing - jobs that have
+    /// started processing can be suspended but not cancelled.
     virtual void Cancel() {}
   };
 
