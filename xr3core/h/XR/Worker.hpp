@@ -7,9 +7,8 @@
 #ifndef XR_WORKER_HPP
 #define XR_WORKER_HPP
 
-#include <XR/Queue.hpp>
-#include <XR/fundamentals.hpp>
-#include <XR/Semaphore.hpp>
+#include "Queue.hpp"
+#include "Semaphore.hpp"
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -25,8 +24,6 @@ namespace XR
 /// this.
 class Worker
 {
-  XR_NONCOPY_DECL(Worker)
-
 public:
   // types
   struct Job 
@@ -85,7 +82,6 @@ private:
   typedef XR::Queue<Job*>  JobQueue;
 
   // data
-
   std::mutex              m_jobsMutex;
   Semaphore::Core         m_workSemaphore;
   JobQueue                m_jobs;
