@@ -79,6 +79,8 @@ void Worker::CancelPendingJobs()
 //==============================================================================
 void  Worker::Finalize()
 {
+  XR_ASSERTMSG(Worker, std::this_thread::get_id() != m_thread.get_id(),
+    ("Attempt to join worker thread with itself."));
   {
     std::unique_lock<std::mutex>  lock(m_jobsMutex);
     if (!m_finishing)

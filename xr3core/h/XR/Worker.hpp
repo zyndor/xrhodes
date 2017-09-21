@@ -19,9 +19,8 @@ namespace XR
 //==============================================================================
 ///@brief Worker is a generic producer / consumer abstraction; it runs a thread
 /// to perform Jobs on.
-///@note The user must make sure that all jobs have finished processing before
-/// the execution reaches the Worker destructor. Finalize() helps facilitate
-/// this.
+///@note The user must call Finalize() before the execution reaches the Worker
+/// destructor.
 class Worker
 {
 public:
@@ -71,8 +70,9 @@ public:
   ///@brief Removes all jobs whose processing has not started.
   void  CancelPendingJobs();
 
-  ///@brief Finishes the processing of jobs.
-  ///@note Must be called before reaching the destructor. Blocking call.
+  ///@brief Finishes the processing of jobs synchronously.
+  ///@note Must be called before reaching the destructor.
+  ///@note Obviously it must not be called from the worker thread.
   void  Finalize();
 
 private:
