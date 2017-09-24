@@ -7,9 +7,8 @@
 #ifndef XR_WORKER_HPP
 #define XR_WORKER_HPP
 
-#include <XR/Queue.hpp>
-#include <XR/fundamentals.hpp>
-#include <XR/Semaphore.hpp>
+#include "Queue.hpp"
+#include "Semaphore.hpp"
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -20,13 +19,10 @@ namespace XR
 //==============================================================================
 ///@brief Worker is a generic producer / consumer abstraction; it runs a thread
 /// to perform Jobs on.
-///@note The user must make sure that all jobs have finished processing before
-/// the execution reaches the Worker destructor. Finalize() helps facilitate
-/// this.
+///@note The user must call Finalize() before the execution reaches the Worker
+/// destructor.
 class Worker
 {
-  XR_NONCOPY_DECL(Worker)
-
 public:
   // types
   struct Job 
@@ -34,10 +30,6 @@ public:
     // structors
     virtual ~Job() {}
 
-    // friends
-    friend class Worker;
-
-  protected:
     // virtual
     ///@brief The job may perform lazy initialisation, or reset its state
     /// if the instance is reused, in this method.
@@ -45,7 +37,7 @@ public:
 
     ///@brief Executes part (or whole) of the a job.
     ///@return Whether the job is complete. The Worker will call Process()
-    /// repeatedly until it is.
+    /// repeatedly until it returns true.
     virtual bool Process() = 0;
 
     ///@brief Provides an opportunity to suspend the processing. The same
@@ -58,7 +50,9 @@ public:
     /// call it concurrent to the execusion of Process().
     virtual void Resume() {}
 
-    ///@brief Notifies the job of cancellation.
+    ///@brief Notifies the job of cancellation. Currently this may only
+    /// happen instead of starting and processing - jobs that have
+    /// started processing can be suspended but not cancelled.
     virtual void Cancel() {}
   };
 
@@ -66,9 +60,12 @@ public:
   Worker();
 
   // general
-  ///@brief Adds a job to the queue, if the thread has not yet been finalized.
-  ///@return Whether the job has been added.
-  bool  Enqueue(Job& job);  // no ownership transfer
+  ///@brief Adds a job to the queue, only if the worker thread is still running
+  /// (it may have been finalized). If the thread is no longer running, this
+  /// will Cancel() @a job.
+  ///@note Enqueuing Jobs from the worker thread is allowed, but it carries the
+  /// risk of never finishing.
+  void  Enqueue(Job& job);  // no ownership transfer
 
   void  Suspend();
   void  Resume();
@@ -76,8 +73,9 @@ public:
   ///@brief Removes all jobs whose processing has not started.
   void  CancelPendingJobs();
 
-  ///@brief Finishes the processing of jobs.
-  ///@note Must be called before reaching the destructor. Blocking call.
+  ///@brief Finishes the processing of jobs synchronously.
+  ///@note Must be called before reaching the destructor.
+  ///@note Obviously it must not be called from the worker thread.
   void  Finalize();
 
 private:
@@ -85,10 +83,9 @@ private:
   typedef XR::Queue<Job*>  JobQueue;
 
   // data
-
   std::mutex              m_jobsMutex;
   Semaphore::Core         m_workSemaphore;
-  JobQueue                m_jobs;
+  JobQueue                m_jobs; // no ownership
 
   bool                    m_finishing;
   std::thread             m_thread;
