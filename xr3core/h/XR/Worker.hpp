@@ -60,9 +60,12 @@ public:
   Worker();
 
   // general
-  ///@brief Adds a job to the queue, if the thread has not yet been finalized.
-  ///@return Whether the job has been added.
-  bool  Enqueue(Job& job);  // no ownership transfer
+  ///@brief Adds a job to the queue, only if the worker thread is still running
+  /// (it may have been finalized). If the thread is no longer running, this
+  /// will Cancel() @a job.
+  ///@note Enqueuing Jobs from the worker thread is allowed, but it carries the
+  /// risk of never finishing.
+  void  Enqueue(Job& job);  // no ownership transfer
 
   void  Suspend();
   void  Resume();
@@ -82,7 +85,7 @@ private:
   // data
   std::mutex              m_jobsMutex;
   Semaphore::Core         m_workSemaphore;
-  JobQueue                m_jobs;
+  JobQueue                m_jobs; // no ownership
 
   bool                    m_finishing;
   std::thread             m_thread;

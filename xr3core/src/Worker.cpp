@@ -25,16 +25,18 @@ Worker::Worker()
 {}
 
 //==============================================================================
-bool  Worker::Enqueue(Job& j)
+void  Worker::Enqueue(Job& j)
 {
   std::unique_lock<std::mutex> lock(m_jobsMutex);
-  bool result = !m_finishing;
-  if (result)
+  if (m_thread.joinable())
   {
     m_jobs.push_back(&j);
     m_workSemaphore.Post();
   }
-  return result;
+  else
+  {
+    j.Cancel();
+  }
 }
 
 //==============================================================================
@@ -90,7 +92,7 @@ void  Worker::Finalize()
     }
     else
     {
-      XR_TRACE(Worker, ("Worker %p already finalized.", this));
+      XR_TRACE(Worker, ("Worker %p was already finalized.", this));
     }
   }
 
