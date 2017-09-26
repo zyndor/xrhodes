@@ -19,8 +19,6 @@ static struct
 {
   bool init = false;
   File::System system;
-  size_t ramPathSize;
-  size_t romPathSize;
 } s_file;
 
 #define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
@@ -34,14 +32,12 @@ void File::Init(System const& filesys)
     s_file.system.ramPath = filesys.ramPath;
     s_file.system.ramPath.AppendDirSeparator();
   }
-  s_file.ramPathSize = s_file.system.ramPath.size();
 
   if (!filesys.romPath.empty())
   {
     s_file.system.romPath = filesys.romPath;
     s_file.system.romPath.AppendDirSeparator();
   }
-  s_file.romPathSize = s_file.system.romPath.size();
 
   s_file.init = true;
 }
@@ -70,11 +66,11 @@ FilePath File::StripRoots(FilePath path)
 {
   if (path.StartsWith(s_file.system.ramPath))
   {
-    path = path.data() + s_file.ramPathSize;
+    path = path.data() + s_file.system.ramPath.size();
   }
   else if (path.StartsWith(s_file.system.romPath))
   {
-    path = path.data() + s_file.romPathSize;
+    path = path.data() + s_file.system.romPath.size();
   }
   return path;
 }
@@ -127,8 +123,8 @@ File::Handle File::Open(FilePath const& name, const char* mode)
 
     // Try ramPath.
     if (!GetRamPath().empty() &&
-      nameLen + s_file.ramPathSize <= FilePath::kCapacity &&
-      strncmp(nameChars, GetRamPath().c_str(), s_file.ramPathSize) != 0)
+      nameLen + s_file.system.ramPath.size() <= FilePath::kCapacity &&
+      strncmp(nameChars, GetRamPath().c_str(), s_file.system.ramPath.size()) != 0)
     {
       FilePath path = s_file.system.ramPath;
       path += nameChars;
@@ -139,8 +135,8 @@ File::Handle File::Open(FilePath const& name, const char* mode)
     // If we still haven't found our file in ramPath, and we only want to read,
     // then we may try romPath.
     if (!file && !GetRomPath().empty() &&
-      nameLen + s_file.romPathSize <= FilePath::kCapacity &&
-      strncmp(nameChars, GetRomPath().c_str(), s_file.romPathSize) != 0 &&
+      nameLen + s_file.system.romPath.size() <= FilePath::kCapacity &&
+      strncmp(nameChars, GetRomPath().c_str(), s_file.system.romPath.size()) != 0 &&
       strchr(mode, 'r') && !strchr(mode, '+'))
     {
       FilePath path = s_file.system.romPath;

@@ -64,7 +64,7 @@ public:
   ///@return Does this start with @a other?
   bool StartsWith(FilePath const& other) const
   {
-    return StartsWith(other.m_arBuffer);
+    return StartsWith(other.m_arBuffer, other.m_size);
   }
 
   ///@brief Removes the last name from the path. If the path ends with a
