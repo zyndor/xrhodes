@@ -9,6 +9,11 @@ namespace XR
   {
     TestString  str;
     ASSERT_EQ(str, "");
+    ASSERT_EQ(str.size(), 0);
+
+    str = "abcd";
+    ASSERT_EQ(str, "abcd");
+    ASSERT_EQ(str.size(), 4);
 
     str = TestString(123);
     ASSERT_EQ(str, "123");
@@ -56,5 +61,10 @@ namespace XR
       ASSERT_EQ(str2, "5645");
       ASSERT_EQ(str2.size(), 4);
     }
+
+    // and finally
+    str.clear();
+    ASSERT_EQ(str, "");
+    ASSERT_EQ(str.size(), 0);
   }
 }
