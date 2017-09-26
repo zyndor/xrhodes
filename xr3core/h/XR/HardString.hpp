@@ -63,7 +63,8 @@ public:
   HardString<N>&  toupper();
 
   void            clear();
-  HardString<N>&  assign(const char* p, size_t len);
+  HardString<N>&  assign(char const* pStr, size_t len);
+  HardString<N>&  append(char const* pStr, size_t len);
 
   // operators
   HardString<N>&  operator =(const char* pString);
@@ -83,7 +84,8 @@ public:
 
 protected:
   // data
-  char  m_arBuffer[N];
+  uint32_t  m_size;
+  char      m_arBuffer[N];
 };
 
 template  <>
@@ -140,6 +142,7 @@ char* strrstr(const char* haystack, const char* needle)
 template  <size_t N>
 inline
 HardString<N>::HardString()
+: m_size(0)
 {
   m_arBuffer[0] = '\0';
 }
@@ -155,6 +158,7 @@ HardString<N>::HardString(const char* pString)
 template  <size_t N>
 inline
 HardString<N>::HardString(const char* pString, size_t size)
+: m_size(size)
 {
   XR_ASSERT(HardString<>, pString != nullptr);
   XR_ASSERT(HardString<>, size <= capacity());
@@ -166,8 +170,8 @@ HardString<N>::HardString(const char* pString, size_t size)
 template  <size_t N>
 inline
 HardString<N>::HardString(int32_t n)
+: HardString<N>()
 {
-  m_arBuffer[0] = '\0';
   operator+=(n);
 }
   
@@ -176,7 +180,7 @@ template <size_t N>
 inline
 bool HardString<N>::empty() const
 {
-  return m_arBuffer[0] == '\0';
+  return m_size == 0;
 }
 
 //==============================================================================
@@ -184,7 +188,7 @@ template  <size_t N>
 inline
 size_t  HardString<N>::size() const
 {
-  return strlen(m_arBuffer);
+  return m_size;
 }
   
 //==============================================================================
@@ -308,45 +312,59 @@ inline
 void  HardString<N>::clear()
 {
   m_arBuffer[0] = '\0';
+  m_size = 0;
 }
 
 //==============================================================================
 template  <size_t N>
 HardString<N>&  HardString<N>::assign(const char* pStr, size_t size)
 {
-  XR_ASSERT(HardString<N>, pStr != 0);
+  XR_ASSERT(HardString<N>, pStr != nullptr);
   XR_ASSERT(HardString<N>, size <= capacity());
   strncpy(m_arBuffer, pStr, size);
   m_arBuffer[size] = '\0';
+  m_size = size;
+  return *this;
+}
+
+//==============================================================================
+template  <size_t N>
+HardString<N>&  HardString<N>::append(const char* pStr, size_t size)
+{
+  XR_ASSERT(HardString<N>, pStr != nullptr);
+  auto const newSize = m_size + size;
+  XR_ASSERT(HardString<N>, newSize <= capacity());
+  strncpy(m_arBuffer + m_size, pStr, size);
+  m_arBuffer[newSize] = '\0';
+  m_size = newSize;
   return *this;
 }
 
 //==============================================================================
 template  <size_t N>
 inline
-HardString<N>& HardString<N>::operator =(const char* pString)
+HardString<N>& HardString<N>::operator =(char const* pString)
 {
-  XR_ASSERT(HardString<N>, strlen(pString) <= kCapacity);
-  strcpy(m_arBuffer, pString);
-  return *this;
+  return assign(pString, strlen(pString));
 }
 
 //==============================================================================
 template  <size_t N>
 inline
-HardString<N>& HardString<N>::operator =(const HardString<N>& str)
+HardString<N>& HardString<N>::operator =(HardString<N> const& str)
 {
-  return (*this = str.c_str());
+  XR_ASSERT(HardString<N>, str.size() <= kCapacity);
+  return assign(str.m_arBuffer, str.m_size);
 }
 
 //==============================================================================
 template  <size_t N>
 HardString<N>& HardString<N>::operator =(int32_t n)
 {
-  char  arBuffer[16];
-  sprintf(arBuffer, "%d", n);
-  XR_ASSERT(HardString<>, strlen(arBuffer) < sizeof(arBuffer));
-  return (*this = arBuffer);
+  char arBuffer[16];
+  const auto size = sprintf(arBuffer, "%d", n);
+  XR_ASSERT(HardString<>, size < sizeof(arBuffer));
+  return assign(arBuffer, size);
 }
 
 //==============================================================================
@@ -354,10 +372,7 @@ template  <size_t N>
 inline
 HardString<N>& HardString<N>::operator +=(const char* pString)
 {
-  const size_t  len = size();
-  XR_ASSERT(HardString<>, len + strlen(pString) <= capacity());
-  strcpy(m_arBuffer + len, pString);
-  return *this;
+  return append(pString, strlen(pString));
 }
   
 //==============================================================================
@@ -365,17 +380,17 @@ template  <size_t N>
 inline
 HardString<N>& HardString<N>::operator +=(const HardString<N>& str)
 {
-  return (*this += str.c_str());
+  return append(str.m_arBuffer, str.m_size);
 }
   
 //==============================================================================
 template  <size_t N>
 HardString<N>&  HardString<N>::operator +=(int32_t n)
 {
-  char  arBuffer[16];
-  sprintf(arBuffer, "%d", n);
-  XR_ASSERT(HardString<>, strlen(arBuffer) < sizeof(arBuffer));
-  return (*this += arBuffer);
+  char arBuffer[16];
+  const auto len = sprintf(arBuffer, "%d", n);
+  XR_ASSERT(HardString<>, len < sizeof(arBuffer));
+  return append(arBuffer, len);
 }
 
 //==============================================================================
