@@ -52,7 +52,7 @@ public:
   ///@return Does this start with the first @a strSize bytes of @a str?
   bool StartsWith(char const* str, size_t strSize) const
   {
-    return strncmp(m_arBuffer, str, strSize) == 0;
+    return strncmp(m_buffer, str, strSize) == 0;
   }
 
   ///@return Does this start with the @a str?
@@ -64,7 +64,7 @@ public:
   ///@return Does this start with @a other?
   bool StartsWith(FilePath const& other) const
   {
-    return StartsWith(other.m_arBuffer, other.m_size);
+    return StartsWith(other.m_buffer, other.m_size);
   }
 
   ///@brief Removes the last name from the path. If the path ends with a
