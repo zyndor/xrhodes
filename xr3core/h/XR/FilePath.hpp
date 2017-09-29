@@ -35,6 +35,10 @@ public:
     NormalizeDirSeparators();
   }
 
+  FilePath(Base const& rhs)
+  : Base(rhs)
+  {}
+
   // general
   ///@brief Replaces all backslashes with kDirSeparator.
   void NormalizeDirSeparators();
