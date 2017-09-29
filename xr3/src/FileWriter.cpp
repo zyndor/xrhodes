@@ -16,7 +16,7 @@ FileWriter::~FileWriter()
 }
 
 //==============================================================================
-char const* kMode[] =
+static char const* const kMode[] =
 {
   "wb",
   "ab",
