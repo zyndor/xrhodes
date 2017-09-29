@@ -37,6 +37,8 @@ public:
   };
   
   // static
+  static FilePath const kRawProto;
+
   ///@brief Initialises the file system with the given paths. Backslashes will
   /// be converted to slashes and for the paths that don't end in a slash, one
   /// will be appended.

@@ -26,7 +26,98 @@ static struct
   File::System system;
 } s_file;
 
+// Abstraction of the actual operation on a concrete path and whether is applicable for
+// read only locations.
+struct FileProcessor
+{
+public:
+  // NO virtual ~FileProcessor(), because not ever deleted, let alone via a pointer to base.
+  virtual bool Process(char const* path) = 0;
+  virtual bool RomApplicable() const { return false; }
+};
+
+// A file operation following XRhodes' logic in helping to resolve paths.
+// - if raw:// was explicitly specified, process the rest of the path as is. otherwise:
+// - strip leading slashes,
+// - unless RAM was explicitly specified, look in RAM,
+//   - If RAM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
+// - if RAM didn't work out and ROM is applicable, look in ROM
+//   - If ROM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
+bool FileOp(FilePath const& path, FileProcessor& proc)
+{
+  bool success = false;
+  char const* cpath = path.c_str();
+  // If explicit raw path, then only process the location and apply no further cleverness.
+  if (path.StartsWith(File::kRawProto))
+  {
+    cpath += File::kRawProto.size();
+    success = proc.Process(cpath);
+  }
+  else
+  {
+    // strip leading slashes
+    size_t size = path.size();
+    while (cpath[0] == FilePath::kDirSeparator)
+    {
+      ++cpath;
+      --size;
+    }
+
+    FilePath path = cpath;
+    const bool explicitRom = path.StartsWith(File::GetRomPath());
+    // unless ROM was explicitly specified, look in RAM first.
+    if (!explicitRom)
+    {
+      bool doRam = true;
+      if (!path.StartsWith(File::GetRamPath()))
+      {
+        doRam = File::GetRamPath().size() + size <= FilePath::kCapacity;
+        if (doRam)
+        {
+          path = File::GetRamPath() + path;
+        }
+        else
+        {
+          XR_TRACE(File, ("Skipping RAM for '%s'; concatenated path length exceeds FilePath::kCapacity.", path.c_str()));
+        }
+      }
+
+      if (doRam)
+      {
+        success = proc.Process(path.c_str());
+      }
+    }
+
+    // If RAM didn't work out, we can have a go with ROM - if applicable.
+    if (!success && proc.RomApplicable())
+    {
+      bool doRom = true;
+      if (!explicitRom)
+      {
+        doRom = File::GetRomPath().size() + size <= FilePath::kCapacity;
+        if(doRom)
+        {
+          path = File::GetRomPath() + path;
+        }
+        else
+        {
+          XR_TRACE(File, ("Skipping ROM for '%s'; concatenated path length exceeds FilePath::kCapacity.", path.c_str()));
+        }
+      }
+
+      if (doRom)
+      {
+        success = proc.Process(path.c_str());
+      }
+    }
+  }
+  return success;
 }
+
+}
+
+//==============================================================================
+FilePath const File::kRawProto("raw://");
 
 //==============================================================================
 void File::Init(System const& filesys)
