@@ -12,7 +12,12 @@
 #include <algorithm>
 #include <fstream>
 
+#define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
+
 namespace XR
+{
+
+namespace
 {
 
 static struct
@@ -21,7 +26,7 @@ static struct
   File::System system;
 } s_file;
 
-#define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
+}
 
 //==============================================================================
 void File::Init(System const& filesys)
