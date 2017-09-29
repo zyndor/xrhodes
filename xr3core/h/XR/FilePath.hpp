@@ -89,12 +89,13 @@ public:
   FilePath& operator/=(char const* path)
   {
     AppendDirSeparator();
-    if (*path == kDirSeparator)
+    size_t size = strlen(path);
+    while (*path == kDirSeparator)
     {
       ++path;
+      --size;
     }
-    *this += FilePath(path);
-    return *this;
+    return static_cast<FilePath&>(append(path, size));
   }
 
   FilePath operator/(char const* path) const
