@@ -12,7 +12,7 @@ namespace XR
 //==============================================================================
 void FilePath::NormalizeDirSeparators()
 {
-  char* p = m_arBuffer;
+  char* p = m_buffer;
   while (p = strchr(p, '\\'))
   {
     *p = kDirSeparator;
@@ -23,7 +23,7 @@ void FilePath::NormalizeDirSeparators()
 //==============================================================================
 void FilePath::AppendDirSeparator()
 {
-  if (m_arBuffer[size() - 1] != kDirSeparator)
+  if (m_buffer[size() - 1] != kDirSeparator)
   {
     char const cstr[] = { kDirSeparator, '\0' };
     *this += cstr;
@@ -40,7 +40,7 @@ char const* FilePath::GetNameExt() const
   }
   else
   {
-    p = m_arBuffer;
+    p = m_buffer;
   }
   return p;
 }
@@ -62,7 +62,7 @@ void FilePath::Up()
   if (char* p = rfind(kDirSeparator))
   {
     *p = '\0';
-    if (p - m_arBuffer < kCapacity && p[1] == '\0')
+    if (p - m_buffer < kCapacity && p[1] == '\0')
     {
       Up();
     }
