@@ -64,13 +64,13 @@ FilePath const& File::GetRomPath()
 //==============================================================================
 FilePath File::StripRoots(FilePath path)
 {
-  if (path.StartsWith(s_file.system.ramPath))
+  if (path.StartsWith(GetRamPath()))
   {
-    path = path.data() + s_file.system.ramPath.size();
+    path = path.data() + GetRamPath().size();
   }
-  else if (path.StartsWith(s_file.system.romPath))
+  else if (path.StartsWith(GetRomPath()))
   {
-    path = path.data() + s_file.system.romPath.size();
+    path = path.data() + GetRomPath().size();
   }
   return path;
 }
@@ -148,7 +148,7 @@ File::Handle File::Open(FilePath const& name, const char* mode)
   return file;
 }
 
-//===============-===============================================================
+//==============================================================================
 size_t File::GetSize(Handle hFile)
 {
   XR_ASSERT_HANDLE_VALID(hFile);
@@ -180,16 +180,6 @@ size_t File::Write(void const* parBuffer, size_t elemSize, size_t numElems, Hand
 }
 
 //==============================================================================
-void File::Close(Handle hFile)
-{
-  FILE* f = static_cast<FILE*>(hFile);
-  if (f)
-  {
-    fclose(f);
-  }
-}
-
-//==============================================================================
 size_t File::Tell(Handle hFile)
 {
   XR_ASSERT_HANDLE_VALID(hFile);
@@ -211,6 +201,16 @@ bool File::Seek(Handle hFile, size_t offset, SeekFrom sf)
   XR_ASSERT_HANDLE_VALID(hFile);
   FILE* f = static_cast<FILE*>(hFile);
   return fseek(f, offset, karSeekOriginMappings[static_cast<int>(sf)]) == 0;
+}
+
+//==============================================================================
+void File::Close(Handle hFile)
+{
+  FILE* f = static_cast<FILE*>(hFile);
+  if (f)
+  {
+    fclose(f);
+  }
 }
 
 } // XR

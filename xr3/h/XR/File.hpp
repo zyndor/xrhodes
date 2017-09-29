@@ -48,15 +48,16 @@ public:
 
   static FilePath StripRoots(FilePath path);
 
-  static bool   CheckExists(FilePath const& name);
-  static time_t GetModifiedTime(FilePath const& name);
+  static bool   CheckExists(FilePath const& path);
+  static time_t GetModifiedTime(FilePath const& path);
 
   ///@brief Attempts to open a file in the given @a mode (standard fopen flags
   /// apply) and return a handle to it. If a file in the given path was not 
   /// found, then attempts will be made to locate the file in the ram and rom
   /// paths (given to Init()) by prepending @a name with them if possible
   /// (i.e. within the capacity of Path), in this order.
-  static Handle Open(FilePath const& name, const char* mode);
+  /// This behaviour may be suppressed by prefixing the path with kRawPath.
+  static Handle Open(FilePath const& path, const char* mode);
 
   static size_t GetSize(Handle hFile);
 
