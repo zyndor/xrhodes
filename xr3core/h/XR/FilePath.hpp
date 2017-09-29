@@ -86,6 +86,19 @@ public:
   ///@brief Appends a kDirSeparator and the given path (with directory separators
   /// unified). Prevents duplicate dir separators at the boundary of this and
   /// the other path only.
+  FilePath& operator/=(FilePath const& path)
+  {
+    AppendDirSeparator();
+    char const* cpath = path.c_str();
+    size_t size = path.size();
+    while (*cpath == kDirSeparator)
+    {
+      ++cpath;
+      --size;
+    }
+    return static_cast<FilePath&>(append(cpath, size));
+  }
+
   FilePath& operator/=(char const* path)
   {
     AppendDirSeparator();
@@ -96,6 +109,12 @@ public:
       --size;
     }
     return static_cast<FilePath&>(append(path, size));
+  }
+
+  FilePath operator/(FilePath const& path) const
+  {
+    FilePath newPath(*this);
+    return newPath /= path;
   }
 
   FilePath operator/(char const* path) const
