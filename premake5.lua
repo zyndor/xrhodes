@@ -74,8 +74,10 @@ workspace "xr3.SDL"
 	filter("not Release")
 		optimize "Debug"
 		symbols "On"
+		runtime "Debug"
 	filter{ "Release" }
 		optimize "Full"
+		runtime "Release"
 	filter{}
 	
 	-- paths
