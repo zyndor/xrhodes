@@ -174,12 +174,7 @@ FilePath File::StripRoots(FilePath path)
 //==============================================================================
 bool File::CheckExists(FilePath const& name)
 {
-  Handle h = Open(name, "rb");
-  if (h)
-  {
-    Close(h);
-  }
-  return h != nullptr;
+  return GetModifiedTime(name) != 0;
 }
 
 //==============================================================================
