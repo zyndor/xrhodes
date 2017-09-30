@@ -178,64 +178,73 @@ bool File::CheckExists(FilePath const& name)
 }
 
 //==============================================================================
-time_t File::GetModifiedTime(FilePath const & name)
+time_t File::GetModifiedTime(FilePath const& name)
 {
-  struct stat statBuffer;
   time_t modTime = 0;
-  if (stat(name.c_str(), &statBuffer) == 0)
+  struct Proc : FileProcessor
   {
+    struct stat statBuffer;
+    time_t& modTime;
+
+    Proc(time_t& outModTime)
+    : modTime(outModTime)
+    {}
+
+    bool Process(char const* path)
+    {
+      bool result = stat(path, &statBuffer) == 0;
+      if (result)
+      {
 #if defined(XR_PLATFORM_OSX) || defined(XR_PLATFORM_IOS)
 #define XR_MTIME_OVERRIDE
 #define st_mtime st_mtimespec.tv_sec
 #endif
-    modTime = statBuffer.st_mtime;
+        modTime = statBuffer.st_mtime;
 #ifdef XR_MTIME_OVERRIDE
 #undef XR_MTIME_OVERRIDE
-#undef st_mtime st_mtimespec.tv_sec
+#undef st_mtime
 #endif
-  }
+      }
+      return result;
+    }
+
+    bool RomApplicable() const
+    {
+      return true;
+    }
+  } proc(modTime);
+
+  FileOp(name, proc);
   return modTime;
 }
 
 //==============================================================================
 File::Handle File::Open(FilePath const& name, const char* mode)
 {
-  FILE*  file = fopen(name.c_str(), mode);
-
-  if (!file)
+  FILE* file = nullptr;
+  struct Proc : FileProcessor
   {
-    // Skip any heading slashes.
-    char const* nameChars = name.c_str();
-    if (nameChars[0] == '/')
-    {
-      ++nameChars;
-    }
-    const size_t nameLen = strlen(nameChars);
+    char const* const mode;
+    FILE*& file;
 
-    // Try ramPath.
-    if (!GetRamPath().empty() &&
-      nameLen + s_file.system.ramPath.size() <= FilePath::kCapacity &&
-      strncmp(nameChars, GetRamPath().c_str(), s_file.system.ramPath.size()) != 0)
-    {
-      FilePath path = s_file.system.ramPath;
-      path += nameChars;
+    Proc(char const* mode_, FILE*& outFile)
+    : mode(mode_),
+      file(outFile)
+    {}
 
-      file = fopen(path.c_str(), mode);
+    bool Process(char const* path)
+    {
+      file = fopen(path, mode);
+      return file != nullptr;
     }
 
-    // If we still haven't found our file in ramPath, and we only want to read,
-    // then we may try romPath.
-    if (!file && !GetRomPath().empty() &&
-      nameLen + s_file.system.romPath.size() <= FilePath::kCapacity &&
-      strncmp(nameChars, GetRomPath().c_str(), s_file.system.romPath.size()) != 0 &&
-      strchr(mode, 'r') && !strchr(mode, '+'))
+    bool RomApplicable() const
     {
-      FilePath path = s_file.system.romPath;
-      path += nameChars;
-
-      file = fopen(path.c_str(), mode);
+      return strchr(mode, 'r') && !strchr(mode, '+');
     }
-  }
+  } proc(mode, file);
+
+  FileOp(name, proc);
   return file;
 }
 
