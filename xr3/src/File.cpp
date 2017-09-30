@@ -12,6 +12,12 @@
 #include <algorithm>
 #include <fstream>
 
+#ifdef XR_PLATFORM_WINDOWS
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
+
 #define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
 
 namespace XR
@@ -39,7 +45,7 @@ public:
 // A file operation following XRhodes' logic in helping to resolve paths.
 // - if raw:// was explicitly specified, process the rest of the path as is. otherwise:
 // - strip leading slashes,
-// - unless RAM was explicitly specified, look in RAM,
+// - unless ROM was explicitly specified, look in RAM,
 //   - If RAM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
 // - if RAM didn't work out and ROM is applicable, look in ROM
 //   - If ROM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
@@ -123,11 +129,8 @@ FilePath const File::kRawProto("raw://");
 void File::Init(System const& filesys)
 {
   XR_ASSERTMSG(File, !s_file.init, ("Already initialised!"));
-  if (!filesys.ramPath.empty())
-  {
-    s_file.system.ramPath = filesys.ramPath;
-    s_file.system.ramPath.AppendDirSeparator();
-  }
+  s_file.system.ramPath = filesys.ramPath;
+  s_file.system.ramPath.AppendDirSeparator();
 
   if (!filesys.romPath.empty())
   {
@@ -311,6 +314,82 @@ void File::Close(Handle hFile)
   {
     fclose(f);
   }
+}
+
+//==============================================================================
+bool File::IsDir(FilePath const& path, bool includeRom)
+{
+  bool isDir = false;
+  struct Proc : FileProcessor
+  {
+    struct stat statBuffer;
+    bool& isDir;
+    bool includeRom;
+
+    Proc(bool& outIsDir, bool includeRom_)
+    : isDir(outIsDir),
+      includeRom(includeRom_)
+    {}
+
+    bool Process(char const* path)
+    {
+      bool result = stat(path, &statBuffer) == 0;
+      if (result)
+      {
+        isDir = IsFullMask(statBuffer.st_mode, S_IFDIR);
+      }
+      return isDir;
+    }
+
+    bool RomApplicable() const
+    {
+      return includeRom;
+    }
+  } proc(isDir, includeRom);
+
+  return FileOp(path, proc);
+}
+
+//==============================================================================
+bool File::MakeDir(FilePath const& path)
+{
+  struct : FileProcessor
+  {
+    bool Process(char const* path)
+    {
+#ifdef XR_PLATFORM_WINDOWS
+      return _mkdir(path) == 0;
+#else
+      return mkdir(path, S_IRWXU) == 0;
+#endif
+    }
+  } proc;
+
+  return FileOp(path, proc);
+}
+
+//==============================================================================
+bool File::MakeDirs(FilePath const& path)
+{
+  bool success = true;
+  char const* start = path.c_str();
+  FilePath dir;
+  while (auto end = strchr(start, FilePath::kDirSeparator))
+  {
+    size_t size = end - start;
+    if (size > 0)
+    {
+      dir.append(start, end - start);
+      dir.AppendDirSeparator();
+      if (!IsDir(dir, false) && !MakeDir(dir))
+      {
+        success = false;
+        break;
+      }
+    }
+    start = end + 1;
+  }
+  return success;
 }
 
 } // XR

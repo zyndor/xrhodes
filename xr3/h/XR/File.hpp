@@ -77,6 +77,24 @@ public:
   static bool   Seek(Handle hFile, size_t offset, SeekFrom sf);
 
   static void   Close(Handle hFile);
+
+  ///@brief Checks if the given @a path is a directory. See the class docs
+  /// about the application of RAM and ROM paths. ROM is only checked if
+  /// @a includeRom is set.
+  ///@return Whether the path is accessible, exists and is a directory.
+  static bool   IsDir(FilePath const& path, bool includeRom);
+
+  ///@brief Makes a directory, if it doesn't exist, in ramPath. A raw path may
+  /// be used instead by prefixing @a path with kRawPath.
+  ///@return Whether the operation was successful.
+  ///@note All of @a path's parent directories must exist.
+  static bool   MakeDir(FilePath const& path);
+
+  ///@brief Makes a directory (and each parent as necessary), if it doesn't
+  /// exist, in ramPath. A raw path may be used instead by prefixing @a path
+  /// with kRawPath.
+  ///@return Whether the operation was successful.
+  static bool   MakeDirs(FilePath const& path);
 };
 
 } // XR
