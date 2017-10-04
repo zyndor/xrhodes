@@ -1,13 +1,29 @@
 #include <gtest/gtest.h>
+#include <XR/File.hpp>
 #include <XR/jsonutils.hpp>
 #include <XR/JsonReader.hpp>
+#include <XR/ScopeGuard.hpp>
 #include <XR/debug.hpp>
+#include "FileLifeCycleManager.hpp"
 
 namespace XR
 {
-  TEST(JsonUtils, LoadJson)
+  class JsonUtils: public ::testing::Test
   {
-    auto json = LoadJSON(DATA_PATH "/loadjson.json", 3, false);
+  public:
+    static void SetUpTestCase()
+    {}
+
+    static void TearDownTestCase()
+    {}
+
+  private:
+    FileLifeCycleManager  flcm;
+  };
+
+  TEST_F(JsonUtils, LoadJson)
+  {
+    auto json = LoadJSON("loadjson.json", 3, false);
     ASSERT_NE(json, nullptr);
 
     ASSERT_EQ(json->GetType(), JSON::OBJECT);

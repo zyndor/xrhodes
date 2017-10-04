@@ -11,7 +11,7 @@ project "unittests"
 	includedirs
 	{
 		"../external/gtest/include",
-		"../unittests",
+		"../unittests/h",
 		"../xr3core/h",
 		"../xr3json/h",
 		"../xr3/h",
