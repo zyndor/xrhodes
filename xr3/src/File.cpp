@@ -34,7 +34,7 @@ static struct
 
 // Abstraction of the actual operation on a concrete path and whether is applicable for
 // read only locations.
-struct FileProcessor
+struct FileOp
 {
 public:
   // NO virtual ~FileProcessor(), because not ever deleted, let alone via a pointer to base.
@@ -49,7 +49,7 @@ public:
 //   - If RAM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
 // - if RAM didn't work out and ROM is applicable, look in ROM
 //   - If ROM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
-bool FileOp(FilePath const& path, FileProcessor& proc)
+bool PerformFileOp(FilePath const& path, FileOp& proc)
 {
   bool success = false;
   char const* cpath = path.c_str();
@@ -184,7 +184,7 @@ bool File::CheckExists(FilePath const& name)
 time_t File::GetModifiedTime(FilePath const& name)
 {
   time_t modTime = 0;
-  struct Proc : FileProcessor
+  struct Proc : FileOp
   {
     struct stat statBuffer;
     time_t& modTime;
@@ -217,7 +217,7 @@ time_t File::GetModifiedTime(FilePath const& name)
     }
   } proc(modTime);
 
-  FileOp(name, proc);
+  PerformFileOp(name, proc);
   return modTime;
 }
 
@@ -225,7 +225,7 @@ time_t File::GetModifiedTime(FilePath const& name)
 File::Handle File::Open(FilePath const& name, const char* mode)
 {
   FILE* file = nullptr;
-  struct Proc : FileProcessor
+  struct Proc : FileOp
   {
     char const* const mode;
     FILE*& file;
@@ -247,7 +247,7 @@ File::Handle File::Open(FilePath const& name, const char* mode)
     }
   } proc(mode, file);
 
-  FileOp(name, proc);
+  PerformFileOp(name, proc);
   return file;
 }
 
@@ -320,7 +320,7 @@ void File::Close(Handle hFile)
 bool File::IsDir(FilePath const& path, bool includeRom)
 {
   bool isDir = false;
-  struct Proc : FileProcessor
+  struct Proc : FileOp
   {
     struct stat statBuffer;
     bool& isDir;
@@ -347,13 +347,13 @@ bool File::IsDir(FilePath const& path, bool includeRom)
     }
   } proc(isDir, includeRom);
 
-  return FileOp(path, proc);
+  return PerformFileOp(path, proc);
 }
 
 //==============================================================================
 bool File::MakeDir(FilePath const& path)
 {
-  struct : FileProcessor
+  struct : FileOp
   {
     bool Process(char const* path)
     {
@@ -365,7 +365,7 @@ bool File::MakeDir(FilePath const& path)
     }
   } proc;
 
-  return FileOp(path, proc);
+  return PerformFileOp(path, proc);
 }
 
 //==============================================================================
