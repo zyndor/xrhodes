@@ -66,6 +66,10 @@ public:
   HardString<N>&  assign(char const* cs, size_t len);
   HardString<N>&  append(char const* cs, size_t len);
 
+  ///@brief Updates the cached size of the HardString. Useful, and should be
+  /// used, after directly manipulating the buffer, i.e. data().
+  void            UpdateSize();
+
   // operators
   HardString<N>&  operator =(const char* cs);
   HardString<N>&  operator =(const HardString<N>& hs);
@@ -338,6 +342,15 @@ HardString<N>&  HardString<N>::append(const char* cs, size_t size)
   m_buffer[newSize] = '\0';
   m_size = newSize;
   return *this;
+}
+
+//==============================================================================
+template<size_t N>
+inline void HardString<N>::UpdateSize()
+{
+  const auto size = strlen(m_buffer);
+  XR_ASSERT(HardString, size <= kCapacity);
+  m_size = size;
 }
 
 //==============================================================================
