@@ -25,8 +25,7 @@ void FilePath::AppendDirSeparator()
 {
   if (m_buffer[size() - 1] != kDirSeparator)
   {
-    char const cstr[] = { kDirSeparator, '\0' };
-    *this += cstr;
+    append(&kDirSeparator, 1);
   }
 }
 
