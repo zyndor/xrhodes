@@ -58,12 +58,12 @@ namespace XR
 
     void Format(char const* name, uint32_t hash, char(&buffer)[64])
     {
-      sprintf(buffer, "%s:  %x", name, hash);
+      sprintf(buffer, "%s:\t%x", name, hash);
     }
 
     void Format(char const* name, uint64_t hash, char(&buffer)[64])
     {
-      sprintf(buffer, "%s:  %llx", name, hash);
+      sprintf(buffer, "%s:\t%llx", name, hash);
     }
 
     template <typename T>
@@ -120,9 +120,9 @@ namespace XR
             auto hash = Hash::String(arBuffer, false);
 
             auto iFind = hashes.find(hash);
-            bool hashNotClashing = iFind == hashes.end();
-            XR_TRACEIF(HashTests, !hashNotClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
-            ASSERT_TRUE(hashNotClashing);
+            bool hashClashing = iFind != hashes.end();
+            XR_TRACEIF(HashTests, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
+            ASSERT_FALSE(hashClashing);
             hashes[hash] = arBuffer;
           }
         }
@@ -134,7 +134,7 @@ namespace XR
     TEST(Hash, StringUniqueness)
     {
       Hash::SetSeed(Hash::kSeed);
-      DoStringUniqueness(true);
+      DoStringUniqueness(false);
 
       for (int i = 0; i < 32; ++i)
       {
@@ -157,9 +157,9 @@ namespace XR
             auto hash = Hash::String32(arBuffer, len);
 
             auto iFind = hashes.find(hash);
-            bool hashNotClashing = iFind == hashes.end();
-            XR_TRACEIF(HashTests, !hashNotClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
-            ASSERT_TRUE(hashNotClashing);
+            bool hashClashing = iFind != hashes.end();
+            XR_TRACEIF(HashTests, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
+            ASSERT_FALSE(hashClashing);
             hashes[hash] = arBuffer;
           }
         }
@@ -171,7 +171,7 @@ namespace XR
     TEST(Hash, String32Uniqueness)
     {
       Hash::SetSeed(Hash::kSeed);
-      DoString32Uniqueness(true);
+      DoString32Uniqueness(false);
 
       for (int i = 0; i <= 32; ++i)
       {
