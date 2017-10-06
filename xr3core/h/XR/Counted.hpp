@@ -114,10 +114,10 @@ public:
     m_p = p;
   }
 
-  template <typename U>
-  Counted<U, D> StaticCast()
+  template <typename U, typename D2 = std::default_delete<U>>
+  Counted<U, D2> StaticCast()
   {
-    return Counted<U, D>(static_cast<U*>(Get()));
+    return Counted<U, D2>(static_cast<U*>(Get()));
   }
 
   Deleter const& GetDeleter() const
