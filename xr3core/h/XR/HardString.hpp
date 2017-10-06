@@ -164,8 +164,8 @@ inline
 HardString<N>::HardString(const char* cs, size_t size)
 : m_size(size)
 {
-  XR_ASSERT(HardString<>, cs != nullptr);
-  XR_ASSERT(HardString<>, size <= capacity());
+  XR_ASSERT(HardString, cs != nullptr);
+  XR_ASSERT(HardString, size <= capacity());
   strncpy(m_buffer, cs, size);
   m_buffer[size] = '\0';
 }
@@ -288,7 +288,7 @@ template  <size_t N>
 inline
 HardString<N> HardString<N>::substr(size_t offs, size_t size) const
 {
-  XR_ASSERT(HardString<>, offs + size <= capacity());
+  XR_ASSERT(HardString, offs + size <= capacity());
   return HardString<N>(m_buffer + offs, size);
 }
 
@@ -323,8 +323,8 @@ void  HardString<N>::clear()
 template  <size_t N>
 HardString<N>&  HardString<N>::assign(const char* cs, size_t size)
 {
-  XR_ASSERT(HardString<N>, cs != nullptr);
-  XR_ASSERT(HardString<N>, size <= capacity());
+  XR_ASSERT(HardString, cs != nullptr);
+  XR_ASSERT(HardString, size <= capacity());
   strncpy(m_buffer, cs, size);
   m_buffer[size] = '\0';
   m_size = size;
@@ -335,9 +335,9 @@ HardString<N>&  HardString<N>::assign(const char* cs, size_t size)
 template  <size_t N>
 HardString<N>&  HardString<N>::append(const char* cs, size_t size)
 {
-  XR_ASSERT(HardString<N>, cs != nullptr);
+  XR_ASSERT(HardString, cs != nullptr);
   auto const newSize = m_size + size;
-  XR_ASSERT(HardString<N>, newSize <= capacity());
+  XR_ASSERT(HardString, newSize <= capacity());
   strncpy(m_buffer + m_size, cs, size);
   m_buffer[newSize] = '\0';
   m_size = newSize;
@@ -366,7 +366,7 @@ template  <size_t N>
 inline
 HardString<N>& HardString<N>::operator =(HardString<N> const& hs)
 {
-  XR_ASSERT(HardString<N>, hs.size() <= kCapacity);
+  XR_ASSERT(HardString, hs.size() <= kCapacity);
   return assign(hs.m_buffer, hs.m_size);
 }
 
@@ -376,7 +376,7 @@ HardString<N>& HardString<N>::operator =(int32_t n)
 {
   char buffer[16];
   const auto size = sprintf(buffer, "%d", n);
-  XR_ASSERT(HardString<>, size < sizeof(buffer));
+  XR_ASSERT(HardString, size < sizeof(buffer));
   return assign(buffer, size);
 }
 
@@ -402,7 +402,7 @@ HardString<N>&  HardString<N>::operator +=(int32_t n)
 {
   char buffer[16];
   const auto len = sprintf(buffer, "%d", n);
-  XR_ASSERT(HardString<>, len < sizeof(buffer));
+  XR_ASSERT(HardString, len < sizeof(buffer));
   return append(buffer, len);
 }
 
@@ -438,8 +438,8 @@ template  <size_t N>
 inline
 const char&  HardString<N>::operator[](size_t i) const
 {
-  XR_ASSERT(HardString<>, i >= 0);
-  XR_ASSERT(HardString<>, i < size());
+  XR_ASSERT(HardString, i >= 0);
+  XR_ASSERT(HardString, i < size());
   return m_buffer[i];
 }
 
@@ -448,8 +448,8 @@ template  <size_t N>
 inline
 char&  HardString<N>::operator[](size_t i)
 {
-  XR_ASSERT(HardString<>, i >= 0);
-  XR_ASSERT(HardString<>, i < size());
+  XR_ASSERT(HardString, i >= 0);
+  XR_ASSERT(HardString, i < size());
   return m_buffer[i];
 }
   
