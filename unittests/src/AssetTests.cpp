@@ -1,0 +1,106 @@
+#include "FileLifeCycleManager.hpp"
+
+#include <gtest/gtest.h>
+#include <XR/Asset.hpp>
+#include <XR/Hash.hpp>
+#include <XR/FileWriter.hpp>
+#include <XR/ScopeGuard.hpp>
+
+#include <random>
+
+namespace XR
+{
+  class AssetTests : public ::testing::Test
+  {
+  public:
+    static void SetUpTestCase()
+    {}
+
+    static void TearDownTestCase()
+    {}
+
+  private:
+    FileLifeCycleManager  flcm;
+  };
+
+  // Test Asset and Builder
+  struct TestAsset : Asset
+  {
+    struct Builder : Asset::Builder
+    {
+      virtual char const * GetExtensions() const override
+      {
+        return "test";
+      }
+
+      virtual bool Build(uint8_t const * buffer, size_t size, FilePath targetPath) const override
+      {
+        int histogram[256];
+        memset(histogram, 0x00, sizeof(histogram));
+
+        auto end = buffer + size;
+        while (buffer < end)
+        {
+          ++histogram[*buffer];
+          ++buffer;
+        }
+
+        FileWriter writer;
+        return writer.Open(targetPath, XR::FileWriter::Mode::Truncate, false)
+          && writer.Write(&kTypeId, sizeof(kTypeId), 1)
+          && writer.Write(histogram, sizeof(histogram[0]), XR_ARRAY_SIZE(histogram));
+      }
+    };
+
+    XR_ASSET_DECL(TestAsset, "tes7")
+
+    virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
+    {
+      return true;
+    }
+
+    virtual void OnUnloaded() override
+    {
+    }
+  };
+
+  XR::TestAsset::Builder testAssetBuilder;
+
+  TEST_F(AssetTests, Basics)
+  {
+    FilePath path("assets/testasset.test");
+    if(!File::CheckExists(path))
+    {
+      std::random_device rd;
+      std::mt19937 gen(rd());
+
+      std::uniform_int_distribution<uint32_t> distro;
+
+      FileWriter fw;
+      FilePath rawPath(File::kRawProto / File::GetRomPath() / path);
+      fw.Open(rawPath, XR::FileWriter::Mode::Truncate, false);
+      for (int i = 0; i < 2560000; ++i)
+      {
+        auto val = distro(gen);
+        fw.Write(&val, sizeof(val), 1);
+      }
+    }
+
+    Asset::Manager::Init();
+    auto assetManGuard = MakeScopeGuard([] {
+      Asset::Manager::Exit();
+    });
+
+    Asset::Manager::RegisterBuilder(testAssetBuilder);
+    auto testAss = Asset::Manager::Load<TestAsset>(path);
+
+    ASSERT_TRUE(IsFullMask(testAss->GetFlags(), Asset::LoadingFlag));
+    ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);
+
+    while (!(testAss->GetFlags() & (Asset::ReadyFlag | Asset::ErrorFlag)))
+    {
+      Asset::Manager::Update();
+    }
+    ASSERT_FALSE(IsFullMask(testAss->GetFlags(), Asset::ErrorFlag));
+  }
+}
