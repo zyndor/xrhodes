@@ -127,14 +127,17 @@ public:
   /// of assets.
   struct Manager
   {
-    ///@brief Initialises the Asset::Manager with the given asset path.
-    /// This is where built assets are expected to be (and will be saved by
-    /// the asset build pipeline). It will be stripped of ram/rom roots.
-    ///@note This means that {ram}/{assets}/ as well as {rom}/{assets}/ should
-    /// not contain raw assets or any other data - the former at the risk of
-    /// being ignored, and both at the risk of being overwritten.
-    ///@note If an empty path is supplied, "assets/" is going to be used.
-    static void Init(FilePath const& path = "", Allocator* alloc = nullptr);
+    static char const* const kDefaultPath;
+
+    ///@brief Initialises the Asset::Manager with the given asset path, which
+    /// is a location that may exist in both of the RAM and ROM paths of the
+    /// filesystem (if RAM or ROM was specified, it will be stripped), where
+    /// built assets are located.
+    ///@note It cannot be a raw:// path, nor an explicit RAM or ROM path; these
+    /// will be stripped from the supplied path.
+    ///@note The asset path should not contain any other data, at the risk of
+    /// being overwrittens.
+    static void Init(FilePath path = kDefaultPath, Allocator* alloc = nullptr);
 
     static void RegisterBuilder(Builder const& builder);
 
@@ -206,7 +209,8 @@ public:
 
     static bool Unload(Asset& asset);
 
-    ///@brief Processes loaded assets and completes their loading.
+    ///@brief Processes loaded assets and completes their loading, caling
+    /// OnLoaded().
     static void Update();
 
     static void Suspend();

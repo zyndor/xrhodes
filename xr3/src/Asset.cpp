@@ -18,15 +18,27 @@ namespace XR
 {
 
 //==============================================================================
-const size_t kChunkSize = 4096;
+const size_t kChunkSizeBytes = XR_KBYTES(16);
 
 struct LoadJob : Worker::Job
 {
+  // data
   Asset::Ptr asset;
 
-  // Inherited via Job
+  // structors
+  explicit LoadJob(Asset::Ptr const& a)
+  : asset(a)
+  {}
+
+  ~LoadJob()
+  {
+    CloseHandle();
+  }
+
+  // general
   virtual void Start()
   {
+    CloseHandle();
     m_path = Asset::Manager::GetAssetPath() / asset->GetDescriptor().ToPath();
   }
 
@@ -62,7 +74,7 @@ struct LoadJob : Worker::Job
 
     if (!done)
     {
-      const size_t nextChunkSize = std::min(kChunkSize, m_data.size() - (m_nextWrite - m_data.data()));
+      const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - (m_nextWrite - m_data.data()));
       const size_t readSize = File::Read(m_hFile, 1, nextChunkSize, m_nextWrite);
       done = readSize != nextChunkSize;
       if (done)
@@ -89,15 +101,27 @@ struct LoadJob : Worker::Job
   }
 
 private:
+  // data
   FilePath              m_path;
   File::Handle          m_hFile = nullptr;
   std::vector<uint8_t>  m_data;
   uint8_t*              m_nextWrite = nullptr;
+
+  // internal
+  void CloseHandle()
+  {
+    if(m_hFile)
+    {
+      File::Close(m_hFile);
+      m_hFile = nullptr;
+    }
+  }
 };
 
 //==============================================================================
-struct ResourceManagerImpl
+struct
 {
+  // data
   FilePath path;
 
   std::map<uint32_t, Asset::Builder const*> builders;
@@ -106,6 +130,7 @@ struct ResourceManagerImpl
 
   Worker worker;
 
+  // general
   bool Manage(Asset::Ptr a)
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
@@ -200,6 +225,7 @@ struct ResourceManagerImpl
   }
 
 private:
+  // data
   Spinlock m_assetsLock;
   std::map<Asset::DescriptorCore, Asset::Ptr> m_assets;
 
@@ -209,27 +235,54 @@ private:
 } s_assetMan;
 
 //==============================================================================
-void PerformLoad(LoadJob& lj)
+void LoadAsset(Asset::Ptr const& asset, Asset::FlagType flags)
 {
-  lj.Start();
-  while (!lj.Process())
-  {}
+  if (IsFullMask(flags, Asset::LoadSyncFlag))
+  {
+    LoadJob lj(asset);
+    lj.Start();
+    while (!lj.Process())
+    {}
 
-  s_assetMan.DeleteJob(lj);
+    if (IsFullMask(lj.asset->GetFlags(), Asset::LoadedFlag))
+    {
+      if (lj.asset->OnLoaded(lj.GetData().size(), lj.GetData().data()))
+      {
+        lj.asset->OverrideFlags(Asset::LoadedFlag, Asset::ReadyFlag);
+      }
+      else
+      {
+        lj.asset->FlagError();
+      }
+    }
+  }
+  else
+  {
+    auto lj = new (s_assetMan.allocator->Allocate(sizeof(LoadJob))) LoadJob(asset);
+    s_assetMan.EnqueueJob(*lj);
+  }
 }
 
 //==============================================================================
-void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
+char const* const Asset::Manager::kDefaultPath = "assets";
+
+//==============================================================================
+void Asset::Manager::Init(FilePath path, Allocator* alloc)
 {
-  s_assetMan.path = File::StripRoots(path);
-  if (s_assetMan.path.empty())
+  if(path.StartsWith(File::kRawProto))
   {
-    s_assetMan.path = "assets";
+    path = path.c_str() + File::kRawProto.size();
+  }
+
+  path = File::StripRoots(path);
+  if (path.empty())
+  {
+    path = kDefaultPath;
   }
   s_assetMan.path.AppendDirSeparator();
 
 #ifdef ENABLE_ASSET_BUILDING
-  File::MakeDir(s_assetMan.path);
+  File::MakeDirs(s_assetMan.path);
 #endif
 
   if (!alloc)
@@ -265,7 +318,7 @@ void Asset::Manager::RegisterBuilder(Builder const& builder)
     }
     exts = next;
   }
-#endif
+#endif  // ENABLE_ASSET_BUILDING
 }
 
 //==============================================================================
@@ -356,6 +409,7 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
   // Clear private flags and set Loading
   asset->OverrideFlags(PrivateMask, LoadingFlag);
 
+#ifdef ENABLE_ASSET_BUILDING
   // Check the name -- are we trying to load a raw or a built asset?
   // Strip ram/rom and asset roots.
   FilePath assetPath(File::StripRoots(path));
@@ -365,7 +419,6 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
   }
 
   FilePath finalPath = asset->GetDescriptor().ToPath();
-#ifdef ENABLE_ASSET_BUILDING
   if (finalPath != assetPath)
   {
     // Check for raw and built asset, compare last modification time.
@@ -423,28 +476,27 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
       }
     }
   }
-#endif
 
-  LoadInternal(asset, flags);
+  // If we're flawless, process job.
+  if (!IsFullMask(asset->GetFlags(), ErrorFlag))
+#endif  // ENABLE_ASSET_BUILDING
+  {
+    LoadAsset(asset, flags);
+  }
 }
 
 //==============================================================================
 void Asset::Manager::LoadInternal(Ptr const& asset, FlagType flags)
 {
-  // If we're flawless, process job.
-  if (!IsFullMask(asset->GetFlags(), ErrorFlag))
-  {
-    auto lj = new (s_assetMan.allocator->Allocate(sizeof(LoadJob))) LoadJob;
-    lj->asset = asset;
-    if (IsFullMask(flags, LoadSyncFlag))
-    {
-      PerformLoad(*lj);
-    }
-    else
-    {
-      s_assetMan.EnqueueJob(*lj);
-    }
-  }
+#ifdef XR_DEBUG
+  // Clear the debug path -- the descriptor tells you where the asset is.
+  asset->m_debugPath.clear();
+#endif
+
+  // Clear private flags and set Loading
+  asset->OverrideFlags(PrivateMask, LoadingFlag);
+
+  LoadAsset(asset, flags);
 }
 
 //==============================================================================
