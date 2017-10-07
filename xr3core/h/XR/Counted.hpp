@@ -131,7 +131,7 @@ public:
   }
 
   // operator overloads
-  Counted<T, D>& operator=(Counted<T, D>& rhs)
+  Counted<T, D>& operator=(Counted<T, D> const& rhs)
   {
     Counted<T, D> temp(rhs);
     std::swap(m_p, temp.m_p);
