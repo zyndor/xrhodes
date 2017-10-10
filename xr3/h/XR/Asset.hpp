@@ -212,6 +212,10 @@ public:
     ///@return The success of the removal, i.e. if it was found in the map.
     static bool Remove(Asset& asset);
 
+    ///@brief Calls Unload() on all assets who have a single reference, held by
+    /// the Asset::Manager.
+    ///@note This doesn't remove them from the manager.
+    static void UnloadUnused();
 
     ///@brief Processes loaded assets and completes their loading, caling
     /// OnLoaded().
@@ -298,6 +302,12 @@ public:
   void Acquire()
   {
     m_refs.Acquire();
+  }
+
+  ///@return The number of references there are to this Asset.
+  int GetRefCount() const
+  {
+    return m_refs.GetCount();
   }
 
   ///@brief Marks end of usage / dependency.

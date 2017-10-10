@@ -219,6 +219,18 @@ struct
     allocator->Deallocate(&lj);
   }
 
+  void UnloadUnused()
+  {
+    std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
+    for (auto& i: m_assets)
+    {
+      if(i.second->GetRefCount() == 1)
+      {
+        i.second->Unload();
+      }
+    }
+  }
+
 private:
   // data
   Spinlock m_assetsLock;
@@ -497,6 +509,12 @@ bool Asset::Manager::Remove(Asset& asset)
     success = s_assetMan.RemoveManaged(asset);
   }
   return success;
+}
+
+//==============================================================================
+void Asset::Manager::UnloadUnused()
+{
+  s_assetMan.UnloadUnused();
 }
 
 //==============================================================================
