@@ -201,13 +201,17 @@ public:
     template <class T>
     static Counted<T> FindOrCreate(Descriptor<T> const& desc, FlagType flags = 0);
 
-    ///@brief If @a asset wasn't managed, it'll add it to the map and updates the
-    /// appropriate flag on it.
+    ///@brief If @a asset wasn't managed, it'll add it to the map and clears the
+    /// UnmanagedFlag on it.
     ///@return The success of the operation, i.e. if @a asset was the first with
     /// the given descriptor, to be managed.
     static bool Manage(Ptr asset);
 
-    static bool Unload(Asset& asset);
+    ///@brief If @a asset was managed, it'll remove it from the map and sets
+    /// UnmanagedFlag on it.
+    ///@return The success of the removal, i.e. if it was found in the map.
+    static bool Remove(Asset& asset);
+
 
     ///@brief Processes loaded assets and completes their loading, caling
     /// OnLoaded().
@@ -235,11 +239,6 @@ public:
   // structors
   virtual ~Asset()
   {}
-
-  // virtual
-  ///@brief Called by the Asset::Manager when the asset data is loaded.
-  virtual bool OnLoaded(size_t size, uint8_t const* buffer) = 0;
-  virtual void OnUnloaded() = 0;
 
   // general
   DescriptorCore const& GetDescriptor() const
@@ -295,19 +294,29 @@ public:
     return Is<T>() ? static_cast<T const*>(this) : nullptr;
   }
 
-  ///@brief Marks a usage or dependency and prevents this asset from being unloaded.
+  ///@brief Marks a usage or dependency.
   void Acquire()
   {
     m_refs.Acquire();
   }
 
-  ///@brief Marks end of usage / dependency and enables this asset to be unloaded.
+  ///@brief Marks end of usage / dependency.
   bool Release()
   {
     bool expired;
     m_refs.Release(expired);
     return expired;
   }
+
+  ///@brief Load the asset with the given source data.
+  bool Load(size_t size, uint8_t const* buffer);
+
+  ///@brief Unloads the Asset (calling OnUnload()) only if it has been loaded.
+  /// If it has, or if the ErrorFlag was set, the private flags are cleared.
+  ///@return Whether unload has been performed.
+  ///@note This doesn't invalidate the Asset object; it may be reloaded based
+  /// on its descriptor.
+  bool Unload();
 
 protected:
   // types
@@ -331,6 +340,15 @@ protected:
 #ifdef XR_DEBUG
   std::string m_debugPath;
 #endif
+
+  // virtual
+  ///@brief Called by the Asset::Manager when the asset data is loaded.
+  virtual bool OnLoaded(size_t size, uint8_t const* buffer) = 0;
+
+  ///@brief Called when unloading of Asset data is requested.
+  ///@note For the concrete resource type, this should happen on the same thread
+  /// as you do the loading on.
+  virtual void OnUnload() = 0;
 };
 
 
@@ -426,7 +444,12 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 \
   className(Asset::DescriptorCore const& desc, FlagType flags)\
   : Asset(desc, flags)\
-  {}
+  {}\
+\
+  ~className()\
+  {\
+    Unload();\
+  }
 
 
 #endif //XR_ASSET_HPP

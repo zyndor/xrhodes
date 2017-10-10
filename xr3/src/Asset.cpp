@@ -95,9 +95,9 @@ struct LoadJob : Worker::Job
     return done;
   }
 
-  std::vector<uint8_t> const& GetData() const
+  bool Load()
   {
-    return m_data;
+    return asset->Load(m_data.size(), m_data.data());
   }
 
 private:
@@ -157,15 +157,17 @@ struct
     return asset;
   }
 
-  void RemoveManaged(Asset& a)
+  bool RemoveManaged(Asset& a)
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
     auto iFind = m_assets.find(a.GetDescriptor());
-    if (iFind != m_assets.end())
+    bool success = iFind != m_assets.end();
+    if (success)
     {
       iFind->second->OverrideFlags(0, Asset::UnmanagedFlag);
       m_assets.erase(iFind);
     }
+    return success;
   }
 
   void ClearManaged()
@@ -204,14 +206,7 @@ struct
       auto j = *i0;
       if (IsFullMask(j->asset->GetFlags(), Asset::LoadedFlag))
       {
-        if (j->asset->OnLoaded(j->GetData().size(), j->GetData().data()))
-        {
-          j->asset->OverrideFlags(Asset::LoadedFlag, Asset::ReadyFlag);
-        }
-        else
-        {
-          j->asset->FlagError();
-        }
+        j->Load();
       }
 
       DeleteJob(*j);
@@ -246,14 +241,7 @@ void LoadAsset(Asset::Ptr const& asset, Asset::FlagType flags)
 
     if (IsFullMask(lj.asset->GetFlags(), Asset::LoadedFlag))
     {
-      if (lj.asset->OnLoaded(lj.GetData().size(), lj.GetData().data()))
-      {
-        lj.asset->OverrideFlags(Asset::LoadedFlag, Asset::ReadyFlag);
-      }
-      else
-      {
-        lj.asset->FlagError();
-      }
+      lj.Load();
     }
   }
   else
@@ -386,6 +374,7 @@ Asset::Ptr Asset::Manager::Find(DescriptorCore const& desc)
 //==============================================================================
 bool Asset::Manager::Manage(Asset::Ptr asset)
 {
+  XR_ASSERT(Asset::Manager, asset);
   bool success = s_assetMan.Manage(asset);
   return success;
 }
@@ -500,13 +489,14 @@ void Asset::Manager::LoadInternal(Ptr const& asset, FlagType flags)
 }
 
 //==============================================================================
-bool Asset::Manager::Unload(Asset& asset)
+bool Asset::Manager::Remove(Asset& asset)
 {
-  if (!IsFullMask(asset.GetFlags(), UnmanagedFlag))
+  bool success = !IsFullMask(asset.GetFlags(), UnmanagedFlag);
+  if (success)
   {
-    s_assetMan.RemoveManaged(asset);
+    success = s_assetMan.RemoveManaged(asset);
   }
-  return false;
+  return success;
 }
 
 //==============================================================================
@@ -534,6 +524,43 @@ void Asset::Manager::Exit()
   s_assetMan.worker.Finalize();
 
   s_assetMan.ClearManaged();
+}
+
+//==============================================================================
+bool Asset::Load(size_t size, uint8_t const* buffer)
+{
+  XR_ASSERTMSG(Asset, !IsFullMask(m_flags, LoadingFlag),
+    ("Loading is already in progress; it's bound to clobber what's being set."));
+  bool success = OnLoaded(size, buffer);
+  if (success)
+  {
+    OverrideFlags(Asset::LoadedFlag, Asset::ReadyFlag);
+  }
+  else
+  {
+    FlagError();
+  }
+  return success;
+}
+
+//==============================================================================
+bool Asset::Unload()
+{
+  bool  doUnload = false;
+  {
+    std::unique_lock<Spinlock> lock(m_flaglock);
+    doUnload = IsFullMask(m_flags, ReadyFlag);
+    if(doUnload || IsFullMask(m_flags, ErrorFlag))
+    {
+      m_flags = m_flags & ~PrivateMask;
+    }
+  }
+
+  if(doUnload)
+  {
+    OnUnload();
+  }
+  return doUnload;
 }
 
 } // XR
