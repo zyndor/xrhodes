@@ -4,7 +4,6 @@
 #include <XR/Asset.hpp>
 #include <XR/Hash.hpp>
 #include <XR/FileWriter.hpp>
-#include <XR/ScopeGuard.hpp>
 
 #include <random>
 
@@ -18,6 +17,16 @@ namespace XR
 
     static void TearDownTestCase()
     {}
+
+    AssetTests()
+    {
+      Asset::Manager::Init();
+    }
+
+    ~AssetTests()
+    {
+      Asset::Manager::Exit();
+    }
 
   private:
     FileLifeCycleManager  flcm;
@@ -59,7 +68,7 @@ namespace XR
       return true;
     }
 
-    virtual void OnUnloaded() override
+    virtual void OnUnload() override
     {
     }
   };
@@ -78,18 +87,13 @@ namespace XR
 
       FileWriter fw;
       FilePath rawPath(File::kRawProto / File::GetRomPath() / path);
-      fw.Open(rawPath, XR::FileWriter::Mode::Truncate, false);
+      ASSERT_TRUE(fw.Open(rawPath, XR::FileWriter::Mode::Truncate, false));
       for (int i = 0; i < 2560000; ++i)
       {
         auto val = distro(gen);
         fw.Write(&val, sizeof(val), 1);
       }
     }
-
-    Asset::Manager::Init();
-    auto assetManGuard = MakeScopeGuard([] {
-      Asset::Manager::Exit();
-    });
 
     Asset::Manager::RegisterBuilder(testAssetBuilder);
     auto testAss = Asset::Manager::Load<TestAsset>(path);
@@ -102,5 +106,18 @@ namespace XR
       Asset::Manager::Update();
     }
     ASSERT_FALSE(IsFullMask(testAss->GetFlags(), Asset::ErrorFlag));
+
+    ASSERT_EQ(testAss->GetRefCount(), 2);
+    Asset::Manager::UnloadUnused();
+
+    ASSERT_TRUE(IsFullMask(testAss->GetFlags(), Asset::ReadyFlag));
+    auto desc = testAss->GetDescriptor();
+
+    testAss.Reset(nullptr);
+
+    Asset::Manager::UnloadUnused();
+    auto cp = Asset::Manager::Find(desc);
+    ASSERT_EQ(cp->GetRefCount(), 2);
+    ASSERT_FALSE(IsFullMask(cp->GetFlags(), Asset::ReadyFlag));
   }
 }
