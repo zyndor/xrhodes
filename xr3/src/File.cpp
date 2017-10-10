@@ -138,7 +138,8 @@ void File::Init(System const& filesys)
     s_file.system.romPath.AppendDirSeparator();
   }
 
-  s_file.init = true;
+  s_file.init = IsDir(s_file.system.ramPath, false) || MakeDirs(s_file.system.ramPath);
+  XR_ASSERTMSG(File, s_file.init, ("Unable to access RAM path."));
 }
 
 //==============================================================================
