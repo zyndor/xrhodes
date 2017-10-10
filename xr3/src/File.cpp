@@ -36,89 +36,89 @@ static struct
 // read only locations.
 struct FileOp
 {
-public:
-  // NO virtual ~FileProcessor(), because not ever deleted, let alone via a pointer to base.
+  // A file operation following XRhodes' logic in helping to resolve paths.
+  // - if raw:// was explicitly specified, process the rest of the path as is. otherwise:
+  // - strip leading slashes,
+  // - unless ROM was explicitly specified, look in RAM,
+  //   - If RAM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
+  // - if RAM didn't work out and ROM is applicable, look in ROM
+  //   - If ROM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
+  bool Perform(FilePath const& path)
+  {
+    bool success = false;
+    char const* cpath = path.c_str();
+    // If explicit raw path, then only process the location and apply no further cleverness.
+    if (path.StartsWith(File::kRawProto))
+    {
+      cpath += File::kRawProto.size();
+      success = Process(cpath);
+    }
+    else
+    {
+      // strip leading slashes
+      size_t size = path.size();
+      while (cpath[0] == FilePath::kDirSeparator)
+      {
+        ++cpath;
+        --size;
+      }
+
+      FilePath path = cpath;
+      const bool explicitRom = path.StartsWith(File::GetRomPath());
+      // unless ROM was explicitly specified, look in RAM first.
+      if (!explicitRom)
+      {
+        bool doRam = true;
+        if (!path.StartsWith(File::GetRamPath()))
+        {
+          doRam = File::GetRamPath().size() + size <= FilePath::kCapacity;
+          if (doRam)
+          {
+            path = File::GetRamPath() + path;
+          }
+          else
+          {
+            XR_TRACE(File, ("Skipping RAM for '%s'; concatenated path length exceeds FilePath::kCapacity.", path.c_str()));
+          }
+        }
+
+        if (doRam)
+        {
+          success = Process(path.c_str());
+        }
+      }
+
+      // If RAM didn't work out, we can have a go with ROM - if applicable.
+      if (!success && RomApplicable())
+      {
+        bool doRom = true;
+        if (!explicitRom)
+        {
+          doRom = File::GetRomPath().size() + size <= FilePath::kCapacity;
+          if (doRom)
+          {
+            path = File::GetRomPath() + path;
+          }
+          else
+          {
+            XR_TRACE(File, ("Skipping ROM for '%s'; concatenated path length exceeds FilePath::kCapacity.", path.c_str()));
+          }
+        }
+
+        if (doRom)
+        {
+          success = Process(path.c_str());
+        }
+      }
+    }
+    return success;
+  }
+
+private:
+  // NO virtual ~FileOp(), because not ever deleted, let alone via a pointer to base.
   virtual bool Process(char const* path) = 0;
   virtual bool RomApplicable() const { return false; }
 };
-
-// A file operation following XRhodes' logic in helping to resolve paths.
-// - if raw:// was explicitly specified, process the rest of the path as is. otherwise:
-// - strip leading slashes,
-// - unless ROM was explicitly specified, look in RAM,
-//   - If RAM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
-// - if RAM didn't work out and ROM is applicable, look in ROM
-//   - If ROM was not explicitly specified, prepend path with it, if we can, otherwise warn and bail.
-bool PerformFileOp(FilePath const& path, FileOp& proc)
-{
-  bool success = false;
-  char const* cpath = path.c_str();
-  // If explicit raw path, then only process the location and apply no further cleverness.
-  if (path.StartsWith(File::kRawProto))
-  {
-    cpath += File::kRawProto.size();
-    success = proc.Process(cpath);
-  }
-  else
-  {
-    // strip leading slashes
-    size_t size = path.size();
-    while (cpath[0] == FilePath::kDirSeparator)
-    {
-      ++cpath;
-      --size;
-    }
-
-    FilePath path = cpath;
-    const bool explicitRom = path.StartsWith(File::GetRomPath());
-    // unless ROM was explicitly specified, look in RAM first.
-    if (!explicitRom)
-    {
-      bool doRam = true;
-      if (!path.StartsWith(File::GetRamPath()))
-      {
-        doRam = File::GetRamPath().size() + size <= FilePath::kCapacity;
-        if (doRam)
-        {
-          path = File::GetRamPath() + path;
-        }
-        else
-        {
-          XR_TRACE(File, ("Skipping RAM for '%s'; concatenated path length exceeds FilePath::kCapacity.", path.c_str()));
-        }
-      }
-
-      if (doRam)
-      {
-        success = proc.Process(path.c_str());
-      }
-    }
-
-    // If RAM didn't work out, we can have a go with ROM - if applicable.
-    if (!success && proc.RomApplicable())
-    {
-      bool doRom = true;
-      if (!explicitRom)
-      {
-        doRom = File::GetRomPath().size() + size <= FilePath::kCapacity;
-        if(doRom)
-        {
-          path = File::GetRomPath() + path;
-        }
-        else
-        {
-          XR_TRACE(File, ("Skipping ROM for '%s'; concatenated path length exceeds FilePath::kCapacity.", path.c_str()));
-        }
-      }
-
-      if (doRom)
-      {
-        success = proc.Process(path.c_str());
-      }
-    }
-  }
-  return success;
-}
 
 }
 
@@ -138,7 +138,8 @@ void File::Init(System const& filesys)
     s_file.system.romPath.AppendDirSeparator();
   }
 
-  s_file.init = true;
+  s_file.init = IsDir(s_file.system.ramPath, false) || MakeDirs(s_file.system.ramPath);
+  XR_ASSERTMSG(File, s_file.init, ("Unable to access RAM path."));
 }
 
 //==============================================================================
@@ -184,12 +185,12 @@ bool File::CheckExists(FilePath const& name)
 time_t File::GetModifiedTime(FilePath const& name)
 {
   time_t modTime = 0;
-  struct Proc : FileOp
+  struct GetModifiedTimeOp : FileOp
   {
     struct stat statBuffer;
     time_t& modTime;
 
-    Proc(time_t& outModTime)
+    GetModifiedTimeOp(time_t& outModTime)
     : modTime(outModTime)
     {}
 
@@ -215,9 +216,9 @@ time_t File::GetModifiedTime(FilePath const& name)
     {
       return true;
     }
-  } proc(modTime);
+  } op(modTime);
 
-  PerformFileOp(name, proc);
+  op.Perform(name);
   return modTime;
 }
 
@@ -225,12 +226,12 @@ time_t File::GetModifiedTime(FilePath const& name)
 File::Handle File::Open(FilePath const& name, const char* mode)
 {
   FILE* file = nullptr;
-  struct Proc : FileOp
+  struct OpenOp : FileOp
   {
     char const* const mode;
     FILE*& file;
 
-    Proc(char const* mode_, FILE*& outFile)
+    OpenOp(char const* mode_, FILE*& outFile)
     : mode(mode_),
       file(outFile)
     {}
@@ -245,9 +246,9 @@ File::Handle File::Open(FilePath const& name, const char* mode)
     {
       return strchr(mode, 'r') && !strchr(mode, '+');
     }
-  } proc(mode, file);
+  } op(mode, file);
 
-  PerformFileOp(name, proc);
+  op.Perform(name);
   return file;
 }
 
@@ -345,9 +346,9 @@ bool File::IsDir(FilePath const& path, bool includeRom)
     {
       return includeRom;
     }
-  } proc(isDir, includeRom);
+  } op(isDir, includeRom);
 
-  return PerformFileOp(path, proc);
+  return op.Perform(path);
 }
 
 //==============================================================================
@@ -363,9 +364,9 @@ bool File::MakeDir(FilePath const& path)
       return mkdir(path, S_IRWXU) == 0;
 #endif
     }
-  } proc;
+  } op;
 
-  return PerformFileOp(path, proc);
+  return op.Perform(path);
 }
 
 //==============================================================================

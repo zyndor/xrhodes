@@ -81,8 +81,8 @@ private:
 };
 
 //==============================================================================
-///@brief Facilitates counting of references, intstances, locking objects,
-/// in your threading environment of choice.
+///@brief Facilitates counting of references, instances, locking objects, in
+/// your threading environment of choice.
 template <class ThreadingPolicy = SingleThreaded>
 class Counter
 {
@@ -121,8 +121,13 @@ public:
   ///@return Whether the counter had been Acquire()d.
   bool IsEngaged() const
   {
+    return GetCount() > 0;
+  }
+
+  int GetCount() const
+  {
     ThreadingScope lock(m_threading);
-    return m_counter > 0;
+    return m_counter;
   }
 
 private:
