@@ -120,7 +120,7 @@ public:
 
     ///@brief Performs the building and writing of the asset into the file 
     /// handle provided.
-    virtual bool Build(uint8_t const* buffer, size_t size, FilePath targetPath) const = 0;
+    virtual bool Build(uint8_t const* buffer, size_t size, FilePath const& targetPath) const = 0;
 
     ///@brief Determines what happens when trying to register a Builder for
     /// an extension that is already handled.
@@ -169,7 +169,7 @@ public:
     ///@brief Adds a asset at the given location, to the loading queue to
     /// be loaded (or, if LoadSyncFlag was set, loads it synchronously).
     template <class T>
-    static Counted<T> Load(FilePath path, FlagType flags = 0)
+    static Counted<T> Load(FilePath const& path, FlagType flags = 0)
     {
       flags &= ~PrivateMask;
       Descriptor<T> desc(HashPath(path));

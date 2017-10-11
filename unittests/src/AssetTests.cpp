@@ -42,7 +42,7 @@ namespace XR
         return "test";
       }
 
-      virtual bool Build(uint8_t const * buffer, size_t size, FilePath targetPath) const override
+      virtual bool Build(uint8_t const * buffer, size_t size, FilePath const& targetPath) const override
       {
         int histogram[256];
         memset(histogram, 0x00, sizeof(histogram));
