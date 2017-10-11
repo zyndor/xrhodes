@@ -43,7 +43,7 @@ namespace XR
 bool CheckAllMaskBits(uint32_t bits, uint32_t mask);
 
 ///@return Whether the @a id-th bit matches @a mask?
-bool IsIdMask(uint32_t id, uint32_t mask);
+bool CheckIdthBit(uint32_t bits, uint32_t id);
 
 ///@return Whether @a value can be fit into 16 bits.
 bool  CheckInt16(int value);
@@ -94,9 +94,9 @@ bool CheckAllMaskBits(uint32_t bits, uint32_t mask)
 
 //==============================================================================
 inline
-bool IsIdMask(uint32_t id, uint32_t mask) 
+bool CheckIdthBit(uint32_t bits, uint32_t id)
 {
-  return CheckAllMaskBits(mask, XR_MASK_ID(uint32_t, id));
+  return CheckAllMaskBits(bits, XR_MASK_ID(uint32_t, id));
 }
 
 //==============================================================================

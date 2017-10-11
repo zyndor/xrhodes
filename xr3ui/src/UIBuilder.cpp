@@ -1639,8 +1639,8 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
   if(pParent != 0)
   {
     uint32_t  flags(GetXmlDimensionMask(pXml, "fillParent"));
-    int   w = IsIdMask(XD_WIDTH, flags) ? pParent->w : pUIElem->w;
-    int   h = IsIdMask(XD_HEIGHT, flags) ? pParent->h : pUIElem->h;
+    int   w = CheckIdthBit(flags, XD_WIDTH) ? pParent->w : pUIElem->w;
+    int   h = CheckIdthBit(flags, XD_HEIGHT) ? pParent->h : pUIElem->h;
     pUIElem->SetSize(w, h);
   }
   
