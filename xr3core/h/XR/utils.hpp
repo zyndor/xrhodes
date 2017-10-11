@@ -39,6 +39,9 @@ namespace XR
 {
 
 //==============================================================================
+///@return Whether any bits of @a mask are set in @a bits.
+bool CheckAnyMaskBits(uint32_t bits, uint32_t mask);
+
 ///@return Whether all bits of @a mask are set in @a bits.
 bool CheckAllMaskBits(uint32_t bits, uint32_t mask);
 
@@ -85,6 +88,13 @@ struct  PtrHash
 
 //==============================================================================
 // implementation
+//==============================================================================
+inline
+bool CheckAnyMaskBits(uint32_t bits, uint32_t mask)
+{
+  return (bits & mask) != mask;
+}
+
 //==============================================================================
 inline
 bool CheckAllMaskBits(uint32_t bits, uint32_t mask)
