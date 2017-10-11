@@ -22,7 +22,7 @@ char(&ArraySizeHelper(T (&)[N]))[N];  // not defined, never actually called; siz
 
 //==============================================================================
 ///@brief Converts @a id into a mask with the @a id'th bit set.
-#define XR_MASK_ID(id) static_cast<size_t>(1 << (id))
+#define XR_MASK_ID(type, id) static_cast<type>(1 << (id))
 
 //==============================================================================
 #define XR_BITSIZEOF(x) (sizeof(x) * 8)
@@ -106,7 +106,7 @@ bool IsFullMask(uint32_t bits, uint32_t mask)
 inline
 bool IsIdMask(uint32_t id, uint32_t mask) 
 {
-  return IsFullMask(XR_MASK_ID(id), mask);
+  return IsFullMask(XR_MASK_ID(uint32_t, id), mask);
 }
 
 //==============================================================================
