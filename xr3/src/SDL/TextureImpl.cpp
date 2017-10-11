@@ -26,7 +26,7 @@ TextureImpl::TextureImpl()
   m_pSurface(nullptr),
   m_width(0),
   m_height(0),
-  m_flags(XR_MASK_ID(F_CLAMPING))
+  m_flags(XR_MASK_ID(decltype(m_flags), F_CLAMPING))
 {
   XR_GL_CALL(glBindTexture(GL_TEXTURE_2D, m_name));
 }
@@ -75,53 +75,53 @@ uint32_t  TextureImpl::GetFlags() const
 //==============================================================================
 bool  TextureImpl::GetClamping() const
 {
-  return (m_flags & XR_MASK_ID(F_CLAMPING)) > 0;
+  return (m_flags & XR_MASK_ID(decltype(m_flags), F_CLAMPING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetFiltering() const
 {
-  return (m_flags & XR_MASK_ID(F_FILTERING)) > 0;
+  return (m_flags & XR_MASK_ID(decltype(m_flags), F_FILTERING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetMipMapping() const
 {
-  return (m_flags & XR_MASK_ID(F_MIPMAPPING)) > 0;
+  return (m_flags & XR_MASK_ID(decltype(m_flags), F_MIPMAPPING)) > 0;
 }
 
 //==============================================================================
 bool  TextureImpl::GetModifiable() const
 {
-  return (m_flags & XR_MASK_ID(F_MODIFIABLE)) > 0;
+  return (m_flags & XR_MASK_ID(decltype(m_flags), F_MODIFIABLE)) > 0;
 }
 
 //==============================================================================
 void  TextureImpl::SetClamping(bool state)
 {
-  m_flags = state ? (m_flags | XR_MASK_ID(F_CLAMPING)) :
-    (m_flags & ~XR_MASK_ID(F_CLAMPING));
+  m_flags = state ? (m_flags | XR_MASK_ID(decltype(m_flags), F_CLAMPING)) :
+    (m_flags & ~XR_MASK_ID(decltype(m_flags), F_CLAMPING));
 }
 
 //==============================================================================
 void  TextureImpl::SetFiltering(bool state)
 {
-  m_flags = state ? (m_flags | XR_MASK_ID(F_FILTERING)) :
-    (m_flags & ~XR_MASK_ID(F_FILTERING));
+  m_flags = state ? (m_flags | XR_MASK_ID(decltype(m_flags), F_FILTERING)) :
+    (m_flags & ~XR_MASK_ID(decltype(m_flags), F_FILTERING));
 }
 
 //==============================================================================
 void  TextureImpl::SetMipMapping(bool state)
 {
-  m_flags = state ? (m_flags | XR_MASK_ID(F_MIPMAPPING)) :
-    (m_flags & ~XR_MASK_ID(F_MIPMAPPING));
+  m_flags = state ? (m_flags | XR_MASK_ID(decltype(m_flags), F_MIPMAPPING)) :
+    (m_flags & ~XR_MASK_ID(decltype(m_flags), F_MIPMAPPING));
 }
 
 //==============================================================================
 void  TextureImpl::SetModifiable(bool state)
 {
-  m_flags = state ? (m_flags | XR_MASK_ID(F_MODIFIABLE)) :
-    (m_flags & ~XR_MASK_ID(F_MODIFIABLE));
+  m_flags = state ? (m_flags | XR_MASK_ID(decltype(m_flags), F_MODIFIABLE)) :
+    (m_flags & ~XR_MASK_ID(decltype(m_flags), F_MODIFIABLE));
 }
 
 //==============================================================================

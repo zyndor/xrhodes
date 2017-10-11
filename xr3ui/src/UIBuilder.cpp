@@ -113,7 +113,7 @@ uint32_t  GetXmlDimensionMask(TiXmlElement* pXml, const char* pAttribName)
     {
       if (strchr(pValue, karXmlDimensionChars[i]) != 0)
       {
-        value |= XR_MASK_ID(i);
+        value |= XR_MASK_ID(decltype(value), i);
       }
     }
   }
@@ -353,21 +353,19 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
 
     // size to content
     uint32_t sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
-    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH) | XR_MASK_ID(XD_HEIGHT)))
+    switch(sizeToContentValue)
     {
+    case XR_MASK_ID(uint32_t, XD_WIDTH) | XR_MASK_ID(uint32_t, XD_HEIGHT):
       pLabel->SetSizeToText();
-    }
-    else
-    {
-      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH)))
-      {
-        pLabel->SetWidthToText();
-      }
+      break;
 
-      if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_HEIGHT)))
-      {   
-        pLabel->SetHeightToText();
-      }
+    case XR_MASK_ID(uint32_t, XD_WIDTH):
+      pLabel->SetWidthToText();
+      break;
+
+    case XR_MASK_ID(uint32_t, XD_HEIGHT):
+      pLabel->SetHeightToText();
+      break;
     }
   }
   return success;
@@ -1641,8 +1639,8 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
   if(pParent != 0)
   {
     uint32_t  flags(GetXmlDimensionMask(pXml, "fillParent"));
-    int   w((flags & XR_MASK_ID(XD_WIDTH)) != 0 ? pParent->w : pUIElem->w);
-    int   h((flags & XR_MASK_ID(XD_HEIGHT)) != 0 ? pParent->h : pUIElem->h);
+    int   w = CheckIdthBit(flags, XD_WIDTH) ? pParent->w : pUIElem->w;
+    int   h = CheckIdthBit(flags, XD_HEIGHT) ? pParent->h : pUIElem->h;
     pUIElem->SetSize(w, h);
   }
   
@@ -1721,21 +1719,19 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
 void UIBuilder::_PostProcessContainer(TiXmlElement* pXml, UIContainer* pContainer)
 {
   uint32_t sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
-  if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH) | XR_MASK_ID(XD_HEIGHT)))
+  switch (sizeToContentValue)
   {
+  case XR_MASK_ID(uint32_t, XD_WIDTH) | XR_MASK_ID(uint32_t, XD_HEIGHT):
     pContainer->SetSizeToContent();
-  }
-  else
-  {
-    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_WIDTH)))
-    {
-      pContainer->SetWidthToContent();
-    }
+    break;
 
-    if (IsFullMask(sizeToContentValue, XR_MASK_ID(XD_HEIGHT)))
-    {   
-      pContainer->SetHeightToContent();
-    }
+  case XR_MASK_ID(uint32_t, XD_WIDTH):
+    pContainer->SetWidthToContent();
+    break;
+
+  case XR_MASK_ID(uint32_t, XD_HEIGHT):
+    pContainer->SetHeightToContent();
+    break;
   }
 }
 

@@ -42,10 +42,10 @@ public:
   
 protected:
   // types
-  enum  StateFlags
+  enum  StateFlags: uint8_t
   {
     SF_SELECTED = SF_PRESSED + 1,
-    MASK_SELECTED = XR_MASK_ID(SF_SELECTED)
+    MASK_SELECTED = XR_MASK_ID(uint8_t, SF_SELECTED)
   };  
 };
 

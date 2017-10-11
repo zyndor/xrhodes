@@ -22,7 +22,7 @@ char(&ArraySizeHelper(T (&)[N]))[N];  // not defined, never actually called; siz
 
 //==============================================================================
 ///@brief Converts @a id into a mask with the @a id'th bit set.
-#define XR_MASK_ID(id) static_cast<size_t>(1 << (id))
+#define XR_MASK_ID(type, id) static_cast<type>(1 << (id))
 
 //==============================================================================
 #define XR_BITSIZEOF(x) (sizeof(x) * 8)
@@ -39,14 +39,14 @@ namespace XR
 {
 
 //==============================================================================
-///@return Whether @a mask covers all bits of @a bits?
-bool IsAllBits(uint32_t bits, uint32_t mask);
+///@return Whether any bits of @a mask are set in @a bits.
+bool CheckAnyMaskBits(uint32_t bits, uint32_t mask);
 
-///@return Whether all bits of @a mask are set in @a bits?
-bool IsFullMask(uint32_t bits, uint32_t mask);
+///@return Whether all bits of @a mask are set in @a bits.
+bool CheckAllMaskBits(uint32_t bits, uint32_t mask);
 
 ///@return Whether the @a id-th bit matches @a mask?
-bool IsIdMask(uint32_t id, uint32_t mask);
+bool CheckIdthBit(uint32_t bits, uint32_t id);
 
 ///@return Whether @a value can be fit into 16 bits.
 bool  CheckInt16(int value);
@@ -90,23 +90,23 @@ struct  PtrHash
 // implementation
 //==============================================================================
 inline
-bool IsAllBits(uint32_t bits, uint32_t mask)
+bool CheckAnyMaskBits(uint32_t bits, uint32_t mask)
 {
-  return (bits & mask) == bits;
+  return (bits & mask) != mask;
 }
 
 //==============================================================================
 inline
-bool IsFullMask(uint32_t bits, uint32_t mask)
+bool CheckAllMaskBits(uint32_t bits, uint32_t mask)
 {
   return (bits & mask) == mask;
 }
 
 //==============================================================================
 inline
-bool IsIdMask(uint32_t id, uint32_t mask) 
+bool CheckIdthBit(uint32_t bits, uint32_t id)
 {
-  return IsFullMask(XR_MASK_ID(id), mask);
+  return CheckAllMaskBits(bits, XR_MASK_ID(uint32_t, id));
 }
 
 //==============================================================================

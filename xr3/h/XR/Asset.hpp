@@ -35,16 +35,16 @@ public:
   enum Flags: FlagType
   {
     // public
-    ForceReloadFlag = XR_MASK_ID(0),  // Load() will not load an already loaded asset, unless this flag is specified.
-    LoadSyncFlag = XR_MASK_ID(1),  // forces the asset to load synchronously.
-    UnmanagedFlag = XR_MASK_ID(2), // the asset manager will not keep a reference to the asset.
-    KeepSourceDataFlag = XR_MASK_ID(3), // source data is discarded by default; handling this flag is a responsibility of the given asset type
+    ForceReloadFlag = XR_MASK_ID(FlagType, 0),  // Load() will not load an already loaded asset, unless this flag is specified.
+    LoadSyncFlag = XR_MASK_ID(FlagType, 1),  // forces the asset to load synchronously.
+    UnmanagedFlag = XR_MASK_ID(FlagType, 2), // the asset manager will not keep a reference to the asset.
+    KeepSourceDataFlag = XR_MASK_ID(FlagType, 3), // source data is discarded by default; handling this flag is a responsibility of the given asset type
 
     // private
-    LoadingFlag = XR_MASK_ID(XR_BITSIZEOF(Flags) - 4),
-    LoadedFlag = XR_MASK_ID(XR_BITSIZEOF(Flags) - 3),
-    ReadyFlag = XR_MASK_ID(XR_BITSIZEOF(Flags) - 2),
-    ErrorFlag = XR_MASK_ID(XR_BITSIZEOF(Flags) - 1),  // The processing of the asset stops when this is set, and the rest of the private flags indicate where things have gone bad.
+    LoadingFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 4),
+    LoadedFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 3),
+    ReadyFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 2),
+    ErrorFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 1),  // The processing of the asset stops when this is set, and the rest of the private flags indicate where things have gone bad.
 
     PrivateMask = ErrorFlag | ReadyFlag | LoadedFlag | LoadingFlag
   };
@@ -425,7 +425,7 @@ inline
 Counted<T> Asset::Manager::CreateInternal(DescriptorCore const& desc, FlagType flags)
 {
   Ptr asset(T::Create(desc, flags));
-  if (!IsFullMask(flags, UnmanagedFlag))
+  if (!CheckAllMaskBits(flags, UnmanagedFlag))
   {
     Manage(asset);
   }
@@ -438,7 +438,7 @@ inline
 Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, FlagType flags)
 {
   Counted<T> asset;
-  if (!IsFullMask(flags, UnmanagedFlag))
+  if (!CheckAllMaskBits(flags, UnmanagedFlag))
   {
     if (auto tmp = Find(desc))
     {

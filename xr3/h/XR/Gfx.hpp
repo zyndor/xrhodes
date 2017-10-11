@@ -30,30 +30,30 @@ struct Buffer
 enum Flags: uint32_t
 {
   F_BUFFER_NONE = 0,
-  F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(0), // TODO: implement support
-  F_BUFFER_INDEX_32BITS = XR_MASK_ID(1),
-  F_BUFFER_INSTANCE_DATA = XR_MASK_ID(XR_BITSIZEOF(Flags) - 1),
+  F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(uint32_t, 0), // TODO: implement support
+  F_BUFFER_INDEX_32BITS = XR_MASK_ID(uint32_t, 1),
+  F_BUFFER_INSTANCE_DATA = XR_MASK_ID(uint32_t, XR_BITSIZEOF(Flags) - 1),
 
   F_TEXTURE_NONE = 0,
-  F_TEXTURE_WRAP = XR_MASK_ID(0), // clamp is default
-  F_TEXTURE_FILTER_POINT = XR_MASK_ID(1), // linear filtering is default
-  F_TEXTURE_SRGB = XR_MASK_ID(2),
-  F_TEXTURE_MIPMAPS = XR_MASK_ID(6),  // no mipmaps by default
-  F_TEXTURE_CUBE = XR_MASK_ID(7),
+  F_TEXTURE_WRAP = XR_MASK_ID(uint32_t, 0), // clamp is default
+  F_TEXTURE_FILTER_POINT = XR_MASK_ID(uint32_t, 1), // linear filtering is default
+  F_TEXTURE_SRGB = XR_MASK_ID(uint32_t, 2),
+  F_TEXTURE_MIPMAPS = XR_MASK_ID(uint32_t, 6),  // no mipmaps by default
+  F_TEXTURE_CUBE = XR_MASK_ID(uint32_t, 7),
 
   F_STATE_NONE = 0,
-  F_STATE_DEPTH_TEST = XR_MASK_ID(0), // off by default
-  F_STATE_DEPTH_WRITE = XR_MASK_ID(1), // off by default
-  F_STATE_ALPHA_BLEND = XR_MASK_ID(2), // off by default
-  F_STATE_CULL_BACK = XR_MASK_ID(3),  // no culling by default
-  F_STATE_CULL_FRONT = XR_MASK_ID(4), // only points and lines drawn when F_STATE_CULL_BACK | F_STATE_CULL_FRONT set
-  F_STATE_SCISSOR_TEST = XR_MASK_ID(5),
-  F_STATE_WIREFRAME = XR_MASK_ID(6),
+  F_STATE_DEPTH_TEST = XR_MASK_ID(uint32_t, 0), // off by default
+  F_STATE_DEPTH_WRITE = XR_MASK_ID(uint32_t, 1), // off by default
+  F_STATE_ALPHA_BLEND = XR_MASK_ID(uint32_t, 2), // off by default
+  F_STATE_CULL_BACK = XR_MASK_ID(uint32_t, 3),  // no culling by default
+  F_STATE_CULL_FRONT = XR_MASK_ID(uint32_t, 4), // only points and lines drawn when F_STATE_CULL_BACK | F_STATE_CULL_FRONT set
+  F_STATE_SCISSOR_TEST = XR_MASK_ID(uint32_t, 5),
+  F_STATE_WIREFRAME = XR_MASK_ID(uint32_t, 6),
 
   F_CLEAR_NONE = 0,
-  F_CLEAR_COLOR = XR_MASK_ID(0),
-  F_CLEAR_DEPTH = XR_MASK_ID(1),
-  F_CLEAR_STENCIL = XR_MASK_ID(2),
+  F_CLEAR_COLOR = XR_MASK_ID(uint32_t, 0),
+  F_CLEAR_DEPTH = XR_MASK_ID(uint32_t, 1),
+  F_CLEAR_STENCIL = XR_MASK_ID(uint32_t, 2),
 };
 
 //=============================================================================

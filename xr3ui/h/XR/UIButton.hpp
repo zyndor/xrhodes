@@ -66,12 +66,12 @@ public:
 
 protected:
   // types
-  enum  StateFlags
+  enum  StateFlags: uint8_t
   {
     SF_ENABLED,
     SF_PRESSED,
-    MASK_ENABLED = XR_MASK_ID(SF_ENABLED),
-    MASK_PRESSED = XR_MASK_ID(SF_PRESSED)
+    MASK_ENABLED = XR_MASK_ID(uint8_t, SF_ENABLED),
+    MASK_PRESSED = XR_MASK_ID(uint8_t, SF_PRESSED)
   };
 
   // data

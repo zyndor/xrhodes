@@ -702,7 +702,7 @@ struct Context
 
   VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
   {
-    XR_TRACEIF(Gfx, IsFullMask(flags, F_BUFFER_INSTANCE_DATA),
+    XR_TRACEIF(Gfx, CheckAllMaskBits(flags, F_BUFFER_INSTANCE_DATA),
       ("Ignored instance data buffer request in CreateVertexBuffer()."));
     return CreateVertexBufferInternal(hFormat, buffer, flags & ~F_BUFFER_INSTANCE_DATA);
   }
@@ -727,7 +727,7 @@ struct Context
     XR_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer.size, buffer.data,
       buffer.data ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW));
 
-    ibo.indexSize = IsFullMask(flags, F_BUFFER_INDEX_32BITS) ? sizeof(uint32_t) : sizeof(uint16_t);
+    ibo.indexSize = CheckAllMaskBits(flags, F_BUFFER_INDEX_32BITS) ? sizeof(uint32_t) : sizeof(uint16_t);
     ibo.flags = flags;
 
     return h;
@@ -785,14 +785,14 @@ struct Context
     t.info.flags = flags;
     
     // determine target
-    t.target = IsFullMask(flags, F_TEXTURE_CUBE) ? GL_TEXTURE_CUBE_MAP : 
+    t.target = CheckAllMaskBits(flags, F_TEXTURE_CUBE) ? GL_TEXTURE_CUBE_MAP : 
       (depth > 0 ? GL_TEXTURE_3D : GL_TEXTURE_2D);
     XR_ASSERT(Gfx, t.target != GL_TEXTURE_CUBE_MAP || (numBuffers % 6) == 0);
 
     // bind it
     t.Bind();
 
-    GLenum  wrapMode(IsFullMask(flags, F_TEXTURE_WRAP) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    GLenum  wrapMode(CheckAllMaskBits(flags, F_TEXTURE_WRAP) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_WRAP_S, wrapMode));
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_WRAP_T, wrapMode));
     if (t.target == GL_TEXTURE_3D)
@@ -800,17 +800,17 @@ struct Context
       XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_WRAP_R, wrapMode));
     }
 
-    GLenum  filterMode(IsFullMask(flags, F_TEXTURE_FILTER_POINT) ? GL_NEAREST : GL_LINEAR);
+    GLenum  filterMode(CheckAllMaskBits(flags, F_TEXTURE_FILTER_POINT) ? GL_NEAREST : GL_LINEAR);
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MIN_FILTER, filterMode));
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MAG_FILTER, filterMode));
 
     auto& formatDesc = kTextureFormats[int(format)];
-    GLenum fmtInternal = (IsFullMask(flags, F_TEXTURE_SRGB) && formatDesc.srgbInternal != GL_ZERO) ?
+    GLenum fmtInternal = (CheckAllMaskBits(flags, F_TEXTURE_SRGB) && formatDesc.srgbInternal != GL_ZERO) ?
       formatDesc.srgbInternal : formatDesc.internal;
 
     GLenum target = t.target != GL_TEXTURE_CUBE_MAP ? t.target : GL_TEXTURE_CUBE_MAP_POSITIVE_X;
     const int sides = t.target != GL_TEXTURE_CUBE_MAP ? 1 : 6;
-    const int mipMapLevels(IsFullMask(flags, F_TEXTURE_MIPMAPS) ?
+    const int mipMapLevels(CheckAllMaskBits(flags, F_TEXTURE_MIPMAPS) ?
       int(std::log2(std::min(width, height))) : 1);
     for (int i = 0; i < mipMapLevels; ++i)
     {
@@ -1293,19 +1293,19 @@ struct Context
   void ClearBuffer(uint32_t flags, Color const& color, float depth, uint8_t stencil)
   {
     GLbitfield flagls = 0;
-    if (IsFullMask(flags, F_CLEAR_COLOR))
+    if (CheckAllMaskBits(flags, F_CLEAR_COLOR))
     {
       XR_GL_CALL(glClearColor(color.r, color.g, color.b, color.a));
       flagls |= GL_COLOR_BUFFER_BIT;
     }
 
-    if (IsFullMask(flags, F_CLEAR_DEPTH))
+    if (CheckAllMaskBits(flags, F_CLEAR_DEPTH))
     {
       XR_GL_CALL(glClearDepth(depth));
       flagls |= GL_DEPTH_BUFFER_BIT;
     }
 
-    if (IsFullMask(flags, F_CLEAR_STENCIL))
+    if (CheckAllMaskBits(flags, F_CLEAR_STENCIL))
     {
       XR_GL_CALL(glClearStencil(stencil));
       flagls |= GL_STENCIL_BUFFER_BIT;
@@ -1344,21 +1344,21 @@ struct Context
     const uint32_t deltaFlags = flags ^ m_activeState;
 
     // depth test
-    if (IsFullMask(deltaFlags, F_STATE_DEPTH_TEST))
+    if (CheckAllMaskBits(deltaFlags, F_STATE_DEPTH_TEST))
     {
-      GL::SwitchEnabledState(GL_DEPTH_TEST, IsFullMask(flags, F_STATE_DEPTH_TEST));
+      GL::SwitchEnabledState(GL_DEPTH_TEST, CheckAllMaskBits(flags, F_STATE_DEPTH_TEST));
     }
 
     // depth write
-    if (IsFullMask(deltaFlags, F_STATE_DEPTH_WRITE))
+    if (CheckAllMaskBits(deltaFlags, F_STATE_DEPTH_WRITE))
     {
-      XR_GL_CALL(glDepthMask(IsFullMask(flags, F_STATE_DEPTH_WRITE)));
+      XR_GL_CALL(glDepthMask(CheckAllMaskBits(flags, F_STATE_DEPTH_WRITE)));
     }
 
     // blending
-    if (IsFullMask(deltaFlags, F_STATE_ALPHA_BLEND))
+    if (CheckAllMaskBits(deltaFlags, F_STATE_ALPHA_BLEND))
     {
-      bool alphaBlend = IsFullMask(flags, F_STATE_ALPHA_BLEND);
+      bool alphaBlend = CheckAllMaskBits(flags, F_STATE_ALPHA_BLEND);
       GL::SwitchEnabledState(GL_BLEND, alphaBlend);
       if (alphaBlend)
       {
@@ -1396,17 +1396,17 @@ struct Context
     }
 
     // scissor test
-    if (IsFullMask(deltaFlags, F_STATE_SCISSOR_TEST))
+    if (CheckAllMaskBits(deltaFlags, F_STATE_SCISSOR_TEST))
     {
       XR_GL_CALL(GL::SwitchEnabledState(GL_SCISSOR_TEST,
-        IsFullMask(flags, F_STATE_SCISSOR_TEST)));
+        CheckAllMaskBits(flags, F_STATE_SCISSOR_TEST)));
     }
 
     // wireframe
-    if (IsFullMask(deltaFlags, F_STATE_WIREFRAME))
+    if (CheckAllMaskBits(deltaFlags, F_STATE_WIREFRAME))
     {
       XR_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK,
-        IsFullMask(flags, F_STATE_WIREFRAME) ? GL_LINE : GL_FILL));
+        CheckAllMaskBits(flags, F_STATE_WIREFRAME) ? GL_LINE : GL_FILL));
     }
 
     m_activeState = flags;
@@ -1418,7 +1418,7 @@ struct Context
     if (h.IsValid())
     {
       VertexBufferObject& idbo = m_vbos[h.id];
-      XR_ASSERT(Gfx, IsFullMask(idbo.flags, F_BUFFER_INSTANCE_DATA));
+      XR_ASSERT(Gfx, CheckAllMaskBits(idbo.flags, F_BUFFER_INSTANCE_DATA));
       m_activeInstDataBufferStride = (idbo.flags & ~F_BUFFER_INSTANCE_DATA) >>
         (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(uint16_t)));
       m_instanceOffset = offset;
@@ -1549,7 +1549,7 @@ private:
     VertexBufferObject& vbo = m_vbos[h.id];
     XR_GL_CALL(glGenBuffers(1, &vbo.name));
 
-    vbo.target = IsFullMask(flags, F_BUFFER_INDIRECT_DRAW) ?
+    vbo.target = CheckAllMaskBits(flags, F_BUFFER_INDIRECT_DRAW) ?
       GL_DRAW_INDIRECT_BUFFER : GL_ARRAY_BUFFER;  // TODO: indirect draw support
     vbo.Bind();
 

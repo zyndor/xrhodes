@@ -193,7 +193,7 @@ struct
       std::unique_lock<decltype(m_pendingLock)> lock(m_pendingLock);
       auto i = m_pending.begin();
       while (i != m_pending.end() &&
-        IsFullMask((*i)->asset->GetFlags(), Asset::LoadedFlag))
+        CheckAllMaskBits((*i)->asset->GetFlags(), Asset::LoadedFlag))
       {
         ++i;
       }
@@ -204,7 +204,7 @@ struct
     for (auto i0 = q.begin(), i1 = q.end(); i0 != i1; ++i0)
     {
       auto j = *i0;
-      if (IsFullMask(j->asset->GetFlags(), Asset::LoadedFlag))
+      if (CheckAllMaskBits(j->asset->GetFlags(), Asset::LoadedFlag))
       {
         j->Load();
       }
@@ -244,14 +244,14 @@ private:
 //==============================================================================
 void LoadAsset(Asset::Ptr const& asset, Asset::FlagType flags)
 {
-  if (IsFullMask(flags, Asset::LoadSyncFlag))
+  if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
   {
     LoadJob lj(asset);
     lj.Start();
     while (!lj.Process())
     {}
 
-    if (IsFullMask(lj.asset->GetFlags(), Asset::LoadedFlag))
+    if (CheckAllMaskBits(lj.asset->GetFlags(), Asset::LoadedFlag))
     {
       lj.Load();
     }
@@ -398,8 +398,8 @@ bool Asset::Manager::Manage(Asset::Ptr asset)
 //==============================================================================
 bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
 {
-  return !(IsFullMask(oldFlags, LoadingFlag) ||
-    (IsFullMask(oldFlags, LoadedFlag) && !IsFullMask(newFlags, ForceReloadFlag)));
+  return !(CheckAllMaskBits(oldFlags, LoadingFlag) ||
+    (CheckAllMaskBits(oldFlags, LoadedFlag) && !CheckAllMaskBits(newFlags, ForceReloadFlag)));
 }
 
 //==============================================================================
@@ -483,7 +483,7 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
   }
 
   // If we're flawless, process job.
-  if (!IsFullMask(asset->GetFlags(), ErrorFlag))
+  if (!CheckAllMaskBits(asset->GetFlags(), ErrorFlag))
 #endif  // ENABLE_ASSET_BUILDING
   {
     LoadAsset(asset, flags);
@@ -507,7 +507,7 @@ void Asset::Manager::LoadInternal(Ptr const& asset, FlagType flags)
 //==============================================================================
 bool Asset::Manager::Remove(Asset& asset)
 {
-  bool success = !IsFullMask(asset.GetFlags(), UnmanagedFlag);
+  bool success = !CheckAllMaskBits(asset.GetFlags(), UnmanagedFlag);
   if (success)
   {
     success = s_assetMan.RemoveManaged(asset);
@@ -551,7 +551,7 @@ void Asset::Manager::Exit()
 //==============================================================================
 bool Asset::Load(size_t size, uint8_t const* buffer)
 {
-  XR_ASSERTMSG(Asset, !IsFullMask(m_flags, LoadingFlag),
+  XR_ASSERTMSG(Asset, !CheckAllMaskBits(m_flags, LoadingFlag),
     ("Loading is already in progress; it's bound to clobber what's being set."));
   bool success = OnLoaded(size, buffer);
   if (success)
@@ -571,8 +571,8 @@ bool Asset::Unload()
   bool  doUnload = false;
   {
     std::unique_lock<Spinlock> lock(m_flaglock);
-    doUnload = IsFullMask(m_flags, ReadyFlag);
-    if(doUnload || IsFullMask(m_flags, ErrorFlag))
+    doUnload = CheckAllMaskBits(m_flags, ReadyFlag);
+    if(doUnload || CheckAllMaskBits(m_flags, ErrorFlag))
     {
       m_flags = m_flags & ~PrivateMask;
     }
