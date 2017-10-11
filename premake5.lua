@@ -14,6 +14,7 @@ tbl_target_values =
 {
 	{ "windows", "VS2015 projects targeting Windows 32/64 bits" },
 	{ "android", "VS2015 projects targeting Android ARM and Intel, 32/64 bits" },
+    { "macosx", "Xcode4 projects targeting OS X" },
 }
 
 newoption
@@ -46,6 +47,9 @@ workspace "xr3.SDL"
 	-- platforms setup
 	tbl_platforms = {}
 	if target_env == "windows" then
+		table.insert(tbl_platforms, "x86")
+		table.insert(tbl_platforms, "x64")
+	elseif target_env == "macosx" then
 		table.insert(tbl_platforms, "x86")
 		table.insert(tbl_platforms, "x64")
 	elseif target_env == "android" then
@@ -122,6 +126,13 @@ workspace "xr3.SDL"
 		system("windows")
 		systemversion "8.1"
 	end
+
+    -- Mac OSX
+    if target_env == "macosx" then
+        buildoptions {
+            "-std=c++14"
+        }
+    end
 
 	-- create projects
 	filter {}
