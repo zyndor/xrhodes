@@ -425,7 +425,7 @@ inline
 Counted<T> Asset::Manager::CreateInternal(DescriptorCore const& desc, FlagType flags)
 {
   Ptr asset(T::Create(desc, flags));
-  if (!IsFullMask(flags, UnmanagedFlag))
+  if (!CheckAllMaskBits(flags, UnmanagedFlag))
   {
     Manage(asset);
   }
@@ -438,7 +438,7 @@ inline
 Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, FlagType flags)
 {
   Counted<T> asset;
-  if (!IsFullMask(flags, UnmanagedFlag))
+  if (!CheckAllMaskBits(flags, UnmanagedFlag))
   {
     if (auto tmp = Find(desc))
     {

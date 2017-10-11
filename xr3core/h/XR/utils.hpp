@@ -39,8 +39,8 @@ namespace XR
 {
 
 //==============================================================================
-///@return Whether all bits of @a mask are set in @a bits?
-bool IsFullMask(uint32_t bits, uint32_t mask);
+///@return Whether all bits of @a mask are set in @a bits.
+bool CheckAllMaskBits(uint32_t bits, uint32_t mask);
 
 ///@return Whether the @a id-th bit matches @a mask?
 bool IsIdMask(uint32_t id, uint32_t mask);
@@ -87,7 +87,7 @@ struct  PtrHash
 // implementation
 //==============================================================================
 inline
-bool IsFullMask(uint32_t bits, uint32_t mask)
+bool CheckAllMaskBits(uint32_t bits, uint32_t mask)
 {
   return (bits & mask) == mask;
 }
@@ -96,7 +96,7 @@ bool IsFullMask(uint32_t bits, uint32_t mask)
 inline
 bool IsIdMask(uint32_t id, uint32_t mask) 
 {
-  return IsFullMask(XR_MASK_ID(uint32_t, id), mask);
+  return CheckAllMaskBits(mask, XR_MASK_ID(uint32_t, id));
 }
 
 //==============================================================================

@@ -337,7 +337,7 @@ bool File::IsDir(FilePath const& path, bool includeRom)
       bool result = stat(path, &statBuffer) == 0;
       if (result)
       {
-        isDir = IsFullMask(statBuffer.st_mode, S_IFDIR);
+        isDir = CheckAllMaskBits(statBuffer.st_mode, S_IFDIR);
       }
       return isDir;
     }

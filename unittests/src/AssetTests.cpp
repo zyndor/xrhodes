@@ -98,19 +98,19 @@ namespace XR
     Asset::Manager::RegisterBuilder(testAssetBuilder);
     auto testAss = Asset::Manager::Load<TestAsset>(path);
 
-    ASSERT_TRUE(IsFullMask(testAss->GetFlags(), Asset::LoadingFlag));
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag));
     ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);
 
     while (!(testAss->GetFlags() & (Asset::ReadyFlag | Asset::ErrorFlag)))
     {
       Asset::Manager::Update();
     }
-    ASSERT_FALSE(IsFullMask(testAss->GetFlags(), Asset::ErrorFlag));
+    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));
 
     ASSERT_EQ(testAss->GetRefCount(), 2);
     Asset::Manager::UnloadUnused();
 
-    ASSERT_TRUE(IsFullMask(testAss->GetFlags(), Asset::ReadyFlag));
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag));
     auto desc = testAss->GetDescriptor();
 
     testAss.Reset(nullptr);
@@ -118,6 +118,6 @@ namespace XR
     Asset::Manager::UnloadUnused();
     auto cp = Asset::Manager::Find(desc);
     ASSERT_EQ(cp->GetRefCount(), 2);
-    ASSERT_FALSE(IsFullMask(cp->GetFlags(), Asset::ReadyFlag));
+    ASSERT_FALSE(CheckAllMaskBits(cp->GetFlags(), Asset::ReadyFlag));
   }
 }
