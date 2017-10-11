@@ -307,12 +307,16 @@ void Asset::Manager::RegisterBuilder(Builder const& builder)
     {
       const uint32_t hash = Hash::String32(exts, size);
       auto iFind = s_assetMan.builders.find(hash);
-      if (iFind == s_assetMan.builders.end())
+
+      // If there's no conflict on an extension, or the pre-existing Builder is
+      // Overridable(), then go ahead and register the new one.
+      if (iFind == s_assetMan.builders.end() || iFind->second->Overridable())
       {
         s_assetMan.builders.insert(iFind, { hash, &builder });
       }
-      else
+      else if(!builder.Overridable())
       {
+        // If we've had a final builder, then registering another one is an error.
         XR_ERROR(("Builder clash on extension '%s'", std::string(exts, size).c_str()));
       }
     }

@@ -121,6 +121,19 @@ public:
     ///@brief Performs the building and writing of the asset into the file 
     /// handle provided.
     virtual bool Build(uint8_t const* buffer, size_t size, FilePath targetPath) const = 0;
+
+    ///@brief Determines what happens when trying to register a Builder for
+    /// an extension that is already handled.
+    /// - Overridable() builders will always be overridden by new registrations
+    ///   (for conflicting extensions).
+    /// - trying to register a non-Overridable() Builder over another one
+    ///   causes an error.
+    /// - requests to register an Overridable() Builder over a non-Overridable()
+    ///   one are ignored.
+    /// Builders in library code - such as all of the ones in XR3 - should be
+    /// Overridable(); make the concrete ones that your application uses,
+    /// non-Overridable().
+    virtual bool Overridable() const { return true; }
   };
 
   ///@brief Offers synchronous and asynchronous loading, and maintains a map,
@@ -139,6 +152,8 @@ public:
     /// being overwrittens.
     static void Init(FilePath path = kDefaultPath, Allocator* alloc = nullptr);
 
+    ///@brief Registers an Asset::Builder, which will provide the file extensions
+    /// that it can process. See overriding rules on Builder::Overridable().
     static void RegisterBuilder(Builder const& builder);
 
     static const FilePath& GetAssetPath();
