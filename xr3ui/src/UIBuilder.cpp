@@ -30,23 +30,23 @@ namespace XR
 //==============================================================================
 static const uint32_t karDirectionNameHash[] =
 {
-  Hash::String("positive"),
-  Hash::String("negative")
+  Hash::String32("positive"),
+  Hash::String32("negative")
 };
 
 static const uint32_t karHorizontalAlignNameHash[] =
 {
-  Hash::String("left"),
-  Hash::String("center"),
-  Hash::String("right"),
+  Hash::String32("left"),
+  Hash::String32("center"),
+  Hash::String32("right"),
   //Hash::String("paragraph")
 };
 
 static const uint32_t karVerticalAlignNameHash[] =
 {
-  Hash::String("top"),
-  Hash::String("middle"),
-  Hash::String("bottom")
+  Hash::String32("top"),
+  Hash::String32("middle"),
+  Hash::String32("bottom")
 };
 
 const int kTinyXmlTextType = 4; // TiXmlNode::TINYXML_TEXT or TiXmlNode::TEXT
@@ -300,7 +300,7 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     pValue = pXml->Attribute("hAlign");
     if (pValue != 0)
     {
-      const uint32_t* pFind(std::find(karHorizontalAlignNameHash, karHorizontalAlignNameHash + 3, Hash::String(pValue)));
+      const uint32_t* pFind(std::find(karHorizontalAlignNameHash, karHorizontalAlignNameHash + 3, Hash::String32(pValue)));
         
       int value(pFind - karHorizontalAlignNameHash);
       if (value < 3)
@@ -313,7 +313,7 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     pValue = pXml->Attribute("vAlign");
     if (pValue != 0)
     {
-      const uint32_t* pFind(std::find(karVerticalAlignNameHash, karVerticalAlignNameHash + 3, Hash::String(pValue)));
+      const uint32_t* pFind(std::find(karVerticalAlignNameHash, karVerticalAlignNameHash + 3, Hash::String32(pValue)));
 
       int value(pFind - karVerticalAlignNameHash);
       if (value < 3)
@@ -517,7 +517,7 @@ bool  UIBInitUIProgressBarBase(TiXmlElement* pXml, UIElement* pUIElem,
       if (pValue != 0)
       {
         const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2,
-          Hash::String(pValue)));
+          Hash::String32(pValue)));
 
         int value(pFind - karDirectionNameHash);
         success = value < 2;
@@ -917,7 +917,7 @@ bool  UIBInitUIGrowingLayout(TiXmlElement* pXml, UIElement* pUIElem,
     pValue = pXml->Attribute("growDir");
     if (pValue != 0)
     {
-      const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2, Hash::String(pValue)));
+      const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2, Hash::String32(pValue)));
 
       int value(pFind - karDirectionNameHash);
       success = value < 2;
@@ -1190,7 +1190,7 @@ bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
 //==============================================================================
 const char* const UIBuilder::kInclude = "include";
 
-const uint32_t  UIBuilder::kIncludeHash = Hash::String(kInclude);
+const uint32_t  UIBuilder::kIncludeHash = Hash::String32(kInclude);
 
 const char* const UIBuilder::karpAlignValues[] =
 {
@@ -1202,10 +1202,10 @@ const char* const UIBuilder::karpAlignValues[] =
 
 const uint32_t UIBuilder::karAlignValueHash[] =
 {
-  Hash::String(karpAlignValues[XA_LOW]),
-  Hash::String(karpAlignValues[XA_CENTER]),
-  Hash::String(karpAlignValues[XA_HIGH]),
-  Hash::String(karpAlignValues[XA_NONE])
+  Hash::String32(karpAlignValues[XA_LOW]),
+  Hash::String32(karpAlignValues[XA_CENTER]),
+  Hash::String32(karpAlignValues[XA_HIGH]),
+  Hash::String32(karpAlignValues[XA_NONE])
 };
 
 const char* const  UIBuilder::karpElementName[] =
@@ -1424,11 +1424,11 @@ void  UIBuilder::RegisterCreator(const char* pName, CreateCallback pCreateCb,
     pCreateCb,
     pInitCb,
     isContainer
-#if defined IW_DEBUG
+#if defined XR_DEBUG
     , pName
 #endif
   };
-  m_creators[Hash::String(pName)] = uicr;
+  m_creators[Hash::String32(pName)] = uicr;
 }
 
 //==============================================================================
@@ -1437,7 +1437,7 @@ bool UIBuilder::RegisterNamedElement(const char* pName, UIElement* pUIElem)
   XR_ASSERT(UIBuilder, pName != 0);
   XR_ASSERT(UIBuilder, pUIElem != 0);
 
-  uint32_t              hash(Hash::String(pName));
+  uint32_t              hash(Hash::String32(pName));
   ElementMap::iterator  iFind(m_handles.find(hash));
   bool                  success(iFind == m_handles.end());
   if (success)
@@ -1484,7 +1484,7 @@ bool  UIBuilder::_Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth)
   {
     UIElement*  pUIElem(0);
 
-    uint32_t  hash(Hash::String(pXml->Value()));
+    uint32_t  hash(Hash::String32(pXml->Value()));
     CreatorMap::iterator  iFind(m_creators.find(hash));
     if (iFind != m_creators.end())
     {
@@ -1623,7 +1623,7 @@ UIElement* UIBuilder::GetElement(uint32_t hash) const
 UIElement* UIBuilder::GetElement(const char* pHandle) const
 {
   XR_ASSERT(UIBuilder, pHandle != 0);
-  return GetElement(Hash::String(pHandle));
+  return GetElement(Hash::String32(pHandle));
 }
 
 //==============================================================================

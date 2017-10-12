@@ -22,14 +22,14 @@ ActorInstanceCore::~ActorInstanceCore()
 {}
 
 //==============================================================================
-void ActorInstanceCore::Enqueue( const char* pActionName, float timeScale )
+void ActorInstanceCore::Enqueue(const char* pActionName, float timeScale)
 {
   XR_ASSERT(ActorInstanceCore, pActionName != 0);
-  Enqueue(Hash::String(pActionName), timeScale);
+  Enqueue(Hash::String32(pActionName), timeScale);
 }
 
 //==============================================================================
-void ActorInstanceCore::Enqueue( uint32_t nameHashAction, float timeScale )
+void ActorInstanceCore::Enqueue(uint32_t nameHashAction, float timeScale)
 {
   m_nameHashNextAction = nameHashAction;
   m_timeScaleNextAction = timeScale;

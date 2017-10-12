@@ -230,7 +230,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         sprite.SetHalfSize(wOffs / 2, hOffs / 2, false);
 
         // add sprite
-        m_sprites[Hash::String(buffer.c_str())] = sprite;
+        m_sprites[Hash::String32(buffer.c_str())] = sprite;
         
         pElem = pElem->NextSiblingElement(karTag[TAG_SPRITE]);
       }
@@ -244,7 +244,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 Sprite* TexturePack::Get( const char* pName, bool allowMissing )
 {
   XR_ASSERT(TexturePack, pName != 0);
-  Sprite* pSprite(Get(Hash::String(pName)));
+  Sprite* pSprite(Get(Hash::String32(pName)));
   XR_ASSERTMSG(TexturePack, pSprite != 0 || allowMissing,
     ("Sprite '%s' doesn't exist in TexturePack.", pName));
   return pSprite;
@@ -253,7 +253,7 @@ Sprite* TexturePack::Get( const char* pName, bool allowMissing )
 const Sprite* TexturePack::Get( const char* pName, bool allowMissing ) const
 {
   XR_ASSERT(TexturePack, pName != 0);
-  const Sprite* pSprite(Get(Hash::String(pName)));
+  const Sprite* pSprite(Get(Hash::String32(pName)));
   XR_ASSERTMSG(TexturePack, pSprite != 0 || allowMissing,
     ("Sprite '%s' doesn't exist in TexturePack.", pName));
   return pSprite;
@@ -263,7 +263,7 @@ const Sprite* TexturePack::Get( const char* pName, bool allowMissing ) const
 Sprite* TexturePack::Get( const char* pName )
 {
   XR_ASSERT(TexturePack, pName != 0);
-  Sprite* pSprite(Get(Hash::String(pName)));
+  Sprite* pSprite(Get(Hash::String32(pName)));
   XR_ASSERTMSG(TexturePack, pSprite != 0, ("Sprite '%s' doesn't exist in TexturePack.", pName));
   return pSprite;
 }
@@ -272,7 +272,7 @@ Sprite* TexturePack::Get( const char* pName )
 const Sprite* TexturePack::Get( const char* pName ) const
 {
   XR_ASSERT(TexturePack, pName != 0);
-  const Sprite* pSprite(Get(Hash::String(pName)));
+  const Sprite* pSprite(Get(Hash::String32(pName)));
   XR_ASSERTMSG(TexturePack, pSprite != 0, ("Sprite '%s' doesn't exist in TexturePack.", pName));
   return pSprite;
 }
