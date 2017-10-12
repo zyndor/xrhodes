@@ -63,7 +63,7 @@ UIRadioButton::~UIRadioButton()
 void UIRadioButton::SetGroup(const char* pGroupName)
 {
   XR_ASSERT(UIRadioButton, pGroupName != 0);
-  SetGroup(Hash::String(pGroupName));
+  SetGroup(Hash::String32(pGroupName));
 }
 
 //==============================================================================

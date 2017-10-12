@@ -24,7 +24,7 @@ public:
   static void   Init(int capacityBytes);
   static void   Exit();
 
-  static T*     Get(uint32_t hash);
+  static T*     Get(uint64_t hash);
   static T*     Get(const char* pName);
   static T*     Get(const char* pName, void* pData);
 
@@ -33,14 +33,14 @@ public:
   static void   FlushFrame();
 
   // intended for use by T only
-  static bool   Manage(uint32_t hash, T* pObj);
+  static bool   Manage(uint64_t hash, T* pObj);
   static bool   Manage(const char* pName, T* pObj);
 
   static void*  Allocate(int numBytes);
   
 private:
   // types
-  typedef std::map<uint32_t, T*>  ObjectMap;
+  typedef std::map<uint64_t, T*>  ObjectMap;
 
   // data
   static Pool*      s_pPool;
@@ -93,7 +93,7 @@ void ResManager<T>::Exit()
 
 //==============================================================================
 template  <class T>
-bool  ResManager<T>::Manage( uint32_t hash, T* pObj)
+bool  ResManager<T>::Manage(uint64_t hash, T* pObj)
 {
   typename ObjectMap::iterator iFind(s_objects.find(hash));
   bool  success(iFind == s_objects.end());
@@ -107,14 +107,14 @@ bool  ResManager<T>::Manage( uint32_t hash, T* pObj)
 //==============================================================================
 template  <class T>
 inline
-bool  ResManager<T>::Manage( const char* pName, T* pObj)
+bool  ResManager<T>::Manage(const char* pName, T* pObj)
 {
-  return Manage(Hash::String(pName), pObj);
+  return Manage(Hash::String32(pName), pObj);
 }
 
 //==============================================================================
 template  <class T>
-T* ResManager<T>::Get( uint32_t hash )
+T* ResManager<T>::Get(uint64_t hash)
 {
   typename ObjectMap::iterator iFind(s_objects.find(hash));
   T*  pObj(0);
@@ -128,15 +128,15 @@ T* ResManager<T>::Get( uint32_t hash )
 //==============================================================================
 template  <class T>
 inline
-T* ResManager<T>::Get( const char* pName )
+T* ResManager<T>::Get(const char* pName)
 {
-  return Get(Hash::String(pName));
+  return Get(Hash::String32(pName));
 }
 
 //==============================================================================
 template  <class T>
 inline
-T* ResManager<T>::Get( const char* pName, void* pData )
+T* ResManager<T>::Get(const char* pName, void* pData)
 {
   T*  pObj(Get(pName));
   return pObj != 0 ? pObj : static_cast<T*>(pData);
@@ -215,9 +215,9 @@ public:\
   static a* CreateManageable();\
   static a* CreateManaged(const char* pName) {\
               XR_ASSERT(a, pName != 0);\
-              return CreateManaged(Hash::String(pName));\
+              return CreateManaged(Hash::String32(pName));\
             }\
-  static a* CreateManaged(uint32_t hash);\
+  static a* CreateManaged(uint64_t hash);\
   \
   void ManagedDestruct();\
 
@@ -233,7 +233,7 @@ a*  a::CreateManageable() {\
   return pRes;\
 }\
 \
-a*  a::CreateManaged(uint32_t hash) {\
+a*  a::CreateManaged(uint64_t hash) {\
   a*  pRes(Manager::Get(hash));\
   if (pRes == 0)\
   {\
@@ -258,7 +258,7 @@ a*  a::CreateManageable() {\
   return pRes;\
 }\
 \
-a*  a::CreateManaged(uint32_t hash) {\
+a*  a::CreateManaged(uint64_t hash) {\
   a*  pRes(Manager::Get(hash));\
   if (pRes == 0) {\
     pRes = CreateManageable();\
