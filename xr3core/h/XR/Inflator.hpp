@@ -8,10 +8,10 @@
 #define XR_INFLATOR_HPP
 
 #include "Inflatable.hpp"
-#include <XR/IdGenerator.hpp>
-#include <XR/fundamentals.hpp>
-#include <XR/debug.hpp>
-#include <XR/typeutils.hpp>
+#include "XR/IdGenerator.hpp"
+#include "XR/fundamentals.hpp"
+#include "XR/debug.hpp"
+#include "XR/typeutils.hpp"
 #include <map>
 #include <set>
 
@@ -45,7 +45,7 @@ public:
   template <class T>
   void  RegisterMapping(IdType id, T *&refP)
   {
-    AssertBase<std::decay<T>::type, Inflatable>();
+    AssertBase<typename std::decay<T>::type, Inflatable>();
 #ifdef XR_DEBUG
     refP = nullptr;
 #endif

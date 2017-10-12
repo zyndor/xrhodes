@@ -6,8 +6,8 @@
 //==============================================================================
 #include <cstring>
 #include <string>
-#include <XR/ParserCore.hpp>
-#include <XR/debug.hpp>
+#include "XR/ParserCore.hpp"
+#include "XR/debug.hpp"
 
 namespace XR
 {

@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Hash.hpp>
-#include <XR/debug.hpp>
+#include "XR/Hash.hpp"
+#include "XR/debug.hpp"
 #include <algorithm>
 #include <map>
 #include <string>

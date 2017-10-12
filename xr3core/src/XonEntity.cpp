@@ -4,16 +4,17 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/XonEntity.hpp>
-#include <XR/debug.hpp>
+#include "XR/XonEntity.hpp"
+#include "XR/debug.hpp"
 #include <algorithm>
+#include <string>
 
 namespace XR
 {
 
 //==============================================================================
 XonEntity::Exception::Exception(Type t, std::string const & message)
-: std::exception(message.c_str()),
+: std::runtime_error(message.c_str()),
   type(t)
 {
   XR_TRACE(Exception, (message.c_str()));

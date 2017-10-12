@@ -7,6 +7,8 @@
 #ifndef XR_XONPARSER_HPP
 #define XR_XONPARSER_HPP
 
+#include <cstddef>
+
 namespace XR
 {
 

@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/XonBuildTree.hpp>
-#include <XR/Queue.hpp>
-#include <XR/stringutils.hpp>
+#include "XR/XonBuildTree.hpp"
+#include "XR/Queue.hpp"
+#include "XR/stringutils.hpp"
 #include <list>
 
 namespace XR

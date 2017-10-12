@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/XonParser.hpp>
-#include <XR/ParserCore.hpp>
-#include <XR/debug.hpp>
+#include "XR/XonParser.hpp"
+#include "XR/ParserCore.hpp"
+#include "XR/debug.hpp"
 #include <string>
 
 namespace XR

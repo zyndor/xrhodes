@@ -7,8 +7,8 @@
 #ifndef XR_EVENTDISPATCHER_HPP
 #define XR_EVENTDISPATCHER_HPP
 
-#include <XR/debug.hpp>
-#include <XR/fundamentals.hpp>
+#include "XR/debug.hpp"
+#include "XR/fundamentals.hpp"
 #include <list>
 #include <map>
 #include <algorithm>
@@ -162,12 +162,12 @@ protected:
     // general
     virtual Return Handle(E eventData)
     {
-      return (static_cast<T*>(ListenerBase::pObject)->*pCallback)(eventData);
+      return (static_cast<T*>(ListenerBaseBase::pObject)->*pCallback)(eventData);
     }
     
     Listener* Clone() const
     {
-      return new Listener(static_cast<T*>(ListenerBase::pObject), pCallback);
+      return new Listener(static_cast<T*>(ListenerBaseBase::pObject), pCallback);
     }
   };
   
@@ -220,12 +220,12 @@ protected:
     // general
     virtual Return Handle()
     {
-      return (static_cast<T*>(pObject)->*pCallback)();
+      return (static_cast<T*>(ListenerBaseBase::pObject)->*pCallback)();
     }
     
     Listener* Clone() const
     {
-      return new Listener(static_cast<T*>(pObject), pCallback);
+      return new Listener(static_cast<T*>(ListenerBaseBase::pObject), pCallback);
     }
   };
   

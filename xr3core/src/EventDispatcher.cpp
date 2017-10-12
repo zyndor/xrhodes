@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/detail/EventDispatcher.hpp>
+#include "XR/detail/EventDispatcher.hpp"
 
 namespace XR
 {

@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/SharedPoolAllocator.hpp>
+#include "XR/SharedPoolAllocator.hpp"
 
 namespace XR
 {

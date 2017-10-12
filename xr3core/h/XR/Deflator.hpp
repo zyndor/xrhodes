@@ -8,8 +8,8 @@
 #define XR_DEFLATOR_HPP
 
 #include "Inflatable.hpp"
-#include <XR/IdGenerator.hpp>
-#include <XR/fundamentals.hpp>
+#include "XR/IdGenerator.hpp"
+#include "XR/fundamentals.hpp"
 #include <map>
 #include <set>
 

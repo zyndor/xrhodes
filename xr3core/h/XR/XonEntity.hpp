@@ -31,7 +31,7 @@ public:
   ///@brief Exception type thrown for attempting to access functionality
   /// invalid for a given concrete XON object, i.e. trying to get elements
   /// of a Value or the value of an Object.
-  struct Exception : public std::exception
+  struct Exception : public std::runtime_error
   {
     enum class Type
     {
