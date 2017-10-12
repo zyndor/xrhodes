@@ -1424,7 +1424,7 @@ void  UIBuilder::RegisterCreator(const char* pName, CreateCallback pCreateCb,
     pCreateCb,
     pInitCb,
     isContainer
-#if defined IW_DEBUG
+#if defined XR_DEBUG
     , pName
 #endif
   };
