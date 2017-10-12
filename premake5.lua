@@ -132,6 +132,10 @@ workspace "xr3.SDL"
         buildoptions {
             "-std=c++14"
         }
+		
+		flags {
+			"StaticRuntime"
+		}
     end
 
 	-- create projects
