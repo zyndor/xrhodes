@@ -119,7 +119,7 @@ protected:
 inline
 bool  Pool::HasBuffer() const
 {
-  return m_parBuffer != 0;
+  return m_parBuffer != nullptr;
 }
 
 //==============================================================================
