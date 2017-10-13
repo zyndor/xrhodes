@@ -53,35 +53,35 @@ public:
   
   struct  MouseActionEvent
   {
-    int     device;
-    int     button;
-    int16_t x;
-    int16_t y;
-    bool    isPressed;
+    uint32_t  device;
+    int       button;
+    int16_t   x;
+    int16_t   y;
+    bool      isPressed;
   };
 
   struct  MouseMotionEvent
   {
-    int     device;
-    int16_t x;
-    int16_t y;
+    uint32_t  device;
+    int16_t   x;
+    int16_t   y;
   };
   
   struct  TouchActionEvent
   {
-    int     device;
-    int     touch;
-    int     x;
-    int     y;
-    bool    isPressed;
+    uint32_t  device;
+    uint32_t  touch;
+    int       x;
+    int       y;
+    bool      isPressed;
   };
   
   struct  TouchMotionEvent
   {
-    int     device;
-    int     touch;
-    int     x;
-    int     y;
+    uint32_t  device;
+    uint32_t  touch;
+    int       x;
+    int       y;
   };
   
   // static

@@ -128,7 +128,7 @@ namespace XR
     std::stringstream io;
     a.WritePieceWise(io);
 
-    io.seekg(0, SEEK_SET);
+    io.seekg(0, std::ios_base::beg);
 
     A a2;
     a2.ReadPiecewise(io);
@@ -147,7 +147,7 @@ namespace XR
     std::stringstream io;
     a.WritePieceWise(io);
 
-    io.seekg(0, SEEK_SET);
+    io.seekg(0, std::ios_base::beg);
 
     A a2;
     a2.ReadPiecewise(io);

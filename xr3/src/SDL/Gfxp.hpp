@@ -160,7 +160,7 @@ public:
   void WriteHandle(UniformType t, uint8_t arraySize, uint16_t loc, UniformHandle h)
   {
     XR_ASSERT(ConstBuffer, m_pos + sizeof(uint32_t) + sizeof(UniformHandle) < m_size);
-    uint32_t refTypeSizeLoc = ((uint8_t(t) & 0x7f | 0x80) << 24) // 1 bits ref (1), 7 bits type
+    uint32_t refTypeSizeLoc = (((uint8_t(t) & 0x7f) | 0x80) << 24) // 1 bits ref (1), 7 bits type
       | (arraySize << 16) // 8 bits size
       | loc; // 16 bits loc
     Write(refTypeSizeLoc);

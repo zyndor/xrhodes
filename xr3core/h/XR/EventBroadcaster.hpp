@@ -32,17 +32,17 @@ public:
   void  Broadcast(E eventData)
   {
     // Start traversal
-    m_isTraversing = true;
+    BaseType::m_isTraversing = true;
 
     // Make sure traversal finishes even if an exception occurs.
     auto traversingGuard = MakeScopeGuard([this]()
     {
-      FinishTraversal();
+      BaseType::FinishTraversal();
     });
 
-    for (auto& i: m_listeners)
+    for (auto& i: BaseType::m_listeners)
     {
-      static_cast<ListenerBase*>(i)->Handle(eventData);
+      static_cast<typename BaseType::ListenerBase*>(i)->Handle(eventData);
     }
   }
 };

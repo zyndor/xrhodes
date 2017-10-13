@@ -41,7 +41,7 @@ namespace XR
       {
         WriteBinaryStream(i, stream);
       }
-      stream.seekp(0, SEEK_SET);
+      stream.seekp(0, std::ios_base::beg);
 
       Inflator inflator;
       std::vector<TestObject>  testObjects(6);

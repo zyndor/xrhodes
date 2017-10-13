@@ -8,6 +8,7 @@
 #define XR_TWEENVARPOOL_HPP
 
 #include "TweenVar.hpp"
+#include "XR/debug.hpp"
 
 namespace XR
 {

@@ -399,8 +399,8 @@ void  Device::YieldOS(int32_t ms)
       Input::MouseMotionEvent  eMouse =
       {
         e.motion.which,
-        e.motion.x,
-        e.motion.y
+        static_cast<int16_t>(e.motion.x),
+        static_cast<int16_t>(e.motion.y)
       };
       CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_MOTION], &eMouse);
       break;
@@ -414,8 +414,8 @@ void  Device::YieldOS(int32_t ms)
       {
         e.button.which,
         TranslateMouseButtonNative(e.button.button),
-        e.button.x,
-        e.button.y,
+        static_cast<int16_t>(e.button.x),
+        static_cast<int16_t>(e.button.y),
         e.button.state == SDL_PRESSED
       };
       CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_ACTION], &eMouse);
@@ -430,8 +430,9 @@ void  Device::YieldOS(int32_t ms)
 
       Input::TouchActionEvent  eTouch =
       {
-        e.tfinger.touchId,
-        e.tfinger.fingerId,
+        // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
+        static_cast<uint32_t>(e.tfinger.touchId),
+        static_cast<uint32_t>(e.tfinger.fingerId),
         x,
         y,
         e.tfinger.type == SDL_FINGERDOWN
@@ -447,8 +448,9 @@ void  Device::YieldOS(int32_t ms)
       
       Input::TouchMotionEvent eTouch = 
       {
-        e.tfinger.touchId,
-        e.tfinger.fingerId,
+        // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
+        static_cast<uint32_t>(e.tfinger.touchId),
+        static_cast<uint32_t>(e.tfinger.fingerId),
         x,
         y
       };

@@ -265,7 +265,7 @@ namespace XR
       try
       {
         fn();
-        ASSERT_FALSE(true, "Must throw.");
+        ASSERT_FALSE(true);//, "Must throw.");
       }
       catch (XonEntity::Exception& x)
       {
@@ -274,7 +274,7 @@ namespace XR
       }
       catch (...)
       {
-        ASSERT_FALSE(true, "Wrong exception type.");
+        ASSERT_FALSE(true);//, "Wrong exception type.");
       }
     }
 

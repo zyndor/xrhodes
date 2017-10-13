@@ -642,7 +642,8 @@ struct Context
       XR_GL_CALL(glDeleteVertexArrays(1, &m_vao));
     }
 
-#define REPORT_LEAKS(name) XR_TRACEIF(Gfx, m_##name##s.server.GetNumAcquired() > 0, ("WARNING: %d "#name##" handles leaked.", m_##name##s.server.GetNumAcquired()))
+#define REPORT_LEAKS(name) XR_TRACEIF(Gfx, m_##name##s.server.GetNumAcquired() > 0,\
+  ("WARNING: %d %s handles leaked.", m_##name##s.server.GetNumAcquired(), #name))
     REPORT_LEAKS(vertexFormat);
     REPORT_LEAKS(vbo);
     REPORT_LEAKS(ibo);
