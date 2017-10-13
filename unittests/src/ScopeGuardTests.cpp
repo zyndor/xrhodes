@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <XR/ScopeGuard.hpp>
+#include "XR/ScopeGuard.hpp"
 #include <list>
 
 namespace XR

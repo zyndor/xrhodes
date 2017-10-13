@@ -11,7 +11,7 @@
 #ifndef XR_NAME_HPP
 #define XR_NAME_HPP
 
-#include <XR/Hash.hpp>
+#include "XR/Hash.hpp"
 #include <string>
 
 namespace XR

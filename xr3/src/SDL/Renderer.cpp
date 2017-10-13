@@ -6,13 +6,13 @@
 //==============================================================================
 #include "MaterialImpl.hpp"
 #include "xrgl.hpp"
-#include <XR/Renderer.hpp>
-#include <XR/Device.hpp>
-#include <XR/Pool.hpp>
-#include <XR/ProjectionHelpers.hpp>
-#include <XR/Mat4x4Helper.hpp>
-#include <XR/SVector2.hpp>
-#include <XR/debug.hpp>
+#include "XR/Renderer.hpp"
+#include "XR/Device.hpp"
+#include "XR/Pool.hpp"
+#include "XR/ProjectionHelpers.hpp"
+#include "XR/Mat4x4Helper.hpp"
+#include "XR/SVector2.hpp"
+#include "XR/debug.hpp"
 #include <SDL.h>
 
 namespace XR

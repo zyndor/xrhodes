@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Text.hpp>
+#include "XR/Text.hpp"
 
 namespace XR {
 

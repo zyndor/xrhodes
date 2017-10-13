@@ -8,9 +8,9 @@
 #define XR_UIELEMENT_HPP
 
 #include <list>
-#include <XR/utils.hpp>
-#include <XR/Rect.hpp>
-#include <XR/Input.hpp>
+#include "XR/utils.hpp"
+#include "XR/Rect.hpp"
+#include "XR/Input.hpp"
 
 namespace XR
 {

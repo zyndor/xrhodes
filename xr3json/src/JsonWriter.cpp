@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/JsonWriter.hpp>
-#include <XR/debug.hpp>
+#include "XR/JsonWriter.hpp"
+#include "XR/debug.hpp"
 #include <cstring>
 
 namespace XR

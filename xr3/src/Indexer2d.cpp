@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Indexer2d.hpp>
-#include <XR/debug.hpp>
+#include "XR/Indexer2d.hpp"
+#include "XR/debug.hpp"
 
 namespace XR
 {

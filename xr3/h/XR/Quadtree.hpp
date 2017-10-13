@@ -8,8 +8,8 @@
 #define XR_QUADTREE_HPP
 
 #include "RectObject.hpp"
-#include <XR/functors.hpp>
-#include <XR/Queue.hpp>
+#include "XR/functors.hpp"
+#include "XR/Queue.hpp"
 #include <list>
 
 #if defined  _MSC_VER

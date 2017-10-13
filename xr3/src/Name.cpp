@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Name.hpp>
-#include <XR/debug.hpp>
+#include "XR/Name.hpp"
+#include "XR/debug.hpp"
 #include <string.h>
 
 namespace XR

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <XR/EventBroadcaster.hpp>
+#include "XR/EventBroadcaster.hpp"
 #include <memory>
 
 namespace XR

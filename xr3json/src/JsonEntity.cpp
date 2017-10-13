@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/JsonEntity.hpp>
-#include <XR/Hash.hpp>
-#include <XR/functors.hpp>
-#include <XR/debug.hpp>
+#include "XR/JsonEntity.hpp"
+#include "XR/Hash.hpp"
+#include "XR/functors.hpp"
+#include "XR/debug.hpp"
 #include <cstring>
 #include <algorithm>
 #include <iterator>

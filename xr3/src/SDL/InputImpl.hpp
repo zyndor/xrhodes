@@ -7,7 +7,7 @@
 #ifndef XR_INPUTIMPL_HPP
 #define XR_INPUTIMPL_HPP
 
-#include <XR/Input.hpp>
+#include "XR/Input.hpp"
 
 namespace XR {
 

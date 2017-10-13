@@ -5,14 +5,14 @@
 //
 //==============================================================================
 #include "InputImpl.hpp"
-#include <XR/Device.hpp>
-#include <XR/FileWriter.hpp>
-#include <XR/JsonReader.hpp>
-#include <XR/JsonWriter.hpp>
-#include <XR/Renderer.hpp>
-#include <XR/jsonutils.hpp>
-#include <XR/utils.hpp>
-#include <XR/stringutils.hpp>
+#include "XR/Device.hpp"
+#include "XR/FileWriter.hpp"
+#include "XR/JsonReader.hpp"
+#include "XR/JsonWriter.hpp"
+#include "XR/Renderer.hpp"
+#include "XR/jsonutils.hpp"
+#include "XR/utils.hpp"
+#include "XR/stringutils.hpp"
 #include <SDL_events.h>
 #include <SDL.h>
 #include <cstdlib>

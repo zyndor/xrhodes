@@ -8,7 +8,7 @@
 #define XR_HTTPCLIENT_HPP
 
 #include <set>
-#include <XR/fundamentals.hpp>
+#include "XR/fundamentals.hpp"
 
 namespace XR
 {

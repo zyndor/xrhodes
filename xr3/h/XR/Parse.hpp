@@ -8,7 +8,7 @@
 #define XR_PARSE_HPP
 
 #include "Color.hpp"
-#include <XR/fundamentals.hpp>
+#include "XR/fundamentals.hpp"
 
 namespace XR
 {

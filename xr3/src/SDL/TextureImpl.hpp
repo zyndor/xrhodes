@@ -9,8 +9,8 @@
 
 #include "xrgl.hpp"
 #include "RenderingResource.hpp"
-#include <XR/fundamentals.hpp>
-#include <XR/Texture.hpp>
+#include "XR/fundamentals.hpp"
+#include "XR/Texture.hpp"
 #include <SDL_video.h>
 
 namespace XR

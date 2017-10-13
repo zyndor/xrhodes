@@ -7,8 +7,8 @@
 #ifndef XR_UICOLOREDELEMENT_HPP
 #define XR_UICOLOREDELEMENT_HPP
 
-#include <XR/maths.hpp>
-#include <XR/Sprite.hpp>
+#include "XR/maths.hpp"
+#include "XR/Sprite.hpp"
 #include "UIElement.hpp"
 
 namespace XR

@@ -9,7 +9,7 @@
 
 #include "AnimationReader.hpp"
 #include "Actor.hpp"
-#include <XR/fundamentals.hpp>
+#include "XR/fundamentals.hpp"
 
 namespace XR
 {

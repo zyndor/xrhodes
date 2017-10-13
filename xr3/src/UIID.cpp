@@ -6,8 +6,8 @@
 //==============================================================================
 #include <algorithm>
 #include <numeric>
-#include <XR/UIID.hpp>
-#include <XR/Timer.hpp>
+#include "XR/UIID.hpp"
+#include "XR/Timer.hpp"
 
 namespace XR
 {

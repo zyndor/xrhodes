@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Quadtree.hpp>
-#include <XR/functors.hpp>
+#include "XR/Quadtree.hpp"
+#include "XR/functors.hpp"
 
 namespace XR
 {

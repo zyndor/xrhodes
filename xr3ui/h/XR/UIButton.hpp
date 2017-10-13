@@ -8,8 +8,8 @@
 #define XR_UIBUTTON_HPP
 
 #include "UIColoredElement.hpp"
-#include <XR/utils.hpp>
-#include <XR/Sprite.hpp>
+#include "XR/utils.hpp"
+#include "XR/Sprite.hpp"
 
 namespace XR
 {

@@ -9,10 +9,10 @@
 
 #include <map>
 #include <string>
-#include <XR/memory.hpp>
-#include <tinyxml.h>
-#include <XR/Font.hpp>
+#include "XR/memory.hpp"
+#include "XR/Font.hpp"
 #include "UIContainer.hpp"
+#include "tinyxml.h"
 
 namespace XR
 {

@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/ActorInstance.hpp>
-#include <XR/Hash.hpp>
+#include "XR/ActorInstance.hpp"
+#include "XR/Hash.hpp"
 
 namespace XR
 {

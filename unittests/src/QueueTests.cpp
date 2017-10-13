@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <XR/Queue.hpp>
+#include "XR/Queue.hpp"
 
 namespace XR
 {

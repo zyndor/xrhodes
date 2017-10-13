@@ -7,8 +7,8 @@
 #ifndef XR_GFXP_HPP
 #define XR_GFXP_HPP
 
-#include <XR/Gfx.hpp>
-#include <XR/IndexServer.hpp>
+#include "XR/Gfx.hpp"
+#include "XR/IndexServer.hpp"
 
 #define XR_ALIGN16(val) XR::Align<uint32_t>(val, 16)
 

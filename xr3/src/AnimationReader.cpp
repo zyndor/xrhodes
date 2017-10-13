@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/AnimationReader.hpp>
+#include "XR/AnimationReader.hpp"
 
 namespace XR
 {

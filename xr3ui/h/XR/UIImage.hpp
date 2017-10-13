@@ -7,7 +7,7 @@
 #ifndef XR_UIIMAGE_HPP
 #define XR_UIIMAGE_HPP
 
-#include <XR/Sprite.hpp>
+#include "XR/Sprite.hpp"
 #include "UIColoredElement.hpp"
 
 namespace XR

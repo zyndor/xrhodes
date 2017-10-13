@@ -10,8 +10,8 @@
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
 #include "Name.hpp"
-#include <XR/fundamentals.hpp>
-#include <XR/typeutils.hpp>
+#include "XR/fundamentals.hpp"
+#include "XR/typeutils.hpp"
 #include <list>
 #include <map>
 

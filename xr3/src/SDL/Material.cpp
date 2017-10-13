@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "MaterialImpl.hpp"
-#include <XR/Material.hpp>
+#include "XR/Material.hpp"
 #include <algorithm>
 
 #define TO_IMPL()  (static_cast<MaterialImpl*>(GetImpl()))

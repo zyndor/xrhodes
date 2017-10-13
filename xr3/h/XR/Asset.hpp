@@ -7,14 +7,14 @@
 #ifndef XR_ASSET_HPP
 #define XR_ASSET_HPP
 
-#include <XR/File.hpp>
-#include <XR/Counted.hpp>
-#include <XR/Counter.hpp>
-#include <XR/Hash.hpp>
-#include <XR/fundamentals.hpp>
-#include <XR/memory.hpp>
-#include <XR/utils.hpp>
-#include <XR/debug.hpp>
+#include "XR/File.hpp"
+#include "XR/Counted.hpp"
+#include "XR/Counter.hpp"
+#include "XR/Hash.hpp"
+#include "XR/fundamentals.hpp"
+#include "XR/memory.hpp"
+#include "XR/utils.hpp"
+#include "XR/debug.hpp"
 #include <memory>
 #include <vector>
 

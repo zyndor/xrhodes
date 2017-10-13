@@ -8,7 +8,7 @@
 #define XR_QUATERNION_HPP
 
 #include "Matrix.hpp"
-#include <XR/debug.hpp>
+#include "XR/debug.hpp"
 #include <cstring>
 #include <cstdint>
 #include <cmath>

@@ -8,8 +8,8 @@
 #define XR_UIEVENTNOTIFIER_HPP
 
 #include <list>
-#include <XR/Input.hpp>
-#include <XR/EventNotifier.hpp>
+#include "XR/Input.hpp"
+#include "XR/EventNotifier.hpp"
 #include "UIElement.hpp"
 
 namespace XR

@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/UIContainer.hpp>
-#include <XR/functors.hpp>
+#include "XR/UIContainer.hpp"
+#include "XR/functors.hpp"
 #include <algorithm>
 
 namespace XR

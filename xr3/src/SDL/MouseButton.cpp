@@ -6,7 +6,7 @@
 //==============================================================================
 #include <algorithm>
 #include <SDL_mouse.h>
-#include <XR/MouseButton.hpp>
+#include "XR/MouseButton.hpp"
 
 namespace XR {
 

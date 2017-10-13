@@ -9,9 +9,9 @@
 
 #include "Parse.hpp"
 #include "Animation.hpp"
-#include <XR/ParserCore.hpp>
-#include <XR/fundamentals.hpp>
-#include <tinyxml.h>
+#include "XR/ParserCore.hpp"
+#include "XR/fundamentals.hpp"
+#include "tinyxml.h"
 #include <list>
 
 namespace XR

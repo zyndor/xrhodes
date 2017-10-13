@@ -6,10 +6,10 @@
 //==============================================================================
 #include <limits>
 #include <iostream>
-#include <XR/FileBuffer.hpp>
-#include <XR/Font.hpp>
-#include <XR/utils.hpp>
-#include <XR/debug.hpp>
+#include "XR/FileBuffer.hpp"
+#include "XR/Font.hpp"
+#include "XR/utils.hpp"
+#include "XR/debug.hpp"
 
 namespace XR
 {

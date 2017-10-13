@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/UILabel.hpp>
-#include <XR/UIRenderer.hpp>
-#include <string.h>
-#include <malloc.h>
+#include "XR/UILabel.hpp"
+#include "XR/UIRenderer.hpp"
+#include <cstring>
+#include <cstdlib>
 
 namespace XR
 {

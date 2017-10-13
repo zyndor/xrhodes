@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/UIGrowingLayoutBase.hpp>
+#include "XR/UIGrowingLayoutBase.hpp"
 
 namespace XR
 {

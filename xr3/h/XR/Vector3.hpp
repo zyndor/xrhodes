@@ -8,7 +8,7 @@
 #define XR_VECTOR3_HPP
 
 #include "Vector2.hpp"
-#include <XR/debug.hpp>
+#include "XR/debug.hpp"
 #include <cstdint>
 #include <cmath>
 

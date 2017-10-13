@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/UISliderBase.hpp>
+#include "XR/UISliderBase.hpp"
 #include <limits>
 
 namespace XR

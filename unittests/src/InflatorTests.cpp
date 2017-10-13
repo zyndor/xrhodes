@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <XR/Deflator.hpp>
-#include <XR/Inflator.hpp>
-#include <XR/streamutils.hpp>
+#include "XR/Deflator.hpp"
+#include "XR/Inflator.hpp"
+#include "XR/streamutils.hpp"
 #include <memory>
 #include <vector>
 #include <algorithm>

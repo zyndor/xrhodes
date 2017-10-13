@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Audio.hpp>
-#include <XR/Device.hpp>
-#include <XR/debug.hpp>
+#include "XR/Audio.hpp"
+#include "XR/Device.hpp"
+#include "XR/debug.hpp"
 #include <SDL_mixer.h>
 #include <string.h>
 

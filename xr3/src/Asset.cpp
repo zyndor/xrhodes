@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Asset.hpp>
-#include <XR/FileBuffer.hpp>
-#include <XR/Worker.hpp>
-#include <XR/Hash.hpp>
+#include "XR/Asset.hpp"
+#include "XR/FileBuffer.hpp"
+#include "XR/Worker.hpp"
+#include "XR/Hash.hpp"
 #include <map>
 
 #ifdef XR_DEBUG

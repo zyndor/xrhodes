@@ -8,9 +8,9 @@
 #define XR_SPRITERENDERER_HPP
 
 #include <list>
-#include <XR/fundamentals.hpp>
-#include <XR/Pool.hpp>
-#include <XR/SharedPoolAllocator.hpp>
+#include "XR/fundamentals.hpp"
+#include "XR/Pool.hpp"
+#include "XR/SharedPoolAllocator.hpp"
 #include "Sprite.hpp"
 #include "IndexMesh.hpp"
 

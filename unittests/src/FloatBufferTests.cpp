@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <XR/FloatBuffer.hpp>
-#include <XR/Vector3.hpp>
+#include "XR/FloatBuffer.hpp"
+#include "XR/Vector3.hpp"
 
 namespace XR
 {

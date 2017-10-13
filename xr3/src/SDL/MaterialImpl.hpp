@@ -8,8 +8,8 @@
 #define XR_MATERIALIMPL_HPP
 
 #include "TextureImpl.hpp"
-#include <XR/Color.hpp>
-#include <XR/utils.hpp>
+#include "XR/Color.hpp"
+#include "XR/utils.hpp"
 
 namespace XR
 {

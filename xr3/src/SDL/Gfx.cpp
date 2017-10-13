@@ -6,11 +6,11 @@
 //==============================================================================
 #include "Gfxp.hpp"
 #include "xrgl.hpp"
-#include <XR/Matrix.hpp>
-#include <XR/Device.hpp>
-#include <XR/SVector2.hpp>
-#include <XR/Pool.hpp>
-#include <XR/Hash.hpp>
+#include "XR/Matrix.hpp"
+#include "XR/Device.hpp"
+#include "XR/SVector2.hpp"
+#include "XR/Pool.hpp"
+#include "XR/Hash.hpp"
 #include <SDL.h>
 #include <GL/glew.h>
 

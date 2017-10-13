@@ -6,7 +6,7 @@
 //==============================================================================
 #include "xrgl.hpp"
 #include "MaterialImpl.hpp"
-#include <XR/Material.hpp>
+#include "XR/Material.hpp"
 
 namespace XR
 {

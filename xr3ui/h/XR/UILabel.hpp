@@ -8,7 +8,7 @@
 #define XR_UILABEL_HPP
 
 #include "UIColoredElement.hpp"
-#include <XR/Text.hpp>
+#include "XR/Text.hpp"
 
 namespace XR
 {

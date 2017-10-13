@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/Image.hpp>
+#include "XR/Image.hpp"
 #include <SDL_image.h>
 
 namespace XR

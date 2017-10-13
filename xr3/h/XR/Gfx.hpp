@@ -7,12 +7,12 @@
 #ifndef XR_GFX_HPP
 #define XR_GFX_HPP
 
-#include <XR/Color.hpp>
-#include <XR/memory.hpp>
-#include <XR/utils.hpp>
-#include <XR/Hash.hpp>
-#include <XR/PrimType.hpp>
-#include <XR/debug.hpp>
+#include "XR/Color.hpp"
+#include "XR/memory.hpp"
+#include "XR/utils.hpp"
+#include "XR/Hash.hpp"
+#include "XR/PrimType.hpp"
+#include "XR/debug.hpp"
 
 namespace XR
 {

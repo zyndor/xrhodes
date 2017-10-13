@@ -9,7 +9,7 @@
 
 #include <list>
 #include "maths.hpp"
-#include <XR/fundamentals.hpp>
+#include "XR/fundamentals.hpp"
 
 namespace XR
 {

@@ -11,8 +11,8 @@
 #include "KeyCode.hpp"
 #include "MouseButton.hpp"
 #include "ButtonState.hpp"
-#include <XR/fundamentals.hpp>
-#include <XR/Callback.hpp>
+#include "XR/fundamentals.hpp"
+#include "XR/Callback.hpp"
 
 namespace XR
 {

@@ -5,8 +5,8 @@
 //
 //==============================================================================
 #include <string>
-#include <XR/FileBuffer.hpp>
-#include <XR/debug.hpp>
+#include "XR/FileBuffer.hpp"
+#include "XR/debug.hpp"
 
 namespace XR
 {

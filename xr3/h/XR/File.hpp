@@ -7,8 +7,8 @@
 #ifndef XR_FILE_HPP
 #define XR_FILE_HPP
 
-#include <XR/FilePath.hpp>
-#include <XR/fundamentals.hpp>
+#include "XR/FilePath.hpp"
+#include "XR/fundamentals.hpp"
 #include <cstdint>
 
 namespace XR

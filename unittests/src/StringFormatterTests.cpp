@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <XR/StringFormatter.hpp>
+#include "XR/StringFormatter.hpp"
 
 namespace XR
 {

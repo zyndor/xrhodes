@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/TexturePack.hpp>
-#include <XR/utils.hpp>
-#include <XR/HardString.hpp>
-#include <XR/debug.hpp>
+#include "XR/TexturePack.hpp"
+#include "XR/utils.hpp"
+#include "XR/HardString.hpp"
+#include "XR/debug.hpp"
 #include <tinyxml.h>
 
 namespace XR

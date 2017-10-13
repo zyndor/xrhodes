@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/IndexMesh.hpp>
-#include <XR/Renderer.hpp>
+#include "XR/IndexMesh.hpp"
+#include "XR/Renderer.hpp"
 
 namespace XR {
 

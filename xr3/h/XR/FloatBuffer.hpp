@@ -7,9 +7,9 @@
 #ifndef XR_FLOATBUFFER_HPP
 #define XR_FLOATBUFFER_HPP
 
-#include <XR/Vector3.hpp>
-#include <XR/Vector2.hpp>
-#include <XR/Color.hpp>
+#include "XR/Vector3.hpp"
+#include "XR/Vector2.hpp"
+#include "XR/Color.hpp"
 #include <functional>
 #include <vector>
 

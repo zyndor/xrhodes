@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/UINavigator.hpp>
+#include "XR/UINavigator.hpp"
 
 namespace XR
 {

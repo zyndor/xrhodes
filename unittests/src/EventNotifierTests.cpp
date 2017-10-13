@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <XR/EventNotifier.hpp>
-#include <XR/fundamentals.hpp>
+#include "XR/EventNotifier.hpp"
+#include "XR/fundamentals.hpp"
 
 namespace XR
 {

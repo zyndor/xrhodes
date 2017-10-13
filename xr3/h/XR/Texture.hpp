@@ -9,7 +9,7 @@
 
 #include "Image.hpp"
 #include "ResManager.hpp"
-#include <XR/Hash.hpp>
+#include "XR/Hash.hpp"
 
 namespace XR
 {

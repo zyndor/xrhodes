@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/TweenVar.hpp>
+#include "XR/TweenVar.hpp"
 
 namespace XR
 {

@@ -5,7 +5,7 @@
 // copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#include <XR/Cursor.hpp>
+#include "XR/Cursor.hpp"
 
 namespace XR
 {

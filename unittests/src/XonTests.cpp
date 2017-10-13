@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <XR/XonParser.hpp>
-#include <XR/XonBuildTree.hpp>
-#include <XR/FileBuffer.hpp>
+#include "XR/XonParser.hpp"
+#include "XR/XonBuildTree.hpp"
+#include "XR/FileBuffer.hpp"
 #include <list>
 #include <functional>
 

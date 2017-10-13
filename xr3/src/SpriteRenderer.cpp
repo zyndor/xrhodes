@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include <algorithm>
-#include <XR/SpriteRenderer.hpp>
+#include "XR/SpriteRenderer.hpp"
 
 namespace XR
 {

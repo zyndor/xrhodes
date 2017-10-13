@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <XR/StringFormatter.hpp>
-#include <XR/Hash.hpp>
-#include <XR/utils.hpp>
+#include "XR/StringFormatter.hpp"
+#include "XR/Hash.hpp"
+#include "XR/utils.hpp"
 #include <map>
 #include <set>
 

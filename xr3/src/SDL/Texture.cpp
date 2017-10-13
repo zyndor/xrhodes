@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "TextureImpl.hpp"
-#include <XR/Texture.hpp>
+#include "XR/Texture.hpp"
 
 #define TO_IMPL()  (static_cast<TextureImpl*>(GetImpl()))
 #define TO_CONST_IMPL()  (static_cast<const TextureImpl*>(GetImpl()))

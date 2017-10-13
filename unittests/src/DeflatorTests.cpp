@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <XR/Deflator.hpp>
-#include <XR/streamutils.hpp>
+#include "XR/Deflator.hpp"
+#include "XR/streamutils.hpp"
 
 namespace XR
 {

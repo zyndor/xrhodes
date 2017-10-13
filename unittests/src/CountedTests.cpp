@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <XR/Counted.hpp>
+#include "XR/Counted.hpp"
 
 namespace XR
 {

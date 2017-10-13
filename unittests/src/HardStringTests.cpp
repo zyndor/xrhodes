@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <XR/HardString.hpp>
+#include "XR/HardString.hpp"
 
 namespace XR
 {

@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/JsonParser.hpp>
-#include <XR/debug.hpp>
+#include "XR/JsonParser.hpp"
+#include "XR/debug.hpp"
 #include <algorithm>
 #include <limits>
 #include <ctype.h>

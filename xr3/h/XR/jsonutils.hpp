@@ -7,7 +7,7 @@
 #ifndef XR_JSONUTILS_HPP
 #define XR_JSONUTILS_HPP
 
-#include <XR/JsonEntity.hpp>
+#include "XR/JsonEntity.hpp"
 
 namespace XR
 {

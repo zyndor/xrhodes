@@ -7,7 +7,7 @@
 #ifndef XR_XRGL_HPP
 #define XR_XRGL_HPP
 
-#include <XR/debug.hpp>
+#include "XR/debug.hpp"
 #include <GL/glew.h>
 #include <SDL_opengl.h>
 

@@ -5,8 +5,8 @@
 //
 //==============================================================================
 #include <algorithm>
-#include <XR/utils.hpp>
-#include <XR/Sprite.hpp>
+#include "XR/utils.hpp"
+#include "XR/Sprite.hpp"
 
 namespace XR
 {

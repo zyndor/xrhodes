@@ -13,8 +13,8 @@
 #include "PrimType.hpp"
 #include "Ray.hpp"
 #include "Matrix.hpp"
-#include <XR/fundamentals.hpp>
-#include <XR/Callback.hpp>
+#include "XR/fundamentals.hpp"
+#include "XR/Callback.hpp"
 
 namespace XR
 {

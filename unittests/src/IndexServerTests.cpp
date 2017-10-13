@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <XR/IndexServer.hpp>
+#include "XR/IndexServer.hpp"
 #include <memory>
 
 namespace XR

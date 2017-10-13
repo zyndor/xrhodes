@@ -9,8 +9,8 @@
 
 #include "File.hpp"
 #include "Log.hpp"
-#include <XR/Callback.hpp>
-#include <XR/fundamentals.hpp>
+#include "XR/Callback.hpp"
+#include "XR/fundamentals.hpp"
 #include <string>
 
 namespace XR
