@@ -50,8 +50,7 @@ workspace "xr3.SDL"
 		table.insert(tbl_platforms, "x86")
 		table.insert(tbl_platforms, "x64")
 	elseif target_env == "macosx" then
-		table.insert(tbl_platforms, "x86")
-		table.insert(tbl_platforms, "x64")
+		table.insert(tbl_platforms, "Universal64")
 	elseif target_env == "android" then
 		table.insert(tbl_platforms, "x86")
 		table.insert(tbl_platforms, "x64")
@@ -98,7 +97,7 @@ workspace "xr3.SDL"
 	else
 		for _, p in ipairs(tbl_platforms) do
 			for _, c in ipairs(tbl_configurations) do
-				local pc = p.."-"..c
+				local pc = "/"..p.."-"..c
 				filter{ "platforms:"..p, c }
 					targetdir(bin_location..pc)
 					libdirs(bin_location..pc)
