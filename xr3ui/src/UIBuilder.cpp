@@ -49,7 +49,7 @@ static const uint32_t karVerticalAlignNameHash[] =
   Hash::String32("bottom")
 };
 
-const int kTinyXmlTextType = 4; // TiXmlNode::TINYXML_TEXT or TiXmlNode::TEXT
+const int kTinyXmlTextType = TiXmlNode::TINYXML_TEXT; //or TiXmlNode::TEXT
 
 //==============================================================================
 float GetXmlScaleAttribute(TiXmlElement* pXml)

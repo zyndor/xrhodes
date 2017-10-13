@@ -178,7 +178,7 @@ public:
       auto foundFlags = asset->GetFlags();
       if (IsLoadable(foundFlags, flags))
       {
-        LoadInternal(path, asset.StaticCast<Asset>(), flags);
+        LoadInternal(path, asset.template StaticCast<Asset>(), flags);
       }
       return asset;
     }
@@ -193,7 +193,7 @@ public:
       auto foundFlags = asset->GetFlags();
       if (IsLoadable(foundFlags, flags))
       {
-        LoadInternal(asset.StaticCast<Asset>(), flags);
+        LoadInternal(asset.template StaticCast<Asset>(), flags);
       }
       return asset;
     }

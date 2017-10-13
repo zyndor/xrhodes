@@ -83,11 +83,6 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
     {
       pResourceName = pName;  // default to name
     }
-
-    XR_ASSERTMSG(AnimationReader, strlen(pResourceName) + strlen("_f###") <
-      static_cast<size_t>(SString().capacity()),
-      ("'%s' for animation is too long",
-        karAnimationTag[AnimationTag::RESOURCE_NAME]));
   }
 
   // frame delay
@@ -142,7 +137,7 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
       TiXmlNode*  pText(pXml->FirstChild());
       while(pText != 0)
       {
-        if(pText->Type() == TiXmlNode::TEXT)
+        if(pText->Type() == TiXmlNode::TINYXML_TEXT)
         {
           break;
         }
@@ -152,7 +147,7 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
       typename AnimationType::FrameVector  fv;
       fv.assign(frames.begin(), frames.end());
 
-      if(pText != 0 && pText->Type() == TiXmlNode::TEXT)
+      if(pText != 0 && pText->Type() == TiXmlNode::TINYXML_TEXT)
       {
         ParserCore  parser;
         parser.SetBuffer(pText->Value(), strlen(pText->Value()));

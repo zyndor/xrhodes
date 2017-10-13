@@ -12,6 +12,7 @@
 #include <cstring>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 
 namespace XR
 {
@@ -274,7 +275,7 @@ bool  Parser::_ParseValue()
           arBuffer[len] = '\0';
         }
         
-        String  str = { arBuffer, len };
+        String  str = { arBuffer, static_cast<size_t>(len) };
         _DoCallback(E_VALUE, &str);
       }
     }

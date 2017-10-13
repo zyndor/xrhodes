@@ -9,6 +9,7 @@
 
 #include "AnimationReader.hpp"
 #include "Actor.hpp"
+#include "XR/HardString.hpp"
 #include "XR/fundamentals.hpp"
 
 namespace XR
@@ -134,7 +135,7 @@ bool ActorReader<Type>::GetFrameDataCallback(const char* pName, int index,
   XR_ASSERT(ActorReader, pData != 0);
   SessionData*  pSessionData(static_cast<SessionData*>(pData));
 
-  SString name(pSessionData->pActorName);
+  HardString<128> name(pSessionData->pActorName);
   name += "_";
   name += pName;
 

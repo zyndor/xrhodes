@@ -32,18 +32,18 @@ public:
   bool  Notify(E eventData)
   {
     // start traversal
-    m_isTraversing = true;
+    BaseType::m_isTraversing = true;
 
     // Make sure traversal finishes even if an exception occurs.
     auto traversingGuard = MakeScopeGuard([this]()
     {
-      FinishTraversal();
+      BaseType::FinishTraversal();
     });
 
     bool  handled(false);
-    for (auto& i: m_listeners)
+    for (auto& i: BaseType::m_listeners)
     {
-      if (static_cast<ListenerBase*>(i)->Handle(eventData))
+      if (static_cast<typename BaseType::ListenerBase*>(i)->Handle(eventData))
       {
         handled = true;
         break;
