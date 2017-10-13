@@ -8,7 +8,7 @@
 #include "XR/utils.hpp"
 #include "XR/HardString.hpp"
 #include "XR/debug.hpp"
-#include <tinyxml.h>
+#include "tinyxml.h"
 
 namespace XR
 {

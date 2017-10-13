@@ -6,7 +6,7 @@
 //==============================================================================
 #include "TextureImpl.hpp"
 #include "XR/utils.hpp"
-#include <SDL_image.h>
+#include "SDL_image.h"
 #include <cmath>
 
 namespace XR

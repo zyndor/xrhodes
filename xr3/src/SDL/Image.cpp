@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "XR/Image.hpp"
-#include <SDL_image.h>
+#include "SDL_image.h"
 
 namespace XR
 {

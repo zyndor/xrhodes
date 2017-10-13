@@ -13,8 +13,8 @@
 #include "XR/jsonutils.hpp"
 #include "XR/utils.hpp"
 #include "XR/stringutils.hpp"
-#include <SDL_events.h>
-#include <SDL.h>
+#include "SDL_events.h"
+#include "SDL.h"
 #include <cstdlib>
 
 namespace XR

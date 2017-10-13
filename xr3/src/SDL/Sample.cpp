@@ -6,7 +6,7 @@
 //==============================================================================
 #include "XR/Sample.hpp"
 #include "XR/File.hpp"
-#include <SDL_mixer.h>
+#include "SDL_mixer.h"
 
 #define TO_IMPL() (static_cast<Mix_Chunk*>(m_pImpl))
 #define TO_CONST_IMPL() (static_cast<const Mix_Chunk*>(m_pImpl))

@@ -11,8 +11,8 @@
 #include "XR/SVector2.hpp"
 #include "XR/Pool.hpp"
 #include "XR/Hash.hpp"
-#include <SDL.h>
-#include <GL/glew.h>
+#include "SDL.h"
+#include "GL/glew.h"
 
 #include <set>
 #include <unordered_map>

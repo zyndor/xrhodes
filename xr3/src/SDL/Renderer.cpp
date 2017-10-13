@@ -13,7 +13,7 @@
 #include "XR/Mat4x4Helper.hpp"
 #include "XR/SVector2.hpp"
 #include "XR/debug.hpp"
-#include <SDL.h>
+#include "SDL.h"
 
 namespace XR
 {

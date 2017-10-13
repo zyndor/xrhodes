@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <SDL_timer.h>
+#include "SDL_timer.h"
 #include "XR/Timer.hpp"
 
 namespace XR
