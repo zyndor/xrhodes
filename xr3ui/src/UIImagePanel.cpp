@@ -203,8 +203,6 @@ void UIImagePanel::Render( UIRenderer* pRenderer ) const
 
   const FloatBuffer& fbSpriteVerts(sprite.GetVertices());
 
-  SVector2* pVerts(0);
-
   float hwSprite(sprite.GetHalfWidth());
   float wSprite(hwSprite * 2.0f);
 

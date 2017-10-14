@@ -100,7 +100,7 @@ public:
   static ConstBuffer* Create(uint32_t size)
   {
     size_t alignedSize = XR_ALIGN16(size);
-    void* mem = g_allocator->Allocate(size);
+    void* mem = g_allocator->Allocate(alignedSize);
     return new (mem)ConstBuffer(size);
   }
 

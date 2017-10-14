@@ -29,4 +29,4 @@ protected:
 
 } // XR
 
-#endif XR_RENDERINGRESOURCE_HPP
+#endif //XR_RENDERINGRESOURCE_HPP

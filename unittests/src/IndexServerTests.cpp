@@ -25,7 +25,7 @@ namespace XR
     ASSERT_EQ(serv.GetNumAcquired(), 4); // increasing with each allocation.
 
     // until the capacity has depleted - should fail with an exception
-    ASSERT_THROW(auto dummy = serv.Acquire(), std::bad_alloc);
+    ASSERT_THROW(serv.Acquire(), std::bad_alloc);
 
     serv.Release(0);
     ASSERT_EQ(serv.GetNumActive(), 4); // never decreasing

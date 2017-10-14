@@ -21,7 +21,6 @@ void LogMemory(void const * pMem, size_t numBytes, std::ostream & os)
   uint8_t const* pEnd = pRead + numBytes;
   while (pRead < pEnd)
   {
-    const uint8_t* pRow = pRead;
     os << static_cast<const void*>(pRead) << "  " << std::hex <<
       std::setw(2U) << std::setfill('0') << int(*pRead);
     ++pRead;
