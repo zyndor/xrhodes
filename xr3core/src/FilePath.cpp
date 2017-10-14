@@ -10,6 +10,10 @@ namespace XR
 {
 
 //==============================================================================
+const char FilePath::kDirSeparator = '/';
+const char FilePath::kExtSeparator = '.';
+
+//==============================================================================
 void FilePath::NormalizeDirSeparators()
 {
   char* p = m_buffer;

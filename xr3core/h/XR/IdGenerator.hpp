@@ -21,7 +21,7 @@ public:
   using IdType = uint32_t;
 
   // static
-  static IdType const kInvalidId = -1;
+  static IdType const kInvalidId;
 
   // structors
   IdGenerator()

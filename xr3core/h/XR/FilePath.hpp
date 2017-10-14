@@ -25,8 +25,8 @@ public:
   using Base = HardString<XR_MAX_PATH>;
 
   // static
-  static char const kDirSeparator = '/';
-  static char const kExtSeparator = '.';
+  static char const kDirSeparator;
+  static char const kExtSeparator;
 
   // structors
   FilePath(char const* path = "")

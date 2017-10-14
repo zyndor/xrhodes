@@ -61,7 +61,7 @@ namespace XR
       }
     };
 
-    XR_ASSET_DECL(TestAsset, "tes7")
+    XR_ASSET_DECL(TestAsset)
 
     virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
     {
@@ -72,6 +72,8 @@ namespace XR
     {
     }
   };
+
+  XR_ASSET_DEF(TestAsset, "tes7")
 
   XR::TestAsset::Builder testAssetBuilder;
 

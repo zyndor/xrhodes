@@ -455,13 +455,10 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 
 } // XR
 
-#define XR_ASSET_DECL(className, id)\
+#define XR_ASSET_DECL(className)\
   using Ptr = XR::Counted<className>;\
 \
-  static_assert(std::is_same<std::decay<decltype(id[0])>::type, char>::value, "Type ID for " #className " must be chars.");\
-  static_assert(XR_ARRAY_SIZE(id) == 5 && id[4] == '\0', "Type ID for " #className " must be 4 characters.");\
-\
-  static uint32_t const kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
+  static uint32_t const kTypeId;\
   static className* Create(Asset::DescriptorCore const& desc, FlagType flags) {\
     return new className(desc, flags);\
   }\
@@ -475,6 +472,12 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   {\
     Unload();\
   }
+
+#define XR_ASSET_DEF(className, id)\
+  static_assert(std::is_same<std::decay<decltype(id[0])>::type, char>::value, "Type ID for " #className " must be chars.");\
+  static_assert(XR_ARRAY_SIZE(id) == 5 && id[4] == '\0', "Type ID for " #className " must be 4 characters.");\
+\
+  uint32_t const className::kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
 
 
 #endif //XR_ASSET_HPP
