@@ -150,10 +150,7 @@ workspace "xr3.SDL"
 	filter {}
 	include "xr3ui/premake5.lua"
 	
-	-- VS unittests
-	if isVS() then
 		filter {}
 		include "unittests/premake5.lua"
-	end
 	
 	
