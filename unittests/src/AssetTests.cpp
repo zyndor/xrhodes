@@ -88,7 +88,7 @@ namespace XR
       std::uniform_int_distribution<uint32_t> distro;
 
       FileWriter fw;
-      FilePath rawPath(File::kRawProto / File::GetRomPath() / path);
+      FilePath rawPath(File::kRawProto + File::GetRomPath() / path);
       ASSERT_TRUE(fw.Open(rawPath, XR::FileWriter::Mode::Truncate, false));
       for (int i = 0; i < 2560000; ++i)
       {

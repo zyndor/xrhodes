@@ -179,7 +179,7 @@ namespace XR
     {
       auto worker = std::make_unique<Worker>();
 
-      std::atomic<int> hits;
+      std::atomic<int> hits(0);
       std::list<SpawnerJob> jobs;
 
       SpawnerJob j;

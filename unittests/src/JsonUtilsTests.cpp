@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
+#include "FileLifeCycleManager.hpp"
 #include "XR/File.hpp"
 #include "XR/jsonutils.hpp"
 #include "XR/JsonReader.hpp"
 #include "XR/ScopeGuard.hpp"
 #include "XR/debug.hpp"
-#include "FileLifeCycleManager.hpp"
 
 namespace XR
 {

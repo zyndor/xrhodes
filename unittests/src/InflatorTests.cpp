@@ -9,23 +9,26 @@
 
 namespace XR
 {
-  struct TestObject : public Inflatable
+  namespace
   {
-    TestObject const* pOther = nullptr;
-
-    virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
-    {}
-
-    virtual void Restore(std::istream & stream, Inflator & inflator) override
+    struct TestObject : public Inflatable
     {
-      Inflator::IdType  idOther;
-      if (ReadBinaryStream(stream, idOther))
+      TestObject const* pOther = nullptr;
+
+      virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
+      {}
+
+      virtual void Restore(std::istream & stream, Inflator & inflator) override
       {
-        inflator.RegisterMapping(idOther, pOther);
-        inflator.RegisterObject(*this);
+        Inflator::IdType  idOther;
+        if (ReadBinaryStream(stream, idOther))
+        {
+          inflator.RegisterMapping(idOther, pOther);
+          inflator.RegisterObject(*this);
+        }
       }
-    }
-  };
+    };
+  }
 
     TEST(Inflator, Basics)
     {

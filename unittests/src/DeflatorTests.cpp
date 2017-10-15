@@ -4,17 +4,20 @@
 
 namespace XR
 {
-  struct A : public XR::Inflatable
+  namespace
   {
-    int a;
+    struct A : public XR::Inflatable
+    {
+      int a;
 
-    // Inherited via Inflatable
-    virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
-    {}
+      // Inherited via Inflatable
+      virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
+      {}
 
-    virtual void Restore(std::istream & stream, Inflator & inflator) override
-    {}
-  };
+      virtual void Restore(std::istream & stream, Inflator & inflator) override
+      {}
+    };
+  }
 
   TEST(Deflator, Basics)
   {

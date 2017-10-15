@@ -75,7 +75,7 @@ workspace "xr3.SDL"
 
 	-- optimization
 	filter("not Release")
-		optimize "Debug"
+		optimize "Off"
 		symbols "On"
 		runtime "Debug"
 	filter{ "Release" }
