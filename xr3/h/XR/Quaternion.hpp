@@ -258,7 +258,6 @@ public:
     const float iSqr(i * i);
     const float jSqr(j * j);
     const float kSqr(k * k);
-    const float wSqr(w * w);
 
     Vector3 v(asinf(-2.0f * (i * k - j * w)),
       atan2f(2.0f * (k * j + i * w), 1.0f - 2.0f * (iSqr + jSqr)),
