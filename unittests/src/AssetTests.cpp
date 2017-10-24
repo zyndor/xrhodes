@@ -42,7 +42,7 @@ namespace XR
         return "test";
       }
 
-      virtual bool Build(uint8_t const * buffer, size_t size, FilePath const& targetPath) const override
+      virtual bool Build(uint8_t const* buffer, size_t size, FileWriter& assetWriter) const override
       {
         int histogram[256];
         memset(histogram, 0x00, sizeof(histogram));
@@ -54,10 +54,7 @@ namespace XR
           ++buffer;
         }
 
-        FileWriter writer;
-        return writer.Open(targetPath, XR::FileWriter::Mode::Truncate, false)
-          && writer.Write(&kTypeId, sizeof(kTypeId), 1)
-          && writer.Write(histogram, sizeof(histogram[0]), XR_ARRAY_SIZE(histogram));
+        return assetWriter.Write(histogram, sizeof(histogram[0]), XR_ARRAY_SIZE(histogram));
       }
     };
 

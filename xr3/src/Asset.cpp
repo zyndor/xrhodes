@@ -6,6 +6,7 @@
 //==============================================================================
 #include "XR/Asset.hpp"
 #include "XR/FileBuffer.hpp"
+#include "XR/FileWriter.hpp"
 #include "XR/Worker.hpp"
 #include "XR/Hash.hpp"
 #include <map>
@@ -45,7 +46,7 @@ struct LoadJob : Worker::Job
   virtual bool Process()
   {
     bool done = false;
-    if (!m_hFile)
+    if (!m_hFile) // Open file.
     {
       m_hFile = File::Open(m_path, "rb");
       done = m_hFile == nullptr;
@@ -56,23 +57,38 @@ struct LoadJob : Worker::Job
       }
     }
 
-    if (!done && m_data.size() == 0)
+    if (!done && m_data.size() == 0)  // get size
     {
       auto size = File::GetSize(m_hFile);
-      done = size == 0;
+      done = size < sizeof(Asset::DescriptorCore::type);
       if (done)
       {
-        XR_TRACE(Asset::Manager, ("Asset '%s' is an empty file.", m_path.c_str()));
+        XR_TRACE(Asset::Manager, ("Asset '%s' doesn't have a valid type ID.",
+          m_path.c_str()));
         asset->FlagError();
       }
-      else
+      else // check typeId and allocate buffer
       {
-        m_data.resize(size);
-        m_nextWrite = m_data.data();
+        size -= sizeof(Asset::DescriptorCore::type);
+        uint32_t typeId;
+        done = File::Read(m_hFile, sizeof(Asset::DescriptorCore::type), 1, &typeId) < 1;
+
+        if (done)
+        {
+          XR_TRACE(Asset::Manager, ("Type id mismatch, expected: %.4s, got: %.4s",
+            reinterpret_cast<char const*>(&asset->GetDescriptor().type),
+            reinterpret_cast<char const*>(&typeId)));
+          asset->FlagError();
+        }
+        else
+        {
+          m_data.resize(size);
+          m_nextWrite = m_data.data();
+        }
       }
     }
 
-    if (!done)
+    if (!done)  // read file chunk by chunk
     {
       const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - (m_nextWrite - m_data.data()));
       const size_t readSize = File::Read(m_hFile, 1, nextChunkSize, m_nextWrite);
@@ -403,18 +419,9 @@ bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
 }
 
 //==============================================================================
-void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
-  FlagType flags)
-{
-#ifdef XR_DEBUG
-  // Store the original path for debugging purposes
-  asset->m_debugPath = path.c_str();
-#endif
-
-  // Clear private flags and set Loading
-  asset->OverrideFlags(PrivateMask, LoadingFlag);
-
 #ifdef ENABLE_ASSET_BUILDING
+static void BuildAsset(FilePath const& path, Asset::Ptr const& asset)
+{
   // Check the name -- are we trying to load a raw or a built asset?
   // Strip ram/rom and asset roots.
   FilePath assetPath(File::StripRoots(path));
@@ -432,7 +439,7 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
     auto tsBuilt = File::GetModifiedTime(s_assetMan.path / finalPath.c_str());
 
     // If built asset doesn't exist or is older, then rebuild it.
-    if(tsBuilt < tsRaw)
+    if (tsBuilt < tsRaw)
     {
       auto ext = assetPath.GetExt();
       XR_ASSERT(Asset::Manager, ext);
@@ -459,7 +466,7 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
       }
 
       FilePath pathBuilt;
-      if (!done)  // build asset
+      if (!done)  // make asset directory if need be
       {
         pathBuilt = File::GetRamPath() / s_assetMan.path.c_str() / finalPath.c_str();
         done = !File::MakeDirs(pathBuilt);
@@ -470,9 +477,31 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
         }
       }
 
-      if (!done)
+      FileWriter assetWriter;
+      if (!done)  // create asset file
       {
-        done = !iFind->second->Build(fb.GetData(), fb.GetSize(), pathBuilt);
+        done = !assetWriter.Open(pathBuilt, FileWriter::Mode::Truncate, false);
+        if (done)
+        {
+          XR_TRACE(Asset::Manager, ("Failed to create file for built asset at %s.",
+            pathBuilt.c_str()));
+        }
+      }
+
+      if (!done)  // write typeId id
+      {
+        uint32_t typeId = asset->GetDescriptor().type;
+        done = !assetWriter.Write(&typeId, sizeof(typeId), 1);
+        if (done)
+        {
+          XR_TRACE(Asset::Manager, ("Failed to create file for built asset at %s.",
+            pathBuilt.c_str()));
+        }
+      }
+
+      if (!done)  // build asset
+      {
+        done = !iFind->second->Build(fb.GetData(), fb.GetSize(), assetWriter);
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", pathBuilt.c_str()));
@@ -481,6 +510,22 @@ void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
       }
     }
   }
+}
+#endif
+
+void Asset::Manager::LoadInternal(FilePath const& path, Asset::Ptr const& asset,
+  FlagType flags)
+{
+#ifdef XR_DEBUG
+  // Store the original path for debugging purposes
+  asset->m_debugPath = path.c_str();
+#endif
+
+  // Clear private flags and set Loading
+  asset->OverrideFlags(PrivateMask, LoadingFlag);
+
+#ifdef ENABLE_ASSET_BUILDING
+  BuildAsset(path, asset);
 
   // If we're flawless, process job.
   if (!CheckAllMaskBits(asset->GetFlags(), ErrorFlag))
