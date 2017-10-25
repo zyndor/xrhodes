@@ -11,6 +11,7 @@ project "unittests"
 	includedirs
 	{
 		"../external/gtest/include",
+		"../external/libpng",
 		"../unittests/h",
 		"../xr3core/h",
 		"../xr3json/h",
@@ -31,16 +32,23 @@ project "unittests"
 	}
 
     if target_env == "windows" then
-        -- TODO: links { SDL & friends }
+        links
+        {
+            "libpng16",
+            "zlib",
+            "opengl32",
+        }
     
         libdirs
         {
+            "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
             "../external/tinyxml/lib/$(Platform)/Release",
             "../external/SDL2/lib/$(PlatformShortName)/",
             "../external/SDL2_image/lib/$(PlatformShortName)",
             "../external/SDL2_mixer/lib/$(PlatformShortName)",
             "../external/glew/lib/Release/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
+            "../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
         }
 
     else
@@ -73,9 +81,17 @@ project "unittests"
 
         -- common *nix libdirs
         filter {}
+        links
+        {
+            "png16",
+            "z"
+        }
+
         libdirs
         {
+            "../external/libpng/lib/"..target_env.."/",
             "../external/tinyxml/lib/"..target_env.."/",
+            "../external/zlib/lib/"..target_env.."/",
         }
         
 		for _, p in ipairs(tbl_platforms) do
