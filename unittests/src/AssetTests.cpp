@@ -9,6 +9,12 @@
 
 namespace XR
 {
+  template <typename T>
+  static void AssertEq(T const& a, T const& b)
+  {
+    ASSERT_EQ(a, b);
+  }
+
   static void AssertStrEq(char const* a, char const* b)
   {
     ASSERT_STREQ(a, b);
@@ -70,12 +76,22 @@ namespace XR
 
     virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
     {
+      AssertEq(size, sizeof(histogram));  // size of data must be equal to what the builder has written.
+
+      for (int i = 0; i < XR_ARRAY_SIZE(histogram); ++i)
+      {
+        int x = reinterpret_cast<int const*>(buffer)[i];
+        histogram[i] = x;
+      }
+
       return true;
     }
 
     virtual void OnUnload() override
     {
     }
+
+    int histogram[256];
   };
 
   XR_ASSET_DEF(TestAsset, "tes7")
