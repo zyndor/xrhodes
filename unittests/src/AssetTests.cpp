@@ -121,26 +121,26 @@ namespace XR
     Asset::Manager::RegisterBuilder(testAssetBuilder);
     auto testAss = Asset::Manager::Load<TestAsset>(path);
 
-    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag));
-    ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
+    ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
 
     while (!(testAss->GetFlags() & (Asset::ReadyFlag | Asset::ErrorFlag)))
     {
       Asset::Manager::Update();
     }
-    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));
+    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));  // loaded successfully
 
-    ASSERT_EQ(testAss->GetRefCount(), 2);
+    ASSERT_EQ(testAss->GetRefCount(), 2); // two references: one in manager, one local
     Asset::Manager::UnloadUnused();
 
-    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag));
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag)); // still loaded
     auto desc = testAss->GetDescriptor();
 
     testAss.Reset(nullptr);
 
     Asset::Manager::UnloadUnused();
     auto cp = Asset::Manager::Find(desc);
-    ASSERT_EQ(cp->GetRefCount(), 2);
-    ASSERT_FALSE(CheckAllMaskBits(cp->GetFlags(), Asset::ReadyFlag));
+    ASSERT_EQ(cp->GetRefCount(), 2);  // not removed
+    ASSERT_FALSE(CheckAllMaskBits(cp->GetFlags(), Asset::ReadyFlag)); // unloaded
   }
 }

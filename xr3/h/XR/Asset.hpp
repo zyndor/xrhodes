@@ -26,7 +26,8 @@ class FileWriter;
 //==============================================================================
 ///@brief The Asset API provides facilities to create and asynchronously
 /// load assets, while managing dependencies and ownership.
-///@note Use XR_ASSET_DECL to facilitate implementation of concrete Asset types.
+///@note Use XR_ASSET_DECL and XR_ASSET_DEF to facilitate implementation of
+/// concrete Asset types.
 class Asset: public Countable
 {
 public:
@@ -215,9 +216,13 @@ public:
     /// map of managed assets.
     static Ptr Find(DescriptorCore const& desc);
 
+    ///@brief Attempts to retrieve a asset of the given descriptor, from the
+    /// map of managed assets.
     template <class T>
     static Counted<T> Find(Descriptor<T> const& desc);
 
+    ///@brief Attempts to retrieve a asset of that the given @a path hashes to,
+    /// from the map of managed assets.
     template <class T>
     static Counted<T> Find(FilePath const& path);
 

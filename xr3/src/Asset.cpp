@@ -332,7 +332,7 @@ void Asset::Manager::RegisterBuilder(Builder const& builder)
       }
       else if(!builder.Overridable())
       {
-        // If we've had a final builder, then registering another one is an error.
+        // If we've had a non-overridable builder, then registering another one is an error.
         XR_ERROR(("Builder clash on extension '%s'", std::string(exts, size).c_str()));
       }
     }
