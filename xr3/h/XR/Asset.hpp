@@ -123,7 +123,8 @@ public:
     ///@brief Performs the building and writing of the asset from the @a buffer
     /// of @a size bytes, into the given FileWriter @a fw.
     ///@note The type id will have been written to the file by the Asset::Manager.
-    virtual bool Build(uint8_t const* buffer, size_t size, FileWriter& assetWriter) const = 0;
+    virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
+      FileWriter& assetWriter) const = 0;
 
     ///@brief Determines what happens when trying to register a Builder for
     /// an extension that is already handled.

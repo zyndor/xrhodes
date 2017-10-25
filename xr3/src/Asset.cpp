@@ -501,7 +501,8 @@ static void BuildAsset(FilePath const& path, Asset::Ptr const& asset)
 
       if (!done)  // build asset
       {
-        done = !iFind->second->Build(fb.GetData(), fb.GetSize(), assetWriter);
+        done = !iFind->second->Build(assetPath.GetNameExt(), fb.GetData(), fb.GetSize(),
+          assetWriter);
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", pathBuilt.c_str()));

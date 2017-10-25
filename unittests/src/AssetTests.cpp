@@ -9,6 +9,11 @@
 
 namespace XR
 {
+  static void AssertStrEq(char const* a, char const* b)
+  {
+    ASSERT_STREQ(a, b);
+  }
+
   class AssetTests : public ::testing::Test
   {
   public:
@@ -42,8 +47,11 @@ namespace XR
         return "test";
       }
 
-      virtual bool Build(uint8_t const* buffer, size_t size, FileWriter& assetWriter) const override
+      virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
+        FileWriter& assetWriter) const override
       {
+        AssertStrEq(rawNameExt, "testasset.test");
+
         int histogram[256];
         memset(histogram, 0x00, sizeof(histogram));
 
