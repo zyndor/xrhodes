@@ -258,7 +258,7 @@ private:
 } s_assetMan;
 
 //==============================================================================
-void LoadAsset(Asset::Ptr const& asset, Asset::FlagType flags)
+static void LoadAsset(Asset::Ptr const& asset, Asset::FlagType flags)
 {
   if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
   {
