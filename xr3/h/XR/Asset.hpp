@@ -21,10 +21,13 @@
 namespace XR
 {
 
+class FileWriter;
+
 //==============================================================================
 ///@brief The Asset API provides facilities to create and asynchronously
 /// load assets, while managing dependencies and ownership.
-///@note Use XR_ASSET_DECL to facilitate implementation of concrete Asset types.
+///@note Use XR_ASSET_DECL and XR_ASSET_DEF to facilitate implementation of
+/// concrete Asset types.
 class Asset: public Countable
 {
 public:
@@ -118,9 +121,11 @@ public:
     /// be built by this Builder.
     virtual char const* GetExtensions() const = 0;
 
-    ///@brief Performs the building and writing of the asset into the file 
-    /// handle provided.
-    virtual bool Build(uint8_t const* buffer, size_t size, FilePath const& targetPath) const = 0;
+    ///@brief Performs the building and writing of the asset from the @a buffer
+    /// of @a size bytes, into the given FileWriter @a fw.
+    ///@note The type id will have been written to the file by the Asset::Manager.
+    virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
+      FileWriter& assetWriter) const = 0;
 
     ///@brief Determines what happens when trying to register a Builder for
     /// an extension that is already handled.
@@ -161,13 +166,20 @@ public:
     ///@brief Calculates the hash of the given path.
     ///@note If the file is in the asset path (given to Init()), then it
     /// must be a valid built asset.
-    ///@note Raw assets' hash is calculated from their stripped location
-    /// (File::StripRoots()), and no extension (the type that it should map
-    /// to is a separate part of the descriptor).
+    ///@note Raw assets' hash is calculated from their location, in the following
+    /// way:
+    /// - ram / rom and asset paths are stripped (but not the rest of the path).
+    /// - file extension is stripped (the type is a separate part of the
+    ///   descriptor).
     static uint64_t HashPath(FilePath path);
 
-    ///@brief Adds a asset at the given location, to the loading queue to
-    /// be loaded (or, if LoadSyncFlag was set, loads it synchronously).
+    ///@brief Attempts to load a built asset from the asset path that the
+    /// given @a path hashes to, either asynchronously (Manager::Update() will
+    /// need to be called regularly), or synchronously (if the LoadSyncFlag was
+    /// set). If asset building is enabled then the actual @a path will be
+    /// checked for a raw asset more recent than the built asset, and the asset
+    /// will be rebuilt. This must succeed for the successful loading of the
+    /// asset.
     template <class T>
     static Counted<T> Load(FilePath const& path, FlagType flags = 0)
     {
@@ -183,7 +195,9 @@ public:
       return asset;
     }
 
-    ///@brief Loads a built asset.
+    ///@brief Attempts to load a built asset from given descriptor, either
+    /// asynchronously (Manager::Update() will need to be called regularly),
+    /// or synchronously (if the LoadSyncFlag was set).
     template <class T>
     static Ptr Load(Descriptor<T> const& desc, FlagType flags = 0)
     {
@@ -202,9 +216,13 @@ public:
     /// map of managed assets.
     static Ptr Find(DescriptorCore const& desc);
 
+    ///@brief Attempts to retrieve a asset of the given descriptor, from the
+    /// map of managed assets.
     template <class T>
     static Counted<T> Find(Descriptor<T> const& desc);
 
+    ///@brief Attempts to retrieve a asset of that the given @a path hashes to,
+    /// from the map of managed assets.
     template <class T>
     static Counted<T> Find(FilePath const& path);
 
@@ -333,7 +351,7 @@ public:
     return expired;
   }
 
-  ///@brief Load the asset with the given source data.
+  ///@brief Loads the asset with the given source data.
   bool Load(size_t size, uint8_t const* buffer);
 
   ///@brief Unloads the Asset (calling OnUnload()) only if it has been loaded.
@@ -367,7 +385,7 @@ protected:
 #endif
 
   // virtual
-  ///@brief Called by the Asset::Manager when the asset data is loaded.
+  ///@brief Called asset data is loaded -- by Load().
   virtual bool OnLoaded(size_t size, uint8_t const* buffer) = 0;
 
   ///@brief Called when unloading of Asset data is requested.

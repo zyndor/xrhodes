@@ -9,6 +9,17 @@
 
 namespace XR
 {
+  template <typename T>
+  static void AssertEq(T const& a, T const& b)
+  {
+    ASSERT_EQ(a, b);
+  }
+
+  static void AssertStrEq(char const* a, char const* b)
+  {
+    ASSERT_STREQ(a, b);
+  }
+
   class AssetTests : public ::testing::Test
   {
   public:
@@ -42,8 +53,11 @@ namespace XR
         return "test";
       }
 
-      virtual bool Build(uint8_t const * buffer, size_t size, FilePath const& targetPath) const override
+      virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
+        FileWriter& assetWriter) const override
       {
+        AssertStrEq(rawNameExt, "testasset.test");
+
         int histogram[256];
         memset(histogram, 0x00, sizeof(histogram));
 
@@ -54,10 +68,7 @@ namespace XR
           ++buffer;
         }
 
-        FileWriter writer;
-        return writer.Open(targetPath, XR::FileWriter::Mode::Truncate, false)
-          && writer.Write(&kTypeId, sizeof(kTypeId), 1)
-          && writer.Write(histogram, sizeof(histogram[0]), XR_ARRAY_SIZE(histogram));
+        return assetWriter.Write(histogram, sizeof(histogram[0]), XR_ARRAY_SIZE(histogram));
       }
     };
 
@@ -65,12 +76,22 @@ namespace XR
 
     virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
     {
+      AssertEq(size, sizeof(histogram));  // size of data must be equal to what the builder has written.
+
+      for (int i = 0; i < XR_ARRAY_SIZE(histogram); ++i)
+      {
+        int x = reinterpret_cast<int const*>(buffer)[i];
+        histogram[i] = x;
+      }
+
       return true;
     }
 
     virtual void OnUnload() override
     {
     }
+
+    int histogram[256];
   };
 
   XR_ASSET_DEF(TestAsset, "tes7")
@@ -100,26 +121,26 @@ namespace XR
     Asset::Manager::RegisterBuilder(testAssetBuilder);
     auto testAss = Asset::Manager::Load<TestAsset>(path);
 
-    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag));
-    ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
+    ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
 
     while (!(testAss->GetFlags() & (Asset::ReadyFlag | Asset::ErrorFlag)))
     {
       Asset::Manager::Update();
     }
-    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));
+    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));  // loaded successfully
 
-    ASSERT_EQ(testAss->GetRefCount(), 2);
+    ASSERT_EQ(testAss->GetRefCount(), 2); // two references: one in manager, one local
     Asset::Manager::UnloadUnused();
 
-    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag));
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag)); // still loaded
     auto desc = testAss->GetDescriptor();
 
     testAss.Reset(nullptr);
 
     Asset::Manager::UnloadUnused();
     auto cp = Asset::Manager::Find(desc);
-    ASSERT_EQ(cp->GetRefCount(), 2);
-    ASSERT_FALSE(CheckAllMaskBits(cp->GetFlags(), Asset::ReadyFlag));
+    ASSERT_EQ(cp->GetRefCount(), 2);  // not removed
+    ASSERT_FALSE(CheckAllMaskBits(cp->GetFlags(), Asset::ReadyFlag)); // unloaded
   }
 }
