@@ -446,7 +446,6 @@ static void BuildAsset(FilePath const& path, Asset::Ptr const& asset)
       if (done)
       {
         XR_TRACE(Asset::Manager, ("Failed to find builder for '%s'.", ext));
-        asset->FlagError();
       }
 
       FileBuffer fb;
@@ -456,7 +455,6 @@ static void BuildAsset(FilePath const& path, Asset::Ptr const& asset)
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to read source '%s'.", path.c_str()));
-          asset->FlagError();
         }
         fb.Close();
       }
@@ -502,8 +500,12 @@ static void BuildAsset(FilePath const& path, Asset::Ptr const& asset)
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", pathBuilt.c_str()));
-          asset->FlagError();
         }
+      }
+
+      if (done)
+      {
+        asset->FlagError();
       }
     }
   }
