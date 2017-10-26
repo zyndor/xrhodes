@@ -123,7 +123,8 @@ public:
 
     ///@brief Performs the building and writing of the asset from the @a buffer
     /// of @a size bytes, into the given FileWriter @a fw.
-    ///@note The type id will have been written to the file by the Asset::Manager.
+    ///@note The type id and the version will have been written to the file by
+    /// the Asset::Manager.
     virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
       FileWriter& assetWriter) const = 0;
 
@@ -190,7 +191,7 @@ public:
       auto foundFlags = asset->GetFlags();
       if (IsLoadable(foundFlags, flags))
       {
-        LoadInternal(path, asset.template StaticCast<Asset>(), flags);
+        LoadInternal(T::kVersion, path, asset.template StaticCast<Asset>(), flags);
       }
       return asset;
     }
@@ -207,12 +208,12 @@ public:
       auto foundFlags = asset->GetFlags();
       if (IsLoadable(foundFlags, flags))
       {
-        LoadInternal(asset.template StaticCast<Asset>(), flags);
+        LoadInternal(T::kVersion, asset.template StaticCast<Asset>(), flags);
       }
       return asset;
     }
 
-    ///@brief Attempts to retrieve a asset of the given descriptor, from the
+    ///@brief Attempts to retrieve an asset of the given descriptor, from the
     /// map of managed assets.
     static Ptr Find(DescriptorCore const& desc);
 
@@ -269,8 +270,9 @@ public:
 
     static bool IsLoadable(FlagType oldFlags, FlagType newFlags);
 
-    static void LoadInternal(FilePath const& path, Ptr const& asset, FlagType flags);
-    static void LoadInternal(Ptr const& asset, FlagType flags);
+    static void LoadInternal(uint16_t version, FilePath const& path, Ptr const& asset,
+      FlagType flags);
+    static void LoadInternal(uint16_t version, Ptr const& asset, FlagType flags);
   };
 
   // structors
@@ -477,6 +479,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   using Ptr = XR::Counted<className>;\
 \
   static uint32_t const kTypeId;\
+  static uint16_t const kVersion;\
   static className* Create(Asset::DescriptorCore const& desc, FlagType flags) {\
     return new className(desc, flags);\
   }\
@@ -491,11 +494,13 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
     Unload();\
   }
 
-#define XR_ASSET_DEF(className, id)\
+#define XR_ASSET_DEF(className, id, version)\
   static_assert(std::is_same<std::decay<decltype(id[0])>::type, char>::value, "Type ID for " #className " must be chars.");\
   static_assert(XR_ARRAY_SIZE(id) == 5 && id[4] == '\0', "Type ID for " #className " must be 4 characters.");\
+  static_assert((version) <= std::numeric_limits<uint16_t>::max(), "Version must be uint16_t.");\
 \
   uint32_t const className::kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
+  uint16_t const className::kVersion = (version);\
 
 
 #endif //XR_ASSET_HPP
