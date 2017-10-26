@@ -124,6 +124,8 @@ workspace "xr3.SDL"
 	if target_env == "windows" then
 		system("windows")
 		systemversion "8.1"
+		
+		desktop = true
 	end
 
     -- Mac OSX
@@ -135,8 +137,17 @@ workspace "xr3.SDL"
 		flags {
 			"StaticRuntime"
 		}
+		
+		desktop = true
     end
 
+	if desktop then
+		filter { "Debug" }
+			defines  {
+				"ENABLE_ASSET_BUILDING"
+			}
+	end
+	
 	-- create projects
 	filter {}
 	include "xr3core/premake5.lua"
@@ -150,7 +161,7 @@ workspace "xr3.SDL"
 	filter {}
 	include "xr3ui/premake5.lua"
 	
-		filter {}
-		include "unittests/premake5.lua"
+	filter {}
+	include "unittests/premake5.lua"
 	
 	

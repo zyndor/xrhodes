@@ -11,10 +11,6 @@
 #include "XR/Hash.hpp"
 #include <map>
 
-#ifdef XR_DEBUG
-#define ENABLE_ASSET_BUILDING
-#endif
-
 namespace XR
 {
 
