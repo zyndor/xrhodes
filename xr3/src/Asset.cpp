@@ -52,88 +52,32 @@ struct LoadJob : Worker::Job
   virtual bool Process()
   {
     bool done = false;
-    if (!m_hFile) // Open file.
+    if (!m_hFile)
     {
-      m_hFile = File::Open(m_path, "rb");
-      done = m_hFile == nullptr;
-      if (done)
-      {
-        XR_TRACE(Asset::Manager, ("Failed to open asset '%s'.", m_path.c_str()));
-        asset->FlagError();
-      }
-    }
-
-    if (!done && m_data.empty())  // get size
-    {
-      auto size = File::GetSize(m_hFile);
-      AssetHeader header;
-      done = size < sizeof(AssetHeader);
-      if (done)
-      {
-        XR_TRACE(Asset::Manager, ("Asset '%s' doesn't have a valid header.",
-          m_path.c_str()));
-        asset->FlagError();
-      }
-      else // read header
-      {
-        size -= sizeof(header);
-
-        done = File::Read(m_hFile, sizeof(header), 1, &header) < 1;
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Failed to read header of asset %s",
-            m_path.c_str()));
-          asset->FlagError();
-        }
-      }
-
-      if (!done)  // check typeId
-      {
-        auto type = asset->GetDescriptor().type;
-        done = header.typeId != type;
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Asset version mismatch, expected: %d, got: %d",
-            type, header.typeId));
-          asset->FlagError();
-        }
-      }
-
-      if (!done)  // check version
-      {
-        done = header.version != m_version;
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Asset version mismatch, expected: %d, got: %d",
-            m_version, header.version));
-          asset->FlagError();
-        }
-      }
-
-      if (!done)  // allocate buffer
-      {
-        m_data.resize(size);
-        m_nextWrite = m_data.data();
-      }
+      done = PrepareLoading();
     }
 
     if (!done)  // read file chunk by chunk
     {
-      const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - (m_nextWrite - m_data.data()));
+      const auto progress = m_nextWrite - m_data.data();
+      const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - progress);
       const size_t readSize = File::Read(m_hFile, 1, nextChunkSize, m_nextWrite);
       done = readSize != nextChunkSize;
       if (done)
       {
         XR_TRACE(Asset::Manager, ("Failed to read %d bytes of asset '%s' @ %d of %d bytes",
-          nextChunkSize, m_path.c_str(), m_nextWrite - m_data.data(), m_data.size()));
+          nextChunkSize, m_path.c_str(), progress, m_data.size()));
         asset->FlagError();
       }
       else
       {
-        auto pos = m_nextWrite + readSize;
-        m_nextWrite = pos;
-        done = pos - m_data.data() == m_data.size();
-        asset->OverrideFlags(Asset::LoadingFlag, Asset::LoadedFlag);
+        m_nextWrite += readSize;
+
+        done = progress + readSize == m_data.size();
+        if (done)
+        {
+          asset->OverrideFlags(Asset::LoadingFlag, Asset::LoadedFlag);
+        }
       }
     }
 
@@ -154,6 +98,68 @@ private:
   uint8_t*              m_nextWrite = nullptr;
 
   // internal
+  bool PrepareLoading()
+  {
+    m_hFile = File::Open(m_path, "rb");
+    bool done = m_hFile == nullptr;
+    if (done)
+    {
+      XR_TRACE(Asset::Manager, ("Failed to open asset '%s'.", m_path.c_str()));
+    }
+
+    size_t size;
+    AssetHeader header;
+    if (!done)  // get size
+    {
+      size = File::GetSize(m_hFile);
+      done = size < sizeof(AssetHeader) ||
+        File::Read(m_hFile, sizeof(header), 1, &header) < 1;
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Failed to read header of asset %s",
+          m_path.c_str()));
+      }
+      else
+      {
+        size -= sizeof(header);
+      }
+    }
+
+    if (!done)  // check typeId
+    {
+      auto type = asset->GetDescriptor().type;
+      done = header.typeId != type;
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Asset '%s' type ID mismatch, expected: %d, got: %d",
+          m_path.c_str(), type, header.typeId));
+      }
+    }
+
+    if (!done)  // check version
+    {
+      done = header.version != m_version;
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Asset '%s' version mismatch, expected: %d, got: %d",
+          m_path.c_str(), m_version, header.version));
+      }
+    }
+
+    if (!done)  // allocate buffer
+    {
+      m_data.resize(size);
+      m_nextWrite = m_data.data();
+    }
+
+    if (done)
+    {
+      asset->FlagError();
+    }
+
+    return done;
+  }
+
   void CloseHandle()
   {
     if(m_hFile)
