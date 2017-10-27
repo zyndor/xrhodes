@@ -156,7 +156,7 @@ public:
     /// will be stripped from the supplied path.
     ///@note The asset path should not contain any other data, at the risk of
     /// being overwrittens.
-    static void Init(FilePath path = kDefaultPath, Allocator* alloc = nullptr);
+    static void Init(FilePath const& path = kDefaultPath, Allocator* alloc = nullptr);
 
     ///@brief Registers an Asset::Builder, which will provide the file extensions
     /// that it can process. See overriding rules on Builder::Overridable().

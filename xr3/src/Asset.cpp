@@ -171,18 +171,58 @@ private:
 };
 
 //==============================================================================
-struct
+struct AssetManagerImpl // TODO: improve encapsulation of members
 {
   // data
-  FilePath path;
-
   std::map<uint32_t, Asset::Builder const*> builders;
 
-  Allocator* allocator;
+  // structors
+  AssetManagerImpl(FilePath path, Allocator* alloc)
+  {
+    if(path.StartsWith(File::kRawProto))
+    {
+      path = path.c_str() + File::kRawProto.size();
+    }
 
-  Worker worker;
+    path = File::StripRoots(path);
+    if (path.empty())
+    {
+      path = Asset::Manager::kDefaultPath;
+    }
+    m_path.AppendDirSeparator();
 
+#ifdef ENABLE_ASSET_BUILDING
+    File::MakeDirs(m_path);
+#endif
+
+    if (!alloc)
+    {
+      static Mallocator mallocator;
+      alloc = &mallocator;
+    }
+
+    m_allocator = alloc;
+  }
+  
+  ~AssetManagerImpl()
+  {
+    m_worker.CancelPendingJobs();
+    m_worker.Finalize();
+    
+    ClearManaged();
+  }
+  
   // general
+  FilePath const& GetPath()
+  {
+    return m_path;
+  }
+  
+  Allocator* GetAllocator()
+  {
+    return m_allocator;
+  }
+  
   bool Manage(Asset::Ptr a)
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
@@ -235,7 +275,7 @@ struct
       m_pending.push_back(&lj);
     }
 
-    worker.Enqueue(lj);
+    m_worker.Enqueue(lj);
   }
 
   void UpdateJobs()
@@ -264,11 +304,21 @@ struct
       DeleteJob(*j);
     }
   }
+  
+  void SuspendJobs()
+  {
+    m_worker.Suspend();
+  }
+  
+  void ResumeJobs()
+  {
+    m_worker.Resume();
+  }
 
   void DeleteJob(LoadJob& lj)
   {
     lj.~LoadJob();
-    allocator->Deallocate(&lj);
+    m_allocator->Deallocate(&lj);
   }
 
   void UnloadUnused()
@@ -285,13 +335,19 @@ struct
 
 private:
   // data
+  FilePath m_path;
+  Allocator* m_allocator;
+
+  Worker m_worker;
+
   Spinlock m_assetsLock;
   std::map<Asset::DescriptorCore, Asset::Ptr> m_assets;
 
   Spinlock m_pendingLock;
   Queue<LoadJob*> m_pending;
+};
 
-} s_assetMan;
+static std::unique_ptr<AssetManagerImpl> s_assetMan;
 
 //==============================================================================
 static void LoadAsset(uint16_t version, Asset::Ptr const& asset, Asset::FlagType flags)
@@ -310,8 +366,8 @@ static void LoadAsset(uint16_t version, Asset::Ptr const& asset, Asset::FlagType
   }
   else
   {
-    auto lj = new (s_assetMan.allocator->Allocate(sizeof(LoadJob))) LoadJob(version, asset);
-    s_assetMan.EnqueueJob(*lj);
+    auto lj = new (s_assetMan->GetAllocator()->Allocate(sizeof(LoadJob))) LoadJob(version, asset);
+    s_assetMan->EnqueueJob(*lj);
   }
 }
 
@@ -319,31 +375,9 @@ static void LoadAsset(uint16_t version, Asset::Ptr const& asset, Asset::FlagType
 char const* const Asset::Manager::kDefaultPath = "assets";
 
 //==============================================================================
-void Asset::Manager::Init(FilePath path, Allocator* alloc)
+void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
 {
-  if(path.StartsWith(File::kRawProto))
-  {
-    path = path.c_str() + File::kRawProto.size();
-  }
-
-  path = File::StripRoots(path);
-  if (path.empty())
-  {
-    path = kDefaultPath;
-  }
-  s_assetMan.path.AppendDirSeparator();
-
-#ifdef ENABLE_ASSET_BUILDING
-  File::MakeDirs(s_assetMan.path);
-#endif
-
-  if (!alloc)
-  {
-    static Mallocator mallocator;
-    alloc = &mallocator;
-  }
-
-  s_assetMan.allocator = alloc;
+  s_assetMan.reset(new AssetManagerImpl(path, alloc));
 }
 
 //==============================================================================
@@ -358,13 +392,13 @@ void Asset::Manager::RegisterBuilder(Builder const& builder)
     if (size > 0)
     {
       const uint32_t hash = Hash::String32(exts, size);
-      auto iFind = s_assetMan.builders.find(hash);
+      auto iFind = s_assetMan->builders.find(hash);
 
       // If there's no conflict on an extension, or the pre-existing Builder is
       // Overridable(), then go ahead and register the new one.
-      if (iFind == s_assetMan.builders.end() || iFind->second->Overridable())
+      if (iFind == s_assetMan->builders.end() || iFind->second->Overridable())
       {
-        s_assetMan.builders.insert(iFind, { hash, &builder });
+        s_assetMan->builders.insert(iFind, { hash, &builder });
       }
       else if(!builder.Overridable())
       {
@@ -380,7 +414,7 @@ void Asset::Manager::RegisterBuilder(Builder const& builder)
 //==============================================================================
 const FilePath & Asset::Manager::GetAssetPath()
 {
-  return s_assetMan.path;
+  return s_assetMan->GetPath();
 }
 
 //==============================================================================
@@ -389,9 +423,9 @@ uint64_t Asset::Manager::HashPath(FilePath path)
   path = File::StripRoots(path);
   // Strip the asset path too, as the user is not required to specify it to
   // operate on assets.
-  if (path.StartsWith(s_assetMan.path))
+  if (path.StartsWith(s_assetMan->GetPath()))
   {
-    path = FilePath(path.c_str() + s_assetMan.path.size());
+    path = FilePath(path.c_str() + s_assetMan->GetPath().size());
   }
 
   // We have a built asset if the remaining path is in our built asset path format:
@@ -436,14 +470,14 @@ uint64_t Asset::Manager::HashPath(FilePath path)
 //==============================================================================
 Asset::Ptr Asset::Manager::Find(DescriptorCore const& desc)
 {
-  return s_assetMan.FindManaged(desc);
+  return s_assetMan->FindManaged(desc);
 }
 
 //==============================================================================
 bool Asset::Manager::Manage(Asset::Ptr asset)
 {
   XR_ASSERT(Asset::Manager, asset);
-  bool success = s_assetMan.Manage(asset);
+  bool success = s_assetMan->Manage(asset);
   return success;
 }
 
@@ -461,9 +495,9 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
   // Check the name -- are we trying to load a raw or a built asset?
   // Strip ram/rom and asset roots.
   FilePath assetPath(File::StripRoots(path));
-  if (assetPath.StartsWith(s_assetMan.path))
+  if (assetPath.StartsWith(s_assetMan->GetPath()))
   {
-    assetPath = FilePath(assetPath.c_str() + s_assetMan.path.size());
+    assetPath = FilePath(assetPath.c_str() + s_assetMan->GetPath().size());
   }
 
   FilePath finalPath = asset->GetDescriptor().ToPath();
@@ -472,7 +506,7 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
     // Check for raw and built asset, compare last modification time.
     auto tsRaw = File::GetModifiedTime(path); // must use original path!
     XR_ASSERTMSG(Asset::Manager, tsRaw > 0, ("'%s' doesn't exist.", path.c_str()));
-    auto tsBuilt = File::GetModifiedTime(s_assetMan.path / finalPath.c_str());
+    auto tsBuilt = File::GetModifiedTime(s_assetMan->GetPath() / finalPath.c_str());
 
     // If built asset doesn't exist or is older, then rebuild it.
     bool rebuild = tsBuilt < tsRaw;
@@ -503,8 +537,8 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
       XR_ASSERT(Asset::Manager, ext);
 
       uint32_t hash = Hash::String32(ext);
-      auto iFind = s_assetMan.builders.find(hash);
-      bool done = iFind == s_assetMan.builders.end();
+      auto iFind = s_assetMan->builders.find(hash);
+      bool done = iFind == s_assetMan->builders.end();
       if (done)
       {
         XR_TRACE(Asset::Manager, ("Failed to find builder for '%s'.", ext));
@@ -524,7 +558,7 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
       FilePath pathBuilt;
       if (!done)  // make asset directory if need be
       {
-        pathBuilt = File::GetRamPath() / s_assetMan.path.c_str() / finalPath.c_str();
+        pathBuilt = File::GetRamPath() / s_assetMan->GetPath().c_str() / finalPath.c_str();
         done = !File::MakeDirs(pathBuilt);
         if (done)
         {
@@ -616,7 +650,7 @@ bool Asset::Manager::Remove(Asset& asset)
   bool success = !CheckAllMaskBits(asset.GetFlags(), UnmanagedFlag);
   if (success)
   {
-    success = s_assetMan.RemoveManaged(asset);
+    success = s_assetMan->RemoveManaged(asset);
   }
   return success;
 }
@@ -624,34 +658,31 @@ bool Asset::Manager::Remove(Asset& asset)
 //==============================================================================
 void Asset::Manager::UnloadUnused()
 {
-  s_assetMan.UnloadUnused();
+  s_assetMan->UnloadUnused();
 }
 
 //==============================================================================
 void Asset::Manager::Update()
 {
-  s_assetMan.UpdateJobs();
+  s_assetMan->UpdateJobs();
 }
 
 //==============================================================================
 void Asset::Manager::Suspend()
 {
-  s_assetMan.worker.Suspend();
+  s_assetMan->SuspendJobs();
 }
 
 //==============================================================================
 void Asset::Manager::Resume()
 {
-  s_assetMan.worker.Resume();
+  s_assetMan->ResumeJobs();
 }
 
 //==============================================================================
 void Asset::Manager::Exit()
 {
-  s_assetMan.worker.CancelPendingJobs();
-  s_assetMan.worker.Finalize();
-
-  s_assetMan.ClearManaged();
+  s_assetMan.reset(nullptr);
 }
 
 //==============================================================================
