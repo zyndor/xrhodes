@@ -44,7 +44,6 @@ project "unittests"
             "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
             "../external/tinyxml/lib/$(Platform)/Release",
             "../external/SDL2/lib/$(PlatformShortName)/",
-            "../external/SDL2_image/lib/$(PlatformShortName)",
             "../external/SDL2_mixer/lib/$(PlatformShortName)",
             "../external/glew/lib/Release/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
@@ -56,7 +55,6 @@ project "unittests"
             -- note: unlike the libdirs, these are _two_ folders out. not entirely sure why.
             local framework_paths = {
                 "-F../../external/SDL2/",
-                "-F../../external/SDL2_image/",
                 "-F../../external/SDL2_mixer/",
             }
         
