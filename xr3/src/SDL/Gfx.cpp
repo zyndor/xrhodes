@@ -11,8 +11,8 @@
 #include "XR/SVector2.hpp"
 #include "XR/Pool.hpp"
 #include "XR/Hash.hpp"
+#include "gl_core_4_5.h"
 #include "SDL.h"
-#include "GL/glew.h"
 
 #include <set>
 #include <unordered_map>
@@ -84,8 +84,7 @@ const GLenum kPrimitiveTypes[] =
   GL_LINE_STRIP,
   GL_TRIANGLES,
   GL_TRIANGLE_STRIP,
-  GL_QUADS,
-  GL_QUAD_STRIP
+  GL_QUADS
 };
 
 //=============================================================================
@@ -609,14 +608,21 @@ struct Context
     m_physicalSize = SVector2(dm.w, dm.h);
     m_logicalSize = SVector2(width, height);
 
+    // Load GL functions. We're aiming quite high with the version number, simply
+    // because functionality has only been added to OpenGL (at least since 3.3)
+    // and because we should. Requesting a lower version context will likely lead
+    // to a rise in the number of load failures.
+    // TODO: Test properly + find a way to determine if anything crucial is unavailable.
+    auto numFailed = ogl_LoadFunctions();
+    if (numFailed > 0)
+    {
+      XR_TRACE(Gfx, ("Failed to load %d functions.", numFailed));
+    }
+
     // log vendor, renderer, driver version
     XR_TRACE(Gfx, ("Vendor: %s", glGetString(GL_VENDOR)));
     XR_TRACE(Gfx, ("Renderer: %s", glGetString(GL_RENDERER)));
     XR_TRACE(Gfx, ("Version: %s", glGetString(GL_VERSION)));
-
-    // Init GLEW.
-    glewExperimental = GL_TRUE;
-    XR_GL_CALL(glewInit());
 
     // initialise extensions
     InitExtensions(openGlVersionMajor * 10 + openGlVersionMinor);

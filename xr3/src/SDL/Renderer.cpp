@@ -15,6 +15,11 @@
 #include "XR/debug.hpp"
 #include "SDL.h"
 
+#ifdef XR_GL_CALL
+#undef XR_GL_CALL
+#endif
+#define XR_GL_CALL(x) // work around legacy OpenGL until we can rip Renderer out completely.
+
 namespace XR
 {
 
@@ -105,8 +110,6 @@ void Renderer::Init(void* mainWindow)
   s_rendererImpl.screenSize = SVector2(width, height); 
   
   // init OpenGL
-  glewExperimental = GL_TRUE;
-  XR_GL_CALL(glewInit());
 
   XR_GL_CALL(glViewport(0, 0, (GLsizei)s_rendererImpl.screenSize.x,
     (GLsizei)s_rendererImpl.screenSize.y));
@@ -472,7 +475,6 @@ static const GLenum arPrimTypeMappings[] =
   GL_TRIANGLES,
   GL_TRIANGLE_STRIP,
   GL_QUADS,
-  GL_QUAD_STRIP
 };
 
 //==============================================================================

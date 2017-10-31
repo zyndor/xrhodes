@@ -17,7 +17,6 @@ enum class PrimType
   TRI_LIST,
   TRI_STRIP,
   QUAD_LIST,
-  QUAD_STRIP,
 };
 
 } // XR

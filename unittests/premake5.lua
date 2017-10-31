@@ -45,7 +45,6 @@ project "unittests"
             "../external/tinyxml/lib/$(Platform)/Release",
             "../external/SDL2/lib/$(PlatformShortName)/",
             "../external/SDL2_mixer/lib/$(PlatformShortName)",
-            "../external/glew/lib/Release/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
             "../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
         }
@@ -71,7 +70,6 @@ project "unittests"
                         "../external/SDL2/lib/"..target_env..pc,
                         "../external/SDL2_image/lib/"..target_env..pc,
                         "../external/SDL2_mixer/lib/"..target_env..pc,
-                        --"../external/glew/lib/"..target_env.."/",
                     }
                 end
             end
