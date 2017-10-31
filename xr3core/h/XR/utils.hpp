@@ -92,7 +92,7 @@ struct  PtrHash
 inline
 bool CheckAnyMaskBits(uint32_t bits, uint32_t mask)
 {
-  return (bits & mask) != mask;
+  return (bits & mask) != 0;
 }
 
 //==============================================================================
