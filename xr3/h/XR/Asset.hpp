@@ -115,6 +115,18 @@ public:
   class Builder
   {
   public:
+    // types
+    ///@brief Registers an Asset::Builder, which will provide the file extensions
+    /// that it can process. See overriding rules on Builder::Overridable().
+    ///@note At least currently, a registration is permanent - the Builder is
+    /// only removed at static destruction time. There should be no need for
+    /// dynamically adding and removing Builders during the app lifecycle.
+    struct Registration
+    {
+      Registration(Builder const& builder);
+    };
+
+    // structors
     virtual ~Builder() {}
 
     ///@return ; separated list of extensions (not including '.'), that should
@@ -157,10 +169,6 @@ public:
     ///@note The asset path should not contain any other data, at the risk of
     /// being overwrittens.
     static void Init(FilePath const& path = kDefaultPath, Allocator* alloc = nullptr);
-
-    ///@brief Registers an Asset::Builder, which will provide the file extensions
-    /// that it can process. See overriding rules on Builder::Overridable().
-    static void RegisterBuilder(Builder const& builder);
 
     static const FilePath& GetAssetPath();
 

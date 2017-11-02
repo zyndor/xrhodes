@@ -118,7 +118,7 @@ namespace XR
       }
     }
 
-    Asset::Manager::RegisterBuilder(testAssetBuilder);
+    Asset::Builder::Registration reg(testAssetBuilder);
     auto testAss = Asset::Manager::Load<TestAsset>(path);
 
     ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
