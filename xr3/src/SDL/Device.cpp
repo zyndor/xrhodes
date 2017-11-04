@@ -385,24 +385,30 @@ void  Device::YieldOS(int32_t ms)
     case  SDL_KEYDOWN:
     case  SDL_KEYUP:
     {
-      Input::KeyEvent eKey =
+      if (InputImpl::s_pInstance)
       {
-        TranslateKeyCodeNative(e.key.keysym.scancode),
-        e.key.state == SDL_PRESSED
-      };
-      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_KEY], &eKey);
+        Input::KeyEvent eKey =
+        {
+          TranslateKeyCodeNative(e.key.keysym.scancode),
+          e.key.state == SDL_PRESSED
+        };
+        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_KEY], &eKey);
+      }
       break;
     }
       
     case  SDL_MOUSEMOTION:
     {
-      Input::MouseMotionEvent  eMouse =
+      if (InputImpl::s_pInstance)
       {
-        e.motion.which,
-        static_cast<int16_t>(e.motion.x),
-        static_cast<int16_t>(e.motion.y)
-      };
-      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_MOTION], &eMouse);
+        Input::MouseMotionEvent  eMouse =
+        {
+          e.motion.which,
+          static_cast<int16_t>(e.motion.x),
+          static_cast<int16_t>(e.motion.y)
+        };
+        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_MOTION], &eMouse);
+      }
       break;
     }
       
@@ -410,52 +416,61 @@ void  Device::YieldOS(int32_t ms)
     case  SDL_MOUSEBUTTONUP:
     case  SDL_MOUSEWHEEL:
     {
-      Input::MouseActionEvent  eMouse =
+      if (InputImpl::s_pInstance)
       {
-        e.button.which,
-        TranslateMouseButtonNative(e.button.button),
-        static_cast<int16_t>(e.button.x),
-        static_cast<int16_t>(e.button.y),
-        e.button.state == SDL_PRESSED
-      };
-      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_ACTION], &eMouse);
+        Input::MouseActionEvent  eMouse =
+        {
+          e.button.which,
+          TranslateMouseButtonNative(e.button.button),
+          static_cast<int16_t>(e.button.x),
+          static_cast<int16_t>(e.button.y),
+          e.button.state == SDL_PRESSED
+        };
+        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_ACTION], &eMouse);
+      }
       break;
     }
       
     case  SDL_FINGERUP:
     case  SDL_FINGERDOWN:
     {
-      int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
-      int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
-
-      Input::TouchActionEvent  eTouch =
+      if (InputImpl::s_pInstance)
       {
-        // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
-        static_cast<uint32_t>(e.tfinger.touchId),
-        static_cast<uint32_t>(e.tfinger.fingerId),
-        x,
-        y,
-        e.tfinger.type == SDL_FINGERDOWN
-      };
-      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_ACTION], &eTouch);
+        int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
+        int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
+
+        Input::TouchActionEvent  eTouch =
+        {
+          // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
+          static_cast<uint32_t>(e.tfinger.touchId),
+          static_cast<uint32_t>(e.tfinger.fingerId),
+          x,
+          y,
+          e.tfinger.type == SDL_FINGERDOWN
+        };
+        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_ACTION], &eTouch);
+      }
       break;
     }
     
     case  SDL_FINGERMOTION:
     {
-      int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
-      int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
-      
-      Input::TouchMotionEvent eTouch = 
+      if (InputImpl::s_pInstance)
       {
-        // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
-        static_cast<uint32_t>(e.tfinger.touchId),
-        static_cast<uint32_t>(e.tfinger.fingerId),
-        x,
-        y
-      };
-      CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_MOTION], &eTouch);
-      break;
+        int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
+        int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
+      
+        Input::TouchMotionEvent eTouch = 
+        {
+          // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
+          static_cast<uint32_t>(e.tfinger.touchId),
+          static_cast<uint32_t>(e.tfinger.fingerId),
+          x,
+          y
+        };
+        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_MOTION], &eTouch);
+        break;
+      }
     }
       
     case  SDL_CONTROLLERDEVICEADDED:
