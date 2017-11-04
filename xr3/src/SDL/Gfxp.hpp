@@ -169,7 +169,7 @@ public:
 
   void WriteData(UniformType t, uint8_t arraySize, uint16_t loc, void const* data)
   {
-    const size_t dataSize = kUniformTypeSize[uint8_t(t)] * arraySize;
+    const uint32_t dataSize = kUniformTypeSize[uint8_t(t)] * arraySize;
     XR_ASSERT(ConstBuffer, m_pos + sizeof(uint32_t) + dataSize < m_size);
     uint32_t refTypeSizeLoc = ((uint8_t(t) & 0x7f) << 24) // 1 bits ref (0), 7 bits type
       | (arraySize << 16) // 8 bits size
@@ -184,7 +184,7 @@ public:
     WriteBytes(&data, sizeof(T));
   }
 
-  void WriteBytes(void const* data, size_t size)
+  void WriteBytes(void const* data, uint32_t size)
   {
     XR_ASSERT(ConstBuffer, m_pos + size < m_size);
     uint8_t* p = GetPtr();
