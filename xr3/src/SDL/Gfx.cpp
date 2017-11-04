@@ -1008,7 +1008,7 @@ struct Context
   UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize)
   {
     // TODO: reserved uniforms
-    uint32_t const hash = XR::Hash::String(name);
+    uint32_t const hash = Hash::String32(name);
     auto iFind = m_uniformHandles.find(hash);
     UniformHandle h;
     bool existing = iFind != m_uniformHandles.end();
@@ -1212,7 +1212,7 @@ struct Context
         XR_GL_CALL(glGetActiveUniform(program.name, i, maxLen, NULL, &arraySize, &type, nameBuffer));
         loc = glGetUniformLocation(program.name, nameBuffer);
 
-        auto iFind = m_uniformHandles.find(XR::Hash::String(nameBuffer));
+        auto iFind = m_uniformHandles.find(Hash::String32(nameBuffer));
         if (iFind != m_uniformHandles.end())
         {
           UniformRef& ur = m_uniforms[iFind->second.id];
