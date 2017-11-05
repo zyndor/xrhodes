@@ -35,7 +35,7 @@ struct Ref
 };
 
 //==============================================================================
-template <typename T, size_t n>
+template <typename T, size_t n, size_t exempt = 0>
 struct ServicedArray
 {
   static const size_t kSize = n;
@@ -49,7 +49,7 @@ struct ServicedArray
   IndexServer server;
 
   ServicedArray()
-  : server(kSize)
+  : server(kSize - exempt)
   {}
 
   T& operator[](size_t i)
@@ -218,4 +218,6 @@ static_assert(sizeof(ConstBuffer) == 16, "sizeof(ConstBuffer) must be 16 bytes."
 }
 }
 
+#else
+#error "One include only, please."
 #endif

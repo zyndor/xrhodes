@@ -213,6 +213,7 @@ template <typename T>
 struct HandleCore : HandleCoreCore
 {
   bool operator==(T const& rhs) const { return id == rhs.id; }
+  bool operator!=(T const& rhs) const { return !operator==(rhs); }
   bool operator<(T const& rhs) const { return id < rhs.id; }
 };
 }
@@ -277,6 +278,11 @@ void Destroy(IndexBufferHandle h);
 TextureHandle CreateTexture(TextureFormat hFormat, uint32_t width,
   uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
   size_t numBuffers = 1);
+
+// default textures.
+TextureHandle GetDefaultTexture2D();
+TextureHandle GetDefaultTexture3D();
+TextureHandle GetDefaultTextureCube();
 
 TextureInfo GetTextureInfo(TextureHandle h);
 

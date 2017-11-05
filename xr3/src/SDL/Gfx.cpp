@@ -26,6 +26,11 @@ namespace Gfx
 #define UINT_PTR_CAST(x) reinterpret_cast<void*>(static_cast<uintptr_t>(x))
 
 //=============================================================================
+static TextureHandle kDefaultTexture2D;
+static TextureHandle kDefaultTexture3D;
+static TextureHandle kDefaultTextureCube;
+
+//=============================================================================
 char const *const  kAttributeName[] =
 {
 	"aPosition",
@@ -627,6 +632,16 @@ struct Context
       XR_GL_CALL(glBindVertexArray(m_vao));
     }
 
+    // create default texturess
+    kDefaultTexture2D.id = decltype(m_textures)::kSize - 1;
+    CreateDefaultTexture(kDefaultTexture2D, GL_TEXTURE_2D);
+
+    kDefaultTexture3D.id = decltype(m_textures)::kSize - 2;
+    CreateDefaultTexture(kDefaultTexture3D, GL_TEXTURE_3D);
+
+    kDefaultTextureCube.id = decltype(m_textures)::kSize - 3;
+    CreateDefaultTexture(kDefaultTextureCube, GL_TEXTURE_CUBE_MAP);
+
     // initialise frame pool
     int poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
     m_framePool.SetBuffer(poolSize, true, 0);
@@ -872,14 +887,17 @@ struct Context
   void Destroy(TextureHandle h)
   {
     TextureRef& texture = m_textures[h.id];
-    XR_ASSERT(Gfx, texture.refCount > 0);
-    --texture.refCount;
-    if (texture.refCount == 0)
+    if(texture.inst.name != 0)
     {
-      XR_GL_CALL(glDeleteTextures(1, &texture.inst.name));
-      std::memset(&texture.inst, 0x00, sizeof(Texture));
+      XR_ASSERT(Gfx, texture.refCount > 0);
+      --texture.refCount;
+      if (texture.refCount == 0)
+      {
+        XR_GL_CALL(glDeleteTextures(1, &texture.inst.name));
+        std::memset(&texture.inst, 0x00, sizeof(Texture));
 
-      m_textures.server.Release(h.id);
+        m_textures.server.Release(h.id);
+      }
     }
   }
 
@@ -1518,7 +1536,7 @@ private:
 
   ServicedArray<VertexBufferObject, 4096> m_vbos;
   ServicedArray<IndexBufferObject, 4096> m_ibos;
-  ServicedArray<TextureRef, 1024> m_textures;
+  ServicedArray<TextureRef, 1024, 3> m_textures;
   ServicedArray<FrameBuffer, 256> m_fbos;
 
   ServicedArray<UniformRef, 1024> m_uniforms;
@@ -1580,6 +1598,14 @@ private:
     {
       program.UnbindInstanceData();
     }
+  }
+
+  void CreateDefaultTexture(TextureHandle const& handle, GLenum target)
+  {
+    auto& texture = m_textures.data[handle.id];
+    texture.refCount = 0;
+    texture.inst.name = 0;
+    texture.inst.target = target;
   }
 };
 
@@ -1680,6 +1706,24 @@ TextureHandle CreateTexture(TextureFormat format, uint32_t width,
   size_t numBuffers)
 {
   return s_impl->CreateTexture(format, width, height, depth, flags, buffer, numBuffers);
+}
+
+//=============================================================================
+TextureHandle GetDefaultTexture2D()
+{
+  return kDefaultTexture2D;
+}
+
+//=============================================================================
+TextureHandle GetDefaultTexture3D()
+{
+  return kDefaultTexture3D;
+}
+
+//=============================================================================
+TextureHandle GetDefaultTextureCube()
+{
+  return kDefaultTextureCube;
 }
 
 //=============================================================================
