@@ -54,12 +54,12 @@ namespace XR
       }
 
       virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
-        FileWriter& assetWriter) const override
+        std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const override
       {
         AssertStrEq(rawNameExt, "testasset.test");
 
-        int histogram[256];
-        memset(histogram, 0x00, sizeof(histogram));
+        data.resize(256 * sizeof(int), 0);
+        int* histogram = reinterpret_cast<int*>(data.data());
 
         auto end = buffer + size;
         while (buffer < end)
@@ -68,7 +68,7 @@ namespace XR
           ++buffer;
         }
 
-        return assetWriter.Write(histogram, sizeof(histogram[0]), XR_ARRAY_SIZE(histogram));
+        return true;
       }
     };
 
@@ -76,7 +76,9 @@ namespace XR
 
     virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
     {
-      AssertEq(size, sizeof(histogram));  // size of data must be equal to what the builder has written.
+      AssertEq(size, sizeof(uint16_t) + sizeof(histogram));  // size of data must be equal to uint16_t number of dependencies + histogram
+      uint16_t  numDependencies = *reinterpret_cast<uint16_t const*>(buffer);
+      buffer += sizeof(uint16_t);
 
       for (int i = 0; i < XR_ARRAY_SIZE(histogram); ++i)
       {

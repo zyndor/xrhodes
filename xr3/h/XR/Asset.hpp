@@ -131,12 +131,10 @@ public:
     /// be built by this Builder.
     virtual char const* GetExtensions() const = 0;
 
-    ///@brief Performs the building and writing of the asset from the @a buffer
-    /// of @a size bytes, into the given FileWriter @a fw.
-    ///@note The type id and the version will have been written to the file by
-    /// the Asset::Manager.
+    ///@brief Parses @a buffer of size @a size bytes, and produces two buffers
+    /// of @a dependencies and asset @a data for writing into the built asset.
     virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
-      FileWriter& assetWriter) const = 0;
+      std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const = 0;
 
     ///@brief Determines what happens when trying to register a Builder for
     /// an extension that is already handled.

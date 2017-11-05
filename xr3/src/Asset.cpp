@@ -399,6 +399,8 @@ static void RegisterBuilder(Asset::Builder& builder)
 //==============================================================================
 static void LoadAsset(uint16_t version, Asset::Ptr const& asset, Asset::FlagType flags)
 {
+  // TODO: move header and dependencies checking i.e. LoadJob::PrepareLoading() to here.
+
   if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
   {
     LoadJob lj(version, asset);
@@ -609,13 +611,35 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
         }
       }
 
+      std::vector<FilePath> dependencies;
+      std::vector<uint8_t> assetData;
       if (!done)  // build asset
       {
         done = !iFind->second->Build(assetPath.GetNameExt(), fb.GetData(), fb.GetSize(),
-          assetWriter);
+          dependencies, assetData);
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", pathBuilt.c_str()));
+        }
+      }
+
+      if (!done)  // write built asset
+      {
+        done = !assetWriter.Write(uint16_t(dependencies.size()));
+        for (auto i0 = dependencies.begin(), i1 = dependencies.end(); !done && i0 != i1; ++i0)
+        {
+          done = !(assetWriter.Write(uint16_t(i0->size())) ||
+            assetWriter.Write(i0->data(), 1, i0->size()));
+        }
+
+        if (!done)
+        {
+          done = !assetWriter.Write(assetData.data(), 1, assetData.size());
+        }
+
+        if (done)
+        {
+          XR_TRACE(Asset::Manager, ("Failed to write built asset '%s'.", pathBuilt.c_str()));
         }
       }
 
