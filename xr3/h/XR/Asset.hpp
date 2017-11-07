@@ -34,6 +34,8 @@ class Asset: public Countable
 public:
   // types
   using Ptr = Counted<Asset>;
+  using TypeId = uint32_t;
+  using HashType = uint64_t;
 
   using FlagType = uint32_t;
   enum Flags: FlagType
@@ -448,7 +450,7 @@ template<class T>
 inline
 Counted<T> Asset::Manager::CreateInternal(DescriptorCore const& desc, FlagType flags)
 {
-  Ptr asset(T::Create(desc, flags));
+  Ptr asset(T::Create(desc.hash, flags));
   if (!CheckAllMaskBits(flags, UnmanagedFlag))
   {
     Manage(asset);
@@ -484,8 +486,8 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 \
   static uint32_t const kTypeId;\
   static uint16_t const kVersion;\
-  static className* Create(Asset::DescriptorCore const& desc, FlagType flags) {\
-    return new className(desc, flags);\
+  static Asset* Create(HashType hash, FlagType flags) {\
+    return new className(DescriptorCore(kTypeId, hash), flags);\
   }\
   static Asset::Builder const& GetBuilder();\
 \
