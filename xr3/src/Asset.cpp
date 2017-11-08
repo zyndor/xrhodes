@@ -360,6 +360,42 @@ static std::unique_ptr<AssetManagerImpl> s_assetMan;
 }
 
 //==============================================================================
+static void RegisterBuilder(Asset::Builder& builder)
+{
+#ifdef ENABLE_ASSET_BUILDING
+  auto exts = builder.GetExtensions();
+  while (exts)
+  {
+    auto next = strchr(exts, ';');
+    size_t size = next ? next - exts : strlen(exts);
+    if (size > 0)
+    {
+      const uint32_t hash = Hash::String32(exts, size);
+      auto iFind = s_assetBuilders.find(hash);
+
+      // If there's no conflict on an extension, or the pre-existing Builder is
+      // Overridable(), then go ahead and register the new one.
+      if (iFind == s_assetBuilders.end() || iFind->second->Overridable())
+      {
+        s_assetBuilders.insert(iFind, { hash, &builder });
+      }
+      else if (!builder.Overridable())
+      {
+        // If we've had a non-overridable builder, then registering another one is an error.
+        XR_ERROR(("Builder clash on extension '%s'", std::string(exts, size).c_str()));
+      }
+
+      if (next)
+      {
+        ++next;
+      }
+    }
+    exts = next;
+  }
+#endif  // ENABLE_ASSET_BUILDING
+}
+
+//==============================================================================
 static void LoadAsset(uint16_t version, Asset::Ptr const& asset, Asset::FlagType flags)
 {
   if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
@@ -388,6 +424,8 @@ char const* const Asset::Manager::kDefaultPath = "assets";
 void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
 {
   s_assetMan.reset(new AssetManagerImpl(path, alloc));
+
+  Builder::Base::ForEach(RegisterBuilder);
 }
 
 //==============================================================================
@@ -661,43 +699,8 @@ void Asset::Manager::Resume()
 //==============================================================================
 void Asset::Manager::Exit()
 {
+  s_assetBuilders.clear();
   s_assetMan.reset(nullptr);
-}
-
-//==============================================================================
-Asset::Builder::Registration::Registration(Builder const& builder)
-{
-#ifdef ENABLE_ASSET_BUILDING
-  auto exts = builder.GetExtensions();
-  while (exts)
-  {
-    auto next = strchr(exts, ';');
-    size_t size = next ? next - exts : strlen(exts);
-    if (size > 0)
-    {
-      const uint32_t hash = Hash::String32(exts, size);
-      auto iFind = s_assetBuilders.find(hash);
-
-      // If there's no conflict on an extension, or the pre-existing Builder is
-      // Overridable(), then go ahead and register the new one.
-      if (iFind == s_assetBuilders.end() || iFind->second->Overridable())
-      {
-        s_assetBuilders.insert(iFind, { hash, &builder });
-      }
-      else if (!builder.Overridable())
-      {
-        // If we've had a non-overridable builder, then registering another one is an error.
-        XR_ERROR(("Builder clash on extension '%s'", std::string(exts, size).c_str()));
-      }
-
-      if (next)
-      {
-        ++next;
-      }
-    }
-    exts = next;
-  }
-#endif  // ENABLE_ASSET_BUILDING
 }
 
 //==============================================================================

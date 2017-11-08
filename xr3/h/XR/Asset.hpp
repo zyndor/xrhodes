@@ -11,6 +11,7 @@
 #include "XR/Counted.hpp"
 #include "XR/Counter.hpp"
 #include "XR/Hash.hpp"
+#include "XR/Linked.hpp"
 #include "XR/fundamentals.hpp"
 #include "XR/memory.hpp"
 #include "XR/utils.hpp"
@@ -112,22 +113,19 @@ public:
   /// format. The Manager reads files and hands the data from those with
   /// the Builder's supported extension to them, along with a path to write
   /// the built asset to.
-  class Builder
+  class Builder: Linked<Builder>
   {
   public:
     // types
-    ///@brief Registers an Asset::Builder, which will provide the file extensions
-    /// that it can process. See overriding rules on Builder::Overridable().
-    ///@note At least currently, a registration is permanent - the Builder is
-    /// only removed at static destruction time. There should be no need for
-    /// dynamically adding and removing Builders during the app lifecycle.
-    struct Registration
-    {
-      Registration(Builder const& builder);
-    };
+    using Base = Linked<Builder>;
 
     // structors
-    virtual ~Builder() {}
+    Builder()
+    : Base(*this)
+    {}
+
+    virtual ~Builder()
+    {}
 
     ///@return ; separated list of extensions (not including '.'), that should
     /// be built by this Builder.

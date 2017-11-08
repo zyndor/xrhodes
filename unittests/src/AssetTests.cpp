@@ -96,7 +96,7 @@ namespace XR
 
   XR_ASSET_DEF(TestAsset, "tes7", 1)
 
-  XR::TestAsset::Builder testAssetBuilder;
+  TestAsset::Builder testAssetBuilder;
 
   TEST_F(AssetTests, Basics)
   {
@@ -118,7 +118,6 @@ namespace XR
       }
     }
 
-    Asset::Builder::Registration reg(testAssetBuilder);
     auto testAss = Asset::Manager::Load<TestAsset>(path);
 
     ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
