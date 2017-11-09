@@ -96,7 +96,7 @@ namespace XR
     int histogram[256];
   };
 
-  XR_ASSET_DEF(TestAsset, "tes7", 1)
+  XR_ASSET_DEF(TestAsset, "tes7", 1, "test")
 
   TestAsset::Builder testAssetBuilder;
 

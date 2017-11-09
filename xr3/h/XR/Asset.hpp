@@ -36,6 +36,7 @@ public:
   using Ptr = Counted<Asset>;
   using TypeId = uint32_t;
   using HashType = uint64_t;
+  using VersionType = uint16_t;
 
   using FlagType = uint32_t;
   enum Flags: FlagType
@@ -109,6 +110,30 @@ public:
     explicit Descriptor(uint64_t hash_ = 0)
     : DescriptorCore(Type::kTypeId, hash_)
     {}
+  };
+
+  ///@brief Internal only use class, responsible for enabling reflection (based
+  /// on a compile time type ID and a semicolon-separated list of extensions)
+  /// for an asset type.
+  struct Reflector: Linked<Reflector const>
+  {
+    // types
+    using Base = Linked<Reflector const>;
+    using Fn = Asset*(*)(HashType, FlagType);
+
+    // structors
+    Reflector(TypeId type_, VersionType version_, Fn fn_, char const* extensions_)
+    : Linked<Reflector const>(*this),
+      type(type_),
+      version(version_),
+      fn(fn_),
+      extensions(extensions_)
+    {}
+
+    TypeId type;
+    VersionType version;
+    Fn fn;
+    char const* extensions;
   };
 
   ///@brief Builders are responsible for converting raw assets into engine
@@ -280,6 +305,9 @@ public:
       FlagType flags);
     static void LoadInternal(uint16_t version, Ptr const& asset, FlagType flags);
   };
+
+  // static
+  static Asset* Reflect(TypeId typeId, HashType hash, FlagType flags = 0);
 
   // structors
   virtual ~Asset()
@@ -500,13 +528,18 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
     Unload();\
   }
 
-#define XR_ASSET_DEF(className, id, version)\
+#define XR_ASSET_DEF(className, id, version, extensions)\
   static_assert(std::is_same<std::decay<decltype(id[0])>::type, char>::value, "Type ID for " #className " must be chars.");\
   static_assert(XR_ARRAY_SIZE(id) == 5 && id[4] == '\0', "Type ID for " #className " must be 4 characters.");\
   static_assert((version) <= std::numeric_limits<uint16_t>::max(), "Version must be uint16_t.");\
 \
   uint32_t const className::kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
   uint16_t const className::kVersion = (version);\
+\
+  namespace {\
+  XR::Asset::Reflector xr ## className ## Reflector(className::kTypeId,\
+    className::kVersion, className::Create, extensions);\
+  }
 
 
 #endif //XR_ASSET_HPP

@@ -352,6 +352,11 @@ private:
 namespace
 {
 
+using ReflectorMap = std::map<Asset::TypeId, Asset::Reflector const*>;
+ReflectorMap s_reflectors;
+
+std::map<uint32_t, ReflectorMap::iterator> s_extensions;
+
 #ifdef ENABLE_ASSET_BUILDING
 std::unordered_map<uint32_t, Asset::Builder const*> s_assetBuilders;
 #endif
@@ -361,7 +366,39 @@ static std::unique_ptr<AssetManagerImpl> s_assetMan;
 }
 
 //==============================================================================
-static void RegisterBuilder(Asset::Builder& builder)
+static void RegisterReflector(Asset::Reflector const& r)
+{
+  // Register reflector.
+  auto iReflector = s_reflectors.find(r.type);
+  XR_ASSERTMSG(Asset::Manager, iReflector == s_reflectors.end(),
+    ("Reflector already registered for type %x", r.type));
+  iReflector = s_reflectors.insert(iReflector, { r.type, &r });
+  
+  // Hash and map extensions to reflector [registration].
+  auto exts = r.extensions;
+  while (exts)
+  {
+    auto next = strchr(exts, ';');
+    size_t size = next ? next - exts : strlen(exts);
+    if (size > 0)
+    {
+      const uint32_t hash = Hash::String32(exts, size);
+      auto iExt = s_extensions.find(hash);
+      XR_ASSERTMSG(Asset::Manager, iExt == s_extensions.end(),
+        ("Extension %.*s already registered.", size, exts));
+      s_extensions.insert(iExt, { hash, iReflector });
+
+      if (next)
+      {
+        ++next;
+      }
+    }
+    exts = next;
+  }
+}
+
+//==============================================================================
+static void RegisterBuilder(Asset::Builder const& builder)
 {
 #ifdef ENABLE_ASSET_BUILDING
   auto exts = builder.GetExtensions();
@@ -428,6 +465,7 @@ void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
 {
   s_assetMan.reset(new AssetManagerImpl(path, alloc));
 
+  Reflector::Base::ForEach(RegisterReflector);
   Builder::Base::ForEach(RegisterBuilder);
 }
 
@@ -727,7 +765,17 @@ void Asset::Manager::Resume()
 void Asset::Manager::Exit()
 {
   s_assetBuilders.clear();
+  s_reflectors.clear();
+  s_extensions.clear();
   s_assetMan.reset(nullptr);
+}
+
+//==============================================================================
+Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
+{
+  auto iFind = s_reflectors.find(typeId);
+  XR_ASSERT(Asset, iFind != s_reflectors.end());
+  return (*iFind->second->fn)(hash, flags);
 }
 
 //==============================================================================
