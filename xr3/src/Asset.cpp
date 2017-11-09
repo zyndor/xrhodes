@@ -22,8 +22,8 @@ namespace XR
 //==============================================================================
 struct AssetHeader
 {
-  uint32_t typeId;
-  uint16_t version;
+  Asset::TypeId typeId;
+  Asset::VersionType version;
   uint16_t reserved;
 };
 
@@ -398,40 +398,15 @@ static void RegisterReflector(Asset::Reflector const& r)
 }
 
 //==============================================================================
+#ifdef ENABLE_ASSET_BUILDING
 static void RegisterBuilder(Asset::Builder const& builder)
 {
-#ifdef ENABLE_ASSET_BUILDING
-  auto exts = builder.GetExtensions();
-  while (exts)
-  {
-    auto next = strchr(exts, ';');
-    size_t size = next ? next - exts : strlen(exts);
-    if (size > 0)
-    {
-      const uint32_t hash = Hash::String32(exts, size);
-      auto iFind = s_assetBuilders.find(hash);
-
-      // If there's no conflict on an extension, or the pre-existing Builder is
-      // Overridable(), then go ahead and register the new one.
-      if (iFind == s_assetBuilders.end() || iFind->second->Overridable())
-      {
-        s_assetBuilders.insert(iFind, { hash, &builder });
-      }
-      else if (!builder.Overridable())
-      {
-        // If we've had a non-overridable builder, then registering another one is an error.
-        XR_ERROR(("Builder clash on extension '%s'", std::string(exts, size).c_str()));
-      }
-
-      if (next)
-      {
-        ++next;
-      }
-    }
-    exts = next;
-  }
-#endif  // ENABLE_ASSET_BUILDING
+  auto iBuilder = s_assetBuilders.find(builder.type);
+  XR_ASSERTMSG(Asset::Manager, iBuilder == s_assetBuilders.end(),
+    ("Builder already registered for type %x", builder.type));
+  s_assetBuilders.insert(iBuilder, { builder.type, &builder });
 }
+#endif  // ENABLE_ASSET_BUILDING
 
 //==============================================================================
 static void LoadAsset(uint16_t version, Asset::Ptr const& asset, Asset::FlagType flags)
@@ -466,7 +441,9 @@ void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
   s_assetMan.reset(new AssetManagerImpl(path, alloc));
 
   Reflector::Base::ForEach(RegisterReflector);
+#ifdef ENABLE_ASSET_BUILDING
   Builder::Base::ForEach(RegisterBuilder);
+#endif
 }
 
 //==============================================================================
@@ -548,7 +525,7 @@ bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
 
 //==============================================================================
 #ifdef ENABLE_ASSET_BUILDING
-static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const& asset)
+static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::Ptr const& asset)
 {
   // Check the name -- are we trying to load a raw or a built asset?
   // Strip ram/rom and asset roots.
@@ -580,7 +557,7 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
         }
       });
 
-      uint16_t versionFound;
+      Asset::VersionType versionFound;
       // Not being able to open the file (which we know for sure exists), to
       // seek 4 bytes and to read a version number isn't a hard error -- we'll
       // just have to rebuild, and we can deal with any persistent I/O errors
@@ -593,15 +570,12 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
 
     if (rebuild)
     {
-      auto ext = assetPath.GetExt();
-      XR_ASSERT(Asset::Manager, ext);
-
-      uint32_t hash = Hash::String32(ext);
-      auto iFind = s_assetBuilders.find(hash);
+      Asset::TypeId type = asset->GetDescriptor().type;
+      auto iFind = s_assetBuilders.find(type);
       bool done = iFind == s_assetBuilders.end();
       if (done)
       {
-        XR_TRACE(Asset::Manager, ("Failed to find builder for '%s'.", ext));
+        XR_TRACE(Asset::Manager, ("Failed to find builder for type %x.", type));
       }
 
       FileBuffer fb;
@@ -764,7 +738,9 @@ void Asset::Manager::Resume()
 //==============================================================================
 void Asset::Manager::Exit()
 {
+#ifdef ENABLE_ASSET_BUILDING
   s_assetBuilders.clear();
+#endif
   s_reflectors.clear();
   s_extensions.clear();
   s_assetMan.reset(nullptr);

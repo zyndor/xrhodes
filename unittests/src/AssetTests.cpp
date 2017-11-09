@@ -46,32 +46,6 @@ namespace XR
   // Test Asset and Builder
   struct TestAsset : Asset
   {
-    struct Builder : Asset::Builder
-    {
-      virtual char const * GetExtensions() const override
-      {
-        return "test";
-      }
-
-      virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
-        std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const override
-      {
-        AssertStrEq(rawNameExt, "testasset.test");
-
-        data.resize(256 * sizeof(int), 0);
-        int* histogram = reinterpret_cast<int*>(data.data());
-
-        auto end = buffer + size;
-        while (buffer < end)
-        {
-          ++histogram[*buffer];
-          ++buffer;
-        }
-
-        return true;
-      }
-    };
-
     XR_ASSET_DECL(TestAsset)
 
     virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
@@ -98,7 +72,26 @@ namespace XR
 
   XR_ASSET_DEF(TestAsset, "tes7", 1, "test")
 
-  TestAsset::Builder testAssetBuilder;
+  XR_ASSET_BUILDER_DECL(TestAsset)
+
+#ifdef ENABLE_ASSET_BUILDING
+  XR_ASSET_BUILDER_BUILD_SIG(TestAsset)
+  {
+    AssertStrEq(rawNameExt, "testasset.test");
+
+    data.resize(256 * sizeof(int), 0);
+    int* histogram = reinterpret_cast<int*>(data.data());
+
+    auto end = buffer + size;
+    while (buffer < end)
+    {
+      ++histogram[*buffer];
+      ++buffer;
+    }
+
+    return true;
+  }
+#endif
 
   TEST_F(AssetTests, Basics)
   {

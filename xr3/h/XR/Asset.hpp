@@ -140,41 +140,28 @@ public:
   /// format. The Manager reads files and hands the data from those with
   /// the Builder's supported extension to them, along with a path to write
   /// the built asset to.
-  class Builder: Linked<Builder>
+  class Builder: Linked<Builder const>
   {
   public:
     // types
-    using Base = Linked<Builder>;
+    using Base = Linked<Builder const>;
+
+    // data
+    const TypeId type;
 
     // structors
-    Builder()
-    : Base(*this)
+    explicit Builder(TypeId type_)
+    : Base(*this),
+      type(type_)
     {}
 
     virtual ~Builder()
     {}
 
-    ///@return ; separated list of extensions (not including '.'), that should
-    /// be built by this Builder.
-    virtual char const* GetExtensions() const = 0;
-
     ///@brief Parses @a buffer of size @a size bytes, and produces two buffers
     /// of @a dependencies and asset @a data for writing into the built asset.
     virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
       std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const = 0;
-
-    ///@brief Determines what happens when trying to register a Builder for
-    /// an extension that is already handled.
-    /// - Overridable() builders will always be overridden by new registrations
-    ///   (for conflicting extensions).
-    /// - trying to register a non-Overridable() Builder over another one
-    ///   causes an error.
-    /// - requests to register an Overridable() Builder over a non-Overridable()
-    ///   one are ignored.
-    /// Builders in library code - such as all of the ones in XR3 - should be
-    /// Overridable(); make the concrete ones that your application uses,
-    /// non-Overridable().
-    virtual bool Overridable() const { return true; }
   };
 
   ///@brief Offers synchronous and asynchronous loading, and maintains a map,
@@ -541,5 +528,24 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
     className::kVersion, className::Create, extensions);\
   }
 
+///@brief Facilitates the declaration of a concrete Asset::Builder which compiles out
+/// when asset building is disabled. Place in .cpp
+#ifdef ENABLE_ASSET_BUILDING
+#define XR_ASSET_BUILDER_DECL(assetType)\
+  class assetType##Builder: public XR::Asset::Builder\
+  {\
+  public:\
+    assetType##Builder(): XR::Asset::Builder(assetType::kTypeId) {}\
+    bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
+      std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const override;\
+  } s_builder##assetType;
+#else
+#define XR_ASSET_BUILDER_DECL(assetType)
+#endif
+
+///@brief Signature for the Build() function of @a assetType.
+#define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
+  bool assetType##Builder::Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
+    std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const
 
 #endif //XR_ASSET_HPP
