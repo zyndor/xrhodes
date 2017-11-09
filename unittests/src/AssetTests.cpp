@@ -31,7 +31,7 @@ namespace XR
 
     AssetTests()
     {
-      Asset::Manager::Init();
+      Asset::Manager::Init(".assets");
     }
 
     ~AssetTests()

@@ -190,7 +190,8 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
     {
       path = Asset::Manager::kDefaultPath;
     }
-    m_path.AppendDirSeparator();
+    path.AppendDirSeparator();
+    m_path = path;
 
 #ifdef ENABLE_ASSET_BUILDING
     File::MakeDirs(m_path);
