@@ -371,7 +371,7 @@ static void RegisterReflector(Asset::Reflector const& r)
   // Register reflector.
   auto iReflector = s_reflectors.find(r.type);
   XR_ASSERTMSG(Asset::Manager, iReflector == s_reflectors.end(),
-    ("Reflector already registered for type %x", r.type));
+    ("Reflector already registered for type '%.*s'.", sizeof(r.type), &r.type));
   iReflector = s_reflectors.insert(iReflector, { r.type, &r });
   
   // Hash and map extensions to reflector [registration].
@@ -403,7 +403,7 @@ static void RegisterBuilder(Asset::Builder const& builder)
 {
   auto iBuilder = s_assetBuilders.find(builder.type);
   XR_ASSERTMSG(Asset::Manager, iBuilder == s_assetBuilders.end(),
-    ("Builder already registered for type %x", builder.type));
+    ("Builder already registered for type '%.*s'", sizeof(builder.type), &builder.type));
   s_assetBuilders.insert(iBuilder, { builder.type, &builder });
 }
 #endif  // ENABLE_ASSET_BUILDING
@@ -575,7 +575,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
       bool done = iFind == s_assetBuilders.end();
       if (done)
       {
-        XR_TRACE(Asset::Manager, ("Failed to find builder for type %x.", type));
+        XR_TRACE(Asset::Manager, ("Failed to find builder for type '%.*s'.", sizeof(type), &type));
       }
 
       FileBuffer fb;
