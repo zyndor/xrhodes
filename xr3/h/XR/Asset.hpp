@@ -59,7 +59,7 @@ public:
   ///@brief Carries information about the type and identifier of an Asset.
   struct DescriptorCore
   {
-    explicit DescriptorCore(uint32_t type_ = 0, uint64_t hash_ = 0)
+    explicit DescriptorCore(TypeId type_ = 0, HashType hash_ = 0)
     : type(type_),
       hash(hash_)
     {}
@@ -97,8 +97,8 @@ public:
       return type == rhs.type && hash == rhs.hash;
     }
 
-    uint32_t type;
-    uint64_t hash;
+    TypeId type;
+    HashType hash;
   };
 
   ///@brief Descriptor of a given type of Asset.
@@ -107,7 +107,7 @@ public:
   {
     using Type = T;
 
-    explicit Descriptor(uint64_t hash_ = 0)
+    explicit Descriptor(HashType hash_ = 0)
     : DescriptorCore(Type::kTypeId, hash_)
     {}
   };
@@ -190,7 +190,7 @@ public:
     /// - ram / rom and asset paths are stripped (but not the rest of the path).
     /// - file extension is stripped (the type is a separate part of the
     ///   descriptor).
-    static uint64_t HashPath(FilePath path);
+    static HashType HashPath(FilePath path);
 
     ///@brief Attempts to load a built asset from the asset path that the
     /// given @a path hashes to, either asynchronously (Manager::Update() will
@@ -288,9 +288,9 @@ public:
 
     static bool IsLoadable(FlagType oldFlags, FlagType newFlags);
 
-    static void LoadInternal(uint16_t version, FilePath const& path, Ptr const& asset,
+    static void LoadInternal(VersionType version, FilePath const& path, Ptr const& asset,
       FlagType flags);
-    static void LoadInternal(uint16_t version, Ptr const& asset, FlagType flags);
+    static void LoadInternal(VersionType version, Ptr const& asset, FlagType flags);
   };
 
   // static
@@ -389,7 +389,7 @@ protected:
   using Lock = Counter<Spinlocked>;
 
   // structors
-  explicit Asset(DescriptorCore const& desc, uint32_t flags = 0)
+  explicit Asset(DescriptorCore const& desc, FlagType flags = 0)
   : m_descriptor(desc),
     m_flags(flags & ~PrivateMask),
     m_refs()
@@ -499,8 +499,8 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 #define XR_ASSET_DECL(className)\
   using Ptr = XR::Counted<className>;\
 \
-  static uint32_t const kTypeId;\
-  static uint16_t const kVersion;\
+  static TypeId const kTypeId;\
+  static VersionType const kVersion;\
   static Asset* Create(HashType hash, FlagType flags) {\
     return new className(DescriptorCore(kTypeId, hash), flags);\
   }\
@@ -518,10 +518,10 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 #define XR_ASSET_DEF(className, id, version, extensions)\
   static_assert(std::is_same<std::decay<decltype(id[0])>::type, char>::value, "Type ID for " #className " must be chars.");\
   static_assert(XR_ARRAY_SIZE(id) == 5 && id[4] == '\0', "Type ID for " #className " must be 4 characters.");\
-  static_assert((version) <= std::numeric_limits<uint16_t>::max(), "Version must be uint16_t.");\
+  static_assert((version) <= std::numeric_limits<XR::Asset::VersionType>::max(), "Version must be XR::Asset::VersionType.");\
 \
-  uint32_t const className::kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
-  uint16_t const className::kVersion = (version);\
+  XR::Asset::TypeId const className::kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
+  XR::Asset::VersionType const className::kVersion = (version);\
 \
   namespace {\
   XR::Asset::Reflector xr ## className ## Reflector(className::kTypeId,\

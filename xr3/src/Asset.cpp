@@ -358,7 +358,7 @@ ReflectorMap s_reflectors;
 std::map<uint32_t, ReflectorMap::iterator> s_extensions;
 
 #ifdef ENABLE_ASSET_BUILDING
-std::unordered_map<uint32_t, Asset::Builder const*> s_assetBuilders;
+std::unordered_map<Asset::TypeId, Asset::Builder const*> s_assetBuilders;
 #endif
 
 static std::unique_ptr<AssetManagerImpl> s_assetMan;
@@ -453,7 +453,7 @@ const FilePath & Asset::Manager::GetAssetPath()
 }
 
 //==============================================================================
-uint64_t Asset::Manager::HashPath(FilePath path)
+Asset::HashType Asset::Manager::HashPath(FilePath path)
 {
   path = File::StripRoots(path);
   // Strip the asset path too, as the user is not required to specify it to
@@ -470,7 +470,7 @@ uint64_t Asset::Manager::HashPath(FilePath path)
   //   and second characters of the [hashed] name.
   char const* nameExt = path.GetNameExt();
   char const* ext = path.GetExt();
-  uint64_t hash;
+  Asset::HashType hash;
   if (!ext &&
     nameExt == path.data() + 4 &&
     path.size() == 20 &&
@@ -664,7 +664,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
 }
 #endif
 
-void Asset::Manager::LoadInternal(uint16_t version, FilePath const& path,
+void Asset::Manager::LoadInternal(VersionType version, FilePath const& path,
   Asset::Ptr const& asset, FlagType flags)
 {
 #ifdef XR_DEBUG
@@ -687,7 +687,7 @@ void Asset::Manager::LoadInternal(uint16_t version, FilePath const& path,
 }
 
 //==============================================================================
-void Asset::Manager::LoadInternal(uint16_t version, Ptr const& asset, FlagType flags)
+void Asset::Manager::LoadInternal(VersionType version, Ptr const& asset, FlagType flags)
 {
 #ifdef XR_DEBUG
   // Clear the debug path -- the descriptor tells you where the asset is.
