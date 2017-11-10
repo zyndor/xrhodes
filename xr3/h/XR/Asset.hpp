@@ -137,9 +137,10 @@ public:
   };
 
   ///@brief Builders are responsible for converting raw assets into engine
-  /// format. The Manager reads files and hands the data from those with
-  /// the Builder's supported extension to them, along with a path to write
-  /// the built asset to.
+  /// format. When asset building is enabled, assets that are loaded by their
+  /// raw path are eligible for checking against their built counterpart, and
+  /// if change is detected, the Manager will invoke the Builder based on
+  /// the type of the asset being loaded.
   class Builder: Linked<Builder const>
   {
   public:
@@ -160,6 +161,9 @@ public:
 
     ///@brief Parses @a buffer of size @a size bytes, and produces two buffers
     /// of @a dependencies and asset @a data for writing into the built asset.
+    /// @a data is what's passed to Asset::Load() when loading; @a dependencies
+    /// are paths to assets which will be loaded by the Manager prior to the
+    /// loading of the given asset.
     virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
       std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const = 0;
   };
@@ -231,6 +235,9 @@ public:
       return asset;
     }
 
+    ///@brief Attempts to load an asset of unknown type.
+    static Ptr LoadReflected(FilePath const& path, FlagType flags = 0);
+
     ///@brief Attempts to retrieve an asset of the given descriptor, from the
     /// map of managed assets.
     static Ptr Find(DescriptorCore const& desc);
@@ -240,7 +247,7 @@ public:
     template <class T>
     static Counted<T> Find(Descriptor<T> const& desc);
 
-    ///@brief Attempts to retrieve a asset of that the given @a path hashes to,
+    ///@brief Attempts to retrieve an asset that the given @a path hashes to,
     /// from the map of managed assets.
     template <class T>
     static Counted<T> Find(FilePath const& path);

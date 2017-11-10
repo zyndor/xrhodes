@@ -50,10 +50,7 @@ namespace XR
 
     virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
     {
-      AssertEq(size, sizeof(uint16_t) + sizeof(histogram));  // size of data must be equal to uint16_t number of dependencies + histogram
-      uint16_t  numDependencies = *reinterpret_cast<uint16_t const*>(buffer);
-      buffer += sizeof(uint16_t);
-
+      AssertEq(size, sizeof(histogram));
       for (int i = 0; i < XR_ARRAY_SIZE(histogram); ++i)
       {
         int x = reinterpret_cast<int const*>(buffer)[i];
@@ -93,10 +90,9 @@ namespace XR
   }
 #endif
 
-  TEST_F(AssetTests, Basics)
+  void EnsureTestAssetExists(FilePath const& path)
   {
-    FilePath path("assets/testasset.test");
-    if(!File::CheckExists(path))
+    if (!File::CheckExists(path))
     {
       std::random_device rd;
       std::mt19937 gen(rd());
@@ -112,6 +108,12 @@ namespace XR
         fw.Write(&val, sizeof(val), 1);
       }
     }
+  }
+
+  TEST_F(AssetTests, Basics)
+  {
+    FilePath path("assets/testasset.test");
+    EnsureTestAssetExists(path);
 
     auto testAss = Asset::Manager::Load<TestAsset>(path);
 
@@ -136,5 +138,23 @@ namespace XR
     auto cp = Asset::Manager::Find(desc);
     ASSERT_EQ(cp->GetRefCount(), 2);  // not removed
     ASSERT_FALSE(CheckAllMaskBits(cp->GetFlags(), Asset::ReadyFlag)); // unloaded
+  }
+
+  TEST_F(AssetTests, LoadReflected)
+  {
+    FilePath path("assets/testasset.test");
+    EnsureTestAssetExists(path);
+
+    auto testAss = Asset::Manager::LoadReflected(path);
+    
+    ASSERT_TRUE(testAss->Cast<TestAsset>()); // determined correct type
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
+    ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
+
+    while (!(testAss->GetFlags() & (Asset::ReadyFlag | Asset::ErrorFlag)))
+    {
+      Asset::Manager::Update();
+    }
+    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));  // loaded successfully
   }
 }
