@@ -521,10 +521,12 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
   FilePath finalPath = asset->GetDescriptor().ToPath();
   if (finalPath != assetPath)
   {
+    finalPath = Asset::Manager::GetAssetPath() / finalPath;
+
     // Check for raw and built asset, compare last modification time.
     auto tsRaw = File::GetModifiedTime(path); // must use original path!
     XR_ASSERTMSG(Asset::Manager, tsRaw > 0, ("'%s' doesn't exist.", path.c_str()));
-    auto tsBuilt = File::GetModifiedTime(s_assetMan->GetPath() / finalPath.c_str());
+    auto tsBuilt = File::GetModifiedTime(finalPath.c_str());
 
     // If built asset doesn't exist or is older, then rebuild it.
     bool rebuild = tsBuilt < tsRaw;
@@ -576,7 +578,7 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
       FilePath pathBuilt;
       if (!done)  // make asset directory if need be
       {
-        pathBuilt = File::GetRamPath() / s_assetMan->GetPath().c_str() / finalPath.c_str();
+        pathBuilt = File::GetRamPath() / finalPath;
         done = !File::MakeDirs(pathBuilt);
         if (done)
         {
