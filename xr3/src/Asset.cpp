@@ -22,10 +22,13 @@ namespace XR
 //==============================================================================
 struct AssetHeader
 {
-  uint32_t typeId;
-  uint16_t version;
+  Asset::TypeId typeId;
+  Asset::VersionType version;
   uint16_t reserved;
 };
+
+using NumDependenciesType = uint16_t;
+using DependencyPathLenType = uint16_t;
 
 //==============================================================================
 const size_t kChunkSizeBytes = XR_KBYTES(16);
@@ -36,9 +39,10 @@ struct LoadJob : Worker::Job
   Asset::Ptr asset;
 
   // structors
-  explicit LoadJob(uint16_t acceptVersion, Asset::Ptr const& a)
+  explicit LoadJob(File::Handle hFile, size_t size, Asset::Ptr const& a)
   : asset(a),
-    m_version(acceptVersion)
+    m_hFile(hFile),
+    m_data(size)
   {}
 
   ~LoadJob()
@@ -49,39 +53,29 @@ struct LoadJob : Worker::Job
   // general
   virtual void Start()
   {
-    CloseHandle();
-    m_path = Asset::Manager::GetAssetPath() / asset->GetDescriptor().ToPath();
+    m_nextWrite = m_data.data();
   }
 
   virtual bool Process()
   {
-    bool done = false;
-    if (!m_hFile)
+    const auto progress = m_nextWrite - m_data.data();
+    const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - progress);
+    const size_t readSize = File::Read(m_hFile, 1, nextChunkSize, m_nextWrite);
+    bool done = readSize != nextChunkSize;
+    if (done)
     {
-      done = PrepareLoading();
+      XR_TRACE(Asset::Manager, ("Failed to read %d bytes of asset '%s' @ %d of %d bytes",
+        nextChunkSize, asset->GetDescriptor().ToPath().c_str(), progress, m_data.size()));
+      asset->FlagError();
     }
-
-    if (!done)  // read file chunk by chunk
+    else
     {
-      const auto progress = m_nextWrite - m_data.data();
-      const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - progress);
-      const size_t readSize = File::Read(m_hFile, 1, nextChunkSize, m_nextWrite);
-      done = readSize != nextChunkSize;
+      m_nextWrite += readSize;
+
+      done = progress + readSize == m_data.size();
       if (done)
       {
-        XR_TRACE(Asset::Manager, ("Failed to read %d bytes of asset '%s' @ %d of %d bytes",
-          nextChunkSize, m_path.c_str(), progress, m_data.size()));
-        asset->FlagError();
-      }
-      else
-      {
-        m_nextWrite += readSize;
-
-        done = progress + readSize == m_data.size();
-        if (done)
-        {
-          asset->OverrideFlags(Asset::LoadingFlag, Asset::LoadedFlag);
-        }
+        asset->OverrideFlags(Asset::LoadingFlag, Asset::LoadedFlag);
       }
     }
 
@@ -95,74 +89,9 @@ struct LoadJob : Worker::Job
 
 private:
   // data
-  uint16_t              m_version;
-  FilePath              m_path;
   File::Handle          m_hFile = nullptr;
   std::vector<uint8_t>  m_data;
   uint8_t*              m_nextWrite = nullptr;
-
-  // internal
-  bool PrepareLoading()
-  {
-    m_hFile = File::Open(m_path, "rb");
-    bool done = m_hFile == nullptr;
-    if (done)
-    {
-      XR_TRACE(Asset::Manager, ("Failed to open asset '%s'.", m_path.c_str()));
-    }
-
-    size_t size;
-    AssetHeader header;
-    if (!done)  // get size
-    {
-      size = File::GetSize(m_hFile);
-      done = size < sizeof(AssetHeader) ||
-        File::Read(m_hFile, sizeof(header), 1, &header) < 1;
-      if (done)
-      {
-        XR_TRACE(Asset::Manager, ("Failed to read header of asset %s",
-          m_path.c_str()));
-      }
-      else
-      {
-        size -= sizeof(header);
-      }
-    }
-
-    if (!done)  // check typeId
-    {
-      auto type = asset->GetDescriptor().type;
-      done = header.typeId != type;
-      if (done)
-      {
-        XR_TRACE(Asset::Manager, ("Asset '%s' type ID mismatch, expected: %d, got: %d",
-          m_path.c_str(), type, header.typeId));
-      }
-    }
-
-    if (!done)  // check version
-    {
-      done = header.version != m_version;
-      if (done)
-      {
-        XR_TRACE(Asset::Manager, ("Asset '%s' version mismatch, expected: %d, got: %d",
-          m_path.c_str(), m_version, header.version));
-      }
-    }
-
-    if (!done)  // allocate buffer
-    {
-      m_data.resize(size);
-      m_nextWrite = m_data.data();
-    }
-
-    if (done)
-    {
-      asset->FlagError();
-    }
-
-    return done;
-  }
 
   void CloseHandle()
   {
@@ -352,8 +281,13 @@ private:
 namespace
 {
 
+using ReflectorMap = std::map<Asset::TypeId, Asset::Reflector const*>;
+ReflectorMap s_reflectors;
+
+std::map<uint32_t, ReflectorMap::iterator> s_extensions;
+
 #ifdef ENABLE_ASSET_BUILDING
-std::unordered_map<uint32_t, Asset::Builder const*> s_assetBuilders;
+std::unordered_map<Asset::TypeId, Asset::Builder const*> s_assetBuilders;
 #endif
 
 static std::unique_ptr<AssetManagerImpl> s_assetMan;
@@ -361,10 +295,16 @@ static std::unique_ptr<AssetManagerImpl> s_assetMan;
 }
 
 //==============================================================================
-static void RegisterBuilder(Asset::Builder& builder)
+static void RegisterReflector(Asset::Reflector const& r)
 {
-#ifdef ENABLE_ASSET_BUILDING
-  auto exts = builder.GetExtensions();
+  // Register reflector.
+  auto iReflector = s_reflectors.find(r.type);
+  XR_ASSERTMSG(Asset::Manager, iReflector == s_reflectors.end(),
+    ("Reflector already registered for type '%.*s'.", sizeof(r.type), &r.type));
+  iReflector = s_reflectors.insert(iReflector, { r.type, &r });
+  
+  // Hash and map extensions to reflector [registration].
+  auto exts = r.extensions;
   while (exts)
   {
     auto next = strchr(exts, ';');
@@ -372,19 +312,10 @@ static void RegisterBuilder(Asset::Builder& builder)
     if (size > 0)
     {
       const uint32_t hash = Hash::String32(exts, size);
-      auto iFind = s_assetBuilders.find(hash);
-
-      // If there's no conflict on an extension, or the pre-existing Builder is
-      // Overridable(), then go ahead and register the new one.
-      if (iFind == s_assetBuilders.end() || iFind->second->Overridable())
-      {
-        s_assetBuilders.insert(iFind, { hash, &builder });
-      }
-      else if (!builder.Overridable())
-      {
-        // If we've had a non-overridable builder, then registering another one is an error.
-        XR_ERROR(("Builder clash on extension '%s'", std::string(exts, size).c_str()));
-      }
+      auto iExt = s_extensions.find(hash);
+      XR_ASSERTMSG(Asset::Manager, iExt == s_extensions.end(),
+        ("Extension %.*s already registered.", size, exts));
+      s_extensions.insert(iExt, { hash, iReflector });
 
       if (next)
       {
@@ -393,28 +324,126 @@ static void RegisterBuilder(Asset::Builder& builder)
     }
     exts = next;
   }
-#endif  // ENABLE_ASSET_BUILDING
 }
 
 //==============================================================================
-static void LoadAsset(uint16_t version, Asset::Ptr const& asset, Asset::FlagType flags)
+#ifdef ENABLE_ASSET_BUILDING
+static void RegisterBuilder(Asset::Builder const& builder)
 {
-  if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
-  {
-    LoadJob lj(version, asset);
-    lj.Start();
-    while (!lj.Process())
-    {}
+  auto iBuilder = s_assetBuilders.find(builder.type);
+  XR_ASSERTMSG(Asset::Manager, iBuilder == s_assetBuilders.end(),
+    ("Builder already registered for type '%.*s'", sizeof(builder.type), &builder.type));
+  s_assetBuilders.insert(iBuilder, { builder.type, &builder });
+}
+#endif  // ENABLE_ASSET_BUILDING
 
-    if (CheckAllMaskBits(lj.asset->GetFlags(), Asset::LoadedFlag))
+//==============================================================================
+static void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset::FlagType flags)
+{
+  FilePath path = Asset::Manager::GetAssetPath() / asset->GetDescriptor().ToPath();
+  File::Handle hFile = File::Open(path, "rb");
+  bool done = hFile == nullptr;
+  if (done)
+  {
+    XR_TRACE(Asset::Manager, ("Failed to open asset '%s'.", path.c_str()));
+  }
+
+  size_t size;
+  AssetHeader header;
+  if (!done)  // get size
+  {
+    size = File::GetSize(hFile);
+    done = size < sizeof(AssetHeader) ||
+      File::Read(hFile, sizeof(header), 1, &header) < 1;
+    if (done)
     {
-      lj.Load();
+      XR_TRACE(Asset::Manager, ("Failed to read header of asset %s",
+        path.c_str()));
+    }
+    else
+    {
+      size -= sizeof(header);
+    }
+  }
+
+  if (!done)  // check typeId
+  {
+    auto type = asset->GetDescriptor().type;
+    done = header.typeId != type;
+    if (done)
+    {
+      XR_TRACE(Asset::Manager, ("Asset '%s' type ID mismatch, expected: %d, got: %d",
+        path.c_str(), type, header.typeId));
+    }
+  }
+
+  if (!done)  // check version
+  {
+    done = header.version != version;
+    if (done)
+    {
+      XR_TRACE(Asset::Manager, ("Asset '%s' version mismatch, expected: %d, got: %d",
+        path.c_str(), version, header.version));
+    }
+  }
+
+  // load dependencies
+  if (!done)
+  {
+    NumDependenciesType numDependencies;
+    done = File::Read(hFile, sizeof(numDependencies), 1, &numDependencies) < 1;
+    size -= sizeof(numDependencies);
+
+    NumDependenciesType i = 0;
+    DependencyPathLenType len;
+    FilePath pathDep;
+    while (!done && i < numDependencies)
+    {
+      done = File::Read(hFile, sizeof(len), 1, &len) < 1 || len > FilePath::kCapacity ||
+        len > size || File::Read(hFile, len, 1, pathDep.data()) < 1;
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Failed to read dependency name %d in '%s'", i,
+          path.c_str()));
+      }
+      else
+      {
+        pathDep.data()[len] = '\0';
+        pathDep.UpdateSize();
+
+        size -= sizeof(DependencyPathLenType) + len;
+
+        auto dependency = Asset::Manager::LoadReflected(pathDep, flags);
+        done = !dependency || CheckAllMaskBits(dependency->GetFlags(), Asset::ErrorFlag);
+        ++i;
+      }
+    }
+  }
+
+  if (!done)  // allocate buffer, create and perform / create job.
+  {
+    if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
+    {
+      LoadJob lj(hFile, size, asset);
+      lj.Start();
+      while (!lj.Process())
+      {}
+
+      if (CheckAllMaskBits(lj.asset->GetFlags(), Asset::LoadedFlag))
+      {
+        lj.Load();
+      }
+    }
+    else
+    {
+      void* jobBuffer = s_assetMan->GetAllocator()->Allocate(sizeof(LoadJob));
+      auto lj = new (jobBuffer) LoadJob(hFile, size, asset);
+      s_assetMan->EnqueueJob(*lj);
     }
   }
   else
   {
-    auto lj = new (s_assetMan->GetAllocator()->Allocate(sizeof(LoadJob))) LoadJob(version, asset);
-    s_assetMan->EnqueueJob(*lj);
+    asset->FlagError();
   }
 }
 
@@ -426,7 +455,10 @@ void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
 {
   s_assetMan.reset(new AssetManagerImpl(path, alloc));
 
+  Reflector::Base::ForEach(RegisterReflector);
+#ifdef ENABLE_ASSET_BUILDING
   Builder::Base::ForEach(RegisterBuilder);
+#endif
 }
 
 //==============================================================================
@@ -436,7 +468,7 @@ const FilePath & Asset::Manager::GetAssetPath()
 }
 
 //==============================================================================
-uint64_t Asset::Manager::HashPath(FilePath path)
+Asset::HashType Asset::Manager::HashPath(FilePath path)
 {
   path = File::StripRoots(path);
   // Strip the asset path too, as the user is not required to specify it to
@@ -453,7 +485,7 @@ uint64_t Asset::Manager::HashPath(FilePath path)
   //   and second characters of the [hashed] name.
   char const* nameExt = path.GetNameExt();
   char const* ext = path.GetExt();
-  uint64_t hash;
+  Asset::HashType hash;
   if (!ext &&
     nameExt == path.data() + 4 &&
     path.size() == 20 &&
@@ -486,6 +518,52 @@ uint64_t Asset::Manager::HashPath(FilePath path)
 }
 
 //==============================================================================
+Asset::Ptr Asset::Manager::LoadReflected(FilePath const& path, FlagType flags)
+{
+  flags &= ~PrivateMask;
+  DescriptorCore  desc(0, HashPath(path));
+
+  auto ext = path.GetExt();
+  if (ext)
+  {
+    uint32_t hash = Hash::String32(ext);
+    auto iFind = s_extensions.find(hash);
+    if (iFind != s_extensions.end())
+    {
+      desc.type = iFind->second->first;
+    }
+  }
+
+  Ptr asset;
+  if (desc.HasType())
+  {
+    // Try to find our guy.
+    if (!CheckAllMaskBits(flags, UnmanagedFlag))
+    {
+      asset = Find(desc);
+    }
+
+    if (!asset)
+    {
+      // We can now try to build / load asset.
+      auto iFind = s_reflectors.find(desc.type);
+      if (iFind != s_reflectors.end())
+      {
+        auto reflector = iFind->second;
+        asset.Reset((*reflector->fn)(desc.hash, flags));
+        if (!CheckAllMaskBits(flags, UnmanagedFlag))
+        {
+          Manage(asset);
+        }
+        LoadInternal(reflector->version, path, asset, flags);
+      }
+    }
+  }
+  
+  return asset;
+}
+
+//==============================================================================
 Asset::Ptr Asset::Manager::Find(DescriptorCore const& desc)
 {
   return s_assetMan->FindManaged(desc);
@@ -508,7 +586,7 @@ bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
 
 //==============================================================================
 #ifdef ENABLE_ASSET_BUILDING
-static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const& asset)
+static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::Ptr const& asset)
 {
   // Check the name -- are we trying to load a raw or a built asset?
   // Strip ram/rom and asset roots.
@@ -540,7 +618,7 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
         }
       });
 
-      uint16_t versionFound;
+      Asset::VersionType versionFound;
       // Not being able to open the file (which we know for sure exists), to
       // seek 4 bytes and to read a version number isn't a hard error -- we'll
       // just have to rebuild, and we can deal with any persistent I/O errors
@@ -553,15 +631,12 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
 
     if (rebuild)
     {
-      auto ext = assetPath.GetExt();
-      XR_ASSERT(Asset::Manager, ext);
-
-      uint32_t hash = Hash::String32(ext);
-      auto iFind = s_assetBuilders.find(hash);
+      Asset::TypeId type = asset->GetDescriptor().type;
+      auto iFind = s_assetBuilders.find(type);
       bool done = iFind == s_assetBuilders.end();
       if (done)
       {
-        XR_TRACE(Asset::Manager, ("Failed to find builder for '%s'.", ext));
+        XR_TRACE(Asset::Manager, ("Failed to find builder for type '%.*s'.", sizeof(type), &type));
       }
 
       FileBuffer fb;
@@ -609,13 +684,35 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
         }
       }
 
+      std::vector<FilePath> dependencies;
+      std::vector<uint8_t> assetData;
       if (!done)  // build asset
       {
         done = !iFind->second->Build(assetPath.GetNameExt(), fb.GetData(), fb.GetSize(),
-          assetWriter);
+          dependencies, assetData);
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", pathBuilt.c_str()));
+        }
+      }
+
+      if (!done)  // write built asset
+      {
+        done = !assetWriter.Write(NumDependenciesType(dependencies.size()));
+        for (auto i0 = dependencies.begin(), i1 = dependencies.end(); !done && i0 != i1; ++i0)
+        {
+          done = !(assetWriter.Write(DependencyPathLenType(i0->size())) &&
+            assetWriter.Write(i0->data(), 1, i0->size()));
+        }
+
+        if (!done)
+        {
+          done = !assetWriter.Write(assetData.data(), 1, assetData.size());
+        }
+
+        if (done)
+        {
+          XR_TRACE(Asset::Manager, ("Failed to write built asset '%s'.", pathBuilt.c_str()));
         }
       }
 
@@ -628,7 +725,7 @@ static void BuildAsset(uint16_t version, FilePath const& path, Asset::Ptr const&
 }
 #endif
 
-void Asset::Manager::LoadInternal(uint16_t version, FilePath const& path,
+void Asset::Manager::LoadInternal(VersionType version, FilePath const& path,
   Asset::Ptr const& asset, FlagType flags)
 {
 #ifdef XR_DEBUG
@@ -651,7 +748,7 @@ void Asset::Manager::LoadInternal(uint16_t version, FilePath const& path,
 }
 
 //==============================================================================
-void Asset::Manager::LoadInternal(uint16_t version, Ptr const& asset, FlagType flags)
+void Asset::Manager::LoadInternal(VersionType version, Ptr const& asset, FlagType flags)
 {
 #ifdef XR_DEBUG
   // Clear the debug path -- the descriptor tells you where the asset is.
@@ -702,8 +799,20 @@ void Asset::Manager::Resume()
 //==============================================================================
 void Asset::Manager::Exit()
 {
+#ifdef ENABLE_ASSET_BUILDING
   s_assetBuilders.clear();
+#endif
+  s_reflectors.clear();
+  s_extensions.clear();
   s_assetMan.reset(nullptr);
+}
+
+//==============================================================================
+Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
+{
+  auto iFind = s_reflectors.find(typeId);
+  XR_ASSERT(Asset, iFind != s_reflectors.end());
+  return (*iFind->second->fn)(hash, flags);
 }
 
 //==============================================================================

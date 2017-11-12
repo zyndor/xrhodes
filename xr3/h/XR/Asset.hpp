@@ -34,6 +34,9 @@ class Asset: public Countable
 public:
   // types
   using Ptr = Counted<Asset>;
+  using TypeId = uint32_t;
+  using HashType = uint64_t;
+  using VersionType = uint16_t;
 
   using FlagType = uint32_t;
   enum Flags: FlagType
@@ -56,7 +59,7 @@ public:
   ///@brief Carries information about the type and identifier of an Asset.
   struct DescriptorCore
   {
-    explicit DescriptorCore(uint32_t type_ = 0, uint64_t hash_ = 0)
+    explicit DescriptorCore(TypeId type_ = 0, HashType hash_ = 0)
     : type(type_),
       hash(hash_)
     {}
@@ -94,8 +97,8 @@ public:
       return type == rhs.type && hash == rhs.hash;
     }
 
-    uint32_t type;
-    uint64_t hash;
+    TypeId type;
+    HashType hash;
   };
 
   ///@brief Descriptor of a given type of Asset.
@@ -104,52 +107,65 @@ public:
   {
     using Type = T;
 
-    explicit Descriptor(uint64_t hash_ = 0)
+    explicit Descriptor(HashType hash_ = 0)
     : DescriptorCore(Type::kTypeId, hash_)
     {}
   };
 
+  ///@brief Internal only use class, responsible for enabling reflection (based
+  /// on a compile time type ID and a semicolon-separated list of extensions)
+  /// for an asset type.
+  struct Reflector: Linked<Reflector const>
+  {
+    // types
+    using Base = Linked<Reflector const>;
+    using Fn = Asset*(*)(HashType, FlagType);
+
+    // structors
+    Reflector(TypeId type_, VersionType version_, Fn fn_, char const* extensions_)
+    : Linked<Reflector const>(*this),
+      type(type_),
+      version(version_),
+      fn(fn_),
+      extensions(extensions_)
+    {}
+
+    TypeId type;
+    VersionType version;
+    Fn fn;
+    char const* extensions;
+  };
+
   ///@brief Builders are responsible for converting raw assets into engine
-  /// format. The Manager reads files and hands the data from those with
-  /// the Builder's supported extension to them, along with a path to write
-  /// the built asset to.
-  class Builder: Linked<Builder>
+  /// format. When asset building is enabled, assets that are loaded by their
+  /// raw path are eligible for checking against their built counterpart, and
+  /// if change is detected, the Manager will invoke the Builder based on
+  /// the type of the asset being loaded.
+  class Builder: Linked<Builder const>
   {
   public:
     // types
-    using Base = Linked<Builder>;
+    using Base = Linked<Builder const>;
+
+    // data
+    const TypeId type;
 
     // structors
-    Builder()
-    : Base(*this)
+    explicit Builder(TypeId type_)
+    : Base(*this),
+      type(type_)
     {}
 
     virtual ~Builder()
     {}
 
-    ///@return ; separated list of extensions (not including '.'), that should
-    /// be built by this Builder.
-    virtual char const* GetExtensions() const = 0;
-
-    ///@brief Performs the building and writing of the asset from the @a buffer
-    /// of @a size bytes, into the given FileWriter @a fw.
-    ///@note The type id and the version will have been written to the file by
-    /// the Asset::Manager.
+    ///@brief Parses @a buffer of size @a size bytes, and produces two buffers
+    /// of @a dependencies and asset @a data for writing into the built asset.
+    /// @a data is what's passed to Asset::Load() when loading; @a dependencies
+    /// are paths to assets which will be loaded by the Manager prior to the
+    /// loading of the given asset.
     virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
-      FileWriter& assetWriter) const = 0;
-
-    ///@brief Determines what happens when trying to register a Builder for
-    /// an extension that is already handled.
-    /// - Overridable() builders will always be overridden by new registrations
-    ///   (for conflicting extensions).
-    /// - trying to register a non-Overridable() Builder over another one
-    ///   causes an error.
-    /// - requests to register an Overridable() Builder over a non-Overridable()
-    ///   one are ignored.
-    /// Builders in library code - such as all of the ones in XR3 - should be
-    /// Overridable(); make the concrete ones that your application uses,
-    /// non-Overridable().
-    virtual bool Overridable() const { return true; }
+      std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const = 0;
   };
 
   ///@brief Offers synchronous and asynchronous loading, and maintains a map,
@@ -178,7 +194,7 @@ public:
     /// - ram / rom and asset paths are stripped (but not the rest of the path).
     /// - file extension is stripped (the type is a separate part of the
     ///   descriptor).
-    static uint64_t HashPath(FilePath path);
+    static HashType HashPath(FilePath path);
 
     ///@brief Attempts to load a built asset from the asset path that the
     /// given @a path hashes to, either asynchronously (Manager::Update() will
@@ -219,6 +235,9 @@ public:
       return asset;
     }
 
+    ///@brief Attempts to load an asset of unknown type.
+    static Ptr LoadReflected(FilePath const& path, FlagType flags = 0);
+
     ///@brief Attempts to retrieve an asset of the given descriptor, from the
     /// map of managed assets.
     static Ptr Find(DescriptorCore const& desc);
@@ -228,7 +247,7 @@ public:
     template <class T>
     static Counted<T> Find(Descriptor<T> const& desc);
 
-    ///@brief Attempts to retrieve a asset of that the given @a path hashes to,
+    ///@brief Attempts to retrieve an asset that the given @a path hashes to,
     /// from the map of managed assets.
     template <class T>
     static Counted<T> Find(FilePath const& path);
@@ -276,10 +295,13 @@ public:
 
     static bool IsLoadable(FlagType oldFlags, FlagType newFlags);
 
-    static void LoadInternal(uint16_t version, FilePath const& path, Ptr const& asset,
+    static void LoadInternal(VersionType version, FilePath const& path, Ptr const& asset,
       FlagType flags);
-    static void LoadInternal(uint16_t version, Ptr const& asset, FlagType flags);
+    static void LoadInternal(VersionType version, Ptr const& asset, FlagType flags);
   };
+
+  // static
+  static Asset* Reflect(TypeId typeId, HashType hash, FlagType flags = 0);
 
   // structors
   virtual ~Asset()
@@ -374,7 +396,7 @@ protected:
   using Lock = Counter<Spinlocked>;
 
   // structors
-  explicit Asset(DescriptorCore const& desc, uint32_t flags = 0)
+  explicit Asset(DescriptorCore const& desc, FlagType flags = 0)
   : m_descriptor(desc),
     m_flags(flags & ~PrivateMask),
     m_refs()
@@ -450,7 +472,7 @@ template<class T>
 inline
 Counted<T> Asset::Manager::CreateInternal(DescriptorCore const& desc, FlagType flags)
 {
-  Ptr asset(T::Create(desc, flags));
+  Ptr asset(T::Create(desc.hash, flags));
   if (!CheckAllMaskBits(flags, UnmanagedFlag))
   {
     Manage(asset);
@@ -484,10 +506,10 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 #define XR_ASSET_DECL(className)\
   using Ptr = XR::Counted<className>;\
 \
-  static uint32_t const kTypeId;\
-  static uint16_t const kVersion;\
-  static className* Create(Asset::DescriptorCore const& desc, FlagType flags) {\
-    return new className(desc, flags);\
+  static TypeId const kTypeId;\
+  static VersionType const kVersion;\
+  static Asset* Create(HashType hash, FlagType flags) {\
+    return new className(DescriptorCore(kTypeId, hash), flags);\
   }\
   static Asset::Builder const& GetBuilder();\
 \
@@ -500,13 +522,37 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
     Unload();\
   }
 
-#define XR_ASSET_DEF(className, id, version)\
+#define XR_ASSET_DEF(className, id, version, extensions)\
   static_assert(std::is_same<std::decay<decltype(id[0])>::type, char>::value, "Type ID for " #className " must be chars.");\
   static_assert(XR_ARRAY_SIZE(id) == 5 && id[4] == '\0', "Type ID for " #className " must be 4 characters.");\
-  static_assert((version) <= std::numeric_limits<uint16_t>::max(), "Version must be uint16_t.");\
+  static_assert((version) <= std::numeric_limits<XR::Asset::VersionType>::max(), "Version must be XR::Asset::VersionType.");\
 \
-  uint32_t const className::kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
-  uint16_t const className::kVersion = (version);\
+  XR::Asset::TypeId const className::kTypeId = XR_FOURCC(id[0], id[1], id[2], id[3]);\
+  XR::Asset::VersionType const className::kVersion = (version);\
+\
+  namespace {\
+  XR::Asset::Reflector xr ## className ## Reflector(className::kTypeId,\
+    className::kVersion, className::Create, extensions);\
+  }
 
+///@brief Facilitates the declaration of a concrete Asset::Builder which compiles out
+/// when asset building is disabled. Place in .cpp
+#ifdef ENABLE_ASSET_BUILDING
+#define XR_ASSET_BUILDER_DECL(assetType)\
+  class assetType##Builder: public XR::Asset::Builder\
+  {\
+  public:\
+    assetType##Builder(): XR::Asset::Builder(assetType::kTypeId) {}\
+    bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
+      std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const override;\
+  } s_builder##assetType;
+#else
+#define XR_ASSET_BUILDER_DECL(assetType)
+#endif
+
+///@brief Signature for the Build() function of @a assetType.
+#define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
+  bool assetType##Builder::Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
+    std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const
 
 #endif //XR_ASSET_HPP
