@@ -18,6 +18,7 @@
 #include "XR/debug.hpp"
 #include <memory>
 #include <vector>
+#include <ostream>
 
 namespace XR
 {
@@ -165,7 +166,7 @@ public:
     /// are paths to assets which will be loaded by the Manager prior to the
     /// loading of the given asset.
     virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
-      std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const = 0;
+      std::vector<FilePath>& dependencies, std::ostream& data) const = 0;
   };
 
   ///@brief Offers synchronous and asynchronous loading, and maintains a map,
@@ -543,7 +544,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   public:\
     assetType##Builder(): XR::Asset::Builder(assetType::kTypeId) {}\
     bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
-      std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const override;\
+      std::vector<FilePath>& dependencies, std::ostream& data) const override;\
   } s_builder##assetType;
 #else
 #define XR_ASSET_BUILDER_DECL(assetType)
@@ -552,6 +553,6 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 ///@brief Signature for the Build() function of @a assetType.
 #define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
   bool assetType##Builder::Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
-    std::vector<FilePath>& dependencies, std::vector<uint8_t>& data) const
+    std::vector<FilePath>& dependencies, std::ostream& data) const
 
 #endif //XR_ASSET_HPP

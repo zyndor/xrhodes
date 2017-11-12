@@ -76,8 +76,7 @@ namespace XR
   {
     AssertStrEq(rawNameExt, "testasset.testBasic");
 
-    data.resize(256 * sizeof(int), 0);
-    int* histogram = reinterpret_cast<int*>(data.data());
+    int histogram[256] = {};
 
     auto end = buffer + size;
     while (buffer < end)
@@ -86,6 +85,7 @@ namespace XR
       ++buffer;
     }
 
+    data.write(reinterpret_cast<char*>(histogram), sizeof(histogram));
     return true;
   }
 #endif

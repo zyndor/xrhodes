@@ -685,7 +685,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
       }
 
       std::vector<FilePath> dependencies;
-      std::vector<uint8_t> assetData;
+      std::ostringstream assetData;
       if (!done)  // build asset
       {
         done = !iFind->second->Build(assetPath.GetNameExt(), fb.GetData(), fb.GetSize(),
@@ -707,7 +707,8 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
 
         if (!done)
         {
-          done = !assetWriter.Write(assetData.data(), 1, assetData.size());
+          auto str = assetData.str();
+          done = !assetWriter.Write(str.data(), 1, str.size());
         }
 
         if (done)
