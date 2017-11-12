@@ -511,7 +511,6 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   static Asset* Create(HashType hash, FlagType flags) {\
     return new className(DescriptorCore(kTypeId, hash), flags);\
   }\
-  static Asset::Builder const& GetBuilder();\
 \
   className(Asset::DescriptorCore const& desc, FlagType flags)\
   : Asset(desc, flags)\
