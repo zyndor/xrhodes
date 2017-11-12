@@ -67,14 +67,14 @@ namespace XR
     int histogram[256];
   };
 
-  XR_ASSET_DEF(TestAsset, "tes7", 1, "test")
+  XR_ASSET_DEF(TestAsset, "xUta", 1, "testBasic")
 
   XR_ASSET_BUILDER_DECL(TestAsset)
 
 #ifdef ENABLE_ASSET_BUILDING
   XR_ASSET_BUILDER_BUILD_SIG(TestAsset)
   {
-    AssertStrEq(rawNameExt, "testasset.test");
+    AssertStrEq(rawNameExt, "testasset.testBasic");
 
     data.resize(256 * sizeof(int), 0);
     int* histogram = reinterpret_cast<int*>(data.data());
@@ -112,7 +112,7 @@ namespace XR
 
   TEST_F(AssetTests, Basics)
   {
-    FilePath path("assets/testasset.test");
+    FilePath path("assets/testasset.testBasic");
     EnsureTestAssetExists(path);
 
     auto testAss = Asset::Manager::Load<TestAsset>(path);
@@ -142,7 +142,7 @@ namespace XR
 
   TEST_F(AssetTests, LoadReflected)
   {
-    FilePath path("assets/testasset.test");
+    FilePath path("assets/testasset.testBasic");
     EnsureTestAssetExists(path);
 
     auto testAss = Asset::Manager::LoadReflected(path);
@@ -156,5 +156,105 @@ namespace XR
       Asset::Manager::Update();
     }
     ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));  // loaded successfully
+  }
+
+  struct DependantTestAsset : public XR::Asset
+  {
+    XR_ASSET_DECL(DependantTestAsset)
+
+    static std::vector<Asset::DescriptorCore> s_order;
+
+    // Inherited via Asset
+    virtual bool OnLoaded(size_t size, uint8_t const * buffer) override
+    {
+      s_order.push_back(GetDescriptor());
+      return false;
+    }
+
+    virtual void OnUnload() override
+    {
+    }
+  };
+
+  XR_ASSET_DEF(DependantTestAsset, "xUda", 2, "testDeps")
+
+  XR_ASSET_BUILDER_DECL(DependantTestAsset)
+
+  std::vector<Asset::DescriptorCore> DependantTestAsset::s_order;
+
+#ifdef ENABLE_ASSET_BUILDING
+  XR_ASSET_BUILDER_BUILD_SIG(DependantTestAsset)
+  {
+    auto start = buffer;
+    bool eol = !buffer || (*buffer == '\r' || *buffer == '\n') || size == 0;
+    FilePath path;
+    while (size > 0)
+    {
+      ++buffer;
+      --size;
+
+      bool isEol = (*buffer == '\r' || *buffer == '\n') || size == 0;
+      if (isEol)
+      {
+        if(!eol)
+        {
+          path.assign((char const*)start, buffer - start);
+          dependencies.push_back(path);
+          start = buffer;
+        }
+        ++start;
+      }
+      eol = isEol;
+    }
+
+    return true;
+  }
+#endif
+
+  TEST_F(AssetTests, Dependencies)
+  {
+    // Load 4 assets of the following dependency structure:
+    // test -> test1, test2; test1 -> test3; test2 -> test3; test3
+    DependantTestAsset::s_order.clear();
+
+    FilePath path("assets/test.testDeps");
+
+    // none of the dependencies exist
+    ASSERT_EQ(Asset::Manager::Find<DependantTestAsset>("assets/test1.testDeps"), Asset::Ptr());
+    ASSERT_EQ(Asset::Manager::Find<DependantTestAsset>("assets/test2.testDeps"), Asset::Ptr());
+    ASSERT_EQ(Asset::Manager::Find<DependantTestAsset>("assets/test3.testDeps"), Asset::Ptr());
+
+    auto testAss = Asset::Manager::Load<DependantTestAsset>(path, 0);
+
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
+
+    // dependencies are created - we don't care if they're loading, as this might
+    // be done by the time we've looked them up and checked it (since only the
+    // data loading is async and the dependencies are processed synchronously).
+    auto dep1 = Asset::Manager::Find<DependantTestAsset>("assets/test1.testDeps");
+    auto dep2 = Asset::Manager::Find<DependantTestAsset>("assets/test2.testDeps");
+    auto dep3 = Asset::Manager::Find<DependantTestAsset>("assets/test3.testDeps");
+    ASSERT_NE(dep1, Asset::Ptr());
+    ASSERT_NE(dep2, Asset::Ptr());
+    ASSERT_NE(dep3, Asset::Ptr());
+
+    while (!(testAss->GetFlags() & (Asset::ReadyFlag | Asset::ErrorFlag)))
+    {
+      Asset::Manager::Update();
+    }
+
+    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag));
+    ASSERT_FALSE(CheckAllMaskBits(dep1->GetFlags(), Asset::ReadyFlag));
+    ASSERT_FALSE(CheckAllMaskBits(dep2->GetFlags(), Asset::ReadyFlag));
+    ASSERT_FALSE(CheckAllMaskBits(dep3->GetFlags(), Asset::ReadyFlag));
+
+    // Dependencies are loaded in the correct order - first the ones without any dependencies,
+    // then the ones that depend upon them etc.
+    // We can't inspect their loading directly, however we know that the order that their
+    // OnLoaded() is called is the order they're popped off the loading queue.
+    ASSERT_EQ(DependantTestAsset::s_order[0], dep3->GetDescriptor());
+    ASSERT_EQ(DependantTestAsset::s_order[1], dep1->GetDescriptor());
+    ASSERT_EQ(DependantTestAsset::s_order[2], dep2->GetDescriptor());
+    ASSERT_EQ(DependantTestAsset::s_order[3], testAss->GetDescriptor());
   }
 }
