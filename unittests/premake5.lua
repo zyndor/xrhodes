@@ -37,14 +37,17 @@ project "unittests"
             "libpng16",
             "zlib",
             "opengl32",
+			
+			"SDL2",
+			--"SDL2_mixer",
         }
     
         libdirs
         {
             "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
             "../external/tinyxml/lib/$(Platform)/Release",
-            "../external/SDL2/lib/$(PlatformShortName)/",
-            "../external/SDL2_mixer/lib/$(PlatformShortName)",
+            "../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
+            "../external/SDL2_mixer/lib/"..target_env.."/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
             "../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
         }
@@ -94,7 +97,6 @@ project "unittests"
 			for _, c in ipairs(tbl_configurations) do
 				local pc = "/"..p.."-"..c
 				filter{ "platforms:"..p, c }
-    
                 libdirs
                 {
                     "../external/gtest/lib/"..target_env..pc,
@@ -102,3 +104,18 @@ project "unittests"
             end
         end
     end
+
+    if target_env == "windows" then -- copy SDL dlls
+		local external_rel_path = "../../external/"; -- current directory at this point is .projects/windows
+		local artifacts_rel_path = "../../"..bin_location.."/";
+		for _, p in ipairs(tbl_platforms) do
+			for _, c in ipairs(tbl_configurations) do
+				local pc = p.."-"..c
+				filter { "platforms:"..p, c }
+				postbuildcommands{
+					os.translateCommands("{COPY} "..external_rel_path.."SDL2/lib/"..target_env.."/"..p.."/*.dll "..artifacts_rel_path..pc),
+					os.translateCommands("{COPY} "..external_rel_path.."SDL2_mixer/lib/"..target_env.."/"..p.."/*.dll "..artifacts_rel_path..pc)
+				}
+			end
+		end
+	end

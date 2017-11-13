@@ -4,7 +4,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "MaterialImpl.hpp"
 #include "xrgl.hpp"
 #include "XR/Renderer.hpp"
 #include "XR/Device.hpp"
@@ -202,10 +201,12 @@ void* Renderer::Alloc(size_t bytes)
 //==============================================================================
 Material* Renderer::AllocMaterial()
 {
-  void* pMem(Alloc(sizeof(MaterialImpl) + sizeof(Material)));
-  MaterialImpl* pImpl(new (static_cast<MaterialImpl*>(pMem)) MaterialImpl());
-  Material*     pMat(new (pImpl + 1) Material(pImpl));
-  return pMat;
+  XR_ASSERTMSG(Renderer, false, ("Renderer is being deprecated imminently."));
+  //void* pMem(Alloc(sizeof(MaterialImpl) + sizeof(Material)));
+  //MaterialImpl* pImpl(new (static_cast<MaterialImpl*>(pMem)) MaterialImpl());
+  //Material*     pMat(new (pImpl + 1) Material(pImpl));
+  //return pMat;
+  return nullptr;
 }
 
 //==============================================================================
@@ -354,7 +355,8 @@ void  Renderer::GetModelMatrix(Matrix& m)
 //==============================================================================
 void Renderer::SetMaterial( Material* pMat )
 {
-  static_cast<MaterialImpl*>(pMat->GetImpl())->Apply();
+  XR_ASSERTMSG(Renderer, false, ("Renderer is being deprecated imminently."));
+  //static_cast<MaterialImpl*>(pMat->GetImpl())->Apply();
 }
 
 //==============================================================================

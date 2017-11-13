@@ -12,6 +12,9 @@
 #include "BasicMesh.hpp"
 #include "XR/fundamentals.hpp"
 
+// remove these includes
+#include "XR/ResManager.hpp"
+
 namespace XR
 {
 

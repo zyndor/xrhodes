@@ -1,0 +1,7 @@
+{
+	state: { depthWrite, depthTest },
+	textures: {
+		0:	"assets/xrhodes.png"
+	},
+	shader: "assets/xrhodes.shd"
+}

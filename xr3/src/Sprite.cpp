@@ -141,12 +141,12 @@ void Sprite::SetUVs(const AABB& tc)
 void Sprite::SetUVsProportional(const AABB& tc)
 {
   XR_ASSERT(Sprite, m_pMaterial != 0);
-  XR_ASSERT(Sprite, m_pMaterial->GetTexture(0).GetImpl() != 0);
+  XR_ASSERT(Sprite, m_pMaterial->GetTexture(0));
 
   SetUVs(tc);
 
-  int32_t hw = (tc.right - tc.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
-  int32_t hh = (tc.bottom - tc.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
+  int32_t hw = (tc.right - tc.left) * .5f * m_pMaterial->GetTexture(0)->GetWidth();
+  int32_t hh = (tc.bottom - tc.top) * .5f * m_pMaterial->GetTexture(0)->GetHeight();
   SetHalfSize(hw, hh, true);
 }
 
@@ -164,12 +164,12 @@ void Sprite::SetUVsRotated(const AABB& uvs)
 void Sprite::SetUVsRotatedProportional(const AABB& uvs)
 {
   XR_ASSERT(Sprite, m_pMaterial != 0);
-  XR_ASSERT(Sprite, m_pMaterial->GetTexture(0).GetImpl() != 0);
+  XR_ASSERT(Sprite, m_pMaterial->GetTexture(0));
 
   SetUVsRotated(uvs);
 
-  int32_t hw = (uvs.bottom - uvs.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
-  int32_t hh = (uvs.right - uvs.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
+  int32_t hw = (uvs.bottom - uvs.top) * .5f * m_pMaterial->GetTexture(0)->GetHeight();
+  int32_t hh = (uvs.right - uvs.left) * .5f * m_pMaterial->GetTexture(0)->GetWidth();
   SetHalfSize(hw, hh, true);
 }
 

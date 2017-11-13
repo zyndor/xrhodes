@@ -122,30 +122,30 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 
     if (texWidth != 0)
     {
-      success = success && m_pMaterial->GetTexture(0).GetWidth() == texWidth;
+      success = success && m_pMaterial->GetTexture(0)->GetWidth() == texWidth;
       if (!success)
       {
         XR_TRACE(TexturePack, ("Texture width mismatch (%d vs %d)",
-          m_pMaterial->GetTexture(0).GetWidth(), texWidth));  
+          m_pMaterial->GetTexture(0)->GetWidth(), texWidth));  
       }
     }
     else
     {
-      texWidth = m_pMaterial->GetTexture(0).GetWidth();
+      texWidth = m_pMaterial->GetTexture(0)->GetWidth();
     }
 
     if (texHeight != 0)
     {
-      success = success && m_pMaterial->GetTexture(0).GetHeight() == texHeight;
+      success = success && m_pMaterial->GetTexture(0)->GetHeight() == texHeight;
       if (!success)
       {
         XR_TRACE(TexturePack, ("Texture height mismatch (%d vs %d)",
-          m_pMaterial->GetTexture(0).GetHeight(), texHeight));  
+          m_pMaterial->GetTexture(0)->GetHeight(), texHeight));  
       }
     }
     else
     {
-      texWidth = m_pMaterial->GetTexture(0).GetHeight();
+      texWidth = m_pMaterial->GetTexture(0)->GetHeight();
     }
   }
 
