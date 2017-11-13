@@ -223,7 +223,7 @@ public:
     /// asynchronously (Manager::Update() will need to be called regularly),
     /// or synchronously (if the LoadSyncFlag was set).
     template <class T>
-    static Ptr Load(Descriptor<T> const& desc, FlagType flags = 0)
+    static Counted<T> Load(Descriptor<T> const& desc, FlagType flags = 0)
     {
       flags &= ~PrivateMask;
       Counted<T> asset = FindOrCreateInternal<T>(desc, flags);
