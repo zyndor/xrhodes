@@ -804,8 +804,8 @@ void Asset::Manager::Exit()
 #ifdef ENABLE_ASSET_BUILDING
   s_assetBuilders.clear();
 #endif
-  s_reflectors.clear();
   s_extensions.clear();
+  s_reflectors.clear();
   s_assetMan.reset(nullptr);
 }
 
