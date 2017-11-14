@@ -42,19 +42,19 @@ public:
   using FlagType = uint32_t;
   enum Flags: FlagType
   {
-    // public
-    ForceReloadFlag = XR_MASK_ID(FlagType, 0),  // Load() will not load an already loaded asset, unless this flag is specified.
-    LoadSyncFlag = XR_MASK_ID(FlagType, 1),  // forces the asset to load synchronously.
-    UnmanagedFlag = XR_MASK_ID(FlagType, 2), // the asset manager will not keep a reference to the asset.
-    KeepSourceDataFlag = XR_MASK_ID(FlagType, 3), // source data is discarded by default; handling this flag is a responsibility of the given asset type
-
     // private
-    LoadingFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 4),
-    LoadedFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 3),
-    ReadyFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 2),
-    ErrorFlag = XR_MASK_ID(FlagType, XR_BITSIZEOF(Flags) - 1),  // The processing of the asset stops when this is set, and the rest of the private flags indicate where things have gone bad.
+    ErrorFlag = XR_MASK_ID(FlagType, 0),  // The processing of the asset stops when this is set. Note: error states are odd numbers.
+    LoadingFlag = XR_MASK_ID(FlagType, 1),  // Asset data is being loaded from disk.
+    ProcessingFlag = XR_MASK_ID(FlagType, 2), // Transient state between loading data and completion, to inform asset manager and help tell loading (I/O) and processing errors.
+    ReadyFlag = XR_MASK_ID(FlagType, 3), // The Asset is ready to use.
 
-    PrivateMask = ErrorFlag | ReadyFlag | LoadedFlag | LoadingFlag
+    // public
+    ForceReloadFlag = XR_MASK_ID(FlagType, 4),  // Load() will not load an already loaded asset, unless this flag is specified.
+    LoadSyncFlag = XR_MASK_ID(FlagType, 5),  // forces the asset to load synchronously.
+    UnmanagedFlag = XR_MASK_ID(FlagType, 6), // the asset manager will not keep a reference to the asset.
+    KeepSourceDataFlag = XR_MASK_ID(FlagType, 7), // source data is discarded by default; handling this flag is a responsibility of the given asset type
+
+    PrivateMask = ErrorFlag | ReadyFlag | ProcessingFlag | LoadingFlag
   };
 
   ///@brief Carries information about the type and identifier of an Asset.
@@ -162,7 +162,7 @@ public:
 
     ///@brief Parses @a buffer of size @a size bytes, and produces two buffers
     /// of @a dependencies and asset @a data for writing into the built asset.
-    /// @a data is what's passed to Asset::Load() when loading; @a dependencies
+    /// @a data is what's passed to Asset::ProcessData() when loading; @a dependencies
     /// are paths to assets which will be loaded by the Manager prior to the
     /// loading of the given asset.
     virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
@@ -383,7 +383,7 @@ public:
   }
 
   ///@brief Loads the asset with the given source data.
-  bool Load(size_t size, uint8_t const* buffer);
+  bool ProcessData(size_t size, uint8_t const* buffer);
 
   ///@brief Unloads the Asset (calling OnUnload()) only if it has been loaded.
   /// If it has, or if the ErrorFlag was set, the private flags are cleared.
@@ -416,7 +416,7 @@ protected:
 #endif
 
   // virtual
-  ///@brief Called asset data is loaded -- by Load().
+  ///@brief Called when asset data is loaded -- by Load().
   virtual bool OnLoaded(size_t size, uint8_t const* buffer) = 0;
 
   ///@brief Called when unloading of Asset data is requested.

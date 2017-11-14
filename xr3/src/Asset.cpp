@@ -75,16 +75,16 @@ struct LoadJob : Worker::Job
       done = progress + readSize == m_data.size();
       if (done)
       {
-        asset->OverrideFlags(Asset::LoadingFlag, Asset::LoadedFlag);
+        asset->OverrideFlags(Asset::LoadingFlag, Asset::ProcessingFlag);
       }
     }
 
     return done;
   }
 
-  bool Load()
+  bool ProcessData()
   {
-    return asset->Load(m_data.size(), m_data.data());
+    return asset->ProcessData(m_data.size(), m_data.data());
   }
 
 private:
@@ -216,7 +216,7 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
       std::unique_lock<decltype(m_pendingLock)> lock(m_pendingLock);
       auto i = m_pending.begin();
       while (i != m_pending.end() &&
-        CheckAllMaskBits((*i)->asset->GetFlags(), Asset::LoadedFlag))
+        CheckAllMaskBits((*i)->asset->GetFlags(), Asset::ProcessingFlag))
       {
         ++i;
       }
@@ -227,9 +227,9 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
     for (auto i0 = q.begin(), i1 = q.end(); i0 != i1; ++i0)
     {
       auto j = *i0;
-      if (CheckAllMaskBits(j->asset->GetFlags(), Asset::LoadedFlag))
+      if (!CheckAllMaskBits(j->asset->GetFlags(), Asset::ErrorFlag))
       {
-        j->Load();
+        j->ProcessData();
       }
 
       DeleteJob(*j);
@@ -429,9 +429,9 @@ static void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset
       while (!lj.Process())
       {}
 
-      if (CheckAllMaskBits(lj.asset->GetFlags(), Asset::LoadedFlag))
+      if (CheckAllMaskBits(lj.asset->GetFlags(), Asset::ProcessingFlag))
       {
-        lj.Load();
+        lj.ProcessData();
       }
     }
     else
@@ -581,7 +581,8 @@ bool Asset::Manager::Manage(Asset::Ptr asset)
 bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
 {
   return !(CheckAllMaskBits(oldFlags, LoadingFlag) ||
-    (CheckAllMaskBits(oldFlags, LoadedFlag) && !CheckAllMaskBits(newFlags, ForceReloadFlag)));
+    (CheckAnyMaskBits(oldFlags, ProcessingFlag | ReadyFlag) &&
+      !CheckAllMaskBits(newFlags, ForceReloadFlag)));
 }
 
 //==============================================================================
@@ -817,14 +818,14 @@ Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
 }
 
 //==============================================================================
-bool Asset::Load(size_t size, uint8_t const* buffer)
+bool Asset::ProcessData(size_t size, uint8_t const* buffer)
 {
   XR_ASSERTMSG(Asset, !CheckAllMaskBits(m_flags, LoadingFlag),
     ("Loading is already in progress; it's bound to clobber what's being set."));
   bool success = OnLoaded(size, buffer);
   if (success)
   {
-    OverrideFlags(Asset::LoadedFlag, Asset::ReadyFlag);
+    OverrideFlags(Asset::ProcessingFlag, Asset::ReadyFlag);
   }
   else
   {
