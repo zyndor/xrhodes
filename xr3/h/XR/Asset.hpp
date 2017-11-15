@@ -190,11 +190,8 @@ public:
     ///@brief Calculates the hash of the given path.
     ///@note If the file is in the asset path (given to Init()), then it
     /// must be a valid built asset.
-    ///@note Raw assets' hash is calculated from their location, in the following
-    /// way:
-    /// - ram / rom and asset paths are stripped (but not the rest of the path).
-    /// - file extension is stripped (the type is a separate part of the
-    ///   descriptor).
+    ///@note Raw assets' hash is calculated from their location, after the
+    /// stripping of ram / rom and asset paths (but not the rest of the path).
     static HashType HashPath(FilePath path);
 
     ///@brief Attempts to load a built asset from the asset path that the

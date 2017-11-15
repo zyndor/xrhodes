@@ -484,9 +484,8 @@ Asset::HashType Asset::Manager::HashPath(FilePath path)
   // - in a two-deep directory structure, the parent directories being the first
   //   and second characters of the [hashed] name.
   char const* nameExt = path.GetNameExt();
-  char const* ext = path.GetExt();
   Asset::HashType hash;
-  if (!ext &&
+  if (!path.GetExt() &&
     nameExt == path.data() + 4 &&
     path.size() == 20 &&
     sscanf(nameExt, "%llx", &hash) == 1)
@@ -498,8 +497,8 @@ Asset::HashType Asset::Manager::HashPath(FilePath path)
   }
   else
   {
-    // Otherwise drop the extension and hash what's left, which must not be an empty string.
-    const size_t size = ext ? ext - path.c_str() : path.size();
+    // Otherwise hash what's left, which must not be an empty string.
+    const size_t size = path.size();
     if (size > 0)
     {
       hash = Hash::String(path.c_str(), size, true);
@@ -597,7 +596,8 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
     assetPath = FilePath(assetPath.c_str() + s_assetMan->GetPath().size());
   }
 
-  FilePath finalPath = asset->GetDescriptor().ToPath();
+  auto desc = asset->GetDescriptor();
+  FilePath finalPath = desc.ToPath();
   if (finalPath != assetPath)
   {
     finalPath = Asset::Manager::GetAssetPath() / finalPath;
@@ -619,25 +619,34 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
         }
       });
 
-      Asset::VersionType versionFound;
-      // Not being able to open the file (which we know for sure exists), to
-      // seek 4 bytes and to read a version number isn't a hard error -- we'll
-      // just have to rebuild, and we can deal with any persistent I/O errors
-      // at that point.
-      rebuild = !(hFile &&
-        File::Seek(hFile, sizeof(AssetHeader::typeId), XR::File::SeekFrom::Start) &&
-        File::Read(hFile, sizeof(versionFound), 1, &versionFound) == 1 &&
-        versionFound == version);
+      // Try to see what type / version we've got here. If the file doesn't exist
+      // or can't be read, we'll rebuild. Persistent I/O errors will be dealt with
+      // later.
+      AssetHeader header;
+      bool gotHeader = hFile &&
+        File::Read(hFile, sizeof(header), 1, &header) == 1;
+      if(gotHeader && header.typeId != desc.type)
+      {
+        XR_TRACE(Asset::Manager,
+          ("Hash clash detected trying to build %s from %s, pre-existing type: %.*s.",
+          finalPath.c_str(), assetPath.c_str(), sizeof(header.typeId), header.typeId));
+        asset->FlagError();
+        rebuild = false;
+      }
+      else
+      {
+        rebuild = header.version != version;
+      }
     }
 
     if (rebuild)
     {
-      Asset::TypeId type = asset->GetDescriptor().type;
-      auto iFind = s_assetBuilders.find(type);
+      auto iFind = s_assetBuilders.find(desc.type);
       bool done = iFind == s_assetBuilders.end();
       if (done)
       {
-        XR_TRACE(Asset::Manager, ("Failed to find builder for type '%.*s'.", sizeof(type), &type));
+        XR_TRACE(Asset::Manager, ("Failed to find builder for type '%.*s'.",
+          sizeof(desc.type), &desc.type));
       }
 
       FileBuffer fb;
@@ -676,7 +685,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
 
       if (!done)  // write header
       {
-        AssetHeader header { asset->GetDescriptor().type, version, 0 };
+        AssetHeader header { desc.type, version, 0 };
         done = !assetWriter.Write(&header, sizeof(header), 1);
         if (done)
         {
