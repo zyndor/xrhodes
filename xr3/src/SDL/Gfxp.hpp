@@ -54,13 +54,13 @@ struct ServicedArray
 
   T& operator[](size_t i)
   {
-    XR_ASSERT(ServicedArray, i < server.GetNumActive());
+    XR_ASSERT(ServicedArray, i < server.GetNumActive() || n - 1 - i < exempt);
     return data[i];
   }
 
   T const& operator[](size_t i) const
   {
-    XR_ASSERT(ServicedArray, i < server.GetNumActive());
+    XR_ASSERT(ServicedArray, i < server.GetNumActive() || n - 1 - i < exempt);
     return data[i];
   }
 };
