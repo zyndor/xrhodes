@@ -702,7 +702,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
           dependencies, assetData);
         if (done)
         {
-          XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", pathBuilt.c_str()));
+          XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", path.c_str()));
         }
       }
 
