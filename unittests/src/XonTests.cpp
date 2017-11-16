@@ -181,6 +181,13 @@ namespace XR
 
     ASSERT_EQ(root->GetNumElements(), 7);
 
+    std::vector<std::string> keys;
+    root->GetKeys(keys);
+    ASSERT_EQ(keys.size(), 2);
+    // note: lexicographic order -- happens to be the same order they're defined.
+    ASSERT_STREQ(keys[0].c_str(), "key");
+    ASSERT_STREQ(keys[1].c_str(), "more_keys");
+
     XonEntity& v0((*root)[0]);
     ASSERT_EQ(v0.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v0.GetValue(), std::string("value"));
@@ -203,6 +210,13 @@ namespace XR
     XonEntity& v4((*root)[4]);
     ASSERT_EQ(v4.GetType(), XonEntity::Type::Object);
     ASSERT_EQ(v4.GetNumElements(), 7);
+
+    static_cast<XonObject&>(v4).GetKeys(keys);
+    ASSERT_EQ(keys.size(), 3);
+    // note: lexicographic order.
+    ASSERT_STREQ(keys[0].c_str(), "a_nested_object");
+    ASSERT_STREQ(keys[1].c_str(), "key");
+    ASSERT_STREQ(keys[2].c_str(), "{}ther key");
 
     XonEntity& v4_0(v4[0]);
     ASSERT_EQ(v4_0.GetType(), XonEntity::Type::Value);

@@ -96,9 +96,11 @@ public:
     return m_values.size();
   }
 
+  ///@brief Writes the keys that it knows of into @a keys, in lexicographic order.
+  void GetKeys(std::vector<std::string>& keys);
+
   void AddValue(XonEntity& value);  // ownership transfer
   void AddValue(std::string key, XonEntity& value);  // ownership transfer
-  void GetKeys(std::vector<std::string>& keys);
   bool HasValue(XonEntity const& value) const;
 
 private:
@@ -127,8 +129,6 @@ private:
   // data
   char* m_value = nullptr;
 };
-
-class XonException;
 
 } //XR
 

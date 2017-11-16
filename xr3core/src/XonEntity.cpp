@@ -178,9 +178,10 @@ void XonObject::GetKeys(std::vector<std::string>& keys)
 {
   if(keys.size() < m_keyValues.size())
   {
-    keys.resize(m_keyValues.size());
+    keys.reserve(m_keyValues.size());
   }
 
+  keys.clear();
   std::for_each(m_keyValues.begin(), m_keyValues.end(),
     [&keys](decltype(m_keyValues)::value_type const& v) {
       keys.push_back(v.first);
