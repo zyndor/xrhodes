@@ -88,8 +88,8 @@ public:
 
 protected:
   // data
-  uint32_t  m_size;
-  char      m_buffer[N];
+  size_t m_size;
+  char   m_buffer[N];
 };
 
 template  <>
