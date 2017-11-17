@@ -168,7 +168,7 @@ namespace XR
     virtual bool OnLoaded(size_t size, uint8_t const * buffer) override
     {
       s_order.push_back(GetDescriptor());
-      return false;
+      return true;
     }
 
     virtual void OnUnload() override
@@ -243,10 +243,10 @@ namespace XR
       Asset::Manager::Update();
     }
 
-    ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag));
-    ASSERT_FALSE(CheckAllMaskBits(dep1->GetFlags(), Asset::ReadyFlag));
-    ASSERT_FALSE(CheckAllMaskBits(dep2->GetFlags(), Asset::ReadyFlag));
-    ASSERT_FALSE(CheckAllMaskBits(dep3->GetFlags(), Asset::ReadyFlag));
+    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::ReadyFlag));
+    ASSERT_TRUE(CheckAllMaskBits(dep1->GetFlags(), Asset::ReadyFlag));
+    ASSERT_TRUE(CheckAllMaskBits(dep2->GetFlags(), Asset::ReadyFlag));
+    ASSERT_TRUE(CheckAllMaskBits(dep3->GetFlags(), Asset::ReadyFlag));
 
     // Dependencies are loaded in the correct order - first the ones without any dependencies,
     // then the ones that depend upon them etc.
