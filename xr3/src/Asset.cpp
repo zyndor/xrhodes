@@ -255,13 +255,8 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
   void UnloadUnused()
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
-    for (auto& i: m_assets)
-    {
-      if(i.second->GetRefCount() == 1)
-      {
-        i.second->Unload();
-      }
-    }
+    while (UnloadUnusedInternal())
+    {}
   }
 
 private:
@@ -276,6 +271,22 @@ private:
 
   Spinlock m_pendingLock;
   Queue<LoadJob*> m_pending;
+
+  // internal
+  bool UnloadUnusedInternal()
+  {
+    bool unloaded = false;
+    for (auto& i : m_assets)
+    {
+      auto& ptr = i.second;
+      if (CheckAllMaskBits(ptr->GetFlags(), Asset::ReadyFlag) && ptr->GetRefCount() == 1)
+      {
+        i.second->Unload();
+        unloaded = true;
+      }
+    }
+    return unloaded;
+  }
 };
 
 namespace
