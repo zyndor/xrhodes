@@ -126,8 +126,9 @@ public:
     uint32_t pack = 0;
     Read(pack);
 
-    ref = ((pack >> 24) & 0x80) != 0;
-    t = static_cast<UniformType>((pack >> 24) & 0x7f);
+    uint8_t refType = pack >> 24;
+    ref = (refType & 0x80) != 0;
+    t = static_cast<UniformType>(refType & 0x7f);
     arraySize = (pack >> 16) & 0x00ff;
     loc = pack & 0xffff;
   }

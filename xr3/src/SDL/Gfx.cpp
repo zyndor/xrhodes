@@ -289,11 +289,13 @@ struct Program: ResourceGL
     uint8_t ignoreSize;
     uint16_t ignoreLoc;
     UniformHandle hUniform;
+    GLint ignoreGlLoc;
     while (!uniforms->AtEnd())
     {
       uniforms->ReadHandle(ignoreType, ignoreSize, ignoreLoc, hUniform);
       XR_ASSERT(Gfx, hUniform.id < numUniforms);
       --(uniformData[hUniform.id].refCount);
+      uniforms->Read(ignoreGlLoc);
     }
 
     uniforms->Finalize();
