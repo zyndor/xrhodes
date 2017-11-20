@@ -49,9 +49,16 @@ public:
   ///@return The filename and extension part of the path, if any.
   char const* GetNameExt() const;
 
+  ///@return The filename and extension part of the path, if any.
+  char* GetNameExt();
+
   ///@return The extension part of the path, which follows the last kExtSeparator
   /// in the filename, if any.
   char const* GetExt() const;
+
+  ///@return The extension part of the path, which follows the last kExtSeparator
+  /// in the filename, if any.
+  char* GetExt();
 
   ///@return Does this start with the first @a strSize bytes of @a str?
   bool StartsWith(char const* str, size_t strSize) const

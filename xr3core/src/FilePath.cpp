@@ -36,7 +36,22 @@ void FilePath::AppendDirSeparator()
 //==============================================================================
 char const* FilePath::GetNameExt() const
 {
-  char const* p = rfind(kDirSeparator);
+  auto p = rfind(kDirSeparator);
+  if (p)
+  {
+    ++p;
+  }
+  else
+  {
+    p = m_buffer;
+  }
+  return p;
+}
+
+//==============================================================================
+char* FilePath::GetNameExt()
+{
+  auto p = rfind(kDirSeparator);
   if (p)
   {
     ++p;
@@ -52,7 +67,18 @@ char const* FilePath::GetNameExt() const
 char const* FilePath::GetExt() const
 {
   auto ext = strrchr(GetNameExt(), kExtSeparator);
-  if(ext)
+  if (ext)
+  {
+    ++ext;
+  }
+  return ext;
+}
+
+//==============================================================================
+char* FilePath::GetExt()
+{
+  auto ext = strrchr(GetNameExt(), kExtSeparator);
+  if (ext)
   {
     ++ext;
   }
