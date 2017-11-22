@@ -174,6 +174,84 @@ private:
   Deleter m_d;
 };
 
+//==============================================================================
+template <typename T>
+inline
+bool operator==(Counted<T> const& p0, std::nullptr_t p1)
+{
+  return p0.Get() == p1;
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator==(Counted<T> const& p0, T* p1)
+{
+  return p0.Get() == p1;
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator==(std::nullptr_t p0, Counted<T> const& p1)
+{
+  return operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator==(T* p0, Counted<T> const& p1)
+{
+  return operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(Counted<T> const& p0, std::nullptr_t p1)
+{
+  return !operator==(p0, p1);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(Counted<T> const& p0, T* p1)
+{
+  return !operator==(p0, p1);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(std::nullptr_t p0, Counted<T> const& p1)
+{
+  return !operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(T* p0, Counted<T> const& p1)
+{
+  return !operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+bool operator==(Counted<T> const& lhs, Counted<T> const& rhs)
+{
+  return lhs.Get() == rhs.Get();
+}
+
+//==============================================================================
+template <typename T>
+bool operator!=(Counted<T> const& lhs, Counted<T> const& rhs)
+{
+  return !operator==(lhs, rhs);
+}
+
 } // XR
 
 #endif
