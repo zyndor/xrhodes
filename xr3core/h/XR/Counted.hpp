@@ -8,6 +8,7 @@
 #define XR_COUNTED_HPP
 
 #include <memory>
+#include <functional>
 
 namespace XR
 {
@@ -51,30 +52,38 @@ protected:
   }
 };
 
-template <class T, class D = std::default_delete<T>>
+template <class T>
 class Counted: protected CountedCore
 {
 public:
   // using
-  using Deleter = typename std::remove_reference<D>::type;
   using CountedCore::operator bool;
+  using Deleter = std::function<void(T*)>;
 
   // structors
-  explicit Counted(T* p = nullptr)
-  : CountedCore(p),
-    m_d()
+  explicit Counted(Deleter d)
+  : Counted(nullptr, d)
   {}
 
-  Counted(Counted<T, D> const& rhs)
+  Counted(T* p = nullptr)
+  : CountedCore(p),
+    m_d(std::default_delete<T>())
+  {}
+
+  Counted(T* p, Deleter d)
+  : CountedCore(p),
+    m_d(d)
+  {}
+
+  Counted(Counted<T> const& rhs)
   : CountedCore(rhs.m_p),
     m_d(rhs.m_d)
   {}
 
-  Counted(Counted<T, D>&& rhs)
-  : CountedCore(nullptr),
-    m_d(std::forward<Deleter>(rhs.GetDeleter()))
+  Counted(Counted<T>&& rhs)
+  : CountedCore(nullptr)
   {
-    std::swap(m_p, rhs.m_p);
+    Swap(rhs);
   }
 
   ~Counted()
@@ -114,10 +123,24 @@ public:
     m_p = p;
   }
 
-  template <typename U, typename D2 = std::default_delete<U>>
-  Counted<U, D2> StaticCast()
+  template <typename D>
+  void Reset(T* p, D d)
   {
-    return Counted<U, D2>(static_cast<U*>(Get()));
+    Reset(p);
+
+    m_d = d;
+  }
+
+  void Swap(Counted<T>& rhs)
+  {
+    std::swap(m_p, rhs.m_p);
+    std::swap(m_d, rhs.m_d);
+  }
+
+  template <typename U, typename DU = std::default_delete<U>>
+  Counted<U> StaticCast(DU d = DU())
+  {
+    return Counted<U>(static_cast<U*>(Get()), d);
   }
 
   Deleter const& GetDeleter() const
@@ -131,10 +154,9 @@ public:
   }
 
   // operator overloads
-  Counted<T, D>& operator=(Counted<T, D> const& rhs)
+  Counted<T>& operator=(Counted<T> const& rhs)
   {
-    Counted<T, D> temp(rhs);
-    std::swap(m_p, temp.m_p);
+    Counted<T>(rhs).Swap(*this);
     return *this;
   }
 
@@ -151,6 +173,84 @@ public:
 private:
   Deleter m_d;
 };
+
+//==============================================================================
+template <typename T>
+inline
+bool operator==(Counted<T> const& p0, std::nullptr_t p1)
+{
+  return p0.Get() == p1;
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator==(Counted<T> const& p0, T* p1)
+{
+  return p0.Get() == p1;
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator==(std::nullptr_t p0, Counted<T> const& p1)
+{
+  return operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator==(T* p0, Counted<T> const& p1)
+{
+  return operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(Counted<T> const& p0, std::nullptr_t p1)
+{
+  return !operator==(p0, p1);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(Counted<T> const& p0, T* p1)
+{
+  return !operator==(p0, p1);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(std::nullptr_t p0, Counted<T> const& p1)
+{
+  return !operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+inline
+bool operator!=(T* p0, Counted<T> const& p1)
+{
+  return !operator==(p1, p0);
+}
+
+//==============================================================================
+template <typename T>
+bool operator==(Counted<T> const& lhs, Counted<T> const& rhs)
+{
+  return lhs.Get() == rhs.Get();
+}
+
+//==============================================================================
+template <typename T>
+bool operator!=(Counted<T> const& lhs, Counted<T> const& rhs)
+{
+  return !operator==(lhs, rhs);
+}
 
 } // XR
 

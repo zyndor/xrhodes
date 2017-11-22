@@ -26,14 +26,14 @@ namespace XR
     int count = 0;
   };
 
-  using MockCounted = Counted<MockCountable, NoopDeleter>;
+  using MockCounted = Counted<MockCountable>;
 
   MockCountable o;
 
   TEST(Counted, CtorResetDtor)
   {
     {
-      MockCounted c(&o);
+      MockCounted c(&o, NoopDeleter());
       ASSERT_EQ(o.count, 1);
       ASSERT_NE(c.Get(), nullptr);
 
@@ -52,7 +52,7 @@ namespace XR
 
   TEST(Counted, Copy)
   {
-    MockCounted c(&o);
+    MockCounted c(&o, NoopDeleter());
     MockCounted c2(c);
 
     ASSERT_EQ(o.count, 2);
@@ -62,7 +62,7 @@ namespace XR
 
   TEST(Counted, Move)
   {
-    MockCounted c(&o);
+    MockCounted c(&o, NoopDeleter());
     MockCounted c2(std::move(c));
 
     ASSERT_EQ(o.count, 1);
