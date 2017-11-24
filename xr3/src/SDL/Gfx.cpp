@@ -1006,7 +1006,7 @@ struct Context
     GLenum formatGl = texFormat.format;
     GLenum type = texFormat.type;
     XR_GL_CALL(glReadBuffer(m_activeFrameBuffer.IsValid() ?
-      GL_COLOR_ATTACHMENT0 + colorAttachment : GL_BACK));
+      GL_COLOR_ATTACHMENT0 + colorAttachment : GL_FRONT + colorAttachment));
     XR_GL_CALL(glReadPixels(x, y, width, height, formatGl, type, mem));
   }
 

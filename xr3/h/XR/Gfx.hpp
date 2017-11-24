@@ -317,8 +317,8 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
   TextureFormat format, void* mem);
 
 ///@brief Reads given colour attachment of currently set framebuffer; if
-/// this is the default one then @a colorAttachment is ignored and simply the
-/// backbuffer is read. 
+/// this is the default one then the contents of the front or back
+/// buffers may be read by specifying attachments 0 or 1, respectively.
 void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
   TextureFormat format, uint16_t colorAttachment, void* mem);
 
