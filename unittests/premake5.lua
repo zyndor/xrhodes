@@ -31,7 +31,9 @@ project "unittests"
 		"xr3ui",
 	}
 
+    -- link options
     if target_env == "windows" then
+        -- Windows
         links
         {
             "libpng16",
@@ -54,6 +56,13 @@ project "unittests"
 
     else
         if target_env == "macosx" then
+            -- OSX
+            links
+            {
+                "SDL2.framework"
+				--"SDL2_mixer.framework"
+            }
+        
             -- note: unlike the libdirs, these are _two_ folders out. not entirely sure why.
             local framework_paths = {
                 "-F../../external/SDL2/",
@@ -63,6 +72,7 @@ project "unittests"
             buildoptions(framework_paths)
             linkoptions(framework_paths)
         else
+            -- other *nix
             for _, p in ipairs(tbl_platforms) do
                 for _, c in ipairs(tbl_configurations) do
                     local pc = "/"..p.."-"..c
@@ -78,7 +88,7 @@ project "unittests"
             end
         end
 
-        -- common *nix libdirs
+        -- common *nix link options
         filter {}
         links
         {
