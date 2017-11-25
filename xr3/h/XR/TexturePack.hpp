@@ -25,20 +25,22 @@ public:
   ~TexturePack();
 
   // general
-  bool              Load(const char* pName,
-                      Material::GetCallback pGetCb = Material::Manager::Get,
-                      void* pGetCbData = 0);
+  ///@deprecated Asset::Manager integration in progress.
+  ///@brief Attempts to load a texture pack from TexturePacker's 'Generic XML'
+  /// format. Requires a material in the same location and name (but with '.mtl'
+  /// extension)as the texture in its definition.
+  bool              Load(char const* name, Asset::FlagType flags = 0);
 
-  Material*         GetMaterial() const;  // no ownership transfer
+  Material::Ptr     GetMaterial() const;  // no ownership transfer
 
-  int               CountSprites() const;
+  size_t            CountSprites() const;
 
-  Sprite*           Get(const char* pName, bool allowMissing); // no ownership transfer
-  Sprite*           Get(const char* pName); // no ownership transfer
+  Sprite*           Get(char const* name, bool allowMissing); // no ownership transfer
+  Sprite*           Get(char const* name); // no ownership transfer
   Sprite*           Get(uint32_t hash); // no ownership transfer
 
-  const Sprite*     Get(const char* pName, bool allowMissing) const; // no ownership transfer
-  const Sprite*     Get(const char* pName) const;
+  const Sprite*     Get(char const* name, bool allowMissing) const; // no ownership transfer
+  const Sprite*     Get(char const* name) const;
   const Sprite*     Get(uint32_t hash) const;
 
   const SpriteMap&  GetSprites() const;
@@ -50,7 +52,7 @@ public:
 
 protected:
   // data
-  Material*  m_pMaterial;  // no ownership
+  Material::Ptr  m_material;  // no ownership
   SpriteMap  m_sprites;
 };
 
@@ -58,14 +60,14 @@ protected:
 // implementation
 //==============================================================================
 inline
-Material* TexturePack::GetMaterial() const
+Material::Ptr TexturePack::GetMaterial() const
 {
-  return m_pMaterial; // no ownership transfer
+  return m_material; // no ownership transfer
 }
 
 //==============================================================================
 inline
-int TexturePack::CountSprites() const
+size_t TexturePack::CountSprites() const
 {
   return m_sprites.size();
 }

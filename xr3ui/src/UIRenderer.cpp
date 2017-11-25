@@ -13,10 +13,9 @@ namespace XR
 UIRenderer::UIRenderer()
 : IndexMesh(),
   m_numSprites(0),
-  m_parpMaterial(0),
   m_colors(),
   m_numSpritesRendered(0),
-  m_numSpritesConsumed(0)
+  m_numSpritesRenderable(0)
 {}
 
 //==============================================================================
@@ -26,12 +25,12 @@ UIRenderer::~UIRenderer()
 }
 
 //==============================================================================
-void UIRenderer::Init( int numSprites )
+void UIRenderer::Init(int numSprites)
 {
   XR_ASSERT(UIRenderer, numSprites > 0);
-  XR_ASSERTMSG(UIRenderer, m_parpMaterial == 0, ("Already initialised. This is an error."));
+  XR_ASSERTMSG(UIRenderer, m_materials.empty(), ("Already initialised. This is an error."));
 
-  m_parpMaterial = new Material*[numSprites];
+  m_materials.resize(numSprites);
 
   int numVertices(numSprites * Sprite::kNumVertices);
   InitStreams(numVertices);
@@ -42,18 +41,18 @@ void UIRenderer::Init( int numSprites )
 }
 
 //==============================================================================
-FloatBuffer  UIRenderer::NewSprite( Material* pMaterial,
-  const FloatBuffer& fbUV, Color color )
+FloatBuffer  UIRenderer::NewSprite(Material::Ptr const& pMaterial,
+  const FloatBuffer& fbUV, Color color)
 {
   XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
     ("UIRenderer must be initialized before calling NewSprite()."));
-  XR_ASSERT(UIRenderer, m_numSpritesConsumed < m_numSprites);
-  XR_ASSERT(UIRenderer, pMaterial != 0);
+  XR_ASSERT(UIRenderer, m_numSpritesRenderable < m_numSprites);
+  XR_ASSERT(UIRenderer, pMaterial);
 
-  int iSprite(m_numSpritesConsumed);
-  ++m_numSpritesConsumed;
+  int iSprite(m_numSpritesRenderable);
+  ++m_numSpritesRenderable;
 
-  m_parpMaterial[iSprite] = pMaterial;
+  m_materials[iSprite] = pMaterial;
 
   iSprite *= Sprite::kNumVertices;
 
@@ -69,18 +68,18 @@ FloatBuffer  UIRenderer::NewSprite( Material* pMaterial,
 }
 
 //==============================================================================
-FloatBuffer  UIRenderer::NewSprite( Material* pMaterial, Color color,
+FloatBuffer  UIRenderer::NewSprite(Material::Ptr const& material, Color color,
   FloatBuffer& fbUV)
 {
   XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
     ("UIRenderer must be initialized before calling NewSprite()."));
-  XR_ASSERT(UIRenderer, m_numSpritesConsumed < m_numSprites);
-  XR_ASSERT(UIRenderer, pMaterial != 0);
+  XR_ASSERT(UIRenderer, m_numSpritesRenderable < m_numSprites);
+  XR_ASSERT(UIRenderer, material != nullptr);
 
-  int iSprite(m_numSpritesConsumed);
-  ++m_numSpritesConsumed;
+  int iSprite(m_numSpritesRenderable);
+  ++m_numSpritesRenderable;
 
-  m_parpMaterial[iSprite] = pMaterial;
+  m_materials[iSprite] = material;
 
   iSprite *= Sprite::kNumVertices;
   fbUV = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
@@ -94,18 +93,18 @@ FloatBuffer  UIRenderer::NewSprite( Material* pMaterial, Color color,
 }
 
 //==============================================================================
-FloatBuffer  UIRenderer::NewSprite( Material* pMaterial,
+FloatBuffer  UIRenderer::NewSprite(Material::Ptr const& pMaterial,
   FloatBuffer& fbUV, FloatBuffer& fbColor)
 {
   XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
     ("UIRenderer must be initialized before calling NewSprite()."));
-  XR_ASSERT(UIRenderer, m_numSpritesConsumed < m_numSprites);
-  XR_ASSERT(UIRenderer, pMaterial != 0);
+  XR_ASSERT(UIRenderer, m_numSpritesRenderable < m_numSprites);
+  XR_ASSERT(UIRenderer, pMaterial != nullptr);
 
-  int iSprite(m_numSpritesConsumed);
-  ++m_numSpritesConsumed;
+  int iSprite(m_numSpritesRenderable);
+  ++m_numSpritesRenderable;
 
-  m_parpMaterial[iSprite] = pMaterial;
+  m_materials[iSprite] = pMaterial;
 
   iSprite *= Sprite::kNumVertices;
   fbUV = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
@@ -121,13 +120,13 @@ void UIRenderer::Render()
   FloatBuffer  fbUVs;
   FloatBuffer  fbCols;
   FloatBuffer  fbVerts;
-  while (i < m_numSpritesConsumed)
+  while (i < m_numSpritesRenderable)
   {
-    Material*  pMaterial(m_parpMaterial[i]);
+    Material::Ptr*  pMaterial(m_materials.data() + i);
 
     int i1(i + 1);
-    Material*  pMatCompare(m_parpMaterial[i1]);
-    while (i1 < m_numSpritesConsumed && pMatCompare == pMaterial)
+    Material::Ptr*  pMatCompare(m_materials.data() + i1);
+    while (i1 < m_numSpritesRenderable && *pMatCompare == *pMaterial)
     {
       ++i1;
       ++pMatCompare;
@@ -142,7 +141,7 @@ void UIRenderer::Render()
     fbCols = FloatBuffer::Adapt(m_colors, iStart, numVertices);
     fbVerts = FloatBuffer::Adapt(m_vertices, iStart, numVertices);
 
-    Renderer::SetMaterial(pMaterial);
+    (*pMaterial)->Apply();
     Renderer::SetUVStream(fbUVs, 0);
     Renderer::SetColStream(fbCols);
     Renderer::SetVertStream(fbVerts);
@@ -152,13 +151,19 @@ void UIRenderer::Render()
     i = i1;
   }
 
-  m_numSpritesRendered = m_numSpritesConsumed;
+  m_numSpritesRendered = m_numSpritesRenderable;
+}
+
+//==============================================================================
+void UIRenderer::ResetRendering()
+{
+  m_numSpritesRendered = 0;
 }
 
 //==============================================================================
 void UIRenderer::Clear()
 {
-  m_numSpritesConsumed = 0;
+  m_numSpritesRenderable = 0;
   m_numSpritesRendered = 0;
 }
 
@@ -167,8 +172,7 @@ void UIRenderer::Shutdown()
 {
   Clear();
 
-  delete[] m_parpMaterial;
-  m_parpMaterial = 0;
+  std::vector<Material::Ptr>().swap(m_materials);
 
   m_vertices.ReleaseData();
   m_uvs.ReleaseData();

@@ -11,6 +11,7 @@
 #include <string>
 #include "XR/memory.hpp"
 #include "XR/Font.hpp"
+#include "XR/Sprite.hpp"
 #include "UIContainer.hpp"
 #include "tinyxml.h"
 

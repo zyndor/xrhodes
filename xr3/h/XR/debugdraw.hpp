@@ -15,15 +15,15 @@ namespace DebugDraw
 {
 
 //==============================================================================
-void  Line(const Vector3& v, Material* pMaterial = 0);
-void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial = 0);
-void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial = 0);
+void  Line(const Vector3& v, Material::Ptr const& material = nullptr);
+void  LineStrip(const Vector3* verts, int numVerts, Material::Ptr const& material = nullptr);
+void  LineList(const Vector3* verts, int numVerts, Material::Ptr const& material = nullptr);
 
-void  Rect(float hw, float hh, Material* pMaterial = 0);
-void  FillRect(float hw, float hh, Material* pMaterial = 0);
+void  Rect(float hw, float hh, Material::Ptr const& material = nullptr);
+void  FillRect(float hw, float hh, Material::Ptr const& material = nullptr);
 
-void  Circle(float radius, Material* pMaterial = 0);
-void  FillCircle(float radius, Material* pMaterial = 0);
+void  Circle(float radius, Material::Ptr const& material = nullptr);
+void  FillCircle(float radius, Material::Ptr const& material = nullptr);
 
 //==============================================================================
 // implementation

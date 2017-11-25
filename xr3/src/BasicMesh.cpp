@@ -26,9 +26,9 @@ BasicMesh::~BasicMesh()
 {}
 
 //==============================================================================
-void  BasicMesh::SetMaterial(Material* pMaterial)
+void  BasicMesh::SetMaterial(Material::Ptr const& material)
 {
-  m_pMaterial = pMaterial;
+  m_material = material;
 }
 
 //==============================================================================
@@ -136,9 +136,9 @@ void  BasicMesh::Render() const
 //==============================================================================
 void  BasicMesh::_PrepareRender() const
 {
-  XR_ASSERT(BasicMesh, m_pMaterial != 0);
+  XR_ASSERT(BasicMesh, m_material != nullptr);
   XR_ASSERT(BasicMesh, m_vertices.GetNumElements() > 0);
-  Renderer::SetMaterial(m_pMaterial);
+  m_material->Apply();
   
   Renderer::SetUVStream(m_uvs, 0);
   Renderer::SetVertStream(m_vertices);

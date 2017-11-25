@@ -59,12 +59,12 @@ static const char* const karTag[]=
 static const char* FindValue(const char* pBuffer, const char* pKey,
     const char*& pResult)
 {
-  XR_ASSERT(FindValue, pBuffer != 0);
-  XR_ASSERT(FindValue, pKey != 0);
+  XR_ASSERT(FindValue, pBuffer != nullptr);
+  XR_ASSERT(FindValue, pKey != nullptr);
   const char* pNext = strstr(pBuffer, pKey);
-  if (pNext != 0)
+  if (pNext != nullptr)
   {
-    int keySize(strlen(pKey));
+    size_t keySize(strlen(pKey));
     pResult = pNext + keySize;
 
     pNext = strpbrk(pResult, " \n\t\0");
@@ -75,9 +75,6 @@ static const char* FindValue(const char* pBuffer, const char* pKey,
   }
   return pNext;
 }
-
-//==============================================================================
-XR_MANAGED_DEF(Font)
 
 //==============================================================================
 void  Font::Glyph::Scale(float s)
@@ -94,8 +91,7 @@ Font::Font()
 : m_size(.0f),
   m_base(.0f),
   //m_arGlyphs(),
-  m_dGlyphs(),
-  m_pMaterial(0)
+  m_dGlyphs()
 {}
 
 //==============================================================================
@@ -103,17 +99,16 @@ Font::~Font()
 {}
 
 //==============================================================================
-bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
-        void* pGetMaterialCbData )
+bool  Font::Load(char const* name, Asset::FlagType flags)
 {
-  XR_ASSERT(Font, pName != 0);
-  XR_ASSERT(Font, strlen(pName) > 0);
+  XR_ASSERT(Font, name != nullptr);
+  XR_ASSERT(Font, strlen(name) > 0);
 
   Clear();
 
-  XR_ASSERT(Font, pName != 0);
+  XR_ASSERT(Font, name != nullptr);
   FileBuffer  file;
-  bool  success(file.Open(pName, false));
+  bool  success(file.Open(name, false));
   if (!success)
   {
     return false;
@@ -127,7 +122,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     const char* pValue;
 
     pTempRead = FindValue(pRead, karTag[TAG_SIZE], pValue);
-    success = success && (pValue != 0);
+    success = success && (pValue != nullptr);
     if (success)
     {
       m_size = float(atof(pValue));
@@ -136,7 +131,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
     float fOutline(.0f);
     pTempRead = FindValue(pRead, karTag[TAG_OUTLINE], pValue);
-    success = success && (pValue != 0);
+    success = success && (pValue != nullptr);
     if (success)
     {
       fOutline = float(atof(pValue));
@@ -145,7 +140,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     }
     
     pTempRead = FindValue(pRead, karTag[TAG_BASE], pValue);
-    success = success && (pValue != 0);
+    success = success && (pValue != nullptr);
     if (success)
     {
       m_base = m_size - float(atof(pValue));
@@ -154,7 +149,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
     float fTexWidth(.0f);
     pTempRead = FindValue(pRead, karTag[TAG_SCALE_W], pValue);
-    success = success && (pValue != 0);
+    success = success && (pValue != nullptr);
     if (success)
     {
       fTexWidth = float(atof(pValue));
@@ -167,7 +162,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
     float fTexHeight(.0f);
     pTempRead = FindValue(pRead, karTag[TAG_SCALE_H], pValue);
-    success = success && (pValue != 0);
+    success = success && (pValue != nullptr);
     if (success)
     {
       fTexHeight = float(atof(pValue));
@@ -179,7 +174,8 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     }
 
     pTempRead = FindValue(pRead, karTag[TAG_FILE], pValue);
-    success = success && (pValue != 0);
+    success = success && (pValue != nullptr);
+    FilePath texturePath;
     if (success)
     {
       if (pValue[0] == '"')
@@ -190,27 +186,38 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
       const char* pClosingQuote(strchr(pValue, '\"'));
       const char* pPeriod(strchr(pValue, '.'));
 
-      const int kBufferSize = 256;
-      char  arBuffer[kBufferSize];
-
-      success = !(pClosingQuote == 0 || pPeriod == 0) &&
+      success = !(pClosingQuote == nullptr || pPeriod == nullptr) &&
         pPeriod < pClosingQuote &&
-        (pPeriod - pValue) < kBufferSize;
+        (pClosingQuote - pValue) < texturePath.capacity();
       if (success)
       {
-        int textureNameSize(pPeriod - pValue);
-        XR_ASSERT(Font, textureNameSize + 1 < kBufferSize);  // 0-terminated
-        strncpy(arBuffer, pValue, textureNameSize);
-        arBuffer[textureNameSize] = '\0';
-
-        m_pMaterial = (*pGetMaterialCb)(arBuffer, pGetMaterialCbData);
+        texturePath = name;
+        texturePath.Up();
+        texturePath.UpdateSize(); // Workaround for broken Up()
+        texturePath.AppendDirSeparator();
+        texturePath.append(pValue, pPeriod - pValue);
+        texturePath += ".mtl";
+      }
+      else
+      {
+        XR_TRACE(Font, ("Failed to parse '%s' for %s", karTag[TAG_FILE], name));
       }
     }
-
-    success = success && m_pMaterial != 0;
-    if (!success)
+    else
     {
-      XR_TRACE(Font, ("The value of the file attribute needs to be the name of a valid material in pGroup (the extension is ignored)."));
+      XR_TRACE(Font, ("%s must define '%s'", name, karTag[TAG_FILE]));
+    }
+
+    if (success)
+    {
+      m_material = Asset::Manager::Load<Material>(texturePath, flags |
+        Asset::LoadSyncFlag | Asset::UnmanagedFlag);
+      success = !CheckAnyMaskBits(m_material->GetFlags(), Asset::ErrorFlag);
+      if (!success)
+      {
+        XR_TRACE(Font, ("Failed to load '%s' for font '%s'", texturePath.c_str(),
+          name));
+      }
     }
 
     if (success)
@@ -218,7 +225,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
       pTempRead = FindValue(pRead, karTag[TAG_CHARS_COUNT], pValue);
     }
     
-    success = success && pValue != 0;
+    success = success && pValue != nullptr;
     if (!success)
     {
       XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_CHARS_COUNT]));
@@ -237,7 +244,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
     {
       pTempRead = FindValue(pRead, karTag[TAG_CHAR_ID], pValue);
 
-      success = pValue != 0;
+      success = pValue != nullptr;
       if (success)
       {
         chr = atoi(pValue);
@@ -253,7 +260,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         
         float x;
         pTempRead = FindValue(pTempRead, karTag[TAG_X], pValue);
-        success = pValue != 0;
+        success = pValue != nullptr;
         if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_X]));
@@ -263,7 +270,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
 
         float y;
         pTempRead = FindValue(pTempRead, karTag[TAG_Y], pValue);
-        success = pValue != 0;
+        success = pValue != nullptr;
         if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_Y]));
@@ -272,7 +279,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         y = float(atof(pValue));
 
         pTempRead = FindValue(pTempRead, karTag[TAG_WIDTH], pValue);
-        success = pValue != 0;
+        success = pValue != nullptr;
         if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_WIDTH]));
@@ -281,7 +288,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         pGlyph->w = float(atof(pValue));
 
         pTempRead = FindValue(pTempRead, karTag[TAG_HEIGHT], pValue);
-        success = pValue != 0;
+        success = pValue != nullptr;
         if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_HEIGHT]));
@@ -290,7 +297,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         pGlyph->h = float(atof(pValue));
 
         pTempRead = FindValue(pTempRead, karTag[TAG_XOFFSET], pValue);
-        success = pValue != 0;
+        success = pValue != nullptr;
         if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_XOFFSET]));
@@ -299,7 +306,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         pGlyph->xOffs = float(atof(pValue)) + fOutline;
 
         pTempRead = FindValue(pTempRead, karTag[TAG_YOFFSET], pValue);
-        success = pValue != 0;
+        success = pValue != nullptr;
         if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_YOFFSET]));
@@ -308,7 +315,7 @@ bool  Font::Load( const char* pName, Material::GetCallback pGetMaterialCb,
         pGlyph->yOffs = float(atof(pValue)) + fOutline;
 
         pTempRead = FindValue(pTempRead, karTag[TAG_XADVANCE], pValue);
-        success = pValue != 0;
+        success = pValue != nullptr;
         if (!success)
         {
           XR_TRACE(Font, ("%s is a required attribute.", karTag[TAG_XADVANCE]));

@@ -353,13 +353,6 @@ void  Renderer::GetModelMatrix(Matrix& m)
 }
 
 //==============================================================================
-void Renderer::SetMaterial( Material* pMat )
-{
-  XR_ASSERTMSG(Renderer, false, ("Renderer is being deprecated imminently."));
-  //static_cast<MaterialImpl*>(pMat->GetImpl())->Apply();
-}
-
-//==============================================================================
 void  Renderer::SetVertStream(FloatBuffer const& fb)
 {
   XR_ASSERT(Renderer::SetVertStream, fb.GetElementSizeBytes() == sizeof(Vector3));

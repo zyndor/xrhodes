@@ -40,7 +40,7 @@ void UIImage::SetSizeToSprite(float scale)
 //==============================================================================
 void UIImage::Render() const
 {
-  XR_ASSERTMSG(UIImage, sprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIImage, sprite.GetMaterial() != nullptr,
     ("Material needs to be set in UIImage::sprite before Render()"));
 
   FloatBuffer* pFbVerts = Renderer::AllocBuffer(sizeof(Vector3),
@@ -49,7 +49,7 @@ void UIImage::Render() const
 
   FloatBuffer* pFbUVs = sprite.CopyUVs();
 
-  Renderer::SetMaterial(sprite.GetMaterial());
+  sprite.GetMaterial()->Apply();
   Renderer::SetAmbientColor(color);
 
   Renderer::SetVertStream(*pFbVerts);
@@ -61,7 +61,7 @@ void UIImage::Render() const
 //==============================================================================
 void UIImage::Render( UIRenderer* pRenderer ) const
 {
-  XR_ASSERTMSG(UIImage, sprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIImage, sprite.GetMaterial() != nullptr,
     ("Material needs to be set in UIImage::sprite before Render()"));
 
   FloatBuffer fbVerts = pRenderer->NewSprite(sprite.GetMaterial(),

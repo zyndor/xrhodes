@@ -36,7 +36,7 @@ UILabel::~UILabel()
 void UILabel::Render() const
 {
   XR_ASSERT(UILabel, m_text.GetFont() != 0);
-  Renderer::SetMaterial(m_text.GetFont()->GetMaterial());
+  m_text.GetFont()->GetMaterial()->Apply();
 
   Renderer::SetColStream(*m_text.CreateColStream(color));
 

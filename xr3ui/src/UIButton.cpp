@@ -103,7 +103,7 @@ bool  UIButton::OnMouseMotion(const Input::MouseMotionEvent& e )
 void UIButton::Render() const
 {
   const Sprite* pSprite(arSprite + GetSpriteId());
-  XR_ASSERTMSG(UIButton, pSprite->GetMaterial() != 0,
+  XR_ASSERTMSG(UIButton, pSprite->GetMaterial() != nullptr,
     ("Material needs to be set in UIButton::arSprites[%d] before Render()",
     GetSpriteId()));
 
@@ -113,7 +113,7 @@ void UIButton::Render() const
 
   FloatBuffer* pFbUVs = pSprite->CopyUVs();
 
-  Renderer::SetMaterial(pSprite->GetMaterial());
+  pSprite->GetMaterial()->Apply();
   Renderer::SetAmbientColor(color);
 
   Renderer::SetVertStream(*pFbVerts);
@@ -126,7 +126,7 @@ void UIButton::Render() const
 void UIButton::Render( UIRenderer* pRenderer ) const
 {
   const Sprite* pSprite(arSprite + GetSpriteId());
-  XR_ASSERTMSG(UIButton, pSprite->GetMaterial() != 0,
+  XR_ASSERTMSG(UIButton, pSprite->GetMaterial() != nullptr,
     ("Material needs to be set in UIButton::arSprites[%d] before Render()",
     GetSpriteId()));
 
