@@ -11,8 +11,6 @@
 #include "XR/debug.hpp"
 #include "png.h"
 
-// TODO: generic implementation -- move out of /SDL
-
 namespace XR
 {
 
