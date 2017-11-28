@@ -627,7 +627,8 @@ struct Context
 
     XR_GL_CALL(glDepthFunc(GL_LEQUAL)); // TODO: give it to state
 
-    if (s_extensions[ExtensionGL::OES_vertex_array_object].supported ||
+    if (openGlVersionMajor >= 3 ||
+      s_extensions[ExtensionGL::OES_vertex_array_object].supported ||
       s_extensions[ExtensionGL::ARB_vertex_array_object].supported)
     {
       XR_GL_CALL(glGenVertexArrays(1, &m_vao));
