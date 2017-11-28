@@ -1098,7 +1098,8 @@ struct Context
     GLenum typegl = kShaderTypes[size_t(type)];
     XR_GL_CALL(shader.name = glCreateShader(typegl));
 
-    XR_GL_CALL(glShaderSource(shader.name, 1, reinterpret_cast<GLchar const* const*>(&buffer.data), nullptr));
+    GLint len = buffer.size;
+    XR_GL_CALL(glShaderSource(shader.name, 1, reinterpret_cast<GLchar const* const*>(&buffer.data), &len));
     XR_GL_CALL(glCompileShader(shader.name));
 
     GLint params = -1;
