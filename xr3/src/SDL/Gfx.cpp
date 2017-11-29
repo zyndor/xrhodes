@@ -581,14 +581,12 @@ struct Context
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     // Create GL context.
-    int openGlVersionMajor = Device::GetConfigInt("GL", "versionMajor", 3);
-    int openGlVersionMinor = Device::GetConfigInt("GL", "versionMinor", 1);
-    int openGLUseCompatibilityProfile = Device::GetConfigInt("GL", "useCompatibility", 0);
+    int openGlVersionMajor = 3;
+    int openGlVersionMinor = 3;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openGlVersionMajor);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openGlVersionMinor);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, openGLUseCompatibilityProfile > 0 ?
-      SDL_GL_CONTEXT_PROFILE_COMPATIBILITY : SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     int width, height;
     SDL_GL_GetDrawableSize(window, &width, &height);
