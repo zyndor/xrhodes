@@ -98,7 +98,6 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
   {
     FilePath texturePath(name);
     texturePath.Up();
-    texturePath.UpdateSize(); // Workaround for a broken Up().
     texturePath /= pTextureName;
     if (auto ext = texturePath.GetExt())
     {

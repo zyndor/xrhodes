@@ -193,7 +193,6 @@ bool  Font::Load(char const* name, Asset::FlagType flags)
       {
         texturePath = name;
         texturePath.Up();
-        texturePath.UpdateSize(); // Workaround for broken Up()
         texturePath.AppendDirSeparator();
         texturePath.append(pValue, pPeriod - pValue);
         texturePath += ".mtl";

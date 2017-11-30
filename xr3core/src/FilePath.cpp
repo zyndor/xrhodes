@@ -88,13 +88,23 @@ char* FilePath::GetExt()
 //==============================================================================
 void FilePath::Up()
 {
+  char* p = m_buffer + (m_size - 1);
+  bool sizeDirty = false;
+  if (*p == kDirSeparator)
+  {
+    *p = '\0';
+    sizeDirty = true;
+  }
+
   if (char* p = rfind(kDirSeparator))
   {
     *p = '\0';
-    if (p - m_buffer < kCapacity && p[1] == '\0')
-    {
-      Up();
-    }
+    sizeDirty = true;
+  }
+
+  if (sizeDirty)
+  {
+    UpdateSize();
   }
 }
 
