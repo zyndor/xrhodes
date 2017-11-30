@@ -8,7 +8,7 @@
 #define XR_XRGL_HPP
 
 #include "XR/debug.hpp"
-#include "GL/glew.h"
+#include "gl_core_4_5.h"
 #include "SDL_opengl.h"
 
 namespace XR

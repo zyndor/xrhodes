@@ -85,7 +85,7 @@ void UICheckBox::Render() const
 
   if (IsSelected())
   {
-    XR_ASSERTMSG(UICheckBox, setSprite.GetMaterial() != 0,
+    XR_ASSERTMSG(UICheckBox, setSprite.GetMaterial() != nullptr,
       ("Material needs to be set in UICheckBox::setSprite before Render()"));
 
     FloatBuffer* parVerts = Renderer::AllocBuffer(sizeof(Vector3),
@@ -94,7 +94,7 @@ void UICheckBox::Render() const
 
     FloatBuffer* pUVs = setSprite.CopyUVs();
 
-    Renderer::SetMaterial(setSprite.GetMaterial());
+    setSprite.GetMaterial()->Apply();
     Renderer::SetAmbientColor(color);
 
     Renderer::SetVertStream(*parVerts);
@@ -111,7 +111,7 @@ void UICheckBox::Render( UIRenderer* pRenderer ) const
 
   if (IsSelected())
   {
-    XR_ASSERTMSG(IW_ASSERTION_CHANNEL_DEFAULT, setSprite.GetMaterial() != 0,
+    XR_ASSERTMSG(IW_ASSERTION_CHANNEL_DEFAULT, setSprite.GetMaterial() != nullptr,
       ("Material needs to be set in UICheckBox::setSprite before Render()"));
 
     FloatBuffer fbVerts(pRenderer->NewSprite(setSprite.GetMaterial(),

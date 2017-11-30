@@ -106,7 +106,7 @@ void UIHorizontalProgressBar::Render() const
       pfbVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
     }
 
-    Renderer::SetMaterial(sprite.GetMaterial());
+    sprite.GetMaterial()->Apply();
     Renderer::SetAmbientColor(color);
 
     Renderer::SetVertStream(*pfbVerts);

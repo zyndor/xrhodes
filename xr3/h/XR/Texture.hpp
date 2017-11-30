@@ -7,46 +7,76 @@
 #ifndef XR_TEXTURE_HPP
 #define XR_TEXTURE_HPP
 
-#include "Image.hpp"
-#include "ResManager.hpp"
+#include "Asset.hpp"
+#include "Gfx.hpp"
 #include "XR/Hash.hpp"
 
 namespace XR
 {
 
 //==============================================================================
-class Texture: protected CrossObject
+class Texture: public Asset
 {
-  XR_CROSS_OBJECT_DECL(Texture)
-  XR_MANAGED_DECL(Texture)
-
 public:
+  XR_ASSET_DECL(Texture);
+
+  enum Flags : FlagType
+  {
+    WrapFlag = XR_MASK_ID(FlagType, 8),
+    PointFilterFlag = XR_MASK_ID(FlagType, 9),
+    MipMapsFlag = XR_MASK_ID(FlagType, 10),
+    SrgbFlag = XR_MASK_ID(FlagType, 11),
+  };
+
   // general
+  ///@return The number of texels the texture has horizontally at the highest
+  /// mipmap level.
   int     GetWidth() const;
+
+  ///@return The number of texels the texture has vertically at the highest
+  /// mipmap level.
   int     GetHeight() const;
-  int     GetPitch() const;
-  
+
+  ///@return Whether the texture has an alpha channel.
   bool    HasAlpha() const;
   
-  bool    Load(const char* pName);
-  void    CopyImage(const Image& img);
+  ///@brief Binds texture to its target, for the given texture @a stage.
+  void Bind(uint32_t stage) const;
 
-  uint32_t  GetFlags() const; // know your platform / implementation.
+  virtual bool OnLoaded(size_t size, uint8_t const* buffer) override;
+  virtual void OnUnload() override;
   
-  bool    GetClamping() const;  // clamping [on] or wrapping (off)
-  bool    GetFiltering() const;  // linear [on] or nearest (off)
-  bool    GetMipMapping() const;
-  bool    GetModifiable() const;  // pixel data is kept [on] or discarded.
+private:
+  // data
+  uint32_t m_width = 0;
+  uint32_t m_height = 0;
+  bool m_hasAlpha = false;
 
-  void    SetClamping(bool state);  // clamping [on] or wrapping (off)
-  void    SetFiltering(bool state);  // linear [on] or nearest (off)
-  void    SetMipMapping(bool state);
-  void    SetModifiable(bool state);  // pixel data is kept [on] or discarded.
-
-  void    Upload();
-
-  uint32_t GetOpenGLHandle() const;
+  Gfx::TextureHandle  m_handle;
+  std::vector<uint8_t> m_data; // If KeepSourceDataFlag is set.
 };
+
+//==============================================================================
+inline
+int Texture::GetWidth() const
+{
+	return m_width;
+}
+
+//==============================================================================
+inline
+int Texture::GetHeight() const
+{
+	return m_height;
+}
+
+//==============================================================================
+inline
+bool Texture::HasAlpha() const
+{
+	return m_hasAlpha;
+}
+
 
 } // XR
 

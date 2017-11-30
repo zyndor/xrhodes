@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "XR/Text.hpp"
+#include "XR/Sprite.hpp"
 
 namespace XR {
 
@@ -29,7 +30,7 @@ Text::~Text()
 void Text::SetFont(const Font& f, bool update)
 {
   m_pFont = &f;
-  m_pMaterial = f.GetMaterial();
+  m_material = f.GetMaterial();
   if (update)
   {
     Update();

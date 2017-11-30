@@ -83,8 +83,6 @@ public:
   static void           GetViewMatrix(Matrix& m);
   static void           GetModelMatrix(Matrix& m);
 
-  static void           SetMaterial(Material* pMat);
-
   static void           SetVertStream(FloatBuffer const& fb);
   static void           SetUVStream(FloatBuffer const& fb = FloatBuffer(), int id = 0);
   static void           SetColStream(FloatBuffer const& fb = FloatBuffer());

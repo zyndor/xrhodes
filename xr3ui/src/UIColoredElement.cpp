@@ -25,7 +25,7 @@ void  UIColoredElement::_CalculateSpriteVerts( const Sprite* pSprite,
         FloatBuffer& fbVerts) const
 {
   XR_ASSERT(UIColoredElement, pSprite != 0);
-  XR_ASSERT(UIColoredElement, pSprite->GetMaterial() != 0);
+  XR_ASSERT(UIColoredElement, pSprite->GetMaterial() != nullptr);
   XR_ASSERT(UIColoredElement, fbVerts.GetElementSizeBytes() == sizeof(Vector3));
   XR_ASSERT(UIColoredElement, fbVerts.GetNumElements() == Sprite::kNumVertices);
 

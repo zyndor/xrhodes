@@ -9,18 +9,19 @@
 
 #include "Color.hpp"
 #include "Texture.hpp"
+#include "Shader.hpp"
 
 namespace XR
 {
 
 //==============================================================================
-class Material: protected CrossObject
+class Material: public Asset
 {
-  XR_CROSS_OBJECT_DECL(Material)
-  XR_MANAGED_DECL(Material)
-
 public:
+  XR_ASSET_DECL(Material)
+
   // typedefs
+  // TODO: remove or implement options properly.
   enum  AlphaMode
   {
     ALPHA_NONE,
@@ -30,67 +31,38 @@ public:
     ALPHA_BLEND,
     ALPHA_DEFAULT
   };
-  
-  enum  AlphaTestMode
+
+  // TODO: remove and replace with asset dependency in Font and TexturePack.
+  struct Manager
   {
-    ALPHATEST_DISABLED,
-    ALPHATEST_NEVER,
-    ALPHATEST_LESS,
-    ALPHATEST_EQUAL,
-    ALPHATEST_LEQUAL,
-    ALPHATEST_GREATER,
-    ALPHATEST_NOTEQUAL,
-    ALPHATEST_GEQUAL,
-    ALPHATEST_ALWAYS,
+    static Material* Get(char const* name, void* data) { return nullptr; }
   };
-  
-  enum BlendMode
-  {
-    BLEND_MODULATE, //!< multiply;
-    BLEND_DECAL,    //!< decal;
-    BLEND_ADD,      //!< additive;
-    BLEND_REPLACE,  //!< replace;
-    BLEND_BLEND,    //!< blend (strange inverting behaviour);
-    BLEND_MODULATE_2X, //!< blend 2x
-    BLEND_MODULATE_4X, //!< blend 4x
-  };
-  
-  enum  CullMode
-  {
-    CULL_BACK,
-    CULL_FRONT,
-    CULL_NONE
-  };
+  using GetCallback = Material*(*)(char const* name, void* data);
+  // end remove
+
+  enum { kMaxTextureStages = 8 };  // TODO: expose in Gfx, remove from here.
 
   // general
-  AlphaMode     GetAlphaMode() const;
-  AlphaTestMode GetAlphaTestMode() const;
-  float         GetAlphaTestRefValue() const;
-  BlendMode     GetBlendMode() const;
-  CullMode      GetCullMode() const;
-  bool          GetDepthWriteEnabled() const;
-  
-  void          SetAlphaMode(AlphaMode am);
-  void          SetAlphaTestMode(AlphaTestMode atm);
-  void          SetAlphaTestRefValue(float f);
-  void          SetBlendMode(BlendMode bm);
-  void          SetCullMode(CullMode cm);
-  void          SetDepthWriteEnabled(bool state);
+  uint32_t  GetStateFlags() const;
+  void      OverrideStateFlags(uint32_t clear, uint32_t set);
 
-  void          SetAmbientColor(const Color& c);
-  void          SetDiffuseColor(const Color& c);
-  void          SetSpecularColor(const Color& c);
-  void          SetEmissiveColor(const Color& c);
-  Color         GetAmbientColor() const;
-  Color         GetDiffuseColor() const;
-  Color         GetSpecularColor() const;
-  Color         GetEmissiveColor() const;
+  void  SetTexture(int stage, Texture::Ptr const& texture);
+  Texture::Ptr  GetTexture(int stage) const;
 
-  void          SetTexture(int id, Texture& t);
-  Texture       GetTexture(int id) const;
-  //void          SetShaderTechnique(Shader* pShader);
+  void  SetShader(Shader::Ptr const& shader);
+  Shader::Ptr GetShader();
 
-  void          Copy(const Material& rhs);
+  void Apply() const;
+
+  // Inherited via Asset
+  virtual bool OnLoaded(size_t size, uint8_t const * buffer) override;
+
+  virtual void OnUnload() override;
+
+private:
+  uint32_t      m_stateFlags;
+  Texture::Ptr  m_textureStages[kMaxTextureStages];
+  Shader::Ptr   m_shader;
 };
 
 } // XR

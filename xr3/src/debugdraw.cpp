@@ -14,34 +14,35 @@ namespace DebugDraw
 
 //==============================================================================
 static uint32_t   s_lastFlush = -1;
-static Material*  s_pMaterial = nullptr;
+static Material::Ptr  s_material;
 
 static void SetMaterial()
 {
   uint32_t  flushId(Renderer::GetFlushId());
-  if(s_lastFlush < flushId || flushId + INT32_MAX > s_lastFlush + INT32_MAX)
+  if (s_lastFlush < flushId || flushId + INT32_MAX > s_lastFlush + INT32_MAX)
   {
-    s_pMaterial = Renderer::AllocMaterial(); 
+    s_material.Release();
+    s_material.Reset(Renderer::AllocMaterial()); 
     s_lastFlush = flushId;
   }
 
-  Renderer::SetMaterial(s_pMaterial);
+  s_material->Apply();
 }
 
 //==============================================================================
-void  Line(const Vector3& v, Material* pMaterial)
+void  Line(const Vector3& v, Material::Ptr const& material)
 {
   FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), 2));
   pStream->Set(0, Vector3::Zero());
   pStream->Set(1, v);
 
-  if(pMaterial == nullptr)
+  if (!material)
   {
     SetMaterial();
   }
   else
   {
-    Renderer::SetMaterial(pMaterial);
+    s_material->Apply();
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -49,22 +50,22 @@ void  Line(const Vector3& v, Material* pMaterial)
 }
 
 //==============================================================================
-void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
+void  LineStrip(const Vector3* verts, int numVerts, Material::Ptr const& material)
 {
   FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  for(int i = 0; i < numVerts; ++i)
+  for (int i = 0; i < numVerts; ++i)
   {
-    pStream->Set(i, *parVerts);
-    ++parVerts;
+    pStream->Set(i, *verts);
+    ++verts;
   }
 
-  if(pMaterial == nullptr)
+  if (!material)
   {
     SetMaterial();
   }
   else
   {
-    Renderer::SetMaterial(pMaterial);
+    material->Apply();
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -72,22 +73,22 @@ void  LineStrip(const Vector3* parVerts, int numVerts, Material* pMaterial)
 }
 
 //==============================================================================
-void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial)
+void  LineList(const Vector3* verts, int numVerts, Material::Ptr const& material)
 {
   FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  for(int i = 0; i < numVerts; ++i)
+  for (int i = 0; i < numVerts; ++i)
   {
-    pStream->Set(i, *parVerts);
-    ++parVerts;
+    pStream->Set(i, *verts);
+    ++verts;
   }
 
-  if (pMaterial == nullptr)
+  if (!material)
   {
     SetMaterial();
   }
   else
   {
-    Renderer::SetMaterial(pMaterial);
+    material->Apply();
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -95,7 +96,7 @@ void  LineList(const Vector3* parVerts, int numVerts, Material* pMaterial)
 }
 
 //==============================================================================
-void  Rect(float hw, float hh, Material* pMaterial)
+void  Rect(float hw, float hh, Material::Ptr const& material)
 {
   FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), 5));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
@@ -104,13 +105,13 @@ void  Rect(float hw, float hh, Material* pMaterial)
   pStream->Set(3, Vector3(hw, -hh, .0f));
   pStream->Set(4, pStream->Get<Vector3>(0));
 
-  if (pMaterial == nullptr)
+  if (!material)
   {
     SetMaterial();
   }
   else
   {
-    Renderer::SetMaterial(pMaterial);
+    material->Apply();
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -118,7 +119,7 @@ void  Rect(float hw, float hh, Material* pMaterial)
 }
 
 //==============================================================================
-void  FillRect(float hw, float hh, Material* pMaterial)
+void  FillRect(float hw, float hh, Material::Ptr const& material)
 {
   FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), 4));
   pStream->Set(0, Vector3(-hw, -hh, .0f));
@@ -126,13 +127,13 @@ void  FillRect(float hw, float hh, Material* pMaterial)
   pStream->Set(2, Vector3(hw, -hh, .0f));
   pStream->Set(3, Vector3(hw, hh, .0f));
 
-  if (pMaterial == nullptr)
+  if (!material)
   {
     SetMaterial();
   }
   else
   {
-    Renderer::SetMaterial(pMaterial);
+    material->Apply();
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -146,7 +147,7 @@ int GetCircleNumVerts(float radius)
   return std::ceil(kPi * radius * .333f);
 }
 
-void  Circle(float radius, Material* pMaterial)
+void  Circle(float radius, Material::Ptr const& material)
 {
   int numVerts(GetCircleNumVerts(radius));
   float theta(M_PI / numVerts);
@@ -157,19 +158,19 @@ void  Circle(float radius, Material* pMaterial)
   numVerts *= 2;
   ++numVerts;
   FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  for(int i = 0; i < numVerts; ++i)
+  for (int i = 0; i < numVerts; ++i)
   {
     pStream->Set(i, v);
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
   }
   
-  if (pMaterial == nullptr)
+  if (!material)
   {
     SetMaterial();
   }
   else
   {
-    Renderer::SetMaterial(pMaterial);
+    material->Apply();
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();
@@ -177,7 +178,7 @@ void  Circle(float radius, Material* pMaterial)
 }
 
 //==============================================================================
-void  FillCircle(float radius, Material* pMaterial)
+void  FillCircle(float radius, Material::Ptr const& material)
 {
   int numVerts(GetCircleNumVerts(radius));
   float theta(M_PI / numVerts);
@@ -191,7 +192,7 @@ void  FillCircle(float radius, Material* pMaterial)
   Vector3* pWrite = pStream->Get<Vector3>();
   *pWrite = v;
   ++pWrite;
-  for(int i = 0; i < numIter; ++i)
+  for (int i = 0; i < numIter; ++i)
   {
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
     *pWrite = Vector3(v.x, -v.y, .0f);
@@ -202,13 +203,13 @@ void  FillCircle(float radius, Material* pMaterial)
 
   *pWrite = Vector3(-radius, .0f, .0f);
 
-  if (pMaterial == nullptr)
+  if (!material)
   {
     SetMaterial();
   }
   else
   {
-    Renderer::SetMaterial(pMaterial);
+    material->Apply();
   }
   Renderer::SetVertStream(*pStream);
   Renderer::SetColStream();

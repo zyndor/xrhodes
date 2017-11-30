@@ -11,6 +11,7 @@ project "unittests"
 	includedirs
 	{
 		"../external/gtest/include",
+		"../external/libpng",
 		"../unittests/h",
 		"../xr3core/h",
 		"../xr3json/h",
@@ -30,31 +31,48 @@ project "unittests"
 		"xr3ui",
 	}
 
+    -- link options
     if target_env == "windows" then
-        -- TODO: links { SDL & friends }
+        -- Windows
+        links
+        {
+            "libpng16",
+            "zlib",
+            "opengl32",
+			
+			"SDL2",
+			--"SDL2_mixer",
+        }
     
         libdirs
         {
+            "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
             "../external/tinyxml/lib/$(Platform)/Release",
-            "../external/SDL2/lib/$(PlatformShortName)/",
-            "../external/SDL2_image/lib/$(PlatformShortName)",
-            "../external/SDL2_mixer/lib/$(PlatformShortName)",
-            "../external/glew/lib/Release/$(PlatformShortName)",
+            "../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
+            "../external/SDL2_mixer/lib/"..target_env.."/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
+            "../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
         }
 
     else
         if target_env == "macosx" then
+            -- OSX
+            links
+            {
+                "SDL2.framework"
+				--"SDL2_mixer.framework"
+            }
+        
             -- note: unlike the libdirs, these are _two_ folders out. not entirely sure why.
             local framework_paths = {
                 "-F../../external/SDL2/",
-                "-F../../external/SDL2_image/",
                 "-F../../external/SDL2_mixer/",
             }
         
             buildoptions(framework_paths)
             linkoptions(framework_paths)
         else
+            -- other *nix
             for _, p in ipairs(tbl_platforms) do
                 for _, c in ipairs(tbl_configurations) do
                     local pc = "/"..p.."-"..c
@@ -65,24 +83,30 @@ project "unittests"
                         "../external/SDL2/lib/"..target_env..pc,
                         "../external/SDL2_image/lib/"..target_env..pc,
                         "../external/SDL2_mixer/lib/"..target_env..pc,
-                        --"../external/glew/lib/"..target_env.."/",
                     }
                 end
             end
         end
 
-        -- common *nix libdirs
+        -- common *nix link options
         filter {}
+        links
+        {
+            "png16",
+            "z"
+        }
+
         libdirs
         {
+            "../external/libpng/lib/"..target_env.."/",
             "../external/tinyxml/lib/"..target_env.."/",
+            "../external/zlib/lib/"..target_env.."/",
         }
         
 		for _, p in ipairs(tbl_platforms) do
 			for _, c in ipairs(tbl_configurations) do
 				local pc = "/"..p.."-"..c
 				filter{ "platforms:"..p, c }
-    
                 libdirs
                 {
                     "../external/gtest/lib/"..target_env..pc,
@@ -90,3 +114,18 @@ project "unittests"
             end
         end
     end
+
+    if target_env == "windows" then -- copy SDL dlls
+		local external_rel_path = "../../external/"; -- current directory at this point is .projects/windows
+		local artifacts_rel_path = "../../"..bin_location.."/";
+		for _, p in ipairs(tbl_platforms) do
+			for _, c in ipairs(tbl_configurations) do
+				local pc = p.."-"..c
+				filter { "platforms:"..p, c }
+				postbuildcommands{
+					os.translateCommands("{COPY} "..external_rel_path.."SDL2/lib/"..target_env.."/"..p.."/*.dll "..artifacts_rel_path..pc),
+					os.translateCommands("{COPY} "..external_rel_path.."SDL2_mixer/lib/"..target_env.."/"..p.."/*.dll "..artifacts_rel_path..pc)
+				}
+			end
+		end
+	end

@@ -90,13 +90,13 @@ bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionEvent& e )
 void UIVerticalSlider::Render() const
 {
   // render the rail
-  if (sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial())
   {
     UIImage::Render();
   }
 
   // render the slider
-  XR_ASSERTMSG(UIVerticalSlider, sliderSprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIVerticalSlider, sliderSprite.GetMaterial() != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
   int left(x + w / 2 - Round(sliderSprite.GetHalfWidth() +
@@ -114,7 +114,7 @@ void UIVerticalSlider::Render() const
 
   if (sliderSprite.GetMaterial() != sprite.GetMaterial())
   {
-    Renderer::SetMaterial(sliderSprite.GetMaterial());
+    sliderSprite.GetMaterial()->Apply();
   }
 
   Renderer::SetAmbientColor(color);
@@ -129,13 +129,13 @@ void UIVerticalSlider::Render() const
 void UIVerticalSlider::Render( UIRenderer* pRenderer ) const
 {
   // render the rail
-  if (sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial())
   {
     UIImage::Render(pRenderer);
   }
 
   // render the slider
-  XR_ASSERTMSG(UIVerticalSlider, sliderSprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIVerticalSlider, sliderSprite.GetMaterial() != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
   int left(x + w / 2 - Round(sliderSprite.GetHalfWidth() +

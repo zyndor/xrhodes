@@ -4,7 +4,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "MaterialImpl.hpp"
 #include "xrgl.hpp"
 #include "XR/Renderer.hpp"
 #include "XR/Device.hpp"
@@ -14,6 +13,11 @@
 #include "XR/SVector2.hpp"
 #include "XR/debug.hpp"
 #include "SDL.h"
+
+#ifdef XR_GL_CALL
+#undef XR_GL_CALL
+#endif
+#define XR_GL_CALL(x) // work around legacy OpenGL until we can rip Renderer out completely.
 
 namespace XR
 {
@@ -105,8 +109,6 @@ void Renderer::Init(void* mainWindow)
   s_rendererImpl.screenSize = SVector2(width, height); 
   
   // init OpenGL
-  glewExperimental = GL_TRUE;
-  XR_GL_CALL(glewInit());
 
   XR_GL_CALL(glViewport(0, 0, (GLsizei)s_rendererImpl.screenSize.x,
     (GLsizei)s_rendererImpl.screenSize.y));
@@ -199,10 +201,12 @@ void* Renderer::Alloc(size_t bytes)
 //==============================================================================
 Material* Renderer::AllocMaterial()
 {
-  void* pMem(Alloc(sizeof(MaterialImpl) + sizeof(Material)));
-  MaterialImpl* pImpl(new (static_cast<MaterialImpl*>(pMem)) MaterialImpl());
-  Material*     pMat(new (pImpl + 1) Material(pImpl));
-  return pMat;
+  XR_ASSERTMSG(Renderer, false, ("Renderer is being deprecated imminently."));
+  //void* pMem(Alloc(sizeof(MaterialImpl) + sizeof(Material)));
+  //MaterialImpl* pImpl(new (static_cast<MaterialImpl*>(pMem)) MaterialImpl());
+  //Material*     pMat(new (pImpl + 1) Material(pImpl));
+  //return pMat;
+  return nullptr;
 }
 
 //==============================================================================
@@ -349,12 +353,6 @@ void  Renderer::GetModelMatrix(Matrix& m)
 }
 
 //==============================================================================
-void Renderer::SetMaterial( Material* pMat )
-{
-  static_cast<MaterialImpl*>(pMat->GetImpl())->Apply();
-}
-
-//==============================================================================
 void  Renderer::SetVertStream(FloatBuffer const& fb)
 {
   XR_ASSERT(Renderer::SetVertStream, fb.GetElementSizeBytes() == sizeof(Vector3));
@@ -472,7 +470,6 @@ static const GLenum arPrimTypeMappings[] =
   GL_TRIANGLES,
   GL_TRIANGLE_STRIP,
   GL_QUADS,
-  GL_QUAD_STRIP
 };
 
 //==============================================================================

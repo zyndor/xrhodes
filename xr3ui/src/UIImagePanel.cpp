@@ -25,7 +25,7 @@ UIImagePanel::~UIImagePanel()
 //==============================================================================
 void UIImagePanel::Render() const
 {
-  XR_ASSERTMSG(UIImagePanel, sprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIImagePanel, sprite.GetMaterial() != nullptr,
     ("Material needs to be set in UIImagePanel::sprite before Render()"));
 
   const FloatBuffer fbSpriteVerts(sprite.GetVertices());
@@ -184,7 +184,7 @@ void UIImagePanel::Render() const
       }
     }
     
-    Renderer::SetMaterial(sprite.GetMaterial());
+    sprite.GetMaterial()->Apply();
     Renderer::SetAmbientColor(color);
     
     Renderer::SetVertStream(*pFbVerts);
@@ -198,7 +198,7 @@ void UIImagePanel::Render() const
 //==============================================================================
 void UIImagePanel::Render( UIRenderer* pRenderer ) const
 {
-  XR_ASSERTMSG(UIImagePanel, sprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIImagePanel, sprite.GetMaterial() != nullptr,
     ("Material needs to be set in UIImagePanel::sprite before Render()"));
 
   const FloatBuffer& fbSpriteVerts(sprite.GetVertices());

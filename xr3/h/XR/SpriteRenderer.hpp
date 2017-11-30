@@ -37,14 +37,14 @@ public:
 
   void  SetView(Matrix mView, float zNear/*, float zFar*/);
 
-  void  Add(const XR::Sprite* pSprite, const Vector3& position, float s,
+  void  Add(const XR::Sprite* sprite, const Vector3& position, float s,
           float rz, bool billboard = true);
-  void  Add(const XR::Sprite* pSprite, const Vector3& position, float sx,
+  void  Add(const XR::Sprite* sprite, const Vector3& position, float sx,
           float sy, float rz, bool billboard = true);
 
-  void  Add(Color tint, const XR::Sprite* pSprite, const Vector3& position,
+  void  Add(Color tint, const XR::Sprite* sprite, const Vector3& position,
           float s, float rz, bool billboard = true);
-  void  Add(Color tint, const XR::Sprite* pSprite, const Vector3& position,
+  void  Add(Color tint, const XR::Sprite* sprite, const Vector3& position,
           float sx, float sy, float rz, bool billboard = true);
 
   virtual void  Render();
@@ -72,7 +72,7 @@ protected:
   // data
   int         m_capacity;
   XR::Pool    m_pool;
-  RecordList* m_pRecords;
+  RecordList* m_records;
 
   Matrix      m_mView;
   Vector3     m_vForward;

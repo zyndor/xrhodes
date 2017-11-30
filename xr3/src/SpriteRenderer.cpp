@@ -13,7 +13,7 @@ namespace XR
 //==============================================================================
 SpriteRenderer::SpriteRenderer()
 : m_pool(),
-  m_pRecords(0)/*,
+  m_records(0)/*,
   m_mView(Matrix::s_identity),
   m_vForward(Vector3::s_zAxis),
   m_zNear(.0f),
@@ -26,7 +26,7 @@ SpriteRenderer::~SpriteRenderer()
   m_pool.Pop();
   m_pool.Flush();
 
-  m_pRecords = 0;
+  m_records = 0;
 }
 
 //==============================================================================
@@ -52,7 +52,7 @@ void  SpriteRenderer::Init(int numRecords)
   // place list at the beginning of pool memory. this includes the initial
   // nodes created to indicate beginning/end of list.
   void* pMemList(m_pool.Allocate(sizeof(RecordList)));
-  m_pRecords = new (pMemList)
+  m_records = new (pMemList)
     RecordList(XR::SharedPoolAllocator<Record>(m_pool));
 
   // push frame - flushes must not destroy the list.
@@ -95,15 +95,15 @@ void  SpriteRenderer::SetView(Matrix mView, float zNear/*, float zFar*/)
 }
 
 //==============================================================================
-void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
+void  SpriteRenderer::Add(Color tint, const XR::Sprite* sprite,
   const Vector3& position, float s, float rz, bool billboard)
 {
-  XR_ASSERT(SpriteRenderer, m_pRecords->size() < (size_t)m_capacity);
+  XR_ASSERT(SpriteRenderer, m_records->size() < (size_t)m_capacity);
   Record  r =
   {
     billboard ? Matrix(m_mView, position) : Matrix(position),
     tint,
-    pSprite
+    sprite
   };
 
   if (s != 1.0f)
@@ -120,22 +120,22 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
   if (zTemp > m_zNear/* && zTemp < m_zFar*/) // if in front of camera
   {
     r.zTemp = zTemp;
-    RecordList::iterator iInsert(std::lower_bound(m_pRecords->begin(),
-      m_pRecords->end(), r, Record::Compare));
-    m_pRecords->insert(iInsert, r);
+    RecordList::iterator iInsert(std::lower_bound(m_records->begin(),
+      m_records->end(), r, Record::Compare));
+    m_records->insert(iInsert, r);
   }
 }
 
 //==============================================================================
-void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
+void  SpriteRenderer::Add(Color tint, const XR::Sprite* sprite,
   const Vector3& position, float sx, float sy, float rz, bool billboard)
 {
-  XR_ASSERT(SpriteRenderer, m_pRecords->size() < (size_t)m_capacity);
+  XR_ASSERT(SpriteRenderer, m_records->size() < (size_t)m_capacity);
   Record  r =
   {
     billboard ? Matrix(m_mView, position) : Matrix(position),
     tint,
-    pSprite
+    sprite
   };
 
   if (sx != 1.0f)
@@ -157,9 +157,9 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
   if (zTemp > m_zNear/* && zTemp < m_zFar*/) // if in front of camera
   {
     r.zTemp = zTemp;
-    RecordList::iterator iInsert(std::lower_bound(m_pRecords->begin(),
-      m_pRecords->end(), r, Record::Compare));
-    m_pRecords->insert(iInsert, r);
+    RecordList::iterator iInsert(std::lower_bound(m_records->begin(),
+      m_records->end(), r, Record::Compare));
+    m_records->insert(iInsert, r);
   }
 }
 
@@ -167,7 +167,7 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* pSprite,
 void  SpriteRenderer::Render()
 {
   // allocate colour / uv / vertex streams
-  int numVerts(m_pRecords->size());
+  int numVerts(m_records->size());
   if (numVerts <= 0)
   {
     return;
@@ -191,10 +191,10 @@ void  SpriteRenderer::Render()
   FloatBuffer uvBatch;
   FloatBuffer vertBatch;
 
-  for (RecordList::const_iterator i0(m_pRecords->begin()),
-    i1(m_pRecords->end()); i0 != i1;)
+  for (RecordList::const_iterator i0(m_records->begin()),
+    i1(m_records->end()); i0 != i1;)
   {
-    Material*  pMaterial(i0->pSprite->GetMaterial());
+    auto const&  pMaterial(i0->pSprite->GetMaterial());
 
     // check for consecutive sprites with the same material
     int numSprites(1);
@@ -217,7 +217,7 @@ void  SpriteRenderer::Render()
     vertBatch = FloatBuffer::Adapt(*pVerts, vertexOffset, numVerts);
 
     // set the material
-    Renderer::SetMaterial(i0->pSprite->GetMaterial());
+    i0->pSprite->GetMaterial()->Apply();
 
     // render sprites
     while (i0 != j0)
@@ -254,8 +254,8 @@ void  SpriteRenderer::Render()
 //==============================================================================
 void  SpriteRenderer::Clear()
 {
-  XR_ASSERT(SpriteRenderer, m_pRecords != 0);
-  m_pRecords->clear();
+  XR_ASSERT(SpriteRenderer, m_records != 0);
+  m_records->clear();
   m_pool.Flush();
 }
 

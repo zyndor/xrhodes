@@ -90,13 +90,13 @@ bool UIHorizontalSlider::OnMouseMotion(const Input::MouseMotionEvent& e)
 void UIHorizontalSlider::Render() const
 {
   // render the rail
-  if (sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial())
   {
     UIImage::Render();
   }
 
   // render the slider
-  XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
   int16_t left(x + CalculateValue() + sliderSprite.GetLeftPadding());
@@ -114,7 +114,7 @@ void UIHorizontalSlider::Render() const
 
   if (sliderSprite.GetMaterial() != sprite.GetMaterial())
   {
-    Renderer::SetMaterial(sliderSprite.GetMaterial());
+    sliderSprite.GetMaterial()->Apply();
   }
 
   Renderer::SetAmbientColor(color);
@@ -129,13 +129,13 @@ void UIHorizontalSlider::Render() const
 void UIHorizontalSlider::Render( UIRenderer* pRenderer ) const
 {
   // render the rail
-  if (sprite.GetMaterial() != 0)
+  if (sprite.GetMaterial())
   {
     UIImage::Render(pRenderer);
   }
 
   // render the slider
-  XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != 0,
+  XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
   int16_t left(x + CalculateValue() + sliderSprite.GetLeftPadding());

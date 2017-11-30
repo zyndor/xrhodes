@@ -7,8 +7,12 @@
 #ifndef XR_FONT_HPP
 #define XR_FONT_HPP
 
+#include "AABB.hpp"
+#include "Material.hpp"
 #include <map>
-#include "Sprite.hpp"
+
+// TODO: remove
+#include "ResManager.hpp"
 
 namespace XR
 {
@@ -43,15 +47,18 @@ public:
   ~Font();
 
   // general
-  bool            Load(const char* pName, Material::GetCallback pGetMaterialCb,
-                    void* pGetMaterialCbData);  // full path; get filename without extension as font name
+  ///@deprecated Asset::Manager integration in progress.
+  ///@brief Attempts to load a Font synchronously. Requires a material in the
+  /// same location and name (but with '.mtl' extension) as the texture in its
+  /// definition.
+  bool            Load(char const* name, Asset::FlagType flags = 0);  // full path; font name will be the filename without path and extension.
 
   float           GetSize() const;
   float           GetBase() const;
   float           CalcHeight(int numLines) const;
   const Glyph*    GetGlyph(int chr) const;
 
-  Material*       GetMaterial() const;  // no ownership transfer
+  Material::Ptr   GetMaterial() const;  // no ownership transfer
 
   void            Scale(float s); 
   void            Clear();
@@ -67,7 +74,7 @@ protected:
   Glyph           m_arGlyphs[kNumBasicGlyphs];
   GlyphMap        m_dGlyphs;
 
-  Material*       m_pMaterial;  // no ownership
+  Material::Ptr   m_material;  // no ownership
 };
 
 //==============================================================================
@@ -112,9 +119,9 @@ float Font::CalcHeight(int numLines) const
 
 //==============================================================================
 inline
-Material* Font::GetMaterial() const
+Material::Ptr Font::GetMaterial() const
 {
-  return m_pMaterial;
+  return m_material;
 }
 
 } // XR

@@ -6,7 +6,7 @@
 //==============================================================================
 #include "XR/TexturePack.hpp"
 #include "XR/utils.hpp"
-#include "XR/HardString.hpp"
+#include "XR/FilePath.hpp"
 #include "XR/debug.hpp"
 #include "tinyxml.h"
 
@@ -53,7 +53,7 @@ static const char* const karTag[] =
 //==============================================================================
 TexturePack::TexturePack()
 : m_sprites(),
-  m_pMaterial(0)
+  m_material()
 {}
 
 //==============================================================================
@@ -63,31 +63,30 @@ TexturePack::~TexturePack()
 }
 
 //==============================================================================
-bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
-  void* pGetCbData)
+bool TexturePack::Load(char const* name, Asset::FlagType flags)
 {
-  XR_ASSERT(TexturePack, pName != 0);
-  XR_ASSERT(TexturePack, strlen(pName) > 0);
+  XR_ASSERT(TexturePack, name != nullptr);
+  XR_ASSERT(TexturePack, strlen(name) > 0);
 
   // clean up
   m_sprites.clear();
 
   // load xml
   TiXmlDocument doc;
-  bool  success(doc.LoadFile(pName));
+  bool  success(doc.LoadFile(name));
 
   TiXmlElement* pElem(doc.RootElement());
   if (success)
   {
-    success = pElem != 0;
+    success = pElem != nullptr;
   }
 
-  const char*   pTextureName(0);
+  const char* pTextureName = nullptr;
   if (success)
   {
     pTextureName = pElem->Attribute(karTag[TAG_IMAGE_PATH]);
 
-    success = pTextureName != 0;
+    success = pTextureName != nullptr;
     if (!success)
     {
       XR_TRACE(TexturePack, ("'%s' is a required attribute.",
@@ -97,19 +96,23 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 
   if (success)
   {
-    HardString<256> buffer(pTextureName);
-    char* pPeriod(buffer.rfind('.'));
-    if (pPeriod != 0)
+    FilePath texturePath(name);
+    texturePath.Up();
+    texturePath.UpdateSize(); // Workaround for a broken Up().
+    texturePath /= pTextureName;
+    if (auto ext = texturePath.GetExt())
     {
-      *pPeriod = '\0';
+      *ext = '\0';
+      texturePath.UpdateSize();
     }
+    texturePath += ".mtl";
 
-    m_pMaterial = (*pGetCb)(buffer.c_str(), pGetCbData);
-
-    success = m_pMaterial != 0;
+    m_material = Asset::Manager::Load<Material>(texturePath, flags |
+      Asset::LoadSyncFlag | Asset::UnmanagedFlag);
+    success = !CheckAnyMaskBits(m_material->GetFlags(), Asset::ErrorFlag);
     if (!success)
     {
-      XR_TRACE(TexturePack, ("Failed to find material '%s'.", buffer.c_str()));
+      XR_TRACE(TexturePack, ("Failed to find material '%s'.", texturePath.c_str()));
     }
   }
 
@@ -122,30 +125,30 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 
     if (texWidth != 0)
     {
-      success = success && m_pMaterial->GetTexture(0).GetWidth() == texWidth;
+      success = success && m_material->GetTexture(0)->GetWidth() == texWidth;
       if (!success)
       {
         XR_TRACE(TexturePack, ("Texture width mismatch (%d vs %d)",
-          m_pMaterial->GetTexture(0).GetWidth(), texWidth));  
+          m_material->GetTexture(0)->GetWidth(), texWidth));  
       }
     }
     else
     {
-      texWidth = m_pMaterial->GetTexture(0).GetWidth();
+      texWidth = m_material->GetTexture(0)->GetWidth();
     }
 
     if (texHeight != 0)
     {
-      success = success && m_pMaterial->GetTexture(0).GetHeight() == texHeight;
+      success = success && m_material->GetTexture(0)->GetHeight() == texHeight;
       if (!success)
       {
         XR_TRACE(TexturePack, ("Texture height mismatch (%d vs %d)",
-          m_pMaterial->GetTexture(0).GetHeight(), texHeight));  
+          m_material->GetTexture(0)->GetHeight(), texHeight));  
       }
     }
     else
     {
-      texWidth = m_pMaterial->GetTexture(0).GetHeight();
+      texWidth = m_material->GetTexture(0)->GetHeight();
     }
   }
 
@@ -158,12 +161,12 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
     int w, h; // size on sprite sheet
     int xOffs, yOffs; // amount of translation left and down
     int wOffs, hOffs; // size of finished sprite, including offset
-    while (success && pElem != 0)
+    while (success && pElem != nullptr)
     {
       // create sprite
       const char* pSpriteName(pElem->Attribute(karTag[TAG_NAME]));
 
-      success = !(pSpriteName == 0 ||
+      success = !(pSpriteName == nullptr ||
         pElem->Attribute(karTag[TAG_W], &w) == 0 ||
         pElem->Attribute(karTag[TAG_H], &h) == 0 ||
         pElem->Attribute(karTag[TAG_X], &x) == 0 ||
@@ -175,7 +178,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         buffer = pSpriteName;
 
         char* pPeriod(buffer.rfind('.'));
-        if (pPeriod != 0)
+        if (pPeriod != nullptr)
         {
           *pPeriod = '\0';
         }
@@ -201,7 +204,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         }
 
         const char* pIsRotated(pElem->Attribute(karTag[TAG_ROTATED]));
-        bool  isRotated(pIsRotated != 0 && strlen(pIsRotated) > 0 &&
+        bool  isRotated(pIsRotated != nullptr && strlen(pIsRotated) > 0 &&
           pIsRotated[0] == 'y');
 
         if (pElem->Attribute(karTag[TAG_OFFSET_W], &wOffs) == 0)
@@ -215,7 +218,7 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
         }
 
         Sprite  sprite;
-        sprite.SetMaterial(m_pMaterial);
+        sprite.SetMaterial(m_material);
 
         if (isRotated)
         {
@@ -241,39 +244,40 @@ bool TexturePack::Load(const char* pName, Material::GetCallback pGetCb,
 }
 
 //==============================================================================
-Sprite* TexturePack::Get( const char* pName, bool allowMissing )
+Sprite* TexturePack::Get(const char* name, bool allowMissing)
 {
-  XR_ASSERT(TexturePack, pName != 0);
-  Sprite* pSprite(Get(Hash::String32(pName)));
-  XR_ASSERTMSG(TexturePack, pSprite != 0 || allowMissing,
-    ("Sprite '%s' doesn't exist in TexturePack.", pName));
-  return pSprite;
-}
-
-const Sprite* TexturePack::Get( const char* pName, bool allowMissing ) const
-{
-  XR_ASSERT(TexturePack, pName != 0);
-  const Sprite* pSprite(Get(Hash::String32(pName)));
-  XR_ASSERTMSG(TexturePack, pSprite != 0 || allowMissing,
-    ("Sprite '%s' doesn't exist in TexturePack.", pName));
+  XR_ASSERT(TexturePack, name != nullptr);
+  Sprite* pSprite(Get(Hash::String32(name)));
+  XR_ASSERTMSG(TexturePack, pSprite != nullptr || allowMissing,
+    ("Sprite '%s' doesn't exist in TexturePack.", name));
   return pSprite;
 }
 
 //==============================================================================
-Sprite* TexturePack::Get( const char* pName )
+const Sprite* TexturePack::Get(const char* name, bool allowMissing) const
 {
-  XR_ASSERT(TexturePack, pName != 0);
-  Sprite* pSprite(Get(Hash::String32(pName)));
-  XR_ASSERTMSG(TexturePack, pSprite != 0, ("Sprite '%s' doesn't exist in TexturePack.", pName));
+  XR_ASSERT(TexturePack, name != nullptr);
+  const Sprite* pSprite(Get(Hash::String32(name)));
+  XR_ASSERTMSG(TexturePack, pSprite != nullptr || allowMissing,
+    ("Sprite '%s' doesn't exist in TexturePack.", name));
   return pSprite;
 }
 
 //==============================================================================
-const Sprite* TexturePack::Get( const char* pName ) const
+Sprite* TexturePack::Get(char const* name)
 {
-  XR_ASSERT(TexturePack, pName != 0);
-  const Sprite* pSprite(Get(Hash::String32(pName)));
-  XR_ASSERTMSG(TexturePack, pSprite != 0, ("Sprite '%s' doesn't exist in TexturePack.", pName));
+  XR_ASSERT(TexturePack, name != nullptr);
+  Sprite* pSprite(Get(Hash::String32(name)));
+  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("Sprite '%s' doesn't exist in TexturePack.", name));
+  return pSprite;
+}
+
+//==============================================================================
+const Sprite* TexturePack::Get(char const* name) const
+{
+  XR_ASSERT(TexturePack, name != nullptr);
+  const Sprite* pSprite(Get(Hash::String32(name)));
+  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("Sprite '%s' doesn't exist in TexturePack.", name));
   return pSprite;
 }
 

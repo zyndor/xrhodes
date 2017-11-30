@@ -28,8 +28,8 @@ public:
   FloatBuffer&        GetUVs();
   const FloatBuffer&  GetUVs() const;
   
-  Material*           GetMaterial() const;
-  void                SetMaterial(Material* pMaterial); // no transfer
+  Material::Ptr       GetMaterial() const;
+  void                SetMaterial(Material::Ptr const& material); // no transfer
   
   void                InitStreams(int numVertices);
   
@@ -41,7 +41,7 @@ public:
   
 protected:
   // data
-  Material*     m_pMaterial;  // no ownership
+  Material::Ptr m_material;  // no ownership
   FloatBuffer   m_vertices;
   FloatBuffer   m_uvs;
   
@@ -81,9 +81,9 @@ const FloatBuffer& BasicMesh::GetUVs() const
 
 //==============================================================================
 inline
-Material* BasicMesh::GetMaterial() const
+Material::Ptr BasicMesh::GetMaterial() const
 {
-  return m_pMaterial;
+  return m_material;
 }
 
 } // XR

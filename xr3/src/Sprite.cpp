@@ -18,14 +18,10 @@ const AABB Sprite::kWholeTexture = { .0f, .0f, 1.0f, 1.0f };
 const AABB Sprite::kNullTexture =  { .0f, .0f, .0f, .0f };
 
 //==============================================================================
-XR_MANAGED_DEF(Sprite)
-
-//==============================================================================
 void Sprite::Slice( AABB base, int across, int down, int maxSlices,
-  Material* pMaterial, Sprite* parSprites )
+  Material::Ptr const& material, Sprite* sprites )
 {
-  XR_ASSERTMSG(Sprite, pMaterial != 0,
-    ("Trying to Slice() NULL material."));
+  XR_ASSERTMSG(Sprite, material, ("Trying to Slice() NULL material."));
   XR_ASSERT(Sprite, across > 0);
   XR_ASSERT(Sprite, down > 0);   
   if (maxSlices <= 0)
@@ -41,13 +37,13 @@ void Sprite::Slice( AABB base, int across, int down, int maxSlices,
   {
     for (int j = 0; j < across && slices < maxSlices; ++j)
     {
-      parSprites->SetMaterial(pMaterial);
-      parSprites->SetUVsProportional(base);
+      sprites->SetMaterial(material);
+      sprites->SetUVsProportional(base);
 
       base.left = base.right;
       base.right += width;
       ++slices;
-      ++parSprites;
+      ++sprites;
     }
     base.left = leftStart;
     base.right = leftStart + width;
@@ -75,16 +71,16 @@ void Sprite::CopyWholeTextureUVsTo(size_t offset, FloatBuffer& uvs)
 }
 
 //==============================================================================
-void Sprite::CopyIndicesTo(uint16_t* parInds, size_t offset)
+void Sprite::CopyIndicesTo(uint16_t* indices, size_t offset)
 {
-  XR_ASSERT(Sprite, parInds != 0);
+  XR_ASSERT(Sprite, indices != 0);
   const uint16_t* i0(karIndices);
   const uint16_t* i1(i0 + kNumIndices);
   while (i0 != i1)
   {
-    *parInds = *i0 + offset;
+    *indices = *i0 + offset;
     ++i0;
-    ++parInds;
+    ++indices;
   }
 }
 
@@ -104,9 +100,9 @@ Sprite::~Sprite()
 {}
 
 //==============================================================================
-void  Sprite::SetMaterial(Material* pMaterial)
+void  Sprite::SetMaterial(Material::Ptr const& material)
 {
-  m_pMaterial = pMaterial;
+  m_material = material;
 }
 
 //==============================================================================
@@ -140,13 +136,13 @@ void Sprite::SetUVs(const AABB& tc)
 //==============================================================================
 void Sprite::SetUVsProportional(const AABB& tc)
 {
-  XR_ASSERT(Sprite, m_pMaterial != 0);
-  XR_ASSERT(Sprite, m_pMaterial->GetTexture(0).GetImpl() != 0);
+  XR_ASSERT(Sprite, m_material);
+  XR_ASSERT(Sprite, m_material->GetTexture(0));
 
   SetUVs(tc);
 
-  int32_t hw = (tc.right - tc.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
-  int32_t hh = (tc.bottom - tc.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
+  int32_t hw = (tc.right - tc.left) * .5f * m_material->GetTexture(0)->GetWidth();
+  int32_t hh = (tc.bottom - tc.top) * .5f * m_material->GetTexture(0)->GetHeight();
   SetHalfSize(hw, hh, true);
 }
 
@@ -163,13 +159,13 @@ void Sprite::SetUVsRotated(const AABB& uvs)
 //==============================================================================
 void Sprite::SetUVsRotatedProportional(const AABB& uvs)
 {
-  XR_ASSERT(Sprite, m_pMaterial != 0);
-  XR_ASSERT(Sprite, m_pMaterial->GetTexture(0).GetImpl() != 0);
+  XR_ASSERT(Sprite, m_material);
+  XR_ASSERT(Sprite, m_material->GetTexture(0));
 
   SetUVsRotated(uvs);
 
-  int32_t hw = (uvs.bottom - uvs.top) * .5f * m_pMaterial->GetTexture(0).GetHeight();
-  int32_t hh = (uvs.right - uvs.left) * .5f * m_pMaterial->GetTexture(0).GetWidth();
+  int32_t hw = (uvs.bottom - uvs.top) * .5f * m_material->GetTexture(0)->GetHeight();
+  int32_t hh = (uvs.right - uvs.left) * .5f * m_material->GetTexture(0)->GetWidth();
   SetHalfSize(hw, hh, true);
 }
 

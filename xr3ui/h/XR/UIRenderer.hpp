@@ -41,7 +41,7 @@ public:
   ///@return  A FloatBuffer that you can write the 4 vertices to.
   ///@note    An assertion is tripped when any combination of NewSprite()
   /// methods are called more than the renderer's capacity without Clear().
-  FloatBuffer  NewSprite(Material* pMaterial, const FloatBuffer& fbUV, Color color);
+  FloatBuffer  NewSprite(Material::Ptr const& pMaterial, const FloatBuffer& fbUV, Color color);
     
   ///@brief   Records the material and the color as passed. @a fbUV will be
   /// set to a buffer of 4 UVs, which you can subsequently fill out.
@@ -49,7 +49,7 @@ public:
   ///@return  A FloatBuffer that you can write the 4 vertices to.
   ///@note    An assertion is tripped when any combination of NewSprite()
   /// methods are called more than the renderer's capacity without Clear().
-  FloatBuffer  NewSprite(Material* pMaterial, Color color, FloatBuffer& fbUV);
+  FloatBuffer  NewSprite(Material::Ptr const& pMaterial, Color color, FloatBuffer& fbUV);
 
   ///@brief   Records the material, @a fbUVs and @a fbColor sill be set to
   /// buffers of 4 UVs and Colors, which you can subsequently fill out.
@@ -57,7 +57,7 @@ public:
   ///@return  A FloatBuffer that you can write the 4 vertices to.
   ///@note    An assertion is tripped when any combination of NewSprite()
   /// methods are called more than the renderer's capacity without Clear().
-  FloatBuffer  NewSprite(Material* pMaterial, FloatBuffer& fbUV,
+  FloatBuffer  NewSprite(Material::Ptr const& pMaterial, FloatBuffer& fbUV,
     FloatBuffer& fbColor);
 
   ///@brief   Renders all unrendered sprites and marks them as rendered.
@@ -78,10 +78,10 @@ public:
 protected:
   // data
   int           m_numSprites;
-  Material**    m_parpMaterial;
+  std::vector<Material::Ptr> m_materials;
   FloatBuffer   m_colors;
   
-  int           m_numSpritesConsumed;
+  int           m_numSpritesRenderable;
   int           m_numSpritesRendered;
 };
 
@@ -98,7 +98,7 @@ int UIRenderer::GetNumSprites() const
 inline
 int UIRenderer::GetNumSpritesConsumed() const
 {
-  return m_numSpritesConsumed;
+  return m_numSpritesRenderable;
 }
 
 //==============================================================================

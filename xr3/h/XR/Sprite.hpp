@@ -12,6 +12,9 @@
 #include "BasicMesh.hpp"
 #include "XR/fundamentals.hpp"
 
+// TODO: Remove these includes.
+#include "XR/ResManager.hpp"
+
 namespace XR
 {
 
@@ -46,13 +49,13 @@ public:
   /// parSprites, shifting the AABB across and down.
   ///@note  @a parSprites must have space for at least @a maxSlices Sprites.
   static void Slice(AABB base, int across, int down, int maxSlices,
-    Material* pMaterial, Sprite* parSprites);
+    Material::Ptr const& material, Sprite* sprites);
 
   static FloatBuffer*   CopyWholeTextureUVs();
   static void           CopyWholeTextureUVsTo(FloatBuffer& uvs);
   static void           CopyWholeTextureUVsTo(size_t offset, FloatBuffer& uvs);
 
-  static void           CopyIndicesTo(uint16_t* parInds, size_t offset);
+  static void           CopyIndicesTo(uint16_t* indices, size_t offset);
 
   // structors
   Sprite();
@@ -60,7 +63,7 @@ public:
 
   // general
   ///@return  The material the Sprite is based on.
-  Material*   GetMaterial() const;
+  Material::Ptr GetMaterial() const;
 
   ///@return Whether the Sprite is created from 90 degrees clockwise rotated
   /// UVs. (Texture Packer rotated="y" does this.)
@@ -116,7 +119,7 @@ public:
   void  SetUVsRotated(const AABB& uvs);
   void  SetUVsRotatedProportional(const AABB& uvs);
 
-  void  SetMaterial(Material* pMaterial);
+  void  SetMaterial(Material::Ptr const& pMaterial);
 
   void  Scale(float s);
   void  Scale(float sx, float sy);
@@ -168,7 +171,7 @@ bool Sprite::IsUVRotated() const
 inline
 void  Sprite::Render()
 {
-  Renderer::SetMaterial(m_pMaterial);
+  m_material->Apply();
   RenderRaw();
 }
 
@@ -244,9 +247,9 @@ const FloatBuffer& Sprite::GetVertices() const
 
 //==============================================================================
 inline
-Material* Sprite::GetMaterial() const
+Material::Ptr Sprite::GetMaterial() const
 {
-  return m_pMaterial;
+  return m_material;
 }
   
 //==============================================================================
