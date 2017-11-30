@@ -119,6 +119,7 @@ namespace XR
     FileLifeCycleManager  flcm;
   };
 
+#ifdef ENABLE_ASSET_BUILDING
   TEST_F(MaterialTests, Textures)
   {
     auto hSamp = Gfx::CreateUniform("xruSampler0", Gfx::UniformType::Int1);
@@ -202,4 +203,5 @@ namespace XR
 
     Gfx::Destroy(hSamp);
   }
+#endif
 }
