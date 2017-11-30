@@ -131,11 +131,8 @@ void Texture::OnUnload()
   m_height = 0;
   m_hasAlpha = false;
 
-  if (m_handle.IsValid())
-  {
-    Gfx::Destroy(m_handle);
-    m_handle = Gfx::TextureHandle();
-  }
+  Gfx::Destroy(m_handle);
+  m_handle.Invalidate();
 
   std::vector<uint8_t>().swap(m_data);
 }

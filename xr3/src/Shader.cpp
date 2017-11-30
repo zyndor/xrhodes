@@ -111,11 +111,8 @@ bool Shader::OnLoaded(size_t size, uint8_t const * buffer)
 //==============================================================================
 void Shader::OnUnload()
 {
-  if (m_handle.IsValid())
-  {
-    Gfx::Destroy(m_handle);
-    m_handle = Gfx::ProgramHandle();
-  }
+  Gfx::Destroy(m_handle);
+  m_handle.Invalidate();
 
   m_vertexShader.Reset(nullptr);
   m_fragmentShader.Reset(nullptr);

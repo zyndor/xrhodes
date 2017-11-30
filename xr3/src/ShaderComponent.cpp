@@ -81,11 +81,8 @@ bool ShaderComponent::OnLoaded(size_t size, uint8_t const * buffer)
 //==============================================================================
 void XR::ShaderComponent::OnUnload()
 {
-  if (m_handle.IsValid())
-  {
-    Gfx::Destroy(m_handle);
-    m_handle = Gfx::ShaderHandle();
-  }
+  Gfx::Destroy(m_handle);
+  m_handle.Invalidate();
 
   std::vector<uint8_t>().swap(m_data);
 }

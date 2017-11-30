@@ -1669,7 +1669,10 @@ VertexFormatHandle RegisterVertexFormat(VertexFormat const& format)
 //=============================================================================
 void Destroy(VertexFormatHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1681,7 +1684,10 @@ VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& 
 //=============================================================================
 void Destroy(VertexBufferHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1693,7 +1699,10 @@ IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
 //=============================================================================
 void Destroy(IndexBufferHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1705,7 +1714,10 @@ InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer, uint16_t
 //=============================================================================
 void Destroy(InstanceDataBufferHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1743,7 +1755,10 @@ TextureInfo GetTextureInfo(TextureHandle h)
 //=============================================================================
 void Destroy(TextureHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1782,7 +1797,10 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 //=============================================================================
 void Destroy(FrameBufferHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1794,7 +1812,10 @@ UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySiz
 //=============================================================================
 void Destroy(UniformHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1806,7 +1827,10 @@ ShaderHandle CreateShader(ShaderType t, Buffer const& buffer)
 //=============================================================================
 void Destroy(ShaderHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================
@@ -1818,7 +1842,10 @@ ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment)
 //=============================================================================
 void Destroy(ProgramHandle h)
 {
-  s_impl->Destroy(h);
+  if (h.IsValid())
+  {
+    s_impl->Destroy(h);
+  }
 }
 
 //=============================================================================

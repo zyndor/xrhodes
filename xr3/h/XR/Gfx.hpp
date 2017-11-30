@@ -207,6 +207,11 @@ struct HandleCoreCore {
   {
     return id != INVALID_ID;
   }
+
+  void Invalidate()
+  {
+    id = INVALID_ID;
+  }
 };
 
 template <typename T>
