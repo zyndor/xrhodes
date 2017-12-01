@@ -1,11 +1,12 @@
+#ifndef XR_FILEWRITER_HPP
+#define XR_FILEWRITER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_FILEWRITER_HPP
-#define XR_FILEWRITER_HPP
 
 #include "File.hpp"
 #include "XR/fundamentals.hpp"

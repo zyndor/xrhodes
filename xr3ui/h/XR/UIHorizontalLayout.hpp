@@ -1,11 +1,12 @@
+#ifndef XR_UIHORIZONTALLAYOUT_HPP
+#define XR_UIHORIZONTALLAYOUT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIHORIZONTALLAYOUT_HPP
-#define XR_UIHORIZONTALLAYOUT_HPP
 
 #include "UIGrowingLayoutBase.hpp"
 

@@ -1,11 +1,12 @@
+#ifndef XR_SEMAPHORE_HPP
+#define XR_SEMAPHORE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SEMAPHORE_HPP
-#define XR_SEMAPHORE_HPP
 
 #include <mutex>
 #include <condition_variable>

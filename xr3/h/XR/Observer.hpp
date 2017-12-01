@@ -1,11 +1,12 @@
+#ifndef XR_OBSERVER_HPP
+#define XR_OBSERVER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_OBSERVER_HPP
-#define XR_OBSERVER_HPP
 
 #include <list>
 

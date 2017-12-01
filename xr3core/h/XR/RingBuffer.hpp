@@ -1,11 +1,12 @@
+#ifndef XR_RINGBUFFER_HPP
+#define XR_RINGBUFFER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_RINGBUFFER_HPP
-#define XR_RINGBUFFER_HPP
 
 #include "debug.hpp"
 #include <vector>

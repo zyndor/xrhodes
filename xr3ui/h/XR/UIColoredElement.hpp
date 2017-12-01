@@ -1,11 +1,12 @@
+#ifndef XR_UICOLOREDELEMENT_HPP
+#define XR_UICOLOREDELEMENT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UICOLOREDELEMENT_HPP
-#define XR_UICOLOREDELEMENT_HPP
 
 #include "XR/maths.hpp"
 #include "XR/Sprite.hpp"

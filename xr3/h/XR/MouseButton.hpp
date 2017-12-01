@@ -1,11 +1,12 @@
+#ifndef XR_MOUSEBUTTON_HPP
+#define XR_MOUSEBUTTON_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MOUSEBUTTON_HPP
-#define XR_MOUSEBUTTON_HPP
 
 namespace XR {
 

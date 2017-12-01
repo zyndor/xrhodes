@@ -1,11 +1,12 @@
+#ifndef XR_STREAMUTILS_HPP
+#define XR_STREAMUTILS_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_STREAMUTILS_HPP
-#define XR_STREAMUTILS_HPP
 
 #include <iomanip>
 

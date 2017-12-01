@@ -1,11 +1,12 @@
+#ifndef XR_MODULE_HPP
+#define XR_MODULE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MODULE_HPP
-#define XR_MODULE_HPP
 
 #include "XR/fundamentals.hpp"
 #include <cstdint>

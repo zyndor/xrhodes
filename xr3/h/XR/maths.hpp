@@ -1,11 +1,12 @@
+#ifndef XR_MATHS_HPP
+#define XR_MATHS_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MATHS_HPP
-#define XR_MATHS_HPP
 
 #include <cmath>
 #include <stdlib.h>

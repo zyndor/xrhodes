@@ -1,11 +1,12 @@
+#ifndef XR_UIHORIZONTALPROGRESSBAR_HPP
+#define XR_UIHORIZONTALPROGRESSBAR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIHORIZONTALPROGRESSBAR_HPP
-#define XR_UIHORIZONTALPROGRESSBAR_HPP
 
 #include "UIProgressBarBase.hpp"
 

@@ -1,11 +1,12 @@
+#ifndef XR_XONREADER_HPP
+#define XR_XONREADER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_XONREADER_HPP
-#define XR_XONREADER_HPP
 
 #include "XonParser.hpp"
 #include "XonEntity.hpp"

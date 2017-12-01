@@ -1,11 +1,12 @@
+#ifndef XR_PLATFORM_HPP
+#define XR_PLATFORM_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_PLATFORM_HPP
-#define XR_PLATFORM_HPP
 
 // compilers
 #if defined(_MSC_VER)

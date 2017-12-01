@@ -1,11 +1,12 @@
+#ifndef XR_POINTER_HPP
+#define XR_POINTER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_POINTER_HPP
-#define XR_POINTER_HPP
 
 #include "XR/Input.hpp"
 #include "UIImage.hpp"

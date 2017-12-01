@@ -1,11 +1,12 @@
+#ifndef XR_UIBUILDERSCREEN_HPP
+#define XR_UIBUILDERSCREEN_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIBUILDERSCREEN_HPP
-#define XR_UIBUILDERSCREEN_HPP
 
 #include "Screen.hpp"
 #include "UIBuilder.hpp"

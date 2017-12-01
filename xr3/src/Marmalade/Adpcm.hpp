@@ -1,11 +1,12 @@
+#ifndef XR_ADPCM_HPP
+#define XR_ADPCM_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_ADPCM_HPP
-#define XR_ADPCM_HPP
 
 #include <XR/fundamentals.hpp>
 #include <cstdint>

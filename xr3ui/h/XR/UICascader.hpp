@@ -1,11 +1,12 @@
+#ifndef XR_UICASCADER_HPP
+#define XR_UICASCADER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UICASCADER_HPP
-#define XR_UICASCADER_HPP
 
 #include "UIAligner.hpp"
 

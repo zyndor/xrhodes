@@ -1,11 +1,12 @@
+#ifndef XR_SHADER_HPP
+#define XR_SHADER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SHADER_HPP
-#define XR_SHADER_HPP
 
 #include "ShaderComponent.hpp"
 #include "Asset.hpp"

@@ -1,11 +1,12 @@
+#ifndef XR_CALLBACK_HPP
+#define XR_CALLBACK_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_CALLBACK_HPP
-#define XR_CALLBACK_HPP
 
 #include "XR/debug.hpp"
 #include <list>

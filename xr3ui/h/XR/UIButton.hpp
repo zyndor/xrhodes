@@ -1,11 +1,12 @@
+#ifndef XR_UIBUTTON_HPP
+#define XR_UIBUTTON_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIBUTTON_HPP
-#define XR_UIBUTTON_HPP
 
 #include "UIColoredElement.hpp"
 #include "XR/utils.hpp"

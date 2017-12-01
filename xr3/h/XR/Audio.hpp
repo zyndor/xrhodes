@@ -1,11 +1,12 @@
+#ifndef XR_AUDIO_HPP
+#define XR_AUDIO_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_AUDIO_HPP
-#define XR_AUDIO_HPP
 
 #include "Sample.hpp"
 #include "XR/fundamentals.hpp"

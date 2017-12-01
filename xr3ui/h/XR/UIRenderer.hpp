@@ -1,11 +1,12 @@
+#ifndef XR_UIRENDERER_HPP
+#define XR_UIRENDERER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIRENDERER_HPP
-#define XR_UIRENDERER_HPP
 
 #include "XR/Sprite.hpp"
 #include "XR/IndexMesh.hpp"

@@ -1,11 +1,12 @@
+#ifndef XR_AUDIOCHANNELSTATE_HPP
+#define XR_AUDIOCHANNELSTATE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_AUDIOCHANNELSTATE_HPP
-#define XR_AUDIOCHANNELSTATE_HPP
 
 #include "SampleData.hpp"
 #include "Adpcm.hpp"

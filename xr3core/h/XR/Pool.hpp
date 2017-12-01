@@ -1,11 +1,12 @@
+#ifndef XR_POOL_HPP
+#define XR_POOL_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_POOL_HPP
-#define XR_POOL_HPP
 
 #include "memory.hpp"
 #include <list>

@@ -1,11 +1,12 @@
+#ifndef XR_DEVICE_HPP
+#define XR_DEVICE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_DEVICE_HPP
-#define XR_DEVICE_HPP
 
 #include "File.hpp"
 #include "Log.hpp"

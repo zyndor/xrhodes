@@ -1,11 +1,12 @@
+#ifndef XR_GFX_HPP
+#define XR_GFX_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_GFX_HPP
-#define XR_GFX_HPP
 
 #include "XR/Color.hpp"
 #include "XR/memory.hpp"

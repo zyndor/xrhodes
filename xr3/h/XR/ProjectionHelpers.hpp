@@ -1,11 +1,12 @@
+#ifndef XR_PROJECTIONHELPERS_HPP
+#define XR_PROJECTIONHELPERS_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_PROJECTIONHELPERS_HPP
-#define XR_PROJECTIONHELPERS_HPP
 
 #include "XR/fundamentals.hpp"
 

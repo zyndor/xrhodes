@@ -1,11 +1,12 @@
+#ifndef XR_XONENTITY_HPP
+#define XR_XONENTITY_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_XONENTITY_HPP
-#define XR_XONENTITY_HPP
 
 #include "fundamentals.hpp"
 #include <map>

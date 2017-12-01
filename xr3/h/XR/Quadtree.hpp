@@ -1,11 +1,12 @@
+#ifndef XR_QUADTREE_HPP
+#define XR_QUADTREE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_QUADTREE_HPP
-#define XR_QUADTREE_HPP
 
 #include "RectObject.hpp"
 #include "XR/functors.hpp"

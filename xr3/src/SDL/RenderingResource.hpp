@@ -1,11 +1,12 @@
+#ifndef XR_RENDERINGRESOURCE_HPP
+#define XR_RENDERINGRESOURCE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_RENDERINGRESOURCE_HPP
-#define XR_RENDERINGRESOURCE_HPP
 
 #include "xrgl.hpp"
 

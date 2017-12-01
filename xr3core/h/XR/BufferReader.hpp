@@ -1,11 +1,12 @@
+#ifndef XR_BUFFERREADER_HPP
+#define XR_BUFFERREADER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_BUFFERREADER_HPP
-#define XR_BUFFERREADER_HPP
 
 #include <cstdint>
 

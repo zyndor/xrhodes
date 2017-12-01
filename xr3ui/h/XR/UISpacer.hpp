@@ -1,11 +1,12 @@
+#ifndef XR_UISPACER_HPP
+#define XR_UISPACER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UISPACER_HPP
-#define XR_UISPACER_HPP
 
 #include "UIElement.hpp"
 

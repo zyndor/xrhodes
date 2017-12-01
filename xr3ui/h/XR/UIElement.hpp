@@ -1,11 +1,12 @@
+#ifndef XR_UIELEMENT_HPP
+#define XR_UIELEMENT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIELEMENT_HPP
-#define XR_UIELEMENT_HPP
 
 #include <list>
 #include "XR/utils.hpp"

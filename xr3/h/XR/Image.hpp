@@ -1,11 +1,12 @@
+#ifndef XR_IMAGE_HPP
+#define XR_IMAGE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_IMAGE_HPP
-#define XR_IMAGE_HPP
 
 #include <vector>
 #include <cstdint>

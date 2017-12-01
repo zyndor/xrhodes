@@ -1,11 +1,12 @@
+#ifndef XR_ASSET_HPP
+#define XR_ASSET_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_ASSET_HPP
-#define XR_ASSET_HPP
 
 #include "XR/File.hpp"
 #include "XR/Counted.hpp"

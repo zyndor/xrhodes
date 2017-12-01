@@ -1,11 +1,12 @@
+#ifndef XR_EVENTNOTIFIER_HPP
+#define XR_EVENTNOTIFIER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_EVENTNOTIFIER_HPP
-#define XR_EVENTNOTIFIER_HPP
 
 #include "detail/EventDispatcher.hpp"
 #include "ScopeGuard.hpp"

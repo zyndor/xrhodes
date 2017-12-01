@@ -1,11 +1,12 @@
+#ifndef XR_INDEXMESH_HPP
+#define XR_INDEXMESH_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_INDEXMESH_HPP
-#define XR_INDEXMESH_HPP
 
 #include "BasicMesh.hpp"
 #include <vector>

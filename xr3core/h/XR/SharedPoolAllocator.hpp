@@ -1,11 +1,12 @@
+#ifndef XR_SHAREDPOOLALLOCATOR_HPP
+#define XR_SHAREDPOOLALLOCATOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SHAREDPOOLALLOCATOR_HPP
-#define XR_SHAREDPOOLALLOCATOR_HPP
 
 #include <stddef.h>
 #include "Pool.hpp"

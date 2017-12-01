@@ -1,11 +1,12 @@
+#ifndef XR_JSON_HPP
+#define XR_JSON_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_JSON_HPP
-#define XR_JSON_HPP
 
 namespace XR {
 

@@ -1,11 +1,12 @@
+#ifndef XR_TEXT_HPP
+#define XR_TEXT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_TEXT_HPP
-#define XR_TEXT_HPP
 
 #include <string>
 #include "Font.hpp"

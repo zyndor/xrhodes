@@ -1,11 +1,12 @@
+#ifndef XR_RESMANAGER_HPP
+#define XR_RESMANAGER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_RESMANAGER_HPP
-#define XR_RESMANAGER_HPP
 
 #include "XR/Hash.hpp"
 #include "XR/Pool.hpp"

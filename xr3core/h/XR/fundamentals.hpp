@@ -1,11 +1,12 @@
+#ifndef XR_FUNDAMENTALS_HPP
+#define XR_FUNDAMENTALS_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_FUNDAMENTALS_HPP
-#define XR_FUNDAMENTALS_HPP
 
 #include <memory>
 

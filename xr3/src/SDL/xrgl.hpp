@@ -1,11 +1,12 @@
+#ifndef XR_XRGL_HPP
+#define XR_XRGL_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_XRGL_HPP
-#define XR_XRGL_HPP
 
 #include "XR/debug.hpp"
 #include "gl_core_4_5.h"

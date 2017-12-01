@@ -1,11 +1,12 @@
+#ifndef XR_PARSE_HPP
+#define XR_PARSE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_PARSE_HPP
-#define XR_PARSE_HPP
 
 #include "Color.hpp"
 #include "XR/fundamentals.hpp"

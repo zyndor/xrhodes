@@ -1,11 +1,12 @@
+#ifndef XR_TWEAKBENCH_HPP
+#define XR_TWEAKBENCH_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_TWEAKBENCH_HPP
-#define XR_TWEAKBENCH_HPP
 
 #include <map>
 #include <cstdint>

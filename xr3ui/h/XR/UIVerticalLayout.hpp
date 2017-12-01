@@ -1,11 +1,12 @@
+#ifndef XR_UIVERTICALLAYOUT_HPP
+#define XR_UIVERTICALLAYOUT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIVERTICALLAYOUT_HPP
-#define XR_UIVERTICALLAYOUT_HPP
 
 #include "UIGrowingLayoutBase.hpp"
 

@@ -1,11 +1,12 @@
+#ifndef XR_DEFLATOR_HPP
+#define XR_DEFLATOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_DEFLATOR_HPP
-#define XR_DEFLATOR_HPP
 
 #include "Inflatable.hpp"
 #include "XR/IdGenerator.hpp"

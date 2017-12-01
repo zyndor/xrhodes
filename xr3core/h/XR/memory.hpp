@@ -1,11 +1,12 @@
+#ifndef XR_MEMORY_HPP
+#define XR_MEMORY_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MEMORY_HPP
-#define XR_MEMORY_HPP
 
 #include "debug.hpp"
 #include <stdint.h>

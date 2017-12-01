@@ -1,11 +1,12 @@
+#ifndef XR_MEMFNADAPTOR_HPP
+#define XR_MEMFNADAPTOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MEMFNADAPTOR_HPP
-#define XR_MEMFNADAPTOR_HPP
 
 namespace	XR
 {

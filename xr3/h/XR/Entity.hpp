@@ -1,11 +1,12 @@
+#ifndef XR_ENTITY_HPP
+#define XR_ENTITY_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_ENTITY_HPP
-#define XR_ENTITY_HPP
 
 #include "Matrix.hpp"
 #include "Quaternion.hpp"

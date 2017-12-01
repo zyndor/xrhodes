@@ -1,11 +1,12 @@
+#ifndef XR_UIPROGRESSBARBASE_HPP
+#define XR_UIPROGRESSBARBASE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIPROGRESSBARBASE_HPP
-#define XR_UIPROGRESSBARBASE_HPP
 
 #include "UIImage.hpp"
 

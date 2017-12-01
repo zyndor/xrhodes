@@ -1,11 +1,12 @@
+#ifndef XR_HASH_HPP
+#define XR_HASH_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_HASH_HPP
-#define XR_HASH_HPP
 
 #include "XR/fundamentals.hpp"
 #include <cstdint>

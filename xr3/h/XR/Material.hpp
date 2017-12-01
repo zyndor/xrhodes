@@ -1,11 +1,12 @@
+#ifndef XR_MATERIAL_HPP
+#define XR_MATERIAL_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MATERIAL_HPP
-#define XR_MATERIAL_HPP
 
 #include "Color.hpp"
 #include "Texture.hpp"

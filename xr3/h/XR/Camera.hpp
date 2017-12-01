@@ -1,11 +1,12 @@
+#ifndef XR_CAMERA_HPP
+#define XR_CAMERA_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_CAMERA_HPP
-#define XR_CAMERA_HPP
 
 #include "Entity.hpp"
 #include "Ray.hpp"

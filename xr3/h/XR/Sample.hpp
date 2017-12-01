@@ -1,11 +1,12 @@
+#ifndef XR_SAMPLE_HPP
+#define XR_SAMPLE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SAMPLE_HPP
-#define XR_SAMPLE_HPP
 
 #include "ResManager.hpp"
 #include "CrossObject.hpp"

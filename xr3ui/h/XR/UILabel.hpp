@@ -1,11 +1,12 @@
+#ifndef XR_UILABEL_HPP
+#define XR_UILABEL_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UILABEL_HPP
-#define XR_UILABEL_HPP
 
 #include "UIColoredElement.hpp"
 #include "XR/Text.hpp"

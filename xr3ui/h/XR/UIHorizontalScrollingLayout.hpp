@@ -1,11 +1,12 @@
+#ifndef XR_UIHORIZONTALSCROLLINGLAYOUT_HPP
+#define XR_UIHORIZONTALSCROLLINGLAYOUT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIHORIZONTALSCROLLINGLAYOUT_HPP
-#define XR_UIHORIZONTALSCROLLINGLAYOUT_HPP
 
 #include "UIHorizontalLayout.hpp"
 

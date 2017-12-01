@@ -1,11 +1,12 @@
+#ifndef XR_JSONPARSER_HPP
+#define XR_JSONPARSER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_JSONPARSER_HPP
-#define XR_JSONPARSER_HPP
 
 #include "json.hpp"
 #include "XR/Callback.hpp"

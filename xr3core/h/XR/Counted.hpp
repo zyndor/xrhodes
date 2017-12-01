@@ -1,11 +1,12 @@
+#ifndef XR_COUNTED_HPP
+#define XR_COUNTED_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_COUNTED_HPP
-#define XR_COUNTED_HPP
 
 #include <memory>
 #include <functional>

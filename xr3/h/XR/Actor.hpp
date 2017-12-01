@@ -1,11 +1,12 @@
+#ifndef XR_ACTOR_HPP
+#define XR_ACTOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_ACTOR_HPP
-#define XR_ACTOR_HPP
 
 #include "Animation.hpp"
 #include "XR/Hash.hpp"

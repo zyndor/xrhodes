@@ -1,11 +1,12 @@
+#ifndef XR_INPUTIMPL_HPP
+#define XR_INPUTIMPL_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_INPUTIMPL_HPP
-#define XR_INPUTIMPL_HPP
 
 #include "XR/Input.hpp"
 

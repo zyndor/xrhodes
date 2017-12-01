@@ -1,11 +1,12 @@
+#ifndef XR_SERIALIZABLE_HPP
+#define XR_SERIALIZABLE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SERIALIZABLE_HPP
-#define XR_SERIALIZABLE_HPP
 
 #include <iostream>
 

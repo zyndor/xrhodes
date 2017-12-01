@@ -1,11 +1,12 @@
+#ifndef XR_JSONWRITER_HPP
+#define XR_JSONWRITER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_JSONWRITER_HPP
-#define XR_JSONWRITER_HPP
 
 #include <sstream>
 #include "json.hpp"

@@ -1,11 +1,12 @@
+#ifndef XR_GRID_HPP
+#define XR_GRID_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_GRID_HPP
-#define XR_GRID_HPP
 
 namespace XR
 {

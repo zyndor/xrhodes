@@ -1,11 +1,12 @@
+#ifndef XR_BUTTONSTATE_HPP
+#define XR_BUTTONSTATE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_BUTTONSTATE_HPP
-#define XR_BUTTONSTATE_HPP
 
 namespace XR
 {

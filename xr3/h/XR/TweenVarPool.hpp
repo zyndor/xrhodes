@@ -1,11 +1,12 @@
+#ifndef XR_TWEENVARPOOL_HPP
+#define XR_TWEENVARPOOL_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_TWEENVARPOOL_HPP
-#define XR_TWEENVARPOOL_HPP
 
 #include "TweenVar.hpp"
 #include "XR/debug.hpp"

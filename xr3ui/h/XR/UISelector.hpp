@@ -1,11 +1,12 @@
+#ifndef XR_UISELECTOR_HPP
+#define XR_UISELECTOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UISELECTOR_HPP
-#define XR_UISELECTOR_HPP
 
 #include <map>
 #include "UIElement.hpp"

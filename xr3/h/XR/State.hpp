@@ -1,11 +1,12 @@
+#ifndef XR_STATE_HPP
+#define XR_STATE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_STATE_HPP
-#define XR_STATE_HPP
 
 #include <list>
 #include <cstdint>

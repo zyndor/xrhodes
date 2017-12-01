@@ -1,11 +1,12 @@
+#ifndef XR_RECTOBJECT_HPP
+#define XR_RECTOBJECT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_RECTOBJECT_HPP
-#define XR_RECTOBJECT_HPP
 
 #include "AABB.hpp"
 #include "Vector2.hpp"

@@ -1,11 +1,12 @@
+#ifndef XR_ACTORINSTANCE_HPP
+#define XR_ACTORINSTANCE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_ACTORINSTANCE_HPP
-#define XR_ACTORINSTANCE_HPP
 
 #include "Actor.hpp"
 #include "AnimationInstance.hpp"

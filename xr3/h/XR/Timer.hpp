@@ -1,11 +1,12 @@
+#ifndef XR_TIMER_HPP
+#define XR_TIMER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_TIMER_HPP
-#define XR_TIMER_HPP
 
 #include "XR/fundamentals.hpp"
 

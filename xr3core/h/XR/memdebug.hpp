@@ -1,11 +1,12 @@
+#ifndef XR_MEMDEBUG_HPP
+#define XR_MEMDEBUG_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MEMDEBUG_HPP
-#define XR_MEMDEBUG_HPP
 
 #include <string>
 

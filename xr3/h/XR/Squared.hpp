@@ -1,11 +1,12 @@
+#ifndef XR_SQUARED_HPP
+#define XR_SQUARED_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SQUARED_HPP
-#define XR_SQUARED_HPP
 
 namespace XR
 {

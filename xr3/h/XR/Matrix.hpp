@@ -1,11 +1,12 @@
+#ifndef XR_MATRIX_HPP
+#define XR_MATRIX_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MATRIX_HPP
-#define XR_MATRIX_HPP
 
 #include "Vector3.hpp"
 #include "XR/debug.hpp"

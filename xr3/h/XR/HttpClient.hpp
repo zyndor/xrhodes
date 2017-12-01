@@ -1,11 +1,12 @@
+#ifndef XR_HTTPCLIENT_HPP
+#define XR_HTTPCLIENT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_HTTPCLIENT_HPP
-#define XR_HTTPCLIENT_HPP
 
 #include <set>
 #include "XR/fundamentals.hpp"

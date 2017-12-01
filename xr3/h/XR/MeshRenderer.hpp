@@ -1,11 +1,12 @@
+#ifndef XR_MESHRENDERER_HPP
+#define XR_MESHRENDERER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_MESHRENDERER_HPP
-#define XR_MESHRENDERER_HPP
 
 #include "Entity.hpp"
 #include "BasicMesh.hpp"

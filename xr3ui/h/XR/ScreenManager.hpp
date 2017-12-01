@@ -1,11 +1,12 @@
+#ifndef XR_SCREENMANAGER_HPP
+#define XR_SCREENMANAGER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SCREENMANAGER_HPP
-#define XR_SCREENMANAGER_HPP
 
 #include "Screen.hpp"
 #include "UIRenderer.hpp"

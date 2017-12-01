@@ -1,11 +1,12 @@
+#ifndef XR_UISLIDERBASE_HPP
+#define XR_UISLIDERBASE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UISLIDERBASE_HPP
-#define XR_UISLIDERBASE_HPP
 
 #include "UIImage.hpp"
 

@@ -1,11 +1,12 @@
+#ifndef XR_TWEENVAR_HPP
+#define XR_TWEENVAR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_TWEENVAR_HPP
-#define XR_TWEENVAR_HPP
 
 #include "Tweener.hpp"
 

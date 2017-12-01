@@ -1,11 +1,12 @@
+#ifndef XR_FUNCTORS_HPP
+#define XR_FUNCTORS_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_FUNCTORS_HPP
-#define XR_FUNCTORS_HPP
 
 #include <algorithm>
 #include <functional>

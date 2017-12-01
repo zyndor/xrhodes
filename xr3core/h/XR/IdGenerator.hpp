@@ -1,11 +1,12 @@
+#ifndef XR_IDGENERATOR_HPP
+#define XR_IDGENERATOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_IDGENERATOR_HPP
-#define XR_IDGENERATOR_HPP
 
 #include <cstdint>
 #include "debug.hpp"

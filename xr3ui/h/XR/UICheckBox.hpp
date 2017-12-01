@@ -1,11 +1,12 @@
+#ifndef XR_UICHECKBOX_HPP
+#define XR_UICHECKBOX_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UICHECKBOX_HPP
-#define XR_UICHECKBOX_HPP
 
 #include <list>
 #include "UIButton.hpp"

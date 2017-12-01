@@ -1,11 +1,12 @@
+#ifndef XR_QUEUE_HPP
+#define XR_QUEUE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_QUEUE_HPP
-#define XR_QUEUE_HPP
 
 #include <algorithm>
 #include <iterator>

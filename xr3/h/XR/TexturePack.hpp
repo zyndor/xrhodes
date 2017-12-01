@@ -1,11 +1,12 @@
+#ifndef XR_TEXTUREPACK_HPP
+#define XR_TEXTUREPACK_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_TEXTUREPACK_HPP
-#define XR_TEXTUREPACK_HPP
 
 #include <map>
 #include "Sprite.hpp"

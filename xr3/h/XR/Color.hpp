@@ -1,11 +1,12 @@
+#ifndef XR_COLOR_HPP
+#define XR_COLOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_COLOR_HPP
-#define XR_COLOR_HPP
 
 #include "maths.hpp"
 #include "XR/debug.hpp"

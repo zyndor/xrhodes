@@ -1,11 +1,12 @@
+#ifndef XR_QUATERNION_HPP
+#define XR_QUATERNION_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_QUATERNION_HPP
-#define XR_QUATERNION_HPP
 
 #include "Matrix.hpp"
 #include "XR/debug.hpp"

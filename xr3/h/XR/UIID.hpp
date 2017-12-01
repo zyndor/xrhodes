@@ -1,11 +1,12 @@
+#ifndef XR_UIID_HPP
+#define XR_UIID_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UIID_HPP
-#define XR_UIID_HPP
 
 #include <vector>
 #include <cstdint>

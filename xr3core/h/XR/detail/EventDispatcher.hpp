@@ -1,11 +1,12 @@
+#ifndef XR_EVENTDISPATCHER_HPP
+#define XR_EVENTDISPATCHER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_EVENTDISPATCHER_HPP
-#define XR_EVENTDISPATCHER_HPP
 
 #include "XR/debug.hpp"
 #include "XR/fundamentals.hpp"

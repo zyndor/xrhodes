@@ -1,11 +1,12 @@
+#ifndef XR_ACTORREADER_HPP
+#define XR_ACTORREADER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_ACTORREADER_HPP
-#define XR_ACTORREADER_HPP
 
 #include "AnimationReader.hpp"
 #include "Actor.hpp"

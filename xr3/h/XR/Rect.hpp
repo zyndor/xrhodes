@@ -1,11 +1,12 @@
+#ifndef XR_RECT_HPP
+#define XR_RECT_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_RECT_HPP
-#define XR_RECT_HPP
 
 #include <cstdint>
 

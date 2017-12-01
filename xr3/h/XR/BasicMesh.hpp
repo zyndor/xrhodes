@@ -1,11 +1,12 @@
+#ifndef XR_BASICMESH_HPP
+#define XR_BASICMESH_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_BASICMESH_HPP
-#define XR_BASICMESH_HPP
 
 #include "FloatBuffer.hpp"
 #include "Material.hpp"

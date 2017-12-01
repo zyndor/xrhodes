@@ -1,11 +1,12 @@
+#ifndef XR_SPRITE_HPP
+#define XR_SPRITE_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SPRITE_HPP
-#define XR_SPRITE_HPP
 
 #include "Renderer.hpp"
 #include "AABB.hpp"

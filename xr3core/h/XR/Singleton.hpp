@@ -1,11 +1,12 @@
+#ifndef XR_SINGLETON_HPP
+#define XR_SINGLETON_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_SINGLETON_HPP
-#define XR_SINGLETON_HPP
 
 #include "debug.hpp"
 

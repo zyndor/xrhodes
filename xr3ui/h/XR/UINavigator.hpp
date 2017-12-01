@@ -1,11 +1,12 @@
+#ifndef XR_UINAVIGATOR_HPP
+#define XR_UINAVIGATOR_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_UINAVIGATOR_HPP
-#define XR_UINAVIGATOR_HPP
 
 #include <map>
 #include "UIElement.hpp"

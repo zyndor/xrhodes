@@ -1,11 +1,12 @@
+#ifndef XR_AUTOMATRIX_HPP
+#define XR_AUTOMATRIX_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#ifndef XR_AUTOMATRIX_HPP
-#define XR_AUTOMATRIX_HPP
 
 #include "Renderer.hpp"
 #include "fundamentals.hpp"
