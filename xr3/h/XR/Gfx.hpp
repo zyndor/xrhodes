@@ -94,7 +94,7 @@ public:
   // general
   void Add(Attribute attrib, uint8_t numComponents, bool normalize)
   {
-    XR_ASSERT(VertexFormat, numComponents > 0 && numComponents < 4);
+    XR_ASSERT(VertexFormat, numComponents > 0 && numComponents <= 4);
     XR_ASSERT(VertexFormat, !Has(attrib));
     const uint8_t iAttrib = uint8_t(attrib);
     // n(ccccc)cc - 1 bit normalized, 7 bits numComponents (2 actually used)
