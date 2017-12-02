@@ -11,6 +11,7 @@
 #include "XR/Device.hpp"
 #include "XR/Gfx.hpp"
 #include "XR/ScopeGuard.hpp"
+#include "XR/Vertex.hpp"
 
 #include <numeric>
 
@@ -145,17 +146,18 @@ namespace XR
     int32_t textureStage = 0;
     Gfx::SetUniform(hSamp, 1, &textureStage);
 
-    Gfx::VertexFormat vf;
-    vf.Add(Gfx::Attribute::Position, 3, false);
-    vf.Add(Gfx::Attribute::UV0, 2, false);
-    vf.Add(Gfx::Attribute::Color0, 3, false);
-    auto hFormat = Gfx::RegisterVertexFormat(vf);
+    using Pos3 = Vertex::Pos<Vector3>;
+    using PosUvColor = Vertex::Format<
+      Vertex::Pos<Vector3>,
+      Vertex::UV0<Vector2>,
+      Vertex::Color0<Vector3>>;
+    auto hFormat = PosUvColor::Register();
 
-    float vboData[] = {
-      -1.0f, -1.0f, .0f, .0f, 0.0f, 1.0f, .0f, .0f,
-      -1.0f, 1.0f, .0f, .0f, 1.0f, .0f, 1.0, .0f,
-      1.0f, -1.0f, .0f, 1.0f, .0f, .0f, 1.0f, 1.0f,
-      1.0f, 1.0f, .0f, 1.0f, 1.0f, 1.0f, .0f, 1.0f,
+    PosUvColor vboData[] = {
+      PosUvColor( Vector3( -1.0f, -1.0f, .0f ), Vector2( .0f, 0.0f ), Vector3( 1.0f, .0f, .0f )),
+      PosUvColor( Vector3( -1.0f, 1.0f, .0f ), Vector2(.0f, 1.0f ), Vector3(.0f, 1.0, .0f )),
+      PosUvColor( Vector3( 1.0f, -1.0f, .0f ), Vector2(1.0f, .0f ), Vector3(.0f, 1.0f, 1.0f )),
+      PosUvColor( Vector3( 1.0f, 1.0f, .0f ), Vector2(1.0f, 1.0f ), Vector3(1.0f, .0f, 1.0f )),
     };
     auto vbo = Gfx::CreateVertexBuffer(hFormat, { (uint8_t*)vboData, sizeof(vboData) });
 
