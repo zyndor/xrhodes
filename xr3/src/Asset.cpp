@@ -671,26 +671,25 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
         fb.Close();
       }
 
-      FilePath pathBuilt;
       if (!done)  // make asset directory if need be
       {
-        pathBuilt = File::GetRamPath() / finalPath;
-        done = !File::MakeDirs(pathBuilt);
+        finalPath = File::GetRamPath() / finalPath;
+        done = !File::MakeDirs(finalPath);
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to create directory structure for built asset '%s'",
-            pathBuilt.c_str()));
+            finalPath.c_str()));
         }
       }
 
       FileWriter assetWriter;
       if (!done)  // create asset file
       {
-        done = !assetWriter.Open(pathBuilt, FileWriter::Mode::Truncate, false);
+        done = !assetWriter.Open(finalPath, FileWriter::Mode::Truncate, false);
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to create file for built asset at %s.",
-            pathBuilt.c_str()));
+            finalPath.c_str()));
         }
       }
 
@@ -701,7 +700,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
         if (done)
         {
           XR_TRACE(Asset::Manager, ("Failed to write header for built asset at %s.",
-            pathBuilt.c_str()));
+            finalPath.c_str()));
         }
       }
 
@@ -734,7 +733,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
 
         if (done)
         {
-          XR_TRACE(Asset::Manager, ("Failed to write built asset '%s'.", pathBuilt.c_str()));
+          XR_TRACE(Asset::Manager, ("Failed to write built asset '%s'.", finalPath.c_str()));
         }
       }
 
