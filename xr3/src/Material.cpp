@@ -250,8 +250,6 @@ void Material::Apply() const
 //==============================================================================
 bool Material::OnLoaded(size_t size, uint8_t const * buffer)
 {
-  OnUnload();
-
   auto flags = GetFlags();
 
   BufferReader  reader(buffer, size);
