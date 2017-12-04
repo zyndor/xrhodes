@@ -609,7 +609,8 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
 
   auto desc = asset->GetDescriptor();
   FilePath finalPath = desc.ToPath();
-  if (finalPath != assetPath)
+  bool rebuild = finalPath != assetPath;
+  if (rebuild)
   {
     finalPath = Asset::Manager::GetAssetPath() / finalPath;
 
@@ -619,7 +620,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
     auto tsBuilt = File::GetModifiedTime(finalPath.c_str());
 
     // If built asset doesn't exist or is older, then rebuild it.
-    bool rebuild = tsBuilt < tsRaw;
+    rebuild = tsBuilt < tsRaw;
     if (!rebuild) // if built asset exists and isn't older, then check version
     {
       auto hFile = File::Open(finalPath, "rb");
@@ -649,98 +650,98 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
         rebuild = header.version != version;
       }
     }
+  }
 
-    if (rebuild)
+  if (rebuild)
+  {
+    auto iFind = s_assetBuilders.find(desc.type);
+    bool done = iFind == s_assetBuilders.end();
+    if (done)
     {
-      auto iFind = s_assetBuilders.find(desc.type);
-      bool done = iFind == s_assetBuilders.end();
+      XR_TRACE(Asset::Manager, ("Failed to find builder for type '%.*s'.",
+        sizeof(desc.type), &desc.type));
+    }
+
+    FileBuffer fb;
+    if (!done)  // read source file 
+    {
+      done = !fb.Open(path, false);
       if (done)
       {
-        XR_TRACE(Asset::Manager, ("Failed to find builder for type '%.*s'.",
-          sizeof(desc.type), &desc.type));
+        XR_TRACE(Asset::Manager, ("Failed to read source '%s'.", path.c_str()));
+      }
+      fb.Close();
+    }
+
+    if (!done)  // make asset directory if need be
+    {
+      finalPath = File::GetRamPath() / finalPath;
+      done = !File::MakeDirs(finalPath);
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Failed to create directory structure for built asset '%s'",
+          finalPath.c_str()));
+      }
+    }
+
+    FileWriter assetWriter;
+    if (!done)  // create asset file
+    {
+      done = !assetWriter.Open(finalPath, FileWriter::Mode::Truncate, false);
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Failed to create file for built asset at %s.",
+          finalPath.c_str()));
+      }
+    }
+
+    if (!done)  // write header
+    {
+      AssetHeader header { desc.type, version, 0 };
+      done = !assetWriter.Write(&header, sizeof(header), 1);
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Failed to write header for built asset at %s.",
+          finalPath.c_str()));
+      }
+    }
+
+    std::vector<FilePath> dependencies;
+    std::ostringstream assetData;
+    if (!done)  // build asset
+    {
+      done = !iFind->second->Build(assetPath.GetNameExt(), fb.GetData(), fb.GetSize(),
+        dependencies, assetData);
+      if (done)
+      {
+        XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", path.c_str()));
+      }
+    }
+
+    if (!done)  // write built asset
+    {
+      done = !assetWriter.Write(NumDependenciesType(dependencies.size()));
+      for (auto i0 = dependencies.begin(), i1 = dependencies.end(); !done && i0 != i1; ++i0)
+      {
+        done = !(assetWriter.Write(DependencyPathLenType(i0->size())) &&
+          assetWriter.Write(i0->data(), 1, i0->size()));
       }
 
-      FileBuffer fb;
-      if (!done)  // read source file 
+      if (!done)
       {
-        done = !fb.Open(path, false);
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Failed to read source '%s'.", path.c_str()));
-        }
-        fb.Close();
-      }
-
-      if (!done)  // make asset directory if need be
-      {
-        finalPath = File::GetRamPath() / finalPath;
-        done = !File::MakeDirs(finalPath);
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Failed to create directory structure for built asset '%s'",
-            finalPath.c_str()));
-        }
-      }
-
-      FileWriter assetWriter;
-      if (!done)  // create asset file
-      {
-        done = !assetWriter.Open(finalPath, FileWriter::Mode::Truncate, false);
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Failed to create file for built asset at %s.",
-            finalPath.c_str()));
-        }
-      }
-
-      if (!done)  // write header
-      {
-        AssetHeader header { desc.type, version, 0 };
-        done = !assetWriter.Write(&header, sizeof(header), 1);
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Failed to write header for built asset at %s.",
-            finalPath.c_str()));
-        }
-      }
-
-      std::vector<FilePath> dependencies;
-      std::ostringstream assetData;
-      if (!done)  // build asset
-      {
-        done = !iFind->second->Build(assetPath.GetNameExt(), fb.GetData(), fb.GetSize(),
-          dependencies, assetData);
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Failed to build asset '%s'.", path.c_str()));
-        }
-      }
-
-      if (!done)  // write built asset
-      {
-        done = !assetWriter.Write(NumDependenciesType(dependencies.size()));
-        for (auto i0 = dependencies.begin(), i1 = dependencies.end(); !done && i0 != i1; ++i0)
-        {
-          done = !(assetWriter.Write(DependencyPathLenType(i0->size())) &&
-            assetWriter.Write(i0->data(), 1, i0->size()));
-        }
-
-        if (!done)
-        {
-          auto str = assetData.str();
-          done = !assetWriter.Write(str.data(), 1, str.size());
-        }
-
-        if (done)
-        {
-          XR_TRACE(Asset::Manager, ("Failed to write built asset '%s'.", finalPath.c_str()));
-        }
+        auto str = assetData.str();
+        done = !assetWriter.Write(str.data(), 1, str.size());
       }
 
       if (done)
       {
-        asset->FlagError();
+        XR_TRACE(Asset::Manager, ("Failed to write built asset '%s'.", finalPath.c_str()));
       }
+    }
+
+    if (done)
+    {
+      asset->FlagError();
     }
   }
 }
