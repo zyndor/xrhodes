@@ -53,8 +53,6 @@ void Texture::Bind(uint32_t stage) const
 //==============================================================================
 bool Texture::OnLoaded(size_t size, uint8_t const* buffer)
 {
-  OnUnload(); // TODO - move to Asset::Load()?
-
   bool success = true;
   BufferReader reader(buffer, size);
 

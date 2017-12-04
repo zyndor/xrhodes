@@ -54,8 +54,6 @@ private:
 //==============================================================================
 bool ShaderComponent::OnLoaded(size_t size, uint8_t const * buffer)
 {
-  OnUnload();
-
   BufferReader reader(buffer, size);
 
   bool success = reader.Read(m_type);

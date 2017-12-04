@@ -76,8 +76,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 //==============================================================================
 bool Shader::OnLoaded(size_t size, uint8_t const * buffer)
 {
-  OnUnload();
-
   auto flags = GetFlags();
   BufferReader reader(buffer, size);
 

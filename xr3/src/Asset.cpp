@@ -840,6 +840,8 @@ Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
 //==============================================================================
 bool Asset::ProcessData(size_t size, uint8_t const* buffer)
 {
+  OnUnload();
+
   XR_ASSERTMSG(Asset, !CheckAllMaskBits(m_flags, LoadingFlag),
     ("Loading is already in progress; it's bound to clobber what's being set."));
   bool success = OnLoaded(size, buffer);
