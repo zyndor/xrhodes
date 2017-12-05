@@ -49,14 +49,13 @@ static const uint32_t karVerticalAlignNameHash[] =
   Hash::String32("bottom")
 };
 
-const int kTinyXmlTextType = TiXmlNode::TINYXML_TEXT; //or TiXmlNode::TEXT
 
 //==============================================================================
-float GetXmlScaleAttribute(TiXmlElement* pXml)
+float GetXmlScaleAttribute(tinyxml2::XMLElement* pXml)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
-  double  scale;
-  pXml->Attribute("scale", &scale);
+  double  scale = .0;
+  pXml->QueryDoubleAttribute("scale", &scale);
   if (scale == .0)
   {
     scale = 1.0;
@@ -65,7 +64,7 @@ float GetXmlScaleAttribute(TiXmlElement* pXml)
 }
 
 //==============================================================================
-bool  GetXmlIntAttribute(TiXmlElement* pXml, const char* pAttribName, int base,
+bool  GetXmlIntAttribute(tinyxml2::XMLElement* pXml, const char* pAttribName, int base,
         int& v)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
@@ -76,7 +75,7 @@ bool  GetXmlIntAttribute(TiXmlElement* pXml, const char* pAttribName, int base,
 }
 
 //==============================================================================
-bool  GetXmlFloatAttribute(TiXmlElement* pXml, const char* pAttribName, float& v)
+bool  GetXmlFloatAttribute(tinyxml2::XMLElement* pXml, const char* pAttribName, float& v)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
   XR_ASSERT(UIBuilder, pAttribName != 0);
@@ -100,7 +99,7 @@ static const int karXmlDimensionChars[kNumXmlDimensions] =
   'h'
 };
 
-uint32_t  GetXmlDimensionMask(TiXmlElement* pXml, const char* pAttribName)
+uint32_t  GetXmlDimensionMask(tinyxml2::XMLElement* pXml, const char* pAttribName)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
   XR_ASSERT(UIBuilder, pAttribName != 0);
@@ -158,7 +157,7 @@ UIElement*  UIBCreateUISpacer(AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-bool  UIBInitUIElement(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(true);
@@ -236,7 +235,7 @@ bool  UIBInitUIElement(TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // colored elements
-bool  UIBInitUIColoredElement(TiXmlElement* pXml, UIElement* pUIElem, 
+bool  UIBInitUIColoredElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem, 
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
@@ -268,7 +267,7 @@ UIElement*  UIBCreateUILabel(AllocateCallback pAllocCb, void* pAllocCbData)
 }
 
 //==============================================================================
-bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent,
+bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer* pParent,
         const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
@@ -323,12 +322,13 @@ bool  UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParen
     }
     
     // text
-    TiXmlNode* pNode(pXml->FirstChild());
+    tinyxml2::XMLNode* pNode = pXml->FirstChild();
     while (pNode != 0)
     {
-      if (pNode->Type() == kTinyXmlTextType)
+      tinyxml2::XMLText* xmlText = pNode->ToText();
+      if (xmlText)
       {
-        const char* pText(pNode->ToText()->Value());
+        const char* pText = xmlText->Value();
         if (pText != 0)
         {
           success = pLabel->GetFont() != 0;
@@ -380,7 +380,7 @@ UIElement*  UIBCreateUIImage(AllocateCallback pAllocCb, void* pAllocCbData)
 }
 
 //==============================================================================
-bool  UIBInitUIImage(TiXmlElement* pXml, UIElement* pUIElem, UIContainer* pParent,
+bool  UIBInitUIImage(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer* pParent,
         const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
@@ -429,7 +429,7 @@ UIElement*  UIBCreateUIImagePanel(AllocateCallback pAllocCb, void* pAllocCbData)
 }
 
 //==============================================================================
-bool  UIBInitUIImagePanel(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIImagePanel(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
@@ -502,7 +502,7 @@ UIElement*  UIBCreateUIVerticalProgressBar(AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-bool  UIBInitUIProgressBarBase(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIProgressBarBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, builder));
@@ -544,7 +544,7 @@ bool  UIBInitUIProgressBarBase(TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // sliders
-bool  UIBInitUISliderBase(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUISliderBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIImage(pXml, pUIElem, pParent, builder));
@@ -613,7 +613,7 @@ UIElement*  UIBCreateUIButton(AllocateCallback pAllocCb, void* pAllocCbData)
 }
 
 //==============================================================================
-bool  UIBInitUIButton(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIColoredElement(pXml, pUIElem, pParent, builder));
@@ -743,7 +743,7 @@ UIElement*  UIBCreateUICheckBox(AllocateCallback pAllocCb, void* pAllocCbData)
 }
 
 //==============================================================================
-bool  UIBInitUICheckBox(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUICheckBox(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIButton(pXml, pUIElem, pParent, builder));
@@ -793,7 +793,7 @@ UIElement*  UIBCreateUIRadioButton(AllocateCallback pAllocCb,
 }
                 
 //==============================================================================
-bool  UIBInitUIRadioButton(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIRadioButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUICheckBox(pXml, pUIElem, pParent, builder));
@@ -819,7 +819,7 @@ UIElement*  UIBCreateUIAligner(AllocateCallback pAllocCb, void* pAllocCbData)
 }
 
 //==============================================================================
-bool  UIBInitUIAligner(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIAligner(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
@@ -854,7 +854,7 @@ UIElement*  UIBCreateUICascader(AllocateCallback pAllocCb, void* pAllocCbData)
 }
 
 //==============================================================================
-bool  UIBInitUICascader(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUICascader(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIAligner(pXml, pUIElem, pParent, builder));
@@ -896,7 +896,7 @@ bool  UIBInitUICascader(TiXmlElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // growing layouts
-bool  UIBInitUIGrowingLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIGrowingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
@@ -982,7 +982,7 @@ UIElement*  UIBCreateUIHorizontalScrollingLayout(AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-bool  UIBInitUIHorizontalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIHorizontalScrollingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder));
@@ -1015,7 +1015,7 @@ UIElement*  UIBCreateUIVerticalScrollingLayout(AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-bool  UIBInitUIVerticalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIVerticalScrollingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIGrowingLayout(pXml, pUIElem, pParent, builder));
@@ -1049,7 +1049,7 @@ UIElement*  UIBCreateUIGridLayout(AllocateCallback pAllocCb,
 }
 
 //==============================================================================
-bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool  UIBInitUIGridLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
@@ -1058,13 +1058,13 @@ bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
     UIGridLayout*  pLayout(static_cast<UIGridLayout*>(pUIElem));
 
     const char* pValue(0);
-    int value;
+    int value = 1;
   
     // rows
     if (success)
     {
-      pValue = pXml->Attribute("rows", &value);
-      success = pValue != 0 && CheckInt16(value) && value >= 0;
+      success = pXml->QueryIntAttribute("rows", &value) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        CheckInt16(value) && value >= 0;
 
       if (!success)
       {
@@ -1081,8 +1081,8 @@ bool  UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
     // columns
     if (success)
     {
-      pValue = pXml->Attribute("cols", &value);
-      success = pValue != 0 && CheckInt16(value) && value >= 0;
+      success = pXml->QueryIntAttribute("cols", &value) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        CheckInt16(value) && value >= 0;
 
       if (!success)
       {
@@ -1244,7 +1244,7 @@ const UIBuilder::Configuration  UIBuilder::kDefaultConfig =
 };
 
 //==============================================================================
-int UIBuilder::GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName)
+int UIBuilder::GetXmlAlignment(tinyxml2::XMLElement* pXml, const char* pAttribName)
 {
   XR_ASSERT(UIBuilder, pXml != 0);
   XR_ASSERT(UIBuilder, pAttribName != 0);
@@ -1455,7 +1455,7 @@ bool UIBuilder::RegisterNamedElement(const char* pName, UIElement* pUIElem)
 }
 
 //==============================================================================
-bool  UIBuilder::Build(TiXmlElement* pXml, UIContainer& container)
+bool  UIBuilder::Build(tinyxml2::XMLElement* pXml, UIContainer& container)
 {
   XR_ASSERT(IW_ASSERTION_CHANNEL_DEFAULT, pXml != 0);
   XR_ASSERT(IW_ASSERTION_CHANNEL_DEFAULT, m_cfg.pAllocate != 0);
@@ -1474,7 +1474,7 @@ bool  UIBuilder::Build(TiXmlElement* pXml, UIContainer& container)
 }
 
 //==============================================================================
-bool  UIBuilder::_Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth)
+bool  UIBuilder::_Build(tinyxml2::XMLElement* pXml, UIContainer* pContainer, int& depth)
 {
   XR_ASSERT(UIBuilder, pContainer != 0);
 
@@ -1549,11 +1549,11 @@ bool  UIBuilder::_Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth)
     else if (kIncludeHash == hash)
     {
       const char* pValue(pXml->Attribute("src"));
-      success = pValue != 0;
+      success = pValue != nullptr;
       if(success)
       {
-        TiXmlDocument doc;
-        std::string fileName((m_cfg.pFormatFileName != 0) ?
+        tinyxml2::XMLDocument doc;
+        std::string fileName((m_cfg.pFormatFileName) ?
           (*m_cfg.pFormatFileName)(pValue, m_cfg.pFormatFileNameUser) :
           pValue);
         
@@ -1627,7 +1627,7 @@ UIElement* UIBuilder::GetElement(const char* pHandle) const
 }
 
 //==============================================================================
-void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
+void UIBuilder::_PostProcess(tinyxml2::XMLElement* pXml, UIElement* pUIElem)
 {
   const char* pValue(pXml->Attribute("handle"));
   if (pValue != 0)
@@ -1716,7 +1716,7 @@ void UIBuilder::_PostProcess(TiXmlElement* pXml, UIElement* pUIElem)
 }
 
 //==============================================================================
-void UIBuilder::_PostProcessContainer(TiXmlElement* pXml, UIContainer* pContainer)
+void UIBuilder::_PostProcessContainer(tinyxml2::XMLElement* pXml, UIContainer* pContainer)
 {
   uint32_t sizeToContentValue(GetXmlDimensionMask(pXml, "sizeToContent"));
   switch (sizeToContentValue)

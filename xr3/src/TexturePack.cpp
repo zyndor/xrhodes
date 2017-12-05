@@ -8,7 +8,7 @@
 #include "XR/utils.hpp"
 #include "XR/FilePath.hpp"
 #include "XR/debug.hpp"
-#include "tinyxml.h"
+#include "tinyxml2.h"
 
 namespace XR
 {
@@ -72,10 +72,10 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
   m_sprites.clear();
 
   // load xml
-  TiXmlDocument doc;
-  bool  success(doc.LoadFile(name));
+  tinyxml2::XMLDocument doc;
+  bool  success = doc.LoadFile(name) == tinyxml2::XML_SUCCESS;
 
-  TiXmlElement* pElem(doc.RootElement());
+  tinyxml2::XMLElement* pElem(doc.RootElement());
   if (success)
   {
     success = pElem != nullptr;
@@ -115,13 +115,32 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
     }
   }
 
-  int texWidth;
-  int texHeight;
+  int texWidth = 0;
   if (success)
   {
-    pElem->Attribute(karTag[TAG_WIDTH], &texWidth);
-    pElem->Attribute(karTag[TAG_HEIGHT], &texHeight);
+    success = pElem->QueryIntAttribute(karTag[TAG_WIDTH], &texWidth) !=
+      tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
+    if (!success)
+    {
+      XR_TRACE(TexturePack, ("Invalid value for %s: %s", karTag[TAG_WIDTH],
+        pElem->Attribute(karTag[TAG_WIDTH])));
+    }
+  }
 
+  int texHeight = 0;
+  if (success)
+  {
+    success = pElem->QueryIntAttribute(karTag[TAG_HEIGHT], &texHeight) !=
+      tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
+    if (!success)
+    {
+      XR_TRACE(TexturePack, ("Invalid value for %s: %s", karTag[TAG_HEIGHT],
+        pElem->Attribute(karTag[TAG_HEIGHT])));
+    }
+  }
+
+  if(success)
+  {
     if (texWidth != 0)
     {
       success = success && m_material->GetTexture(0)->GetWidth() == texWidth;
@@ -158,18 +177,23 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
     HardString<256> buffer;
     int x, y; // position of top left corner on sprite sheet
     int w, h; // size on sprite sheet
-    int xOffs, yOffs; // amount of translation left and down
-    int wOffs, hOffs; // size of finished sprite, including offset
     while (success && pElem != nullptr)
     {
+      int xOffs = 0, yOffs = 0; // amount of translation left and down
+      int wOffs = 0, hOffs = 0; // size of finished sprite, including offset
+
       // create sprite
       const char* pSpriteName(pElem->Attribute(karTag[TAG_NAME]));
 
-      success = !(pSpriteName == nullptr ||
-        pElem->Attribute(karTag[TAG_W], &w) == 0 ||
-        pElem->Attribute(karTag[TAG_H], &h) == 0 ||
-        pElem->Attribute(karTag[TAG_X], &x) == 0 ||
-        pElem->Attribute(karTag[TAG_Y], &y) == 0);
+      success = pSpriteName != nullptr &&
+        pElem->QueryIntAttribute(karTag[TAG_W], &w) == tinyxml2::XML_SUCCESS &&
+        pElem->QueryIntAttribute(karTag[TAG_H], &h) == tinyxml2::XML_SUCCESS &&
+        pElem->QueryIntAttribute(karTag[TAG_X], &x) == tinyxml2::XML_SUCCESS &&
+        pElem->QueryIntAttribute(karTag[TAG_Y], &y) == tinyxml2::XML_SUCCESS &&
+        pElem->QueryIntAttribute(karTag[TAG_W], &wOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        pElem->QueryIntAttribute(karTag[TAG_H], &hOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        pElem->QueryIntAttribute(karTag[TAG_X], &xOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        pElem->QueryIntAttribute(karTag[TAG_Y], &yOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
       
       if (success)
       {
@@ -192,26 +216,16 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
         };
 
         // offset and total size
-        if (pElem->Attribute(karTag[Tag_OFFSET_X], &xOffs) == 0)
-        {
-          xOffs = 0;
-        }
-
-        if (pElem->Attribute(karTag[TAG_OFFSET_Y], &yOffs) == 0)
-        {
-          yOffs = 0;
-        }
-
         const char* pIsRotated(pElem->Attribute(karTag[TAG_ROTATED]));
         bool  isRotated(pIsRotated != nullptr && strlen(pIsRotated) > 0 &&
           pIsRotated[0] == 'y');
 
-        if (pElem->Attribute(karTag[TAG_OFFSET_W], &wOffs) == 0)
+        if (wOffs == 0)
         {
           wOffs = isRotated ? h : w;
         }
 
-        if (pElem->Attribute(karTag[TAG_OFFSET_H], &hOffs) == 0)
+        if (hOffs == 0)
         {
           hOffs = isRotated ? w : h;
         }

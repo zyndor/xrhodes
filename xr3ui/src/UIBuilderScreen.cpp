@@ -68,10 +68,10 @@ void  UIBuilderScreen::SetConfiguration(const UIBuilder::Configuration& cfg)
 }
 
 //==============================================================================
-bool  UIBuilderScreen::Build(TiXmlElement* pXml)
+bool  UIBuilderScreen::Build(tinyxml2::XMLElement* pXml)
 {
 #ifdef  XR_DEBUG
-  TiXmlDocument*  pDoc = pXml->GetDocument();
+  tinyxml2::XMLDocument*  pDoc = pXml->GetDocument();
   m_debugName = pDoc ? pDoc->Value() : "unknown";
 #endif  //XR_DEBUG
 
@@ -218,9 +218,9 @@ void  UIBuilderScreen::_Unregister()
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessListeners(TiXmlElement* pXml)
+void  UIBuilderScreen::_ProcessListeners(tinyxml2::XMLElement* pXml)
 {
-  TiXmlElement* pListenerXml(pXml->FirstChildElement(karTag[TAG_LISTENER]));
+  tinyxml2::XMLElement* pListenerXml(pXml->FirstChildElement(karTag[TAG_LISTENER]));
   UIElementList l;
   while (pListenerXml != 0)
   {
@@ -241,9 +241,9 @@ void  UIBuilderScreen::_ProcessListeners(TiXmlElement* pXml)
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessTweening(TiXmlElement* pXml)
+void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* pXml)
 {
-  TiXmlElement* pTweeningXml(pXml->FirstChildElement(karTag[TAG_TWEENING]));
+  tinyxml2::XMLElement* pTweeningXml(pXml->FirstChildElement(karTag[TAG_TWEENING]));
   UIElementList l;
   while (pTweeningXml != 0)
   {

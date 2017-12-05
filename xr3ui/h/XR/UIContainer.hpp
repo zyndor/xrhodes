@@ -27,7 +27,7 @@ public:
   bool                    MoveUpElement(UIElement* pElem);
 
   const UIElement::List&  GetElements() const;
-  int                     GetNumElements() const;
+  size_t                  GetNumElements() const;
 
   void                    RemoveAllElements();
 
@@ -62,7 +62,7 @@ protected:
 // implementation
 //==============================================================================
 inline
-int UIContainer::GetNumElements() const
+size_t UIContainer::GetNumElements() const
 {
   return m_lElements.size();
 }
