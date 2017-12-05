@@ -9,5 +9,5 @@ out vec4 frag_colour;
 void main()
 {
 	vec4 rgba = texture(xruSampler0, uv);
-	frag_colour = mix(rgba, vec4(col, .0), .5);
+	frag_colour = mix(rgba, vec4(col, 1.0), .5);
 }
