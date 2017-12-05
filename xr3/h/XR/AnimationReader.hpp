@@ -12,7 +12,7 @@
 #include "Animation.hpp"
 #include "XR/ParserCore.hpp"
 #include "XR/fundamentals.hpp"
-#include "tinyxml.h"
+#include "tinyxml2.h"
 #include <list>
 
 namespace XR
@@ -50,7 +50,7 @@ public:
     Type& frame);
 
   // static
-  static bool  Read(TiXmlElement* pXml, GetFrameDataCallback pGetFrameDataCb,
+  static bool  Read(tinyxml2::XMLElement* pXml, GetFrameDataCallback pGetFrameDataCb,
     void* pGetFrameDataCbData, AnimationType& anim);
 };
 
@@ -58,7 +58,7 @@ public:
 // implementation
 //==============================================================================
 template  <class T>
-bool  AnimationReader<T>::Read(TiXmlElement* pXml,
+bool  AnimationReader<T>::Read(tinyxml2::XMLElement* pXml,
   GetFrameDataCallback pGetFrameDataCb, void* pGetFrameDataCbData,
   AnimationType& anim)
 {
@@ -135,10 +135,10 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
     else
     {
       // have we got a comma separated list of frames as text?
-      TiXmlNode*  pText(pXml->FirstChild());
+      tinyxml2::XMLNode*  pText(pXml->FirstChild());
       while(pText != 0)
       {
-        if(pText->Type() == TiXmlNode::TINYXML_TEXT)
+        if(pText->Type() == tinyxml2::XMLNode::TINYXML_TEXT)
         {
           break;
         }
@@ -148,7 +148,7 @@ bool  AnimationReader<T>::Read(TiXmlElement* pXml,
       typename AnimationType::FrameVector  fv;
       fv.assign(frames.begin(), frames.end());
 
-      if(pText != 0 && pText->Type() == TiXmlNode::TINYXML_TEXT)
+      if(pText != 0 && pText->Type() == tinyxml2::XMLNode::TINYXML_TEXT)
       {
         ParserCore  parser;
         parser.SetBuffer(pText->Value(), strlen(pText->Value()));

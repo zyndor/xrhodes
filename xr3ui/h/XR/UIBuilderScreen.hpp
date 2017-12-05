@@ -57,7 +57,7 @@ public:
   
   void                SetConfiguration(const UIBuilder::Configuration& cfg);
   
-  bool                Build(TiXmlElement* pXml);
+  bool                Build(tinyxml2::XMLElement* pXml);
   UIElement*          GetElement(const char* pName);
   UIElement*          GetElement(uint32_t hash);
   
@@ -104,8 +104,8 @@ protected:
   virtual void  _Register();
   virtual void  _Unregister();
   
-  void          _ProcessListeners(TiXmlElement* pXml);
-  void          _ProcessTweening(TiXmlElement* pXml);
+  void          _ProcessListeners(tinyxml2::XMLElement* pXml);
+  void          _ProcessTweening(tinyxml2::XMLElement* pXml);
 };
 
 //==============================================================================

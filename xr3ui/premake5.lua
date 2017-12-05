@@ -12,5 +12,5 @@ project "xr3ui"
 		"../xr3core/h/",
 		"../xr3json/h/",
 		"../xr3/h/",
-		"../external/tinyxml",
+		"../external/tinyxml2",
 	}

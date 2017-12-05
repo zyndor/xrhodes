@@ -14,7 +14,7 @@
 #include "XR/Font.hpp"
 #include "XR/Sprite.hpp"
 #include "UIContainer.hpp"
-#include "tinyxml.h"
+#include "tinyxml2.h"
 
 namespace XR
 {
@@ -25,7 +25,7 @@ class UIBuilder
 public:
   // types
   typedef UIElement*(*CreateCallback)(AllocateCallback pAllocate, void* pUser);
-  typedef bool(*InitCallback)(TiXmlElement* pXml, UIElement* pUIElem,
+  typedef bool(*InitCallback)(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     UIContainer* pContainer, const UIBuilder& builder);
   typedef std::string(*ProcessStringCallback)(const char* pName, void* pUser);
 
@@ -88,7 +88,7 @@ public:
 
   static const Configuration  kDefaultConfig;
 
-  static int    GetXmlAlignment(TiXmlElement* pXml, const char* pAttribName);
+  static int    GetXmlAlignment(tinyxml2::XMLElement* pXml, const char* pAttribName);
  
   // structors
   explicit UIBuilder(const Configuration& cfg = kDefaultConfig);
@@ -116,7 +116,7 @@ public:
 
   bool          RegisterNamedElement(const char* pName, UIElement* pUIElem);
 
-  bool          Build(TiXmlElement* pXml, UIContainer& container);
+  bool          Build(tinyxml2::XMLElement* pXml, UIContainer& container);
 
   UIElement*    GetElement(uint32_t hash) const;
   UIElement*    GetElement(const char* pHandle) const;
@@ -142,10 +142,10 @@ protected:
   typedef std::map<uint32_t, UIElement*>      ElementMap;
 
   // internal
-  bool  _Build(TiXmlElement* pXml, UIContainer* pContainer, int& depth);
+  bool  _Build(tinyxml2::XMLElement* pXml, UIContainer* pContainer, int& depth);
 
-  void  _PostProcess(TiXmlElement* pXml, UIElement* pUIElem);
-  void  _PostProcessContainer(TiXmlElement* pXml, UIContainer* pUIContainer);
+  void  _PostProcess(tinyxml2::XMLElement* pXml, UIElement* pUIElem);
+  void  _PostProcessContainer(tinyxml2::XMLElement* pXml, UIContainer* pUIContainer);
 
   // data
   CreatorMap          m_creators;
@@ -201,7 +201,7 @@ UIElement* UIBCreateUIGridLayout(AllocateCallback pAllocCb, void* pAllocCbData);
 /// *The notations #%, #.# and #x are supported and are used for scaling the
 /// value in the xml by Base (in the case of #%, percent scaling, meaning that
 /// the 1/100th of the value is used).
-bool UIBInitUIElement(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 //==============================================================================
@@ -210,7 +210,7 @@ bool UIBInitUIElement(TiXmlElement* pXml, UIElement* pUIElem,
 ///  digit.
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIColoredElement(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIColoredElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 //==============================================================================
@@ -226,7 +226,7 @@ bool UIBInitUIColoredElement(TiXmlElement* pXml, UIElement* pUIElem,
 ///  the height) characters.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 //==============================================================================
@@ -234,7 +234,7 @@ bool UIBInitUILabel(TiXmlElement* pXml, UIElement* pUIElem,
 /// img: the name of the sprite to use. Compulsory.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIImage(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIImage(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 //==============================================================================
@@ -243,7 +243,7 @@ bool UIBInitUIImage(TiXmlElement* pXml, UIElement* pUIElem,
 /// vSplit: vertical split as percentage of the image height. Defaults to .5.
 ///@note Passes the processing to UIBInitUIImage, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIImagePanel(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIImagePanel(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 //==============================================================================
@@ -255,7 +255,7 @@ bool UIBInitUIImagePanel(TiXmlElement* pXml, UIElement* pUIElem,
 ///  [.0, 1.0] range.
 ///@note Passes the processing to UIBInitUIImage, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIProgressBarBase(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIProgressBarBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UISliderBase from xml. Supported attributes:
@@ -263,7 +263,7 @@ bool UIBInitUIProgressBarBase(TiXmlElement* pXml, UIElement* pUIElem,
 ///@note One of the bgMaterial and uv attributes is compulsory.
 ///@note Passes the processing to UIBInitUIImage, therefore the
 /// attributes listed there are handled.
-bool UIBInitUISliderBase(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUISliderBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UIButton from xml. Supported attributes:
@@ -277,7 +277,7 @@ bool UIBInitUISliderBase(TiXmlElement* pXml, UIElement* pUIElem,
 ///  If not defined, will default to the value of imgDown.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIButton(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UICheckBox from xml. Supported attributes:
@@ -285,14 +285,14 @@ bool UIBInitUIButton(TiXmlElement* pXml, UIElement* pUIElem,
 /// imgSet: the sprite to superimpose it when the box is checked.
 ///@note Passes the processing to UIBInitUIButton, therefore the
 /// attributes listed there are handled.
-bool UIBInitUICheckBox(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUICheckBox(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
     
 ///@brief Initialises a UIRadioButton from xml. Supported attributes:
 /// group: the name of the UIRadioButton::Group to add the button to.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIRadioButton(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIRadioButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UIAligner from xml. Supported attributes:
@@ -302,7 +302,7 @@ bool UIBInitUIRadioButton(TiXmlElement* pXml, UIElement* pUIElem,
 ///  are: low/center/high/none.
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIAligner(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIAligner(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UICascader from xml. Supported attributes:
@@ -313,7 +313,7 @@ bool UIBInitUIAligner(TiXmlElement* pXml, UIElement* pUIElem,
 /// the 1/100th of the value is used).
 ///@note Passes the processing to UIBInitUIAligner, therefore the
 /// attributes listed there are handled.
-bool UIBInitUICascader(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUICascader(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UIGrowingLayout from xml. Supported attributes:
@@ -329,7 +329,7 @@ bool UIBInitUICascader(TiXmlElement* pXml, UIElement* pUIElem,
 /// the 1/100th of the value is used).
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIGrowingLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIGrowingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UIVerticalScrollingLayout from xml. Supported
@@ -337,7 +337,7 @@ bool UIBInitUIGrowingLayout(TiXmlElement* pXml, UIElement* pUIElem,
 /// yOffset: the vertical offset into the container.
 ///@note Passes the processing to UIBInitUIGrowingLayout, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIVerticalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIVerticalScrollingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UIHorizontalScrollingLayout from xml. Supported
@@ -345,7 +345,7 @@ bool UIBInitUIVerticalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
 /// xOffset: the horoizontal offset into the container.
 ///@note Passes the processing to UIBInitUIGrowingLayout, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIHorizontalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIHorizontalScrollingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 ///@brief Initialises a UIGridLayout from xml. Supported Attributes:
@@ -364,7 +364,7 @@ bool UIBInitUIHorizontalScrollingLayout(TiXmlElement* pXml, UIElement* pUIElem,
 /// the 1/100th of the value is used).
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIGridLayout(TiXmlElement* pXml, UIElement* pUIElem,
+bool UIBInitUIGridLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
 
 /// UIBuilder supports a few miscellaneous attributes. These are the following:

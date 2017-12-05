@@ -47,7 +47,7 @@ project "unittests"
         libdirs
         {
             "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
-            "../external/tinyxml/lib/$(Platform)/Release",
+            "../external/tinyxml2/lib/$(PlatformShortName)-$(Configuration)",
             "../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
             "../external/SDL2_mixer/lib/"..target_env.."/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
@@ -99,7 +99,6 @@ project "unittests"
         libdirs
         {
             "../external/libpng/lib/"..target_env.."/",
-            "../external/tinyxml/lib/"..target_env.."/",
             "../external/zlib/lib/"..target_env.."/",
         }
         
@@ -109,6 +108,7 @@ project "unittests"
 				filter{ "platforms:"..p, c }
                 libdirs
                 {
+					"../external/tinyxml2/lib/"..target_env..pc,
                     "../external/gtest/lib/"..target_env..pc,
                 }
             end

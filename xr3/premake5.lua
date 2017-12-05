@@ -17,6 +17,6 @@ project "xr3.SDL"
 		"../external/SDL2/include/",
 		"../external/SDL2_image/include",
 		"../external/SDL2_mixer/include",
-		"../external/tinyxml",
+		"../external/tinyxml2",
 		"../external/libpng",
 	}

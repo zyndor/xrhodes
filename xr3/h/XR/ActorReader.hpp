@@ -49,7 +49,7 @@ public:
   typedef Actor<Type> ActorType;
 
   // static
-  static bool Read(TiXmlElement* pXml,
+  static bool Read(tinyxml2::XMLElement* pXml,
     typename AnimationReader<Type>::GetFrameDataCallback pGetFrameDataCb,
     void* pGetFrameDataCbData, bool clearActions, ActorType& actor);
   
@@ -69,7 +69,7 @@ private:
 // implementation
 //==============================================================================
 template  <class Type>
-bool ActorReader<Type>::Read(TiXmlElement* pXml,
+bool ActorReader<Type>::Read(tinyxml2::XMLElement* pXml,
   typename AnimationReader<Type>::GetFrameDataCallback pGetFrameDataCb,
   void* pGetFrameDataCbData, bool clearActions, Actor<Type>& actor)
 {
