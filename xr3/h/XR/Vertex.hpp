@@ -12,7 +12,6 @@
 
 namespace XR
 {
-
 namespace Vertex
 {
 
@@ -21,6 +20,8 @@ namespace Vertex
 template <typename V>
 struct Pos
 {
+  using Value = V;
+
   enum { kType = int(Gfx::Attribute::Position),
     kCount = V::kNumComponents,
     kNormalize = false };
@@ -28,7 +29,7 @@ struct Pos
 
   V pos;
 
-  Pos(V const& v = Vector3())
+  Pos(V const& v = V())
   : pos(v)
   {}
 };
@@ -39,6 +40,7 @@ struct Pos
   template <typename V> \
   struct UV##i \
   {\
+    using Value = V;\
     enum { kType = int(Gfx::Attribute::UV##i),\
       kCount = V::kNumComponents,\
       kNormalize = false };\
@@ -63,26 +65,12 @@ XR_UV_GENERATOR(7)
 #undef XR_UV_GENERATOR
 
 //==============================================================================
-///@brief The Normal component for a Vertex::Format<>.
-struct Normal
-{
-  enum { kType = int(Gfx::Attribute::Normal),
-    kCount = 3,
-    kNormalize = true };
-
-  Vector3 normal;
-
-  Normal(Vector3 const& v = Vector3())
-  : normal(v)
-  {}
-};
-
-//==============================================================================
 ///@brief One of the 2 supported Color components for a Vertex::Format<>.
 #define XR_COLOR_GENERATOR_(i)\
   template <typename V> \
   struct Color##i \
   {\
+    using Value = V;\
     enum { kType = int(Gfx::Attribute::Color##i),\
       kCount = V::kNumComponents,\
       kNormalize = false };\
@@ -101,37 +89,42 @@ XR_COLOR_GENERATOR(1)
 #undef XR_COLOR_GENERATOR
 
 //==============================================================================
-///@brief The Tangent component for a Vertex::Format<>.
-struct Tangent
-{
-  enum { kType = int(Gfx::Attribute::Tangent), kCount = 3, kNormalize = true };
-  Vector3 tangent;
+///@brief Components that have Vector3 data and are normalized.
+#define XR_NORMALIZED_VECTOR3_GENERATOR(typeName, memberName)\
+  struct typeName\
+  {\
+    using Value = Vector3;\
+    enum {\
+      kType = int(Gfx::Attribute::typeName),\
+      kCount = Value::kNumComponents,\
+      kNormalize = true\
+    };\
+    Vector3 memberName;\
+    typeName(Vector3 const& v = Vector3())\
+    : memberName(v)\
+    {}\
+  };
 
-  Tangent(Vector3 const& v = Vector3())
-  : tangent(v)
-  {}
-};
+///@brief A 3-dimensional normal component for a Vertex::Format<>.
+XR_NORMALIZED_VECTOR3_GENERATOR(Normal, normal)
+
+///@brief A 3-dimensional tangent component for a Vertex::Format<>.
+XR_NORMALIZED_VECTOR3_GENERATOR(Tangent, tangent)
+
+///@brief A 3-dimensional bitangent component for a Vertex::Format<>.
+XR_NORMALIZED_VECTOR3_GENERATOR(Bitangent, bitangent)
+#undef XR_NORMALIZED_VECTOR3_GENERATOR
 
 //==============================================================================
-///@brief The Bitangent component for a Vertex::Format<>.
-struct Bitangent
-{
-  enum { kType = int(Gfx::Attribute::Bitangent), kCount = 3, kNormalize = true };
-  Vector3 bitangent;
-
-  Bitangent(Vector3 const& v = Vector3())
-  : bitangent(v)
-  {}
-};
-
-//==============================================================================
-///@brief Facilitates the creation and registration of a compile-time Gfx vertex
-/// format, using a variation of the types above.
-///@note A warning of a repeated base class is a precursor of a runtime failure
-/// attempting to defining one component more than once.
+///@brief Facilitates the creation and registration of a compile-time vertex
+/// format for Gfx, using a combination of the types above. It also allows
+/// specialising previously declared vertex formats.
+///@note A warning of a repeated base class is an indication of component being
+/// used more than once, leading to a runtime failure.
 template <class... Rest>
 struct Format
 {
+  enum { kSize = 0 };
   static void AddAttribute(Gfx::VertexFormat&)
   {}
 };
@@ -139,18 +132,14 @@ struct Format
 template <class T, class... Rest>
 struct Format<T, Rest...> : T, Format<Rest...>
 {
-  using Self = T;
-  
-  Format()
-  : T(),
-    Format<Rest...>()
-  {}
+  // types
+  using Base = Format<Rest...>;
+  using Self = Format<T, Rest...>;
+  using Value = typename T::Value;
 
-  Format(T t, Rest... r)
-  : T(t),
-    Format<Rest...>(r...)
-  {}
+  enum { kSize = sizeof(T) + Base::kSize };
 
+  // static
   static Gfx::VertexFormatHandle Register()
   {
     Gfx::VertexFormat vf;
@@ -160,12 +149,81 @@ struct Format<T, Rest...> : T, Format<Rest...>
 
   static void AddAttribute(Gfx::VertexFormat& vf)
   {
-    vf.Add(static_cast<Gfx::Attribute>(Self::kType), Self::kCount, Self::kNormalize);
-    Format<Rest...>::AddAttribute(vf);
+    vf.Add(static_cast<Gfx::Attribute>(T::kType), T::kCount, T::kNormalize);
+    Base::AddAttribute(vf);
+  }
+
+  // structors
+  Format()
+  : T(),
+    Base()
+  {}
+
+  template <class... RestT>
+  Format(Value v = Value(), RestT... r)
+  : T(v),
+    Base(r...)
+  {}
+
+  // operator overloads
+  using Base::operator=;
+
+  Self& operator=(T const& rhs)
+  {
+    Self& self = *this;
+    static_cast<T&>(self) = rhs;
+    return self;
   }
 };
 
-}
+template <class T, class... Rest>
+struct Format<T, Format<Rest...>> : Format<Rest...>, T
+{
+  // types
+  using Base = Format<Rest...>;
+  using Self = Format<T, Base>;
+  using Value = typename T::Value;
+
+  enum { kSize = sizeof(T) + Base::kSize };
+
+  // static
+  static Gfx::VertexFormatHandle Register()
+  {
+    Gfx::VertexFormat vf;
+    AddAttribute(vf);
+    return Gfx::RegisterVertexFormat(vf);
+  }
+
+  static void AddAttribute(Gfx::VertexFormat& vf)
+  {
+    Base::AddAttribute(vf);
+    vf.Add(static_cast<Gfx::Attribute>(T::kType), T::kCount, T::kNormalize);
+  }
+
+  // structors
+  Format()
+  : T(),
+    Base()
+  {}
+
+  template <class... RestT>
+  Format(Value v = Value(), RestT... r)
+  : T(v),
+    Base(r...)
+  {}
+
+  // operator overloads
+  using Base::operator=;
+
+  Self& operator=(T const& rhs)
+  {
+    Self& self = *this;
+    static_cast<T&>(self) = rhs;
+    return self;
+  }
+};
+
+} // Vertex
 }
 
 #endif
