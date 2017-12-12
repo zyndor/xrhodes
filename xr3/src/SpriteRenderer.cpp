@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include <algorithm>
+#include "XR/IndexMesh.hpp"
 #include "XR/SpriteRenderer.hpp"
 
 namespace XR
@@ -12,12 +13,9 @@ namespace XR
 
 //==============================================================================
 SpriteRenderer::SpriteRenderer()
-: m_pool(),
-  m_records(0)/*,
-  m_mView(Matrix::s_identity),
-  m_vForward(Vector3::s_zAxis),
-  m_zNear(.0f),
-  m_zFar(1000.0f)*/
+: m_hVertexFormat(Vertex::Register()),
+  m_pool(),
+  m_records(nullptr)
 {}
 
 //==============================================================================
@@ -26,7 +24,9 @@ SpriteRenderer::~SpriteRenderer()
   m_pool.Pop();
   m_pool.Flush();
 
-  m_records = 0;
+  m_records = nullptr;
+
+  Gfx::Destroy(m_hVertexFormat);
 }
 
 //==============================================================================
@@ -57,26 +57,16 @@ void  SpriteRenderer::Init(int numRecords)
 
   // push frame - flushes must not destroy the list.
   m_pool.Push();
-  
-#if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
-  InitStreams(numRecords * Sprite::kNumVertices);
-  SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices,
-    Sprite::kNumVertices, numRecords);
-#else
-  m_indices.resize(numRecords * Sprite::kNumIndices);
-  
-  int vertexOffset(0);
-  int indexOffset(0);
-  for (int i = 0; i < numRecords; ++i)
-  {
-    for (int j = 0; j < Sprite::kNumIndices; ++j)
-    {
-      m_indices[indexOffset + j] = Sprite::karIndices[j] + vertexOffset;
-    }
-    vertexOffset += Sprite::kNumVertices;
-    indexOffset += Sprite::kNumIndices;
-  }
-#endif
+
+  // Create index pattern.
+  Gfx::Destroy(m_ibo);
+
+  IndexMeshCore imc;
+  imc.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numRecords);
+
+  auto& indexData = imc.GetIndices();
+  m_ibo = Gfx::CreateIndexBuffer({ indexData.size() * sizeof(uint16_t),
+    reinterpret_cast<uint8_t const*>(indexData.data()) }, 0);
 }
 
 //==============================================================================
@@ -84,9 +74,9 @@ void  SpriteRenderer::SetView(Matrix mView, float zNear/*, float zFar*/)
 {
   //XR_ASSERT(SpriteRenderer, zNear < zFar);
   XR_ASSERT(SpriteRenderer, zNear > .0f);
-  
+
   m_vForward = Vector3(mView.zx, mView.zy, mView.zz).Normalise();
-  
+
   //mView.Transpose();  // the actual view is a transpose, so this isn't needed.
   m_mView = mView;
 
@@ -115,7 +105,7 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* sprite,
   {
     r.xForm.RotateZ(rz);
   }
-  
+
   float zTemp = (r.xForm.t - m_mView.t).Dot(m_vForward);
   if (zTemp > m_zNear/* && zTemp < m_zFar*/) // if in front of camera
   {
@@ -167,39 +157,26 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* sprite,
 void  SpriteRenderer::Render()
 {
   // allocate colour / uv / vertex streams
-  int numVerts(m_records->size());
-  if (numVerts <= 0)
+  int numVertices(m_records->size());
+  if (numVertices <= 0)
   {
     return;
   }
-  numVerts *= XR::Sprite::kNumVertices;
-  
-  FloatBuffer* pCols(Renderer::AllocBuffer(sizeof(Color), numVerts));
-  XR_ASSERT(SpriteRenderer, pCols != 0);
-#if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
-  FloatBuffer* pUVs(&m_uvs);
-  FloatBuffer* pVerts(&m_vertices);
-#else
-  FloatBuffer* pUVs(Renderer::AllocBuffer(sizeof(Vector2), numVerts));
-  XR_ASSERT(SpriteRenderer, pUVs != 0);
-  FloatBuffer* pVerts(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  XR_ASSERT(SpriteRenderer, pVerts != 0);
-#endif
-  
-  int         vertexOffset(0);
-  FloatBuffer colBatch;
-  FloatBuffer uvBatch;
-  FloatBuffer vertBatch;
+  numVertices *= XR::Sprite::kNumVertices;
 
+  auto vertices = FloatBuffer(sizeof(Vertex), numVertices);
+  auto vertsHead = vertices.Get<Vertex>();
+
+  int vertexOffset = 0;
   for (RecordList::const_iterator i0(m_records->begin()),
     i1(m_records->end()); i0 != i1;)
   {
     auto const&  pMaterial(i0->pSprite->GetMaterial());
 
     // check for consecutive sprites with the same material
-    int numSprites(1);
+    int numSprites = 1;
 
-    RecordList::const_iterator j0(i0);
+    RecordList::const_iterator j0 = i0;
     while (++j0 != i1)
     {
       if (j0->pSprite->GetMaterial() != pMaterial)
@@ -210,11 +187,9 @@ void  SpriteRenderer::Render()
     }
 
     // calculate number of vertices
-    numVerts = numSprites * XR::Sprite::kNumVertices;
+    numVertices = numSprites * XR::Sprite::kNumVertices;
 
-    colBatch = FloatBuffer::Adapt(*pCols, vertexOffset, numVerts);
-    uvBatch = FloatBuffer::Adapt(*pUVs, vertexOffset, numVerts);
-    vertBatch = FloatBuffer::Adapt(*pVerts, vertexOffset, numVerts);
+    auto verts = vertsHead;
 
     // set the material
     i0->pSprite->GetMaterial()->Apply();
@@ -222,32 +197,32 @@ void  SpriteRenderer::Render()
     // render sprites
     while (i0 != j0)
     {
-      pCols->Set(vertexOffset, i0->tint);
-      pCols->Set(vertexOffset + 1, i0->tint);
-      pCols->Set(vertexOffset + 2, i0->tint);
-      pCols->Set(vertexOffset + 3, i0->tint);
+      verts[0].color0 = i0->tint;
+      verts[1].color0 = i0->tint;
+      verts[2].color0 = i0->tint;
+      verts[3].color0 = i0->tint;
 
-      i0->pSprite->CopyUVsTo(vertexOffset, *pUVs);
-
+      i0->pSprite->CopyVerticesTo(verts);
       for (int i = 0; i < XR::Sprite::kNumVertices; ++i)
       {
-        // TODO: optimize
-        pVerts->Set(vertexOffset + i,
-          i0->xForm.TransformVec(i0->pSprite->GetVertices().Get<Vector3>(i)));
+        verts[i].pos = i0->xForm.TransformVec(verts[i].pos);
       }
 
-      vertexOffset += XR::Sprite::kNumVertices;
       ++i0;
+      verts += Sprite::kNumVertices;
     }
 
     // indices
     int numIndices(numSprites * Sprite::kNumIndices);
-    
+
     // render
-    Renderer::SetColStream(colBatch);
-    Renderer::SetUVStream(uvBatch, 0);
-    Renderer::SetVertStream(vertBatch);
-    Renderer::DrawPrims(PrimType::TRI_LIST, &m_indices[0], numIndices);
+    auto vertsBytes = reinterpret_cast<uint8_t const*>(vertsHead);
+    Gfx::VertexBufferHandle vbo = Gfx::CreateVertexBuffer(m_hVertexFormat,
+      { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
+    Gfx::Draw(vbo, m_ibo, PrimType::TRI_LIST, 0, numIndices);
+    Gfx::Destroy(vbo);
+
+    vertexOffset += numVertices;
   }
 }
 

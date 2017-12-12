@@ -7,28 +7,24 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
-#include <list>
+#include "Sprite.hpp"
 #include "XR/fundamentals.hpp"
 #include "XR/Pool.hpp"
 #include "XR/SharedPoolAllocator.hpp"
-#include "Sprite.hpp"
-#include "IndexMesh.hpp"
+#include <list>
 
 namespace XR
 {
 
-#define XR_SPRITE_RENDERER_PERSISTENT_STREAMS
-  
 //==============================================================================
 class SpriteRenderer
-#if defined XR_SPRITE_RENDERER_PERSISTENT_STREAMS
-  : protected IndexMesh
-#endif
 {
   XR_NONCOPY_DECL(SpriteRenderer)
 
 public:
+  // types
+  using Vertex = Vertex::Format<Vertex::Color0<Color>, SpriteVertexFormat>;
+
   // structors
   SpriteRenderer();
   ~SpriteRenderer();
@@ -48,7 +44,7 @@ public:
   void  Add(Color tint, const XR::Sprite* sprite, const Vector3& position,
           float sx, float sy, float rz, bool billboard = true);
 
-  virtual void  Render();
+  void  Render();
 
   void  Clear();
 
@@ -71,6 +67,8 @@ protected:
   typedef std::list<Record, XR::SharedPoolAllocator<Record> > RecordList;
 
   // data
+  Gfx::VertexFormatHandle m_hVertexFormat;
+
   int         m_capacity;
   XR::Pool    m_pool;
   RecordList* m_records;
@@ -80,11 +78,8 @@ protected:
   float       m_zNear;
   //float       m_zFar;
 
-#ifndef XR_SPRITE_RENDERER_PERSISTENT_STREAMS
-  typedef std::vector<uint16_t> Uint16Array;
-  
-  Uint16Array m_indices;
-#endif
+  FloatBuffer m_vertices;
+  Gfx::IndexBufferHandle m_ibo;
 };
 
 //==============================================================================

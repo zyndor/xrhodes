@@ -10,22 +10,12 @@
 namespace XR {
 
 //==============================================================================
-IndexMesh::IndexMesh()
-: BasicMesh(),
-  m_indices()
-{}
-
-//==============================================================================
-IndexMesh::~IndexMesh()
-{}
-
-//==============================================================================
-void  IndexMesh::SetIndexPattern(const uint16_t* pInds, int numInds, int repeat)
+void  IndexMeshCore::SetIndexPattern(const uint16_t* pInds, int numInds, int repeat)
 {
   XR_ASSERT(IndexMesh, numInds >= 0);
   XR_ASSERT(IndexMesh, repeat >= 0);
   XR_ASSERT(IndexMesh, pInds != 0);
-  
+
   uint16_t  shift(0);
   for (int i = 0; i < numInds; ++i)
   {
@@ -34,18 +24,18 @@ void  IndexMesh::SetIndexPattern(const uint16_t* pInds, int numInds, int repeat)
       shift = pInds[i];
     }
   }
-  
+
   SetIndexPattern(pInds, numInds, shift + 1, repeat);
 }
 
 //==============================================================================
-void  IndexMesh::SetIndexPattern(const uint16_t* pInds, int numInds, uint16_t shift,
-    int repeat)
+void IndexMeshCore::SetIndexPattern(const uint16_t * pInds, int numInds,
+  uint16_t shift, int repeat)
 {
   XR_ASSERT(IndexMesh, numInds >= 0);
   XR_ASSERT(IndexMesh, repeat >= 0);
   XR_ASSERT(IndexMesh, pInds != 0);
-  
+
   int indexOffset(0);
   int vertexOffset(0);
   m_indices.resize(numInds * repeat);
@@ -61,13 +51,11 @@ void  IndexMesh::SetIndexPattern(const uint16_t* pInds, int numInds, uint16_t sh
 }
 
 //==============================================================================
-void  IndexMesh::Render()
+void IndexMeshCore::CreateIbo(uint32_t flags)
 {
-  if (m_vertices.GetNumElements() > 0)
-  {
-    _PrepareRender();
-    Renderer::DrawPrims(PrimType::TRI_LIST, &m_indices[0], m_indices.size());
-  }
+  Gfx::Destroy(m_ibo);
+  m_ibo = Gfx::CreateIndexBuffer({ m_indices.size() * sizeof(decltype(m_indices)::value_type),
+    reinterpret_cast<uint8_t const*>(m_indices.data()) }, flags);
 }
 
 } // XR

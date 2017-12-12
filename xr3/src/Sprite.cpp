@@ -53,35 +53,10 @@ void Sprite::Slice( AABB base, int across, int down, int maxSlices,
 }
 
 //==============================================================================
-void Sprite::CopyWholeTextureUVsTo(FloatBuffer& uvs)
-{
-  uvs.Set(VI_NW, Vector2(kWholeTexture.left, kWholeTexture.top));
-  uvs.Set(VI_SW, Vector2(kWholeTexture.left, kWholeTexture.bottom));
-  uvs.Set(VI_SE, Vector2(kWholeTexture.right, kWholeTexture.bottom));
-  uvs.Set(VI_NE, Vector2(kWholeTexture.right, kWholeTexture.top));
-}
-
-//==============================================================================
-void Sprite::CopyWholeTextureUVsTo(size_t offset, FloatBuffer& uvs)
-{
-  uvs.Set(offset + VI_NW, Vector2(kWholeTexture.left, kWholeTexture.top));
-  uvs.Set(offset + VI_SW, Vector2(kWholeTexture.left, kWholeTexture.bottom));
-  uvs.Set(offset + VI_SE, Vector2(kWholeTexture.right, kWholeTexture.bottom));
-  uvs.Set(offset + VI_NE, Vector2(kWholeTexture.right, kWholeTexture.top));
-}
-
-//==============================================================================
-void Sprite::CopyIndicesTo(uint16_t* indices, size_t offset)
+void Sprite::CopyIndicesTo(uint16_t indices[kNumIndices])
 {
   XR_ASSERT(Sprite, indices != 0);
-  const uint16_t* i0(karIndices);
-  const uint16_t* i1(i0 + kNumIndices);
-  while (i0 != i1)
-  {
-    *indices = *i0 + offset;
-    ++i0;
-    ++indices;
-  }
+  memcpy(indices, karIndices, sizeof(karIndices));
 }
 
 //==============================================================================
@@ -92,18 +67,12 @@ Sprite::Sprite()
   m_isUVRotated(false),
   m_offset(Vector2::Zero())
 {
-  InitStreams(kNumVertices);
+  AllocBuffer(kNumVertices);
 }
 
 //==============================================================================
 Sprite::~Sprite()
 {}
-
-//==============================================================================
-void  Sprite::SetMaterial(Material::Ptr const& material)
-{
-  m_material = material;
-}
 
 //==============================================================================
 void Sprite::SetHalfSize( int32_t hw, int32_t hh, bool calculateVertices)
@@ -116,10 +85,11 @@ void Sprite::SetHalfSize( int32_t hw, int32_t hh, bool calculateVertices)
 
   if (calculateVertices)
   {
-    m_vertices.Set(VI_NW, Vector3(-hw, -hh, .0f));
-    m_vertices.Set(VI_SW, Vector3(-hw, hh, .0f));
-    m_vertices.Set(VI_SE, Vector3(hw, hh, .0f));
-    m_vertices.Set(VI_NE, Vector3(hw, -hh, .0f));
+    auto verts = GetVertices();
+    verts[VI_NW].pos = Vector3(-hw, -hh, .0f);
+    verts[VI_SW].pos = Vector3(-hw, hh, .0f);
+    verts[VI_SE].pos = Vector3(hw, hh, .0f);
+    verts[VI_NE].pos = Vector3(hw, -hh, .0f);
   }
 }
 
@@ -127,10 +97,11 @@ void Sprite::SetHalfSize( int32_t hw, int32_t hh, bool calculateVertices)
 void Sprite::SetUVs(const AABB& tc)
 {
   m_isUVRotated = false;
-  m_uvs.Set(VI_NW, Vector2(tc.left, tc.top));
-  m_uvs.Set(VI_SW, Vector2(tc.left, tc.bottom));
-  m_uvs.Set(VI_SE, Vector2(tc.right, tc.bottom));
-  m_uvs.Set(VI_NE, Vector2(tc.right, tc.top));
+  auto verts = GetVertices();
+  verts[VI_NW].uv0 = Vector2(tc.left, tc.top);
+  verts[VI_SW].uv0 = Vector2(tc.left, tc.bottom);
+  verts[VI_SE].uv0 = Vector2(tc.right, tc.bottom);
+  verts[VI_NE].uv0 = Vector2(tc.right, tc.top);
 }
 
 //==============================================================================
@@ -150,10 +121,11 @@ void Sprite::SetUVsProportional(const AABB& tc)
 void Sprite::SetUVsRotated(const AABB& uvs)
 {
   m_isUVRotated = true;
-  m_uvs.Set(VI_NW, Vector2(uvs.right, uvs.top));
-  m_uvs.Set(VI_SW, Vector2(uvs.left, uvs.top));
-  m_uvs.Set(VI_SE, Vector2(uvs.left, uvs.bottom));
-  m_uvs.Set(VI_NE, Vector2(uvs.right, uvs.bottom));
+  auto verts = GetVertices();
+  verts[VI_NW].uv0 = Vector2(uvs.right, uvs.top);
+  verts[VI_SW].uv0 = Vector2(uvs.left, uvs.top);
+  verts[VI_SE].uv0 = Vector2(uvs.left, uvs.bottom);
+  verts[VI_NE].uv0 = Vector2(uvs.right, uvs.bottom);
 }
 
 //==============================================================================
@@ -181,12 +153,11 @@ void Sprite::Scale( float sx, float sy )
   m_halfWidth *= fabsf(sx);
   m_halfHeight *= fabsf(sy);
 
+  auto verts = GetVertices();
   for (int i = 0; i < kNumVertices; ++i)
   {
-    Vector3 v(m_vertices.Get<Vector3>(i));
-    v.x *= sx;
-    v.y *= sy;
-    m_vertices.Set(i, v);
+    verts[i].pos.x *= sx;
+    verts[i].pos.y *= sy;
   }
 }
 
@@ -194,14 +165,24 @@ void Sprite::Scale( float sx, float sy )
 void Sprite::ScaleX( float sx )
 {
   m_halfWidth *= fabsf(sx);
-  m_vertices.ForEach<Vector3>([sx](Vector3& v) { v.x *= sx; });
+
+  auto verts = GetVertices();
+  for (int i = 0; i < kNumVertices; ++i)
+  {
+    verts[i].pos.x *= sx;
+  }
 }
 
 //==============================================================================
 void Sprite::ScaleY( float sy )
 {
   m_halfHeight *= fabsf(sy);
-  m_vertices.ForEach<Vector3>([sy](Vector3& v) { v.x *= sy; });
+
+  auto verts = GetVertices();
+  for (int i = 0; i < kNumVertices; ++i)
+  {
+    verts[i].pos.y *= sy;
+  }
 }
 
 //==============================================================================
@@ -214,40 +195,45 @@ void Sprite::FlipX()
 //==============================================================================
 void Sprite::FlipVerticesX()
 {
-  m_vertices.ForEach<Vector3>([](Vector3& v) { v.x *= -1.0f; });
+  auto verts = GetVertices();
+  for (int i = 0; i < kNumVertices; ++i)
+  {
+    verts[i].pos.x *= -1.0f;
+  }
   m_offset.x *= -1.0f;
 }
 
 //==============================================================================
 void Sprite::FlipUVsX()
 {
+  auto verts = GetVertices();
   if (m_isUVRotated)
   {
-    Vector3 vLeft(m_uvs.Get<Vector3>(VI_NW));
-    Vector3 vRight(m_uvs.Get<Vector3>(VI_NE));
+    Vector2 vLeft(verts[VI_NW].uv0);
+    Vector2 vRight(verts[VI_NE].uv0);
     std::swap(vLeft.y, vRight.y);
-    m_uvs.Set(VI_NW, vLeft);
-    m_uvs.Set(VI_NE, vRight);
+    verts[VI_NW].uv0 = vLeft;
+    verts[VI_NE].uv0 = vRight;
 
-    vLeft = m_uvs.Get<Vector3>(VI_SW);
-    vRight = m_uvs.Get<Vector3>(VI_SE);
+    vLeft = verts[VI_SW].uv0;
+    vRight = verts[VI_SE].uv0;
     std::swap(vLeft.y, vRight.y);
-    m_uvs.Set(VI_SW, vLeft);
-    m_uvs.Set(VI_SE, vRight);
+    verts[VI_SW].uv0 = vLeft;
+    verts[VI_SE].uv0 = vRight;
   }
   else
   {
-    Vector3 vLeft(m_uvs.Get<Vector3>(VI_NW));
-    Vector3 vRight(m_uvs.Get<Vector3>(VI_NE));
+    Vector2 vLeft(verts[VI_NW].uv0);
+    Vector2 vRight(verts[VI_NE].uv0);
     std::swap(vLeft.x, vRight.x);
-    m_uvs.Set(VI_NW, vLeft);
-    m_uvs.Set(VI_NE, vRight);
+    verts[VI_NW].uv0 = vLeft;
+    verts[VI_NE].uv0 = vRight;
 
-    vLeft = m_uvs.Get<Vector3>(VI_SW);
-    vRight = m_uvs.Get<Vector3>(VI_SE);
+    vLeft = verts[VI_SW].uv0;
+    vRight = verts[VI_SE].uv0;
     std::swap(vLeft.x, vRight.x);
-    m_uvs.  Set(VI_SW, vLeft);
-    m_uvs.Set(VI_SE, vRight);
+    verts[VI_SW].uv0 = vLeft;
+    verts[VI_SE].uv0 = vRight;
   }
 }
 
@@ -261,61 +247,60 @@ void Sprite::FlipY()
 //==============================================================================
 void Sprite::FlipVerticesY()
 {
-  m_vertices.ForEach<Vector3>([](Vector3& v) { v.y *= -1.0f; });
+  auto verts = GetVertices();
+  for (int i = 0; i < kNumVertices; ++i)
+  {
+    verts[i].pos.y *= -1.0f;
+  }
   m_offset.y *= -1.0f;
 }
 
 //==============================================================================
 void Sprite::FlipUVsY()
 {
+  auto verts = GetVertices();
   if (m_isUVRotated)
   {
-    Vector3 vLeft(m_uvs.Get<Vector3>(VI_NW));
-    Vector3 vRight(m_uvs.Get<Vector3>(VI_NE));
+    Vector2 vLeft(verts[VI_NW].uv0);
+    Vector2 vRight(verts[VI_NE].uv0);
     std::swap(vLeft.x, vRight.x);
-    m_uvs.Set(VI_NW, vLeft);
-    m_uvs.Set(VI_NE, vRight);
+    verts[VI_NW].uv0 = vLeft;
+    verts[VI_NE].uv0 = vRight;
 
-    vLeft = m_uvs.Get<Vector3>(VI_SW);
-    vRight = m_uvs.Get<Vector3>(VI_SE);
+    vLeft = verts[VI_SW].uv0;
+    vRight = verts[VI_SE].uv0;
     std::swap(vLeft.x, vRight.x);
-    m_uvs.Set(VI_SW, vLeft);
-    m_uvs.Set(VI_SE, vRight);
+    verts[VI_SW].uv0 = vLeft;
+    verts[VI_SE].uv0 = vRight;
   }
   else
   {
-    Vector3 vLeft(m_uvs.Get<Vector3>(VI_NW));
-    Vector3 vRight(m_uvs.Get<Vector3>(VI_SW));
+    Vector2 vLeft(verts[VI_NW].uv0);
+    Vector2 vRight(verts[VI_SW].uv0);
     std::swap(vLeft.y, vRight.y);
-    m_uvs.Set(VI_NW, vLeft);
-    m_uvs.Set(VI_SW, vRight);
+    verts[VI_NW].uv0 = vLeft;
+    verts[VI_SW].uv0 = vRight;
 
-    vLeft = m_uvs.Get<Vector3>(VI_NE);
-    vRight = m_uvs.Get<Vector3>(VI_SE);
+    vLeft = verts[VI_NE].uv0;
+    vRight = verts[VI_SE].uv0;
     std::swap(vLeft.y, vRight.y);
-    m_uvs.Set(VI_NE, vLeft);
-    m_uvs.Set(VI_SE, vRight);
+    verts[VI_NE].uv0 = vLeft;
+    verts[VI_SE].uv0 = vRight;
   }
 }
 
 //==============================================================================
 void Sprite::OffsetVertices( float x, float y)
 {
-  m_vertices.ForEach<Vector3>([x, y](Vector3& v) {
-    v.x += x;
-    v.y += y;
-  });
+  auto verts = GetVertices();
+  for (int i = 0; i < kNumVertices; ++i)
+  {
+    verts[i].pos.x += x;
+    verts[i].pos.y += y;
+  }
+
   m_offset.x += x;
   m_offset.y += y;
-}
-
-//==============================================================================
-void  Sprite::RenderRaw()
-{
-  // the material is already set
-  Renderer::SetUVStream(m_uvs, 0);
-  Renderer::SetVertStream(m_vertices);
-  Renderer::DrawPrims(PrimType::TRI_LIST, karIndices, kNumIndices);
 }
 
 } // XR
