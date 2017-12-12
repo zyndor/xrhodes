@@ -201,40 +201,4 @@ size_t FloatBuffer::ResolveSize(size_t offset, size_t size) const
   return size == kSizeRest ? m_numElems - offset : size;
 }
 
-//=============================================================================
-void FloatBuffer::SetInternal(size_t i, Vector2 const & v)
-{
-  std::copy(v.arData, v.arData + Vector2::kNumComponents, m_parData + i * m_elemSizeFloats);
-}
-
-//=============================================================================
-void FloatBuffer::SetInternal(size_t i, Vector3 const & v)
-{
-  std::copy(v.arData, v.arData + Vector3::kNumComponents, m_parData + i * m_elemSizeFloats);
-}
-
-//=============================================================================
-void FloatBuffer::SetInternal(size_t i, Color const & c)
-{
-  std::copy(c.arData, c.arData + Color::kNumComponents, m_parData + i * m_elemSizeFloats);
-}
-
-//=============================================================================
-void FloatBuffer::GetInternal(Vector2 const *& v) const
-{
-  v = reinterpret_cast<Vector2 const*>(m_parData);
-}
-
-//=============================================================================
-void FloatBuffer::GetInternal(Vector3 const *& v) const
-{
-  v = reinterpret_cast<Vector3 const*>(m_parData);
-}
-
-//=============================================================================
-void FloatBuffer::GetInternal(Color const *& c) const
-{
-  c = reinterpret_cast<Color const*>(m_parData);
-}
-
 } // XR

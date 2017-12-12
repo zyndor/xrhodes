@@ -139,14 +139,6 @@ private:
   void CopyData(FloatBuffer const& other);
   void DetachFromOwner();
   size_t ResolveSize(size_t offset, size_t size) const;
-
-  void SetInternal(size_t i, Vector2 const& v);
-  void SetInternal(size_t i, Vector3 const& v);
-  void SetInternal(size_t i, Color const& c);
-
-  void GetInternal(Vector2 const*& v) const;
-  void GetInternal(Vector3 const*& v) const;
-  void GetInternal(Color const*& c) const;
 };
 
 //=============================================================================
@@ -169,10 +161,11 @@ void FloatBuffer::Set(size_t numElems, T const * pData, size_t offset)
   XR_ASSERT(FloatBuffer, m_parData != nullptr);
   XR_ASSERT(FloatBuffer, offset + numElems <= m_numElems);
   T const* pEnd = pData + numElems;
+  auto write = Get<T>();
   while (pData != pEnd)
   {
-    SetInternal(offset, *pData);
-    ++offset;
+    *write = *pData;
+    ++write;
     ++pData;
   }
 }
@@ -185,7 +178,7 @@ void FloatBuffer::Set(size_t i, T const & value)
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
   XR_ASSERT(FloatBuffer, m_parData != nullptr);
   XR_ASSERT(FloatBuffer, i < m_numElems);
-  SetInternal(i, value);
+  Get<T>(i) = value;
 }
 
 //=============================================================================
@@ -208,8 +201,8 @@ inline
 T * FloatBuffer::Get()
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
-  FloatBuffer const* ct = this;
-  return const_cast<T*>(ct->Get<T>());
+  T* p = reinterpret_cast<T*>(m_parData);
+  return p;
 }
 
 //=============================================================================
@@ -218,8 +211,7 @@ inline
 T const * FloatBuffer::Get() const
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
-  const T* p;
-  GetInternal(p);
+  const T* p = reinterpret_cast<T const*>(m_parData);
   return p;
 }
 
