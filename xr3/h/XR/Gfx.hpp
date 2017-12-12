@@ -13,19 +13,13 @@
 #include "XR/utils.hpp"
 #include "XR/Hash.hpp"
 #include "XR/PrimType.hpp"
+#include "XR/Buffer.hpp"
 #include "XR/debug.hpp"
 
 namespace XR
 {
 namespace Gfx
 {
-
-//=============================================================================
-struct Buffer
-{
-  uint8_t const* data;
-  size_t size;
-};
 
 //=============================================================================
 enum Flags: uint32_t
@@ -275,9 +269,10 @@ InstanceDataBufferHandle  CreateInstanceDataBuffer(Buffer const& buffer,
 
 void Destroy(InstanceDataBufferHandle h);
 
-///@brief Creates a vertex buffer with the given format, data and
+///@brief Creates an index buffer with the given format, data and
 /// options.
 IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
+
 void Destroy(IndexBufferHandle h);
 
 ///@brief Uploads texture. Texel data isn't kept around by Gfx.

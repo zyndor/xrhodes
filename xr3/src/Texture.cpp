@@ -54,7 +54,7 @@ void Texture::Bind(uint32_t stage) const
 bool Texture::OnLoaded(size_t size, uint8_t const* buffer)
 {
   bool success = true;
-  BufferReader reader(buffer, size);
+  BufferReader reader({ size, buffer});
 
   uint32_t width = 0;
   uint32_t height = 0;
@@ -104,7 +104,7 @@ bool Texture::OnLoaded(size_t size, uint8_t const* buffer)
 
     // Create Gfx texture.
     const size_t texDataSize = width * height * bytesPerPixel;
-    Gfx::Buffer texBuffer = { reader.ReadBytes(texDataSize), texDataSize };
+    Buffer texBuffer = { texDataSize, reader.ReadBytes(texDataSize) };
     success = texBuffer.data != nullptr;
     if (success)  // set properties
     {

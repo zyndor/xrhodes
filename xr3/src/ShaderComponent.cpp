@@ -54,7 +54,7 @@ private:
 //==============================================================================
 bool ShaderComponent::OnLoaded(size_t size, uint8_t const * buffer)
 {
-  BufferReader reader(buffer, size);
+  BufferReader reader({ size, buffer });
 
   bool success = reader.Read(m_type);
   if (success)
@@ -64,7 +64,7 @@ bool ShaderComponent::OnLoaded(size_t size, uint8_t const * buffer)
     success = source != nullptr;
     if (success)
     {
-      m_handle = Gfx::CreateShader(m_type, { source, sourceLen });
+      m_handle = Gfx::CreateShader(m_type, { sourceLen, source });
       success = m_handle.IsValid();
     }
 

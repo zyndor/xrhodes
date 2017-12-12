@@ -159,7 +159,7 @@ namespace XR
       PosUvColor( Vector3( 1.0f, -1.0f, .0f ), Vector2(1.0f, .0f ), Vector3(.0f, 1.0f, 1.0f )),
       PosUvColor( Vector3( 1.0f, 1.0f, .0f ), Vector2(1.0f, 1.0f ), Vector3(1.0f, .0f, 1.0f )),
     };
-    auto vbo = Gfx::CreateVertexBuffer(hFormat, { (uint8_t*)vboData, sizeof(vboData) });
+    auto vbo = Gfx::CreateVertexBuffer(hFormat, { sizeof(vboData), (uint8_t*)vboData });
 
     Gfx::Clear(Gfx::F_CLEAR_DEPTH);
     material->Apply();

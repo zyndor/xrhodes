@@ -77,7 +77,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 bool Shader::OnLoaded(size_t size, uint8_t const * buffer)
 {
   auto flags = GetFlags();
-  BufferReader reader(buffer, size);
+  BufferReader reader({ size, buffer });
 
   HashType hash;
   bool success = reader.Read(hash);

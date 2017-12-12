@@ -252,7 +252,7 @@ bool Material::OnLoaded(size_t size, uint8_t const * buffer)
 {
   auto flags = GetFlags();
 
-  BufferReader  reader(buffer, size);
+  BufferReader  reader({ size, buffer });
   uint8_t numTextures;
   bool success = reader.Read(m_stateFlags) && reader.Read(numTextures);
 
