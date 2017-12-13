@@ -28,7 +28,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
       fsh: "path/to/vertex_shader", # fsh extension is optional
     }
   */
-  auto root = XonBuildTree(reinterpret_cast<char const*>(buffer), size);
+  auto root = XonBuildTree(reinterpret_cast<char const*>(buffer.data), buffer.size);
   bool success = root != nullptr;
   if (success)
   {
@@ -74,10 +74,10 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 }
 
 //==============================================================================
-bool Shader::OnLoaded(size_t size, uint8_t const * buffer)
+bool Shader::OnLoaded(Buffer buffer)
 {
   auto flags = GetFlags();
-  BufferReader reader({ size, buffer });
+  BufferReader reader(buffer);
 
   HashType hash;
   bool success = reader.Read(hash);

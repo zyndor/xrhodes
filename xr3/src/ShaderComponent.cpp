@@ -29,7 +29,7 @@ public:
     m_types[Hash::String32("fsh")] = Gfx::ShaderType::Fragment;
   }
 
-  bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
+  bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
     auto ext = strrchr(rawNameExt, '.');
@@ -41,7 +41,7 @@ public:
     
     // TODO: support includes
     return WriteBinaryStream(iFind->second, data) &&
-      data.write(reinterpret_cast<char const*>(buffer), size);
+      data.write(reinterpret_cast<char const*>(buffer.data), buffer.size);
   }
 
 private:
@@ -52,9 +52,9 @@ private:
 }
 
 //==============================================================================
-bool ShaderComponent::OnLoaded(size_t size, uint8_t const * buffer)
+bool ShaderComponent::OnLoaded(Buffer buffer)
 {
-  BufferReader reader({ size, buffer });
+  BufferReader reader(buffer);
 
   bool success = reader.Read(m_type);
   if (success)
@@ -70,7 +70,7 @@ bool ShaderComponent::OnLoaded(size_t size, uint8_t const * buffer)
 
     if (success && CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
     {
-      m_data.assign(buffer, buffer + size);
+      m_data.assign(buffer.data, buffer.data + buffer.size);
     }
   }
   return success;
