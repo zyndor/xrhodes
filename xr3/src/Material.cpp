@@ -56,8 +56,7 @@ public:
   bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
-    XonObject* root = XonBuildTree(reinterpret_cast<char const*>(buffer.data),
-      buffer.size);
+    XonObject* root = XonBuildTree(buffer.As<char const>(), buffer.size);
     bool success = root != nullptr;
     if (success)  // process stage flags
     {

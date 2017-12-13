@@ -28,7 +28,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
       fsh: "path/to/vertex_shader", # fsh extension is optional
     }
   */
-  auto root = XonBuildTree(reinterpret_cast<char const*>(buffer.data), buffer.size);
+  auto root = XonBuildTree(buffer.As<char const>(), buffer.size);
   bool success = root != nullptr;
   if (success)
   {

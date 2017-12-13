@@ -41,7 +41,7 @@ public:
     
     // TODO: support includes
     return WriteBinaryStream(iFind->second, data) &&
-      data.write(reinterpret_cast<char const*>(buffer.data), buffer.size);
+      data.write(buffer.As<char const>(), buffer.size);
   }
 
 private:

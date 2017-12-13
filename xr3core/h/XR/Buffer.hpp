@@ -14,9 +14,23 @@ namespace XR
 
 //==============================================================================
 struct Buffer
-{
+{ 
+  // data
   size_t size;
   uint8_t const* data;
+
+  // general
+  template <typename T>
+  T* As()
+  {
+    return reinterpret_cast<T*>(data);
+  }
+
+  template <typename T>
+  T const* As() const
+  {
+    return reinterpret_cast<T const*>(data);
+  }
 };
 
 } // XR
