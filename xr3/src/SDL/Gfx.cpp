@@ -720,6 +720,8 @@ struct Context
     {
       uint32_t hash = vfr.inst.CalculateHash();
       m_vertexFormatHandles.erase(hash);
+
+      m_vertexFormats.server.Release(h.id);
     }
   }
 
@@ -737,6 +739,7 @@ struct Context
     XR_GL_CALL(glDeleteBuffers(1, &vbo.name));
 
     std::memset(&vbo, 0x00, sizeof(vbo));
+    m_vbos.server.Release(h.id);
   }
 
   IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
@@ -763,6 +766,7 @@ struct Context
     XR_GL_CALL(glDeleteBuffers(1, &ibo.name));
 
     std::memset(&ibo, 0x00, sizeof(ibo));
+    m_ibos.server.Release(h.id);
   }
 
   InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
@@ -780,7 +784,7 @@ struct Context
 
     InstanceDataBufferHandle h;
     h.id = CreateVertexBufferInternal(VertexFormatHandle(), buffer, flags).id;
-      
+
     return h;
   }
 
@@ -806,9 +810,9 @@ struct Context
     t.info.height = height;
     t.info.depth = depth;
     t.info.flags = flags;
-    
+
     // determine target
-    t.target = CheckAllMaskBits(flags, F_TEXTURE_CUBE) ? GL_TEXTURE_CUBE_MAP : 
+    t.target = CheckAllMaskBits(flags, F_TEXTURE_CUBE) ? GL_TEXTURE_CUBE_MAP :
       (depth > 0 ? GL_TEXTURE_3D : GL_TEXTURE_2D);
     XR_ASSERT(Gfx, t.target != GL_TEXTURE_CUBE_MAP || (numBuffers % 6) == 0);
 
