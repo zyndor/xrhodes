@@ -37,13 +37,15 @@ public:
     kNumVertices
   };
 
+  using Vertex = SpriteVertexFormat;
+
   // static
   static const int32_t  kNumIndices = 6;
   static const uint16_t karIndices[kNumIndices];
-  
+
   static const int32_t  kUVsSize = kNumVertices * sizeof(Vector2);
   static const int32_t  kVertsSize = kNumVertices * sizeof(Vector3);
-  
+
   static const AABB   kWholeTexture;
   static const AABB   kNullTexture;
 
@@ -53,6 +55,14 @@ public:
   ///@note  @a parSprites must have space for at least @a maxSlices Sprites.
   static void Slice(AABB base, int across, int down, int maxSlices,
     Material::Ptr const& material, Sprite* sprites);
+
+  ///@brief Sets the UVs on @a verts from the given @a aabb, based on whether
+  /// it is @a rotated or not. UV rotation means a sprite rotated 90 degrees
+  /// clockwise, which we need to offset.
+  static void CalculateUVs(AABB const& aabb, bool rotate, Vertex verts[kNumVertices]);
+
+  ///@brief Determines whether the given vertices have uv rotation.
+  static bool IsUVRotated(Vertex const verts[kNumVertices]);
 
   static void  CopyIndicesTo(uint16_t indices[kNumIndices]);
 
@@ -72,7 +82,7 @@ public:
   ///@return  The half height of the Sprite.
   ///@note    This includes any padding.
   float       GetHalfHeight() const;
-  
+
   ///@return  The distance between the top left and top right vertices of the
   /// quad.
   float       GetQuadWidth() const;
@@ -80,7 +90,7 @@ public:
   ///@return  The distance between the top left and bottom left vertices of the
   /// quad.
   float       GetQuadHeight() const;
-  
+
   float       GetLeftPadding() const;
   float       GetTopPadding() const;
   float       GetRightPadding() const;
@@ -105,7 +115,19 @@ public:
   template <typename VertexFormat>
   void  CopyVerticesTo(VertexFormat* verts) const;
 
-  void  SetHalfSize(int32_t hw, int32_t hh, bool calculateVertices = true);
+  ///@brief Sets the halfSize of the sprite, which may be used for layouting.
+  /// Note that this may be different from what the vertex data defines, if
+  /// the Sprite had fully transparent areas trimmed away. (Which a non-zero
+  /// offset will suggest.)
+  void  SetHalfSize(float hw, float hh, bool calculateVertices);
+
+  ///@brief Adds the given amounts to the offset of the sprite, optionally
+  /// updating (translating) vertex data.
+  void  AddOffset(float x, float y, bool updateVertices);
+
+  ///@brief Copies vertex data, determines UV rotation, halfSize and offset
+  /// (for padding).
+  void  Import(Vertex const verts[kNumVertices]);
 
   void  SetUVs(const AABB& uvs);
   void  SetUVsProportional(const AABB& uvs);
@@ -122,12 +144,10 @@ public:
   void  FlipVerticesX();
   void  FlipUVsX();
   void  FlipX();
-  
+
   void  FlipVerticesY();
   void  FlipUVsY();
   void  FlipY();
-
-  void  OffsetVertices(float x, float y);
 
 protected:
   // data
@@ -183,7 +203,7 @@ float Sprite::GetLeftPadding() const
 {
   return m_halfWidth + GetVertices()[VI_NW].pos.x;
 }
-  
+
 //==============================================================================
 inline
 float Sprite::GetTopPadding() const

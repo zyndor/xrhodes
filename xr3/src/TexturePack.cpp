@@ -147,7 +147,7 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
       if (!success)
       {
         XR_TRACE(TexturePack, ("Texture width mismatch (%d vs %d)",
-          m_material->GetTexture(0)->GetWidth(), texWidth));  
+          m_material->GetTexture(0)->GetWidth(), texWidth));
       }
     }
     else
@@ -161,7 +161,7 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
       if (!success)
       {
         XR_TRACE(TexturePack, ("Texture height mismatch (%d vs %d)",
-          m_material->GetTexture(0)->GetHeight(), texHeight));  
+          m_material->GetTexture(0)->GetHeight(), texHeight));
       }
     }
     else
@@ -194,7 +194,7 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
         pElem->QueryIntAttribute(karTag[TAG_H], &hOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
         pElem->QueryIntAttribute(karTag[TAG_X], &xOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
         pElem->QueryIntAttribute(karTag[TAG_Y], &yOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
-      
+
       if (success)
       {
         // get name, strip extension
@@ -236,18 +236,18 @@ bool TexturePack::Load(char const* name, Asset::FlagType flags)
         if (isRotated)
         {
           sprite.SetUVsRotatedProportional(uvs);
-          sprite.OffsetVertices(xOffs - (wOffs - h) * .5f, yOffs - (hOffs - w) * .5f);
+          sprite.AddOffset(xOffs - (wOffs - h) * .5f, yOffs - (hOffs - w) * .5f, true);
         }
         else
         {
           sprite.SetUVsProportional(uvs);
-          sprite.OffsetVertices(xOffs - (wOffs - w) * .5f, yOffs - (hOffs - h) * .5f);
+          sprite.AddOffset(xOffs - (wOffs - w) * .5f, yOffs - (hOffs - h) * .5f, true);
         }
         sprite.SetHalfSize(wOffs / 2, hOffs / 2, false);
 
         // add sprite
         m_sprites[Hash::String32(buffer.c_str())] = sprite;
-        
+
         pElem = pElem->NextSiblingElement(karTag[TAG_SPRITE]);
       }
     }
