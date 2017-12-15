@@ -26,7 +26,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Texture)
 {
   // parse image
   Image img;
-  bool success = img.Parse(buffer, size);
+  bool success = img.Parse(buffer.data, buffer.size);
   if (success)
   {
     uint32_t width = img.GetWidth();
@@ -51,10 +51,10 @@ void Texture::Bind(uint32_t stage) const
 }
 
 //==============================================================================
-bool Texture::OnLoaded(size_t size, uint8_t const* buffer)
+bool Texture::OnLoaded(Buffer buffer)
 {
   bool success = true;
-  BufferReader reader(buffer, size);
+  BufferReader reader(buffer);
 
   uint32_t width = 0;
   uint32_t height = 0;
@@ -104,7 +104,7 @@ bool Texture::OnLoaded(size_t size, uint8_t const* buffer)
 
     // Create Gfx texture.
     const size_t texDataSize = width * height * bytesPerPixel;
-    Gfx::Buffer texBuffer = { reader.ReadBytes(texDataSize), texDataSize };
+    Buffer texBuffer = { texDataSize, reader.ReadBytes(texDataSize) };
     success = texBuffer.data != nullptr;
     if (success)  // set properties
     {
@@ -115,7 +115,7 @@ bool Texture::OnLoaded(size_t size, uint8_t const* buffer)
 
       if (CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
       {
-        m_data.assign(buffer, buffer + size);
+        m_data.assign(buffer.data, buffer.data + buffer.size);
       }
     }
   }

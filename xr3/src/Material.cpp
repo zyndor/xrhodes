@@ -53,10 +53,10 @@ public:
     m_states[Hash::String("wireframe")] = Gfx::F_STATE_WIREFRAME;
   }
 
-  bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
+  bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
-    XonObject* root = XonBuildTree(reinterpret_cast<char const*>(buffer), size);
+    XonObject* root = XonBuildTree(buffer.As<char const>(), buffer.size);
     bool success = root != nullptr;
     if (success)  // process stage flags
     {
@@ -248,11 +248,11 @@ void Material::Apply() const
 }
 
 //==============================================================================
-bool Material::OnLoaded(size_t size, uint8_t const * buffer)
+bool Material::OnLoaded(Buffer buffer)
 {
   auto flags = GetFlags();
 
-  BufferReader  reader(buffer, size);
+  BufferReader  reader(buffer);
   uint8_t numTextures;
   bool success = reader.Read(m_stateFlags) && reader.Read(numTextures);
 

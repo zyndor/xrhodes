@@ -523,7 +523,7 @@ struct Context
           ext += 3;
         }
         size_t span = strcspn(ext, " ");
-        extensions.insert({ (uint8_t const*)ext, span });
+        extensions.insert({ span, (uint8_t const*)ext });
         
         ext += span;
         if (*ext == ' ')
@@ -549,7 +549,7 @@ struct Context
         {
           ext += 3;
         }
-        extensions.insert({ (uint8_t const*)ext, strlen(ext) });
+        extensions.insert({ strlen(ext), (uint8_t const*)ext });
       }
     }
 
@@ -557,7 +557,7 @@ struct Context
     for (auto& i : s_extensions)
     {
       i.supported = extensions.end() !=
-        extensions.find(Buffer{ (uint8_t const*)i.name, strlen(i.name) });
+        extensions.find({ strlen(i.name), (uint8_t const*)i.name });
     }
   }
 

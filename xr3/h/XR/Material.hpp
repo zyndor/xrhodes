@@ -56,9 +56,9 @@ public:
   void Apply() const;
 
   // Inherited via Asset
-  virtual bool OnLoaded(size_t size, uint8_t const * buffer) override;
+  bool OnLoaded(Buffer buffer) override;
 
-  virtual void OnUnload() override;
+  void OnUnload() override;
 
 private:
   uint32_t      m_stateFlags;

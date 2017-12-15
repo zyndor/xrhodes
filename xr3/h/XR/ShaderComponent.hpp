@@ -33,7 +33,7 @@ public:
     return m_handle;
   }
 
-  bool OnLoaded(size_t size, uint8_t const * buffer) override;
+  bool OnLoaded(Buffer buffer) override;
   void OnUnload() override;
 
 protected:

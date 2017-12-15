@@ -7,8 +7,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
-#include <cstdint>
+#include "XR/Buffer.hpp"
 
 namespace XR
 {
@@ -20,9 +19,8 @@ class BufferReader
 {
 public:
   // structors
-  explicit BufferReader(uint8_t const* buffer, size_t size)
-  : m_buffer(buffer),
-    m_size(size)
+  BufferReader(Buffer const& buffer)
+  : m_buffer(buffer)
   {}
 
   // general
@@ -32,12 +30,12 @@ public:
   template <typename T>
   bool  Read(T& val)
   {
-    bool result = sizeof(T) <= m_size;
-    if(result)
+    bool result = sizeof(T) <= m_buffer.size;
+    if (result)
     {
-      memcpy(reinterpret_cast<uint8_t*>(&val), m_buffer, sizeof(T));
-      m_buffer += sizeof(T);
-      m_size -= sizeof(T);
+      memcpy(reinterpret_cast<uint8_t*>(&val), m_buffer.data, sizeof(T));
+      m_buffer.data += sizeof(T);
+      m_buffer.size -= sizeof(T);
     }
     return result;
   }
@@ -49,11 +47,11 @@ public:
   uint8_t const* ReadBytes(size_t size)
   {
     uint8_t const* p = nullptr;
-    if(size <= m_size)
+    if (size <= m_buffer.size)
     {
-      p = m_buffer;
-      m_buffer += size;
-      m_size -= size;
+      p = m_buffer.data;
+      m_buffer.data += size;
+      m_buffer.size -= size;
     }
     return p;
   }
@@ -61,15 +59,14 @@ public:
   ///@return Number of bytes still readable.
   size_t GetRemainingSize() const
   {
-    return m_size;
+    return m_buffer.size;
   }
 
 private:
   // data
-  uint8_t const* m_buffer;
-  size_t m_size;
+  Buffer m_buffer;
 };
 
-} // XR
+}
 
-#endif //XR_BUFFERREADER_HPP
+#endif

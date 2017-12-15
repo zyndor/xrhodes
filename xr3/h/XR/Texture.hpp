@@ -44,8 +44,8 @@ public:
   ///@brief Binds texture to its target, for the given texture @a stage.
   void Bind(uint32_t stage) const;
 
-  virtual bool OnLoaded(size_t size, uint8_t const* buffer) override;
-  virtual void OnUnload() override;
+  bool OnLoaded(Buffer buffer) override;
+  void OnUnload() override;
   
 private:
   // data

@@ -13,6 +13,7 @@
 #include "XR/Counter.hpp"
 #include "XR/Hash.hpp"
 #include "XR/Linked.hpp"
+#include "XR/Buffer.hpp"
 #include "XR/fundamentals.hpp"
 #include "XR/memory.hpp"
 #include "XR/utils.hpp"
@@ -166,7 +167,7 @@ public:
     /// @a data is what's passed to Asset::ProcessData() when loading; @a dependencies
     /// are paths to assets which will be loaded by the Manager prior to the
     /// loading of the given asset.
-    virtual bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,
+    virtual bool Build(char const* rawNameExt, Buffer buffer,
       std::vector<FilePath>& dependencies, std::ostream& data) const = 0;
   };
 
@@ -381,7 +382,7 @@ public:
   }
 
   ///@brief Loads the asset with the given source data.
-  bool ProcessData(size_t size, uint8_t const* buffer);
+  bool ProcessData(Buffer const& buffer);
 
   ///@brief Unloads the Asset (calling OnUnload()) only if it has been loaded.
   /// If it has, or if the ErrorFlag was set, the private flags are cleared.
@@ -415,7 +416,7 @@ protected:
 
   // virtual
   ///@brief Called when asset data is loaded -- by Load().
-  virtual bool OnLoaded(size_t size, uint8_t const* buffer) = 0;
+  virtual bool OnLoaded(Buffer buffer) = 0;
 
   ///@brief Called when unloading of Asset data is requested.
   ///@note For the concrete resource type, this should happen on the same thread
@@ -541,7 +542,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   {\
   public:\
     assetType##Builder(): XR::Asset::Builder(assetType::kTypeId) {}\
-    bool Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
+    bool Build(char const* rawNameExt, Buffer buffer,\
       std::vector<FilePath>& dependencies, std::ostream& data) const override;\
   } s_builder##assetType;
 #else
@@ -550,7 +551,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 
 ///@brief Signature for the Build() function of @a assetType.
 #define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
-  bool assetType##Builder::Build(char const* rawNameExt, uint8_t const* buffer, size_t size,\
+  bool assetType##Builder::Build(char const* rawNameExt, Buffer buffer,\
     std::vector<FilePath>& dependencies, std::ostream& data) const
 
 #endif //XR_ASSET_HPP

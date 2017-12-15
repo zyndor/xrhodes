@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 #include "XR/Asset.hpp"
 #include "XR/Hash.hpp"
+#include "XR/BufferReader.hpp"
 #include "XR/FileWriter.hpp"
 
 #include <random>
@@ -48,12 +49,12 @@ namespace XR
   {
     XR_ASSET_DECL(TestAsset)
 
-    virtual bool OnLoaded(size_t size, uint8_t const* buffer) override
+    virtual bool OnLoaded(Buffer buffer) override
     {
-      AssertEq(size, sizeof(histogram));
+      AssertEq(buffer.size, sizeof(histogram));
       for (int i = 0; i < XR_ARRAY_SIZE(histogram); ++i)
       {
-        int x = reinterpret_cast<int const*>(buffer)[i];
+        int x = reinterpret_cast<int const*>(buffer.data)[i];
         histogram[i] = x;
       }
 
@@ -78,11 +79,10 @@ namespace XR
 
     int histogram[256] = {};
 
-    auto end = buffer + size;
-    while (buffer < end)
+    BufferReader reader(buffer);
+    while (reader.GetRemainingSize() > 0)
     {
-      ++histogram[*buffer];
-      ++buffer;
+      ++histogram[*reader.ReadBytes(1)];
     }
 
     data.write(reinterpret_cast<char*>(histogram), sizeof(histogram));
@@ -165,7 +165,7 @@ namespace XR
     static std::vector<Asset::DescriptorCore> s_order;
 
     // Inherited via Asset
-    virtual bool OnLoaded(size_t size, uint8_t const * buffer) override
+    virtual bool OnLoaded(Buffer buffer) override
     {
       s_order.push_back(GetDescriptor());
       return true;
@@ -185,22 +185,22 @@ namespace XR
 #ifdef ENABLE_ASSET_BUILDING
   XR_ASSET_BUILDER_BUILD_SIG(DependantTestAsset)
   {
-    auto start = buffer;
-    bool eol = !buffer || (*buffer == '\r' || *buffer == '\n') || size == 0;
+    auto start = buffer.data;
+    bool eol = !buffer.data || (*buffer.data == '\r' || *buffer.data == '\n') || buffer.size == 0;
     FilePath path;
-    while (size > 0)
+    while (buffer.size > 0)
     {
-      ++buffer;
-      --size;
+      ++buffer.data;
+      --buffer.size;
 
-      bool isEol = (*buffer == '\r' || *buffer == '\n') || size == 0;
+      bool isEol = (*buffer.data == '\r' || *buffer.data == '\n') || buffer.size == 0;
       if (isEol)
       {
         if(!eol)
         {
-          path.assign((char const*)start, buffer - start);
+          path.assign((char const*)start, buffer.data - start);
           dependencies.push_back(path);
-          start = buffer;
+          start = buffer.data;
         }
         ++start;
       }

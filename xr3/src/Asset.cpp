@@ -84,7 +84,7 @@ struct LoadJob : Worker::Job
 
   bool ProcessData()
   {
-    return asset->ProcessData(m_data.size(), m_data.data());
+    return asset->ProcessData({ m_data.size(), m_data.data() });
   }
 
 private:
@@ -710,7 +710,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
     std::ostringstream assetData;
     if (!done)  // build asset
     {
-      done = !iFind->second->Build(assetPath.GetNameExt(), fb.GetData(), fb.GetSize(),
+      done = !iFind->second->Build(assetPath.GetNameExt(), { fb.GetSize(), fb.GetData() },
         dependencies, assetData);
       if (done)
       {
@@ -838,13 +838,13 @@ Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
 }
 
 //==============================================================================
-bool Asset::ProcessData(size_t size, uint8_t const* buffer)
+bool Asset::ProcessData(Buffer const& buffer)
 {
   OnUnload();
 
   XR_ASSERTMSG(Asset, !CheckAllMaskBits(m_flags, LoadingFlag),
     ("Loading is already in progress; it's bound to clobber what's being set."));
-  bool success = OnLoaded(size, buffer);
+  bool success = OnLoaded(buffer);
   if (success)
   {
     OverrideFlags(Asset::ProcessingFlag, Asset::ReadyFlag);
