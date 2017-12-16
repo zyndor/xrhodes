@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Color.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
@@ -61,7 +60,7 @@ public:
   void OnUnload() override;
 
 private:
-  uint32_t      m_stateFlags;
+  uint32_t      m_stateFlags = 0;
   Texture::Ptr  m_textureStages[kMaxTextureStages];
   Shader::Ptr   m_shader;
 };

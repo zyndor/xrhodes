@@ -50,7 +50,7 @@ public:
     m_states[Hash::String32("cullFront")] = Gfx::F_STATE_CULL_FRONT;
 
     // experimental
-    m_states[Hash::String("wireframe")] = Gfx::F_STATE_WIREFRAME;
+    m_states[Hash::String32("wireframe")] = Gfx::F_STATE_WIREFRAME;
   }
 
   bool Build(char const* rawNameExt, Buffer buffer,
