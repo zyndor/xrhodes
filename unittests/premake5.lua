@@ -42,12 +42,14 @@ project "unittests"
 			
 			"SDL2",
 			--"SDL2_mixer",
+			
+			"tinyxml2",
         }
     
         libdirs
         {
             "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
-            "../external/tinyxml2/lib/$(PlatformShortName)-$(Configuration)",
+            "../external/tinyxml2/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
             "../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
             "../external/SDL2_mixer/lib/"..target_env.."/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
