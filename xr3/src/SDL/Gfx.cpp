@@ -84,7 +84,6 @@ const GLenum kPrimitiveTypes[] =
   GL_LINE_STRIP,
   GL_TRIANGLES,
   GL_TRIANGLE_STRIP,
-  GL_QUADS
 };
 
 //=============================================================================
@@ -524,7 +523,7 @@ struct Context
         }
         size_t span = strcspn(ext, " ");
         extensions.insert({ span, (uint8_t const*)ext });
-        
+
         ext += span;
         if (*ext == ' ')
         {
