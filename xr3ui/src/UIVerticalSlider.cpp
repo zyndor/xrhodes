@@ -87,12 +87,12 @@ bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionEvent& e )
 }
 
 //==============================================================================
-void UIVerticalSlider::Render() const
+void UIVerticalSlider::Render(IUIRenderer& renderer) const
 {
   // render the rail
   if (sprite.GetMaterial())
   {
-    UIImage::Render();
+    UIImage::Render(renderer);
   }
 
   // render the slider
@@ -105,51 +105,15 @@ void UIVerticalSlider::Render() const
   int right(left + sliderSprite.GetQuadWidth());
   int bottom(top + sliderSprite.GetQuadHeight());
 
-  FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(Vector3),
-    Sprite::kNumVertices));
-  pFbVerts->Set(Sprite::VI_NW, Vector3(left, top, .0f));
-  pFbVerts->Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-  pFbVerts->Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-  pFbVerts->Set(Sprite::VI_NE, Vector3(right, top, .0f));
+  auto verts = renderer.NewSprite(sliderSprite.GetMaterial());
+  verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);
+  verts[Sprite::VI_SW].pos = Vector3(left, bottom, .0f);
+  verts[Sprite::VI_SE].pos = Vector3(right, bottom, .0f);
+  verts[Sprite::VI_NE].pos = Vector3(right, top, .0f);
 
-  if (sliderSprite.GetMaterial() != sprite.GetMaterial())
-  {
-    sliderSprite.GetMaterial()->Apply();
-  }
+  sliderSprite.CopyUVsTo(verts);
 
-  Renderer::SetAmbientColor(color);
-
-  Renderer::SetUVStream(*sliderSprite.CopyUVs());
-  Renderer::SetVertStream(*pFbVerts);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
-}
-
-//==============================================================================
-void UIVerticalSlider::Render( UIRenderer* pRenderer ) const
-{
-  // render the rail
-  if (sprite.GetMaterial())
-  {
-    UIImage::Render(pRenderer);
-  }
-
-  // render the slider
-  XR_ASSERTMSG(UIVerticalSlider, sliderSprite.GetMaterial() != nullptr,
-    ("Material needs to be set in sliderSprite before Render()"));
-
-  int left(x + w / 2 - Round(sliderSprite.GetHalfWidth() +
-    sliderSprite.GetLeftPadding()));
-  int top(y + CalculateValue() + sliderSprite.GetTopPadding());
-  int right(left + sliderSprite.GetQuadWidth());
-  int bottom(top + sliderSprite.GetQuadHeight());
-
-  FloatBuffer  fbVerts(pRenderer->NewSprite(sliderSprite.GetMaterial(),
-    sliderSprite.GetUVs(), color));
-  fbVerts.Set(Sprite::VI_NW, Vector3(left, top, .0f));
-  fbVerts.Set(Sprite::VI_SW, Vector3(left, bottom, .0f));
-  fbVerts.Set(Sprite::VI_SE, Vector3(right, bottom, .0f));
-  fbVerts.Set(Sprite::VI_NE, Vector3(right, top, .0f));
+  _ApplyColor(verts);
 }
 
 } // XR

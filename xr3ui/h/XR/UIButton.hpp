@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "UIColoredElement.hpp"
 #include "XR/utils.hpp"
 #include "XR/Sprite.hpp"
@@ -59,8 +58,7 @@ public:
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
   virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
 
-  virtual void  Render() const;
-  virtual void  Render(UIRenderer* pRenderer) const;
+  void  Render(IUIRenderer& pRenderer) const override;
 
   void  OnPressed();
   void  OnReleased();
@@ -79,7 +77,7 @@ protected:
   const Rect*  m_pActiveArea; // no ownership
 
   uint8_t m_state;
-  
+
   SVector2  m_lastTouch;
 };
 

@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "UIGrowingLayoutBase.hpp"
 
 namespace XR
@@ -38,7 +37,7 @@ protected:
 inline
 int UIHorizontalLayout::CalculateElementsExtent() const
 {
-  return m_lElements.empty() ? 0 : (m_growDir == GD_POSITIVE ? 
+  return m_lElements.empty() ? 0 : (m_growDir == GD_POSITIVE ?
     (m_lElements.back()->CalculateRight() - m_lElements.front()->x) :
     (m_lElements.front()->CalculateRight() - m_lElements.back()->x));
 }

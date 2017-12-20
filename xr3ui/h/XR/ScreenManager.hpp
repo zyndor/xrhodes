@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Screen.hpp"
 #include "UIRenderer.hpp"
 
@@ -25,18 +24,17 @@ public:
   // general
   UIContainer&        GetContainer();
   UIEventNotifier&    GetNotifier();
-  
+
   void                Change(Screen& screen, int32_t delayMs);
   void                Push(Screen& screen, int32_t delayMs);
   void                Pop(int32_t delayMs);
-  
+
   void                Update(int32_t ms);
 
-  void                Render();
-  void                Render(UIRenderer& r);
+  void                Render(IUIRenderer& r);
 
   void                Shutdown();
-  
+
 protected:
   // types
   typedef std::list<Screen*>  ScreenList;
@@ -44,10 +42,10 @@ protected:
   // static
   ScreenList          m_stack; // no ownership
   Screen*             m_pPrevious;  // no ownership
-  
+
   UIContainer         m_container;
   UIEventNotifier     m_notifier;
-  
+
   // internal
   void  _ClearExiting();
 };

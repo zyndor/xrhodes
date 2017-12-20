@@ -19,11 +19,7 @@ UISpacer::~UISpacer()
 {}
 
 //==============================================================================
-void UISpacer::Render() const
-{}
-
-//==============================================================================
-void UISpacer::Render( UIRenderer* pRenderer ) const
+void UISpacer::Render(IUIRenderer& renderer) const
 {}
 
 } // XR

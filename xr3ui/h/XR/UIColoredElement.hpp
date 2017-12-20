@@ -7,10 +7,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/maths.hpp"
 #include "XR/Sprite.hpp"
 #include "UIElement.hpp"
+#include "IUIRenderer.hpp"
 
 namespace XR
 {
@@ -29,7 +29,9 @@ public:
 
 protected:
   // internal
-  void _CalculateSpriteVerts(const Sprite* pSprite, FloatBuffer& fbVerts) const;
+  void _CalculateSpriteVerts(const Sprite* pSprite,
+    IUIRenderer::Vertex verts[Sprite::kNumVertices]) const;
+  void _ApplyColor(IUIRenderer::Vertex verts[Sprite::kNumVertices]) const;
 };
 
 } // XR

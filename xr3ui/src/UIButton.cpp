@@ -100,39 +100,17 @@ bool  UIButton::OnMouseMotion(const Input::MouseMotionEvent& e )
 }
 
 //==============================================================================
-void UIButton::Render() const
+void UIButton::Render(IUIRenderer& renderer) const
 {
   const Sprite* pSprite(arSprite + GetSpriteId());
   XR_ASSERTMSG(UIButton, pSprite->GetMaterial() != nullptr,
     ("Material needs to be set in UIButton::arSprites[%d] before Render()",
     GetSpriteId()));
 
-  FloatBuffer* pFbVerts = Renderer::AllocBuffer(sizeof(Vector3),
-    Sprite::kNumVertices);
-  _CalculateSpriteVerts(pSprite, *pFbVerts);
-
-  FloatBuffer* pFbUVs = pSprite->CopyUVs();
-
-  pSprite->GetMaterial()->Apply();
-  Renderer::SetAmbientColor(color);
-
-  Renderer::SetVertStream(*pFbVerts);
-  Renderer::SetUVStream(*pFbUVs);
-
-  Renderer::DrawPrims(PrimType::TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
-}
-
-//==============================================================================
-void UIButton::Render( UIRenderer* pRenderer ) const
-{
-  const Sprite* pSprite(arSprite + GetSpriteId());
-  XR_ASSERTMSG(UIButton, pSprite->GetMaterial() != nullptr,
-    ("Material needs to be set in UIButton::arSprites[%d] before Render()",
-    GetSpriteId()));
-
-  FloatBuffer  fbVerts = pRenderer->NewSprite(pSprite->GetMaterial(),
-    pSprite->GetUVs(), color);
-  _CalculateSpriteVerts(pSprite, fbVerts);
+  auto verts = renderer.NewSprite(pSprite->GetMaterial());
+  pSprite->CopyUVsTo(verts);
+  _CalculateSpriteVerts(pSprite, verts);
+  _ApplyColor(verts);
 }
 
 //==============================================================================
@@ -140,10 +118,10 @@ void  UIButton::SetSprites(const Sprite* pSprite, float scale)
 {
   XR_ASSERT(UIButton, pSprite != 0);
   arSprite[S_UP] = arSprite[S_DOWN] = arSprite[S_OFF] = *pSprite;
-  
+
   SetSizeToSprite(scale);
 }
-  
+
 //==============================================================================
 void  UIButton::SetSprites(const Sprite* arpSprite[kNumStates], float scale)
 {

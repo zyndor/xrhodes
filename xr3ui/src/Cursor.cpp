@@ -127,20 +127,11 @@ void  Cursor::Update(int ms)
 }
 
 //==============================================================================
-void  Cursor::Render()
+void  Cursor::Render(IUIRenderer& r)
 {
   if(m_isEnabled)
   {
-    m_image.Render();
-  }
-}
-
-//==============================================================================
-void  Cursor::Render(UIRenderer& r)
-{
-  if(m_isEnabled)
-  {
-    m_image.Render(&r);
+    m_image.Render(r);
   }
 }
 

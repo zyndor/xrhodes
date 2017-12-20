@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include <list>
 #include "XR/utils.hpp"
 #include "XR/Rect.hpp"
@@ -19,7 +18,7 @@ namespace XR
 //==============================================================================
 class UIContainer;
 class UIEventNotifier;
-class UIRenderer;
+class IUIRenderer;
 
 //==============================================================================
 class UIElement:  public Rect
@@ -33,23 +32,20 @@ public:
     AL_HIGH,  // as in on the axis; right / bottom
     AL_NOALIGN
   };
-  
+
   typedef std::list<UIElement*> List;
 
   // static
   static void  OnChangeCaller(void* pData);
-  
+
   // structors
   UIElement();
   UIElement(int w, int h);
   virtual ~UIElement();
 
   // virtual
-  ///@brief Renders the UIElement.
-  virtual void Render() const =0;
-
   ///@brief Renders the UIElement using a UIRenderer.
-  virtual void Render(UIRenderer* pRenderer) const =0;
+  virtual void Render(IUIRenderer& renderer) const =0;
 
   // general
   ///@return  A pointer to the container the UIElement is added to, if any.
@@ -58,7 +54,7 @@ public:
   ///@brief Sets the UIContainer pointed to by @a pContainer as the parent of
   /// this UIElement.
   void          SetParent(UIContainer* pContainer);
-  
+
   ///@brief Calculates the x coordinate of the UIElement's right side based on
   /// position and width.
   int           CalculateRight() const;
@@ -119,7 +115,7 @@ public:
   ///@brief Handles an MOUSE_ACTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
-  
+
   ///@brief Handles an MOUSE_MOTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
   virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);

@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "UIVerticalLayout.hpp"
 
 namespace XR
@@ -33,8 +32,7 @@ public:
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
   virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
 
-  virtual void  Render() const;
-  virtual void  Render(UIRenderer* pRenderer) const;
+  void  Render(IUIRenderer& renderer) const override;
 
 protected:
   // data

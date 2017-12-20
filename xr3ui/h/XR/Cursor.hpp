@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/Input.hpp"
 #include "UIImage.hpp"
 
@@ -29,12 +28,11 @@ public:
   void  SetSprite(const Sprite* pSprite);
   void  SetEnabled(bool state);
   void  SetPosition(int x, int y);
- 
+
   void  Wake();
 
   void  Update(int ms);
-  void  Render();
-  void  Render(UIRenderer& r);
+  void  Render(IUIRenderer& r);
 
 private:
   // static

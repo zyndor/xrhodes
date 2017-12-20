@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "UIImage.hpp"
 
 namespace XR
@@ -22,12 +21,11 @@ public:
   float vSplit;
 
   // structors
-  UIImagePanel();  
+  UIImagePanel();
   virtual ~UIImagePanel();
 
   // general use
-  virtual void Render() const;
-  virtual void Render(UIRenderer* pRenderer) const;
+  virtual void Render(IUIRenderer& renderer) const;
 };
 
 } // XR

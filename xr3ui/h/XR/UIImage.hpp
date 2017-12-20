@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/Sprite.hpp"
 #include "UIColoredElement.hpp"
 
@@ -22,15 +21,14 @@ public:
   Sprite  sprite;
 
   // structors
-  UIImage();  
+  UIImage();
   virtual ~UIImage();
 
   // general use
   void  SetSprite(const Sprite* pSprite, float scale = 1.0f);
   void  SetSizeToSprite(float scale = 1.0f);
 
-  virtual void Render() const;
-  virtual void Render(UIRenderer* pRenderer) const;
+  virtual void Render(IUIRenderer& renderer) const;
 };
 
 } // XR
