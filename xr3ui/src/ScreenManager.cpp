@@ -35,7 +35,7 @@ void  ScreenManager::Change(Screen& screen, int32_t delayMs)
     m_stack.pop_back();
   }
   m_pPrevious = pPrevious;
-  
+
   m_stack.push_back(&screen);
   screen.Show(*this, delayMs);
 }
@@ -48,7 +48,7 @@ void  ScreenManager::Push(Screen& screen, int32_t delayMs)
   {
     pPrevious = m_stack.back();
     pPrevious->Unregister();
-  }  
+  }
   //m_pPrevious = pPrevious;  // probably not necessary - we only care if it isn't on the stack
 
   m_stack.push_back(&screen);
@@ -84,7 +84,7 @@ void  ScreenManager::Update(int32_t ms)
   {
     m_stack.back()->Update(ms);
   }
-  
+
   if (m_pPrevious != 0)
   {
     m_pPrevious->Update(ms);
@@ -96,15 +96,9 @@ void  ScreenManager::Update(int32_t ms)
 }
 
 //==============================================================================
-void  ScreenManager::Render()
+void  ScreenManager::Render(IUIRenderer& r)
 {
-  m_container.Render();
-}
-
-//==============================================================================
-void  ScreenManager::Render(UIRenderer& r)
-{
-  m_container.Render(&r);
+  m_container.Render(r);
 }
 
 //==============================================================================

@@ -5,15 +5,16 @@
 //
 //==============================================================================
 #include "XR/UIRenderer.hpp"
+#include "XR/IndexMesh.hpp"
 
 namespace XR
 {
 
 //==============================================================================
 UIRenderer::UIRenderer()
-: IndexMesh(),
+: m_hVertexFormat(Vertex::Register()),
   m_numSprites(0),
-  m_colors(),
+  m_vertices(),
   m_numSpritesRendered(0),
   m_numSpritesRenderable(0)
 {}
@@ -33,68 +34,20 @@ void UIRenderer::Init(int numSprites)
   m_materials.resize(numSprites);
 
   int numVertices(numSprites * Sprite::kNumVertices);
-  InitStreams(numVertices);
-  SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numSprites);
-  m_colors.SetBuffer(sizeof(Color), numVertices);
+  m_vertices.SetBuffer<Vertex>(numVertices);
+
+  IndexMeshCore imc;
+  imc.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numSprites);
+
+  auto& indexData = imc.GetIndices();
+  m_ibo = Gfx::CreateIndexBuffer({ indexData.size() * sizeof(uint16_t),
+    reinterpret_cast<uint8_t const*>(indexData.data()) }, 0);
 
   m_numSprites = numSprites;
 }
 
 //==============================================================================
-FloatBuffer  UIRenderer::NewSprite(Material::Ptr const& pMaterial,
-  const FloatBuffer& fbUV, Color color)
-{
-  XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
-    ("UIRenderer must be initialized before calling NewSprite()."));
-  XR_ASSERT(UIRenderer, m_numSpritesRenderable < m_numSprites);
-  XR_ASSERT(UIRenderer, pMaterial);
-
-  int iSprite(m_numSpritesRenderable);
-  ++m_numSpritesRenderable;
-
-  m_materials[iSprite] = pMaterial;
-
-  iSprite *= Sprite::kNumVertices;
-
-  XR_ASSERT(UIRenderer, fbUV.GetNumElements() == Sprite::kNumVertices);
-  m_uvs.Set(Sprite::kNumVertices, fbUV.Get<Vector2>(), iSprite);
-
-  for (int i = 0; i < Sprite::kNumVertices; ++i)
-  {
-    m_colors.Set(iSprite + i, color);
-  }
-
-  return FloatBuffer::Adapt(m_vertices, iSprite, Sprite::kNumVertices);
-}
-
-//==============================================================================
-FloatBuffer  UIRenderer::NewSprite(Material::Ptr const& material, Color color,
-  FloatBuffer& fbUV)
-{
-  XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
-    ("UIRenderer must be initialized before calling NewSprite()."));
-  XR_ASSERT(UIRenderer, m_numSpritesRenderable < m_numSprites);
-  XR_ASSERT(UIRenderer, material != nullptr);
-
-  int iSprite(m_numSpritesRenderable);
-  ++m_numSpritesRenderable;
-
-  m_materials[iSprite] = material;
-
-  iSprite *= Sprite::kNumVertices;
-  fbUV = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
-
-  for (int i = 0; i < Sprite::kNumVertices; ++i)
-  {
-    m_colors.Set(iSprite + i, color);
-  }
-
-  return FloatBuffer::Adapt(m_vertices, iSprite, Sprite::kNumVertices);
-}
-
-//==============================================================================
-FloatBuffer  UIRenderer::NewSprite(Material::Ptr const& pMaterial,
-  FloatBuffer& fbUV, FloatBuffer& fbColor)
+UIRenderer::Vertex*  UIRenderer::NewSprite(Material::Ptr const& pMaterial)
 {
   XR_ASSERTMSG(UIRenderer, m_numSprites > 0,
     ("UIRenderer must be initialized before calling NewSprite()."));
@@ -107,48 +60,39 @@ FloatBuffer  UIRenderer::NewSprite(Material::Ptr const& pMaterial,
   m_materials[iSprite] = pMaterial;
 
   iSprite *= Sprite::kNumVertices;
-  fbUV = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
-  fbColor = FloatBuffer::Adapt(m_uvs, iSprite, Sprite::kNumVertices);
 
-  return FloatBuffer::Adapt(m_vertices, iSprite, Sprite::kNumVertices);
+  return m_vertices.Get<Vertex>() + iSprite;
 }
 
 //==============================================================================
 void UIRenderer::Render()
 {
-  int i(m_numSpritesRendered);
-  FloatBuffer  fbUVs;
-  FloatBuffer  fbCols;
-  FloatBuffer  fbVerts;
-  while (i < m_numSpritesRenderable)
-  {
-    Material::Ptr*  pMaterial(m_materials.data() + i);
+  auto verts = m_vertices.Get<Vertex>() + m_numSpritesRendered * Sprite::kNumVertices;
 
-    int i1(i + 1);
-    Material::Ptr*  pMatCompare(m_materials.data() + i1);
-    while (i1 < m_numSpritesRenderable && *pMatCompare == *pMaterial)
+  auto i = m_materials.begin() + m_numSpritesRendered;
+  auto iEnd = i + (m_numSpritesRenderable - m_numSpritesRendered);
+  while (i != iEnd)
+  {
+    auto iCompare = i + 1;
+    while (iCompare != iEnd && *iCompare == *i)
     {
-      ++i1;
-      ++pMatCompare;
+      ++iCompare;
     }
 
-    int numSprites(i1 - i);
-    int numVertices(numSprites * Sprite::kNumVertices);
+    const int numSprites = iCompare - i;
+    const int numVertices = numSprites * Sprite::kNumVertices;
+    const int numIndices = numSprites * Sprite::kNumIndices;
 
-    int iStart(i * Sprite::kNumVertices);
-    
-    fbUVs = FloatBuffer::Adapt(m_uvs, iStart, numVertices);
-    fbCols = FloatBuffer::Adapt(m_colors, iStart, numVertices);
-    fbVerts = FloatBuffer::Adapt(m_vertices, iStart, numVertices);
+    auto vertsBytes = reinterpret_cast<uint8_t const*>(verts);
+    Gfx::VertexBufferHandle vbo = Gfx::CreateVertexBuffer(m_hVertexFormat,
+      { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
 
-    (*pMaterial)->Apply();
-    Renderer::SetUVStream(fbUVs, 0);
-    Renderer::SetColStream(fbCols);
-    Renderer::SetVertStream(fbVerts);
-    Renderer::DrawPrims(PrimType::TRI_LIST, &m_indices[0], numSprites *
-      Sprite::kNumIndices);
+    (*i)->Apply();
+    Gfx::Draw(vbo, m_ibo, PrimType::TRI_LIST, 0, numIndices);
+    Gfx::Destroy(vbo);
 
-    i = i1;
+    verts += numVertices;
+    i = iCompare;
   }
 
   m_numSpritesRendered = m_numSpritesRenderable;
@@ -174,11 +118,10 @@ void UIRenderer::Shutdown()
 
   std::vector<Material::Ptr>().swap(m_materials);
 
-  m_vertices.ReleaseData();
-  m_uvs.ReleaseData();
-  m_colors.ReleaseData();
-  IndexArray().swap(m_indices);
+  Gfx::Destroy(m_ibo);
+  m_ibo.Invalidate();
 
+  m_vertices.ReleaseData();
   m_numSprites = 0;
 }
 

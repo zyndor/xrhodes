@@ -116,24 +116,14 @@ void UIHorizontalScrollingLayout::_AlignElement( UIElement* pElem )
 }
 
 //==============================================================================
-void UIHorizontalScrollingLayout::Render() const
+void UIHorizontalScrollingLayout::Render(IUIRenderer& renderer) const
 {
-  Renderer::SetScissorRect(*this);
-  
-  UIHorizontalLayout::Render();
+  renderer.Render();
 
-  Renderer::ClearScissorRect();
-}
-
-//==============================================================================
-void UIHorizontalScrollingLayout::Render( UIRenderer* pRenderer ) const
-{
-  pRenderer->Render();
-  
   Renderer::SetScissorRect(*this);
 
-  UIHorizontalLayout::Render();
-  pRenderer->Render();
+  UIHorizontalLayout::Render(renderer);
+  renderer.Render();
 
   Renderer::ClearScissorRect();
 }
@@ -159,7 +149,7 @@ void UIHorizontalScrollingLayout::SetXOffset( int16_t xOffs )
       xOffs = minOffs;
     }
   }
-  
+
   if (m_xOffset != xOffs)
   {
     m_xOffset = xOffs;

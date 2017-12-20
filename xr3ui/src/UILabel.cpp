@@ -38,19 +38,19 @@ void UILabel::Render() const
   XR_ASSERT(UILabel, m_text.GetFont() != 0);
   m_text.GetFont()->GetMaterial()->Apply();
 
-  Renderer::SetColStream(*m_text.CreateColStream(color));
+  Renderer::SetAmbientColor(color);
 
   static Matrix m;
   Renderer::GetModelMatrix(m);
   Renderer::SetModelMatrix(Matrix(Vector3(float(x + w / 2), float(y + h / 2), .0f)));
-  m_text.Render();
+  m_text.RenderOnly(PrimType::TRI_LIST);
   Renderer::SetModelMatrix(m);
 }
 
 //==============================================================================
-void UILabel::Render( UIRenderer* pRenderer ) const
+void UILabel::Render(IUIRenderer& renderer) const
 {
-  pRenderer->Render();
+  renderer.Render();
   Render();
 }
 

@@ -29,7 +29,7 @@ MeshRenderer*  MeshRenderer::Clone() const
 }
 
 //==============================================================================
-void  MeshRenderer::SetMesh(BasicMesh* pMesh)
+void  MeshRenderer::SetMesh(IndexMesh<VertexFormat>* pMesh)
 {
   m_pMesh = pMesh;
 }
@@ -42,7 +42,8 @@ void  MeshRenderer::Render()
   // TODO: probably introduce interim RendererComponent with model[view] matrix
   // stack update, rather than regenerating the world transform from scratch.
   Renderer::SetModelMatrix(GetOwner()->GetWorldTransform());
-  m_pMesh->Render();
+  m_pMesh->GetMaterial()->Apply();
+  m_pMesh->RenderOnly(PrimType::TRI_LIST);
 }
 
 } // XR

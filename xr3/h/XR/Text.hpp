@@ -7,15 +7,18 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include <string>
 #include "Font.hpp"
 #include "IndexMesh.hpp"
+#include "Vertex.hpp"
 
 namespace XR {
 
 //==============================================================================
-class Text: public IndexMesh
+using TextVertexFormat =
+  Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
+
+class Text: public IndexMesh<TextVertexFormat>
 {
 public:
   // types
@@ -56,8 +59,6 @@ public:
   float         GetMaxLineWidth() const;
   float         GetHeight() const;
   
-  FloatBuffer*  CreateColStream(const Color& c) const;
-
   void          Clear();
   
 protected:

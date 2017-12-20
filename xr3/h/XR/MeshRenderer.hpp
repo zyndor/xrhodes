@@ -9,7 +9,8 @@
 //==============================================================================
 
 #include "Entity.hpp"
-#include "BasicMesh.hpp"
+#include "IndexMesh.hpp"
+#include "Vertex.hpp"
 
 namespace XR
 {
@@ -18,6 +19,13 @@ namespace XR
 class MeshRenderer:  public Entity::ComponentT<MeshRenderer>
 {
 public:
+  // types
+  using VertexFormat = Vertex::Format<Vertex::Pos<Vector3>,
+    Vertex::UV0<Vector2>,
+    Vertex::Normal,
+    Vertex::Tangent,
+    Vertex::Bitangent>;
+
   // structors
   MeshRenderer();
   ~MeshRenderer();
@@ -25,21 +33,21 @@ public:
   // general
   virtual MeshRenderer*  Clone() const;
   
-  BasicMesh*  GetMesh() const;  // no ownership transfer
-  void        SetMesh(BasicMesh* pMesh);  // no ownership transfer
+  IndexMesh<VertexFormat>*  GetMesh() const;  // no ownership transfer
+  void        SetMesh(IndexMesh<VertexFormat>* pMesh);  // no ownership transfer
   
   void        Render();
   
 protected:
   // data
-  BasicMesh*  m_pMesh;  // no ownership
+  IndexMesh<VertexFormat>*  m_pMesh;  // no ownership
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-BasicMesh*  MeshRenderer::GetMesh() const
+IndexMesh<MeshRenderer::VertexFormat>*  MeshRenderer::GetMesh() const
 {
   return  m_pMesh;
 }

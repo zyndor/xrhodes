@@ -79,44 +79,19 @@ bool  UICheckBox::OnMouseAction(const Input::MouseActionEvent& e )
 }
 
 //==============================================================================
-void UICheckBox::Render() const
+void UICheckBox::Render(IUIRenderer& renderer) const
 {
-  UIButton::Render();
-
-  if (IsSelected())
-  {
-    XR_ASSERTMSG(UICheckBox, setSprite.GetMaterial() != nullptr,
-      ("Material needs to be set in UICheckBox::setSprite before Render()"));
-
-    FloatBuffer* parVerts = Renderer::AllocBuffer(sizeof(Vector3),
-      Sprite::kNumVertices);
-    _CalculateSpriteVerts(&setSprite, *parVerts);
-
-    FloatBuffer* pUVs = setSprite.CopyUVs();
-
-    setSprite.GetMaterial()->Apply();
-    Renderer::SetAmbientColor(color);
-
-    Renderer::SetVertStream(*parVerts);
-    Renderer::SetUVStream(*pUVs);
-
-    Renderer::DrawPrims(PrimType::TRI_LIST, Sprite::karIndices, Sprite::kNumIndices);
-  }
-}
-
-//==============================================================================
-void UICheckBox::Render( UIRenderer* pRenderer ) const
-{
-  UIButton::Render(pRenderer);
+  UIButton::Render(renderer);
 
   if (IsSelected())
   {
     XR_ASSERTMSG(IW_ASSERTION_CHANNEL_DEFAULT, setSprite.GetMaterial() != nullptr,
       ("Material needs to be set in UICheckBox::setSprite before Render()"));
 
-    FloatBuffer fbVerts(pRenderer->NewSprite(setSprite.GetMaterial(),
-      setSprite.GetUVs(), color));
-    _CalculateSpriteVerts(&setSprite, fbVerts);
+    auto verts = renderer.NewSprite(setSprite.GetMaterial());
+    setSprite.CopyUVsTo(verts);
+    _CalculateSpriteVerts(&setSprite, verts);
+    _ApplyColor(verts);
   }
 }
 

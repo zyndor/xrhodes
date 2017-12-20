@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "UIElement.hpp"
 
 namespace XR
@@ -36,8 +35,7 @@ public:
 
   void                    SetSizeToContent();
 
-  virtual void            Render() const;
-  virtual void            Render(UIRenderer* pRenderer) const;
+  void  Render(IUIRenderer& renderer) const override;
 
   virtual void            OnChange();
 
@@ -50,7 +48,7 @@ protected:
 
   // internal use
   virtual void  _AlignElement(UIElement* pElem);
-  
+
   virtual void  _SetWidthToContent();
   virtual void  _SetHeightToContent();
 

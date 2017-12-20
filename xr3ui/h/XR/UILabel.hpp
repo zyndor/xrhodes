@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "UIColoredElement.hpp"
 #include "XR/Text.hpp"
 
@@ -38,7 +37,7 @@ public:
   void  SetVerticalAlignment(Text::VAlign val);
 
   int   GetLineWidth(int line) const;
-  
+
   void  SetWidthToText();
   void  SetHeightToText();
   void  SetSizeToText();
@@ -48,15 +47,17 @@ public:
   const Text& GetText() const;
 
   virtual void OnChange();
-  
-  virtual void Render() const;
-  virtual void Render(UIRenderer* pRenderer) const;
+
+  virtual void Render(IUIRenderer& renderer) const;
 
 protected:
   // data
   mutable Text  m_text;
   int16_t       m_oldWidth;
   int16_t       m_oldHeight;
+
+  // internal
+  void Render() const;  // deprecate
 };
 
 //==============================================================================

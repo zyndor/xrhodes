@@ -194,7 +194,7 @@ void  Text::Update()
   m_height = ceilf(m_pFont->CalcHeight((int)m_lines.size()));
   
   // generate uvs and coordinates
-  InitStreams(numGlyphsTotal * Sprite::kNumVertices);
+  AllocBuffer(numGlyphsTotal * Sprite::kNumVertices);
   SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, 
     Sprite::kNumVertices, numGlyphsTotal);
 
@@ -254,10 +254,11 @@ void  Text::Update()
         {
           // copy uvs
           const AABB& uvs(pGlyph->uvs);
-          m_uvs.Set(Sprite::VI_NW + vertOffset, Vector2(uvs.left, uvs.top));
-          m_uvs.Set(Sprite::VI_SW + vertOffset, Vector2(uvs.left, uvs.bottom));
-          m_uvs.Set(Sprite::VI_SE + vertOffset, Vector2(uvs.right, uvs.bottom));
-          m_uvs.Set(Sprite::VI_NE + vertOffset, Vector2(uvs.right, uvs.top));
+          auto verts = GetVertices() + vertOffset;
+          verts[Sprite::VI_NW].uv0 = Vector2(uvs.left, uvs.top);
+          verts[Sprite::VI_SW].uv0 = Vector2(uvs.left, uvs.bottom);
+          verts[Sprite::VI_SE].uv0 = Vector2(uvs.right, uvs.bottom);
+          verts[Sprite::VI_NE].uv0 = Vector2(uvs.right, uvs.top);
         
           // calculate vertices
           float x(fillHor + pGlyph->xOffs);
@@ -265,10 +266,10 @@ void  Text::Update()
           float x1(x + pGlyph->w);
           float y1(y + pGlyph->h);
 
-          m_vertices.Set(Sprite::VI_NW + vertOffset, Vector3(x, y, .0f));
-          m_vertices.Set(Sprite::VI_SW + vertOffset, Vector3(x, y1, .0f));
-          m_vertices.Set(Sprite::VI_SE + vertOffset, Vector3(x1, y1, .0f));
-          m_vertices.Set(Sprite::VI_NE + vertOffset, Vector3(x1, y, .0f));
+          verts[Sprite::VI_NW].pos = Vector3(x, y, .0f);
+          verts[Sprite::VI_SW].pos = Vector3(x, y1, .0f);
+          verts[Sprite::VI_SE].pos = Vector3(x1, y1, .0f);
+          verts[Sprite::VI_NE].pos = Vector3(x1, y, .0f);
           
           vertOffset += Sprite::kNumVertices;
           indexOffset += Sprite::kNumIndices;
@@ -296,19 +297,6 @@ float Text::GetMaxLineWidth() const
     }
   }
   return max;
-}
-
-//==============================================================================
-FloatBuffer*  Text::CreateColStream(const Color& c) const
-{
-  const int n(GetVertices().GetNumElements());
-  FloatBuffer* pCols(Renderer::AllocBuffer(sizeof(Color), n));
-  for(int i = 0; i < n; ++i)
-  {
-    pCols->Set(i, c);
-  }
-
-  return pCols;
 }
 
 } // XR

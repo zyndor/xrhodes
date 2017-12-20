@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "UIElement.hpp"
 
 namespace XR
@@ -22,8 +21,7 @@ public:
   ~UISpacer();
 
   // general
-  virtual void Render() const;
-  virtual void Render(UIRenderer* pRenderer) const;
+  void Render(IUIRenderer& renderer) const override;
 };
 
 } // XR

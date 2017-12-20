@@ -7,10 +7,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Renderer.hpp"
 #include "AABB.hpp"
 #include "BasicMesh.hpp"
+#include "Vertex.hpp"
 #include "XR/fundamentals.hpp"
 
 // TODO: Remove these includes.
@@ -20,7 +20,9 @@ namespace XR
 {
 
 //==============================================================================
-class Sprite: public  BasicMesh
+using SpriteVertexFormat = Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
+
+class Sprite: public BasicMesh<SpriteVertexFormat>
 {
   XR_MANAGED_DECL(Sprite)
 
@@ -52,20 +54,13 @@ public:
   static void Slice(AABB base, int across, int down, int maxSlices,
     Material::Ptr const& material, Sprite* sprites);
 
-  static FloatBuffer*   CopyWholeTextureUVs();
-  static void           CopyWholeTextureUVsTo(FloatBuffer& uvs);
-  static void           CopyWholeTextureUVsTo(size_t offset, FloatBuffer& uvs);
-
-  static void           CopyIndicesTo(uint16_t* indices, size_t offset);
+  static void  CopyIndicesTo(uint16_t indices[kNumIndices]);
 
   // structors
   Sprite();
   ~Sprite();
 
   // general
-  ///@return  The material the Sprite is based on.
-  Material::Ptr GetMaterial() const;
-
   ///@return Whether the Sprite is created from 90 degrees clockwise rotated
   /// UVs. (Texture Packer rotated="y" does this.)
   bool        IsUVRotated() const;
@@ -94,22 +89,21 @@ public:
   ///@return  The offsetting that's been applied to the vertices so far.
   const Vector2& GetOffset() const;
 
-  ///@return  The array of UVs that make up the Sprite.
-  const FloatBuffer& GetUVs() const;
-  
-  ///@return  The array of vertices that make up the Sprite.
-  ///@return  An IW_GX_ALLOCated copy of the UVs' array.
-  FloatBuffer* CopyUVs() const;
-
-  ///@return  An IW_GX_ALLOCated copy of the vertices' array.
+  ///@deprecate Let the client handle the allocation.
+  ///@return  A renderer-allocated copy of the vertices' array.
   FloatBuffer* CopyVertices() const;
-  const FloatBuffer& GetVertices() const;
 
   ///@brief Copies the UVs to the supplied array.
-  void  CopyUVsTo(size_t offset, FloatBuffer& uvs) const;
+  template <typename VertexFormat>
+  void  CopyUVsTo(VertexFormat* verts) const;
+
+  ///@brief Copies the positions to the supplied array.
+  template <typename VertexFormat>
+  void  CopyPositionsTo(VertexFormat* verts) const;
 
   ///@brief Copies the vertices to the supplied array.
-  void  CopyVerticesTo(size_t offset, FloatBuffer& verts) const;
+  template <typename VertexFormat>
+  void  CopyVerticesTo(VertexFormat* verts) const;
 
   void  SetHalfSize(int32_t hw, int32_t hh, bool calculateVertices = true);
 
@@ -119,8 +113,6 @@ public:
   // from a rotated definition (90 degs clockwise)
   void  SetUVsRotated(const AABB& uvs);
   void  SetUVsRotatedProportional(const AABB& uvs);
-
-  void  SetMaterial(Material::Ptr const& pMaterial);
 
   void  Scale(float s);
   void  Scale(float sx, float sy);
@@ -136,44 +128,23 @@ public:
   void  FlipY();
 
   void  OffsetVertices(float x, float y);
-  void  OffsetVertices(const Vector2& offset);
-
-  virtual void  Render();
-  void          RenderRaw();
 
 protected:
   // data
-  float         m_halfWidth;
-  float         m_halfHeight;
-  bool          m_isUVRotated;
+  float m_halfWidth;
+  float m_halfHeight;
+  bool  m_isUVRotated;
 
-  Vector2       m_offset;
+  Vector2 m_offset;
 };
 
 //==============================================================================
 //implementation
 //==============================================================================
 inline
-FloatBuffer* Sprite::CopyWholeTextureUVs()
-{
-  FloatBuffer* pUVs(Renderer::AllocBuffer(sizeof(Vector2), kNumVertices));
-  CopyWholeTextureUVsTo(0, *pUVs);
-  return pUVs;
-}
-
-//==============================================================================
-inline
 bool Sprite::IsUVRotated() const
 {
   return m_isUVRotated;
-}
-
-//==============================================================================
-inline
-void  Sprite::Render()
-{
-  m_material->Apply();
-  RenderRaw();
 }
 
 //==============================================================================
@@ -194,65 +165,46 @@ float Sprite::GetHalfHeight() const
 inline
 float Sprite::GetQuadWidth() const
 {
-  return m_vertices.Get<Vector3>(VI_NE).x - m_vertices.Get<Vector3>(VI_NW).x;
+  auto verts = GetVertices();
+  return verts[VI_NE].pos.x - verts[VI_NW].pos.x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetQuadHeight() const
 {
-  return m_vertices.Get<Vector3>(VI_SW).y - m_vertices.Get<Vector3>(VI_NW).y;
+  auto verts = GetVertices();
+  return verts[VI_SW].pos.y - verts[VI_NW].pos.y;
 }
 
 //==============================================================================
 inline
 float Sprite::GetLeftPadding() const
 {
-  return m_halfWidth + m_vertices.Get<Vector3>(VI_NW).x;
+  return m_halfWidth + GetVertices()[VI_NW].pos.x;
 }
   
 //==============================================================================
 inline
 float Sprite::GetTopPadding() const
 {
-  return m_halfHeight + m_vertices.Get<Vector3>(VI_NW).y;
+  return m_halfHeight + GetVertices()[VI_NW].pos.y;
 }
 
 //==============================================================================
 inline
 float Sprite::GetRightPadding() const
 {
-  return m_halfWidth - m_vertices.Get<Vector3>(VI_NE).x;
+  return m_halfWidth - GetVertices()[VI_NE].pos.x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetBottomPadding() const
 {
-  return m_halfHeight - m_vertices.Get<Vector3>(VI_SW).y;
-}
-  
-//==============================================================================
-inline
-const FloatBuffer& Sprite::GetUVs() const
-{
-  return m_uvs;
+  return m_halfHeight - GetVertices()[VI_SW].pos.y;
 }
 
-//==============================================================================
-inline
-const FloatBuffer& Sprite::GetVertices() const
-{
-  return m_vertices;
-}
-
-//==============================================================================
-inline
-Material::Ptr Sprite::GetMaterial() const
-{
-  return m_material;
-}
-  
 //==============================================================================
 inline
 const Vector2&  Sprite::GetOffset() const
@@ -262,38 +214,56 @@ const Vector2&  Sprite::GetOffset() const
 
 //==============================================================================
 inline
-FloatBuffer* Sprite::CopyUVs() const
-{
-  FloatBuffer* pFbUVs(Renderer::AllocBuffer(sizeof(Vector2), kNumVertices));
-  CopyUVsTo(0, *pFbUVs);
-  return pFbUVs;
-}
-
-//==============================================================================
-inline
 FloatBuffer* Sprite::CopyVertices() const
 {
-  FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(Vector2), kNumVertices));
-  CopyVerticesTo(0, *pFbVerts);
+  FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(SpriteVertexFormat), kNumVertices));
+  CopyVerticesTo(pFbVerts->Get<SpriteVertexFormat>());
   return pFbVerts;
 }
 
 //==============================================================================
+template <typename VertexFormat>
 inline
-void Sprite::CopyUVsTo(size_t offset, FloatBuffer& uvs) const
+void Sprite::CopyUVsTo(VertexFormat* verts) const
 {
-  XR_ASSERT(Sprite, uvs.GetElementSizeBytes() == sizeof(Vector2));
-  XR_ASSERT(Sprite, uvs.GetNumElements() >= offset + kNumVertices);
-  uvs.Set<Vector2>(kNumVertices, m_uvs.Get<Vector2>(), offset);
+  auto vertsEnd = verts + kNumVertices;
+  auto source = GetVertices();
+  while(verts != vertsEnd)
+  {
+    verts->uv0 = source->uv0;
+    ++verts;
+    ++source;
+  }
 }
 
 //==============================================================================
+template <typename VertexFormat>
 inline
-void Sprite::CopyVerticesTo(size_t offset, FloatBuffer& verts) const
+void Sprite::CopyPositionsTo(VertexFormat* verts) const
 {
-  XR_ASSERT(Sprite, verts.GetElementSizeBytes() == sizeof(Vector3));
-  XR_ASSERT(Sprite, verts.GetNumElements() >= offset + kNumVertices);
-  verts.Set<Vector3>(kNumVertices, m_uvs.Get<Vector3>());
+  auto vertsEnd = verts + kNumVertices;
+  auto source = GetVertices();
+  while (verts != vertsEnd)
+  {
+    verts->pos = source->pos;
+    ++verts;
+    ++source;
+  }
+}
+
+//==============================================================================
+template <typename VertexFormat>
+inline
+void Sprite::CopyVerticesTo(VertexFormat* verts) const
+{
+  auto vertsEnd = verts + kNumVertices;
+  auto source = GetVertices();
+  while (verts != vertsEnd)
+  {
+    *verts = *source;
+    ++verts;
+    ++source;
+  }
 }
 
 } // XR

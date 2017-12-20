@@ -22,17 +22,10 @@ UIContainer::~UIContainer()
 {}
 
 //==============================================================================
-void UIContainer::Render() const
+void UIContainer::Render(IUIRenderer& renderer) const
 {
   std::for_each(m_lElements.begin(), m_lElements.end(),
-    Caller<const UIElement>(&UIElement::Render));
-}
-
-//==============================================================================
-void UIContainer::Render(UIRenderer* pRenderer) const
-{
-  std::for_each(m_lElements.begin(), m_lElements.end(),
-    Caller<const UIElement, void, UIRenderer*>(&UIElement::Render, pRenderer));
+    Caller<const UIElement, void, IUIRenderer&>(&UIElement::Render, renderer));
 }
 
 //==============================================================================
@@ -52,9 +45,9 @@ bool  UIContainer::AddElement(UIElement* pElem)
     {
       pParent->RemoveElement(pElem);
     }
-    
+
     pElem->SetParent(this);
-    
+
     _AddChild(pElem);
   }
   //else

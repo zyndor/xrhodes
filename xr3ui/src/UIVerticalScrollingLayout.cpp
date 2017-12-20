@@ -116,24 +116,14 @@ void UIVerticalScrollingLayout::_AlignElement( UIElement* pElem )
 }
 
 //==============================================================================
-void UIVerticalScrollingLayout::Render() const
+void UIVerticalScrollingLayout::Render(IUIRenderer& renderer) const
 {
-  Renderer::SetScissorRect(*this);
-  
-  UIVerticalLayout::Render();
+  renderer.Render();
 
-  Renderer::ClearScissorRect();
-}
-
-//==============================================================================
-void UIVerticalScrollingLayout::Render( UIRenderer* pRenderer ) const
-{
-  pRenderer->Render();
-  
   Renderer::SetScissorRect(*this);
 
-  UIVerticalLayout::Render(pRenderer);
-  pRenderer->Render();
+  UIVerticalLayout::Render(renderer);
+  renderer.Render();
 
   Renderer::ClearScissorRect();
 }
@@ -159,7 +149,7 @@ void UIVerticalScrollingLayout::SetYOffset(int yOffs)
       yOffs = minOffs;
     }
   }
-  
+
   if (m_yOffset != yOffs)
   {
     m_yOffset = yOffs;
