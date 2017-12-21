@@ -10,29 +10,27 @@
 
 #include <map>
 #include "Sprite.hpp"
+#include "Asset.hpp"
 
 namespace XR
 {
 
 //==============================================================================
-class TexturePack
+///@brief A texture atlas based on TexturePacker's Generic XML format, with a
+/// simple addition: it supports a shaderPath attribute on the root element.
+class TexturePack: public Asset
 {
 public:
+  XR_ASSET_DECL(TexturePack)
+
   // types
   typedef std::map<uint32_t, Sprite>  SpriteMap;
 
-  // structors
-  TexturePack();
-  ~TexturePack();
+  // static
+  static Shader::Ptr* s_defaultShader;
 
   // general
-  ///@deprecated Asset::Manager integration in progress.
-  ///@brief Attempts to load a texture pack from TexturePacker's 'Generic XML'
-  /// format. Requires a material in the same location and name (but with '.mtl'
-  /// extension)as the texture in its definition.
-  bool              Load(char const* name, Asset::FlagType flags = 0);
-
-  Material::Ptr     GetMaterial() const;  // no ownership transfer
+  Material::Ptr     GetMaterial() const;
 
   size_t            CountSprites() const;
 
@@ -51,9 +49,12 @@ public:
 
   void              Clear();
 
+  bool OnLoaded(Buffer buffer) override;
+  void OnUnload() override;
+
 protected:
   // data
-  Material::Ptr  m_material;  // no ownership
+  Material::Ptr m_material;
   SpriteMap  m_sprites;
 };
 
@@ -63,7 +64,7 @@ protected:
 inline
 Material::Ptr TexturePack::GetMaterial() const
 {
-  return m_material; // no ownership transfer
+  return m_material;
 }
 
 //==============================================================================

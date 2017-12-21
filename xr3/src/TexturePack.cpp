@@ -7,6 +7,8 @@
 #include "XR/TexturePack.hpp"
 #include "XR/utils.hpp"
 #include "XR/FilePath.hpp"
+#include "XR/BufferReader.hpp"
+#include "XR/streamutils.hpp"
 #include "XR/debug.hpp"
 #include "tinyxml2.h"
 
@@ -14,9 +16,70 @@ namespace XR
 {
 
 //==============================================================================
+XR_ASSET_DEF(TexturePack, "xtpk", 1, "xtp")
+
+struct SpriteData
+{
+  SpriteVertexFormat  vertices[Sprite::kNumVertices];
+  Vector2 halfSize;
+  Vector2 offset;
+
+  void CalculatePositions(float baseWidth, float baseHeight)
+  {
+    float width = baseWidth;
+    float height = baseHeight;
+    bool rotated = Sprite::IsUVRotated(vertices);
+    if(rotated)
+    {
+      width *= (vertices[Sprite::VI_NE].uv0 - vertices[Sprite::VI_SE].uv0).Magnitude();
+      height *= (vertices[Sprite::VI_SW].uv0 - vertices[Sprite::VI_SE].uv0).Magnitude();
+    }
+    else
+    {
+      width *= (vertices[Sprite::VI_SE].uv0 - vertices[Sprite::VI_SW].uv0).Magnitude();
+      height *= (vertices[Sprite::VI_SW].uv0 - vertices[Sprite::VI_NW].uv0).Magnitude();
+    }
+
+    width *= .5f;
+    height *= .5f;
+    halfSize.x = width;
+    halfSize.y = height;
+
+    if(rotated)
+    {
+      std::swap(width, height);
+    }
+
+    vertices[Sprite::VI_NW].pos = Vector3(-width, height, .0f);
+    vertices[Sprite::VI_SW].pos = Vector3(-width, -height, .0f);
+    vertices[Sprite::VI_SE].pos = Vector3(width, -height, .0f);
+    vertices[Sprite::VI_NE].pos = Vector3(width, height, .0f);
+  }
+
+  void AddOffset(float x, float y)
+  {
+    offset.x += x;
+    offset.y += y;
+
+    Vector3 t(x, y, .0f);
+    vertices[Sprite::VI_NW].pos += t;
+    vertices[Sprite::VI_SW].pos += t;
+    vertices[Sprite::VI_SE].pos += t;
+    vertices[Sprite::VI_NE].pos += t;
+  }
+};
+
+using NumSpritesType = uint32_t;
+using SpriteNameHashType = uint32_t;
+
+#ifdef ENABLE_ASSET_BUILDING
+namespace
+{
+
 enum
 {
   TAG_IMAGE_PATH,
+  TAG_SHADER_PATH,
   TAG_WIDTH,
   TAG_HEIGHT,
   TAG_SPRITE,
@@ -25,16 +88,17 @@ enum
   TAG_Y,
   TAG_W,
   TAG_H,
-  Tag_OFFSET_X,
+  TAG_OFFSET_X,
   TAG_OFFSET_Y,
-  TAG_OFFSET_W,
-  TAG_OFFSET_H,
+  TAG_ORIGINAL_W,
+  TAG_ORIGINAL_H,
   TAG_ROTATED
 };
 
-static const char* const karTag[] =
+static const char* const kTags[] =
 {
   "imagePath",
+  "shaderPath",
   "width",
   "height",
   "sprite",
@@ -50,211 +114,208 @@ static const char* const karTag[] =
   "r"
 };
 
-//==============================================================================
-TexturePack::TexturePack()
-: m_sprites(),
-  m_material()
-{}
+XR_ASSET_BUILDER_DECL(TexturePack)
 
-//==============================================================================
-TexturePack::~TexturePack()
+XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 {
-  Clear();
-}
-
-//==============================================================================
-bool TexturePack::Load(char const* name, Asset::FlagType flags)
-{
-  XR_ASSERT(TexturePack, name != nullptr);
-  XR_ASSERT(TexturePack, strlen(name) > 0);
-
-  // clean up
-  m_sprites.clear();
-
   // load xml
   tinyxml2::XMLDocument doc;
-  bool  success = doc.LoadFile(name) == tinyxml2::XML_SUCCESS;
+  bool success = doc.Parse(buffer.As<char const>(), buffer.size) == tinyxml2::XML_SUCCESS;
 
-  tinyxml2::XMLElement* pElem(doc.RootElement());
+  tinyxml2::XMLElement* elem = doc.RootElement();
   if (success)
   {
-    success = pElem != nullptr;
+    success = elem != nullptr;
   }
 
-  const char* pTextureName = nullptr;
+  // Base texture name
+  const char* textureName = nullptr;
   if (success)
   {
-    pTextureName = pElem->Attribute(karTag[TAG_IMAGE_PATH]);
-
-    success = pTextureName != nullptr;
+    textureName = elem->Attribute(kTags[TAG_IMAGE_PATH]);
+    success = textureName != nullptr;
     if (!success)
     {
       XR_TRACE(TexturePack, ("'%s' is a required attribute.",
-        karTag[TAG_IMAGE_PATH]));
+        kTags[TAG_IMAGE_PATH]));
     }
   }
 
   if (success)
   {
-    FilePath texturePath(name);
-    texturePath.Up();
-    texturePath /= pTextureName;
-    if (auto ext = texturePath.GetExt())
-    {
-      *ext = '\0';
-      texturePath.UpdateSize();
-    }
-    texturePath += ".mtl";
+    dependencies.push_back(textureName);
 
-    m_material = Asset::Manager::Load<Material>(texturePath, flags |
-      Asset::LoadSyncFlag | Asset::UnmanagedFlag);
-    success = !CheckAnyMaskBits(m_material->GetFlags(), Asset::ErrorFlag);
-    if (!success)
-    {
-      XR_TRACE(TexturePack, ("Failed to find material '%s'.", texturePath.c_str()));
-    }
+    Asset::HashType hash = Asset::Manager::HashPath(dependencies.back());
+    success = WriteBinaryStream(hash, data);
   }
 
+  // Shader name
+  const char* shaderName = nullptr;
+  if (success)
+  {
+    shaderName = elem->Attribute(kTags[TAG_SHADER_PATH]);
+
+    Asset::HashType hash = 0;
+    if (shaderName != nullptr)
+    {
+      dependencies.push_back(shaderName);
+      hash = Asset::Manager::HashPath(dependencies.back());
+    }
+
+    success = WriteBinaryStream(hash, data);
+  }
+
+  // Base texture size.
   int texWidth = 0;
   if (success)
   {
-    success = pElem->QueryIntAttribute(karTag[TAG_WIDTH], &texWidth) !=
+    success = elem->QueryIntAttribute(kTags[TAG_WIDTH], &texWidth) !=
       tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
     if (!success)
     {
-      XR_TRACE(TexturePack, ("Invalid value for %s: %s", karTag[TAG_WIDTH],
-        pElem->Attribute(karTag[TAG_WIDTH])));
+      XR_TRACE(TexturePack, ("Invalid value for %s: %s", kTags[TAG_WIDTH],
+        elem->Attribute(kTags[TAG_WIDTH])));
     }
   }
 
   int texHeight = 0;
   if (success)
   {
-    success = pElem->QueryIntAttribute(karTag[TAG_HEIGHT], &texHeight) !=
+    success = elem->QueryIntAttribute(kTags[TAG_HEIGHT], &texHeight) !=
       tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
     if (!success)
     {
-      XR_TRACE(TexturePack, ("Invalid value for %s: %s", karTag[TAG_HEIGHT],
-        pElem->Attribute(karTag[TAG_HEIGHT])));
+      XR_TRACE(TexturePack, ("Invalid value for %s: %s", kTags[TAG_HEIGHT],
+        elem->Attribute(kTags[TAG_HEIGHT])));
     }
   }
 
-  if(success)
-  {
-    if (texWidth != 0)
-    {
-      success = success && m_material->GetTexture(0)->GetWidth() == texWidth;
-      if (!success)
-      {
-        XR_TRACE(TexturePack, ("Texture width mismatch (%d vs %d)",
-          m_material->GetTexture(0)->GetWidth(), texWidth));
-      }
-    }
-    else
-    {
-      texWidth = m_material->GetTexture(0)->GetWidth();
-    }
-
-    if (texHeight != 0)
-    {
-      success = success && m_material->GetTexture(0)->GetHeight() == texHeight;
-      if (!success)
-      {
-        XR_TRACE(TexturePack, ("Texture height mismatch (%d vs %d)",
-          m_material->GetTexture(0)->GetHeight(), texHeight));
-      }
-    }
-    else
-    {
-      texWidth = m_material->GetTexture(0)->GetHeight();
-    }
-  }
-
+  // Number of Sprites.
+  NumSpritesType numSprites = 0;
   if (success)
   {
-    pElem = pElem->FirstChildElement(karTag[TAG_SPRITE]);
+    auto counter = elem->FirstChildElement("sprite");
+    while (counter)
+    {
+      ++numSprites;
+      counter = counter->NextSiblingElement("sprite");
+    }
+
+    success = WriteBinaryStream(numSprites, data);
+  }
+
+  // Sprite data
+  if (success)
+  {
+    elem = elem->FirstChildElement(kTags[TAG_SPRITE]);
 
     HardString<256> buffer;
     int x, y; // position of top left corner on sprite sheet
-    int w, h; // size on sprite sheet
-    while (success && pElem != nullptr)
+    int w, h; // actual size on sprite sheet. This will inform the halfSize. Needs swapping if the sprite is rotated.
+    while (success && elem != 0)
     {
-      int xOffs = 0, yOffs = 0; // amount of translation left and down
-      int wOffs = 0, hOffs = 0; // size of finished sprite, including offset
+      // Amount of translation padding left of and above sprite, or bottom and left, if sprite is rotated.
+      int xOffs = 0;
+      int yOffs = 0;
+      // Original width / height, if trimmed. Accounts for rotation. Includes all padding.
+      // For un-trimmed sprites, wOrig and hOrig are their w / h. If the sprite is rotated, we need to swap those.
+      int wOrig = 0;
+      int hOrig = 0;
 
-      // create sprite
-      const char* pSpriteName(pElem->Attribute(karTag[TAG_NAME]));
+      // Get sprite attributes.
+      const char* spriteName = elem->Attribute(kTags[TAG_NAME]);
 
-      success = pSpriteName != nullptr &&
-        pElem->QueryIntAttribute(karTag[TAG_W], &w) == tinyxml2::XML_SUCCESS &&
-        pElem->QueryIntAttribute(karTag[TAG_H], &h) == tinyxml2::XML_SUCCESS &&
-        pElem->QueryIntAttribute(karTag[TAG_X], &x) == tinyxml2::XML_SUCCESS &&
-        pElem->QueryIntAttribute(karTag[TAG_Y], &y) == tinyxml2::XML_SUCCESS &&
-        pElem->QueryIntAttribute(karTag[TAG_W], &wOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
-        pElem->QueryIntAttribute(karTag[TAG_H], &hOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
-        pElem->QueryIntAttribute(karTag[TAG_X], &xOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
-        pElem->QueryIntAttribute(karTag[TAG_Y], &yOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
+      success = spriteName != nullptr &&
+        elem->QueryIntAttribute(kTags[TAG_W], &w) == tinyxml2::XML_SUCCESS &&
+        elem->QueryIntAttribute(kTags[TAG_H], &h) == tinyxml2::XML_SUCCESS &&
+        elem->QueryIntAttribute(kTags[TAG_X], &x) == tinyxml2::XML_SUCCESS &&
+        elem->QueryIntAttribute(kTags[TAG_Y], &y) == tinyxml2::XML_SUCCESS &&
+        elem->QueryIntAttribute(kTags[TAG_ORIGINAL_W], &wOrig) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        elem->QueryIntAttribute(kTags[TAG_ORIGINAL_H], &hOrig) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        elem->QueryIntAttribute(kTags[TAG_OFFSET_X], &xOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+        elem->QueryIntAttribute(kTags[TAG_OFFSET_Y], &yOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
 
       if (success)
       {
-        // get name, strip extension
-        buffer = pSpriteName;
-
+        // Get name (of original image), strip extension.
+        buffer = spriteName;
         char* pPeriod(buffer.rfind('.'));
-        if (pPeriod != nullptr)
+        if (pPeriod)
         {
           *pPeriod = '\0';
+          buffer.UpdateSize();
         }
 
-        // set uvs
+        // Calculate UVs - convert from bitmap-space to texture-space (bottom-left based).
+        // TODO: consider support for non-openGL renderers where texture-space might be top-left based.
+        auto omy = texHeight - y;
         AABB  uvs =
         {
           float(x) / texWidth,
-          float(y) / texHeight,
+          float(omy) / texHeight,
           float(x + w) / texWidth,
-          float(y + h) / texHeight,
+          float(omy - h) / texHeight,
         };
 
-        // offset and total size
-        const char* pIsRotated(pElem->Attribute(karTag[TAG_ROTATED]));
-        bool  isRotated(pIsRotated != nullptr && strlen(pIsRotated) > 0 &&
-          pIsRotated[0] == 'y');
+        // Get UV rotation attribute.
+        const char* rotationAttrib = elem->Attribute(kTags[TAG_ROTATED]);
+        const bool  isRotated = rotationAttrib != nullptr && strlen(rotationAttrib) > 0 &&
+          rotationAttrib[0] == 'y';
 
-        if (wOffs == 0)
+        // If wOffs / hOffs isn't set, then use sprite width / height, depending on whether it's rotated.
+        // We'll need these to correctly calculate offset (for padding).
+        if (wOrig == 0)
         {
-          wOffs = isRotated ? h : w;
+          wOrig = isRotated ? h : w;
         }
 
-        if (hOffs == 0)
+        if (hOrig == 0)
         {
-          hOffs = isRotated ? w : h;
+          hOrig = isRotated ? w : h;
         }
 
-        Sprite  sprite;
-        sprite.SetMaterial(m_material);
+        // Calculate UVs and vertex positions.
+        SpriteData sprite;
+        Sprite::CalculateUVs(uvs, isRotated, sprite.vertices);
+        sprite.CalculatePositions(texWidth, texHeight);
 
+        // Calculate offset for padding.
+        // NOTE: y conversion (negation) applies since we're moving from bitmap space to model space.
+        // TODO: consider support for non-openGL renderers where model-space might have negative Y.
+        Vector2 offset;
         if (isRotated)
         {
-          sprite.SetUVsRotatedProportional(uvs);
-          sprite.AddOffset(xOffs - (wOffs - h) * .5f, yOffs - (hOffs - w) * .5f, true);
+          offset.x = xOffs - (wOrig - h) * .5f;
+          offset.y = (hOrig - w) * .5f - yOffs;
         }
         else
         {
-          sprite.SetUVsProportional(uvs);
-          sprite.AddOffset(xOffs - (wOffs - w) * .5f, yOffs - (hOffs - h) * .5f, true);
+          offset.x = xOffs - (wOrig - w) * .5f;
+          offset.y = (hOrig - h) * .5f - yOffs;
         }
-        sprite.SetHalfSize(wOffs / 2, hOffs / 2, false);
+        sprite.AddOffset(offset.x, offset.y);
 
-        // add sprite
-        m_sprites[Hash::String32(buffer.c_str())] = sprite;
+        // Calculate halfSize.
+        sprite.halfSize.x = wOrig * .5f;
+        sprite.halfSize.y = hOrig * .5f;
 
-        pElem = pElem->NextSiblingElement(karTag[TAG_SPRITE]);
+        // Write sprite
+        SpriteNameHashType hash = Hash::String32(buffer.c_str());
+        success = WriteBinaryStream(hash, data) && WriteBinaryStream(sprite, data);
+
+        elem = elem->NextSiblingElement(kTags[TAG_SPRITE]);
       }
     }
   }
 
   return success;
 }
+
+}
+#endif
+
+//==============================================================================
+Shader::Ptr* TexturePack::s_defaultShader = nullptr;
 
 //==============================================================================
 Sprite* TexturePack::Get(const char* name, bool allowMissing)
@@ -312,6 +373,83 @@ void  TexturePack::ScaleSprites(float x, float y)
 //==============================================================================
 void TexturePack::Clear()
 {
+  m_sprites.clear();
+}
+
+//==============================================================================
+bool TexturePack::OnLoaded(Buffer buffer)
+{
+  BufferReader reader(buffer);
+
+  HashType textureHash;
+  HashType shaderHash;
+  bool success = reader.Read(textureHash) && reader.Read(shaderHash);
+
+  FlagType flags = 0;
+  if (success)
+  {
+    flags = GetFlags();
+  }
+
+  Texture::Ptr texture;
+  if (success)
+  {
+    texture = Manager::Load(Descriptor<Texture>(textureHash), flags);
+    success = texture != nullptr;
+  }
+
+  Shader::Ptr shader;
+  if (success)
+  {
+    if (shaderHash != 0)
+    {
+      shader = Manager::Load(Descriptor<Shader>(shaderHash), flags);
+    }
+    else if(s_defaultShader)
+    {
+      shader = *s_defaultShader;
+    }
+    else
+    {
+      XR_TRACE(TexturePack, ("%s has no shader while no default shader set.", m_debugPath.c_str()));
+    }
+    success = shader != nullptr;
+  }
+
+  if(success)
+  {
+    Material* material = Material::Create(0, GetFlags())->Cast<Material>();
+    material->SetTexture(0, texture);
+    material->SetShader(shader);
+    m_material.Reset(material);
+  }
+
+  NumSpritesType numSprites;
+  if (success)
+  {
+    success = reader.Read(numSprites);
+  }
+
+  SpriteNameHashType spriteHash;
+  SpriteData sprData;
+  while (success && numSprites-- > 0)
+  {
+    success = reader.Read(spriteHash) && reader.Read(sprData);
+    if (success)
+    {
+      Sprite& spr = m_sprites[spriteHash];
+      spr.SetMaterial(m_material);
+      spr.Import(sprData.vertices);
+      spr.SetHalfSize(sprData.halfSize.x, sprData.halfSize.y, false);
+    }
+  }
+  return success;
+}
+
+//==============================================================================
+void TexturePack::OnUnload()
+{
+  m_material.Reset(nullptr);
   m_sprites.clear();
 }
 
