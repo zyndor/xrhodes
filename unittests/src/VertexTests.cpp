@@ -34,7 +34,12 @@ namespace XR
       Vertex::Color0<Vector3>>;
 
     // Construction omitting some subtypes.
+#ifdef XR_PLATFORM_OSX  // TODO: Remove once https://bugreport.apple.com/web/?problemID=36213140 is resolved.
+    VF1 v1(Vector3::One() * 2.0f);
+    v1.uv0 = Vector2(.5f, .5f);
+#else
     VF1 v1(Vector3::One() * 2.0f, Vector2(.5f, .5f));
+#endif
     static_assert(VF1::kSize == sizeof(v1), "Size mismatch.");
     ASSERT_EQ(v1.uv0.x, .5f);
     ASSERT_EQ(v1.uv0.y, .5f);

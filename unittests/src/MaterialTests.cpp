@@ -111,9 +111,10 @@ namespace XR
 
     ~MaterialTests()
     {
+      Asset::Manager::Exit();
+      
       Gfx::Exit();
       Device::Exit();
-      Asset::Manager::Exit();
     }
 
   private:
@@ -153,12 +154,31 @@ namespace XR
       Vertex::Color0<Vector3>>;
     auto hFormat = PosUvColor::Register();
 
+#ifdef XR_PLATFORM_OSX  // TODO: Remove once https://bugreport.apple.com/web/?problemID=36213140 is resolved.
+    PosUvColor vboData[4];
+    vboData[0].pos = Vector3( -1.0f, -1.0f, .0f );
+    vboData[0].uv0 = Vector2(.0f, .0f);
+    vboData[0].color0 = Vector3(1.0f, .0f, .0f);
+
+    vboData[1].pos = Vector3( -1.0f, 1.0f, .0f );
+    vboData[1].uv0 = Vector2(.0f, 1.0f);
+    vboData[1].color0 = Vector3(.0f, 1.0f, .0f);
+
+    vboData[2].pos = Vector3( 1.0f, -1.0f, .0f );
+    vboData[2].uv0 = Vector2(1.0f, .0f);
+    vboData[2].color0 = Vector3(.0f, 1.0f, 1.0f);
+
+    vboData[3].pos = Vector3( 1.0f, 1.0f, .0f );
+    vboData[3].uv0 = Vector2(1.0f, 1.0f);
+    vboData[3].color0 = Vector3(1.0f, .0f, 1.0f);
+#else
     PosUvColor vboData[] = {
       PosUvColor( Vector3( -1.0f, -1.0f, .0f ), Vector2( .0f, 0.0f ), Vector3( 1.0f, .0f, .0f )),
       PosUvColor( Vector3( -1.0f, 1.0f, .0f ), Vector2(.0f, 1.0f ), Vector3(.0f, 1.0, .0f )),
       PosUvColor( Vector3( 1.0f, -1.0f, .0f ), Vector2(1.0f, .0f ), Vector3(.0f, 1.0f, 1.0f )),
       PosUvColor( Vector3( 1.0f, 1.0f, .0f ), Vector2(1.0f, 1.0f ), Vector3(1.0f, .0f, 1.0f )),
     };
+#endif
     auto vbo = Gfx::CreateVertexBuffer(hFormat, { sizeof(vboData), (uint8_t*)vboData });
 
     Gfx::Clear(Gfx::F_CLEAR_DEPTH);
