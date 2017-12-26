@@ -17,7 +17,7 @@ class IndexMeshCore
 {
 public:
   // types
-  typedef std::vector<uint16_t> IndexArray;
+  using IndexArray = std::vector<uint16_t>;
 
   // general
   IndexArray& GetIndices();
@@ -86,9 +86,9 @@ inline
 void IndexMesh<VertexFormat>::RenderOnly(PrimType primitiveType, uint32_t offset,
   uint32_t count) const
 {
-  XR_ASSERT(BasicMesh, m_vbo.IsValid());
-  XR_ASSERT(BasicMesh, m_ibo.IsValid());
-  Gfx::Draw(m_vbo, m_ibo, primitiveType, offset, count);
+  XR_ASSERT(IndexMesh, Base::m_vbo.IsValid());
+  XR_ASSERT(IndexMesh, m_ibo.IsValid());
+  Gfx::Draw(Base::m_vbo, m_ibo, primitiveType, offset, count);
 }
 
 } // XR
