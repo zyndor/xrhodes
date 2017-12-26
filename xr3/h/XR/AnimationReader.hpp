@@ -136,9 +136,9 @@ bool  AnimationReader<T>::Read(tinyxml2::XMLElement* pXml,
     {
       // have we got a comma separated list of frames as text?
       tinyxml2::XMLNode*  pText(pXml->FirstChild());
-      while(pText != 0)
+      while(!pText)
       {
-        if(pText->Type() == tinyxml2::XMLNode::TINYXML_TEXT)
+        if(pText->ToText())
         {
           break;
         }
@@ -148,7 +148,7 @@ bool  AnimationReader<T>::Read(tinyxml2::XMLElement* pXml,
       typename AnimationType::FrameVector  fv;
       fv.assign(frames.begin(), frames.end());
 
-      if(pText != 0 && pText->Type() == tinyxml2::XMLNode::TINYXML_TEXT)
+      if(pText != nullptr && pText->ToText())
       {
         ParserCore  parser;
         parser.SetBuffer(pText->Value(), strlen(pText->Value()));
