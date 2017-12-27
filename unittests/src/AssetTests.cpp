@@ -147,8 +147,8 @@ namespace XR
 
     auto testAss = Asset::Manager::LoadReflected(path);
     
-    ASSERT_TRUE(testAss->Cast<TestAsset>()); // determined correct type
     ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
+    ASSERT_TRUE(testAss->Cast<TestAsset>()); // determined correct type
     ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
 
     while (!(testAss->GetFlags() & (Asset::ReadyFlag | Asset::ErrorFlag)))
@@ -225,8 +225,6 @@ namespace XR
     ASSERT_EQ(Asset::Manager::Find<DependantTestAsset>("assets/test3.testDeps"), Asset::Ptr());
 
     auto testAss = Asset::Manager::Load<DependantTestAsset>(path, 0);
-
-    ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
 
     // dependencies are created - we don't care if they're loading, as this might
     // be done by the time we've looked them up and checked it (since only the
