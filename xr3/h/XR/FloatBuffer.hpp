@@ -161,7 +161,7 @@ void FloatBuffer::Set(size_t numElems, T const * pData, size_t offset)
   XR_ASSERT(FloatBuffer, m_parData != nullptr);
   XR_ASSERT(FloatBuffer, offset + numElems <= m_numElems);
   T const* pEnd = pData + numElems;
-  auto write = Get<T>();
+  auto write = Get<T>() + offset;
   while (pData != pEnd)
   {
     *write = *pData;
