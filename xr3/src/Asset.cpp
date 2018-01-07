@@ -134,26 +134,26 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
 
     m_allocator = alloc;
   }
-  
+
   ~AssetManagerImpl()
   {
     m_worker.CancelPendingJobs();
     m_worker.Finalize();
-    
+
     ClearManaged();
   }
-  
+
   // general
   FilePath const& GetPath()
   {
     return m_path;
   }
-  
+
   Allocator* GetAllocator()
   {
     return m_allocator;
   }
-  
+
   bool Manage(Asset::Ptr a)
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
@@ -235,12 +235,12 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
       DeleteJob(*j);
     }
   }
-  
+
   void SuspendJobs()
   {
     m_worker.Suspend();
   }
-  
+
   void ResumeJobs()
   {
     m_worker.Resume();
@@ -313,7 +313,7 @@ static void RegisterReflector(Asset::Reflector const& r)
   XR_ASSERTMSG(Asset::Manager, iReflector == s_reflectors.end(),
     ("Reflector already registered for type '%.*s'.", sizeof(r.type), &r.type));
   iReflector = s_reflectors.insert(iReflector, { r.type, &r });
-  
+
   // Hash and map extensions to reflector [registration].
   auto exts = r.extensions;
   while (exts)
@@ -569,7 +569,7 @@ Asset::Ptr Asset::Manager::LoadReflected(FilePath const& path, FlagType flags)
       }
     }
   }
-  
+
   return asset;
 }
 
@@ -610,10 +610,14 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
   auto desc = asset->GetDescriptor();
   FilePath finalPath = desc.ToPath();
   bool rebuild = finalPath != assetPath;
-  if (rebuild)
+  bool forceBuild = CheckAllMaskBits(asset->GetFlags(), Asset::ForceBuildFlag);
+  if (rebuild || forceBuild) // If we're building, we'll need the correct asset path.
   {
     finalPath = Asset::Manager::GetAssetPath() / finalPath;
+  }
 
+  if (rebuild)
+  {
     // Check for raw and built asset, compare last modification time.
     auto tsRaw = File::GetModifiedTime(path); // must use original path!
     XR_ASSERTMSG(Asset::Manager, tsRaw > 0, ("'%s' doesn't exist.", path.c_str()));
@@ -652,7 +656,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
     }
   }
 
-  if (rebuild)
+  if (rebuild || forceBuild) // Perform the building of the asset.
   {
     auto iFind = s_assetBuilders.find(desc.type);
     bool done = iFind == s_assetBuilders.end();
@@ -663,7 +667,7 @@ static void BuildAsset(Asset::VersionType version, FilePath const& path, Asset::
     }
 
     FileBuffer fb;
-    if (!done)  // read source file 
+    if (!done)  // read source file
     {
       done = !fb.Open(path, false);
       if (done)

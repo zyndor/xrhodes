@@ -55,6 +55,7 @@ public:
     LoadSyncFlag = XR_MASK_ID(FlagType, 5),  // forces the asset to load synchronously.
     UnmanagedFlag = XR_MASK_ID(FlagType, 6), // the asset manager will not keep a reference to the asset.
     KeepSourceDataFlag = XR_MASK_ID(FlagType, 7), // source data is discarded by default; handling this flag is a responsibility of the given asset type
+    ForceBuildFlag = XR_MASK_ID(FlagType, 8), // forces the building of the asset, intended for debug only; ignored / not meaningful when asset building is disabled.
 
     PrivateMask = ErrorFlag | ReadyFlag | ProcessingFlag | LoadingFlag
   };
