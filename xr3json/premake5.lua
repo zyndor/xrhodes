@@ -1,3 +1,10 @@
+--==============================================================================
+--
+-- XRhodes
+--
+-- copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+--
+--==============================================================================
 project "xr3json"
 
 	kind "StaticLib"

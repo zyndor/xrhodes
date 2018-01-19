@@ -1,3 +1,10 @@
+--==============================================================================
+--
+-- XRhodes
+--
+-- copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+--
+--==============================================================================
 -- helpers
 function debug_print_table(t)
 	for _, v in ipairs(t) do
