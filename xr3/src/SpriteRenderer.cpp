@@ -63,10 +63,7 @@ void  SpriteRenderer::Init(int numRecords)
 
   IndexMeshCore imc;
   imc.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numRecords);
-
-  auto& indexData = imc.GetIndices();
-  m_ibo = Gfx::CreateIndexBuffer({ indexData.size() * sizeof(uint16_t),
-    reinterpret_cast<uint8_t const*>(indexData.data()) }, 0);
+  m_ibo = Gfx::CreateIndexBuffer(imc.GetIndexBuffer(), 0);
 }
 
 //==============================================================================

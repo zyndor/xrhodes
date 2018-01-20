@@ -54,8 +54,7 @@ void IndexMeshCore::SetIndexPattern(const uint16_t * pInds, int numInds,
 void IndexMeshCore::CreateIbo(uint32_t flags)
 {
   Gfx::Destroy(m_ibo);
-  m_ibo = Gfx::CreateIndexBuffer({ m_indices.size() * sizeof(decltype(m_indices)::value_type),
-    reinterpret_cast<uint8_t const*>(m_indices.data()) }, flags);
+  m_ibo = Gfx::CreateIndexBuffer(GetIndexBuffer(), flags);
 }
 
 } // XR

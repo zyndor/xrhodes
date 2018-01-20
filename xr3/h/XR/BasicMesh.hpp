@@ -68,6 +68,8 @@ public:
 
   void AllocBuffer(size_t numVertices);
 
+  Buffer GetVertexBuffer() const;
+
   VertexFormat* GetVertices();
   const VertexFormat* GetVertices() const;
 
@@ -120,10 +122,7 @@ void BasicMesh<VertexFormat>::CreateVbo(uint32_t flags)
   Gfx::Destroy(m_vbo);
   XR_ASSERT(BasicMesh, s_hVertexFormat.IsValid());
   XR_ASSERT(BasicMesh, m_vertices.GetRaw() != nullptr);
-  m_vbo = Gfx::CreateVertexBuffer(s_hVertexFormat,
-    { m_vertices.GetElementSizeBytes() * m_vertices.GetNumElements(),
-      reinterpret_cast<uint8_t const*>(m_vertices.GetRaw()) },
-    flags);
+  m_vbo = Gfx::CreateVertexBuffer(s_hVertexFormat, GetVertexBuffer(), flags);
 }
 
 //==============================================================================
@@ -154,6 +153,14 @@ void  BasicMesh<VertexFormat>::AllocBuffer(size_t numVertices)
 {
   XR_ASSERT(BasicMesh, numVertices >= 0);
   m_vertices.SetBuffer(VertexFormat::kSize, numVertices);
+}
+
+//==============================================================================
+template<class VertexFormat>
+inline Buffer BasicMesh<VertexFormat>::GetVertexBuffer() const
+{
+  return Buffer{ m_vertices.GetElementSizeBytes() * m_vertices.GetNumElements(),
+    reinterpret_cast<uint8_t const*>(m_vertices.GetRaw()) };
 }
 
 //==============================================================================

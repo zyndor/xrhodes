@@ -23,6 +23,8 @@ public:
   IndexArray& GetIndices();
   const IndexArray& GetIndices() const;
 
+  Buffer GetIndexBuffer() const;
+
   void  SetIndexPattern(const uint16_t* pInds, int numInds, int repeat);
   void  SetIndexPattern(const uint16_t* pInds, int numInds, uint16_t shift,
     int repeat);
@@ -45,6 +47,7 @@ public:
 
   // general
   using IndexMeshCore::GetIndices;
+  using IndexMeshCore::GetIndexBuffer;
   using IndexMeshCore::SetIndexPattern;
 
   ///@brief Renders the mesh using the index information, without setting the
@@ -70,6 +73,15 @@ inline
 const IndexMeshCore::IndexArray&  IndexMeshCore::GetIndices() const
 {
   return m_indices;
+}
+
+//==============================================================================
+inline Buffer IndexMeshCore::GetIndexBuffer() const
+{
+  return Buffer {
+    static_cast<uint32_t>(m_indices.size() * sizeof(IndexArray::value_type)),
+    reinterpret_cast<uint8_t const*>(m_indices.data())
+  };
 }
 
 //==============================================================================
