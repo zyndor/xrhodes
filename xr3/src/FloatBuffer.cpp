@@ -10,7 +10,7 @@ namespace XR
 {
 
 //=============================================================================
-FloatBuffer FloatBuffer::Adapt(FloatBuffer& other, size_t offset, size_t size)
+FloatBuffer FloatBuffer::Adapt(FloatBuffer& other, uint32_t offset, uint32_t size)
 {
   XR_ASSERT(FloatBuffer, offset < other.m_numElems);
   return FloatBuffer(other, offset, size);
@@ -27,7 +27,7 @@ FloatBuffer::FloatBuffer()
 {}
 
 //=============================================================================
-FloatBuffer::FloatBuffer(size_t elemSize, size_t numElems, float* parBuffer)
+FloatBuffer::FloatBuffer(uint32_t elemSize, uint32_t numElems, float* parBuffer)
 : m_elemSizeFloats(elemSize),
   m_numElems(numElems),
   m_parData(parBuffer),
@@ -71,7 +71,7 @@ FloatBuffer::~FloatBuffer()
 }
 
 //=============================================================================
-void FloatBuffer::SetBuffer(size_t elemSize, size_t numElems, float* parBuffer)
+void FloatBuffer::SetBuffer(uint32_t elemSize, uint32_t numElems, float* parBuffer)
 {
   XR_ASSERT(FloatBuffer, elemSize % sizeof(float) == 0);
   ReleaseData();
@@ -153,10 +153,10 @@ FloatBuffer& FloatBuffer::operator=(FloatBuffer const& rhs)
 }
 
 //=============================================================================
-float * FloatBuffer::AllocateBuffer(size_t elemSize, size_t numElems)
+float * FloatBuffer::AllocateBuffer(uint32_t elemSize, uint32_t numElems)
 {
   float* buffer = nullptr;
-  const size_t totalSize = elemSize * numElems;
+  const uint32_t totalSize = elemSize * numElems;
   if (totalSize > 0)
   {
     buffer = new float[totalSize];
@@ -165,7 +165,7 @@ float * FloatBuffer::AllocateBuffer(size_t elemSize, size_t numElems)
 }
 
 //=============================================================================
-FloatBuffer::FloatBuffer(FloatBuffer & other, size_t offset, size_t size)  // adapt constructor
+FloatBuffer::FloatBuffer(FloatBuffer & other, uint32_t offset, uint32_t size)  // adapt constructor
 : m_elemSizeFloats(other.m_elemSizeFloats),
   m_numElems(other.ResolveSize(offset, size)),
   m_parData(other.m_parData + offset * other.m_elemSizeFloats),
@@ -194,7 +194,7 @@ void FloatBuffer::DetachFromOwner()
 }
 
 //=============================================================================
-size_t FloatBuffer::ResolveSize(size_t offset, size_t size) const
+uint32_t FloatBuffer::ResolveSize(uint32_t offset, uint32_t size) const
 {
   XR_ASSERT(FloatBuffer, offset <= m_numElems);
   XR_ASSERT(FloatBuffer, size == kSizeRest || offset + size <= m_numElems);

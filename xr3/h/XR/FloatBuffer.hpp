@@ -25,7 +25,7 @@ class FloatBuffer
 {
 public:
   // static
-  static const size_t kSizeRest = -1;
+  static const uint32_t kSizeRest = -1;
 
   ///@brief Adaptation allows you to have a FloatBuffer object pointing to
   /// the data of another FloatBuffer, e.g. to simplify indexing of a relevant
@@ -37,11 +37,11 @@ public:
   /// vice versa - this guarantees to prevent self-adapting.
   ///@note The @a offset and @a size parameters are numbers of objects of
   /// the vectorial type that @a other represents.
-  static FloatBuffer Adapt(FloatBuffer& other, size_t offset, size_t size = kSizeRest);
+  static FloatBuffer Adapt(FloatBuffer& other, uint32_t offset, uint32_t size = kSizeRest);
 
   // structors
   FloatBuffer();
-  FloatBuffer(size_t elemSize, size_t numElems, float* parBuffer = nullptr);
+  FloatBuffer(uint32_t elemSize, uint32_t numElems, float* parBuffer = nullptr);
   FloatBuffer(FloatBuffer const& other);
   ~FloatBuffer();
 
@@ -49,20 +49,20 @@ public:
   ///@brief Sets the buffer to the given size. The caller may optionally
   /// provide a buffer of their allocation, otherwise this instance will
   /// allocate a buffer and will own it.
-  void SetBuffer(size_t elemSize, size_t numElems, float* parBuffer = nullptr);
+  void SetBuffer(uint32_t elemSize, uint32_t numElems, float* parBuffer = nullptr);
 
   template <class T>
-  void SetBuffer(size_t numElems, T* parBuffer = nullptr);
+  void SetBuffer(uint32_t numElems, T* parBuffer = nullptr);
 
   ///@brief Gets the size of the individual elements in this buffer as the
   /// number of floats.
-  size_t GetElementSizeFloats() const { return m_elemSizeFloats; }
+  uint32_t GetElementSizeFloats() const { return m_elemSizeFloats; }
 
   ///@brief Gets the size of the individual elements in this buffer, in bytes.
-  size_t GetElementSizeBytes() const { return GetElementSizeFloats() * sizeof(float); }
+  uint32_t GetElementSizeBytes() const { return GetElementSizeFloats() * sizeof(float); }
 
   ///@brief Gets the number or elements in this buffer.
-  size_t GetNumElements() const { return m_numElems; }
+  uint32_t GetNumElements() const { return m_numElems; }
 
   ///@brief Moves @a other's data to this, releasing previous data. @a other must
   /// not have any dependants.
@@ -80,14 +80,14 @@ public:
   /// at @a offset (as T).
   ///@note This is indexed as an array of T.
   template <typename T>
-  void Set(size_t numElems, T const* pData, size_t offset = 0);
+  void Set(uint32_t numElems, T const* pData, uint32_t offset = 0);
 
   ///@brief Sets the @a i-th element in this as T, to a@ value. The
   /// buffer must contain GetNumElements() items of type T, and sizeof(T)
   /// must be equal to GetElementSizeBytes().
   ///@note This is indexed as an array of T.
   template <typename T>
-  void Set(size_t i, T const& value);
+  void Set(uint32_t i, T const& value);
 
   ///@brief Gets the underlying raw buffer of floats.
   ///@note Does not transfer ownership.
@@ -105,13 +105,13 @@ public:
   template <typename T>
   T*  Get();
 
-  ///@brief Indexes into the buffer as an array of const T. 
+  ///@brief Indexes into the buffer as an array of const T.
   template <typename T>
-  T const& Get(size_t i) const;
+  T const& Get(uint32_t i) const;
 
-  ///@brief Indexes into the buffer as an array of T. 
+  ///@brief Indexes into the buffer as an array of T.
   template <typename T>
-  T& Get(size_t i);
+  T& Get(uint32_t i);
 
   ///@brief Passes each element in the buffer, cast to T, to the function @a fn.
   template <typename T>
@@ -122,23 +122,23 @@ public:
 
 private:
   // static
-  static float* AllocateBuffer(size_t elemSize, size_t numElems);
+  static float* AllocateBuffer(uint32_t elemSize, uint32_t numElems);
 
   // data members
-  size_t              m_elemSizeFloats;
-  size_t              m_numElems;
+  uint32_t              m_elemSizeFloats;
+  uint32_t              m_numElems;
   float*              m_parData;  // ownership if m_pAdapted == nullptr && m_ownData
 
   FloatBuffer const*  m_pAdapted; // no ownership
   bool                m_ownData : 1;
-  mutable size_t      m_numDependents : 31;
+  mutable uint32_t      m_numDependents : 31;
 
   // internal
-  FloatBuffer(FloatBuffer& other, size_t offset, size_t size = kSizeRest);
+  FloatBuffer(FloatBuffer& other, uint32_t offset, uint32_t size = kSizeRest);
 
   void CopyData(FloatBuffer const& other);
   void DetachFromOwner();
-  size_t ResolveSize(size_t offset, size_t size) const;
+  uint32_t ResolveSize(uint32_t offset, uint32_t size) const;
 };
 
 //=============================================================================
@@ -146,7 +146,7 @@ private:
 //=============================================================================
 template<class T>
 inline
-void FloatBuffer::SetBuffer(size_t numElems, T * parBuffer)
+void FloatBuffer::SetBuffer(uint32_t numElems, T * parBuffer)
 {
   static_assert((sizeof(T) % sizeof(float)) == 0, "Type T must have a size which is an integer multiple of sizeof(float).");
   SetBuffer(sizeof(T), numElems, reinterpret_cast<float*>(parBuffer));
@@ -155,7 +155,7 @@ void FloatBuffer::SetBuffer(size_t numElems, T * parBuffer)
 //=============================================================================
 template<typename T>
 inline
-void FloatBuffer::Set(size_t numElems, T const * pData, size_t offset)
+void FloatBuffer::Set(uint32_t numElems, T const * pData, uint32_t offset)
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
   XR_ASSERT(FloatBuffer, m_parData != nullptr);
@@ -173,7 +173,7 @@ void FloatBuffer::Set(size_t numElems, T const * pData, size_t offset)
 //=============================================================================
 template<typename T>
 inline
-void FloatBuffer::Set(size_t i, T const & value)
+void FloatBuffer::Set(uint32_t i, T const & value)
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
   XR_ASSERT(FloatBuffer, m_parData != nullptr);
@@ -218,7 +218,7 @@ T const * FloatBuffer::Get() const
 //=============================================================================
 template<typename T>
 inline
-T const & FloatBuffer::Get(size_t i) const
+T const & FloatBuffer::Get(uint32_t i) const
 {
   return Get<T>()[i];
 }
@@ -226,7 +226,7 @@ T const & FloatBuffer::Get(size_t i) const
 //=============================================================================
 template<typename T>
 inline
-T & FloatBuffer::Get(size_t i)
+T & FloatBuffer::Get(uint32_t i)
 {
   return Get<T>()[i];
 }
