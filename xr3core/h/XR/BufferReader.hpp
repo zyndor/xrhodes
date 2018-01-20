@@ -56,6 +56,20 @@ public:
     return p;
   }
 
+  ///@brief Attempts to read one SizeType into @a numBytesRead followed by
+  /// that many bytes, a pointer to which is then returned. If either attempt
+  /// fails, a nullptr is returned.
+  template <typename SizeType>
+  uint8_t const* ReadBytesWithSize(SizeType& numBytesRead)
+  {
+    uint8_t const* p = nullptr;
+    if(Read(numBytesRead))
+    {
+      p = ReadBytes(numBytesRead);
+    }
+    return p;
+  }
+
   ///@return Number of bytes still readable.
   size_t GetRemainingSize() const
   {
