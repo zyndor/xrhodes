@@ -38,7 +38,7 @@ public:
 
     auto iFind = m_types.find(Hash::String32(ext));
     XR_ASSERT(ShaderComponentBuilder, iFind != m_types.end());
-    
+
     // TODO: support includes
     return WriteBinaryStream(iFind->second, data) &&
       data.write(buffer.As<char const>(), buffer.size);
@@ -49,6 +49,27 @@ private:
 } shaderComponentBuilder;
 #endif
 
+}
+
+
+//==============================================================================
+bool ShaderComponent::SetSource(Gfx::ShaderType type, char const* source)
+{
+  Gfx::Destroy(m_handle);
+  auto p = reinterpret_cast<uint8_t const*>(source);
+  m_handle = Gfx::CreateShader(type, { strlen(source), p });
+
+  bool success = m_handle.IsValid();
+  if(success)
+  {
+    m_type = type;
+
+    if(CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
+    {
+      m_data.assign(p, p + strlen(source));
+    }
+  }
+  return success;
 }
 
 //==============================================================================

@@ -28,6 +28,8 @@ public:
     return m_handle;
   }
 
+  bool SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fragment);
+
   bool OnLoaded(Buffer buffer) override;
   void OnUnload() override;
 

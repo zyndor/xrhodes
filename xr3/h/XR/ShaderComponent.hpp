@@ -33,6 +33,8 @@ public:
     return m_handle;
   }
 
+  bool SetSource(Gfx::ShaderType type, char const* source);
+
   bool OnLoaded(Buffer buffer) override;
   void OnUnload() override;
 

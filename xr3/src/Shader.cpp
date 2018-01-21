@@ -74,6 +74,28 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 }
 
 //==============================================================================
+bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fragment)
+{
+  bool success = vertex.Get() && vertex->GetType() == Gfx::ShaderType::Vertex &&
+    fragment.Get() && fragment->GetType() == Gfx::ShaderType::Fragment;
+
+  if (success)
+  {
+    Gfx::Destroy(m_handle);
+    m_handle = Gfx::CreateProgram(vertex->GetHandle(), fragment->GetHandle());
+
+    success = m_handle.IsValid();
+  }
+
+  if (success)
+  {
+    m_vertexShader = vertex;
+    m_fragmentShader = fragment;
+  }
+  return success;
+}
+
+//==============================================================================
 bool Shader::OnLoaded(Buffer buffer)
 {
   auto flags = GetFlags();
@@ -81,26 +103,21 @@ bool Shader::OnLoaded(Buffer buffer)
 
   HashType hash;
   bool success = reader.Read(hash);
+  ShaderComponent::Ptr cVertex;
   if (success)  // Read vertex shader
   {
-    auto ptr = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
-    m_vertexShader = ptr;
-    success = ptr.Get() != nullptr && reader.Read(hash) &&
-      ptr->GetType() == Gfx::ShaderType::Vertex;
+    cVertex = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
   }
 
+  ShaderComponent::Ptr cFragment;
   if (success)  // read fragment shader
   {
-    auto ptr = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
-    m_fragmentShader = ptr;
-    success = ptr.Get() != nullptr &&
-      ptr->GetType() == Gfx::ShaderType::Fragment;
+    cFragment = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
   }
 
   if (success)  // now link these babies
   {
-    m_handle = Gfx::CreateProgram(m_vertexShader->GetHandle(),
-      m_fragmentShader->GetHandle());
+    success = SetComponents(cVertex, cFragment);
   }
 
   return success;
