@@ -49,6 +49,7 @@ public:
   using IndexMeshCore::GetIndices;
   using IndexMeshCore::GetIndexBuffer;
   using IndexMeshCore::SetIndexPattern;
+  using IndexMeshCore::CreateIbo;
 
   ///@brief Renders the mesh using the index information, without setting the
   /// material.
