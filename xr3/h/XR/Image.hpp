@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include <vector>
 #include <cstdint>
 
@@ -27,7 +26,7 @@ public:
   Image();
   Image(Image const& rhs);
   ~Image();
-  
+
   // general
   ///@return  The width of the image in pixels.
   uint32_t GetWidth() const;
@@ -63,18 +62,20 @@ public:
   ///@return The result of the operation.
   bool Load(FilePath const& path);
 
-  ///@brief Writes image to a location @a filename. TGA and PNG formats
-  /// are supported.
+  ///@brief Writes image to a location @a path. TGA and PNG formats are
+  /// supported; the one used will be picked based on the extension of the
+  /// given @a path. If a file of the same name exists, the method will fail
+  /// unless @a overwrite was set to true.
   ///@return The result of the operation.
   bool Save(FilePath path, bool overwrite);
 
   ///@brief Attemts to parse loaded image information into a file.
   ///@note Currently PNG and TGA are the only supported formates.
   bool Parse(uint8_t const* buffer, size_t size);
-    
+
   ///@brief Copies @a img, overwriting this image.
   void Copy(const Image& img);
-  
+
   ///@brief Efficient swapping of image objects.
   void Swap(Image& rhs);
 

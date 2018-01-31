@@ -108,24 +108,26 @@ bool  Image::Load(FilePath const& path)
 //==============================================================================
 bool Image::Save(FilePath path, bool overwrite)
 {
-  bool(Image::*fn)(FileWriter&) const = nullptr;
-
   auto ext = path.GetExt();
-  if(strcmp(ext, "png") == 0)
+  bool success = ext != nullptr;
+  if (success)
   {
-    fn = &Image::WritePng;
-  }
-  else if (strcmp(ext, "tga") == 0)
-  {
-    fn = &Image::WriteTga;
-  }
+    bool(Image::*fn)(FileWriter&) const = nullptr;
+    if (strcmp(ext, "png") == 0)
+    {
+      fn = &Image::WritePng;
+    }
+    else if (strcmp(ext, "tga") == 0)
+    {
+      fn = &Image::WriteTga;
+    }
 
-  FileWriter writer;
-  bool success = fn != nullptr &&
-    (!File::CheckExists(path) || overwrite) &&
-    writer.Open(path, FileWriter::Mode::Truncate, false) &&
-    (this->*fn)(writer);
-
+    FileWriter writer;
+    success = fn != nullptr &&
+      (!File::CheckExists(path) || overwrite) &&
+      writer.Open(path, FileWriter::Mode::Truncate, false) &&
+      (this->*fn)(writer);
+  }
   return success;
 }
 
@@ -138,7 +140,7 @@ bool Image::Parse(uint8_t const* buffer, size_t size)
   {
     result = ParsePng(buffer, size);
   }
-  // else if other format, probably parse before tga, since we can't really check for that. 
+  // else if other format, probably parse before tga, since we can't really check for that.
   else
   {
     result = ParseTga(buffer, size);
@@ -487,7 +489,7 @@ bool Image::WriteTga(FileWriter& w) const
       success = false;
     }
   }
-  
+
   return success;
 }
 
