@@ -34,8 +34,6 @@ public:
     int                     maxDepth;
     Sprite::GetCallback     pGetSprite;
     void*                   pGetSpriteData;
-    Font::GetCallback       pGetFont;
-    void*                   pGetFontData;
     AllocateCallback        pAllocate;
     void*                   pAllocateData;
     DeallocateCallback      pDeallocate;
@@ -45,7 +43,7 @@ public:
     ProcessStringCallback   pFormatFileName;
     void*                   pFormatFileNameUser;
   };
-  
+
   enum  XmlAlignValue
   {
     XA_LOW = UIElement::AL_LOW + 1,
@@ -89,7 +87,7 @@ public:
   static const Configuration  kDefaultConfig;
 
   static int    GetXmlAlignment(tinyxml2::XMLElement* pXml, const char* pAttribName);
- 
+
   // structors
   explicit UIBuilder(const Configuration& cfg = kDefaultConfig);
   ~UIBuilder();
@@ -97,20 +95,18 @@ public:
   // general use
   const Configuration&  GetConfiguration() const;
   void                  SetConfiguration(const Configuration& cfg);
-  
+
   void          SetMaxDepth(int maxDepth);
 
   void          SetAllocateCallback(AllocateCallback pAllocateCb, void* pCbData);
   void          SetDeallocateCallback(DeallocateCallback pAllocateCb, void* pCbData);
   void          SetGetSpriteCallback(Sprite::GetCallback pGetSpriteCb, void* pCbData);
-  void          SetGetFontCallback(Font::GetCallback pGetFontCb, void* pCbData);
 
   void*         Allocate(int size);
   void          Deallocate(void* pBuffer);
   const Sprite* GetSprite(const char* pName) const;
-  const Font*   GetFont(const char* pName) const;
   std::string   ProcessText(const char* pText) const;
-  
+
   void          RegisterCreator(const char* pName, CreateCallback pCreateCb,
                   InitCallback pInitCb, bool isContainer);
 
@@ -287,7 +283,7 @@ bool UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 /// attributes listed there are handled.
 bool UIBInitUICheckBox(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   UIContainer* pParent, const UIBuilder* pBuilder);
-    
+
 ///@brief Initialises a UIRadioButton from xml. Supported attributes:
 /// group: the name of the UIRadioButton::Group to add the button to.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the

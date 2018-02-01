@@ -13,7 +13,7 @@ namespace XR
 {
 
 //==============================================================================
-const Font* UILabel::s_pDefaultFont(0);
+Font::Ptr UILabel::s_defaultFont;
 
 //==============================================================================
 UILabel::UILabel()
@@ -22,9 +22,9 @@ UILabel::UILabel()
   m_oldWidth(0),
   m_oldHeight(0)
 {
-  if (s_pDefaultFont != 0)
+  if (s_defaultFont)
   {
-    m_text.SetFont(*s_pDefaultFont);
+    m_text.SetFont(s_defaultFont);
   }
 }
 
@@ -35,8 +35,8 @@ UILabel::~UILabel()
 //==============================================================================
 void UILabel::Render() const
 {
-  XR_ASSERT(UILabel, m_text.GetFont() != 0);
-  m_text.GetFont()->GetMaterial()->Apply();
+  XR_ASSERT(UILabel, m_text.GetFont());
+  //m_text.GetFont()->GetMaterial()->Apply();
 
   Renderer::SetAmbientColor(color);
 
@@ -55,11 +55,11 @@ void UILabel::Render(IUIRenderer& renderer) const
 }
 
 //==============================================================================
-void UILabel::SetFont( const Font* pFont )
+void UILabel::SetFont(Font::Ptr const& font)
 {
-  if (pFont != 0)
+  if (font)
   {
-    m_text.SetFont(*pFont);
+    m_text.SetFont(font);  // NOTE: in all likelyhood, this is going away.
   }
 }
 
@@ -86,23 +86,23 @@ void UILabel::SetVerticalAlignment(Text::VAlign val )
 //==============================================================================
 void UILabel::PrepareText( const char* pText )
 {
-  XR_ASSERT(UILabel, m_text.GetFont() != 0);
+  XR_ASSERT(UILabel, m_text.GetFont());
   XR_ASSERTMSG(UILabel, pText != 0,
     ("Can't prepare NULL text."));
-  m_text.SetSize((float)w, (float)h, false);
+  m_text.SetBoxSize((float)w, (float)h, false);
   m_text.SetText(pText);
 }
 
 //==============================================================================
 void UILabel::SetWidthToText()
 {
-  w = int32_t(std::ceilf(m_text.GetMaxLineWidth()));
+  w = int32_t(std::ceilf(m_text.GetStats().maxLineWidth));
 }
 
 //==============================================================================
 void UILabel::SetHeightToText()
 {
-  h = int32_t(std::ceilf(m_text.GetHeight()));
+  h = int32_t(std::ceilf(m_text.GetStats().height));
 }
 
 //==============================================================================
@@ -113,17 +113,11 @@ void UILabel::SetSizeToText()
 }
 
 //==============================================================================
-int UILabel::GetLineWidth( int line ) const
-{
-  return int32_t(std::ceilf(m_text.GetLineWidth(line)));
-}
-
-//==============================================================================
 void UILabel::OnChange()
 {
   if(!(m_oldWidth == w && m_oldHeight == h))
   {
-    m_text.SetSize(float(w), float(h));
+    m_text.SetBoxSize(float(w), float(h));
 
     m_oldWidth = w;
     m_oldHeight = h;

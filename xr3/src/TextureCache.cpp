@@ -185,6 +185,28 @@ void TextureCache::Deallocate(uint8_t* buffer)
 }
 
 //==============================================================================
+void TextureCache::Reset()
+{
+  auto i = m_allocsHead;
+  while (i != m_allocsEnd)
+  {
+    i->Reset();
+    ++i;
+  }
+
+  i = m_allocs.data();
+  auto iEnd = i + (m_numAllocs - (m_allocsEnd - m_allocsHead));
+  while (i != iEnd)
+  {
+    i->Reset();
+    ++i;
+  }
+
+  m_numAllocs = 0;
+  m_allocsHead = m_allocs.data();
+}
+
+//==============================================================================
 TextureCache::Allocation& TextureCache::Next()
 {
   auto const base = m_allocs.data();

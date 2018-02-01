@@ -18,25 +18,21 @@ class UILabel: public UIColoredElement
 {
 public:
   // static
-  static const Font* s_pDefaultFont;
+  static Font::Ptr s_defaultFont;
 
   // structors
   UILabel();
   virtual ~UILabel();
 
   // general
-  const Font* GetFont() const;
-  int         GetNumLines() const;
-
-  void  SetFont(const Font* pFont);
+  Font::Ptr GetFont() const;
+  void  SetFont(Font::Ptr const& pFont);
 
   Text::HAlign  GetAlignHor() const;
   Text::VAlign  GetAlignVer() const;
 
   void  SetHorizontalAlignment(Text::HAlign val);
   void  SetVerticalAlignment(Text::VAlign val);
-
-  int   GetLineWidth(int line) const;
 
   void  SetWidthToText();
   void  SetHeightToText();
@@ -64,7 +60,7 @@ protected:
 // implementation
 //==============================================================================
 inline
-const Font* UILabel::GetFont() const
+Font::Ptr UILabel::GetFont() const
 {
   return m_text.GetFont();
 }
@@ -81,13 +77,6 @@ inline
 Text::VAlign  UILabel::GetAlignVer() const
 {
   return m_text.GetVerticalAlignment();
-}
-
-//==============================================================================
-inline
-int UILabel::GetNumLines() const
-{
-  return m_text.GetNumLines();
 }
 
 //==============================================================================

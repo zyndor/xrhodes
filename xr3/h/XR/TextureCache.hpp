@@ -70,6 +70,9 @@ public:
   /// come from a call to Allocate().
   void Deallocate(uint8_t* buffer);
 
+  ///@brief Clears all allocations.
+  void Reset();
+
   ///@return The pointer to the pixel data.
   uint8_t const* GetBuffer() { return m_buffer.data(); }
 
