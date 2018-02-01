@@ -26,4 +26,6 @@ project "xr3.SDL"
 		"../external/SDL2_mixer/include",
 		"../external/tinyxml2",
 		"../external/libpng",
+		"../external/stb",
+		"../external/utf8cpp",
 	}
