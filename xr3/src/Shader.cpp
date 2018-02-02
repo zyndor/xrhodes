@@ -76,8 +76,12 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 //==============================================================================
 bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fragment)
 {
-  bool success = vertex.Get() && vertex->GetType() == Gfx::ShaderType::Vertex &&
-    fragment.Get() && fragment->GetType() == Gfx::ShaderType::Fragment;
+  bool success = vertex->GetType() == Gfx::ShaderType::Vertex &&
+    fragment->GetType() == Gfx::ShaderType::Fragment;
+  if (!success)
+  {
+    XR_TRACE(Shader, ("Invalid input to '%s' (check components).", m_debugPath.c_str()));
+  }
 
   if (success)
   {
@@ -85,6 +89,10 @@ bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fra
     m_handle = Gfx::CreateProgram(vertex->GetHandle(), fragment->GetHandle());
 
     success = m_handle.IsValid();
+    if (!success)
+    {
+      XR_TRACE(Shader, ("Failed to create program for '%s'.", m_debugPath.c_str()));
+    }
   }
 
   if (success)
@@ -103,19 +111,42 @@ bool Shader::OnLoaded(Buffer buffer)
 
   HashType hash;
   bool success = reader.Read(hash);
+  if (!success)
+  {
+    XR_TRACE(Shader, ("Failed to read vertex shader hash for '%s'.", m_debugPath.c_str()));
+  }
+
   ShaderComponent::Ptr cVertex;
   if (success)  // Read vertex shader
   {
-    cVertex = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
+    cVertex = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
+    success = cVertex.Get();
+    if (!success)
+    {
+      XR_TRACE(Shader, ("Failed to load fragment shader component for '%s'.", m_debugPath.c_str()));
+    }
+  }
+
+  if (success)
+  {
+    success = reader.Read(hash);
+    if (!success)
+    {
+      XR_TRACE(Shader, ("Failed to read fragment shader hash for '%s'.", m_debugPath.c_str()));
+    }
   }
 
   ShaderComponent::Ptr cFragment;
   if (success)  // read fragment shader
   {
-    cFragment = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
+    cFragment = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
+    if (!success)
+    {
+      XR_TRACE(Shader, ("Failed to load fragment shader component for '%s'.", m_debugPath.c_str()));
+    }
   }
 
-  if (success)  // now link these babies
+  if (success)
   {
     success = SetComponents(cVertex, cFragment);
   }
