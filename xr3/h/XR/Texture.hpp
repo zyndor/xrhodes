@@ -32,21 +32,25 @@ public:
   // general
   ///@return The number of texels the texture has horizontally at the highest
   /// mipmap level.
-  int     GetWidth() const;
+  int GetWidth() const;
 
   ///@return The number of texels the texture has vertically at the highest
   /// mipmap level.
-  int     GetHeight() const;
+  int GetHeight() const;
 
   ///@return Whether the texture has an alpha channel.
-  bool    HasAlpha() const;
-  
+  bool HasAlpha() const;
+
+  ///@brief Creates / updates a handle with one that's for a texture
+  /// created with the given data.
+  ///@note Must be called from the render thread.
+  bool Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height,
+    Buffer buffer);
+
   ///@brief Binds texture to its target, for the given texture @a stage.
+  ///@note Must be called from the render thread.
   void Bind(uint32_t stage) const;
 
-  bool OnLoaded(Buffer buffer) override;
-  void OnUnload() override;
-  
 private:
   // data
   uint32_t m_width = 0;
@@ -55,6 +59,10 @@ private:
 
   Gfx::TextureHandle  m_handle;
   std::vector<uint8_t> m_data; // If KeepSourceDataFlag is set.
+
+  // internal
+  bool OnLoaded(Buffer buffer) override;
+  void OnUnload() override;
 };
 
 //==============================================================================
