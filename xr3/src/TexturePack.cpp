@@ -394,7 +394,7 @@ bool TexturePack::OnLoaded(Buffer buffer)
   Texture::Ptr texture;
   if (success)
   {
-    texture = Manager::Load(Descriptor<Texture>(textureHash), flags);
+    texture = Manager::Find(Descriptor<Texture>(textureHash));
     success = texture != nullptr;
   }
 
