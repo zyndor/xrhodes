@@ -27,7 +27,11 @@ public:
   typedef std::map<uint32_t, Sprite>  SpriteMap;
 
   // static
-  static Shader::Ptr* s_defaultShader;
+  ///@brief Descriptor of a default Shader, for TexturePacks that don't define
+  /// one. If not set [by application code], then it will be set to the first
+  /// Shader that's defined by a TexturePack that's being loaded.
+  ///@note Must be of a Shader that's loaded and managed by the Asset::Manager.
+  static Asset::Descriptor<Shader> s_descDefaultShader;
 
   // general
   Material::Ptr     GetMaterial() const;

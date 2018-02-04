@@ -315,7 +315,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 #endif
 
 //==============================================================================
-Shader::Ptr* TexturePack::s_defaultShader = nullptr;
+Asset::Descriptor<Shader> TexturePack::s_descDefaultShader;
 
 //==============================================================================
 Sprite* TexturePack::Get(const char* name, bool allowMissing)
@@ -382,8 +382,8 @@ bool TexturePack::OnLoaded(Buffer buffer)
   BufferReader reader(buffer);
 
   HashType textureHash;
-  HashType shaderHash;
-  bool success = reader.Read(textureHash) && reader.Read(shaderHash);
+  Descriptor<Shader> descShader;
+  bool success = reader.Read(textureHash) && reader.Read(descShader.hash);
 
   FlagType flags = 0;
   if (success)
@@ -401,19 +401,37 @@ bool TexturePack::OnLoaded(Buffer buffer)
   Shader::Ptr shader;
   if (success)
   {
-    if (shaderHash != 0)
+    // If a shader wasn't defined, attempt to fall back to default.
+    const bool useDefault = !descShader.IsValid() && s_descDefaultShader.IsValid();
+    if (useDefault)
     {
-      shader = Manager::Load(Descriptor<Shader>(shaderHash), flags);
+      descShader = s_descDefaultShader;
     }
-    else if(s_defaultShader)
+
+    success = descShader.IsValid();
+    if (success)
     {
-      shader = *s_defaultShader;
+      // NOTE: should we check / assert that the (default) shader is loaded at this point?
+      shader = Manager::Find(descShader);
+      success = shader != nullptr;
+      if (!success)
+      {
+        XR_TRACE(TexturePack, ("Failed to set shader %x for '%s'%s", descShader.hash,
+          m_debugPath.c_str(), useDefault ? " (bad default shader!)" : ""));
+      }
     }
     else
     {
-      XR_TRACE(TexturePack, ("%s has no shader while no default shader set.", m_debugPath.c_str()));
+      XR_TRACE(TexturePack, ("'%s' has no shader while no default shader set.",
+        m_debugPath.c_str()));
     }
-    success = shader != nullptr;
+
+    if (success && !s_descDefaultShader.IsValid())
+    {
+      s_descDefaultShader = descShader;
+      XR_TRACE(TexturePack, ("Using %x as default shader now (defined in '%s').",
+        descShader.hash, m_debugPath.c_str()));
+    }
   }
 
   if(success)
