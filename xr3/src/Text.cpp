@@ -309,13 +309,9 @@ Text::~Text()
 {}
 
 //==============================================================================
-void Text::SetFont(const Font::Ptr& f, bool update)
+void Text::SetFont(const Font::Ptr& font)
 {
-  m_font = f;
-  if (update)
-  {
-    Update();
-  }
+  m_font = font;
 }
 
 //==============================================================================
@@ -325,47 +321,31 @@ void Text::SetScale(float scale)
 }
 
 //==============================================================================
-void Text::SetHorizontalAlignment(HAlign ha, bool update)
+void Text::SetHorizontalAlignment(HAlign ha)
 {
   m_hAlign = ha;
-  if (update)
-  {
-    Update();
-  }
 }
 
 //==============================================================================
-void Text::SetVerticalAlignment(VAlign va, bool update)
+void Text::SetVerticalAlignment(VAlign va)
 {
   m_vAlign = va;
-  if (update)
-  {
-    Update();
-  }
 }
 
 //==============================================================================
-void Text::SetText(const char* pText, bool update)
+void Text::SetText(const char* text)
 {
-  XR_ASSERT(Text, pText != 0);
-  m_text = pText;
-  if (update)
-  {
-    Update();
-  }
+  XR_ASSERT(Text, text != 0);
+  m_text = text;
 }
 
 //==============================================================================
-void  Text::SetBoxSize(float boxWidth, float boxHeight, bool update)
+void  Text::SetBoxSize(float width, float height)
 {
-  XR_ASSERT(Text, boxWidth >= .0f);
-  XR_ASSERT(Text, boxHeight >= .0f);
+  XR_ASSERT(Text, width >= .0f);
+  XR_ASSERT(Text, height >= .0f);
 
-  m_boxSize = Vector2(boxWidth, boxHeight);
-  if (update)
-  {
-    Update();
-  }
+  m_boxSize = Vector2(width, height);
 }
 
 //==============================================================================

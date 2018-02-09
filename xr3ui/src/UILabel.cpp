@@ -36,7 +36,7 @@ UILabel::~UILabel()
 void UILabel::Render() const
 {
   XR_ASSERT(UILabel, m_text.GetFont());
-  //m_text.GetFont()->GetMaterial()->Apply();
+  m_text.GetFont()->GetMaterial()->Apply();
 
   Renderer::SetAmbientColor(color);
 
@@ -59,7 +59,7 @@ void UILabel::SetFont(Font::Ptr const& font)
 {
   if (font)
   {
-    m_text.SetFont(font);  // NOTE: in all likelyhood, this is going away.
+    Text::Updater(m_text).SetFont(font);  // TODO: consider rendering text to texture.
   }
 }
 
@@ -89,8 +89,8 @@ void UILabel::PrepareText( const char* pText )
   XR_ASSERT(UILabel, m_text.GetFont());
   XR_ASSERTMSG(UILabel, pText != 0,
     ("Can't prepare NULL text."));
-  m_text.SetBoxSize((float)w, (float)h, false);
-  m_text.SetText(pText);
+  Text::Updater(m_text).SetBoxSize((float)w, (float)h)
+    .SetText(pText);
 }
 
 //==============================================================================
@@ -117,7 +117,7 @@ void UILabel::OnChange()
 {
   if(!(m_oldWidth == w && m_oldHeight == h))
   {
-    m_text.SetBoxSize(float(w), float(h));
+    Text::Updater(m_text).SetBoxSize(float(w), float(h));
 
     m_oldWidth = w;
     m_oldHeight = h;

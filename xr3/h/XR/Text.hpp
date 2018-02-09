@@ -68,6 +68,33 @@ public:
     float height;
   };
 
+  ///@brief Convenience functionality allowing to chain a number of setters, followed
+  /// by an automatic update of the underlying font.
+  class Updater
+  {
+    XR_NONCOPY_DECL(Updater)
+
+  public:
+    Updater(Text& text)
+    : m_text(text)
+    {}
+
+    ~Updater()
+    {
+      m_text.Update();
+    }
+
+    Updater& SetFont(Font::Ptr const& font) { m_text.SetFont(font); return *this; }
+    Updater& SetScale(float scale) { m_text.SetScale(scale); return *this; }
+    Updater& SetBoxSize(float width, float height) { m_text.SetBoxSize(width, height); return *this; }
+    Updater& SetHorizontalAlignment(HAlign ha) { m_text.SetHorizontalAlignment(ha); return *this; }
+    Updater& SetVerticalAlignment(VAlign va) { m_text.SetVerticalAlignment(va); return *this; }
+    Updater& SetText(const char* text) { m_text.SetText(text); return *this; }
+
+  private:
+    Text& m_text;
+  };
+
   // static
   ///@brief Pre-processes UTF-8 encoded @a text, attempting to fit it into a
   /// rectangle of @a maxSize size, after applying @a scale, breaking the text
@@ -107,12 +134,12 @@ public:
   HAlign        GetHorizontalAlignment() const;
   VAlign        GetVerticalAlignment() const;
 
-  void          SetFont(const Font::Ptr& font, bool update = true);
+  void          SetFont(const Font::Ptr& font);
   void          SetScale(float scale);
-  void          SetBoxSize(float boxWidth, float boxHeight, bool update = true);
-  void          SetHorizontalAlignment(HAlign ha, bool update = true);
-  void          SetVerticalAlignment(VAlign va, bool update = true);
-  void          SetText(const char* pText, bool update = true);
+  void          SetBoxSize(float width, float hight);
+  void          SetHorizontalAlignment(HAlign ha);
+  void          SetVerticalAlignment(VAlign va);
+  void          SetText(const char* text);
 
   ///@brief Create the mesh based on the given font, scale, box size, alignments.
   ///@note No check made for [lack of] changes - a full blown recreation of text
