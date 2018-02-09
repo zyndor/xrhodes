@@ -196,7 +196,7 @@ namespace
 #define ADVANCE_PTR(p, stride) p = reinterpret_cast<decltype(p)>(reinterpret_cast<uint8_t*>(p) + (stride))
 
 void Text::GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
-  Vector2 boxSize, HAlign hAlign, VAlign vAlign, uint32_t attribStride,
+  Vector2 boxSize, Alignment hAlign, Alignment vAlign, uint32_t attribStride,
   Vector3* positions, Vector2* uvs, Stats* statsOut)
 {
   const float lineHeight = font->GetLineHeight() * scale;
@@ -209,11 +209,11 @@ void Text::GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
     Vector3 cursor = Vector3::Zero();
     switch (vAlign)
     {
-    case VA_MIDDLE:
+    case Alignment::Center:
       cursor.y -= (boxSize.y - height) * .5f;
       break;
 
-    case VA_BOTTOM:
+    case Alignment::Far:
       cursor.y -= (boxSize.y - height);
       break;
 
@@ -221,7 +221,7 @@ void Text::GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
       break;
     }
 
-    auto hAligner = hAligners[hAlign];
+    auto hAligner = hAligners[static_cast<int>(hAlign)];
 
     cursor.y -= font->GetAscent() * scale;
 
@@ -298,8 +298,8 @@ Text::Text()
   m_font(0),
   m_scale(!.0f),
   m_boxSize(.0f, .0f),
-  m_hAlign(HA_CENTER),
-  m_vAlign(VA_MIDDLE),
+  m_horizontalAlignment(Alignment::Center),
+  m_verticalAlignment(Alignment::Center),
   m_text(),
   m_stats{ 0, .0f, .0f }
 {}
@@ -321,15 +321,15 @@ void Text::SetScale(float scale)
 }
 
 //==============================================================================
-void Text::SetHorizontalAlignment(HAlign ha)
+void Text::SetHorizontalAlignment(Alignment ha)
 {
-  m_hAlign = ha;
+  m_horizontalAlignment = ha;
 }
 
 //==============================================================================
-void Text::SetVerticalAlignment(VAlign va)
+void Text::SetVerticalAlignment(Alignment va)
 {
-  m_vAlign = va;
+  m_verticalAlignment = va;
 }
 
 //==============================================================================
@@ -359,7 +359,7 @@ void Text::Update()
   AllocBuffer(m.numGlyphs * Sprite::kNumVertices);
   SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, m.numGlyphs);
 
-  GenerateMesh(m, m_font, m_scale, m_boxSize, m_hAlign, m_vAlign, GetVertices(),
+  GenerateMesh(m, m_font, m_scale, m_boxSize, m_horizontalAlignment, m_verticalAlignment, GetVertices(),
     &m_stats);
 
   // Create GPU objects.

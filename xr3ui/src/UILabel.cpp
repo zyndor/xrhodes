@@ -64,33 +64,32 @@ void UILabel::SetFont(Font::Ptr const& font)
 }
 
 //==============================================================================
-void UILabel::SetHorizontalAlignment(Text::HAlign val )
+void UILabel::SetHorizontalAlignment(Text::Alignment a)
 {
-  if (val != m_text.GetHorizontalAlignment())
+  if (a != m_text.GetHorizontalAlignment())
   {
-    m_text.SetHorizontalAlignment(val);
+    m_text.SetHorizontalAlignment(a);
     OnChange();
   }
 }
 
 //==============================================================================
-void UILabel::SetVerticalAlignment(Text::VAlign val )
+void UILabel::SetVerticalAlignment(Text::Alignment a)
 {
-  if (val != m_text.GetVerticalAlignment())
+  if (a != m_text.GetVerticalAlignment())
   {
-    m_text.SetVerticalAlignment(val);
+    m_text.SetVerticalAlignment(a);
     OnChange();
   }
 }
 
 //==============================================================================
-void UILabel::PrepareText( const char* pText )
+void UILabel::PrepareText( const char* text )
 {
   XR_ASSERT(UILabel, m_text.GetFont());
-  XR_ASSERTMSG(UILabel, pText != 0,
-    ("Can't prepare NULL text."));
+  XR_ASSERTMSG(UILabel, text != nullptr, ("Can't prepare NULL text."));
   Text::Updater(m_text).SetBoxSize((float)w, (float)h)
-    .SetText(pText);
+    .SetText(text);
 }
 
 //==============================================================================

@@ -25,18 +25,13 @@ class Text: public IndexMesh<TextVertexFormat>
 {
 public:
   // types
-  enum  HAlign
+  ///@brief Describes the alignment of text in terms of the relation between its
+  /// starting point (in its box) and the origin, along the given axis.
+  enum class Alignment
   {
-    HA_LEFT,
-    HA_CENTER,
-    HA_RIGHT
-  };
-
-  enum  VAlign
-  {
-    VA_TOP,
-    VA_MIDDLE,
-    VA_BOTTOM
+    Near, // Left / Top
+    Center,
+    Far,  // Right / Bottom
   };
 
   ///@brief A line of text, with width information to support horizontal alignment.
@@ -87,8 +82,8 @@ public:
     Updater& SetFont(Font::Ptr const& font) { m_text.SetFont(font); return *this; }
     Updater& SetScale(float scale) { m_text.SetScale(scale); return *this; }
     Updater& SetBoxSize(float width, float height) { m_text.SetBoxSize(width, height); return *this; }
-    Updater& SetHorizontalAlignment(HAlign ha) { m_text.SetHorizontalAlignment(ha); return *this; }
-    Updater& SetVerticalAlignment(VAlign va) { m_text.SetVerticalAlignment(va); return *this; }
+    Updater& SetHorizontalAlignment(Alignment a) { m_text.SetHorizontalAlignment(a); return *this; }
+    Updater& SetVerticalAlignment(Alignment a) { m_text.SetVerticalAlignment(a); return *this; }
     Updater& SetText(const char* text) { m_text.SetText(text); return *this; }
 
   private:
@@ -107,7 +102,7 @@ public:
   ///@note Expects to have at least m.numGlyphs * 4 elements in the @a positions
   /// and @a uvs arrays.
   static void GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
-    Vector2 maxSize, HAlign hAlign, VAlign vAlign, uint32_t attribStride,
+    Vector2 maxSize, Alignment hAlign, Alignment vAlign, uint32_t attribStride,
     Vector3* positions, Vector2* uvs, Stats* statsOut);
 
   ///@brief Convenience function to geenrate the mesh for the given text into
@@ -117,7 +112,7 @@ public:
   /// array.
   template <class VertexFormat>
   static void GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
-    Vector2 maxSize, HAlign hAlign, VAlign vAlign, VertexFormat* verts, Stats* statsOut)
+    Vector2 maxSize, Alignment hAlign, Alignment vAlign, VertexFormat* verts, Stats* statsOut)
   {
     GenerateMesh(m, font, scale, maxSize, hAlign, vAlign, VertexFormat::kSize,
       &verts->pos, &verts->uv0, statsOut);
@@ -131,14 +126,14 @@ public:
   Font::Ptr     GetFont() const;
   float         GetScale() const;
   Vector2       GetBoxSize() const;
-  HAlign        GetHorizontalAlignment() const;
-  VAlign        GetVerticalAlignment() const;
+  Alignment     GetHorizontalAlignment() const;
+  Alignment     GetVerticalAlignment() const;
 
   void          SetFont(const Font::Ptr& font);
   void          SetScale(float scale);
   void          SetBoxSize(float width, float hight);
-  void          SetHorizontalAlignment(HAlign ha);
-  void          SetVerticalAlignment(VAlign va);
+  void          SetHorizontalAlignment(Alignment a);
+  void          SetVerticalAlignment(Alignment a);
   void          SetText(const char* text);
 
   ///@brief Create the mesh based on the given font, scale, box size, alignments.
@@ -157,8 +152,8 @@ protected:
   Font::Ptr     m_font;
   float         m_scale;
   Vector2       m_boxSize;
-  HAlign        m_hAlign;
-  VAlign        m_vAlign;
+  Alignment     m_horizontalAlignment;
+  Alignment     m_verticalAlignment;
   std::string   m_text;
 
   Stats m_stats;
@@ -189,16 +184,16 @@ Vector2 Text::GetBoxSize() const
 
 //==============================================================================
 inline
-Text::HAlign  Text::GetHorizontalAlignment() const
+Text::Alignment  Text::GetHorizontalAlignment() const
 {
-  return m_hAlign;
+  return m_horizontalAlignment;
 }
 
 //==============================================================================
 inline
-Text::VAlign  Text::GetVerticalAlignment() const
+Text::Alignment  Text::GetVerticalAlignment() const
 {
-  return m_vAlign;
+  return m_verticalAlignment;
 }
 
 //==============================================================================
