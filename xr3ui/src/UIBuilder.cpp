@@ -120,7 +120,7 @@ uint32_t  GetXmlDimensionMask(tinyxml2::XMLElement* pXml, const char* pAttribNam
 }
 
 //==============================================================================
-void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem) 
+void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem)
 {
   XR_ASSERT(UIBuilder, pSprite != 0);
   outSprite = *pSprite;
@@ -189,7 +189,7 @@ bool  UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     if (!success)
     {
       XR_TRACE(UIBuilder, ("UIElement requires a 16 bit 'y' value (got %d).", temp));
-    }  
+    }
   }
 
   if (success)
@@ -206,7 +206,7 @@ bool  UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     if (!success)
     {
       XR_TRACE(UIBuilder, ("UIElement requires a 16 bit 'w' value (got %d).", temp));
-    }  
+    }
   }
 
   if (success)
@@ -222,7 +222,7 @@ bool  UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     if (!success)
     {
       XR_TRACE(UIBuilder, ("UIElement requires a 16 bit 'h' value (got %d).", temp));
-    }  
+    }
   }
 
   if (success)
@@ -235,7 +235,7 @@ bool  UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 
 //==============================================================================
 // colored elements
-bool  UIBInitUIColoredElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem, 
+bool  UIBInitUIColoredElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
 {
   bool  success(UIBInitUIElement(pXml, pUIElem, pParent, builder));
@@ -281,9 +281,8 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
     pValue = pXml->Attribute("font");
     if (pValue != 0)
     {
-      const Font* pFont(builder.GetFont(pValue));
-      
-      success = pFont != 0;
+      Font::Ptr font = Asset::Manager::Find<Font>(pValue);
+      success = font;
       if (!success)
       {
         XR_TRACE(UIBuilder, ("Couldn't find font '%s' for UILabel.", pValue));
@@ -291,23 +290,23 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
 
       if (success)
       {
-        pLabel->SetFont(pFont);
+        pLabel->SetFont(font);
       }
     }
-    
+
     // horizontal alignment
     pValue = pXml->Attribute("hAlign");
     if (pValue != 0)
     {
       const uint32_t* pFind(std::find(karHorizontalAlignNameHash, karHorizontalAlignNameHash + 3, Hash::String32(pValue)));
-        
+
       int value(pFind - karHorizontalAlignNameHash);
       if (value < 3)
       {
         pLabel->SetHorizontalAlignment(static_cast<Text::HAlign>(value));
       }
     }
-    
+
     // vertical alignment
     pValue = pXml->Attribute("vAlign");
     if (pValue != 0)
@@ -320,7 +319,7 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
         pLabel->SetVerticalAlignment(static_cast<Text::VAlign>(value));
   	  }
     }
-    
+
     // text
     tinyxml2::XMLNode* pNode = pXml->FirstChild();
     while (pNode != 0)
@@ -331,14 +330,14 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
         const char* pText = xmlText->Value();
         if (pText != 0)
         {
-          success = pLabel->GetFont() != 0;
+          success = pLabel->GetFont();
           if (!success)
           {
             const int kBufferSize = 32;
             char  arBuffer[kBufferSize + 1];
             snprintf(arBuffer, kBufferSize, "%s", pText);
 
-            XR_TRACE(UIBuilder, ("A font need to be set on UILabel to prepare text '%s'.", arBuffer));
+            XR_TRACE(UIBuilder, ("A font needs to be set on UILabel to prepare text '%s'.", arBuffer));
           }
 
           if (success)
@@ -467,7 +466,7 @@ bool  UIBInitUIImagePanel(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     if (success)
     {
       pImagePanel->sprite.Scale(scale);
-      
+
       float temp;
       if (GetXmlFloatAttribute(pXml, "hSplit", temp))
       {
@@ -634,7 +633,7 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 
     // material
     bool  arIsSet[UIButton::kNumStates] = { false, false, false };
-    
+
     if (success)
     {
       pValue = pXml->Attribute("img");
@@ -669,7 +668,7 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         }
       }
     }
-    
+
     if (success)
     {
       pValue = pXml->Attribute("imgDown");
@@ -782,7 +781,7 @@ bool  UIBInitUICheckBox(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   }
   return success;
 }
-    
+
 //==============================================================================
 // radio button
 UIElement*  UIBCreateUIRadioButton(AllocateCallback pAllocCb,
@@ -791,7 +790,7 @@ UIElement*  UIBCreateUIRadioButton(AllocateCallback pAllocCb,
   void* pMem((*pAllocCb)(sizeof(UIRadioButton), pAllocCbData));
   return new (static_cast<UIRadioButton*>(pMem)) UIRadioButton;
 }
-                
+
 //==============================================================================
 bool  UIBInitUIRadioButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         UIContainer* pParent, const UIBuilder& builder)
@@ -800,7 +799,7 @@ bool  UIBInitUIRadioButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   if (success)
   {
     UIRadioButton*  pRadioButton(static_cast<UIRadioButton*>(pUIElem));
-    
+
     const char* pValue(pXml->Attribute("group"));
     if (pValue != 0 && strlen(pValue) > 0)
     {
@@ -861,7 +860,7 @@ bool  UIBInitUICascader(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   if (success)
   {
     UICascader* pCascader(static_cast<UICascader*>(pUIElem));
-    
+
     int temp;
     GetXmlIntAttribute(pXml, "hOffset", pCascader->w, temp);
     success = CheckInt16(temp);
@@ -946,7 +945,7 @@ bool  UIBInitUIGrowingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         XR_TRACE(UIBuilder,
           ("UIGrowingLayoutBase requires a 16 bit 'spacing' value (got %d).",
             spacing));
-      }  
+      }
     }
 
     if (success)
@@ -1059,7 +1058,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 
     const char* pValue(0);
     int value = 1;
-  
+
     // rows
     if (success)
     {
@@ -1235,8 +1234,6 @@ const UIBuilder::Configuration  UIBuilder::kDefaultConfig =
   16,
   Sprite::Manager::Get,
   0,
-  Font::Manager::Get,
-  0,
   NewAllocate,
   0,
   NewDeallocate,
@@ -1333,7 +1330,7 @@ void UIBuilder::SetMaxDepth(int maxDepth)
 {
   XR_ASSERT(UIBuilder, maxDepth >= 0);
   Destroy();
-  
+
   delete[]  m_parLevels;
   m_parLevels = new UIElementList[maxDepth];
   m_cfg.maxDepth = maxDepth;
@@ -1345,14 +1342,6 @@ void UIBuilder::SetGetSpriteCallback(Sprite::GetCallback pGetSpriteCb,
 {
   m_cfg.pGetSprite = pGetSpriteCb;
   m_cfg.pGetSpriteData = pCbData;
-}
-
-//==============================================================================
-void UIBuilder::SetGetFontCallback(Font::GetCallback pGetFontCb,
-  void* pCbData)
-{
-  m_cfg.pGetFont = pGetFontCb;
-  m_cfg.pGetFontData = pCbData;
 }
 
 //==============================================================================
@@ -1391,14 +1380,6 @@ const Sprite* UIBuilder::GetSprite(const char* pName) const
   XR_ASSERTMSG(UIBuilder, m_cfg.pGetSprite != 0,
     ("%s callback was not set.", "GetSprite"));
   return (*m_cfg.pGetSprite)(pName, m_cfg.pGetSpriteData);
-}
-
-//==============================================================================
-const Font* UIBuilder::GetFont(const char* pName) const
-{
-  XR_ASSERTMSG(UIBuilder, m_cfg.pGetFont != 0,
-    ("%s callback was not set.", "GetFont"));
-  return (*m_cfg.pGetFont)(pName, m_cfg.pGetFontData);
 }
 
 //==============================================================================
@@ -1450,7 +1431,7 @@ bool UIBuilder::RegisterNamedElement(const char* pName, UIElement* pUIElem)
     success = iFind->first == hash;
   }
   XR_ASSERTMSG(UIBuilder, success, ("The handle '%s' is already taken", pName));
-  
+
   return success;
 }
 
@@ -1556,7 +1537,7 @@ bool  UIBuilder::_Build(tinyxml2::XMLElement* pXml, UIContainer* pContainer, int
         std::string fileName((m_cfg.pFormatFileName) ?
           (*m_cfg.pFormatFileName)(pValue, m_cfg.pFormatFileNameUser) :
           pValue);
-        
+
         success = doc.LoadFile(fileName.c_str()) &&
           doc.RootElement() != 0 &&
           _Build(doc.RootElement(), pContainer, depth);
@@ -1580,7 +1561,7 @@ void UIBuilder::Destroy()
   if (m_depth > 0)
   {
     XR_ASSERT(UIBuilder, m_parLevels != 0);
-    
+
     if (m_pRoot != 0)
     {
       UIElementList&  lElems(m_parLevels[0]);
@@ -1590,7 +1571,7 @@ void UIBuilder::Destroy()
         m_pRoot->RemoveElement(*i0);
       }
     }
-    
+
     for (int i = 0; i <= m_depth; ++i)
     {
       UIElementList&  lElems(m_parLevels[i]);
@@ -1643,7 +1624,7 @@ void UIBuilder::_PostProcess(tinyxml2::XMLElement* pXml, UIElement* pUIElem)
     int   h = CheckIdthBit(flags, XD_HEIGHT) ? pParent->h : pUIElem->h;
     pUIElem->SetSize(w, h);
   }
-  
+
   pValue = pXml->Attribute("alignTo");
   if (pValue != 0)
   {
