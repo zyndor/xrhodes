@@ -196,7 +196,7 @@ namespace
 #define ADVANCE_PTR(p, stride) p = reinterpret_cast<decltype(p)>(reinterpret_cast<uint8_t*>(p) + (stride))
 
 void Text::GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
-  Vector2 boxSize, HAlign hAlign, VAlign vAlign, uint32_t attribStride,
+  Vector2 boxSize, Alignment hAlign, Alignment vAlign, uint32_t attribStride,
   Vector3* positions, Vector2* uvs, Stats* statsOut)
 {
   const float lineHeight = font->GetLineHeight() * scale;
@@ -209,11 +209,11 @@ void Text::GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
     Vector3 cursor = Vector3::Zero();
     switch (vAlign)
     {
-    case VA_MIDDLE:
+    case Alignment::Center:
       cursor.y -= (boxSize.y - height) * .5f;
       break;
 
-    case VA_BOTTOM:
+    case Alignment::Far:
       cursor.y -= (boxSize.y - height);
       break;
 
@@ -221,7 +221,7 @@ void Text::GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
       break;
     }
 
-    auto hAligner = hAligners[hAlign];
+    auto hAligner = hAligners[static_cast<int>(hAlign)];
 
     cursor.y -= font->GetAscent() * scale;
 
@@ -298,8 +298,8 @@ Text::Text()
   m_font(0),
   m_scale(!.0f),
   m_boxSize(.0f, .0f),
-  m_hAlign(HA_CENTER),
-  m_vAlign(VA_MIDDLE),
+  m_horizontalAlignment(Alignment::Center),
+  m_verticalAlignment(Alignment::Center),
   m_text(),
   m_stats{ 0, .0f, .0f }
 {}
@@ -309,13 +309,9 @@ Text::~Text()
 {}
 
 //==============================================================================
-void Text::SetFont(const Font::Ptr& f, bool update)
+void Text::SetFont(const Font::Ptr& font)
 {
-  m_font = f;
-  if (update)
-  {
-    Update();
-  }
+  m_font = font;
 }
 
 //==============================================================================
@@ -325,47 +321,31 @@ void Text::SetScale(float scale)
 }
 
 //==============================================================================
-void Text::SetHorizontalAlignment(HAlign ha, bool update)
+void Text::SetHorizontalAlignment(Alignment ha)
 {
-  m_hAlign = ha;
-  if (update)
-  {
-    Update();
-  }
+  m_horizontalAlignment = ha;
 }
 
 //==============================================================================
-void Text::SetVerticalAlignment(VAlign va, bool update)
+void Text::SetVerticalAlignment(Alignment va)
 {
-  m_vAlign = va;
-  if (update)
-  {
-    Update();
-  }
+  m_verticalAlignment = va;
 }
 
 //==============================================================================
-void Text::SetText(const char* pText, bool update)
+void Text::SetText(const char* text)
 {
-  XR_ASSERT(Text, pText != 0);
-  m_text = pText;
-  if (update)
-  {
-    Update();
-  }
+  XR_ASSERT(Text, text != 0);
+  m_text = text;
 }
 
 //==============================================================================
-void  Text::SetBoxSize(float boxWidth, float boxHeight, bool update)
+void  Text::SetBoxSize(float width, float height)
 {
-  XR_ASSERT(Text, boxWidth >= .0f);
-  XR_ASSERT(Text, boxHeight >= .0f);
+  XR_ASSERT(Text, width >= .0f);
+  XR_ASSERT(Text, height >= .0f);
 
-  m_boxSize = Vector2(boxWidth, boxHeight);
-  if (update)
-  {
-    Update();
-  }
+  m_boxSize = Vector2(width, height);
 }
 
 //==============================================================================
@@ -379,7 +359,7 @@ void Text::Update()
   AllocBuffer(m.numGlyphs * Sprite::kNumVertices);
   SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, m.numGlyphs);
 
-  GenerateMesh(m, m_font, m_scale, m_boxSize, m_hAlign, m_vAlign, GetVertices(),
+  GenerateMesh(m, m_font, m_scale, m_boxSize, m_horizontalAlignment, m_verticalAlignment, GetVertices(),
     &m_stats);
 
   // Create GPU objects.

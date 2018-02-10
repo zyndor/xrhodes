@@ -303,7 +303,7 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
       int value(pFind - karHorizontalAlignNameHash);
       if (value < 3)
       {
-        pLabel->SetHorizontalAlignment(static_cast<Text::HAlign>(value));
+        pLabel->SetHorizontalAlignment(static_cast<Text::Alignment>(value));
       }
     }
 
@@ -316,8 +316,8 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
       int value(pFind - karVerticalAlignNameHash);
       if (value < 3)
       {
-        pLabel->SetVerticalAlignment(static_cast<Text::VAlign>(value));
-  	  }
+        pLabel->SetVerticalAlignment(static_cast<Text::Alignment>(value));
+      }
     }
 
     // text

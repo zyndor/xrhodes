@@ -28,11 +28,11 @@ public:
   Font::Ptr GetFont() const;
   void  SetFont(Font::Ptr const& pFont);
 
-  Text::HAlign  GetAlignHor() const;
-  Text::VAlign  GetAlignVer() const;
+  Text::Alignment  GetHorizontalAlignment() const;
+  Text::Alignment  GetVerticalAlignment() const;
 
-  void  SetHorizontalAlignment(Text::HAlign val);
-  void  SetVerticalAlignment(Text::VAlign val);
+  void  SetHorizontalAlignment(Text::Alignment a);
+  void  SetVerticalAlignment(Text::Alignment a);
 
   void  SetWidthToText();
   void  SetHeightToText();
@@ -67,14 +67,14 @@ Font::Ptr UILabel::GetFont() const
 
 //==============================================================================
 inline
-Text::HAlign  UILabel::GetAlignHor() const
+Text::Alignment  UILabel::GetHorizontalAlignment() const
 {
   return m_text.GetHorizontalAlignment();
 }
 
 //==============================================================================
 inline
-Text::VAlign  UILabel::GetAlignVer() const
+Text::Alignment  UILabel::GetVerticalAlignment() const
 {
   return m_text.GetVerticalAlignment();
 }
