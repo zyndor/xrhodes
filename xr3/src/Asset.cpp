@@ -154,16 +154,20 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
     return m_allocator;
   }
 
-  bool Manage(Asset::Ptr a)
+  bool Manage(Asset::Ptr const& a)
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
     auto const& desc = a->GetDescriptor();
-    auto iFind = m_assets.find(desc);
-    bool success = iFind == m_assets.end();
-    if(success)
+    bool success = desc.IsValid();
+    if (success)
     {
-      m_assets.insert(iFind, { desc, a });
-      a->OverrideFlags(Asset::UnmanagedFlag, 0);
+      auto iFind = m_assets.find(desc);
+      success = iFind == m_assets.end();
+      if (success)
+      {
+        m_assets.insert(iFind, { desc, a });
+        a->OverrideFlags(Asset::UnmanagedFlag, 0);
+      }
     }
     return success;
   }
@@ -398,8 +402,7 @@ static void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset
     }
   }
 
-  // load dependencies
-  if (!done)
+  if (!done)  // load dependencies
   {
     NumDependenciesType numDependencies;
     done = File::Read(hFile, sizeof(numDependencies), 1, &numDependencies) < 1;
@@ -580,7 +583,7 @@ Asset::Ptr Asset::Manager::Find(DescriptorCore const& desc)
 }
 
 //==============================================================================
-bool Asset::Manager::Manage(Asset::Ptr asset)
+bool Asset::Manager::Manage(Asset::Ptr const& asset)
 {
   XR_ASSERT(Asset::Manager, asset);
   bool success = s_assetMan->Manage(asset);

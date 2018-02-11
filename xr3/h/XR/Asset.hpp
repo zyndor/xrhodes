@@ -261,11 +261,22 @@ public:
     template <class T>
     static Counted<T> FindOrCreate(Descriptor<T> const& desc, FlagType flags = 0);
 
-    ///@brief If @a asset wasn't managed, it'll add it to the map and clears the
+    ///@brief If @a asset wasn't managed, it'll attempt to add it to the map
+    /// and clears the UnmanagedFlag on it.
+    ///@return The success of the operation, i.e. if the descriptor of @a asset
+    /// IsValid(), and was the first amongst the managed assets.
+    static bool Manage(Ptr const& asset);
+
+    ///@brief Convenience method to manage a Counted<> of a concrete asset type.
+    /// If @a asset wasn't managed, it'll add it to the map and clears the
     /// UnmanagedFlag on it.
-    ///@return The success of the operation, i.e. if @a asset was the first with
-    /// the given descriptor, to be managed.
-    static bool Manage(Ptr asset);
+    ///@return The success of the operation, i.e. if the descriptor of @a asset
+    /// IsValid(), and was the first amongst the managed assets.
+    template <class T>
+    static bool Manage(Counted<T> const& asset)
+    {
+      return Manage(Ptr(&*asset));
+    }
 
     ///@brief If @a asset was managed, it'll remove it from the map and sets
     /// UnmanagedFlag on it.
