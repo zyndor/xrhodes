@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
 #include "Name.hpp"
@@ -26,7 +25,7 @@ namespace XR
 class Entity
 {
   XR_NONCOPY_DECL(Entity)
-  
+
 public:
   // types
   typedef std::list<Entity*>  List;
@@ -49,13 +48,13 @@ public:
     // data
     Name  m_name;
   };
-  
+
   ///@brief Component class which defines a single unique aspect of an Entity,
   /// with access to the Entity that owns it.
   class Component
   {
     XR_NONCOPY_DECL(Component)
-  
+
   public:
     // static
     template <typename T>
@@ -67,7 +66,7 @@ public:
     // structors
     Component();
     virtual ~Component();
-    
+
     // virtual
     ///@brief Returns the type id of the component.
     virtual size_t      GetTypeId() const =0;
@@ -100,7 +99,7 @@ public:
       return GetTypeIdImpl<T>();
     }
   };
-  
+
   // static
   ///@brief The separator character used in an Entity path to FindChild(), e.g.
   /// "Zone.Locators.PlayerStart"
@@ -110,12 +109,12 @@ public:
   Vector3         translation;
   Quaternion      rotation;
   Vector3         scaling;
-  
+
   // structors
   explicit Entity(Entity* pParent);
   explicit Entity(Name n, Entity* pParent);
   ~Entity();
-  
+
   // general
   Name            GetName() const;
   void            SetName(Name n);
@@ -123,18 +122,18 @@ public:
   ///@brief Updates the local transform matrix of this Entity.
   void            UpdateTransform();
   const Matrix&   GetTransform() const;
-  
+
   ///@brief Calculates and returns the world transform matrix of this Entity,
   /// based on the transforms of itself and its parents.
   Matrix          GetWorldTransform() const;
-  
+
   ///@brief Returns the parent of this Entity, or nullptr if none.
   Entity*         GetParent() const;
 
   ///@brief Removes this entity from the list of its parent's children. If this
   /// Entity doesn't have a parent, this is a no-op.
   void            DetachFromParent();
-  
+
   ///@brief Adds the Entity @a e as a child of this and transfers its ownership
   /// to this.
   void            AddChild(Entity& e);
@@ -147,7 +146,7 @@ public:
   ///@brief Returns a read only list of this' children. Does not transfer
   /// ownership of any of them.
   const List&     GetChildren() const;
-  
+
   ///@brief Attempts to find a child in the given @a path, which should be
   /// a kSeparator delimited list of names, e.g. "Zone.Locators.PlayerStart".
   ///@return Pointer to the child entity, or if if wasn't found, null.
@@ -205,7 +204,7 @@ private:
   // data
   Entity*         m_pParent;  // no ownership
   Matrix          m_xForm;
-  
+
   List            m_children; // yes ownership
   ComponentMap    m_components; // yes ownership
 
