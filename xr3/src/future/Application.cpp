@@ -22,7 +22,7 @@ void Application::Runner::OnSecond(SecondEvent const&)
 int32_t  Application::m_frameDelayMs(0);
 int32_t  Application::m_frameCappingMs(1000);
 bool   Application::m_isRunning(false);
-bool   Application::m_breakUpdate(false);  
+bool   Application::m_breakUpdate(false);
 
 //==============================================================================
 void  Application::Init(File::System const& filesys, char const* title)
@@ -32,13 +32,11 @@ void  Application::Init(File::System const& filesys, char const* title)
 
   Renderer::Init(Device::GetMainWindow());
   Input::Init();
-  Audio::Init();
 }
 
 //==============================================================================
 void  Application::Exit()
 {
-  Audio::Exit();
   Input::Exit();
   Renderer::Exit();
   File::Exit();
@@ -73,26 +71,26 @@ void Application::Run(Runner& runner)
   XR_ASSERT(Application, !m_isRunning);
   XR_ASSERT(Application, m_frameDelayMs > 0);
   m_isRunning = true;
-  
+
   uint64_t tLast;
   uint64_t tNow = Timer::GetUST();
   int64_t tAccum(m_frameDelayMs);
   int64_t tSecond(0);
   SecondEvent eSec = { 0, 0 };
-  
+
   while (!Device::IsQuitting())
-  {    
+  {
     // render
     runner.Render();
-    
+
     Renderer::Flush();
     Renderer::Present();
-    
+
     ++eSec.numRenders;
-    
+
     // update time
     tLast = tNow;
-    
+
     tNow = Timer::GetUST();
     int64_t tDelta(tNow - tLast);
     tSecond += tDelta;
@@ -103,18 +101,18 @@ void Application::Run(Runner& runner)
       tDelta = m_frameCappingMs;
     }
     tAccum += tDelta;
-    
+
     // update stats
     if (tSecond >= 1000)
     {
       runner.OnSecond(eSec);
-      
+
       eSec.numUpdates = 0;
       eSec.numRenders = 0;
-      
+
       tSecond -= 1000;
     }
-    
+
     // update
     while (tAccum > 0)
     {
@@ -127,7 +125,7 @@ void Application::Run(Runner& runner)
       else
       {
         Input::Update();
-        
+
         if (m_breakUpdate)
         {
           tAccum = 0;
@@ -135,14 +133,14 @@ void Application::Run(Runner& runner)
           break;
         }
       }
-      
+
       runner.Update();
-      
+
       tAccum -= m_frameDelayMs;
       ++eSec.numUpdates;
     }
   }
-  
+
   m_isRunning = false;
 }
 

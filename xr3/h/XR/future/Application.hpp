@@ -14,7 +14,6 @@
 #include "Renderer.hpp"
 #include "Timer.hpp"
 #include "Input.hpp"
-#include "Audio.hpp"
 #include "XR/fundamentals.hpp"
 
 namespace XR
@@ -36,32 +35,32 @@ public:
   {
   public:
     virtual ~Runner();
-    
+
     virtual void Update() =0;
     virtual void Render() =0;
     virtual void OnSecond(SecondEvent const& se);
   };
-  
+
   // static
   static void   Init(char const* title = nullptr);
   static void   Exit();
   static void     Init(File::System const& filesys, char const* title = nullptr);
-    
+
   static int32_t  GetFrameDelayMs();
   static bool   IsRunning();
-  
+
   static void   BreakUpdate();
-  
+
   static void   SetFrameDelayMs(int32_t ms);
   static void   SetFrameCappingMs(int32_t ms);
-  
+
   static void   Run(Runner& r);
-  
+
 private:
   // static
   static int32_t  m_frameDelayMs;
   static int32_t  m_frameCappingMs;
-  
+
   static bool     m_isRunning;
   static bool     m_breakUpdate;
 };
