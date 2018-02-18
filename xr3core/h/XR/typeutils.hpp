@@ -119,23 +119,6 @@ struct  UnPointer<T*>
 };
 
 //==============================================================================
-///@brief Enforces Derived to be derived from Base via implicit upcasting.
-template  <class Derived, class Base>
-class AssertBase
-{
-  static void Constraint(Derived* p)
-  {
-    Base* pBase = p;
-  }
- 
-public:
-  AssertBase()
-  {
-    void(*p)(Derived*) = Constraint;
-  }
-};
-
-//==============================================================================
 namespace
 {
 template  <typename T>

@@ -46,7 +46,8 @@ public:
   template <class T>
   void  RegisterMapping(IdType id, T *&refP)
   {
-    AssertBase<typename std::decay<T>::type, Inflatable>();
+    static_assert(std::is_base_of<Inflatable, typename std::decay<T>::type>::value,
+      "Type must derive from Inflatable.");
 #ifdef XR_DEBUG
     refP = nullptr;
 #endif
