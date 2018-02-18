@@ -7,8 +7,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include <XR/debug.hpp>
-#include <XR/maths.hpp>
+#include "XR/debug.hpp"
+#include "XR/maths.hpp"
 #include <vector>
 #include <cstdint>
 
