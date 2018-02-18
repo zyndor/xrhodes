@@ -14,9 +14,9 @@ namespace XR
 //==============================================================================
 UIHorizontalScrollingLayout::UIHorizontalScrollingLayout()
 : UIHorizontalLayout(),
-  m_isTouched(false),
-  m_sensitivity(1.0f),
   m_xOffset(0),
+  m_sensitivity(1.0f),
+  m_isTouched(false),
   m_lastTouchX(0)
 {}
 
@@ -58,7 +58,7 @@ bool UIHorizontalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e
     if (e.x >= x && e.x < (x + w) &&
       e.y >= y && e.y < (y + h))
     {
-      int dx(floorf((e.x - m_lastTouchX) * m_sensitivity + .5f));
+      auto dx = static_cast<int32_t>(floorf((e.x - m_lastTouchX) * m_sensitivity + .5f));
       if (dx != 0)
       {
         SetXOffset(m_xOffset + dx);
@@ -84,6 +84,9 @@ void UIHorizontalScrollingLayout::_AlignElement( UIElement* pElem )
 
   case  AL_HIGH:
     pElem->y = y + h - pElem->h;
+    break;
+      
+  case  AL_NOALIGN:
     break;
   }
 

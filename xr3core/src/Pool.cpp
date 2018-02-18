@@ -27,8 +27,8 @@ void  Pool::Deallocate(void* pMem, void* pUser)
 Pool::Pool()
 : m_parBuffer(0),
   m_isAuto(false),
-  m_pEnd(nullptr),
-  m_pNext(nullptr)
+  m_pNext(nullptr),
+  m_pEnd(nullptr)
 {}
 
 //==============================================================================

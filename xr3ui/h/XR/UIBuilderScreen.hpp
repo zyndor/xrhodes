@@ -32,41 +32,41 @@ public:
     A_BOTTOM_RIGHT,
     kNumAnchors
   };
-  
+
   struct  Tweenable
   {
     UIElement*  pElem;
-    int         id;
+    size_t      id;
     float       percent;
     uint32_t    delayMs;
   };
-  
+
   typedef void(*TweenCallback)(Tweenable& t, void* pUser);
-  
+
   typedef std::vector<UIElement*> UIElementVector;
 
   // static
   static const char* const    karAnchorName[kNumAnchors];
-  
+
   // structors
   explicit UIBuilderScreen(const UIBuilder::Configuration& cfg = UIBuilder::kDefaultConfig);
   ~UIBuilderScreen();
-  
+
   // general
   virtual void        Reposition(int width, int height);
-  
+
   void                SetConfiguration(const UIBuilder::Configuration& cfg);
-  
+
   bool                Build(tinyxml2::XMLElement* pXml);
   UIElement*          GetElement(const char* pName);
   UIElement*          GetElement(uint32_t hash);
-  
+
   int                 GetPadding() const;
   void                SetPadding(int padding);
-  
+
   void                SetTweenIn(TweenCallback pOnTweenIn, void* pData);
   void                SetTweenOut(TweenCallback pOnTweenIn, void* pData);
-  
+
   size_t              GetNumListeners() const;
   UIElementVector const&  GetListeners() const; // no ownership transfer
   size_t              GetNumTweening() const;
@@ -75,7 +75,7 @@ public:
   void                MoveTweening(int x, int y);
 
   void                Destroy();
-  
+
 protected:
   // data
 #ifdef  XR_DEBUG
@@ -85,25 +85,25 @@ protected:
   UIContainer   m_root;
   UIBuilder     m_builder;
   int           m_padding;
-  
+
   std::vector<UIElement*> m_listeners;
   std::vector<UIElement*> m_tweening;
 
   TweenCallback m_pTweenIn;
   void*         m_pTweenInData;
-  
+
   TweenCallback m_pTweenOut;
   void*         m_pTweenOutData;
-  
+
   // internal
   virtual void  _AddElements();
   virtual void  _Show(uint32_t ms);
   virtual void  _Hide(uint32_t ms);
   virtual void  _RemoveElements();
-  
+
   virtual void  _Register();
   virtual void  _Unregister();
-  
+
   void          _ProcessListeners(tinyxml2::XMLElement* pXml);
   void          _ProcessTweening(tinyxml2::XMLElement* pXml);
 };

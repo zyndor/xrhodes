@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "XR/SpinLock.hpp"
+#include "XR/Spinlock.hpp"
 #include "XR/debug.hpp"
 #include <vector>
 #include <mutex>
@@ -40,19 +40,19 @@ namespace XR
       }
     }
 
-    void ThreadWhole(int id, int n)
+    void ThreadWhole(size_t id, size_t n)
     {
       std::unique_lock<Spinlock> lock(spinner);
-      for (int i = 0; i < n; ++i)
+      for (size_t i = 0; i < n; ++i)
       {
         ++data[id];
         ++accessCounter;
       }
     }
 
-    void ThreadPerAccess(int id, int n)
+    void ThreadPerAccess(size_t id, size_t n)
     {
-      for (int i = 0; i < n; ++i)
+      for (size_t i = 0; i < n; ++i)
       {
         {
           std::unique_lock<Spinlock> lock(spinner);
@@ -73,12 +73,12 @@ namespace XR
 
     std::vector<std::thread> threads;
     threads.reserve(data.data.size());
-    for (int i = 0; i < threads.capacity(); ++i)
+    for (size_t i = 0; i < threads.capacity(); ++i)
     {
       threads.emplace_back(&Data::ThreadWhole, &data, i, numAccesses);
     }
 
-    for (int i = 0; i < threads.capacity(); ++i)
+    for (size_t i = 0; i < threads.capacity(); ++i)
     {
       threads[i].join();
     }
@@ -93,12 +93,12 @@ namespace XR
 
     std::vector<std::thread> threads;
     threads.reserve(data.data.size());
-    for (int i = 0; i < threads.capacity(); ++i)
+    for (size_t i = 0; i < threads.capacity(); ++i)
     {
       threads.emplace_back(&Data::ThreadPerAccess, &data, i, numAccesses);
     }
 
-    for (int i = 0; i < threads.capacity(); ++i)
+    for (size_t i = 0; i < threads.capacity(); ++i)
     {
       threads[i].join();
     }

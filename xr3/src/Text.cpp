@@ -78,7 +78,7 @@ void Text::Measure(char const* text, Font::Ptr font, float scale, Vector2 maxSiz
       }
 
       // Check word boundary.
-      bool isSpace = isspace(cp);
+      bool isSpace = isspace(cp) != 0;
       if ((wordStart != nullptr) == isSpace) // If we have a word started, and hit space, or if have no word started and hit non-whitespace.
       {
         if (wordStart)  // Had word, now finished.
@@ -234,10 +234,12 @@ void Text::GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
 
       auto i = line.start;
       bool firstChar = true;
+      XR_ASSERT(Text, utf8::is_valid(line.start, line.end));
       while (i != line.end)
       {
         auto codePoint = utf8u::peek_next(i);
-        if (cg = font->CacheGlyph(codePoint))
+        cg = font->CacheGlyph(codePoint);
+        if (cg)
         {
           if (cg->uvs.right > .0f)
           {
@@ -357,7 +359,7 @@ void Text::Update()
 
   // Allocate buffer, set index pattern
   AllocBuffer(m.numGlyphs * Sprite::kNumVertices);
-  SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, m.numGlyphs);
+  SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, static_cast<int>(m.numGlyphs));
 
   GenerateMesh(m, m_font, m_scale, m_boxSize, m_horizontalAlignment, m_verticalAlignment, GetVertices(),
     &m_stats);

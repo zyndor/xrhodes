@@ -38,7 +38,7 @@ Parser::~Parser ()
 {}
 
 //==============================================================================
-bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
+bool  Parser::Parse(const char* parBuffer, size_t size, Callback pCallback,
         void* pUser)
 {
   XR_ASSERT(Json::Parser, parBuffer != nullptr);
@@ -47,21 +47,21 @@ bool  Parser::Parse(const char* parBuffer, int size, Callback pCallback,
   m_depth = 0;
   m_pCallback = pCallback;
   m_pCallbackUser = pUser;
-  
+
   const char* pChar(m_state.ExpectChar()); // drop leading whitespace
   bool        result(!m_state.IsOver(pChar));
   if (result)
   {
     bool  isObject(*pChar == kObjectBegin);
     bool  isArray(*pChar == kArrayBegin);
-    
+
     result = (isObject || isArray) && !m_state.IsOver(m_state.SkipChar());
     if (result) // check exceeding max depth (not an error)
     {
       result = isObject ? _ParseObject() : _ParseArray();
     }
   }
-   
+
   return result;
 }
 
@@ -94,7 +94,7 @@ bool  Parser::_ParseArray()
       {
         break;
       }
-      
+
       m_state.SkipChar(); // leave character
       if (*pChar == kArrayEnd)
       {
@@ -143,7 +143,7 @@ bool  Parser::_ParseObject()
       {
         break;
       }
-      
+
       XR_ASSERT(Json::Parser, pKeyEnd >= pKey);
       String  str = { pKey, size_t(pKeyEnd - pKey) };
       _DoCallback(E_KEY, &str);
@@ -200,7 +200,7 @@ bool  Parser::_ParseValue()
   bool  result(!m_state.IsOver(pChar));
   if (result)
   {
-    const int kBufferSize = 64; // bytes enough for everyone? (for conversion of numericals.)
+    const size_t kBufferSize = 64; // bytes enough for everyone? (for conversion of numericals.)
     char  arBuffer[kBufferSize];
 
     if (*pChar == kQuot) // string
@@ -260,8 +260,8 @@ bool  Parser::_ParseValue()
 
       if (result)
       {
-        int len = pValueEnd - pChar;
-        
+        size_t len = pValueEnd - pChar;
+
         double  value(atof(pChar));
         double  absValue(std::abs(value));
         if(absValue - std::floor(absValue) < std::numeric_limits<double>::epsilon())
@@ -274,7 +274,7 @@ bool  Parser::_ParseValue()
           std::strncpy(arBuffer, pChar, len);
           arBuffer[len] = '\0';
         }
-        
+
         String  str = { arBuffer, static_cast<size_t>(len) };
         _DoCallback(E_VALUE, &str);
       }
@@ -289,7 +289,7 @@ bool  Parser::_ParseValue()
         pValueEnd = m_state.SkipChar();
       }
 
-      const int len = pValueEnd - pChar;
+      const size_t len = pValueEnd - pChar;
       if (strncmp(pChar, kFalse, len) == 0)
       {
         std::snprintf(arBuffer, kBufferSize - 1, "0");

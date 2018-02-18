@@ -2088,7 +2088,12 @@ static int Load_Version_4_5(void)
 typedef int (*PFN_LOADFUNCPOINTERS)(void);
 typedef struct ogl_StrToExtMap_s
 {
-	char *extensionName;
+//<XR3> Fix 'ISO C++11 does not allow conversion from string literal to char*'.
+// An alternative way would be to disable warnings for this file only, which doesn't
+// seem to work as of premake5.0.0-alpha12 & xcode v9.2.
+  //char *extensionName;
+	char const *extensionName;
+//</XR3>
 	int *extensionVariable;
 	PFN_LOADFUNCPOINTERS LoadExtension;
 } ogl_StrToExtMap;

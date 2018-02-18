@@ -147,6 +147,9 @@ void UIElement::_AlignHorizontally( int x1, Alignment hAlign )
   case AL_HIGH:
     x = x1 - w;
     break;
+      
+  case AL_NOALIGN:
+    break;
   }
 }
 
@@ -165,6 +168,9 @@ void UIElement::_AlignVertically( int y1, Alignment vAlign )
 
   case AL_HIGH:
     y = y1 - h;
+    break;
+    
+  case AL_NOALIGN:
     break;
   }
 }

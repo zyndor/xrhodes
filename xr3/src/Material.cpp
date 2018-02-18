@@ -70,7 +70,7 @@ public:
           break;
 
         case XonEntity::Type::Object:
-          for (auto i = 0; i < state.GetNumElements(); ++i)
+          for (size_t i = 0; i < state.GetNumElements(); ++i)
           {
             if (state[i].GetType() == XonEntity::Type::Value)
             {

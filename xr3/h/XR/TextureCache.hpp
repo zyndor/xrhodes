@@ -70,7 +70,8 @@ public:
   /// come from a call to Allocate().
   void Deallocate(uint8_t* buffer);
 
-  ///@brief Clears all allocations.
+  ///@brief Clears all allocations. Invalidates all buffer pointers and uvs
+  /// previously retrieved from this TextureCache.
   void Reset();
 
   ///@return The pointer to the pixel data.
@@ -78,6 +79,8 @@ public:
 
 private:
   // types
+  using AllocId = uint32_t;
+
   struct Block
   {
     bool last : 1;
@@ -140,7 +143,7 @@ private:
   // internal
   Allocation& Next();
 
-  void Deallocate(uint32_t id);
+  void Deallocate(AllocId id);
 };
 
 }

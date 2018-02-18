@@ -60,8 +60,8 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
   const uint32_t m = 0x5bd1e995;
   const int r = 24;
 
-  uint32_t h1 = uint32_t(seed) ^ len;
-  uint32_t h2 = uint32_t(seed >> 32);
+  uint32_t h1 = static_cast<uint32_t>(seed ^ len);
+  uint32_t h2 = static_cast<uint32_t>(seed >> 32);
 
   const uint32_t * data = (const uint32_t *)key;
 
@@ -107,7 +107,7 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
   h = (h << 32) | h2;
 
   return h;
-} 
+}
 
 #undef PREPROCESS_BYTES
 }
@@ -130,13 +130,13 @@ uint32_t Hash::String32(const char* str)
 //==============================================================================
 uint32_t Hash::String32(const char* str, size_t size)
 {
-  return Hash32<ToLower>(str, size, s_seed);
+  return Hash32<ToLower>(str, size, static_cast<uint32_t>(s_seed));
 }
 
 //==============================================================================
 uint32_t Hash::Data32(const void* data, size_t size)
 {
-  return Hash32<ByteNoOp>(data, size, s_seed);
+  return Hash32<ByteNoOp>(data, size, static_cast<uint32_t>(s_seed));
 }
 
 //==============================================================================

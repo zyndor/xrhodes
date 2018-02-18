@@ -15,9 +15,9 @@ UISliderBase::UISliderBase()
 : UIImage(),
   pOnValueChangeCb(0),
   pOnValueChangeCbData(0),
+  m_percentage(.0f),
   m_isTouched(false),
-  m_touchPosition(0),
-  m_percentage(.0f)
+  m_touchPosition(0)
 {}
 
 //==============================================================================
@@ -25,14 +25,14 @@ UISliderBase::~UISliderBase()
 {}
 
 //==============================================================================
-int UISliderBase::CalculateValue() const
+int32_t UISliderBase::CalculateValue() const
 {
-  int range(CalculateRange());
-  return static_cast<int>(Round(range * m_percentage));
+  int32_t range = CalculateRange();
+  return static_cast<int32_t>(std::round(range * m_percentage));
 }
 
 //==============================================================================
-void UISliderBase::SetValue( int value )
+void UISliderBase::SetValue( int32_t value )
 {
   SetPercentage(static_cast<float>(value) / CalculateRange());
 }

@@ -17,7 +17,7 @@ class BasicMeshCore
 {
 public:
   // structors
-  BasicMeshCore(size_t vertexSize, size_t numVertices = 0);
+  BasicMeshCore(uint32_t vertexSize, uint32_t numVertices = 0);
   ~BasicMeshCore();
 
   // general
@@ -59,14 +59,14 @@ public:
   }
 
   // structors
-  BasicMesh(size_t numVertices = 0);
+  BasicMesh(uint32_t numVertices = 0);
 
   // general
   using BasicMeshCore::GetMaterial;
   using BasicMeshCore::SetMaterial;
   using BasicMeshCore::RenderOnly;
 
-  void AllocBuffer(size_t numVertices);
+  void AllocBuffer(uint32_t numVertices);
 
   Buffer GetVertexBuffer() const;
 
@@ -127,7 +127,7 @@ void BasicMesh<VertexFormat>::CreateVbo(uint32_t flags)
 
 //==============================================================================
 template <class VertexFormat>
-BasicMesh<VertexFormat>::BasicMesh(size_t numVertices)
+BasicMesh<VertexFormat>::BasicMesh(uint32_t numVertices)
 : BasicMeshCore(VertexFormat::kSize, numVertices)
 {}
 
@@ -149,7 +149,7 @@ const VertexFormat* BasicMesh<VertexFormat>::GetVertices() const
 
 //==============================================================================
 template <class VertexFormat>
-void  BasicMesh<VertexFormat>::AllocBuffer(size_t numVertices)
+void  BasicMesh<VertexFormat>::AllocBuffer(uint32_t numVertices)
 {
   XR_ASSERT(BasicMesh, numVertices >= 0);
   m_vertices.SetBuffer(VertexFormat::kSize, numVertices);

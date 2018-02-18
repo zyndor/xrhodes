@@ -24,6 +24,8 @@
 #include "XR/Pool.hpp"
 #include "XR/utils.hpp"
 
+#define ARRAY_SIZE(x) std::extent<decltype(x)>::value
+
 namespace XR
 {
 
@@ -128,7 +130,7 @@ void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem
   float hw(pSprite->GetHalfWidth());
   if (pUIElem->w == 0)
   {
-    pUIElem->w = hw * 2.0f;
+    pUIElem->w = static_cast<int32_t>(hw * 2.0f);
   }
   else if (hw > .0f)
   {
@@ -138,7 +140,7 @@ void UIBSetUISprite(const Sprite* pSprite, Sprite& outSprite, UIElement* pUIElem
   float hh(pSprite->GetHalfHeight());
   if (pUIElem->h == 0)
   {
-    pUIElem->h = hh * 2.0f;
+    pUIElem->h = static_cast<int32_t>(hh * 2.0f);
   }
   else if (pSprite->GetHalfHeight() > .0f)
   {
@@ -298,10 +300,12 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
     pValue = pXml->Attribute("hAlign");
     if (pValue != 0)
     {
-      const uint32_t* pFind(std::find(karHorizontalAlignNameHash, karHorizontalAlignNameHash + 3, Hash::String32(pValue)));
+      const uint32_t* pFind = std::find(karHorizontalAlignNameHash,
+        karHorizontalAlignNameHash + ARRAY_SIZE(karHorizontalAlignNameHash),
+        Hash::String32(pValue));
 
-      int value(pFind - karHorizontalAlignNameHash);
-      if (value < 3)
+      int value = static_cast<int32_t>(pFind - karHorizontalAlignNameHash);
+      if (value < ARRAY_SIZE(karHorizontalAlignNameHash))
       {
         pLabel->SetHorizontalAlignment(static_cast<Text::Alignment>(value));
       }
@@ -311,10 +315,11 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
     pValue = pXml->Attribute("vAlign");
     if (pValue != 0)
     {
-      const uint32_t* pFind(std::find(karVerticalAlignNameHash, karVerticalAlignNameHash + 3, Hash::String32(pValue)));
+      const uint32_t* pFind(std::find(karVerticalAlignNameHash, karVerticalAlignNameHash +
+        ARRAY_SIZE(karVerticalAlignNameHash), Hash::String32(pValue)));
 
-      int value(pFind - karVerticalAlignNameHash);
-      if (value < 3)
+      int value = static_cast<int32_t>(pFind - karVerticalAlignNameHash);
+      if (value < ARRAY_SIZE(karVerticalAlignNameHash))
       {
         pLabel->SetVerticalAlignment(static_cast<Text::Alignment>(value));
       }
@@ -515,11 +520,11 @@ bool  UIBInitUIProgressBarBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
       const char* pValue(pXml->Attribute("fillDir"));
       if (pValue != 0)
       {
-        const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2,
-          Hash::String32(pValue)));
+        const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash +
+          ARRAY_SIZE(karDirectionNameHash), Hash::String32(pValue)));
 
-        int value(pFind - karDirectionNameHash);
-        success = value < 2;
+        int value = static_cast<int32_t>(pFind - karDirectionNameHash);
+        success = value < ARRAY_SIZE(karDirectionNameHash);
         if (!success)
         {
           XR_TRACE(UIBuilder, ("Invalid value in 'fillDir' element for UIProgressBarBase: %s",
@@ -916,10 +921,11 @@ bool  UIBInitUIGrowingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     pValue = pXml->Attribute("growDir");
     if (pValue != 0)
     {
-      const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash + 2, Hash::String32(pValue)));
+      const uint32_t* pFind(std::find(karDirectionNameHash, karDirectionNameHash +
+        ARRAY_SIZE(karDirectionNameHash), Hash::String32(pValue)));
 
-      int value(pFind - karDirectionNameHash);
-      success = value < 2;
+      int value = static_cast<int32_t>(pFind - karDirectionNameHash);
+      success = value < ARRAY_SIZE(karDirectionNameHash);
       if (success)
       {
         pLayout->SetGrowDir(static_cast<UIGrowingLayoutBase::GrowDir>(value));
@@ -1056,7 +1062,6 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
   {
     UIGridLayout*  pLayout(static_cast<UIGridLayout*>(pUIElem));
 
-    const char* pValue(0);
     int value = 1;
 
     // rows
@@ -1241,19 +1246,19 @@ const UIBuilder::Configuration  UIBuilder::kDefaultConfig =
 };
 
 //==============================================================================
-int UIBuilder::GetXmlAlignment(tinyxml2::XMLElement* pXml, const char* pAttribName)
+int UIBuilder::GetXmlAlignment(tinyxml2::XMLElement* xml, const char* attribName)
 {
-  XR_ASSERT(UIBuilder, pXml != 0);
-  XR_ASSERT(UIBuilder, pAttribName != 0);
+  XR_ASSERT(UIBuilder, xml != 0);
+  XR_ASSERT(UIBuilder, attribName != 0);
 
   int value(XA_NONE);
-  const char* pValue(pXml->Attribute(pAttribName));
-  if (pValue != 0)
+  const char* strValue = xml->Attribute(attribName);
+  if (value != 0)
   {
-    value = FindItemId(karAlignValueHash, kNumAlignValues, Hash::String32(pValue));
+    value = static_cast<int32_t>(FindItemId(karAlignValueHash, kNumAlignValues, Hash::String32(strValue)));
     if (value >= kNumAlignValues) // if not found, default to none
     {
-      XR_TRACE(UIBuilder, ("The value of '%s' is not a valid alignment.", pAttribName));
+      XR_TRACE(UIBuilder, ("The value of '%s' is not a valid alignment.", attribName));
       value = XA_NONE;
     }
   }

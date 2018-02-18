@@ -263,7 +263,7 @@ size_t File::GetSize(Handle hFile)
     result = Tell(hFile);
     Seek(hFile, offset, SeekFrom::Start);
   }
-  
+
   return result;
 }
 
@@ -304,7 +304,11 @@ bool File::Seek(Handle hFile, size_t offset, SeekFrom sf)
 {
   XR_ASSERT_HANDLE_VALID(hFile);
   FILE* f = static_cast<FILE*>(hFile);
+#if defined XR_COMPILER_MSVC && defined XR_ARCH_64
+  return _fseeki64(f, offset, karSeekOriginMappings[static_cast<int>(sf)]) == 0;
+#else
   return fseek(f, offset, karSeekOriginMappings[static_cast<int>(sf)]) == 0;
+#endif
 }
 
 //==============================================================================

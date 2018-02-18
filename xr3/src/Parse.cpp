@@ -31,12 +31,12 @@ int Parse::GetErrorCode()
 bool Parse::BooleanPositive( const char* pValue )
 {
   s_errorCode = ERR_NONE;
-  
+
   bool  result(true);
   if (pValue != 0 && pValue[0] != '\0')
   {
     int dummy;
-    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy == 0) || 
+    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy == 0) ||
       pValue[0] == 'n' || pValue[0] == 'N')
     {
       result = false;
@@ -54,7 +54,7 @@ bool Parse::BooleanNegative( const char* pValue )
   if (pValue != 0 && pValue[0] != '\0')
   {
     int dummy;
-    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy > 0) || 
+    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy > 0) ||
       pValue[0] == 'y' || pValue[0] == 'Y')
     {
       result = true;
@@ -352,7 +352,7 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
   r0 = r1 = 0;
   if (success)
   {
-    int   len(strlen(pValue));
+    size_t len = strlen(pValue);
     success = len > 0 && sscanf(pValue, "%d", &r0) == 1;
     if (!success)
     {
@@ -396,7 +396,7 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
   r0 = r1 = 0;
   if (success)
   {
-    int   len(strlen(pValue));
+    size_t len = strlen(pValue);
     success = len > 0 && sscanf(pValue, "%f", &r0) == 1;
     if (!success)
     {
@@ -439,7 +439,7 @@ XR::Color Parse::Color( const char* pValue )
     {
       if (strlen(pValue) <= 6)
       {
-        rgba <<= 8;  
+        rgba <<= 8;
         col.a = 1.0f;
       }
       else

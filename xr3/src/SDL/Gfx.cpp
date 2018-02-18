@@ -274,6 +274,9 @@ struct Program: ResourceGL
         case UniformType::Mat4:
           XR_GL_CALL(glUniformMatrix4fv(loc, arraySize, GL_FALSE, reinterpret_cast<GLfloat const*>(value)));
           break;
+
+        default:
+          break;
         }
       }
     }
@@ -848,13 +851,13 @@ struct Context
           {
           case GL_TEXTURE_3D:
             XR_GL_CALL(glCompressedTexImage3D(target, i, fmtInternal, width, height,
-              depth, 0, buffer->size, buffer->data));
+              depth, 0, static_cast<GLsizei>(buffer->size), buffer->data));
             break;
 
           case GL_TEXTURE_2D:
           case GL_TEXTURE_CUBE_MAP:
             XR_GL_CALL(glCompressedTexImage2D(target + j, i, fmtInternal,
-              width, height, 0, buffer[j].size, buffer[j].data));
+              width, height, 0, static_cast<GLsizei>(buffer[j].size), buffer[j].data));
             break;
           }
         }
@@ -1063,7 +1066,7 @@ struct Context
       Uniform u;
       u.name = name;
       u.type = type;
-      u.arraySize = std::max(arraySize, uint8_t(1));
+      u.arraySize = std::max(arraySize, static_cast<decltype(arraySize)>(1));
 
       size_t requiredBytes = u.arraySize * kUniformTypeSize[uint8_t(u.type)];
       void*& data = m_uniformData[h.id];
@@ -1105,7 +1108,8 @@ struct Context
     GLenum typegl = kShaderTypes[size_t(type)];
     XR_GL_CALL(shader.name = glCreateShader(typegl));
 
-    GLint len = buffer.size;
+    XR_ASSERT(Gfx, buffer.size <= static_cast<size_t>(std::numeric_limits<GLint>::max()));
+    auto len = static_cast<GLint>(buffer.size);
     XR_GL_CALL(glShaderSource(shader.name, 1, reinterpret_cast<GLchar const* const*>(&buffer.data), &len));
     XR_GL_CALL(glCompileShader(shader.name));
 
@@ -1473,7 +1477,7 @@ struct Context
 
   void Draw(VertexBufferHandle vbh, PrimType pt, uint32_t offset, uint32_t count)
   {
-    XR_ASSERT(Gfx, m_activeProgram.id != INVALID_ID);
+    XR_ASSERT(Gfx, m_activeProgram.id != ProgramHandle::INVALID_ID);
     Program& program = m_programs[m_activeProgram.id];
     XR_ASSERT(Gfx, program.linked == true);
 
@@ -1495,7 +1499,7 @@ struct Context
 
   void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType pt, uint32_t offset, uint32_t count)
   {
-    XR_ASSERT(Gfx, m_activeProgram.id != INVALID_ID);
+    XR_ASSERT(Gfx, m_activeProgram.id != ProgramHandle::INVALID_ID);
     Program& program = m_programs[m_activeProgram.id];
     XR_ASSERT(Gfx, program.linked == true);
 

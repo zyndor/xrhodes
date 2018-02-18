@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "detail/debugd.hpp"
 #include "platform.hpp"
 #include <cstdio>

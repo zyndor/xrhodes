@@ -52,8 +52,9 @@ public:
   ///@brief Using @a base as the UVs of the initial sprite on @a pMaterial,
   /// creates @a across * @a down (but no more than @a maxSlices) Sprites in @a
   /// parSprites, shifting the AABB across and down.
-  ///@note  @a parSprites must have space for at least @a maxSlices Sprites.
-  static void Slice(AABB base, int across, int down, int maxSlices,
+  ///@note  @a parSprites must have space for at least @a maxSlices or
+  /// @a across x @a down Sprites, whichever is smaller.
+  static void Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices,
     Material::Ptr const& material, Sprite* sprites);
 
   ///@brief Sets the UVs on @a verts from the given @a aabb, based on whether

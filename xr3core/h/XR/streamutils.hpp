@@ -7,7 +7,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
+#include "XR/debug.hpp"
 #include <iomanip>
 
 namespace XR
@@ -32,7 +32,7 @@ bool  ReadBinaryStream(std::istream& s, T& value, size_t* pOutNumBytesRead = nul
 /// themselves in the [@a iBegin, @a iEnd) range to the stream @a s, as a
 /// byte array. If specified, @a pOutNumBytesWritten is incremented by the
 /// size of T times the number of elements successfully inserted into the
-/// stream. Note that this doesn't include the bytes written as part of 
+/// stream. Note that this doesn't include the bytes written as part of
 /// the number of elements.
 ///@return Whether the operation was successful, i.e. !@a s.fail().
 template <typename SizeType = uint32_t, typename Iter>
@@ -85,8 +85,9 @@ template <typename SizeType, typename Iter>
 inline
 bool  WriteRangeBinaryStream(Iter iBegin, Iter iEnd, std::ostream& s, size_t* pOutNumBytesWritten)
 {
-  SizeType numElems = std::distance(iBegin, iEnd);
-  bool result = WriteBinaryStream(numElems, s, nullptr);
+  auto numElems = std::distance(iBegin, iEnd);
+  XR_ASSERT(StreamUtils, static_cast<size_t>(numElems) <= static_cast<size_t>(std::numeric_limits<SizeType>::max()));
+  bool result = WriteBinaryStream(static_cast<SizeType>(numElems), s, nullptr);
   while (result && iBegin != iEnd)
   {
     result = WriteBinaryStream(*iBegin, s, pOutNumBytesWritten);

@@ -22,24 +22,24 @@ class SdfBuilder
 public:
   struct Point
   {
-    int x;
-    int y;
+    uint32_t x;
+    uint32_t y;
   };
 
   SdfBuilder(uint32_t bitmapSize, uint32_t fieldSize)
   : m_rowSize(bitmapSize + 2),
     m_points(m_rowSize * m_rowSize),
     m_distances(m_points.size(), .0f),
-    m_fieldSize(fieldSize)
+    m_fieldSize(static_cast<float>(fieldSize))
   {}
 
   void Generate(uint8_t const* srcPixels, uint32_t srcRowSize, uint32_t w, uint32_t h)
   {
-    const int rowSize = m_rowSize;
+    const uint32_t rowSize = m_rowSize;
     XR_ASSERT(SdfBuilder, w <= rowSize - 2);
     XR_ASSERT(SdfBuilder, h <= rowSize - 2);
     // Clear buffers.
-    std::fill(m_points.begin(), m_points.end(), Point{ -1, -1 });
+    std::fill(m_points.begin(), m_points.end(), Point{ uint32_t(-1), uint32_t(-1) });
     std::fill(m_distances.begin(), m_distances.end(), std::numeric_limits<float>::max());
 
     const size_t idxBegin = rowSize + 1; // index of first useful pixel.
@@ -51,7 +51,7 @@ public:
     auto iSrc = srcPixels;
     const auto rowDiff = rowSize - w;
     const auto srcRowDiff = srcRowSize - w;
-    for (int y = 0; y < h; ++y)
+    for (decltype(h) y = 0; y < h; ++y)
     {
       auto p0 = p;
       auto p1 = p + w;
@@ -62,7 +62,7 @@ public:
           *(iSrc + srcRowSize) != value || *(iSrc - srcRowSize) != value)
         {
           *d = .0f;
-          *p = { int(p - p0), y };
+          *p = { uint32_t(p - p0), y };
         }
         ++d;
         ++p;
@@ -81,37 +81,37 @@ public:
     const float d2 = sqrtf(2.0f);
     p = m_points.data() + idxBegin;
     d = m_distances.data() + idxBegin;
-    for (int y = 0; y < h; ++y)
+    for (decltype(h) y = 0; y < h; ++y)
     {
-      for (int x = 0; x < w; ++x)
+      for (decltype(w) x = 0; x < w; ++x)
       {
-        int offset = -(rowSize + 1); // top left
+        int offset = -(static_cast<int32_t>(rowSize) + 1); // top left
         if (*(d + offset) + d2 < *d)
         {
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = -rowSize; // above
+        offset = -static_cast<int32_t>(rowSize); // above
         if (*(d + offset) + d1 < *d)
         {
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = -(rowSize - 1); // top right
+        offset = -static_cast<int32_t>(rowSize - 1); // top right
         if (*(d + offset) + d2 < *d)
         {
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -121,7 +121,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -138,9 +138,9 @@ public:
     auto idxEnd = idxBegin + wLess1 + hLess1 * rowSize;
     p = m_points.data() + idxEnd;
     d = m_distances.data() + idxEnd;
-    for (int y = hLess1; y >= 0; --y)
+    for (decltype(hLess1) y = hLess1;; --y)
     {
-      for (int x = wLess1; x >= 0; --x)
+      for (decltype(wLess1) x = wLess1;; --x)
       {
         int offset = 1; // right
         if (*(d + offset) + d1 < *d)
@@ -148,45 +148,56 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = rowSize - 1;  // bottom left
+        offset = static_cast<int32_t>(rowSize - 1);  // bottom left
         if (*(d + offset) + d2 < *d)
         {
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = rowSize;  // below
+        offset = static_cast<int32_t>(rowSize);  // below
         if (*(d + offset) + d1 < *d)
         {
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = rowSize + 1;  // bottom right
+        offset = static_cast<int32_t>(rowSize + 1);  // bottom right
         if (*(d + offset) + d2 < *d)
         {
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = sqrt(dx * dx + dy * dy);
+          *d = std::sqrtf(float(dx * dx + dy * dy));
           *p = b;
         }
 
         --p;
         --d;
+        
+        if (x == 0)
+        {
+          break;
+        }
       }
+
       p -= rowDiff;
       d -= rowDiff;
+
+      if (y == 0)
+      {
+        break;
+      }
     }
 
     // Scale distance field values into the -127, 128 range, clamping them first
@@ -195,9 +206,9 @@ public:
     const float scale = m_fieldSize;
     d = m_distances.data() + idxBegin;
     iSrc = srcPixels;
-    for (int y = 0; y < h; ++y)
+    for (decltype(h) y = 0; y < h; ++y)
     {
-      for (int x = 0; x < w; ++x)
+      for (decltype(w) x = 0; x < w; ++x)
       {
         if (*iSrc == 0)
         {
@@ -219,9 +230,9 @@ public:
     XR_ASSERT(SdfBuilder, w <= m_rowSize - 2);
     XR_ASSERT(SdfBuilder, h <= m_rowSize - 2);
     float* d = m_distances.data() + m_rowSize + 1;
-    for (int y = 0; y < h; ++y)
+    for (decltype(h) y = 0; y < h; ++y)
     {
-      for (int x = 0; x < w; ++x)
+      for (decltype(w) x = 0; x < w; ++x)
       {
         float value = d[x + m_rowSize * y] + 127.0f;
         buffer[x + w * y] = uint8_t(value);
@@ -230,7 +241,7 @@ public:
   }
 
 private:
-  size_t m_rowSize;
+  uint32_t m_rowSize;
   std::vector<Point> m_points;
   std::vector<float> m_distances;
   float m_fieldSize;

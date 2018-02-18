@@ -21,10 +21,10 @@ public:
   ~UIVerticalSlider();
 
   // general use
-  virtual int   CalculateRange() const;
+  int32_t CalculateRange() const override;
 
-  virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
-  virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
+  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
+  bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
 
   void  Render(IUIRenderer& renderer) const override;
 };

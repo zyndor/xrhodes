@@ -10,10 +10,10 @@
 namespace XR {
 
 //==============================================================================
-void  IndexMeshCore::SetIndexPattern(const uint16_t* pInds, int numInds, int repeat)
+void  IndexMeshCore::SetIndexPattern(const uint16_t* pInds, int numInds, int numSets)
 {
   XR_ASSERT(IndexMesh, numInds >= 0);
-  XR_ASSERT(IndexMesh, repeat >= 0);
+  XR_ASSERT(IndexMesh, numSets >= 0);
   XR_ASSERT(IndexMesh, pInds != 0);
 
   uint16_t  shift(0);
@@ -25,21 +25,21 @@ void  IndexMeshCore::SetIndexPattern(const uint16_t* pInds, int numInds, int rep
     }
   }
 
-  SetIndexPattern(pInds, numInds, shift + 1, repeat);
+  SetIndexPattern(pInds, numInds, shift + 1, numSets);
 }
 
 //==============================================================================
 void IndexMeshCore::SetIndexPattern(const uint16_t * pInds, int numInds,
-  uint16_t shift, int repeat)
+  uint16_t shift, int numSets)
 {
   XR_ASSERT(IndexMesh, numInds >= 0);
-  XR_ASSERT(IndexMesh, repeat >= 0);
+  XR_ASSERT(IndexMesh, numSets >= 0);
   XR_ASSERT(IndexMesh, pInds != 0);
 
   int indexOffset(0);
   int vertexOffset(0);
-  m_indices.resize(numInds * repeat);
-  for (int i = 0; i < repeat; ++i)
+  m_indices.resize(numInds * numSets);
+  for (int i = 0; i < numSets; ++i)
   {
     for (int j = 0; j < numInds; ++j)
     {

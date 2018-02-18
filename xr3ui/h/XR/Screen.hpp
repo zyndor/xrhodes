@@ -38,43 +38,43 @@ public:
 
   // virtual
   virtual void    Reposition(int width, int height) =0;
-  
+
   // general
   State           GetState() const;
   bool            IsRegistered() const;
   ScreenManager*  GetManager() const;  // no ownership transfer
-  
+
   void            SetOnBecomeActive(BecomeActiveCallback pCb, void* pData);
 
   void            Show(ScreenManager& sm, int32_t ms);
   void            Register();
   void            Unregister();
   void            Hide(uint32_t ms);
-  
-  void            Update(int32_t ms);
-  
+
+  void            Update(uint32_t ms);
+
 protected:
   // data
   ScreenManager*  m_pManager;  // no ownership
-  
+
   // virtual
   virtual void    _AddElements() =0;
   virtual void    _Show(uint32_t ms) =0;
   virtual void    _Hide(uint32_t ms) =0;
   virtual void    _RemoveElements() =0;
-  
+
   virtual void    _Register() =0;
   virtual void    _Unregister() =0;
-  
+
 private:
   // data
   State           m_state;
-  int32_t         m_timer;
+  uint32_t        m_timer;
   bool            m_isRegistered;
-  
+
   BecomeActiveCallback  m_pOnBecomeActive;
   void*                 m_pOnBecomeActiveData;
-  
+
   // internal
   void            _MakeActive();
   void            _MakeHidden();

@@ -38,6 +38,7 @@ TextureCache::TextureCache(uint32_t size, Format format, uint32_t blockWidth,
   m_numAllocs(0),
   m_buffer(size * m_pitch)
 {
+  XR_ASSERT(TextureCache, m_allocs.size() < std::numeric_limits<AllocId>::max());
   Block* b = m_blocks.data();
   auto last = (m_pitch / blockWidth) - 1;
   for (auto& r : m_rows)
@@ -135,16 +136,16 @@ uint8_t* TextureCache::Allocate(uint32_t widthPixels, uint32_t heightPixels,
     alloc->block = block;
     alloc->row = row;
 
-    int y = (row - m_rows.data());
-    int x = block - row->blocks;
+    ptrdiff_t y = row - m_rows.data();
+    ptrdiff_t x = block - row->blocks;
     buffer = m_buffer.data() + y * m_rowStride + x * m_blockWidth;
     alloc->buffer = buffer;
 
-    int u = x * m_blockWidth;
+    ptrdiff_t u = x * m_blockWidth;
     uvs.left = u / float(m_size);
     uvs.right = (u + widthPixels) / float(m_size);
 
-    int v = y * m_rowHeight;
+    ptrdiff_t v = y * m_rowHeight;
     uvs.top = v / float(m_size);
     uvs.bottom = (v + heightPixels) / float(m_size);
 
@@ -172,14 +173,14 @@ void TextureCache::Deallocate(uint8_t* buffer)
   auto iFind = std::find_if(m_allocsHead, m_allocsEnd, findPredicate);
   if(iFind != m_allocsEnd)
   {
-    Deallocate(iFind - m_allocs.data());
+    Deallocate(static_cast<AllocId>(iFind - m_allocs.data()));
   }
   else
   {
     iFind = std::find_if(m_allocs.data(), m_allocs.data() + (m_numAllocs - (m_allocsEnd - m_allocsHead)), findPredicate);
     if(iFind != m_allocsEnd)
     {
-      Deallocate(iFind - m_allocs.data());
+      Deallocate(static_cast<AllocId>(iFind - m_allocs.data()));
     }
   }
 }
@@ -229,7 +230,7 @@ TextureCache::Allocation& TextureCache::Next()
 }
 
 //==============================================================================
-void TextureCache::Deallocate(uint32_t id)  // absolute index into the array of allocations
+void TextureCache::Deallocate(AllocId id)  // absolute index into the array of allocations
 {
   // Swaps our guy with the most recent allocation, then pops it off.
   auto base = m_allocs.data();

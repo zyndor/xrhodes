@@ -21,10 +21,10 @@ UIVerticalSlider::~UIVerticalSlider()
 {}
 
 //==============================================================================
-int UIVerticalSlider::CalculateRange() const
+int32_t UIVerticalSlider::CalculateRange() const
 {
-  int ssh(GetSliderSpriteHeight());
-  int range(h - ssh);
+  int32_t ssh(GetSliderSpriteHeight());
+  int32_t range(h - ssh);
   XR_ASSERTMSG(UIVerticalSlider, range > 0,
     ("Slider height (%d) - slider's sprite's height (%d) needs to be > 0.",
     h, ssh));
@@ -34,8 +34,8 @@ int UIVerticalSlider::CalculateRange() const
 //==============================================================================
 bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 {
-  const int kRight(CalculateRight());
-  const int kBottom(CalculateBottom());
+  const int32_t kRight(CalculateRight());
+  const int32_t kBottom(CalculateBottom());
 
   int yTouch(e.y);
   if (e.isPressed && e.x >= x && e.x < kRight &&
@@ -44,10 +44,10 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
     // calculate which side we're on
     yTouch -= y;
 
-    int value(CalculateValue());
+    int32_t value(CalculateValue());
     if (yTouch < value)
     {
-      yTouch -= sliderSprite.GetHalfHeight();
+      yTouch -= static_cast<int32_t>(sliderSprite.GetHalfHeight());
       SetValue(yTouch);
     }
     else
@@ -56,7 +56,7 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 
       if (yTouch > value)
       {
-        yTouch += sliderSprite.GetHalfHeight();
+        yTouch += static_cast<int32_t>(sliderSprite.GetHalfHeight());
         SetValue(yTouch);
       }
       else
@@ -79,7 +79,7 @@ bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionEvent& e )
 {
   if (m_isTouched)
   {
-    int dy(e.y - m_touchPosition);
+    int32_t dy = e.y - m_touchPosition;
     m_touchPosition = e.y;
     SetValue(CalculateValue() + dy);
   }
@@ -99,11 +99,10 @@ void UIVerticalSlider::Render(IUIRenderer& renderer) const
   XR_ASSERTMSG(UIVerticalSlider, sliderSprite.GetMaterial() != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
-  int left(x + w / 2 - Round(sliderSprite.GetHalfWidth() +
-    sliderSprite.GetLeftPadding()));
-  int top(y + CalculateValue() + sliderSprite.GetTopPadding());
-  int right(left + sliderSprite.GetQuadWidth());
-  int bottom(top + sliderSprite.GetQuadHeight());
+  float left = x + w / 2 - sliderSprite.GetHalfWidth() + sliderSprite.GetLeftPadding();
+  float top = y + CalculateValue() + sliderSprite.GetTopPadding();
+  float right = left + sliderSprite.GetQuadWidth();
+  float bottom = top + sliderSprite.GetQuadHeight();
 
   auto verts = renderer.NewSprite(sliderSprite.GetMaterial());
   verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);

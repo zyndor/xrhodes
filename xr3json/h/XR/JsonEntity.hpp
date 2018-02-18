@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "json.hpp"
 #include "XR/debug.hpp"
 #include <map>
@@ -36,7 +35,7 @@ enum  Type
 
 //==============================================================================
 ///@brief Generic JSON Entity base class.
-class Entity 
+class Entity
 {
 public:
   // structors
@@ -61,20 +60,20 @@ public:
 
   // virtual
   virtual Entity*     Clone() const =0;
-  
-  virtual int         GetNumChildren() const =0;  // objects. arrays and values return 0
-  virtual int         GetNumElements() const =0;  // arrays. objects and values return 0
-  virtual int         GetValueSize() const =0;    // values. objects and arrays return 0
+
+  virtual size_t      GetNumChildren() const =0;  // objects. arrays and values return 0
+  virtual size_t      GetNumElements() const =0;  // arrays. objects and values return 0
+  virtual size_t      GetValueSize() const =0;    // values. objects and arrays return 0
 
   virtual const char* GetValue() const =0;  // values. objects and arrays return 0
 
   virtual Entity*     GetChild(const char* pKey, Type acceptType) const =0;  // retrieve child from object
   virtual Entity*     GetElement(int id, Type acceptType) const =0;  // retrieve child from array
-  
+
 private:
   // data
   Type                m_type;
-  
+
   Entity*              m_pPrevSibling; // no ownership
   Entity*              m_pNextSibling; // no ownership
 };
@@ -99,16 +98,16 @@ public:
 
   // general
   void                SetValue(const char* pValue);
-  void                SetValue(const char* pValue, int len);
+  void                SetValue(const char* pValue, size_t len);
   void                SetValue(int i);
   void                SetValue(double d);
   void                SetValue(std::string str);
 
   virtual Value*      Clone() const;
-  
-  virtual int         GetNumChildren() const;  // objects. arrays and values return 0
-  virtual int         GetNumElements() const;  // arrays. objects and values return 0
-  virtual int         GetValueSize() const;    // values. objects and arrays return 0
+
+  virtual size_t      GetNumChildren() const;  // objects. arrays and values return 0
+  virtual size_t      GetNumElements() const;  // arrays. objects and values return 0
+  virtual size_t      GetValueSize() const;    // values. objects and arrays return 0
 
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 
@@ -133,7 +132,7 @@ class Object: public Entity
 public:
   // types
   typedef std::list<std::string>  StringList;
-  
+
   // using
   using Entity::GetChild;
   using Entity::GetElement;
@@ -145,25 +144,25 @@ public:
 
   // general
   virtual Object*     Clone() const;
-  
-  virtual int         GetNumChildren() const;  // objects. arrays and values return 0
-  virtual int         GetNumElements() const;  // arrays. objects and values return 0
-  virtual int         GetValueSize() const;    // values. objects and arrays return 0
+
+  virtual size_t      GetNumChildren() const;  // objects. arrays and values return 0
+  virtual size_t      GetNumElements() const;  // arrays. objects and values return 0
+  virtual size_t      GetValueSize() const;    // values. objects and arrays return 0
 
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 
   void                AddChild(const char* pKey, Entity* pEntity);
   void                AddChild(const char* pKey, size_t keySize, Entity* pEntity);
   void                AddChild(std::string name, Entity* pEntity);
-  
+
   void                GetChildNames(StringList& sl) const;
-  
+
   const Entity*       GetFirstChild() const;
   const Entity*       GetLastChild() const;
-  
+
   Entity*             GetFirstChild();
   Entity*             GetLastChild();
-  
+
   virtual Entity*     GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
   virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
 
@@ -172,7 +171,7 @@ protected:
   struct  Child
   {
     // types
-    typedef std::map<uint32_t, Child>      Map;
+    typedef std::map<uint64_t, Child>      Map;
 
     struct  GetName
     {
@@ -181,15 +180,15 @@ protected:
         return v.second.name;
       }
     };
-    
+
     // data
     std::string  name;
     Entity*      pEntity;
   };
-  
+
   // data
   Child::Map          m_children;
-  
+
 private:
   // disabled
   Value*  ToValue();
@@ -214,10 +213,10 @@ public:
 
   // general
   virtual Array*      Clone() const;
-  
-  virtual int         GetNumChildren() const;  // objects. arrays and values return 0
-  virtual int         GetNumElements() const;  // arrays. objects and values return 0
-  virtual int         GetValueSize() const;    // values. objects and arrays return 0
+
+  virtual size_t      GetNumChildren() const;  // objects. arrays and values return 0
+  virtual size_t      GetNumElements() const;  // arrays. objects and values return 0
+  virtual size_t      GetValueSize() const;    // values. objects and arrays return 0
 
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 

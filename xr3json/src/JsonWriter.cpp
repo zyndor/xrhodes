@@ -30,24 +30,9 @@ const char* const Writer::karEscapeSub[] =
 };
 
 //==============================================================================
-Writer::Writer(int maxDepth)
-: m_stream(),
-  m_parScopes(nullptr),
-  m_maxDepth(maxDepth),
-  m_depth(0),
-  m_allowLinebreaks(false),
-  m_allowIndents(false),
-  m_allowSpace(false),
-  m_autoEscapeString(false)
-{
-  m_parScopes = new Scope[maxDepth];
-}
-
-//==============================================================================
-Writer::~Writer()
-{
-  delete[] m_parScopes;
-}
+Writer::Writer(uint32_t maxDepth)
+: m_scopes(maxDepth)
+{}
 
 //==============================================================================
 void Writer::SetLinebreaks( bool pref )
@@ -140,7 +125,7 @@ Writer&  Writer::WriteValue( const char* pKey, bool value )
 //==============================================================================
 Writer&  Writer::WriteObject( const char* pKey )
 {
-  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type != ARRAY,
+  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type != ARRAY,
     ("Current scope is an array, named objects are invalid. Use WriteArrayObject() instead."));
   _WriteKey(pKey);
   _PushScope(OBJECT);
@@ -151,7 +136,7 @@ Writer&  Writer::WriteObject( const char* pKey )
 //==============================================================================
 Writer&  Writer::WriteArray( const char* pKey )
 {
-  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type != ARRAY,
+  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type != ARRAY,
     ("Current scope is an array, named arrays are invalid. Use WriteArrayArray() instead."));
   _WriteKey(pKey);
   _PushScope(ARRAY);
@@ -198,8 +183,8 @@ Writer&  Writer::WriteArrayElement( bool value )
 //==============================================================================
 Writer&  Writer::WriteArrayObject()
 {
-  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type == ARRAY,
-    ("Current scope is not an array, anonymous objects are invalid. Use WriteArrayArray() instead."));
+  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type == ARRAY,
+    ("Current scope is not an array; anonymous objects are invalid. Use WriteArrayArray() instead."));
   _WriteComma();
   _PushScope(OBJECT);
 
@@ -209,8 +194,8 @@ Writer&  Writer::WriteArrayObject()
 //==============================================================================
 Writer& Writer::WriteArrayArray()
 {
-  XR_ASSERTMSG(Json::Writer, m_parScopes[m_depth].type == ARRAY,
-    ("Current scope is not an array, anonymous arrays are invalid. Use WriteArrayArray() instead."));
+  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type == ARRAY,
+    ("Current scope is not an array; anonymous arrays are invalid. Use WriteArrayArray() instead."));
   _WriteComma();
   _PushScope(ARRAY);
 
@@ -222,7 +207,8 @@ Writer&  Writer::CloseScope()
 {
   XR_ASSERT(Json::Writer, m_depth > 0);
 
-  const int type(m_parScopes[m_depth].type);
+  const Type type(m_scopes[m_depth].type);
+  XR_ASSERT(Json::Writer, type != INVALID);
   --m_depth;
 
   _AddLinebreak();
@@ -234,6 +220,9 @@ Writer&  Writer::CloseScope()
   
   case ARRAY:
     m_stream.put(kArrayEnd);
+    break;
+    
+  default:
     break;
   }
 
@@ -282,9 +271,9 @@ void  Writer::_WriteKey( const char* pKey )
 void  Writer::_WriteComma()
 {
   XR_ASSERT(Json::Writer, m_depth > 0);
-  if (m_parScopes[m_depth].isEmpty)
+  if (m_scopes[m_depth].isEmpty)
   {
-    m_parScopes[m_depth].isEmpty = false;
+    m_scopes[m_depth].isEmpty = false;
   }
   else
   {
@@ -304,10 +293,10 @@ void  Writer::_PushScope(Type type)
 {
   XR_ASSERT(Json::Writer, type > INVALID);
   XR_ASSERT(Json::Writer, type <= ARRAY);
-  XR_ASSERT(Json::Writer, m_depth + 1 < m_maxDepth);
+  XR_ASSERT(Json::Writer, m_depth + 1 < m_scopes.size());
   ++m_depth;
-  m_parScopes[m_depth].type = type;
-  m_parScopes[m_depth].isEmpty = true;
+  m_scopes[m_depth].type = type;
+  m_scopes[m_depth].isEmpty = true;
 
   m_stream.put(karScopeBegin[type]);
   _AddLinebreak();

@@ -37,10 +37,10 @@ public:
 
   void  Render(IUIRenderer& renderer) const override;
 
-  virtual void            OnChange();
+  void  OnChange() override;
 
-  virtual bool            OnMouseAction(const Input::MouseActionEvent& e);
-  virtual bool            OnMouseMotion(const Input::MouseMotionEvent& e);
+  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
+  bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
 
 protected:
   // data
