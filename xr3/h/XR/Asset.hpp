@@ -143,8 +143,8 @@ public:
   ///@brief Builders are responsible for converting raw assets into engine
   /// format. When asset building is enabled, assets that are loaded by their
   /// raw path are eligible for checking against their built counterpart, and
-  /// if change is detected, the Manager will invoke the Builder based on
-  /// the type of the asset being loaded.
+  /// if change is detected in modification date or asset version, the Manager
+  /// will invoke the Builder based on the type of the asset being loaded.
   class Builder: Linked<Builder const>
   {
   public:
@@ -201,9 +201,9 @@ public:
     /// given @a path hashes to, either asynchronously (Manager::Update() will
     /// need to be called regularly), or synchronously (if the LoadSyncFlag was
     /// set). If asset building is enabled then the actual @a path will be
-    /// checked for a raw asset more recent than the built asset, and the asset
-    /// will be rebuilt. This must succeed for the successful loading of the
-    /// asset.
+    /// checked for a raw asset either more recently modified than the built
+    /// asset or having a different version, and the asset will be rebuilt.
+    /// This must succeed for the successful loading of the asset.
     template <class T>
     static Counted<T> Load(FilePath const& path, FlagType flags = 0)
     {

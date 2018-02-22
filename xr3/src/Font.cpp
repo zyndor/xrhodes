@@ -30,6 +30,9 @@
 #include "XR/Image.hpp"
 #endif
 
+#define LTRACE(format) XR_TRACE(Font, format)
+#define LTRACEIF(condition, format) XR_TRACEIF(Font, condition, format)
+
 namespace XR
 {
 
@@ -82,7 +85,7 @@ bool ParseLiteralChar(std::string const& value, uint32_t& c)
   }
   else
   {
-    XR_TRACE(Font, ("Invalid code point literal: '%s'", value.c_str()));
+    LTRACE(("Invalid code point literal: '%s'", value.c_str()));
   }
   return success;
 }
@@ -90,10 +93,8 @@ bool ParseLiteralChar(std::string const& value, uint32_t& c)
 bool ParseHexCodePoint(std::string const& value, uint32_t& c)
 {
   bool success = !!(std::istringstream(value) >> std::ws >> std::hex >> c);
-  if(!success)
-  {
-    XR_TRACE(Font, ("Failed to parse hex code point value: %s", value.c_str()));
-  }
+  LTRACEIF(!success, ("Failed to parse hex code point value: %s",
+    value.c_str()));
   return success;
 }
 
@@ -164,8 +165,12 @@ XR_ASSET_BUILDER_DECL(Font)
 
 XR_ASSET_BUILDER_BUILD_SIG(Font)
 {
-  auto root = XonBuildTree(buffer.As<char const>(), buffer.size);
+  XonParser::State state;
+  auto root = XonBuildTree(buffer.As<char const>(), buffer.size, &state);
   bool success = root != nullptr;
+  LTRACEIF(!success,
+    ("%s: failed to parse XON somewhere around row %d, column %d.",
+      rawNameExt, state.row, state.column));
 
   // Get font file path, read file.
   FileBuffer ttfData;
@@ -179,7 +184,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     catch(XonEntity::Exception&)
     {
       success = false;
-      XR_TRACE(Font, ("%s: missing definition for '%s'", rawNameExt, "font"));
+      LTRACE(("%s: missing definition for '%s'", rawNameExt, "font"));
     }
   }
 
@@ -197,19 +202,18 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           char const* rangeDef = codePoints[i0].GetValue();
           if(!ParseRange(rangeDef, codePointsRoot))
           {
-            XR_TRACE(Font, ("%s: '%s' is not a valid code point range.", rawNameExt, rangeDef));
+            LTRACE(("%s: '%s' is not a valid code point range.", rawNameExt,
+              rangeDef));
           }
         }
         catch(XonEntity::Exception&)
-        {
-          // ignore
-        }
+        {} // ignore
       }
     }
     catch(XonEntity::Exception&)
     {
       success = false;
-      XR_TRACE(Font, ("%s: missing definition for '%s'", rawNameExt, "codePoints"));
+      LTRACE(("%s: missing definition for '%s'", rawNameExt, "codePoints"));
     }
   }
 
@@ -219,11 +223,8 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   {
     numFonts = stbtt_GetNumberOfFonts(ttfData.GetData());
     success = numFonts > 0;
-    if (!success)
-    {
-      XR_TRACE(Font, ("%s: Failed to get number of fonts from (%d).",
-        rawNameExt, numFonts));
-    }
+    LTRACEIF(!success, ("%s: failed to get number of fonts (%d).", rawNameExt,
+      numFonts));
   }
 
   int fontIndex = 0;
@@ -240,47 +241,43 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         fontIndex >= numFonts)
       {
         fontIndex = 0;
-        XR_TRACE(Font, ("%s: '%s' is invalid for %s; defaulting to %d.",
-          rawNameExt, index.GetValue(), "fontIndex", fontIndex));
+        LTRACE(("%s: '%s' is invalid for %s; defaulting to %d.", rawNameExt,
+          index.GetValue(), "fontIndex", fontIndex));
       }
     }
     catch (XonEntity::Exception&)
-    {
-      // ignore.
-    }
+    {} // ignore.
 
     try
     {
       auto& size = root->Find("fontSize");
       if (!StringTo(size.GetValue(), fontSize))
       {
-        XR_TRACE(Font, ("%s: Failed to parse %s for %s, defaulting to %d.",
-          rawNameExt, size.GetValue(), "fontSize", fontSize));
+        LTRACE(("%s: failed to parse %s for %s, defaulting to %d.", rawNameExt,
+          size.GetValue(), "fontSize", fontSize));
       }
       else if (fontSize < kMinFontSize)
       {
-        XR_TRACE(Font, ("%s: Clamped %s (%d) to minimum (%d).", "fontSize",
-          rawNameExt, fontSize, kMinFontSize));
+        LTRACE(("%s: clamped %s (%d) to minimum (%d).", "fontSize", rawNameExt,
+          fontSize, kMinFontSize));
         fontSize = kMinFontSize;
       }
     }
     catch (XonEntity::Exception&)
-    {
-      // ignore.
-    }
+    {} // ignore.
 
     try
     {
       auto& size = root->Find("sdfSize");
       if (!StringTo(size.GetValue(), sdfSize))
       {
-        XR_TRACE(Font, ("%s: Failed to parse %s for %s, defaulting to %d.",
-          rawNameExt, size.GetValue(), "sdfSize", sdfSize));
+        LTRACE(("%s: failed to parse %s for %s, defaulting to %d.", rawNameExt,
+          size.GetValue(), "sdfSize", sdfSize));
       }
       else if (sdfSize < kMinSdfSize)
       {
-        XR_TRACE(Font, ("%s: Clamped %s (%d) to minimum (%d).", "sdfSize",
-          rawNameExt, sdfSize, kMinSdfSize));
+        LTRACE(("%s: clamped %s (%d) to minimum (%d).", "sdfSize", rawNameExt,
+          sdfSize, kMinSdfSize));
         sdfSize = kMinSdfSize;
       }
       else
@@ -288,36 +285,32 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         const int maxSdfSize = (fontSize / 2) - 1;
         if (sdfSize > maxSdfSize)
         {
-          XR_TRACE(Font, ("%s: Clamped %s (%d) to maximum (%d).", "sdfSize",
-            rawNameExt, sdfSize, maxSdfSize));
+          LTRACE(("%s: clamped %s (%d) to maximum (%d).", "sdfSize", rawNameExt,
+            sdfSize, maxSdfSize));
           sdfSize = maxSdfSize;
         }
       }
     }
     catch (XonEntity::Exception&)
-    {
-      // ignore.
-    }
+    {} // ignore.
 
     try
     {
       auto& size = root->Find("cacheSize");
       if (!StringTo(size.GetValue(), cacheSize))
       {
-        XR_TRACE(Font, ("%s: Failed to parse %s for %s, defaulting to %d.",
-          rawNameExt, size.GetValue(), "cacheSize", cacheSize));
+        LTRACE(("%s: failed to parse %s for %s, defaulting to %d.", rawNameExt,
+          size.GetValue(), "cacheSize", cacheSize));
       }
       else if (cacheSize < kMinCacheSize)
       {
-        XR_TRACE(Font, ("%s: Clamped %s (%d) to minimum (%d).", "cacheSize",
-          rawNameExt, cacheSize, kMinCacheSize));
+        LTRACE(("%s: clamped %s (%d) to minimum (%d).", "cacheSize", rawNameExt,
+          cacheSize, kMinCacheSize));
         cacheSize = std::min(cacheSize, kMinCacheSize);
       }
     }
     catch (XonEntity::Exception&)
-    {
-      // ignore.
-    }
+    {} // ignore.
 
     try
     {
@@ -329,9 +322,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       }
     }
     catch (XonEntity::Exception&)
-    {
-      // ignore.
-    }
+    {} // ignore.
   }
 
   // Init font data.
@@ -340,10 +331,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   {
     int offset = stbtt_GetFontOffsetForIndex(ttfData.GetData(), fontIndex);
     success = stbtt_InitFont(&stbFont, ttfData.GetData(), offset) != 0;
-    if (!success)
-    {
-      XR_TRACE(Font, ("%s: Failed to initialise font.", rawNameExt));
-    }
+    LTRACEIF(!success, ("%s: failed to initialise font.", rawNameExt));
   }
 
   // Calculate and write some font metrics. These are in 1/64 sub-pixel units.
@@ -366,10 +354,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     success = WriteBinaryStream(lineHeightUnits * kUnitsToPixel, data) &&
       WriteBinaryStream(ascent * kUnitsToPixel, data) &&
       WriteBinaryStream(cacheSize, data);
-    if (!success)
-    {
-      XR_TRACE(Font, ("%s: Failed to write font metrics.", rawNameExt));
-    }
+    LTRACEIF(!success, ("%s: failed to write font metrics.", rawNameExt));
   }
 
   // Calculate and write number of glyphs
@@ -387,7 +372,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     if (!WriteBinaryStream(numGlyphs, data))
     {
       success = false;
-      XR_TRACE(Font, ("%s: Failed to write number of glyphs.", rawNameExt));
+      LTRACE(("%s: failed to write number of glyphs.", rawNameExt));
     }
   }
 
@@ -415,7 +400,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         auto const iGlyph = stbtt_FindGlyphIndex(&stbFont, i0);
         if(iGlyph < 0)
         {
-          XR_TRACE(Font, ("%s: No glyph found for code point 0x%x.", rawNameExt, i0));
+          LTRACE(("%s: no glyph found for code point 0x%x.", rawNameExt, i0));
           continue;
         }
 
@@ -466,7 +451,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
             w, h, glyphSizePadded, pixelScale, pixelScale, iGlyph);
 
 #ifdef ENABLE_GLYPH_DEBUG
-          //XR_TRACE(Font, ("0x%x (%c) Bitmap @ %d x %d (+ %d, %d)", i0, i0, w, h, xPixelOffs, yPixelOffs));
+          //LTRACE(("0x%x (%c) Bitmap @ %d x %d (+ %d, %d)", i0, i0, w, h, xPixelOffs, yPixelOffs));
           //{
           //  auto pp = glyphBitmapPadded + bufferOffset;
           //  auto rowDiff = glyphSizePadded - w;
@@ -495,7 +480,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           sdf.ConvertToBitmap(sw, sh, glyphBitmap.data());
 
 #ifdef ENABLE_GLYPH_DEBUG
-          //XR_TRACE(Font, ("0x%x (%c) SDF Bitmap @ %d x %d", i0, i0, sw, sh));
+          //LTRACE(("0x%x (%c) SDF Bitmap @ %d x %d", i0, i0, sw, sh));
           //{
           //  auto pp = glyphBitmap.data();
           //  for (int yy = 0; yy < sh; ++yy)
@@ -531,7 +516,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
             &glyphBytesWritten))
           {
             success = false;
-            XR_TRACE(Font, ("%s: Failed to write glyph bitmap data for 0x%x in '%s'.",
+            LTRACE(("%s: failed to write glyph bitmap data for 0x%x in '%s'.",
               rawNameExt, i0));
             break;
           }
@@ -541,7 +526,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         if(!WriteBinaryStream(glyph, data))
         {
           success = false;
-          XR_TRACE(Font, ("%s: Failed to write glyph data for 0x%x.", rawNameExt, i0));
+          LTRACE(("%s: failed to write glyph data for 0x%x.", rawNameExt, i0));
           break;
         }
       }
@@ -552,7 +537,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     if(success && !WriteBinaryStream(static_cast<uint32_t>(glyphBytesWritten), data))
     {
       success = false;
-      XR_TRACE(Font, ("%s: Failed to write glyp bitmap blob size for.", rawNameExt));
+      LTRACE(("%s: failed to write glyp bitmap blob size.", rawNameExt));
     }
 
     if(success)
@@ -560,14 +545,14 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       auto blob = glyphBitmaps.str();
       auto p = reinterpret_cast<uint8_t const*>(blob.data());
       success = WriteRangeBinaryStream<uint32_t>(p, p + blob.size(), data);
-      XR_TRACEIF(Font, !success, ("%s: Failed to write glyph bitmap blob for '%s'.", rawNameExt));
+      LTRACEIF(!success, ("%s: failed to write glyph bitmap blob.", rawNameExt));
     }
   }
 
   if (success)
   {
     success = WriteBinaryStream(shaderHash, data);
-    XR_TRACEIF(Font, !success, ("%s: Failed to write shader for", rawNameExt));
+    LTRACEIF(!success, ("%s: Failed to write shader hash.", rawNameExt));
   }
   return success;
 }
@@ -587,46 +572,65 @@ bool Font::OnLoaded(Buffer buffer)
     m_ascent > .0f &&
     reader.Read(m_cacheSideSizePixels) &&
     m_cacheSideSizePixels > 0;
+  LTRACEIF(!success, ("%s: failed to read font metrics.", m_debugPath.c_str()));
 
   // num glyphs
   uint32_t numGlyphs = 0;
   if(success)
   {
     success = reader.Read(numGlyphs);
+    LTRACEIF(!success, ("%s: failed to read glyph count.", m_debugPath.c_str()));
   }
 
   uint32_t maxHeight = 0;
-  Glyph g;
-  uint32_t i = 0;
-  while(success && i < numGlyphs)
+  if (success)
   {
-    success = reader.Read(g);
-    auto h = g.fieldHeight;
-    if(h > maxHeight)
+    Glyph g;
+    uint32_t i = 0;
+    while (i < numGlyphs)
     {
-      maxHeight = h;
+      success = reader.Read(g);
+      if (success)
+      {
+        auto h = g.fieldHeight;
+        if (h > maxHeight)
+        {
+          maxHeight = h;
+        }
+        m_glyphs[g.codePoint] = g;
+        ++i;
+      }
+      else
+      {
+        LTRACE(("%s: failed to read glyph %d.", m_debugPath.c_str(), i));
+        break;
+      }
     }
-    m_glyphs[g.codePoint] = g;
-    ++i;
   }
 
   uint32_t glyphBitmapsSize;
   if(success)
   {
-    success = reader.Read(glyphBitmapsSize) &&
-      glyphBitmapsSize <= reader.GetRemainingSize();
+    success = reader.Read(glyphBitmapsSize);
+    LTRACEIF(!success, ("%s: failed to read bitmap size.", m_debugPath.c_str()));
+  }
+
+  uint32_t readSize;
+  if (success)
+  {
+    success = reader.Read(readSize) && readSize <= reader.GetRemainingSize();
+    LTRACEIF(!success,
+      ("%s: unexpected end of buffer before bitmap blob (%d bytes missing).",
+      m_debugPath.c_str(), readSize - reader.GetRemainingSize()));
   }
 
   if(success)
   {
     m_glyphBitmaps.resize(glyphBitmapsSize);
 
-    uint32_t readSize;
-    success = reader.Read(readSize) && readSize <= reader.GetRemainingSize();
-
     auto writep = m_glyphBitmaps.data();
     auto writeEnd = m_glyphBitmaps.data() + m_glyphBitmaps.size();
-    while (success && writep != writeEnd)
+    while (writep != writeEnd)
     {
       auto readp = reader.ReadBytesWithSize(readSize);
       success = readp != nullptr;
@@ -635,6 +639,13 @@ bool Font::OnLoaded(Buffer buffer)
         memcpy(writep, readp, readSize);
         writep += readSize;
       }
+      else
+      {
+        XR_TRACE(Font,
+          ("%s: failed to read %z bytes of bitmap data (read %z so far).",
+            m_debugPath.c_str(), readSize, writep - m_glyphBitmaps.data()));
+        break;
+      }
     }
   }
 
@@ -642,6 +653,8 @@ bool Font::OnLoaded(Buffer buffer)
   if (success)
   {
     success = reader.Read(descShader.hash);
+    LTRACEIF(!success, ("%s: failed to read shader descriptor.",
+      m_debugPath.c_str()));
   }
 
   Shader::Ptr shader;
@@ -660,19 +673,20 @@ bool Font::OnLoaded(Buffer buffer)
       success = shader != nullptr;
       if (!success)
       {
-        XR_TRACE(Font, ("%s: failed to set shader 0x%llx%s.", m_debugPath.c_str(),
+        LTRACE(("%s: failed to set shader 0x%llx%s.", m_debugPath.c_str(),
           descShader.hash, useDefault ? " (bad default shader!)": ""));
       }
     }
     else
     {
-      XR_TRACE(Font, ("%s: missing shader definition and no default shader."));
+      LTRACE(("%s: missing shader definition and no default shader set.",
+        m_debugPath.c_str()));
     }
 
     if (success && !s_descDefaultShader.IsValid())
     {
       s_descDefaultShader = descShader;
-      XR_TRACE(Font, ("%s: setting default shader to 0x%llx.", m_debugPath.c_str(),
+      LTRACE(("%s: setting default shader to 0x%llx now.", m_debugPath.c_str(),
         descShader.hash));
     }
   }
@@ -791,7 +805,8 @@ Font::CachedGlyphInternal* Font::CacheGlyphInternal(uint32_t codePoint)
         }
         else
         {
-          XR_TRACE(Font, ("Failed to allocate cache space for glyph 0x%x.", codePoint));
+          LTRACE(("%s: Failed to allocate cache space for glyph 0x%x.",
+            m_debugPath.c_str(), codePoint));
         }
       }
 

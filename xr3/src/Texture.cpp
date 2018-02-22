@@ -11,6 +11,9 @@
 #include "XR/FileWriter.hpp"
 #include "XR/streamutils.hpp"
 
+#define LTRACE(format) XR_TRACE(Texture, format)
+#define LTRACEIF(condition, format) XR_TRACEIF(Texture, condition, format)
+
 namespace XR
 {
 
@@ -37,6 +40,8 @@ XR_ASSET_BUILDER_BUILD_SIG(Texture)
   // parse image
   Image img;
   bool success = img.Parse(buffer.data, buffer.size);
+  LTRACEIF(!success, ("%s: failed to parse image data.", rawNameExt));
+
   if (success)
   {
     uint32_t width = img.GetWidth();
@@ -58,6 +63,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Texture)
     }
 
     success = SerializeTexture(format, width, height, { img.GetPixelDataSize(), img.GetPixelData() }, data);
+    LTRACEIF(!success, ("%s: failed to serialize texture.", rawNameExt));
   }
   return success;
 }
@@ -146,16 +152,14 @@ void Texture::Bind(uint32_t stage) const
 //==============================================================================
 bool Texture::OnLoaded(Buffer buffer)
 {
-  bool success = true;
   BufferReader reader(buffer);
 
   Gfx::TextureFormat format = Gfx::TextureFormat::kCount;
   uint32_t width = 0;
   uint32_t height = 0;
-  if (success)  // read texture dimensions
-  {
-    success = reader.Read(format) && reader.Read(width) && reader.Read(height);
-  }
+  bool success = reader.Read(format) && reader.Read(width) && reader.Read(height);
+  LTRACEIF(!success, ("%s: failed to read texture dimensions.",
+    m_debugPath.c_str()));
 
   uint32_t textureDataSize;
   uint8_t const* textureData;
@@ -164,6 +168,7 @@ bool Texture::OnLoaded(Buffer buffer)
     // Create Gfx texture.
     textureData = reader.ReadBytesWithSize<uint32_t>(textureDataSize);
     success = textureData != nullptr;
+    LTRACEIF(!success, ("%s: failed to read texel data.", m_debugPath.c_str()));
   }
 
   uint32_t flags;
@@ -175,6 +180,7 @@ bool Texture::OnLoaded(Buffer buffer)
     Buffer textureBuffer = { textureDataSize, textureData };
     m_handle = Gfx::CreateTexture(format, width, height, 0, textureFlags, &textureBuffer);
     success = m_handle.IsValid();
+    LTRACEIF(!success, ("%s: failed to create texture.", m_debugPath.c_str()));
   }
 
   if (success)

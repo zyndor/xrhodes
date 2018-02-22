@@ -70,6 +70,20 @@ public:
     return p;
   }
 
+  ///@brief Attempts to read one SizeType into @a numElements followed by
+  /// that many sizeof(T) byte chunks, a pointer to which is then returned.
+  /// If either attempt fails, a nullptr is returned.
+  template <typename T, typename SizeType>
+  T const* ReadElementsWithSize(SizeType& numElements)
+  {
+    T const* p = nullptr;
+    if (Read(numElements))
+    {
+      p = reinterpret_cast<const T*>(ReadBytes(numElements * sizeof(T)));
+    }
+    return p;
+  }
+
   ///@return Number of bytes still readable.
   size_t GetRemainingSize() const
   {
