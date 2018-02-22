@@ -124,11 +124,26 @@ workspace "xr3.SDL"
 			"XR_DEBUG"
 		}
 	filter{}
+
+	if isVS() == false then
+		buildoptions {
+			"-std=c++14",
+			"-Wall",
+			"-Werror",
+		}
+	end
 	
 	-- target-specific setup
-	-- Windows
 	filter {}
+	-- Windows
 	if target_env == "windows" then
+		if isVS() then
+			buildoptions {
+				"/WX",
+				--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.
+			}
+		end
+		
 		system("windows")
 		systemversion "8.1"
 		
@@ -137,10 +152,6 @@ workspace "xr3.SDL"
 
     -- Mac OSX
     if target_env == "macosx" then
-        buildoptions {
-            "-std=c++14"
-        }
-		
 		flags {
 			"StaticRuntime"
 		}
