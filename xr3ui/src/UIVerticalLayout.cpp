@@ -36,6 +36,9 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
     case  AL_HIGH:
       xElem += w - pElem->w;
       break;
+      
+    case  AL_NOALIGN:
+      break;
     }
     pElem->x = xElem;
   }
@@ -70,7 +73,7 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
 //==============================================================================
 void UIVerticalLayout::_SetHeightToContent()
 {
-  int hNew = 0;
+  int32_t hNew = 0;
   for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     hNew += (*i0)->h;
@@ -78,7 +81,7 @@ void UIVerticalLayout::_SetHeightToContent()
 
   if (m_lElements.size() > 0)
   {
-    hNew += (m_lElements.size() - 1) * m_spacing;
+    hNew += static_cast<int32_t>(m_lElements.size() - 1) * m_spacing;
   }
 
   h = hNew;

@@ -120,7 +120,7 @@ bool Shader::OnLoaded(Buffer buffer)
   if (success)  // Read vertex shader
   {
     cVertex = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
-    success = cVertex.Get();
+    success = cVertex != nullptr;
     if (!success)
     {
       XR_TRACE(Shader, ("Failed to load fragment shader component for '%s'.", m_debugPath.c_str()));
@@ -140,6 +140,7 @@ bool Shader::OnLoaded(Buffer buffer)
   if (success)  // read fragment shader
   {
     cFragment = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
+    success = cFragment != nullptr;
     if (!success)
     {
       XR_TRACE(Shader, ("Failed to load fragment shader component for '%s'.", m_debugPath.c_str()));

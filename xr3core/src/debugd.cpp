@@ -70,7 +70,9 @@ bool Channel::IsEnabled(char const* name)
 
 //==============================================================================
 Channel::Channel(char const* name)
+#if defined(XR_DEBUG)
 : m_name(name)
+#endif
 {}
 
 void Channel::Trace(char const* format, ...)

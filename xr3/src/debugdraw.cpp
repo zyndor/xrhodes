@@ -22,7 +22,7 @@ static void SetMaterial()
   if (s_lastFlush < flushId || flushId + INT32_MAX > s_lastFlush + INT32_MAX)
   {
     s_material.Release();
-    s_material.Reset(Renderer::AllocMaterial()); 
+    s_material.Reset(Renderer::AllocMaterial());
     s_lastFlush = flushId;
   }
 
@@ -144,26 +144,26 @@ void  FillRect(float hw, float hh, Material::Ptr const& material)
 int GetCircleNumVerts(float radius)
 {
   XR_ASSERT(GetCircleNumVerts, radius >= .0f);
-  return std::ceil(kPi * radius * .333f);
+  return int(std::ceil(kPi * radius * .333f));
 }
 
 void  Circle(float radius, Material::Ptr const& material)
 {
-  int numVerts(GetCircleNumVerts(radius));
-  float theta(M_PI / numVerts);
-  float c(cosf(theta));
-  float s(sinf(theta));
+  uint32_t numVerts(GetCircleNumVerts(radius));
+  float theta = float(M_PI / numVerts);
+  float c = std::cosf(theta);
+  float s = std::sinf(theta);
   Vector3 v(radius, .0f, .0f);
 
   numVerts *= 2;
   ++numVerts;
-  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  for (int i = 0; i < numVerts; ++i)
+  FloatBuffer* pStream(Renderer::AllocBuffer(uint32_t(sizeof(Vector3)), numVerts));
+  for (uint32_t i = 0; i < numVerts; ++i)
   {
     pStream->Set(i, v);
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
   }
-  
+
   if (!material)
   {
     SetMaterial();
@@ -181,9 +181,9 @@ void  Circle(float radius, Material::Ptr const& material)
 void  FillCircle(float radius, Material::Ptr const& material)
 {
   int numVerts(GetCircleNumVerts(radius));
-  float theta(M_PI / numVerts);
-  float c(cosf(theta));
-  float s(sinf(theta));
+  float theta = float(M_PI / numVerts);
+  float c = cosf(theta);
+  float s = sinf(theta);
   Vector3 v(radius, .0f, .0f);
 
   int numIter = numVerts - 1;

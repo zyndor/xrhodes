@@ -14,7 +14,7 @@ int UIGridLayout::s_defaultRowPadding(0);
 int UIGridLayout::s_defaultColumnPadding(0);
 
 //==============================================================================
-void UIGridLayout::SetDefaultPadding( int padding )
+void UIGridLayout::SetDefaultPadding( int32_t padding )
 {
   XR_ASSERT(UIGridLayout, padding >= 0);
   s_defaultRowPadding = padding;
@@ -22,27 +22,27 @@ void UIGridLayout::SetDefaultPadding( int padding )
 }
 
 //==============================================================================
-void UIGridLayout::SetDefaultRowPadding( int padding )
+void UIGridLayout::SetDefaultRowPadding( int32_t padding )
 {
   XR_ASSERT(UIGridLayout, padding >= 0);
   s_defaultRowPadding = padding;
 }
 
 //==============================================================================
-void UIGridLayout::SetDefaultColumnPadding( int padding )
+void UIGridLayout::SetDefaultColumnPadding( int32_t padding )
 {
   XR_ASSERT(UIGridLayout, padding >= 0);
   s_defaultColumnPadding = padding;
 }
 
 //==============================================================================
-int UIGridLayout::GetDefaultRowPadding()
+int32_t UIGridLayout::GetDefaultRowPadding()
 {
   return s_defaultRowPadding;
 }
 
 //==============================================================================
-int UIGridLayout::GetDefaultColumnPadding()
+int32_t UIGridLayout::GetDefaultColumnPadding()
 {
   return s_defaultColumnPadding;
 }
@@ -65,9 +65,9 @@ UIGridLayout::~UIGridLayout()
 //==============================================================================
 void UIGridLayout::_AlignElement( UIElement* pElem )
 {
-  const size_t numElements = m_lElements.size();
-  int row = numElements / m_numColumns;
-  int column = numElements - (row * m_numColumns);
+  const int numElements = static_cast<int>(m_lElements.size());
+  const int row = numElements / m_numColumns;
+  const int column = numElements - (row * m_numColumns);
 
   if (m_hAlign != AL_NOALIGN)
   {
@@ -83,6 +83,9 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
 
     case  AL_HIGH:
       xElem += m_cellWidth - pElem->w;
+      break;
+      
+    case  AL_NOALIGN:
       break;
     }
     pElem->x = xElem;
@@ -103,6 +106,9 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
     case  AL_HIGH:
       yElem += m_cellHeight - pElem->h;
       break;
+      
+    case  AL_NOALIGN:
+      break;
     }
     pElem->y = yElem;
   }
@@ -111,7 +117,7 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
 }
 
 //==============================================================================
-void UIGridLayout::SetCellWidth(int wCell)
+void UIGridLayout::SetCellWidth(int32_t wCell)
 {
   if (wCell != m_cellWidth)
   {
@@ -121,7 +127,7 @@ void UIGridLayout::SetCellWidth(int wCell)
 }
 
 //==============================================================================
-void UIGridLayout::SetCellHeight(int hCell)
+void UIGridLayout::SetCellHeight(int32_t hCell)
 {
   if (hCell != m_cellHeight)
   {
@@ -131,7 +137,7 @@ void UIGridLayout::SetCellHeight(int hCell)
 }
 
 //==============================================================================
-void UIGridLayout::SetCellSize(int wCell, int hCell)
+void UIGridLayout::SetCellSize(int32_t wCell, int32_t hCell)
 {
   if (wCell != m_cellWidth || hCell != m_cellHeight)
   {
@@ -142,7 +148,7 @@ void UIGridLayout::SetCellSize(int wCell, int hCell)
 }
 
 //==============================================================================
-void UIGridLayout::SetColumnPadding(int padding)
+void UIGridLayout::SetColumnPadding(int32_t padding)
 {
   if (padding != m_columnPadding)
   {
@@ -152,7 +158,7 @@ void UIGridLayout::SetColumnPadding(int padding)
 }
 
 //==============================================================================
-void UIGridLayout::SetRowPadding(int padding)
+void UIGridLayout::SetRowPadding(int32_t padding)
 {
   if (padding != m_rowPadding)
   {
@@ -162,7 +168,7 @@ void UIGridLayout::SetRowPadding(int padding)
 }
 
 //==============================================================================
-void UIGridLayout::SetCellPadding(int xPadding, int yPadding)
+void UIGridLayout::SetCellPadding(int32_t xPadding, int32_t yPadding)
 {
   if (m_columnPadding != xPadding || m_rowPadding != yPadding)
   {

@@ -18,12 +18,10 @@ const AABB Sprite::kWholeTexture = { .0f, .0f, 1.0f, 1.0f };
 const AABB Sprite::kNullTexture =  { .0f, .0f, .0f, .0f };
 
 //==============================================================================
-void Sprite::Slice( AABB base, int across, int down, int maxSlices,
-  Material::Ptr const& material, Sprite* sprites )
+void Sprite::Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices,
+  Material::Ptr const& material, Sprite* sprites)
 {
-  XR_ASSERTMSG(Sprite, material, ("Trying to Slice() NULL material."));
-  XR_ASSERT(Sprite, across > 0);
-  XR_ASSERT(Sprite, down > 0);
+  XR_ASSERTMSG(Sprite, material, ("Trying to Slice() null material."));
   if (maxSlices <= 0)
   {
     maxSlices = down * across;
@@ -32,10 +30,10 @@ void Sprite::Slice( AABB base, int across, int down, int maxSlices,
   const float leftStart(base.left);
   const float width(base.right - base.left);
   const float height(base.bottom - base.top);
-  int slices(0);
-  for (int i = 0; i < down && slices < maxSlices; ++i)
+  decltype(maxSlices) slices = 0;
+  for (decltype(down) i = 0; i < down && slices < maxSlices; ++i)
   {
-    for (int j = 0; j < across && slices < maxSlices; ++j)
+    for (decltype(across) j = 0; j < across && slices < maxSlices; ++j)
     {
       sprites->SetMaterial(material);
       sprites->SetUVsProportional(base);

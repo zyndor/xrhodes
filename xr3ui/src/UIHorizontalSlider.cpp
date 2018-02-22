@@ -21,10 +21,10 @@ UIHorizontalSlider::~UIHorizontalSlider()
 {}
 
 //==============================================================================
-int UIHorizontalSlider::CalculateRange() const
+int32_t UIHorizontalSlider::CalculateRange() const
 {
-  int ssw(GetSliderSpriteWidth());
-  int range(w - ssw);
+  int32_t ssw = GetSliderSpriteWidth();
+  int32_t range = w - ssw;
   XR_ASSERTMSG(UIHorizontalSlider, range > 0,
     ("Slider width (%d) - slider's sprite's width (%d) needs to be > 0.",
     w, ssw));
@@ -34,10 +34,10 @@ int UIHorizontalSlider::CalculateRange() const
 //==============================================================================
 bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 {
-  const int kRight(CalculateRight());
-  const int kBottom(CalculateBottom());
+  const int32_t kRight(CalculateRight());
+  const int32_t kBottom(CalculateBottom());
 
-  int xTouch(e.x);
+  int32_t xTouch = e.x;
   if (e.isPressed && e.y >= y && e.y < kBottom &&
     xTouch >= x && xTouch < kRight)
   {
@@ -47,7 +47,7 @@ bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
     int value(CalculateValue());
     if (xTouch < value)
     {
-      xTouch -= sliderSprite.GetHalfWidth();
+      xTouch -= static_cast<int32_t>(sliderSprite.GetHalfWidth());
       SetValue(xTouch);
     }
     else
@@ -56,7 +56,7 @@ bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 
       if (xTouch > value)
       {
-        xTouch += sliderSprite.GetHalfWidth();
+        xTouch += static_cast<int32_t>(sliderSprite.GetHalfWidth());
         SetValue(xTouch);
       }
       else
@@ -79,7 +79,7 @@ bool UIHorizontalSlider::OnMouseMotion(const Input::MouseMotionEvent& e)
 {
   if (m_isTouched)
   {
-    int dx(e.x - m_touchPosition);
+    int32_t dx = e.x - m_touchPosition;
     m_touchPosition = e.x;
     SetValue(CalculateValue() + dx);
   }
@@ -99,11 +99,11 @@ void UIHorizontalSlider::Render(IUIRenderer& renderer) const
   XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
-  int16_t left(x + CalculateValue() + sliderSprite.GetLeftPadding());
-  int16_t top(y + h / 2 - Round(sliderSprite.GetHalfHeight() -
-    sliderSprite.GetTopPadding()));
-  int16_t right(left + sliderSprite.GetQuadWidth());
-  int16_t bottom(top + sliderSprite.GetQuadHeight());
+  float left = x + CalculateValue() + sliderSprite.GetLeftPadding();
+  float top = y + h / 2 - Round(sliderSprite.GetHalfHeight() -
+    sliderSprite.GetTopPadding());
+  float right = left + sliderSprite.GetQuadWidth();
+  float bottom = top + sliderSprite.GetQuadHeight();
 
   auto verts = renderer.NewSprite(sliderSprite.GetMaterial());
   verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);

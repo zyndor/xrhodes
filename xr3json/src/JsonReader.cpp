@@ -8,9 +8,9 @@
 #include "XR/debug.hpp"
 
 namespace XR
-{  
+{
 namespace JSON
-{  
+{
 
 //==============================================================================
 void  Reader::OnParserEvent(Parser::Event e, const Parser::String* pString,
@@ -32,7 +32,7 @@ Reader::~Reader()
 {}
 
 //==============================================================================
-Entity* Reader::Read(const char* parBuffer, int size)
+Entity* Reader::Read(const char* parBuffer, size_t size)
 {
   XR_ASSERT(Json::Reader, parBuffer != nullptr);
   XR_ASSERT(Json::Reader, size >= 0);

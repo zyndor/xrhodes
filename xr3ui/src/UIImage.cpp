@@ -33,8 +33,8 @@ void  UIImage::SetSprite(const Sprite *pSprite, float scale)
 void UIImage::SetSizeToSprite(float scale)
 {
   scale *= 2.0f;
-  w = Round(sprite.GetHalfWidth() * scale);
-  h = Round(sprite.GetHalfHeight() * scale);
+  w = static_cast<int32_t>(Round(sprite.GetHalfWidth() * scale));
+  h = static_cast<int32_t>(Round(sprite.GetHalfHeight() * scale));
 }
 
 //==============================================================================

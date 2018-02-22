@@ -21,7 +21,7 @@ void  Cursor::OnMotion(void* pSystem, void* pUser)
   xDelta *= xDelta;
   yDelta *= yDelta;
   xDelta += yDelta;
-  xDelta = sqrtf(xDelta);
+  xDelta = static_cast<int32_t>(sqrtf(static_cast<float>(xDelta)));
   int hScr(Renderer::GetScreenHeight());
   if(xDelta >= hScr * pCursor->m_moveTreshold ||
     (pCursor->m_timer > 0 && xDelta >= hScr * pCursor->m_keepAliveTreshold))
@@ -47,11 +47,11 @@ void  Cursor::OnAction(void* pSystem, void* pUser)
 //==============================================================================
 Cursor::Cursor()
 : m_isEnabled(false),
+  m_image(),
   m_timeOut(INT_FAST32_MAX),
   m_timer(INT_FAST32_MAX),
   m_moveTreshold(.0f),
   m_keepAliveTreshold(.0f),
-  m_image(),
   m_isPressed(false)
 {}
 

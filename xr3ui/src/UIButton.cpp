@@ -138,8 +138,8 @@ void  UIButton::SetSprites(const Sprite* arpSprite[kNumStates], float scale)
 void UIButton::SetSizeToSprite(float scale)
 {
   scale *= 2.0f;
-  w = Round(arSprite[0].GetHalfWidth() * scale);
-  h = Round(arSprite[0].GetHalfHeight() * scale);
+  w = static_cast<int32_t>(Round(arSprite[0].GetHalfWidth() * scale));
+  h = static_cast<int32_t>(Round(arSprite[0].GetHalfHeight() * scale));
 }
 
 //==============================================================================

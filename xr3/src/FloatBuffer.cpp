@@ -155,8 +155,9 @@ FloatBuffer& FloatBuffer::operator=(FloatBuffer const& rhs)
 //=============================================================================
 float * FloatBuffer::AllocateBuffer(uint32_t elemSize, uint32_t numElems)
 {
+  XR_ASSERT(FloatBuffer, elemSize % sizeof(float) == 0);
   float* buffer = nullptr;
-  const uint32_t totalSize = elemSize * numElems;
+  const uint32_t totalSize = elemSize * numElems / sizeof(float);
   if (totalSize > 0)
   {
     buffer = new float[totalSize];

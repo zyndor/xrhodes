@@ -10,7 +10,7 @@
 namespace XR {
 
 //==============================================================================
-BasicMeshCore::BasicMeshCore(size_t vertexSize, size_t numVertices)
+BasicMeshCore::BasicMeshCore(uint32_t vertexSize, uint32_t numVertices)
 : m_vertices(vertexSize, numVertices)
 {}
 

@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/fundamentals.hpp"
 #include "JsonEntity.hpp"
 #include "JsonParser.hpp"
@@ -28,14 +27,14 @@ public:
   // structors
   explicit Reader(int maxDepth = kMaxParseDepthDefault);
   ~Reader();
-  
+
   // general
   const ParserCore& GetState() const;
-  
+
   ///@brief Parses the string in @a parBuffer.
   ///@return  Pointer to root entity. You gain ownership of this object.
-  Entity* Read(const char* parBuffer, int size);
-  
+  Entity* Read(const char* parBuffer, size_t size);
+
 protected:
   // types
   typedef std::vector<Entity*>  EntityVector;
@@ -43,13 +42,13 @@ protected:
   // static
   static void OnParserEvent(Parser::Event e, const Parser::String* pString,
                 void* pUser);
-  
+
   // data
   Parser          m_parser;
-  Parser::String  m_key;   
+  Parser::String  m_key;
   EntityVector    m_entities;
   Entity*         m_pRoot;
-  
+
   // internal
   void  _HandleEvent(Parser::Event e, const Parser::String* pString);
 };

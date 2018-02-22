@@ -49,7 +49,7 @@ public:
   struct Measurement
   {
     Vector2 size;
-    size_t numGlyphs; // printable only; x4 vertices required.
+    uint32_t numGlyphs; // printable only; x4 vertices required.
     std::vector<Line> lines;
   };
 

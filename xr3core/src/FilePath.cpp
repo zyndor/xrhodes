@@ -17,7 +17,7 @@ const char FilePath::kExtSeparator = '.';
 void FilePath::NormalizeDirSeparators()
 {
   char* p = m_buffer;
-  while (p = strchr(p, '\\'))
+  while ((p = strchr(p, '\\')) != nullptr)
   {
     *p = kDirSeparator;
     ++p;

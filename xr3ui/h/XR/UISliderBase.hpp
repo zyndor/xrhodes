@@ -21,52 +21,52 @@ public:
   typedef void(*ValueChangedCallback)(UISliderBase* pSlider, void* pVoid);
 
   // data
+  Sprite                sliderSprite;
+
   ValueChangedCallback  pOnValueChangeCb;
   void*                 pOnValueChangeCbData;
-
-  Sprite                sliderSprite;
 
   // structors
   UISliderBase();
   ~UISliderBase();
 
   // general
-  int           GetSliderSpriteWidth() const;
-  int           GetSliderSpriteHeight() const;
+  int32_t       GetSliderSpriteWidth() const;
+  int32_t       GetSliderSpriteHeight() const;
 
   float         GetPercentage() const;
   const float&  GetPercentageRef() const;
 
-  int           CalculateValue() const;
+  int32_t       CalculateValue() const;
 
   void          SetPercentage( float percentage );
-  void          SetValue( int value );
+  void          SetValue( int32_t value );
 
   // virtual
-  virtual int   CalculateRange() const =0;
+  virtual int32_t CalculateRange() const =0;
 
 protected:
   // data
   float m_percentage;
 
-  bool  m_isTouched;
-  int   m_touchPosition;
+  bool m_isTouched;
+  int32_t m_touchPosition;
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-int UISliderBase::GetSliderSpriteWidth() const
+int32_t UISliderBase::GetSliderSpriteWidth() const
 {
-  return static_cast<int>(sliderSprite.GetHalfWidth() * 2.0f);
+  return static_cast<int32_t>(sliderSprite.GetHalfWidth() * 2.0f);
 }
 
 //==============================================================================
 inline
-int UISliderBase::GetSliderSpriteHeight() const
+int32_t UISliderBase::GetSliderSpriteHeight() const
 {
-  return static_cast<int>(sliderSprite.GetHalfHeight() * 2.0f);
+  return static_cast<int32_t>(sliderSprite.GetHalfHeight() * 2.0f);
 }
 
 //==============================================================================

@@ -26,7 +26,7 @@ void UICascader::_AlignElement( UIElement* pElem )
 {
   if (m_hAlign != AL_NOALIGN)
   {
-    int x1(x + m_horizontalOffset * m_lElements.size());
+    int x1 = static_cast<int32_t>(x + m_horizontalOffset * m_lElements.size());
 
     switch (m_hAlign)
     {
@@ -40,6 +40,9 @@ void UICascader::_AlignElement( UIElement* pElem )
     case  AL_HIGH:
       x1 += w - pElem->w;
       break;
+
+    case  AL_NOALIGN:
+      break;
     }
 
     pElem->x = x1;
@@ -47,7 +50,7 @@ void UICascader::_AlignElement( UIElement* pElem )
 
   if (m_vAlign)
   {
-    int y1(y + m_verticalOffset * m_lElements.size());
+    int y1 = static_cast<int32_t>(y + m_verticalOffset * m_lElements.size());
 
     switch (m_vAlign)
     {
@@ -60,6 +63,9 @@ void UICascader::_AlignElement( UIElement* pElem )
 
     case  AL_HIGH:
       y1 += h - pElem->h;
+      break;
+
+    case  AL_NOALIGN:
       break;
     }
 
@@ -92,8 +98,8 @@ void UICascader::SetVerticalOffset( int val )
 //==============================================================================
 void UICascader::_SetWidthToContent()
 {
-  int xMin(std::numeric_limits<int>::max());
-  int xMax(std::numeric_limits<int>::min());
+  int xMin = std::numeric_limits<int>::max();
+  int xMax = std::numeric_limits<int>::min();
   for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     const UIElement*  pElem(*i0);
@@ -108,7 +114,7 @@ void UICascader::_SetWidthToContent()
       xMax = right;
     }
   }
-  
+
   w = xMax - xMin;
 }
 
@@ -131,7 +137,7 @@ void UICascader::_SetHeightToContent()
       yMax = bottom;
     }
   }
-  
+
   h = yMax - yMin;
 }
 

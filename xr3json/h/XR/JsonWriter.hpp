@@ -7,10 +7,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
-#include <sstream>
 #include "json.hpp"
 #include "XR/fundamentals.hpp"
+#include <sstream>
+#include <vector>
 
 namespace XR
 {
@@ -52,8 +52,7 @@ public:
   static const char* const karEscapeSub[kNumEscapedChars];
 
   // structors
-  explicit Writer(int maxDepth = kMaxParseDepthDefault);
-  ~Writer();
+  explicit Writer(uint32_t maxDepth = kMaxParseDepthDefault);
 
   // general
   void        SetLinebreaks(bool pref);
@@ -102,16 +101,15 @@ protected:
   void  _ProcessEscaped( const char* pValue );
 
   // data
-  bool                m_allowLinebreaks;
-  bool                m_allowIndents;
-  bool                m_allowSpace;
-  bool                m_autoEscapeString;
+  bool  m_allowLinebreaks = false;
+  bool  m_allowIndents = false;
+  bool  m_allowSpace = false;
+  bool  m_autoEscapeString = false;
 
-  std::ostringstream  m_stream;  // no ownership
+  uint32_t  m_depth = 0;
+  std::vector<Scope>  m_scopes;
 
-  Scope*              m_parScopes;
-  int                 m_maxDepth;
-  int                 m_depth;
+  std::ostringstream  m_stream;
 };
 
 } // JSON

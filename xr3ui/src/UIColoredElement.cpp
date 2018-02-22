@@ -27,12 +27,12 @@ void  UIColoredElement::_CalculateSpriteVerts( const Sprite* pSprite,
   XR_ASSERT(UIColoredElement, pSprite != 0);
   XR_ASSERT(UIColoredElement, pSprite->GetMaterial() != nullptr);
 
-  float ws((w / 2) / pSprite->GetHalfWidth());
-  float hs((h / 2) / pSprite->GetHalfHeight());
-  float left(x + static_cast<int32_t>(Round(pSprite->GetLeftPadding() * ws)));
-  float right(x + w - static_cast<int32_t>(Round(pSprite->GetRightPadding() * ws)));
-  float top(y + static_cast<int32_t>(Round(pSprite->GetTopPadding() * hs)));
-  float bottom(y + h - static_cast<int32_t>(Round(pSprite->GetBottomPadding() * hs)));
+  float ws = (w / 2) / pSprite->GetHalfWidth();
+  float hs = (h / 2) / pSprite->GetHalfHeight();
+  float left = x + Round(pSprite->GetLeftPadding() * ws);
+  float right = x + w - Round(pSprite->GetRightPadding() * ws);
+  float top = y + Round(pSprite->GetTopPadding() * hs);
+  float bottom = y + h - Round(pSprite->GetBottomPadding() * hs);
 
   verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);
   verts[Sprite::VI_SW].pos = Vector3(left, bottom, .0f);

@@ -90,7 +90,7 @@ template<class VertexFormat>
 inline
 void IndexMesh<VertexFormat>::RenderOnly(PrimType primitiveType) const
 {
-  RenderOnly(primitiveType, 0, m_indices.size());
+  RenderOnly(primitiveType, 0, static_cast<uint32_t>(m_indices.size()));
 }
 
 //==============================================================================

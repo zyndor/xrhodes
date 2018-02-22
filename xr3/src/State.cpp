@@ -73,6 +73,9 @@ void  State::Manager::Update(int32_t ms)
     case  Result::POP:
       Pop();
       break;
+    
+    case  Result::NONE:
+      break;
     }
   }
 }

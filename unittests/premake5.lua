@@ -38,6 +38,12 @@ project "unittests"
 		"xr3ui",
 	}
 
+	if isVS() then
+		buildoptions { "/WX-" }
+	else
+		buildoptions { "-Wno-error" }
+	end
+
     -- link options
     if target_env == "windows" then
         -- Windows

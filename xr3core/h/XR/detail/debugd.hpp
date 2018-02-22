@@ -37,13 +37,15 @@ struct Channel
   AssertAction Assert(char const* format, ...);
 
 private:
+#if defined(XR_DEBUG) // TODO: move the whole debugd.hpp/cpp into debug.cpp and hide all implementation.
   char const* m_name;
+#endif
 };
 
 } // Debug
 } // XR
 
-#define XR__DEBUG_MESSAGE_LENGTH 2048
+#define XR__DEBUG_MESSAGE_LENGTH 1024
 #define XR__ASSERT_STATE_INIT static char s_isAssertActive = 1;
 #define XR__ASSERT_STATE_CHECK(c) (s_isAssertActive == 1 && XR::Debug::Channel::IsEnabled(c))
 #define XR__ASSERT_STATE_DISABLE s_isAssertActive = 0

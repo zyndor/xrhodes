@@ -277,7 +277,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
         // Calculate UVs and vertex positions.
         SpriteData sprite;
         Sprite::CalculateUVs(uvs, isRotated, sprite.vertices);
-        sprite.CalculatePositions(texWidth, texHeight);
+        sprite.CalculatePositions(static_cast<float>(texWidth), static_cast<float>(texHeight));
 
         // Calculate offset for padding.
         // NOTE: y conversion (negation) applies since we're moving from bitmap space to model space.
@@ -416,7 +416,7 @@ bool TexturePack::OnLoaded(Buffer buffer)
       success = shader != nullptr;
       if (!success)
       {
-        XR_TRACE(TexturePack, ("Failed to set shader %x for '%s'%s", descShader.hash,
+        XR_TRACE(TexturePack, ("Failed to set shader 0x%llx for '%s'%s", descShader.hash,
           m_debugPath.c_str(), useDefault ? " (bad default shader!)" : ""));
       }
     }
@@ -429,7 +429,7 @@ bool TexturePack::OnLoaded(Buffer buffer)
     if (success && !s_descDefaultShader.IsValid())
     {
       s_descDefaultShader = descShader;
-      XR_TRACE(TexturePack, ("Using %x as default shader now (defined in '%s').",
+      XR_TRACE(TexturePack, ("Using 0x%llx as default shader now (defined in '%s').",
         descShader.hash, m_debugPath.c_str()));
     }
   }

@@ -19,9 +19,9 @@ void Worker::ThreadFunction(Worker& worker)
 
 //==============================================================================
 Worker::Worker()
-: m_isSuspended(false),
-  m_finishing(false),
-  m_thread(std::thread(ThreadFunction, MakeRefHolder(*this)))
+: m_finishing(false),
+  m_thread(std::thread(ThreadFunction, MakeRefHolder(*this))),
+  m_isSuspended(false)
 {}
 
 //==============================================================================

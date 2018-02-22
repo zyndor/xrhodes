@@ -98,66 +98,58 @@ void ThrowIndexOutOfBoundsError(size_t index, size_t bounds)
 
 XonEntity& XonObject::operator[](size_t index)
 {
-  if (index < m_values.size())
-  {
-    return *m_values[index];
-  }
-  else
+  if (index >= m_values.size())
   {
     ThrowIndexOutOfBoundsError(index, m_values.size());
   }
+  return *m_values[index];
 }
 
 //==============================================================================
 XonEntity const& XonObject::operator[](size_t index) const
 {
-  if (index < m_values.size())
-  {
-    return *m_values[index];
-  }
-  else
+  if (index >= m_values.size())
   {
     ThrowIndexOutOfBoundsError(index, m_values.size());
   }
+  return *m_values[index];
 }
 
 //==============================================================================
-void ThrowInvalidKeyError(const char* pName)
+void ThrowInvalidKeyError(const char* name)
 {
   char arBuffer[128];
-  int len = strlen(pName);
-  const int kMaxSize = 100;
+  auto len = strlen(name);
+  const size_t kMaxSize = 100;
   bool overSized = len > kMaxSize;
-  sprintf(arBuffer, "Invalid key '%s%.*s'.", overSized ? "..." : "",
-    overSized ? kMaxSize : len, pName + std::max(len - kMaxSize, 0));
+  if (overSized)
+  {
+    name += len - kMaxSize;
+    len = kMaxSize;
+  }
+  sprintf(arBuffer, "Invalid key '%s%s'.", overSized ? "..." : "", name);
   throw XonEntity::Exception(XonEntity::Exception::Type::InvalidKey, arBuffer);
 }
 
 XonEntity& XonObject::Find(std::string const& name)
 {
   auto iFind = m_keyValues.find(name);
-  if (iFind != m_keyValues.end())
-  {
-    return *iFind->second;
-  }
-  else
+  if (iFind == m_keyValues.end())
   {
     ThrowInvalidKeyError(name.c_str());
   }
+  return *iFind->second;
 }
 
 //==============================================================================
 XonEntity const& XonObject::Find(std::string const& name) const
 {
   auto iFind = m_keyValues.find(name);
-  if (iFind != m_keyValues.end())
-  {
-    return *iFind->second;
-  }
-  else
+  if (iFind == m_keyValues.end())
   {
     ThrowInvalidKeyError(name.c_str());
   }
+  return *iFind->second;
 }
 
 //==============================================================================

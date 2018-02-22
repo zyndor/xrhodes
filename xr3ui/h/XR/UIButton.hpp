@@ -31,10 +31,10 @@ public:
   typedef void(*Callback)(UIButton *, void *pData);
 
   // data
+  Sprite    arSprite[kNumStates];
   Callback  pOnPressed;
   Callback  pOnReleased;
   void*     pCallbackData;
-  Sprite    arSprite[kNumStates];
 
   // structors
   UIButton();
@@ -55,8 +55,8 @@ public:
 
   void  SetActiveArea(const Rect* pActiveArea); // no ownership transfer
 
-  virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
-  virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
+  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
+  bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
 
   void  Render(IUIRenderer& pRenderer) const override;
 

@@ -30,31 +30,31 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
 
   auto spriteVerts = sprite.GetVertices();
 
-  float hwSprite(sprite.GetHalfWidth());
-  float wSprite(hwSprite * 2.0f);
+  float hwSprite = sprite.GetHalfWidth();
+  float wSprite = hwSprite * 2.0f;
 
-  float hhSprite(sprite.GetHalfHeight());
-  float hSprite(hhSprite * 2.0f);
+  float hhSprite = sprite.GetHalfHeight();
+  float hSprite = hhSprite * 2.0f;
 
-  float xSplit(wSprite * hSplit);
-  float ySplit(hSprite * vSplit);
-  int ixSplit(static_cast<int>(Round(xSplit)));
-  int iySplit(static_cast<int>(Round(ySplit)));
+  float xSplit = wSprite * hSplit;
+  float ySplit = hSprite * vSplit;
+  int32_t ixSplit = static_cast<int32_t>(std::round(xSplit));
+  int32_t iySplit = static_cast<int32_t>(std::round(ySplit));
 
-  int arXCoords[4] =
+  float arXCoords[4] =
   {
-    x + (int)Round(sprite.GetLeftPadding()),
-    x + ixSplit,
-    x + w - ixSplit,
-    x + w - (int)Round(sprite.GetRightPadding())
+    float(x + std::round(sprite.GetLeftPadding())),
+    float(x + ixSplit),
+    float(x + w - ixSplit),
+    float(x + w - std::round(sprite.GetRightPadding()))
   };
 
-  int arYCoords[4] =
+  float arYCoords[4] =
   {
-    y + (int)Round(sprite.GetTopPadding()),
-    y + iySplit,
-    y + h - iySplit,
-    y + h - (int)Round(sprite.GetBottomPadding())
+    float(y + std::round(sprite.GetTopPadding())),
+    float(y + iySplit),
+    float(y + h - iySplit),
+    float(y + h - std::round(sprite.GetBottomPadding()))
   };
 
   float arU[4];
@@ -87,14 +87,14 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   arV[1] = Lerp(arV[0], arV[3], vSplit);
   arV[2] = arV[1];
 
-  int ix0(0);
-  int ix1(3);
+  int32_t ix0 = 0;
+  int32_t ix1 = 3;
   if (arXCoords[1] > arXCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(w / wSprite);
-    arXCoords[0] = x + Round(scale * (spriteVerts[Sprite::VI_NW].pos.x + hwSprite));
-    arXCoords[1] = x + Round(scale * (spriteVerts[Sprite::VI_NE].pos.x + hwSprite));
+    arXCoords[0] = x + std::round(scale * (spriteVerts[Sprite::VI_NW].pos.x + hwSprite));
+    arXCoords[1] = x + std::round(scale * (spriteVerts[Sprite::VI_NE].pos.x + hwSprite));
 
     arU[1] = arU[3];
     ix1 = 1;
@@ -116,14 +116,14 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
     }
   }
 
-  int iy0(0);
-  int iy1(3);
+  int32_t iy0 = 0;
+  int32_t iy1 = 3;
   if (arYCoords[1] > arYCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(h / hSprite);
-    arYCoords[0] = y + Round(scale * (spriteVerts[Sprite::VI_NW].pos.y + hhSprite));
-    arYCoords[1] = y + Round(scale * (spriteVerts[Sprite::VI_SW].pos.y + hhSprite));
+    arYCoords[0] = y + std::round(scale * (spriteVerts[Sprite::VI_NW].pos.y + hhSprite));
+    arYCoords[1] = y + std::round(scale * (spriteVerts[Sprite::VI_SW].pos.y + hhSprite));
 
     arV[1] = arV[3];
     iy1 = 1;
@@ -145,8 +145,8 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
     }
   }
 
-  int hQuads(ix1 - ix0);
-  int vQuads(iy1 - iy0);
+  int32_t hQuads(ix1 - ix0);
+  int32_t vQuads(iy1 - iy0);
 
   int numVertices(hQuads * vQuads * Sprite::kNumVertices);
   if (numVertices > 0)

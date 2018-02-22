@@ -40,7 +40,7 @@ static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* pSystem)
 }
 
 //==============================================================================
-static struct  
+static struct
 {
   // data
   CallbackObject::List  arCallback[Device::kMaxEvents];
@@ -91,11 +91,11 @@ void Device::Init(char const* title)
     XR_TRACE(Device, ("Failed to initialise SDL."));
     //exit(1);
   }
-  
+
   s_deviceImpl.isPauseRequested = false;
   s_deviceImpl.isQuitRequested = false;
   s_deviceImpl.isYielding = false;
-  
+
   if (!File::CheckExists(kConfigName))
   {
     JSON::Writer  writer;
@@ -103,13 +103,13 @@ void Device::Init(char const* title)
     writer.SetIndents(true);
     writer.SetSpaceAfterColon(true);
     writer.SetAutoEscape(true);
-    
+
     writer.Start(JSON::Writer::OBJECT);
-    
+
     writer.WriteObject("Device").
       WriteValue("logging", true).
       CloseScope();
-    
+
     writer.WriteObject("Display").
       WriteValue("width", 800).
       WriteValue("height", 600).
@@ -120,20 +120,20 @@ void Device::Init(char const* title)
     writer.WriteObject("GFX").
       WriteValue("framePoolSize", 256000).
       CloseScope();
-    
+
     writer.WriteObject("Audio").
       WriteValue("sampleRate", 22050).
       WriteValue("bufferSize", 4096).
       WriteValue("mixingChannels", 16).
       WriteValue("forceMono", false).
       CloseScope();
-    
+
     writer.WriteObject("Input").
       WriteValue("ignoreControllers", false).
       CloseScope();
-    
+
     std::string json(writer.Finish(true));
-    
+
     FileWriter file;
     result = file.Open(kConfigName, FileWriter::Mode::Truncate, false) &&
       file.Write(json.c_str(), json.size(), 1) == 1;
@@ -151,7 +151,7 @@ void Device::Init(char const* title)
   int   height(Device::GetConfigInt("Display", "height", 600));
 
   uint32_t flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-  if (!bool(Device::GetConfigInt("Display", "windowed", false)))
+  if (Device::GetConfigInt("Display", "windowed", false) == 0)
   {
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
@@ -191,10 +191,10 @@ void Device::Exit()
   SDL_VideoQuit();
 
   SDL_Quit();
-  
+
   delete s_deviceImpl.pConfig;
   s_deviceImpl.pConfig = 0;
-  
+
   Log::Exit();
 }
 
@@ -244,7 +244,7 @@ std::string Device::GetConfig(const char* pGroup, const char* pId)
       }
     }
   }
-  
+
   return result;
 }
 
@@ -282,7 +282,7 @@ bool Device::RegisterCallback( Event ev, Callback pCallback, void* pUserData )
       }
     }
 
-    s_deviceImpl.arPostponedAdd[ev].push_back(CallbackObject(pCallback, pUserData));    
+    s_deviceImpl.arPostponedAdd[ev].push_back(CallbackObject(pCallback, pUserData));
   }
   else
   {
@@ -374,13 +374,13 @@ void  Device::YieldOS(int32_t ms)
         e.type = SDL_APP_TERMINATING;
         SDL_PushEvent(&e);
         break;
-        
+
       case  SDL_WINDOWEVENT_RESIZED:
         ScreenChangeEventHandler(s_deviceImpl.arCallback[EV_SCREEN_CHANGE], &e);
         break;
       }
       break;
-      
+
     case  SDL_KEYDOWN:
     case  SDL_KEYUP:
     {
@@ -395,7 +395,7 @@ void  Device::YieldOS(int32_t ms)
       }
       break;
     }
-      
+
     case  SDL_MOUSEMOTION:
     {
       if (InputImpl::s_pInstance)
@@ -410,7 +410,7 @@ void  Device::YieldOS(int32_t ms)
       }
       break;
     }
-      
+
     case  SDL_MOUSEBUTTONDOWN:
     case  SDL_MOUSEBUTTONUP:
     case  SDL_MOUSEWHEEL:
@@ -429,7 +429,7 @@ void  Device::YieldOS(int32_t ms)
       }
       break;
     }
-      
+
     case  SDL_FINGERUP:
     case  SDL_FINGERDOWN:
     {
@@ -451,15 +451,15 @@ void  Device::YieldOS(int32_t ms)
       }
       break;
     }
-    
+
     case  SDL_FINGERMOTION:
     {
       if (InputImpl::s_pInstance)
       {
         int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
         int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
-      
-        Input::TouchMotionEvent eTouch = 
+
+        Input::TouchMotionEvent eTouch =
         {
           // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
           static_cast<uint32_t>(e.tfinger.touchId),
@@ -471,7 +471,7 @@ void  Device::YieldOS(int32_t ms)
         break;
       }
     }
-      
+
     case  SDL_CONTROLLERDEVICEADDED:
     case  SDL_CONTROLLERDEVICEREMOVED:
     case  SDL_CONTROLLERDEVICEREMAPPED:
@@ -480,14 +480,14 @@ void  Device::YieldOS(int32_t ms)
     }
   }
   s_deviceImpl.isYielding = false;
-  
+
   for(int i = 0; i < kMaxEvents; ++i)
   {
     Event e(static_cast<Event>(i));
     CallbackObject::List& lRemove(s_deviceImpl.arPostponedRemove[i]);
     while(!lRemove.empty())
     {
-      bool  result(UnregisterCallback(e, lRemove.front().pCallback));
+      XR_DEBUG_ONLY(bool result =) UnregisterCallback(e, lRemove.front().pCallback);
       XR_ASSERT(Device, result);
       lRemove.pop_front();
     }
@@ -496,7 +496,7 @@ void  Device::YieldOS(int32_t ms)
     while(!lAdd.empty())
     {
       CallbackObject& cbo(lAdd.front());
-      bool  result(RegisterCallback(e, cbo.pCallback, cbo.pUserData));
+      XR_DEBUG_ONLY(bool result =) RegisterCallback(e, cbo.pCallback, cbo.pUserData);
       XR_ASSERT(Device, result);
       lAdd.pop_front();
     }

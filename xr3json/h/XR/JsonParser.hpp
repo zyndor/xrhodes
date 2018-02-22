@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "json.hpp"
 #include "XR/Callback.hpp"
 #include "XR/ParserCore.hpp"
@@ -31,19 +30,19 @@ public:
     E_OBJECT_BEGIN,
     E_OBJECT_END
   };
-  
+
   struct  String
   {
     const char* pString;
     size_t      length;
   };
-  
+
   typedef void(*Callback)(Event e, const String* data, void* pUser);
-  
+
   // structors
   explicit Parser(int maxDepth = kMaxParseDepthDefault);
   ~Parser();
-  
+
   // general
   ///@brief Sets a callback to call when the maximum depth has been exceeded.
   /// The parser stops raising entity events past the max depth until the
@@ -53,10 +52,10 @@ public:
 
   ///@return The internal state.
   const ParserCore& GetState() const;
-  
-  ///@brief Parses the string in @a parBuffer, 
-  bool  Parse(const char* parBuffer, int size, Callback pCallback, void* pUser);
-  
+
+  ///@brief Parses the string in @a parBuffer,
+  bool  Parse(const char* parBuffer, size_t size, Callback pCallback, void* pUser);
+
 private:
   // data
   ParserCore    m_state;
@@ -66,7 +65,7 @@ private:
   void*         m_pCallbackUser; // no ownership
   XR::Callback  m_pMaxDepthCallback;
   void*         m_pMaxDepthCallbackUser; // no ownership
-  
+
   // internal
   bool  _ParseArray();
   bool  _ParseObject();

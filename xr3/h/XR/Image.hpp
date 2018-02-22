@@ -86,10 +86,10 @@ public:
 
 private:
   // data
-  std::vector<uint8_t> m_bytes;
   uint32_t m_width;
   uint32_t m_height;
   uint8_t m_bytesPerPixel;
+  std::vector<uint8_t> m_bytes;
 
   // internal
   bool ParsePng(uint8_t const* buffer, size_t size);

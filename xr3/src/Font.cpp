@@ -176,7 +176,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       auto& fontPath = root->Find("font");
       success = ttfData.Open(fontPath.GetValue(), false);
     }
-    catch(XonEntity::Exception& e)
+    catch(XonEntity::Exception&)
     {
       success = false;
       XR_TRACE(Font, ("%s: missing definition for '%s'", rawNameExt, "font"));
@@ -339,7 +339,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   if(success)
   {
     int offset = stbtt_GetFontOffsetForIndex(ttfData.GetData(), fontIndex);
-    success = stbtt_InitFont(&stbFont, ttfData.GetData(), offset);
+    success = stbtt_InitFont(&stbFont, ttfData.GetData(), offset) != 0;
     if (!success)
     {
       XR_TRACE(Font, ("%s: Failed to initialise font.", rawNameExt));
@@ -355,13 +355,13 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   if (success)
   {
     stbtt_GetFontVMetrics(&stbFont, &ascent, &descent, &lineGap);
-    const float lineHeightUnits = ascent - descent + lineGap;
+    const int lineHeightUnits = ascent - descent + lineGap;
 
     stbtt_GetFontBoundingBox(&stbFont, &x0, &y0, &x1, &y1);
     int heightUnits = y1 - y0;
     sdfSizeUnits = (sdfSize / float(fontSize)) * heightUnits;
 
-    pixelScale = stbtt_ScaleForPixelHeight(&stbFont, fontSize - sdfSize * 2);
+    pixelScale = stbtt_ScaleForPixelHeight(&stbFont, float(fontSize - sdfSize * 2));
 
     success = WriteBinaryStream(lineHeightUnits * kUnitsToPixel, data) &&
       WriteBinaryStream(ascent * kUnitsToPixel, data) &&
@@ -395,7 +395,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   // functionality is that we want to control (and minimize) the allocations.
   if(success)
   {
-    const int ascentPixels = std::ceil(ascent * pixelScale);
+    const int ascentPixels = int(std::ceil(ascent * pixelScale));
 
     const int glyphPadding = 1; // We pad the glyph bitmap to simplify comparing neighbour pixels, where we'd need to special case at the edges - reading off by one.
     const int glyphSizePadded = fontSize + glyphPadding * 2;
@@ -415,7 +415,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         auto const iGlyph = stbtt_FindGlyphIndex(&stbFont, i0);
         if(iGlyph < 0)
         {
-          XR_TRACE(Font, ("%s: No glyph found for code point %x.", rawNameExt, i0));
+          XR_TRACE(Font, ("%s: No glyph found for code point 0x%x.", rawNameExt, i0));
           continue;
         }
 
@@ -456,7 +456,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           int w = x1 - x0;
           int h = y1 - y0;
 
-          int xBearingPixels = std::ceil(glyph.xBearing * pixelScale);
+          auto xBearingPixels = int(std::ceil(glyph.xBearing * pixelScale));
           auto xPixelOffs = sdfSize + xBearingPixels;
           auto yPixelOffs = sdfSize + ascentPixels + y0;
           auto bufferOffset = xPixelOffs + yPixelOffs * glyphSizePadded;
@@ -466,7 +466,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
             w, h, glyphSizePadded, pixelScale, pixelScale, iGlyph);
 
 #ifdef ENABLE_GLYPH_DEBUG
-          //XR_TRACE(Font, ("%x (%c) Bitmap @ %d x %d (+ %d, %d)", i0, i0, w, h, xPixelOffs, yPixelOffs));
+          //XR_TRACE(Font, ("0x%x (%c) Bitmap @ %d x %d (+ %d, %d)", i0, i0, w, h, xPixelOffs, yPixelOffs));
           //{
           //  auto pp = glyphBitmapPadded + bufferOffset;
           //  auto rowDiff = glyphSizePadded - w;
@@ -495,7 +495,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           sdf.ConvertToBitmap(sw, sh, glyphBitmap.data());
 
 #ifdef ENABLE_GLYPH_DEBUG
-          //XR_TRACE(Font, ("%x (%c) SDF Bitmap @ %d x %d", i0, i0, sw, sh));
+          //XR_TRACE(Font, ("0x%x (%c) SDF Bitmap @ %d x %d", i0, i0, sw, sh));
           //{
           //  auto pp = glyphBitmap.data();
           //  for (int yy = 0; yy < sh; ++yy)
@@ -512,7 +512,8 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
 
           glyph.fieldWidth = sw;
           glyph.fieldHeight = sh;
-          glyph.dataOffset = glyphBytesWritten;
+          XR_ASSERT(Font, glyphBytesWritten < std::numeric_limits<decltype(glyph.dataOffset)>::max());
+          glyph.dataOffset = static_cast<uint32_t>(glyphBytesWritten);
 
           // write glyph bitmap data to other stream.
           auto p = glyphBitmap.data();
@@ -530,7 +531,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
             &glyphBytesWritten))
           {
             success = false;
-            XR_TRACE(Font, ("%s: Failed to write glyph bitmap data for %x in '%s'.",
+            XR_TRACE(Font, ("%s: Failed to write glyph bitmap data for 0x%x in '%s'.",
               rawNameExt, i0));
             break;
           }
@@ -540,7 +541,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         if(!WriteBinaryStream(glyph, data))
         {
           success = false;
-          XR_TRACE(Font, ("%s: Failed to write glyph data for %x.", rawNameExt, i0));
+          XR_TRACE(Font, ("%s: Failed to write glyph data for 0x%x.", rawNameExt, i0));
           break;
         }
       }
@@ -659,7 +660,7 @@ bool Font::OnLoaded(Buffer buffer)
       success = shader != nullptr;
       if (!success)
       {
-        XR_TRACE(Font, ("%s: failed to set shader %x%s.", m_debugPath.c_str(),
+        XR_TRACE(Font, ("%s: failed to set shader 0x%llx%s.", m_debugPath.c_str(),
           descShader.hash, useDefault ? " (bad default shader!)": ""));
       }
     }
@@ -671,7 +672,7 @@ bool Font::OnLoaded(Buffer buffer)
     if (success && !s_descDefaultShader.IsValid())
     {
       s_descDefaultShader = descShader;
-      XR_TRACE(Font, ("%s: setting default shader to %x.", m_debugPath.c_str(),
+      XR_TRACE(Font, ("%s: setting default shader to 0x%llx.", m_debugPath.c_str(),
         descShader.hash));
     }
   }
@@ -711,7 +712,7 @@ void Font::OnUnload()
 //==============================================================================
 Font::CachedGlyph const* Font::CacheGlyph(uint32_t codePoint)
 {
-  CachedGlyph const* cg;
+  CachedGlyph const* cg = nullptr;
   if (auto cgi = CacheGlyphInternal(codePoint))
   {
     cg = &cgi->glyph;
@@ -767,11 +768,12 @@ Font::CachedGlyphInternal* Font::CacheGlyphInternal(uint32_t codePoint)
     if (iGlyph != m_glyphs.end())
     {
       Glyph const& glyph = iGlyph->second;
-      CachedGlyphInternal cg = { nullptr, { &glyph } };
+      CachedGlyphInternal cg = { nullptr, { &glyph, AABB() } };
       if (glyph.fieldWidth > 0)
       {
-        if (cg.buffer = m_textureCache->Allocate(glyph.fieldWidth, glyph.fieldHeight,
-          cg.glyph.uvs))
+        cg.buffer = m_textureCache->Allocate(glyph.fieldWidth, glyph.fieldHeight,
+          cg.glyph.uvs);
+        if (cg.buffer)
         {
           // copy the bitmap data to the texture
           auto writep = cg.buffer;
@@ -789,15 +791,12 @@ Font::CachedGlyphInternal* Font::CacheGlyphInternal(uint32_t codePoint)
         }
         else
         {
-          XR_TRACE(Font, ("Failed to allocate cache space for glyph %x.", codePoint));
+          XR_TRACE(Font, ("Failed to allocate cache space for glyph 0x%x.", codePoint));
         }
       }
 
-      if (glyph.fieldWidth >= 0)
-      {
-        iCached = m_cachedGlyphs.insert(iCached, cg);
-        result = &*iCached;
-      }
+      iCached = m_cachedGlyphs.insert(iCached, cg);
+      result = &*iCached;
     }
   }
   else

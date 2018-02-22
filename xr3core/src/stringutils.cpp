@@ -26,7 +26,7 @@ char const* Replace(char const* original, size_t originalSize, char const* find,
   {
     // TODO: instead of repeatedly calling strncmp, do an internal loop to find
     // long partial matches and copy them whole?
-    if (findLen <= (originalEnd - original)
+    if (findLen <= static_cast<size_t>(originalEnd - original)
       && strncmp(original, find, findLen) == 0)
     {
       auto copyLen = std::min(size_t(writeEnd - write), replaceLen);
@@ -66,8 +66,8 @@ const char kHexDigits[] = {
 
 char* Char2Hex(char c, char buffer[2])
 {
-  const char d0 = (c & 0xf0) >> 4;
-  const char d1 = c & 0xf;
+  const int d0 = (c & 0xf0) >> 4;
+  const int d1 = c & 0xf;
   *buffer = kHexDigits[d0];
   ++buffer;
   *buffer = kHexDigits[d1];

@@ -36,6 +36,9 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
     case  AL_HIGH:
       yElem += h - pElem->h;
       break;
+      
+    case  AL_NOALIGN:
+      break;
     }
 
     pElem->y = yElem;
@@ -71,7 +74,7 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
 //==============================================================================
 void UIHorizontalLayout::_SetWidthToContent()
 {
-  int wNew = 0;
+  int32_t wNew = 0;
   for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
   {
     wNew += (*i0)->w;
@@ -79,7 +82,7 @@ void UIHorizontalLayout::_SetWidthToContent()
 
   if (m_lElements.size() > 0)
   {
-    wNew += (m_lElements.size() - 1) * m_spacing;
+    wNew += static_cast<int32_t>(m_lElements.size() - 1) * m_spacing;
   }
 
   w = wNew;

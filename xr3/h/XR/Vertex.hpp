@@ -202,8 +202,8 @@ struct Format<T, Format<Rest...>> : Format<Rest...>, T
 
   // structors
   Format()
-  : T(),
-    Base()
+  : Base(),
+    T()
   {}
 
   template <class... RestT>

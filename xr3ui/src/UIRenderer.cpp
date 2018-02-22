@@ -15,8 +15,8 @@ UIRenderer::UIRenderer()
 : m_hVertexFormat(Vertex::Register()),
   m_numSprites(0),
   m_vertices(),
-  m_numSpritesRendered(0),
-  m_numSpritesRenderable(0)
+  m_numSpritesRenderable(0),
+  m_numSpritesRendered(0)
 {}
 
 //==============================================================================
@@ -66,7 +66,7 @@ void UIRenderer::Render()
 {
   auto verts = m_vertices.Get<Vertex>() + m_numSpritesRendered * Sprite::kNumVertices;
 
-  auto i = m_materials.begin() + m_numSpritesRendered;
+  auto i = m_materials.data() + m_numSpritesRendered;
   auto iEnd = i + (m_numSpritesRenderable - m_numSpritesRendered);
   while (i != iEnd)
   {
@@ -76,9 +76,9 @@ void UIRenderer::Render()
       ++iCompare;
     }
 
-    const int numSprites = iCompare - i;
-    const int numVertices = numSprites * Sprite::kNumVertices;
-    const int numIndices = numSprites * Sprite::kNumIndices;
+    const uint32_t numSprites = static_cast<uint32_t>(iCompare - i);
+    const uint32_t numVertices = numSprites * Sprite::kNumVertices;
+    const uint32_t numIndices = numSprites * Sprite::kNumIndices;
 
     auto vertsBytes = reinterpret_cast<uint8_t const*>(verts);
     Gfx::VertexBufferHandle vbo = Gfx::CreateVertexBuffer(m_hVertexFormat,

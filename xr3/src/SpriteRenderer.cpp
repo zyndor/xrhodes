@@ -45,8 +45,8 @@ void  SpriteRenderer::Init(int numRecords)
   // Size of Record + 2 pointers assumed, 4 bytes aligned, otherwise,
   // based on compiler and libc++ implementation, the use of RecordList::_Node,
   // std::__detail::_List_node<Record> or other abomination would be required.
-  int nodeSize(Align<size_t>((sizeof(Record) + 2 * sizeof(void*)), 4));
-  int memSize(Align<size_t>(sizeof(RecordList), 4) + nodeSize * (2 * numRecords + 1));
+  size_t nodeSize = Align<size_t>((sizeof(Record) + 2 * sizeof(void*)), 4);
+  size_t memSize = Align<size_t>(sizeof(RecordList), 4) + nodeSize * (2 * numRecords + 1);
   m_pool.SetBuffer(memSize, true, 0);
 
   // place list at the beginning of pool memory. this includes the initial
@@ -153,15 +153,13 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* sprite,
 //==============================================================================
 void  SpriteRenderer::Render()
 {
-  // allocate colour / uv / vertex streams
-  int numVertices(m_records->size());
-  if (numVertices <= 0)
+  if (m_records->empty())
   {
     return;
   }
-  numVertices *= XR::Sprite::kNumVertices;
 
-  auto vertices = FloatBuffer(sizeof(Vertex), numVertices);
+  uint32_t numVertices = static_cast<uint32_t>(m_records->size()) * XR::Sprite::kNumVertices;
+  FloatBuffer vertices(sizeof(Vertex), numVertices);
   auto vertsHead = vertices.Get<Vertex>();
 
   int vertexOffset = 0;
@@ -171,7 +169,7 @@ void  SpriteRenderer::Render()
     auto const&  pMaterial(i0->pSprite->GetMaterial());
 
     // check for consecutive sprites with the same material
-    int numSprites = 1;
+    uint32_t numSprites = 1;
 
     RecordList::const_iterator j0 = i0;
     while (++j0 != i1)
@@ -210,7 +208,7 @@ void  SpriteRenderer::Render()
     }
 
     // indices
-    int numIndices(numSprites * Sprite::kNumIndices);
+    uint32_t numIndices = numSprites * Sprite::kNumIndices;
 
     // render
     auto vertsBytes = reinterpret_cast<uint8_t const*>(vertsHead);

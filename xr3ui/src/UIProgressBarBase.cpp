@@ -12,8 +12,8 @@ namespace XR
 //==============================================================================
 UIProgressBarBase::UIProgressBarBase( FillDir fd )
 : UIImage(),
-  m_percentage(.0f),
-  m_fillDir(fd)
+  m_fillDir(fd),
+  m_percentage(.0f)
 {}
 
 //==============================================================================

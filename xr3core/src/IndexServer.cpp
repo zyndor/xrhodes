@@ -12,8 +12,8 @@ namespace XR
 
 //==============================================================================
 IndexServer::IndexServer(size_t capacity)
-: m_iReleased(0),
-  m_ids()
+: m_ids(),
+  m_iReleased(0)
 {
   m_ids.reserve(capacity);
 }

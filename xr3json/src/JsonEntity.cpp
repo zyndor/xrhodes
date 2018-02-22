@@ -39,7 +39,7 @@ Entity* Entity::LinkPrevSibling(Entity* p)
   {
     pTemp->m_pNextSibling = nullptr;
   }
-  
+
   m_pPrevSibling = p;
   if (p != nullptr)
   {
@@ -57,7 +57,7 @@ Entity* Entity::LinkNextSibling(Entity* p)
   {
     pTemp->m_pPrevSibling = nullptr;
   }
-  
+
   m_pNextSibling = p;
   if (p != nullptr)
   {
@@ -113,19 +113,19 @@ Value::~Value()
 }
 
 //==============================================================================
-int Value::GetNumChildren() const
+size_t Value::GetNumChildren() const
 {
   return 0;
 }
 
 //==============================================================================
-int Value::GetNumElements() const
+size_t Value::GetNumElements() const
 {
   return 0;
 }
 
 //==============================================================================
-int Value::GetValueSize() const
+size_t Value::GetValueSize() const
 {
   return m_parValue != nullptr ? strlen(m_parValue) : 0;
 }
@@ -159,8 +159,8 @@ void Value::SetValue(const char* pValue)
   }
   else
   {
-    int len(strlen(pValue));
-    
+    size_t len(strlen(pValue));
+
     m_parValue = new char[len + 1];
     strncpy(m_parValue, pValue, len);
     m_parValue[len] = '\0';
@@ -168,11 +168,11 @@ void Value::SetValue(const char* pValue)
 }
 
 //==============================================================================
-void Value::SetValue(const char* pValue, int len)
+void Value::SetValue(const char* pValue, size_t len)
 {
   XR_ASSERT(Json::Value, len >= 0);
   delete[] m_parValue;
-  
+
   if (pValue == nullptr)
   {
     m_parValue = nullptr;
@@ -205,7 +205,7 @@ void Value::SetValue(double d)
 void  Value::SetValue(std::string str)
 {
   delete[] m_parValue;
-  
+
   m_parValue = new char[str.length() + 1];
   strcpy(m_parValue, str.c_str());
 }
@@ -251,19 +251,19 @@ Object* Object::Clone() const
 }
 
 //==============================================================================
-int Object::GetNumChildren() const
+size_t Object::GetNumChildren() const
 {
   return int(m_children.size());
 }
 
 //==============================================================================
-int Object::GetNumElements() const
+size_t Object::GetNumElements() const
 {
   return 0;
 }
 
 //==============================================================================
-int Object::GetValueSize() const
+size_t Object::GetValueSize() const
 {
   return 0;
 }
@@ -278,7 +278,7 @@ const char* Object::GetValue() const
 Entity* Object::GetChild(const char* pKey, Type acceptType) const
 {
   XR_ASSERT(Json::Object, pKey != nullptr);
-  uint32_t  hash(Hash::String(pKey));
+  const uint64_t  hash = Hash::String(pKey);
   Child::Map::const_iterator iFind(m_children.find(hash));
   Entity* pResult = nullptr;
   if (iFind != m_children.end())
@@ -314,7 +314,7 @@ void  Object::AddChild(const char* pKey, size_t keySize, Entity* pEntity)
 void  Object::AddChild(std::string name, Entity* pEntity)
 {
   XR_ASSERT(Json::Object, pEntity != nullptr);
-  const uint32_t  hash(Hash::String(name.c_str()));
+  const uint64_t  hash = Hash::String(name.c_str());
   Child::Map::iterator iFind(m_children.find(hash));
   if (iFind != m_children.end())
   {
@@ -340,7 +340,7 @@ void  Object::AddChild(std::string name, Entity* pEntity)
     XR_ASSERT(Json::Object, hasNext || iPrev->second.pEntity->GetNextSibling() == nullptr);
     iPrev->second.pEntity->LinkNextSibling(pEntity);
   }
-  
+
   if (hasNext)
   {
     XR_ASSERT(Json::Object, hasPrev || iPrev->second.pEntity->GetPrevSibling() == nullptr);
@@ -411,13 +411,13 @@ Array*  Array::Clone() const
 }
 
 //==============================================================================
-int Array::GetNumChildren() const
+size_t Array::GetNumChildren() const
 {
   return 0;
 }
 
 //==============================================================================
-int Array::GetNumElements() const
+size_t Array::GetNumElements() const
 {
   return m_elements.size();
 }
@@ -429,7 +429,7 @@ const char* Array::GetValue() const
 }
 
 //==============================================================================
-int Array::GetValueSize() const
+size_t Array::GetValueSize() const
 {
   return 0;
 }
@@ -444,7 +444,7 @@ void Array::AddElement(Entity* pEntity)
     pPrev = *m_elements.rbegin();
   }
   pEntity->LinkPrevSibling(pPrev);
-  
+
   m_elements.push_back(pEntity);
 }
 

@@ -29,8 +29,8 @@ public:
   void          SetYOffset(int yOffs);
   void          SetSensitivity(float s);
 
-  virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
-  virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
+  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
+  bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
 
   void  Render(IUIRenderer& renderer) const override;
 
@@ -43,7 +43,7 @@ protected:
   int m_lastTouchY;
 
   // internal
-  virtual void _AlignElement( UIElement* pElem );
+  void _AlignElement( UIElement* pElem ) override;
 };
 
 //==============================================================================

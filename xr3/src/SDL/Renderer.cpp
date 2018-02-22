@@ -57,7 +57,7 @@ static void UpdateModelViewMatrix()
   m.RotateBy(s_rendererImpl.mView);
   m.t = s_rendererImpl.mView.RotateVec(m.t - s_rendererImpl.mView.t);
   Mat4x4Helper::ExportToGL(m, arData);
-  
+
   XR_GL_CALL(glLoadMatrixf(arData));
 }
 
@@ -73,7 +73,7 @@ void Renderer::Init(void* mainWindow)
 
   SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, openGlVersionMajor );
   SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, openGlVersionMinor );
-  SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, openGLUseCompatibilityProfile > 0 ? 
+  SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, openGLUseCompatibilityProfile > 0 ?
     SDL_GL_CONTEXT_PROFILE_COMPATIBILITY : SDL_GL_CONTEXT_PROFILE_CORE);
 
   // Window must be created at this point. In SDL, we do it in Device.
@@ -95,19 +95,19 @@ void Renderer::Init(void* mainWindow)
 
   s_rendererImpl.glContext = SDL_GL_CreateContext(s_rendererImpl.mainWindow);
   SDL_GL_MakeCurrent(s_rendererImpl.mainWindow, s_rendererImpl.glContext);
-  
+
   SDL_RendererInfo  info;
   SDL_GetRendererInfo(s_rendererImpl.pRenderer, &info);
-  
+
   XR_ASSERT(Renderer, info.flags & SDL_RENDERER_ACCELERATED);
   XR_ASSERT(Renderer, info.flags & SDL_RENDERER_TARGETTEXTURE);
 
   SDL_DisplayMode dm;
   SDL_GetCurrentDisplayMode(0, &dm);
-  
+
   s_rendererImpl.deviceSize = SVector2(dm.w, dm.h);
-  s_rendererImpl.screenSize = SVector2(width, height); 
-  
+  s_rendererImpl.screenSize = SVector2(width, height);
+
   // init OpenGL
 
   XR_GL_CALL(glViewport(0, 0, (GLsizei)s_rendererImpl.screenSize.x,
@@ -131,7 +131,7 @@ void Renderer::Init(void* mainWindow)
   // initialise frame pool
   int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
   s_rendererImpl.framePool.SetBuffer(poolSize, true, 0);
-  
+
   // FloatBuffers
   s_rendererImpl.numVertices = 0;
   s_rendererImpl.numColors = 0;
@@ -152,7 +152,7 @@ void Renderer::Init(void* mainWindow)
 void Renderer::Exit()
 {
   XR_ASSERTMSG(Renderer, s_rendererImpl.initSuccess, ("Not initialised."));
-  
+
   SDL_GL_DeleteContext(s_rendererImpl.glContext);
   SDL_DestroyRenderer(s_rendererImpl.pRenderer);
 
@@ -160,7 +160,7 @@ void Renderer::Exit()
   s_rendererImpl.numColors = -1;
   s_rendererImpl.numTexCoords = -1;
   s_rendererImpl.numNormals = -1;
-  
+
   s_rendererImpl.framePool.Flush();
   s_rendererImpl.framePool.SetBuffer(0, true, 0);
 
@@ -210,7 +210,7 @@ Material* Renderer::AllocMaterial()
 }
 
 //==============================================================================
-FloatBuffer* Renderer::AllocBuffer(size_t elemSize, size_t numElems)
+FloatBuffer* Renderer::AllocBuffer(uint32_t elemSize, uint32_t numElems)
 {
   XR_ASSERT(Renderer, numElems >= 0);
 
@@ -245,7 +245,7 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
     float zNear, float zFar)
 {
   XR_GL_CALL(glMatrixMode(GL_PROJECTION));
-  
+
   s_rendererImpl.zFar = zFar;
   if (zNear == .0f)
   {
@@ -253,7 +253,7 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
   }
   s_rendererImpl.zNear = zNear;
   s_rendererImpl.tanHalfVerticalFov = .0f;
-  
+
   float arPerspMatrix[kNumPersMatrixElems];
   ProjectionHelpers::CalculateOrtho(left, right, bottom, top, zNear, zFar,
     arPerspMatrix);
@@ -269,7 +269,7 @@ void  Renderer::SetPerspective(float verticalFov, float aspectRatio, float zNear
 
   s_rendererImpl.zNear = zNear;
   s_rendererImpl.zFar = zFar;
-  
+
 //  float f(1.0f / tanf(verticalFov * .5f));
 //  float dz(1.0f / (zFar - zNear));
 //  float arData[16] =
@@ -277,7 +277,7 @@ void  Renderer::SetPerspective(float verticalFov, float aspectRatio, float zNear
 //    f, .0f, .0f, .0f,
 //    .0f, f / aspectRatio, .0f, .0f,
 //    .0f, .0f, (zNear + zFar) * dz, (2.0f * zNear * zFar) * dz,
-//    .0f, .0f, 1.0f, .0f      
+//    .0f, .0f, 1.0f, .0f
 //  };
 
   float arPerspMatrix[kNumPersMatrixElems];
@@ -429,7 +429,7 @@ Color Renderer::GetClearColor()
 {
   GLint arParam[4];
   XR_GL_CALL(glGetIntegerv(GL_COLOR_CLEAR_VALUE, arParam));
-  return Color(arParam[0], arParam[1], arParam[2], arParam[3]);
+  return Color(float(arParam[0]), float(arParam[1]), float(arParam[2]), float(arParam[3]));
 }
 
 //==============================================================================
@@ -437,7 +437,7 @@ Color Renderer::GetAmbientColor()
 {
   GLint arParam[4];
   XR_GL_CALL(glGetIntegerv(GL_CURRENT_COLOR, arParam));
-  return Color(arParam[0], arParam[1], arParam[2], arParam[3]);
+  return Color(float(arParam[0]), float(arParam[1]), float(arParam[2]), float(arParam[3]));
 }
 
 //==============================================================================
@@ -463,14 +463,14 @@ Rect Renderer::GetScissorRect()
 }
 
 //==============================================================================
-static const GLenum arPrimTypeMappings[] =
-{
-  GL_LINES,
-  GL_LINE_STRIP,
-  GL_TRIANGLES,
-  GL_TRIANGLE_STRIP,
-  GL_QUADS,
-};
+//static const GLenum arPrimTypeMappings[] =
+//{
+//  GL_LINES,
+//  GL_LINE_STRIP,
+//  GL_TRIANGLES,
+//  GL_TRIANGLE_STRIP,
+//  GL_QUADS,
+//};
 
 //==============================================================================
 void  Renderer::DrawPrims(PrimType prim)
@@ -513,7 +513,7 @@ void  Renderer::DrawPrims( PrimType prim, const uint16_t* pInds, int numInds)
     XR_ASSERT(Renderer, numInds <= s_rendererImpl.numVertices);
     XR_GL_CALL(glDrawArrays(arPrimTypeMappings[int(prim)], 0, numInds));
   }
-  
+
   XR_GL_CALL(glDisableClientState(GL_INDEX_ARRAY));
   XR_GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
   XR_GL_CALL(glDisableClientState(GL_COLOR_ARRAY));
@@ -554,10 +554,10 @@ void  Renderer::SetFogRange(float zFar, float zNear)
 //==============================================================================
 void Renderer::ClearBuffer(uint32_t flags)
 {
-  GLbitfield  bitField(((flags & BF_COLOR) ? GL_COLOR_BUFFER_BIT: 0 ) |
-    ((flags & BF_DEPTH) ? GL_DEPTH_BUFFER_BIT : 0 ));
-  XR_GL_CALL(glClear(bitField));
-  
+//  GLbitfield  bitField(((flags & BF_COLOR) ? GL_COLOR_BUFFER_BIT: 0 ) |
+//    ((flags & BF_DEPTH) ? GL_DEPTH_BUFFER_BIT : 0 ));
+//  XR_GL_CALL(glClear(bitField));
+
   //s_rendererImpl.framePool.Flush();
 }
 

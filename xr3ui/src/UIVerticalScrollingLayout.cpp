@@ -14,9 +14,9 @@ namespace XR
 //==============================================================================
 UIVerticalScrollingLayout::UIVerticalScrollingLayout()
 : UIVerticalLayout(),
-  m_isTouched(false),
-  m_sensitivity(1.0f),
   m_yOffset(0),
+  m_sensitivity(1.0f),
+  m_isTouched(false),
   m_lastTouchY(0)
 {}
 
@@ -58,7 +58,7 @@ bool UIVerticalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e )
     if (e.x >= x && e.x < (x + w) &&
       e.y >= y && e.y < (y + h))
     {
-      int dy(floorf((e.y - m_lastTouchY) * m_sensitivity + .5f));
+      auto dy = static_cast<int32_t>(std::floor((e.y - m_lastTouchY) * m_sensitivity + .5f));
       if (dy != 0)
       {
         SetYOffset(m_yOffset + dy);
@@ -84,6 +84,9 @@ void UIVerticalScrollingLayout::_AlignElement( UIElement* pElem )
 
   case  AL_HIGH:
     pElem->x = x + w - pElem->w;
+    break;
+    
+  case  AL_NOALIGN:
     break;
   }
 

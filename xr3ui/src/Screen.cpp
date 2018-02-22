@@ -77,7 +77,7 @@ void  Screen::Hide(uint32_t ms)
   {
     Unregister();
   }
-  
+
   _Hide(ms);
   if (ms > 0)
   {
@@ -91,7 +91,7 @@ void  Screen::Hide(uint32_t ms)
 }
 
 //==============================================================================
-void  Screen::Update(int32_t ms)
+void  Screen::Update(uint32_t ms)
 {
   if (m_timer > 0)
   {
@@ -103,10 +103,14 @@ void  Screen::Update(int32_t ms)
         // completed showing - register
         _MakeActive();
         break;
-        
+
       case  S_HIDING:
         // completed hiding - remove elements
         _MakeHidden();
+        break;
+        
+      case  S_HIDDEN:
+      case  S_ACTIVE:
         break;
       }
       m_timer = 0;
@@ -123,7 +127,7 @@ void  Screen::_MakeActive()
 {
   m_state = S_ACTIVE;
   Register();
-  
+
   if(m_pOnBecomeActive != 0)
   {
     (*m_pOnBecomeActive)(this, m_pOnBecomeActiveData);

@@ -40,15 +40,15 @@ private:
   static void OnAction(void* pSystem, void* pUser);
 
   // data
-  bool        m_isEnabled;
+  bool  m_isEnabled;
   UIImage m_image;
 
-  int         m_timeOut;
-  int         m_timer;
-  float       m_moveTreshold;
-  float       m_keepAliveTreshold;
+  int m_timeOut;
+  int m_timer;
+  float m_moveTreshold;
+  float m_keepAliveTreshold;
 
-  bool        m_isPressed;
+  bool  m_isPressed;
 };
 
 } // XR

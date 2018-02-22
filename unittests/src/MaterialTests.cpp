@@ -30,6 +30,7 @@ namespace XR
     : countDiffBytes(0),
       diffAccum(0),
       diffMax(0),
+      histogram{},
       countDiffPixels(0)
     {
       XR_ASSERT(DiffImage, lhs.GetWidth() == rhs.GetWidth());
@@ -80,16 +81,11 @@ namespace XR
       }
     }
   };
-  
+
   template <typename T>
   static void AssertEq(T const& a, T const& b)
   {
     ASSERT_EQ(a, b);
-  }
-
-  static void AssertStrEq(char const* a, char const* b)
-  {
-    ASSERT_STREQ(a, b);
   }
 
   class MaterialTests : public ::testing::Test
@@ -112,7 +108,7 @@ namespace XR
     ~MaterialTests()
     {
       Asset::Manager::Exit();
-      
+
       Gfx::Exit();
       Device::Exit();
     }
@@ -147,7 +143,6 @@ namespace XR
     int32_t textureStage = 0;
     Gfx::SetUniform(hSamp, 1, &textureStage);
 
-    using Pos3 = Vertex::Pos<Vector3>;
     using PosUvColor = Vertex::Format<
       Vertex::Pos<Vector3>,
       Vertex::UV0<Vector2>,
@@ -211,9 +206,9 @@ namespace XR
     Image diff;
     ImageDiff id(cap, truth, diff);
     //diff.Save("diff.png", true);
-    
+
     ASSERT_LT(id.countDiffBytes / float(truth.GetPixelDataSize()), .005f);
-    ASSERT_GE(id.countDiffBytes, 0);
+    ASSERT_GE(id.countDiffBytes, 0UL);
     if (id.countDiffBytes > 0)
     {
       int diffSignificant = std::accumulate(id.histogram + 16, id.histogram + 256, 0);

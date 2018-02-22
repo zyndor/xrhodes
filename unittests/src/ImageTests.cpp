@@ -39,9 +39,9 @@ TEST_F(ImageTests, Basic)
   ASSERT_NE(img.GetPixelData(), nullptr);
 
   auto p = img.GetPixelData();
-  for (int i = 0; i < height; ++i)
+  for (uint32_t i = 0; i < height; ++i)
   {
-    for (int j = 0; j < width; ++j)
+    for (uint32_t j = 0; j < width; ++j)
     {
       *p = i;
       ++p;
