@@ -13,6 +13,9 @@
 #include <algorithm>
 #include <unordered_map>
 
+#define LTRACE(format) XR_TRACE(Material, format)
+#define LTRACEIF(condition, format) XR_TRACEIF(Material, condition, format)
+
 namespace XR
 {
 
@@ -22,6 +25,12 @@ XR_ASSET_DEF(Material, "xmtl", 1, "mtl")
 //==============================================================================
 namespace
 {
+
+struct SerializedTextureStage
+{
+  uint8_t stage;
+  Asset::HashType hash;
+};
 
 #ifdef ENABLE_ASSET_BUILDING
 static class MaterialBuilder : public Asset::Builder
@@ -56,12 +65,16 @@ public:
   bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
-    XonObject* root = XonBuildTree(buffer.As<char const>(), buffer.size);
+    XonParser::State state;
+    XonObject* root = XonBuildTree(buffer.As<char const>(), buffer.size, &state);
     bool success = root != nullptr;
+    LTRACEIF(!success,
+      ("%s: failed to parse XON somewhere around row %d, column %d.", rawNameExt,
+        state.row, state.column));
     if (success)  // process stage flags
     {
+      uint32_t flags = 0;
       try {
-        uint32_t flags = 0;
         auto& state = root->Find("state");
         switch (state.GetType())
         {
@@ -72,31 +85,25 @@ public:
         case XonEntity::Type::Object:
           for (size_t i = 0; i < state.GetNumElements(); ++i)
           {
-            if (state[i].GetType() == XonEntity::Type::Value)
+            auto& elem = state[i];
+            if (elem.GetType() == XonEntity::Type::Value)
             {
-              InterpretState(state[i].GetValue(), flags);
+              InterpretState(elem.GetValue(), flags);
             }
           }
           break;
         }
-
-        success = WriteBinaryStream(flags, data);
       }
       catch (XonEntity::Exception const&)
-      {
-        success = false;
-      }
+      {}  // ignore missing state.
+
+      success = WriteBinaryStream(flags, data);
+      LTRACEIF(!success, ("%s: failed to write state.", rawNameExt));
     }
 
     if (success)  // process texture stages
     {
-      struct TextureData
-      {
-        uint8_t stage;
-        Asset::HashType hash;
-      };
-
-      std::vector<TextureData>  stages;
+      std::vector<SerializedTextureStage>  stages;
 
       try {
         auto& textures = root->Find("textures");
@@ -111,21 +118,22 @@ public:
           Asset::HashType hash = Asset::Manager::HashPath(path);
           stages.push_back({ 0, hash });
         }
-        else
+        else // object
         {
           stages.reserve(std::min(textures.GetNumElements(),
             static_cast<size_t>(Material::kMaxTextureStages)));
 
           std::vector<std::string> keys;
           static_cast<XonObject&>(textures).GetKeys(keys);
-          uint16_t stage;  // Stage is totally a uint8_t, but we don't want StringTo()'s stream extraction to interpret it as a character; we'll cast it back upon writing, promise.
-          for (size_t i = 0; success && i < stages.capacity(); ++i)
+          for (auto &key: keys)
           {
-            if (StringTo(keys[i].c_str(), stage) && stage < Material::kMaxTextureStages)
+            uint32_t stage; // avoid interpretation as character.
+            if (StringTo(key.c_str(), stage) &&
+              stage < Material::kMaxTextureStages)
             {
               try {
-                auto& texture = textures.Find(keys[i]);
-                if (texture.GetType() == XonEntity::Type::Value)
+                auto& texture = textures.Find(key);
+                if(texture.GetType() == XonEntity::Type::Value)
                 {
                   path = texture.GetValue();
                   dependencies.push_back(path);
@@ -133,32 +141,35 @@ public:
                   Asset::HashType hash = Asset::Manager::HashPath(path);
                   stages.push_back({ uint8_t(stage), hash });
                 }
+                else
+                {
+                  LTRACE(("%s: ignoring texture %d: path not a value.",
+                    rawNameExt, stage));
+                }
               }
-              catch (XonEntity::Exception const&) // the texture that we were told we're going to have isn't there.
+              catch(XonEntity::Exception const&)
               {
-                success = false;
-                break;
+                LTRACE(("FATAL: %s: key '%s' declared but not found.",
+                  rawNameExt, key.c_str()));
+                abort();
               }
             }
             else
             {
-              success = false;
+              LTRACE(("%s: ignoring texture stage '%s' as invalid.", rawNameExt,
+                key.c_str()));
             }
           }
         }
       }
-      catch (XonEntity::Exception const&) // couldn't find textures - not an error
-      {}
+      catch (XonEntity::Exception const&)
+      {} // ignore missing textures.
 
       if (success)  // write out texture stages
       {
-        success = WriteBinaryStream(uint8_t(stages.size()), data);
-
-        for (auto& stage : stages)
-        {
-          success = success && WriteBinaryStream(stage.stage, data) &&
-            WriteBinaryStream(stage.hash, data);
-        }
+        success = WriteRangeBinaryStream<uint8_t>(stages.begin(), stages.end(),
+          data);
+        LTRACEIF(!success, ("%s: failed to write texture stages.", rawNameExt));
       }
     }
 
@@ -175,10 +186,12 @@ public:
 
         auto hash = Asset::Manager::HashPath(path);
         success = WriteBinaryStream(hash, data);
+        LTRACEIF(!success, ("%s: failed to write shader hash."));
       }
       catch (XonEntity::Exception const&)
       {
         success = false;
+        LTRACE(("%s: missing %s definition.", rawNameExt, "shader"));
       }
     }
     return success;
@@ -195,7 +208,7 @@ public:
     }
     else
     {
-      XR_TRACE(MaterialBuilder, ("Unsupported state: %s", value));
+      LTRACE(("Unsupported state: %s", value));
     }
   }
 } materialBuilder;
@@ -253,19 +266,32 @@ bool Material::OnLoaded(Buffer buffer)
   auto flags = GetFlags();
 
   BufferReader  reader(buffer);
-  uint8_t numTextures;
-  bool success = reader.Read(m_stateFlags) && reader.Read(numTextures);
+  bool success = reader.Read(m_stateFlags);
+  LTRACEIF(!success, ("%s: failed to read state flags.", m_debugPath.c_str()));
 
-  uint8_t stage;
-  DescriptorCore desc(Texture::kTypeId);
-  for (auto i = 0; success && i < numTextures; ++i) // read texture stages and hashes
+  uint8_t numTextures = 0;
+  SerializedTextureStage const* textures = nullptr;
+  if (success)
   {
-    success = reader.Read(stage) && reader.Read(desc.hash);
-    if (success)  // get texture
+    textures = reader.ReadElementsWithSize<SerializedTextureStage>(numTextures);
+    success = textures != nullptr;
+    LTRACEIF(!success, ("%s: failed to read texture stages.", m_debugPath.c_str()));
+  }
+
+  DescriptorCore desc(Texture::kTypeId);
+  for (decltype(numTextures) i = 0; success && i < numTextures; ++i)
+  {
+    desc.hash = textures[i].hash;
+    auto ptr = Asset::Manager::Load(static_cast<Descriptor<Texture>&>(desc),
+      flags); // TODO: remove Asset::
+    success = ptr.Get() != nullptr;
+    if (success)
     {
-      auto ptr = Asset::Manager::Load(static_cast<Descriptor<Texture>&>(desc), flags); // TODO: remove Asset::
-      m_textureStages[stage] = ptr;
-      success = ptr.Get() != nullptr;
+      m_textureStages[textures[i].stage] = ptr;
+    }
+    else
+    {
+      LTRACE(("%s: failed to retrieve texture %llx.", m_debugPath.c_str()));
     }
   }
 
@@ -273,6 +299,7 @@ bool Material::OnLoaded(Buffer buffer)
   {
     desc.type = Shader::kTypeId;
     success = reader.Read(desc.hash);
+    LTRACEIF(!success, ("%s: failed to read shader hash.", m_debugPath.c_str()));
   }
 
   if (success)  // get shader
@@ -280,6 +307,8 @@ bool Material::OnLoaded(Buffer buffer)
     auto ptr = Asset::Manager::Load(static_cast<Descriptor<Shader>&>(desc), flags); // TODO: remove Asset::
     m_shader = ptr;
     success = ptr.Get() != nullptr;
+    LTRACEIF(!success, ("%s: failed to retrieve shader %llx.", m_debugPath.c_str(),
+      desc.hash));
   }
 
   // TODO tints

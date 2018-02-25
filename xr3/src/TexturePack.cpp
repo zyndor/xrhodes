@@ -12,6 +12,9 @@
 #include "XR/debug.hpp"
 #include "tinyxml2.h"
 
+#define LTRACE(format) XR_TRACE(TexturePack, format)
+#define LTRACEIF(condition, format) XR_TRACEIF(TexturePack, condition, format)
+
 namespace XR
 {
 
@@ -120,12 +123,15 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 {
   // load xml
   tinyxml2::XMLDocument doc;
-  bool success = doc.Parse(buffer.As<char const>(), buffer.size) == tinyxml2::XML_SUCCESS;
+  auto xmlError = doc.Parse(buffer.As<char const>(), buffer.size);
+  bool success = xmlError == tinyxml2::XML_SUCCESS;
+  LTRACEIF(!success, ("%s: failed to parse xml, code: %d", rawNameExt, xmlError));
 
   tinyxml2::XMLElement* elem = doc.RootElement();
   if (success)
   {
     success = elem != nullptr;
+    LTRACEIF(!success, ("%s: no root element found.", rawNameExt));
   }
 
   // Base texture name
@@ -134,11 +140,8 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
   {
     textureName = elem->Attribute(kTags[TAG_IMAGE_PATH]);
     success = textureName != nullptr;
-    if (!success)
-    {
-      XR_TRACE(TexturePack, ("'%s' is a required attribute.",
-        kTags[TAG_IMAGE_PATH]));
-    }
+    LTRACEIF(!success, ("%s: '%s' is a required attribute.", rawNameExt,
+      kTags[TAG_IMAGE_PATH]));
   }
 
   if (success)
@@ -147,6 +150,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 
     Asset::HashType hash = Asset::Manager::HashPath(dependencies.back());
     success = WriteBinaryStream(hash, data);
+    LTRACEIF(!success, ("%s: failed to write texture hash.", rawNameExt));
   }
 
   // Shader name
@@ -163,6 +167,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
     }
 
     success = WriteBinaryStream(hash, data);
+    LTRACEIF(!success, ("%s: failed to write shader hash.", rawNameExt));
   }
 
   // Base texture size.
@@ -171,11 +176,8 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
   {
     success = elem->QueryIntAttribute(kTags[TAG_WIDTH], &texWidth) !=
       tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
-    if (!success)
-    {
-      XR_TRACE(TexturePack, ("Invalid value for %s: %s", kTags[TAG_WIDTH],
-        elem->Attribute(kTags[TAG_WIDTH])));
-    }
+    LTRACEIF(!success, ("%s: invalid value for %s: %s", rawNameExt,
+      kTags[TAG_WIDTH], elem->Attribute(kTags[TAG_WIDTH])));
   }
 
   int texHeight = 0;
@@ -183,11 +185,8 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
   {
     success = elem->QueryIntAttribute(kTags[TAG_HEIGHT], &texHeight) !=
       tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
-    if (!success)
-    {
-      XR_TRACE(TexturePack, ("Invalid value for %s: %s", kTags[TAG_HEIGHT],
-        elem->Attribute(kTags[TAG_HEIGHT])));
-    }
+    LTRACEIF(!success, ("%s: invalid value for %s: %s", rawNameExt,
+      kTags[TAG_HEIGHT], elem->Attribute(kTags[TAG_HEIGHT])));
   }
 
   // Number of Sprites.
@@ -202,6 +201,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
     }
 
     success = WriteBinaryStream(numSprites, data);
+    LTRACEIF(!success, ("%s: failed to write sprite count.", rawNameExt));
   }
 
   // Sprite data
@@ -212,6 +212,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
     HardString<256> buffer;
     int x, y; // position of top left corner on sprite sheet
     int w, h; // actual size on sprite sheet. This will inform the halfSize. Needs swapping if the sprite is rotated.
+    size_t numSprites = 0;
     while (success && elem != 0)
     {
       // Amount of translation padding left of and above sprite, or bottom and left, if sprite is rotated.
@@ -234,6 +235,17 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
         elem->QueryIntAttribute(kTags[TAG_ORIGINAL_H], &hOrig) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
         elem->QueryIntAttribute(kTags[TAG_OFFSET_X], &xOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
         elem->QueryIntAttribute(kTags[TAG_OFFSET_Y], &yOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
+      LTRACEIF(!success, ("%s: definition of sprite %d missing a required element.",
+        rawNameExt, numSprites));
+
+      if (success)
+      {
+        auto spriteNameLen = strlen(spriteName);
+        success = spriteNameLen <= buffer.capacity();
+        XR_TRACEIF(TexturePath, !success,
+          ("%s: sprite name '%s' too long (%z too many characters)", rawNameExt,
+            spriteNameLen - buffer.capacity()));
+      }
 
       if (success)
       {
@@ -302,8 +314,11 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
         // Write sprite
         SpriteNameHashType hash = Hash::String32(buffer.c_str());
         success = WriteBinaryStream(hash, data) && WriteBinaryStream(sprite, data);
+        LTRACEIF(!success, ("%s: failed to write sprite %d.", rawNameExt,
+          numSprites));
 
         elem = elem->NextSiblingElement(kTags[TAG_SPRITE]);
+        ++numSprites;
       }
     }
   }
@@ -323,7 +338,7 @@ Sprite* TexturePack::Get(const char* name, bool allowMissing)
   XR_ASSERT(TexturePack, name != nullptr);
   Sprite* pSprite(Get(Hash::String32(name)));
   XR_ASSERTMSG(TexturePack, pSprite != nullptr || allowMissing,
-    ("Sprite '%s' doesn't exist in TexturePack.", name));
+    ("%s: sprite '%s' doesn't exist.", m_debugPath.c_str(), name));
   return pSprite;
 }
 
@@ -333,7 +348,7 @@ const Sprite* TexturePack::Get(const char* name, bool allowMissing) const
   XR_ASSERT(TexturePack, name != nullptr);
   const Sprite* pSprite(Get(Hash::String32(name)));
   XR_ASSERTMSG(TexturePack, pSprite != nullptr || allowMissing,
-    ("Sprite '%s' doesn't exist in TexturePack.", name));
+    ("%s: sprite '%s' doesn't exist.", m_debugPath.c_str(), name));
   return pSprite;
 }
 
@@ -342,7 +357,8 @@ Sprite* TexturePack::Get(char const* name)
 {
   XR_ASSERT(TexturePack, name != nullptr);
   Sprite* pSprite(Get(Hash::String32(name)));
-  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("Sprite '%s' doesn't exist in TexturePack.", name));
+  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("%s: sprite '%s' doesn't exist.",
+    m_debugPath.c_str(), name));
   return pSprite;
 }
 
@@ -351,7 +367,8 @@ const Sprite* TexturePack::Get(char const* name) const
 {
   XR_ASSERT(TexturePack, name != nullptr);
   const Sprite* pSprite(Get(Hash::String32(name)));
-  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("Sprite '%s' doesn't exist in TexturePack.", name));
+  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("%s: sprite '%s' doesn't exist.",
+    m_debugPath.c_str(), name));
   return pSprite;
 }
 
@@ -382,8 +399,15 @@ bool TexturePack::OnLoaded(Buffer buffer)
   BufferReader reader(buffer);
 
   HashType textureHash;
+  bool success = reader.Read(textureHash);
+  LTRACEIF(!success, ("%s: failed to read texture id.", m_debugPath.c_str()));
+
   Descriptor<Shader> descShader;
-  bool success = reader.Read(textureHash) && reader.Read(descShader.hash);
+  if (success)
+  {
+    reader.Read(descShader.hash);
+    LTRACEIF(!success, ("%s: failed to read shader id.", m_debugPath.c_str()));
+  }
 
   FlagType flags = 0;
   if (success)
@@ -396,6 +420,7 @@ bool TexturePack::OnLoaded(Buffer buffer)
   {
     texture = Manager::Find(Descriptor<Texture>(textureHash));
     success = texture != nullptr;
+    LTRACEIF(!success, ("%s: failed to retrieve texture.", m_debugPath.c_str()));
   }
 
   Shader::Ptr shader;
@@ -416,21 +441,21 @@ bool TexturePack::OnLoaded(Buffer buffer)
       success = shader != nullptr;
       if (!success)
       {
-        XR_TRACE(TexturePack, ("Failed to set shader 0x%llx for '%s'%s", descShader.hash,
-          m_debugPath.c_str(), useDefault ? " (bad default shader!)" : ""));
+        LTRACE(("%s: failed to retrieve shader 0x%llx%s.", m_debugPath.c_str(),
+          descShader.hash, useDefault ? " (bad default shader!)" : ""));
       }
     }
     else
     {
-      XR_TRACE(TexturePack, ("'%s' has no shader while no default shader set.",
+      LTRACE(("%s: missing shader definition and no default shader set.",
         m_debugPath.c_str()));
     }
 
     if (success && !s_descDefaultShader.IsValid())
     {
       s_descDefaultShader = descShader;
-      XR_TRACE(TexturePack, ("Using 0x%llx as default shader now (defined in '%s').",
-        descShader.hash, m_debugPath.c_str()));
+      LTRACE(("%s: setting default shader to 0x%llx now.", m_debugPath.c_str(),
+        descShader.hash));
     }
   }
 
@@ -446,11 +471,13 @@ bool TexturePack::OnLoaded(Buffer buffer)
   if (success)
   {
     success = reader.Read(numSprites);
+    LTRACEIF(!success, ("%s: failed to read sprite count.", m_debugPath.c_str()));
   }
 
   SpriteNameHashType spriteHash;
   SpriteData sprData;
-  while (success && numSprites-- > 0)
+  NumSpritesType i = 0;
+  while (success && i < numSprites)
   {
     success = reader.Read(spriteHash) && reader.Read(sprData);
     if (success)
@@ -459,6 +486,11 @@ bool TexturePack::OnLoaded(Buffer buffer)
       spr.SetMaterial(m_material);
       spr.Import(sprData.vertices);
       spr.SetHalfSize(sprData.halfSize.x, sprData.halfSize.y, false);
+      ++i;
+    }
+    else
+    {
+      LTRACE(("%s: failed to read sprite %d.", m_debugPath.c_str(), i));
     }
   }
   return success;
