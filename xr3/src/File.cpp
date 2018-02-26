@@ -271,24 +271,21 @@ size_t File::GetSize(Handle hFile)
 size_t File::Read(Handle hFile, size_t elemSize, size_t numElems, void* parBuffer)
 {
   XR_ASSERT_HANDLE_VALID(hFile);
-  FILE* f = static_cast<FILE*>(hFile);
-  return fread(parBuffer, elemSize, numElems, f);
+  return fread(parBuffer, elemSize, numElems, static_cast<FILE*>(hFile));
 }
 
 //==============================================================================
 size_t File::Write(void const* parBuffer, size_t elemSize, size_t numElems, Handle hFile)
 {
   XR_ASSERT(File, hFile);
-  FILE* f = static_cast<FILE*>(hFile);
-  return fwrite(parBuffer, elemSize, numElems, f);
+  return fwrite(parBuffer, elemSize, numElems, static_cast<FILE*>(hFile));
 }
 
 //==============================================================================
 size_t File::Tell(Handle hFile)
 {
   XR_ASSERT_HANDLE_VALID(hFile);
-  FILE* f = static_cast<FILE*>(hFile);
-  const size_t tell = ftell(f);
+  const size_t tell = ftell(static_cast<FILE*>(hFile));
   return tell;
 }
 
@@ -300,24 +297,25 @@ static const int  karSeekOriginMappings[] =
   SEEK_END,
 };
 
+#if defined XR_COMPILER_MSVC && defined XR_ARCH_64
+#define XR_FSEEK _fseeki64
+#else
+#define XR_FSEEK fseek
+#endif
+
 bool File::Seek(Handle hFile, size_t offset, SeekFrom sf)
 {
   XR_ASSERT_HANDLE_VALID(hFile);
-  FILE* f = static_cast<FILE*>(hFile);
-#if defined XR_COMPILER_MSVC && defined XR_ARCH_64
-  return _fseeki64(f, offset, karSeekOriginMappings[static_cast<int>(sf)]) == 0;
-#else
-  return fseek(f, offset, karSeekOriginMappings[static_cast<int>(sf)]) == 0;
-#endif
+  return XR_FSEEK(static_cast<FILE*>(hFile), offset,
+    karSeekOriginMappings[static_cast<int>(sf)]) == 0;
 }
 
 //==============================================================================
 void File::Close(Handle hFile)
 {
-  FILE* f = static_cast<FILE*>(hFile);
-  if (f)
+  if (hFile)
   {
-    fclose(f);
+    fclose(static_cast<FILE*>(hFile));
   }
 }
 
