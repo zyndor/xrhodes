@@ -85,7 +85,7 @@ static int  FilterEvents(void* pUser, SDL_Event* pEvent)
 //==============================================================================
 void Device::Init(char const* title)
 {
-  bool  result(SDL_Init(SDL_INIT_EVERYTHING) == 0);
+  bool  result(SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_TIMER) == 0);
   if (!result)
   {
     XR_TRACE(Device, ("Failed to initialise SDL."));

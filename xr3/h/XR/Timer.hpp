@@ -19,12 +19,15 @@ class Timer
   XR_NONOBJECT_DECL(Timer)
 
 public:
-  // general
-  static void Init();
-  static void Exit();
-
+  ///@return Number of milliseconds since the epoch (1st January 1970 00:00)
   static uint64_t GetUTC();
+
+  ///@return Uninterrupted system time in milliseconds. Unaffected by clock
+  /// adjustments.
   static uint64_t GetUST();
+
+  ///@return Uninterrupted system time in nanoseconds. Unaffected by clock
+  /// adjustments.
   static uint64_t GetUSTNano();
 };
 
