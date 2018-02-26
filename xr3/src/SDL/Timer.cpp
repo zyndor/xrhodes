@@ -4,31 +4,36 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "SDL_timer.h"
 #include "XR/Timer.hpp"
+#include <chrono>
+#include <ctime>
+
+namespace sc = std::chrono;
 
 namespace XR
 {
-
-void  Timer::Init()
-{}
-
-void  Timer::Exit()
-{}
+namespace
+{
+const auto s_ust0 = sc::steady_clock::now();
+}
 
 uint64_t Timer::GetUTC()
 {
-  return 0;
+  auto utc = sc::system_clock::now().time_since_epoch();
+  auto ms = sc::duration_cast<sc::milliseconds>(utc);
+  return ms.count();
 }
 
 uint64_t Timer::GetUST()
 {
-  return SDL_GetTicks();
+  auto ust = sc::steady_clock::now() - s_ust0;
+  return sc::duration_cast<sc::milliseconds>(ust).count();
 }
 
 uint64_t Timer::GetUSTNano()
 {
-  return GetUST() * uint64_t(1000);
+  auto ust = sc::steady_clock::now() - s_ust0;
+  return sc::duration_cast<sc::nanoseconds>(ust).count();
 }
 
 } // XR
