@@ -26,27 +26,21 @@ UIID  GenerateUIID()
   // append time in millisecs
   const uint64_t  tNow = Timer::GetUTC();
 
-  const int kOffset = 0;
   std::copy(reinterpret_cast<const UIID::value_type*>(&tNow),
-    reinterpret_cast<const UIID::value_type*>(&tNow + sizeof(&tNow)),
+    reinterpret_cast<const UIID::value_type*>(&tNow) + sizeof(&tNow),
     iWrite);
-  //memcpy(iWrite, &tNow + kOffset, sizeof(tNow) - kOffset);
-  iWrite += sizeof(tNow) - kOffset; // 8 bytes
+  iWrite += sizeof(tNow); // 8 bytes
 
   // append address of local variable - random enough
-  UIID::value_type*   p = &uiid[0];
-  std::copy(reinterpret_cast<const UIID::value_type*>(&p),
-    reinterpret_cast<const UIID::value_type*>(&p + sizeof(&p)),
-    iWrite);
-  //memcpy(iWrite, &pp, sizeof(&iWrite));
+  UIID::value_type* p = &uiid[0];
+  auto pp = reinterpret_cast<UIID::value_type*>(&p);
+  std::copy(pp, pp + sizeof(decltype(&p)), iWrite);
   iWrite += sizeof(&iWrite); // 4 or 8 bytes
 
   if(iWrite != iEnd)
   {
     // on <64 bit systems, jumble address and append again
-    std::copy(reinterpret_cast<const UIID::value_type*>(&p),
-      reinterpret_cast<const UIID::value_type*>(&p + sizeof(&p)),
-      iWrite);
+    std::copy(pp, pp + sizeof(decltype(&p)), iWrite);
     //memcpy(iWrite, &pp, sizeof(&iWrite));
     std::reverse(iWrite, iWrite + sizeof(&iWrite));
 
@@ -54,7 +48,7 @@ UIID  GenerateUIID()
     std::transform(iWrite, iWrite + sizeof(&iWrite), iWrite,
       [sum](UIID::value_type& v){ return v += sum; });
 
-    iWrite += sizeof(&iWrite); // 4 or 8 bytes
+    iWrite += sizeof(&iWrite); // must be 4 bytes
   }
 
   // scramble digits
