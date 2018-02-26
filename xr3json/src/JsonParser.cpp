@@ -292,14 +292,14 @@ bool  Parser::_ParseValue()
       const size_t len = pValueEnd - pChar;
       if (strncmp(pChar, kFalse, len) == 0)
       {
-        std::snprintf(arBuffer, kBufferSize - 1, "0");
-        String  str = { arBuffer, strlen(arBuffer) };
+        auto size = size_t(std::snprintf(arBuffer, kBufferSize - 1, "0"));
+        String  str = { arBuffer, size };
         _DoCallback(E_VALUE, &str);
       }
       else if (strncmp(pChar, kTrue, len) == 0)
       {
-        std::snprintf(arBuffer, kBufferSize - 1, "1");
-        String  str = { arBuffer, strlen(arBuffer) };
+        auto size = size_t(std::snprintf(arBuffer, kBufferSize - 1, "1"));
+        String  str = { arBuffer, size };
         _DoCallback(E_VALUE, &str);
       }
       else if (strncmp(pChar, kNull, len) == 0)
