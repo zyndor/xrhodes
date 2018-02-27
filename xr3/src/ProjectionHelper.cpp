@@ -4,7 +4,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/ProjectionHelpers.hpp"
+#include "XR/ProjectionHelper.hpp"
 #include "XR/debug.hpp"
 #include <cmath>
 #include <cstring>
@@ -13,18 +13,18 @@ namespace XR
 {
 
 //==============================================================================
-void ProjectionHelpers::CalculateOrtho(float left, float right, float top,
-  float bottom, float zNear, float zFar, float(&arData)[16])
+void ProjectionHelper::CalculateOrthographic(float left, float right, float bottom,
+  float top, float zNear, float zFar, float matrix[kNumMatrixElems])
 {
-  XR_ASSERT(ProjectionHelpers, left != right);
-  XR_ASSERT(ProjectionHelpers, top != bottom);
-  XR_ASSERT(ProjectionHelpers, zFar > 0.0f);
+  XR_ASSERT(ProjectionHelper, left != right);
+  XR_ASSERT(ProjectionHelper, top != bottom);
+  XR_ASSERT(ProjectionHelper, zFar > zNear);
 
   float dx(1.0f / (right - left));
-  float dy(1.0f / (bottom - top));  // simplified -dy
+  float dy(1.0f / (top - bottom));
   float dz(1.0f / (zNear - zFar));	// simplified -dz
 
-  float*  pWrite = arData;
+  float*  pWrite = matrix;
   *pWrite = 2.0f * dx;
   *++pWrite = 0.0f;
   *++pWrite = 0.0f;
@@ -38,49 +38,39 @@ void ProjectionHelpers::CalculateOrtho(float left, float right, float top,
   *++pWrite = 2.0f * dz;
   *++pWrite = 0.0f;
   *++pWrite = (left + right) * -dx;
-  *++pWrite = (top + bottom) * dy;
+  *++pWrite = (top + bottom) * -dy;
   *++pWrite = (zFar + zNear) * dz;
   *++pWrite = 1.0f;
 }
 
 //==============================================================================
-void ProjectionHelpers::CalculateOrtho(float width, float height, float zNear,
-  float zFar, float(&arData)[16])
+void ProjectionHelper::CalculateOrthographic(float width, float height, float zNear,
+  float zFar, float matrix[kNumMatrixElems])
 {
-  XR_ASSERT(ProjectionHelpers, width > 0.0f);
-  XR_ASSERT(ProjectionHelpers, height > 0.0f);
-  XR_ASSERT(ProjectionHelpers, zFar > 0.0f);
-  XR_ASSERT(ProjectionHelpers, zNear > 0.0f);
+  XR_ASSERT(ProjectionHelper, width > 0.0f);
+  XR_ASSERT(ProjectionHelper, height > 0.0f);
+  XR_ASSERT(ProjectionHelper, zFar > zNear);
 
-  float dx(1.0f / width);
-  float dy(1.0f / height);
-  float dz(1.0f / (zNear - zFar));
-
-  float*  pWrite = arData;
-  *pWrite = 2.0f * dx;
-  *++pWrite = 0.0f;
-  *++pWrite = 0.0f;
-  *++pWrite = 0.0f;
-  *++pWrite = 0.0f;
-  *++pWrite = 2.0f * dy;
-  *++pWrite = 0.0f;
-  *++pWrite = 0.0f;
-  *++pWrite = 0.0f;
-  *++pWrite = 0.0f;
-  *++pWrite = 2.0f * dz;
-  *++pWrite = 0.0f;
-  *++pWrite = width * -dx;
-  *++pWrite = height * dy;
-  *++pWrite = (zFar + zNear) * dz;
-  *++pWrite = 1.0f;
+  CalculateOrthographic(.0f, width, -height, .0f, zNear, zFar, matrix);
 }
 
 //==============================================================================
-void ProjectionHelpers::CalculatePerspective(float verticalFOV, float aspectRatio,
-  float zNear, float zFar, float(&arData)[16], float* pTanVerticalFOVHalf)
+void ProjectionHelper::CalculateOrthographic(float size, float zNear, float zFar,
+  float matrix[kNumMatrixElems])
+{
+  XR_ASSERT(ProjectionHelper, size >= 0.0f);
+
+  size *= .5f;
+  CalculateOrthographic(-size, size, size, -size, zNear, zFar, matrix);
+}
+
+//==============================================================================
+void ProjectionHelper::CalculatePerspective(float verticalFOV, float aspectRatio,
+  float zNear, float zFar, float matrix[kNumMatrixElems],
+  float* pTanVerticalFOVHalf)
 {
   float tanVerticalFOVHalf = tanf(verticalFOV * 0.5f);
-  if(pTanVerticalFOVHalf != 0)
+  if(pTanVerticalFOVHalf)
   {
     *pTanVerticalFOVHalf = tanVerticalFOVHalf;
   }
@@ -88,7 +78,7 @@ void ProjectionHelpers::CalculatePerspective(float verticalFOV, float aspectRati
   float f(1.0f / tanVerticalFOVHalf);
   float dz(1.0f / (zNear - zFar));
 
-  float*  pWrite = arData;
+  float*  pWrite = matrix;
   *pWrite = f / aspectRatio;
   *++pWrite = 0.0f;
   *++pWrite = 0.0f;

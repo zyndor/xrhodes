@@ -8,7 +8,7 @@
 #include "XR/Renderer.hpp"
 #include "XR/Device.hpp"
 #include "XR/Pool.hpp"
-#include "XR/ProjectionHelpers.hpp"
+#include "XR/ProjectionHelper.hpp"
 #include "XR/Matrix4Helper.hpp"
 #include "XR/SVector2.hpp"
 #include "XR/debug.hpp"
@@ -255,7 +255,7 @@ void  Renderer::SetOrtho(float left, float right, float bottom, float top,
   s_rendererImpl.tanHalfVerticalFov = .0f;
 
   float arPerspMatrix[kNumPersMatrixElems];
-  ProjectionHelpers::CalculateOrtho(left, right, bottom, top, zNear, zFar,
+  ProjectionHelper::CalculateOrthographic(left, right, bottom, top, zNear, zFar,
     arPerspMatrix);
   SetPerspMatrix(arPerspMatrix);
 }
@@ -281,7 +281,7 @@ void  Renderer::SetPerspective(float verticalFov, float aspectRatio, float zNear
 //  };
 
   float arPerspMatrix[kNumPersMatrixElems];
-  ProjectionHelpers::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
+  ProjectionHelper::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
     arPerspMatrix, &s_rendererImpl.tanHalfVerticalFov);
   SetPerspMatrix(arPerspMatrix);
 }
