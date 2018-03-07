@@ -335,16 +335,13 @@ void Transforms::Init()
   XR_ASSERTMSG(Transforms, !s_transformsImpl, ("Already initialised!"));
   s_transformsImpl.reset(new TransformsImpl());
 
+  Gfx::RegisterExitCallback([](void*, void*) {
+    s_transformsImpl.reset(nullptr);
+  }, nullptr);
+
   Updater().SetModel(Matrix::Identity()).
     SetViewerTransform(Matrix::Identity()).
     SetPerspectiveProjection(M_PI * .25f, .1f, 100.0f);
-}
-
-//==============================================================================
-void Transforms::Exit()
-{
-  XR_ASSERTMSG(Transforms, s_transformsImpl, ("Not initialised."));
-  s_transformsImpl.reset(nullptr);
 }
 
 //==============================================================================

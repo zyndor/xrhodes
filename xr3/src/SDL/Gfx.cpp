@@ -661,6 +661,11 @@ struct Context
   ~Context()
   {
     XR_TRACE(Gfx, ("Gfx shutting down."));
+    for (auto& cb: m_onExit)
+    {
+      cb.Call(nullptr);
+    }
+
     if (m_vao != 0)
     {
       XR_GL_CALL(glDeleteVertexArrays(1, &m_vao));
@@ -1529,12 +1534,27 @@ struct Context
     XR_GL_CALL(glFlush());
     m_framePool.Flush();
     //++m_flushId;
+
+    for (auto& cb : m_onFlush)
+    {
+      cb.Call(nullptr);
+    }
   }
 
   void Present(bool resetState)
   {
     Flush();
     SDL_GL_SwapWindow(m_window);
+  }
+
+  void RegisterFlushCallback(Callback fn, void* userData)
+  {
+    m_onFlush.push_back({ fn, userData });
+  }
+
+  void RegisterExitCallback(Callback fn, void* userData)
+  {
+    m_onExit.push_back({ fn, userData });
   }
 
 private:
@@ -1573,6 +1593,8 @@ private:
   FrameBufferHandle m_activeFrameBuffer;
 
   Pool m_framePool;
+  std::vector<CallbackObject> m_onFlush;
+  std::vector<CallbackObject> m_onExit;
 
   // internal
   VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
@@ -1933,6 +1955,18 @@ void Flush()
 void Present(bool resetState)
 {
   s_impl->Present(resetState);
+}
+
+//==============================================================================
+void RegisterFlushCallback(Callback fn, void* userData)
+{
+  s_impl->RegisterFlushCallback(fn, userData);
+}
+
+//==============================================================================
+void RegisterExitCallback(Callback fn, void* userData)
+{
+  s_impl->RegisterExitCallback(fn, userData);
 }
 
 }

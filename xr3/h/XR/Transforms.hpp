@@ -110,10 +110,6 @@ public:
   ///@note Gfx::Init() must be called beforehand.
   static void Init();
 
-  ///@brief Shuts down Transforms.
-  ///@note must be called before Gfx::Exit().
-  static void Exit();
-
   ///@brief Copies the current model matrix, which is the product of all model
   /// matrices pushed to the stack.
   static void GetModel(Matrix& m);

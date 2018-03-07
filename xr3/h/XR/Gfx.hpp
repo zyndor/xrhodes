@@ -7,11 +7,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/Color.hpp"
 #include "XR/memory.hpp"
 #include "XR/utils.hpp"
 #include "XR/Hash.hpp"
+#include "XR/Callback.hpp"
 #include "XR/PrimType.hpp"
 #include "XR/Buffer.hpp"
 #include "XR/debug.hpp"
@@ -243,9 +243,6 @@ struct FrameBufferAttachment
 /// implementation of Device.
 void Init(void* window, Allocator* alloc = nullptr);
 
-///@brief shuts down the renderer.
-void Exit();
-
 ///@return Logical width of screen in pixels.
 uint16_t GetWidth();
 
@@ -391,6 +388,15 @@ void Clear(uint32_t flags, Color color = Color(0xff000000), float depth = 1.0f,
 
 void Flush();
 void Present(bool resetState = true);
+
+///@brief Registers a function to be called upon Flush().
+void RegisterFlushCallback(Callback fn, void* userData);
+
+///@brief Registers a function to be called upon Exit().
+void RegisterExitCallback(Callback fn, void* userData);
+
+///@brief shuts down the renderer.
+void Exit();
 
 } // GFX
 } // XR
