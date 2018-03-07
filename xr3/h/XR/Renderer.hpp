@@ -41,12 +41,6 @@ public:
   static void           Init(void* mainWindow);
   static void           Exit();
 
-  static int32_t        GetScreenWidth();
-  static int32_t        GetScreenHeight();
-
-  static int32_t        GetDeviceWidth();
-  static int32_t        GetDeviceHeight();
-
   static void*          Alloc(size_t bytes);
   static Material*      AllocMaterial();
   static FloatBuffer*   AllocBuffer(uint32_t elemSize, uint32_t numElems);
@@ -58,27 +52,6 @@ public:
 
   static void           DrawPrims(PrimType pt);
   static void           DrawPrims(PrimType pt, const uint16_t* pInds, int numInds);
-
-  static void           PrintString(int16_t x, int16_t y, const char* pString);
-  static void           SetClearColor(Color c);
-  static void           SetAmbientColor(Color c);
-
-  static Color          GetClearColor();
-  static Color          GetAmbientColor();
-
-  static Rect           GetScissorRect();
-  static void           SetScissorRect( const Rect& r );
-  static void           ClearScissorRect();
-
-  static void           SetLighting(bool state);
-
-  static void           SetFog(bool state);
-  static void           SetFogColor(Color c);
-  static void           SetFogRange(float zFar, float zNear);
-
-  static void           ClearBuffer(uint32_t flags = (BF_COLOR | BF_DEPTH));
-  static void           Flush();
-  static void           Present();
 
   static uint32_t       GetFlushId();
 };

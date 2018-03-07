@@ -21,7 +21,7 @@ namespace XR
 class Device
 {
   XR_NONOBJECT_DECL(Device)
-  
+
 public:
   // types
   enum Event
@@ -36,19 +36,19 @@ public:
     EV_SCREEN_CHANGE, // system data is ScreenChangeEvent
     kMaxEvents
   };
-  
-  struct ScreenChangeEvent 
+
+  struct ScreenChangeEvent
   {
     bool      isOrientationChanged;
     uint32_t  width;
     uint32_t  height;
   };
-  
+
   // general
   static void         Init(char const* title = nullptr);
 
   ///@brief Gets native window representation of the main window; primarily for
-  /// context creation in Renderer - obviously, Device and Renderer
+  /// context creation in Gfx - obviously, Device and Gfx
   /// implementations still need to match. This window only exists between
   /// calls to Init() and Exit().
   static void*        GetMainWindow();
@@ -56,17 +56,17 @@ public:
   static void         SetMainWindowTitle(char const* title);
 
   static void         Exit();
-  
+
   static bool         IsQuitting();
   static bool         IsPaused();
-  
+
   static std::string  GetConfig(const char* pGroup, const char* pId);
   static int          GetConfigInt(const char* pGroup, const char* pId,
                         int defaultValue);
-  
+
   static bool         RegisterCallback(Event ev, Callback pCb, void* pCbData);
   static bool         UnregisterCallback(Event ev, Callback pCb);
-  
+
   static void         YieldOS(int32_t ms);
   static bool         IsYielding();
 };

@@ -1355,12 +1355,17 @@ struct Context
 
   void SetViewport(Rect const& rect)
   {
-    XR_GL_CALL(glViewport(rect.x, rect.y, rect.width, rect.height));
+    XR_GL_CALL(glViewport(rect.x, rect.y, rect.w, rect.h));
   }
 
-  void SetScissor(Rect const& rect)
+  void SetScissor(Rect const* rect)
   {
-    XR_GL_CALL(glScissor(rect.x, rect.y, rect.width, rect.height));
+    bool state = rect != nullptr;
+    GL::SwitchEnabledState(GL_SCISSOR_TEST, state);
+    if (state)
+    {
+      XR_GL_CALL(glScissor(rect->x, rect->y, rect->w, rect->h));
+    }
   }
 
   void SetUniform(UniformHandle h, uint8_t num, void const* data)
@@ -1890,7 +1895,7 @@ void SetViewport(Rect const& rect)
 }
 
 //==============================================================================
-void SetScissor(Rect const& rect)
+void SetScissor(Rect const* rect)
 {
   s_impl->SetScissor(rect);
 }

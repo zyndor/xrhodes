@@ -6,7 +6,7 @@
 //==============================================================================
 #include "XR/UIElement.hpp"
 #include "XR/UIEventNotifier.hpp"
-#include "XR/Renderer.hpp"
+#include "XR/Gfx.hpp"
 
 namespace XR
 {
@@ -122,13 +122,13 @@ void UIElement::Center()
 //==============================================================================
 void UIElement::_CenterHorizontally()
 {
-  x = (Renderer::GetScreenWidth() - w) / 2;
+  x = (Gfx::GetWidth() - w) / 2;
 }
 
 //==============================================================================
 void UIElement::_CenterVertically()
 {
-  y = (Renderer::GetScreenHeight() - h) / 2;
+  y = (Gfx::GetHeight() - h) / 2;
 }
 
 //==============================================================================
@@ -141,13 +141,13 @@ void UIElement::_AlignHorizontally( int x1, Alignment hAlign )
     break;
 
   case AL_CENTER:
-    x = x1 - w / 2; 
+    x = x1 - w / 2;
     break;
 
   case AL_HIGH:
     x = x1 - w;
     break;
-      
+
   case AL_NOALIGN:
     break;
   }
@@ -163,13 +163,13 @@ void UIElement::_AlignVertically( int y1, Alignment vAlign )
     break;
 
   case AL_CENTER:
-    y = y1 - h / 2; 
+    y = y1 - h / 2;
     break;
 
   case AL_HIGH:
     y = y1 - h;
     break;
-    
+
   case AL_NOALIGN:
     break;
   }

@@ -5,7 +5,6 @@
 //
 //==============================================================================
 #include "XR/BasicMesh.hpp"
-#include "XR/Renderer.hpp"
 
 namespace XR {
 

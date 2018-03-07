@@ -22,7 +22,7 @@ enum
   kNumTags
 };
 
-static const char* const karTag[kNumTags] = 
+static const char* const karTag[kNumTags] =
 {
   "listener",
   "tweening",
@@ -76,16 +76,16 @@ bool  UIBuilderScreen::Build(tinyxml2::XMLElement* pXml)
 #endif  //XR_DEBUG
 
   Destroy();
-  
+
   XR_ASSERT(UIBuilderScreen, pXml != 0);
-  
+
   bool  result(m_builder.Build(pXml, m_root));
   if(result)
   {
     _ProcessListeners(pXml);
     _ProcessTweening(pXml);
 
-    Reposition(Renderer::GetScreenWidth(), Renderer::GetScreenHeight());
+    Reposition(Gfx::GetWidth(), Gfx::GetHeight());
   }
   return result;
 }
@@ -104,7 +104,7 @@ void  UIBuilderScreen::SetPadding(int padding)
 {
   XR_ASSERT(UIBuilderScreen, padding >= 0);
   m_padding = padding;
-  Reposition(Renderer::GetScreenWidth(), Renderer::GetScreenHeight());
+  Reposition(Gfx::GetWidth(), Gfx::GetHeight());
 }
 
 //==============================================================================
@@ -227,16 +227,16 @@ void  UIBuilderScreen::_ProcessListeners(tinyxml2::XMLElement* pXml)
     const char* pHandle(pListenerXml->Attribute(karTag[TAG_ID]));
     XR_ASSERTMSG(UIBuilderScreen, pHandle != 0, ("'%s' is required in '%s'",
       karTag[TAG_ID], karTag[TAG_LISTENER]));
-    
+
     UIElement*  pElem(m_builder.GetElement(pHandle));
     XR_ASSERTMSG(UIBuilderScreen, pElem != 0, ("the %s '%s' is undefined.",
       karTag[TAG_ID], pHandle));
-    
+
     l.push_back(pElem);
-    
+
     pListenerXml = pListenerXml->NextSiblingElement(karTag[TAG_LISTENER]);
   }
-  
+
   m_listeners.assign(l.begin(), l.end());
 }
 
@@ -250,16 +250,16 @@ void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* pXml)
     const char* pHandle(pTweeningXml->Attribute(karTag[TAG_ID]));
     XR_ASSERTMSG(UIBuilderScreen, pHandle != 0, ("'%s' is required in '%s'",
       karTag[TAG_ID], karTag[TAG_TWEENING]));
-    
+
     UIElement*  pElem(m_builder.GetElement(pHandle));
     XR_ASSERTMSG(UIBuilderScreen, pElem != 0, ("the %s '%s' is undefined.",
       karTag[TAG_ID], pHandle));
-    
+
     l.push_back(pElem);
-    
+
     pTweeningXml = pTweeningXml->NextSiblingElement(karTag[TAG_TWEENING]);
   }
-  
+
   m_tweening.assign(l.begin(), l.end());
 }
 

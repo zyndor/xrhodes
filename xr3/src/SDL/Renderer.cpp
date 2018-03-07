@@ -30,12 +30,6 @@ static struct
   SDL_Window*           mainWindow; // no ownership
   SDL_Renderer*         pRenderer;  // yes ownership
   SDL_GLContext         glContext;  // yes ownership
-  SVector2              screenSize;
-  SVector2              deviceSize;
-  float                 zFar;
-  float                 zNear;
-  float                 tanHalfVerticalFov;
-  Rect                  scissorRect;
   Pool                  framePool;
   int32_t               numVertices;
   int32_t               numTexCoords;
@@ -88,29 +82,6 @@ void Renderer::Init(void* mainWindow)
   SDL_DisplayMode dm;
   SDL_GetCurrentDisplayMode(0, &dm);
 
-  s_rendererImpl.deviceSize = SVector2(dm.w, dm.h);
-  s_rendererImpl.screenSize = SVector2(width, height);
-
-  // init OpenGL
-
-  XR_GL_CALL(glViewport(0, 0, (GLsizei)s_rendererImpl.screenSize.x,
-    (GLsizei)s_rendererImpl.screenSize.y));
-
-  XR_GL_CALL(glClearColor(.0f, .0f, .0f, .0f));
-  XR_GL_CALL(glClearDepth(1.0f));
-
-  XR_GL_CALL(glEnable(GL_DEPTH_TEST));
-  XR_GL_CALL(glDepthFunc(GL_LEQUAL));
-
-  // scissor box
-  GLint arVal[4];
-  XR_GL_CALL(glGetIntegerv(GL_SCISSOR_BOX, (GLint*)&arVal));
-
-  s_rendererImpl.scissorRect.x = arVal[0];
-  s_rendererImpl.scissorRect.y = arVal[1];
-  s_rendererImpl.scissorRect.w = arVal[2];
-  s_rendererImpl.scissorRect.h = arVal[3];
-
   // initialise frame pool
   int   poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
   s_rendererImpl.framePool.SetBuffer(poolSize, true, 0);
@@ -141,30 +112,6 @@ void Renderer::Exit()
   s_rendererImpl.framePool.SetBuffer(0, true, 0);
 
   s_rendererImpl.initSuccess = false;
-}
-
-//==============================================================================
-int32_t Renderer::GetScreenWidth()
-{
-  return s_rendererImpl.screenSize.x;
-}
-
-//==============================================================================
-int32_t Renderer::GetScreenHeight()
-{
-  return s_rendererImpl.screenSize.y;
-}
-
-//==============================================================================
-int32_t Renderer::GetDeviceWidth()
-{
-  return s_rendererImpl.deviceSize.x;
-}
-
-//==============================================================================
-int32_t Renderer::GetDeviceHeight()
-{
-  return s_rendererImpl.deviceSize.y;
 }
 
 //==============================================================================
@@ -258,56 +205,6 @@ void  Renderer::SetNormStream(FloatBuffer const& fb)
 }
 
 //==============================================================================
-void Renderer::SetClearColor( Color c )
-{
-  XR_GL_CALL(glClearColor(c.r, c.g, c.b, c.a));
-}
-
-//==============================================================================
-void Renderer::SetAmbientColor( Color c )
-{
-  XR_GL_CALL(glColor4f(c.r, c.g, c.b, c.a));
-}
-
-//==============================================================================
-Color Renderer::GetClearColor()
-{
-  GLint arParam[4];
-  XR_GL_CALL(glGetIntegerv(GL_COLOR_CLEAR_VALUE, arParam));
-  return Color(float(arParam[0]), float(arParam[1]), float(arParam[2]), float(arParam[3]));
-}
-
-//==============================================================================
-Color Renderer::GetAmbientColor()
-{
-  GLint arParam[4];
-  XR_GL_CALL(glGetIntegerv(GL_CURRENT_COLOR, arParam));
-  return Color(float(arParam[0]), float(arParam[1]), float(arParam[2]), float(arParam[3]));
-}
-
-//==============================================================================
-void Renderer::SetScissorRect( const Rect& r )
-{
-  memcpy(&s_rendererImpl.scissorRect, &r, sizeof(Rect));
-  XR_GL_CALL(glEnable(GL_SCISSOR_TEST));
-  XR_GL_CALL(glScissor(r.x, r.y, r.w, r.h));
-}
-
-//==============================================================================
-void Renderer::ClearScissorRect()
-{
-  Rect  r(0, 0, GetScreenWidth(), GetScreenHeight());
-  SetScissorRect(r);
-  XR_GL_CALL(glDisable(GL_SCISSOR_TEST));
-}
-
-//==============================================================================
-Rect Renderer::GetScissorRect()
-{
-  return s_rendererImpl.scissorRect;
-}
-
-//==============================================================================
 //static const GLenum arPrimTypeMappings[] =
 //{
 //  GL_LINES,
@@ -363,62 +260,6 @@ void  Renderer::DrawPrims( PrimType prim, const uint16_t* pInds, int numInds)
   XR_GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
   XR_GL_CALL(glDisableClientState(GL_COLOR_ARRAY));
   XR_GL_CALL(glDisableClientState(GL_NORMAL_ARRAY));
-}
-
-//==============================================================================
-void Renderer::PrintString( int16_t x, int16_t y, const char* pString )
-{
-  //IwGxPrintString(x, y, pString);
-}
-
-//==============================================================================
-void  Renderer::SetLighting(bool state)
-{
-  XR_GL_CALL(state ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING));
-}
-
-//==============================================================================
-void  Renderer::SetFog(bool state)
-{
-  XR_GL_CALL(state ? glEnable(GL_FOG) : glDisable(GL_FOG));
-}
-
-//==============================================================================
-void  Renderer::SetFogColor(Color c)
-{
-  XR_GL_CALL(glFogfv(GL_FOG_COLOR, c.arData));
-}
-
-//==============================================================================
-void  Renderer::SetFogRange(float zFar, float zNear)
-{
-  XR_GL_CALL(glFogf(GL_FOG_START, zNear));
-  XR_GL_CALL(glFogf(GL_FOG_END, zFar));
-}
-
-//==============================================================================
-void Renderer::ClearBuffer(uint32_t flags)
-{
-//  GLbitfield  bitField(((flags & BF_COLOR) ? GL_COLOR_BUFFER_BIT: 0 ) |
-//    ((flags & BF_DEPTH) ? GL_DEPTH_BUFFER_BIT : 0 ));
-//  XR_GL_CALL(glClear(bitField));
-
-  //s_rendererImpl.framePool.Flush();
-}
-
-//==============================================================================
-void Renderer::Flush()
-{
-  XR_GL_CALL(glFlush());
-  s_rendererImpl.framePool.Flush();
-}
-
-//==============================================================================
-void Renderer::Present()
-{
-  Flush();
-  SDL_GL_SwapWindow(s_rendererImpl.mainWindow);
-  ++s_rendererImpl.flushId;
 }
 
 //==============================================================================

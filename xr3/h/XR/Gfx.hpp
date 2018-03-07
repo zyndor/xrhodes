@@ -11,6 +11,7 @@
 #include "XR/memory.hpp"
 #include "XR/utils.hpp"
 #include "XR/Hash.hpp"
+#include "XR/Rect.hpp"
 #include "XR/Callback.hpp"
 #include "XR/PrimType.hpp"
 #include "XR/Buffer.hpp"
@@ -183,15 +184,6 @@ enum class UniformType: uint8_t
 };
 
 //=============================================================================
-struct Rect
-{
-  int16_t x;
-  int16_t y;
-  uint16_t width;
-  uint16_t height;
-};
-
-//=============================================================================
 namespace
 {
 struct HandleCoreCore {
@@ -354,7 +346,7 @@ void Destroy(ProgramHandle h);
 void SetViewport(Rect const& rect);
 
 ///@brief Sets rectangle for scissor testing; if null, disables scissor test.
-void SetScissor(Rect const& rect);
+void SetScissor(Rect const* rect);
 
 ///@brief Sets a value for the given uniform.
 void SetUniform(UniformHandle h, uint8_t num, void const* data);

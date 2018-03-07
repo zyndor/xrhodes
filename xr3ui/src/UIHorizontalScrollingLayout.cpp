@@ -6,7 +6,7 @@
 //==============================================================================
 #include "XR/UIHorizontalScrollingLayout.hpp"
 #include "XR/UIRenderer.hpp"
-#include "XR/Renderer.hpp"
+#include "XR/Gfx.hpp"
 
 namespace XR
 {
@@ -85,7 +85,7 @@ void UIHorizontalScrollingLayout::_AlignElement( UIElement* pElem )
   case  AL_HIGH:
     pElem->y = y + h - pElem->h;
     break;
-      
+
   case  AL_NOALIGN:
     break;
   }
@@ -123,12 +123,12 @@ void UIHorizontalScrollingLayout::Render(IUIRenderer& renderer) const
 {
   renderer.Render();
 
-  Renderer::SetScissorRect(*this);
+  Gfx::SetScissor(this);
 
   UIHorizontalLayout::Render(renderer);
   renderer.Render();
 
-  Renderer::ClearScissorRect();
+  Gfx::SetScissor(nullptr);
 }
 
 //==============================================================================
