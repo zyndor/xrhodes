@@ -184,12 +184,15 @@ enum class UniformType: uint8_t
 };
 
 //=============================================================================
-namespace
-{
 struct HandleCoreCore {
   enum : uint16_t { INVALID_ID = 0xffff };
 
-  uint16_t id = INVALID_ID;
+  uint16_t id;
+
+  HandleCoreCore()
+  : id{ INVALID_ID }
+  {}
+
   bool IsValid() const
   {
     return id != INVALID_ID;
@@ -208,7 +211,6 @@ struct HandleCore : HandleCoreCore
   bool operator!=(T const& rhs) const { return !operator==(rhs); }
   bool operator<(T const& rhs) const { return id < rhs.id; }
 };
-}
 
 #define GFX_HANDLE_DECL(name) struct name: HandleCore<name> {}
 GFX_HANDLE_DECL(VertexFormatHandle);

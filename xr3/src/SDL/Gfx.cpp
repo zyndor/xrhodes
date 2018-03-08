@@ -22,6 +22,8 @@ namespace XR
 {
 namespace Gfx
 {
+namespace
+{
 
 #define UINT_PTR_CAST(x) reinterpret_cast<void*>(static_cast<uintptr_t>(x))
 
@@ -1584,15 +1586,16 @@ private:
   uint32_t m_activeState = F_STATE_NONE;
 
   InstanceDataBufferHandle m_hActiveInstDataBuffer;
-  uint16_t m_activeInstDataBufferStride;
-  uint16_t m_instanceOffset;
-  uint16_t m_instanceCount;
+  uint16_t m_activeInstDataBufferStride = 0;
+  uint16_t m_instanceOffset = 0;
+  uint16_t m_instanceCount = 0;
 
   ProgramHandle m_activeProgram;
   FrameBufferHandle m_activeFrameBuffer;
 
   std::vector<CallbackObject> m_onFlush;
   std::vector<CallbackObject> m_onExit;
+
   // internal
   VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
   {
@@ -1643,18 +1646,14 @@ private:
   }
 };
 
-//==============================================================================
-void ContextDeleter(Context* ctx)
-{
-  ctx->~Context();
-  g_allocator->Deallocate(ctx);
-};
+Context* s_impl = nullptr;
 
-std::unique_ptr<Context, std::function<void(Context*)> > s_impl(nullptr, ContextDeleter);
+} //
 
 //=============================================================================
 void Init(void * window, Allocator* alloc)
 {
+  XR_ASSERTMSG(Gfx, !s_impl, ("Already initialized."));
   auto sdlWindow = static_cast<SDL_Window*>(window);
 
   if (!alloc)
@@ -1664,7 +1663,7 @@ void Init(void * window, Allocator* alloc)
   }
   g_allocator = alloc;
 
-  s_impl.reset(new (g_allocator->Allocate(sizeof(Context))) Context(sdlWindow));
+  s_impl = new (g_allocator->Allocate(sizeof(Context))) Context(sdlWindow);
 }
 
 //=============================================================================
@@ -1682,7 +1681,11 @@ uint16_t GetHeight()
 //=============================================================================
 void Exit()
 {
-  s_impl.reset();
+  XR_ASSERTMSG(Gfx, s_impl, ("Not initialized."));
+  s_impl->~Context();
+  g_allocator->Deallocate(s_impl);
+  s_impl = nullptr;
+
   g_allocator = nullptr;
 }
 

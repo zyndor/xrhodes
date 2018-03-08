@@ -234,30 +234,30 @@ private:
   float m_tanHalfVerticalFov;
 };
 
-std::unique_ptr<TransformsImpl> s_transformsImpl;
+TransformsImpl* s_impl;
 
-}
+} //
 
 //==============================================================================
 Transforms::Updater::Updater()
 {
-  XR_ASSERT(Transforms, s_transformsImpl);
-  XR_ASSERTMSG(Transforms, !s_transformsImpl->IsUpdateInProgress(),
+  XR_ASSERT(Transforms, s_impl);
+  XR_ASSERTMSG(Transforms, !s_impl->IsUpdateInProgress(),
     ("An update was already in progress; this might cause unexpected results."));
 }
 
 //==============================================================================
 Transforms::Updater::~Updater()
 {
-  XR_ASSERT(Transforms, s_transformsImpl);
-  s_transformsImpl->Update();
+  XR_ASSERT(Transforms, s_impl);
+  s_impl->Update();
 }
 
 //==============================================================================
 Transforms::Updater&
   Transforms::Updater::SetModel(const Matrix& m)
 {
-  s_transformsImpl->SetModel(m);
+  s_impl->SetModel(m);
   return *this;
 }
 
@@ -265,7 +265,7 @@ Transforms::Updater&
 Transforms::Updater&
   Transforms::Updater::PushModel(const Matrix& m)
 {
-  s_transformsImpl->PushModel(m);
+  s_impl->PushModel(m);
   return *this;
 }
 
@@ -273,7 +273,7 @@ Transforms::Updater&
 Transforms::Updater&
   Transforms::Updater::PopModel()
 {
-  s_transformsImpl->PopModel();
+  s_impl->PopModel();
   return *this;
 }
 
@@ -281,7 +281,7 @@ Transforms::Updater&
 Transforms::Updater&
   Transforms::Updater::SetViewerTransform(Matrix const& m)
 {
-  s_transformsImpl->SetViewerTransform(m);
+  s_impl->SetViewerTransform(m);
   return *this;
 }
 
@@ -289,7 +289,7 @@ Transforms::Updater&
 Transforms::Updater&
   Transforms::Updater::SetView(const float matrix[kNumMatrixElems])
 {
-  s_transformsImpl->SetView(matrix);
+  s_impl->SetView(matrix);
   return *this;
 }
 
@@ -298,7 +298,7 @@ Transforms::Updater&
   Transforms::Updater::SetProjection(const float matrix[kNumMatrixElems],
     float zNear, float zFar, float tanHalfVerticalFov)
 {
-  s_transformsImpl->SetProjection(matrix, zNear, zFar, tanHalfVerticalFov);
+  s_impl->SetProjection(matrix, zNear, zFar, tanHalfVerticalFov);
   return *this;
 }
 
@@ -307,7 +307,7 @@ Transforms::Updater&
   Transforms::Updater::SetOrthographicProjection(float left, float right,
   float bottom, float top, float zNear, float zFar)
 {
-  s_transformsImpl->SetOrthographicProjection(left, right, bottom, top, zNear, zFar);
+  s_impl->SetOrthographicProjection(left, right, bottom, top, zNear, zFar);
   return *this;
 }
 
@@ -316,7 +316,7 @@ Transforms::Updater&
   Transforms::Updater::SetPerspectiveProjection(float verticalFov,
   float aspectRatio, float zNear, float zFar)
 {
-  s_transformsImpl->SetPerspectiveProjection(verticalFov, aspectRatio, zNear, zFar);
+  s_impl->SetPerspectiveProjection(verticalFov, aspectRatio, zNear, zFar);
   return *this;
 }
 
@@ -332,11 +332,12 @@ Transforms::Updater&
 //==============================================================================
 void Transforms::Init()
 {
-  XR_ASSERTMSG(Transforms, !s_transformsImpl, ("Already initialised!"));
-  s_transformsImpl.reset(new TransformsImpl());
+  XR_ASSERTMSG(Transforms, !s_impl, ("Already initialised!"));
+  s_impl = new TransformsImpl();
 
   Gfx::RegisterExitCallback([](void*, void*) {
-    s_transformsImpl.reset(nullptr);
+    delete s_impl;
+    s_impl = nullptr;
   }, nullptr);
 
   Updater().SetModel(Matrix::Identity()).
@@ -347,13 +348,13 @@ void Transforms::Init()
 //==============================================================================
 void  Transforms::GetModel(Matrix& m)
 {
-  s_transformsImpl->GetModelMatrix(m);
+  s_impl->GetModelMatrix(m);
 }
 
 //==============================================================================
 void  Transforms::GetViewerTransform(Matrix& m)
 {
-  s_transformsImpl->GetViewerTransform(m);
+  s_impl->GetViewerTransform(m);
 }
 
 //==============================================================================
@@ -364,31 +365,31 @@ void  Transforms::GetView(float matrix[kNumMatrixElems])
   //m.zx *= -1.0f;
   //m.zy *= -1.0f;
   //m.zz *= -1.0f;
-  s_transformsImpl->GetView(matrix);
+  s_impl->GetView(matrix);
 }
 
 //==============================================================================
 void  Transforms::GetProjection(float matrix[kNumMatrixElems])
 {
-  s_transformsImpl->GetProjection(matrix);
+  s_impl->GetProjection(matrix);
 }
 
 //==============================================================================
 float Transforms::GetPerspectiveMultiple()
 {
-  return s_transformsImpl->GetPerspectiveMultiple();
+  return s_impl->GetPerspectiveMultiple();
 }
 
 //==============================================================================
 float Transforms::GetZNearClippingPlane()
 {
-  return s_transformsImpl->GetZNearClippingPlane();
+  return s_impl->GetZNearClippingPlane();
 }
 
 //==============================================================================
 float Transforms::GetZFarClippingPlane()
 {
-  return s_transformsImpl->GetZFarClippingPlane();
+  return s_impl->GetZFarClippingPlane();
 }
 
 } // XR
