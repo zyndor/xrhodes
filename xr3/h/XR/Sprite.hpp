@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "Renderer.hpp"
 #include "AABB.hpp"
 #include "BasicMesh.hpp"
 #include "Vertex.hpp"
@@ -99,10 +98,6 @@ public:
 
   ///@return  The offsetting that's been applied to the vertices so far.
   const Vector2& GetOffset() const;
-
-  ///@deprecate Let the client handle the allocation.
-  ///@return  A renderer-allocated copy of the vertices' array.
-  FloatBuffer* CopyVertices() const;
 
   ///@brief Copies the UVs to the supplied array.
   template <typename VertexFormat>
@@ -231,15 +226,6 @@ inline
 const Vector2&  Sprite::GetOffset() const
 {
   return m_offset;
-}
-
-//==============================================================================
-inline
-FloatBuffer* Sprite::CopyVertices() const
-{
-  FloatBuffer* pFbVerts(Renderer::AllocBuffer(sizeof(SpriteVertexFormat), kNumVertices));
-  CopyVerticesTo(pFbVerts->Get<SpriteVertexFormat>());
-  return pFbVerts;
 }
 
 //==============================================================================

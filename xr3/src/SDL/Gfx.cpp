@@ -566,7 +566,7 @@ struct Context
   Context(SDL_Window* window)
   {
     XR_TRACE(Gfx, ("Gfx init start..."));
-    XR_ASSERTMSG(Renderer, window, ("Window must not be null!"));
+    XR_ASSERTMSG(Gfx, window, ("Window must not be null!"));
     m_window = window;
 
     // Window must be created at this point. In SDL, we do it in Device.
@@ -601,8 +601,8 @@ struct Context
     SDL_RendererInfo  info;
     SDL_GetRendererInfo(m_ownRenderer, &info);
 
-    XR_ASSERT(Renderer, info.flags & SDL_RENDERER_ACCELERATED);
-    XR_ASSERT(Renderer, info.flags & SDL_RENDERER_TARGETTEXTURE);
+    XR_ASSERT(Gfx, info.flags & SDL_RENDERER_ACCELERATED);
+    XR_ASSERT(Gfx, info.flags & SDL_RENDERER_TARGETTEXTURE);
 
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
@@ -650,10 +650,6 @@ struct Context
 
     kDefaultTextureCube.id = decltype(m_textures)::kSize - 3;
     CreateDefaultTexture(kDefaultTextureCube, GL_TEXTURE_CUBE_MAP);
-
-    // initialise frame pool
-    int poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
-    m_framePool.SetBuffer(poolSize, true, 0);
 
     XR_TRACE(Gfx, ("Gfx init complete."));
   }
@@ -1537,8 +1533,6 @@ struct Context
   void Flush()
   {
     XR_GL_CALL(glFlush());
-    m_framePool.Flush();
-    //++m_flushId;
 
     for (auto& cb : m_onFlush)
     {
@@ -1597,10 +1591,8 @@ private:
   ProgramHandle m_activeProgram;
   FrameBufferHandle m_activeFrameBuffer;
 
-  Pool m_framePool;
   std::vector<CallbackObject> m_onFlush;
   std::vector<CallbackObject> m_onExit;
-
   // internal
   VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
   {

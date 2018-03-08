@@ -8,6 +8,7 @@
 //
 //==============================================================================
 #include "Sprite.hpp"
+#include "Matrix.hpp"
 #include "XR/fundamentals.hpp"
 #include "XR/Pool.hpp"
 #include "XR/SharedPoolAllocator.hpp"
