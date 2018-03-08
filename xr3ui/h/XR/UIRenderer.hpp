@@ -59,8 +59,6 @@ public:
 
 protected:
   // data
-  Gfx::VertexFormatHandle m_hVertexFormat;
-
   int m_numSprites;
   std::vector<Material::Ptr> m_materials;
   FloatBuffer m_vertices;

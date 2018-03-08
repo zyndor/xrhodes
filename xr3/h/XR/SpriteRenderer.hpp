@@ -67,8 +67,6 @@ protected:
   typedef std::list<Record, XR::SharedPoolAllocator<Record> > RecordList;
 
   // data
-  Gfx::VertexFormatHandle m_hVertexFormat;
-
   int         m_capacity;
   XR::Pool    m_pool;
   RecordList* m_records;

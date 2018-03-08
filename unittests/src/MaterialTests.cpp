@@ -11,7 +11,7 @@
 #include "XR/Device.hpp"
 #include "XR/Gfx.hpp"
 #include "XR/ScopeGuard.hpp"
-#include "XR/Vertex.hpp"
+#include "XR/VertexFormats.hpp"
 
 #include <numeric>
 
@@ -147,7 +147,7 @@ namespace XR
       Vertex::Pos<Vector3>,
       Vertex::UV0<Vector2>,
       Vertex::Color0<Vector3>>;
-    auto hFormat = PosUvColor::Register();
+    auto hFormat = Vertex::Formats::GetHandle<PosUvColor>();
 
 #ifdef XR_PLATFORM_OSX  // TODO: Remove once https://bugreport.apple.com/web/?problemID=36213140 is resolved.
     PosUvColor vboData[4];

@@ -9,6 +9,7 @@
 //==============================================================================
 #include "Gfx.hpp"
 #include "Vector3.hpp"
+#include "Color.hpp"
 
 namespace XR
 {
@@ -147,12 +148,6 @@ struct Format<T, Rest...> : T, Format<Rest...>
     return Gfx::RegisterVertexFormat(vf);
   }
 
-  static void AddAttribute(Gfx::VertexFormat& vf)
-  {
-    vf.Add(static_cast<Gfx::Attribute>(T::kType), T::kCount, T::kNormalize);
-    Base::AddAttribute(vf);
-  }
-
   // structors
   Format()
   : T(),
@@ -174,6 +169,14 @@ struct Format<T, Rest...> : T, Format<Rest...>
     static_cast<T&>(self) = rhs;
     return self;
   }
+
+protected:
+  // static
+  static void AddAttribute(Gfx::VertexFormat& vf)
+  {
+    vf.Add(static_cast<Gfx::Attribute>(T::kType), T::kCount, T::kNormalize);
+    Base::AddAttribute(vf);
+  }
 };
 
 template <class T, class... Rest>
@@ -192,12 +195,6 @@ struct Format<T, Format<Rest...>> : Format<Rest...>, T
     Gfx::VertexFormat vf;
     AddAttribute(vf);
     return Gfx::RegisterVertexFormat(vf);
-  }
-
-  static void AddAttribute(Gfx::VertexFormat& vf)
-  {
-    Base::AddAttribute(vf);
-    vf.Add(static_cast<Gfx::Attribute>(T::kType), T::kCount, T::kNormalize);
   }
 
   // structors
@@ -220,6 +217,14 @@ struct Format<T, Format<Rest...>> : Format<Rest...>, T
     Self& self = *this;
     static_cast<T&>(self) = rhs;
     return self;
+  }
+
+protected:
+  // static
+  static void AddAttribute(Gfx::VertexFormat& vf)
+  {
+    Base::AddAttribute(vf);
+    vf.Add(static_cast<Gfx::Attribute>(T::kType), T::kCount, T::kNormalize);
   }
 };
 
