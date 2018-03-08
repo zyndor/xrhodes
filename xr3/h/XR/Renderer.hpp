@@ -51,38 +51,6 @@ public:
   static Material*      AllocMaterial();
   static FloatBuffer*   AllocBuffer(uint32_t elemSize, uint32_t numElems);
 
-  static void           SetPerspMatrix(const float (&arData)[kNumPersMatrixElems]);
-
-  ///@brief Sets up orthographic projection.
-  ///@param zNear distance of the near viewing plane.
-  ///@param zFar distance of the far viewing plane.
-  static void           SetOrtho(float left, float right, float bottom,
-                          float top, float zNear, float zFar);
-
-  ///@brief Sets up perspective projection.
-  ///@param verticalFov Vertical field of view in radians.
-  ///@param aspectRatio The ratio of the projection width to (/ over) height.
-  ///@param zNear The distance of the near clipping pane from the camera.
-  ///@param zFar The distance of the far clipping pane from the camera.
-  static void           SetPerspective(float verticalFov, float aspectRatio,
-                          float zNear, float zFar);
-
-  ///@brief Sets up perspective projection. The aspect ratio is calculated from the
-  /// current screen width and height.
-  static void           SetPerspective(float verticalFov, float zNear, float zFar);
-
-  static void           SetFarNearZ(float zFar, float zNear);
-  static float          GetNearZ();
-  static float          GetFarZ();
-
-  static float          GetPerspectiveMultiple();
-
-  static void           SetViewMatrix(const Matrix& m);
-  static void           SetModelMatrix(const Matrix& m);
-
-  static void           GetViewMatrix(Matrix& m);
-  static void           GetModelMatrix(Matrix& m);
-
   static void           SetVertStream(FloatBuffer const& fb);
   static void           SetUVStream(FloatBuffer const& fb = FloatBuffer(), int id = 0);
   static void           SetColStream(FloatBuffer const& fb = FloatBuffer());

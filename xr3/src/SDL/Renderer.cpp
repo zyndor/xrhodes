@@ -32,8 +32,6 @@ static struct
   SDL_GLContext         glContext;  // yes ownership
   SVector2              screenSize;
   SVector2              deviceSize;
-  Matrix                mModel;
-  Matrix                mView;
   float                 zFar;
   float                 zNear;
   float                 tanHalfVerticalFov;
@@ -45,21 +43,6 @@ static struct
   int32_t               numNormals;
   uint32_t              flushId;
 } s_rendererImpl;
-
-//==============================================================================
-static void UpdateModelViewMatrix()
-{
-  XR_GL_CALL(glMatrixMode(GL_MODELVIEW));
-  XR_GL_CALL(glLoadIdentity());
-
-  static float arData[Renderer::kNumPersMatrixElems];
-  Matrix  m(s_rendererImpl.mModel);
-  m.RotateBy(s_rendererImpl.mView);
-  m.t = s_rendererImpl.mView.RotateVec(m.t - s_rendererImpl.mView.t);
-  Matrix4Helper::FromMatrix(m, arData);
-
-  XR_GL_CALL(glLoadMatrixf(arData));
-}
 
 //==============================================================================
 void Renderer::Init(void* mainWindow)
@@ -138,13 +121,6 @@ void Renderer::Init(void* mainWindow)
   s_rendererImpl.numTexCoords = 0;
   s_rendererImpl.numNormals = 0;
 
-  // matrices
-  SetPerspective(M_PI * .25f, 10.0f, 1000.0f);
-
-  s_rendererImpl.mView = Matrix::Identity();
-  s_rendererImpl.mModel = Matrix::Identity();
-  UpdateModelViewMatrix();
-
   s_rendererImpl.initSuccess = true;
 }
 
@@ -219,137 +195,6 @@ FloatBuffer* Renderer::AllocBuffer(uint32_t elemSize, uint32_t numElems)
   FloatBuffer* pBuffer(new (pMem) FloatBuffer());
   pBuffer->SetBuffer(elemSize, numElems, reinterpret_cast<float*>(pBuffer + 1));
   return pBuffer;
-}
-
-//==============================================================================
-void Renderer::SetPerspMatrix(const float (&arData)[kNumPersMatrixElems])
-{
-  XR_ASSERT(Renderer, arData != 0);
-  XR_GL_CALL(glMatrixMode(GL_PROJECTION));
-  if(arData)
-  {
-    float arPerspMatrix[kNumPersMatrixElems];
-    memcpy(arPerspMatrix, arData, sizeof(arPerspMatrix));
-    arPerspMatrix[5] *= -1.0f;
-
-    XR_GL_CALL(glLoadMatrixf(arPerspMatrix));
-  }
-  else
-  {
-    XR_GL_CALL(glLoadIdentity());
-  }
-}
-
-//==============================================================================
-void  Renderer::SetOrtho(float left, float right, float bottom, float top,
-    float zNear, float zFar)
-{
-  XR_GL_CALL(glMatrixMode(GL_PROJECTION));
-
-  s_rendererImpl.zFar = zFar;
-  if (zNear == .0f)
-  {
-    zNear = -zFar;
-  }
-  s_rendererImpl.zNear = zNear;
-  s_rendererImpl.tanHalfVerticalFov = .0f;
-
-  float arPerspMatrix[kNumPersMatrixElems];
-  ProjectionHelper::CalculateOrthographic(left, right, bottom, top, zNear, zFar,
-    arPerspMatrix);
-  SetPerspMatrix(arPerspMatrix);
-}
-
-//==============================================================================
-void  Renderer::SetPerspective(float verticalFov, float aspectRatio, float zNear, float zFar)
-{
-  XR_ASSERT(Renderer, zNear < zFar);
-  XR_ASSERT(Renderer, aspectRatio > .0f);
-  XR_GL_CALL(glMatrixMode(GL_PROJECTION));
-
-  s_rendererImpl.zNear = zNear;
-  s_rendererImpl.zFar = zFar;
-
-//  float f(1.0f / tanf(verticalFov * .5f));
-//  float dz(1.0f / (zFar - zNear));
-//  float arData[16] =
-//  {
-//    f, .0f, .0f, .0f,
-//    .0f, f / aspectRatio, .0f, .0f,
-//    .0f, .0f, (zNear + zFar) * dz, (2.0f * zNear * zFar) * dz,
-//    .0f, .0f, 1.0f, .0f
-//  };
-
-  float arPerspMatrix[kNumPersMatrixElems];
-  ProjectionHelper::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
-    arPerspMatrix, &s_rendererImpl.tanHalfVerticalFov);
-  SetPerspMatrix(arPerspMatrix);
-}
-
-//==============================================================================
-void  Renderer::SetPerspective(float verticalFov, float zNear, float zFar)
-{
-  SetPerspective(verticalFov, float(GetScreenWidth()) / float(GetScreenHeight()), zNear, zFar);
-}
-
-//==============================================================================
-void Renderer::SetFarNearZ( float zFar, float zNear )
-{
-  XR_GL_CALL(glDepthRange(zNear, zFar));
-  s_rendererImpl.zFar = zFar;
-  s_rendererImpl.zNear = zNear;
-}
-
-//==============================================================================
-float Renderer::GetNearZ()
-{
-  return s_rendererImpl.zNear;
-}
-
-//==============================================================================
-float Renderer::GetFarZ()
-{
-  return s_rendererImpl.zFar;
-}
-
-//==============================================================================
-float Renderer::GetPerspectiveMultiple()
-{
-  return s_rendererImpl.tanHalfVerticalFov * (GetScreenHeight() / 2);
-}
-
-//==============================================================================
-void Renderer::SetViewMatrix(const Matrix& m)
-{
-  s_rendererImpl.mView = m;
-  s_rendererImpl.mView.zx *= -1.0f;
-  s_rendererImpl.mView.zy *= -1.0f;
-  s_rendererImpl.mView.zz *= -1.0f;
-  s_rendererImpl.mView.Transpose();
-  UpdateModelViewMatrix();
-}
-
-//==============================================================================
-void Renderer::SetModelMatrix(const Matrix& m)
-{
-  s_rendererImpl.mModel = m;
-  UpdateModelViewMatrix();
-}
-
-//==============================================================================
-void  Renderer::GetViewMatrix(Matrix& m)
-{
-  m = s_rendererImpl.mView;
-  m.Transpose();
-  m.zx *= -1.0f;
-  m.zy *= -1.0f;
-  m.zz *= -1.0f;
-}
-
-//==============================================================================
-void  Renderer::GetModelMatrix(Matrix& m)
-{
-  m = s_rendererImpl.mModel;
 }
 
 //==============================================================================
