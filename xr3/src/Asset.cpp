@@ -644,7 +644,7 @@ static void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::
       // Try to see what type / version we've got here. If the file doesn't exist
       // or can't be read, we'll rebuild. Persistent I/O errors will be dealt with
       // later.
-      AssetHeader header;
+      AssetHeader header = { 0, 0 };
       bool gotHeader = hFile &&
         File::Read(hFile, sizeof(header), 1, &header) == 1;
       if(gotHeader && header.typeId != desc.type)

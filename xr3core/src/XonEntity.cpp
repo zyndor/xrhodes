@@ -125,7 +125,6 @@ void ThrowInvalidKeyError(const char* name)
   if (overSized)
   {
     name += len - kMaxSize;
-    len = kMaxSize;
   }
   sprintf(arBuffer, "Invalid key '%s%s'.", overSized ? "..." : "", name);
   throw XonEntity::Exception(XonEntity::Exception::Type::InvalidKey, arBuffer);

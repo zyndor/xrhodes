@@ -89,7 +89,7 @@ void Device::Init(char const* title)
   if (!result)
   {
     XR_TRACE(Device, ("Failed to initialise SDL."));
-    //exit(1);
+    exit(1);
   }
 
   s_deviceImpl.isPauseRequested = false;
@@ -137,6 +137,11 @@ void Device::Init(char const* title)
     FileWriter file;
     result = file.Open(kConfigName, FileWriter::Mode::Truncate, false) &&
       file.Write(json.c_str(), json.size(), 1) == 1;
+    if (!result)
+    {
+      XR_TRACE(Device, ("Failed to write xr.json"));
+      exit(1);
+    }
   }
 
   s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
