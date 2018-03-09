@@ -111,7 +111,7 @@ bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fra
     m_handle = Gfx::CreateProgram(vertex->GetHandle(), fragment->GetHandle());
 
     success = m_handle.IsValid();
-    LTRACE(("%s: failed to create shader program.", m_debugPath.c_str()));
+    LTRACEIF(!success, ("%s: failed to create shader program.", m_debugPath.c_str()));
   }
 
   if (success)
