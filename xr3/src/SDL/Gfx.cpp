@@ -373,6 +373,7 @@ struct Program: ResourceGL
 };
 
 //=============================================================================
+#ifdef XR_DEBUG
 char const* GetGLSLTypeName(GLenum type)
 {
 #define GLSL_TYPE(t) case t: return #t
@@ -440,70 +441,7 @@ char const* GetGLSLTypeName(GLenum type)
   }
 #undef GLSL_TYPE
 }
-//=============================================================================
-UniformType ImportGLSLType(GLenum type)
-{
-  switch (type)
-  {
-  case GL_INT:
-  case GL_UNSIGNED_INT:
-
-  case GL_SAMPLER_2D:
-  case GL_SAMPLER_2D_ARRAY:
-  case GL_SAMPLER_2D_MULTISAMPLE:
-
-  case GL_INT_SAMPLER_2D:
-  case GL_INT_SAMPLER_2D_ARRAY:
-  case GL_INT_SAMPLER_2D_MULTISAMPLE:
-
-  case GL_UNSIGNED_INT_SAMPLER_2D:
-  case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
-  case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE:
-
-  case GL_SAMPLER_2D_SHADOW:
-  case GL_SAMPLER_2D_ARRAY_SHADOW:
-
-  case GL_SAMPLER_3D:
-  case GL_INT_SAMPLER_3D:
-  case GL_UNSIGNED_INT_SAMPLER_3D:
-
-  case GL_SAMPLER_CUBE:
-  case GL_INT_SAMPLER_CUBE:
-  case GL_UNSIGNED_INT_SAMPLER_CUBE:
-
-  case GL_IMAGE_1D:
-  case GL_INT_IMAGE_1D:
-  case GL_UNSIGNED_INT_IMAGE_1D:
-
-  case GL_IMAGE_2D:
-  case GL_INT_IMAGE_2D:
-  case GL_UNSIGNED_INT_IMAGE_2D:
-
-  case GL_IMAGE_3D:
-  case GL_INT_IMAGE_3D:
-  case GL_UNSIGNED_INT_IMAGE_3D:
-
-  case GL_IMAGE_CUBE:
-  case GL_INT_IMAGE_CUBE:
-  case GL_UNSIGNED_INT_IMAGE_CUBE:
-    return UniformType::Int1;
-
-  case GL_FLOAT:
-  case GL_FLOAT_VEC2:
-  case GL_FLOAT_VEC3:
-  case GL_FLOAT_VEC4:
-    return UniformType::Vec4;
-
-  case GL_FLOAT_MAT3:
-    return UniformType::Mat3;
-
-  case GL_FLOAT_MAT4:
-    return UniformType::Mat4;
-
-  default:
-    return UniformType::kCount;
-  }
-}
+#endif
 
 //=============================================================================
 struct Context
