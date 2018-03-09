@@ -82,9 +82,6 @@ static_assert(XR_ARRAY_SIZE(kUniformTypeSize) == size_t(UniformType::kCount) + 1
   "Uniform type count / size definition count mustmatch.");
 
 //==============================================================================
-Allocator* g_allocator = nullptr; // extern
-
-//==============================================================================
 struct Uniform
 {
   UniformType type;
@@ -101,14 +98,14 @@ public:
   static ConstBuffer* Create(uint32_t size)
   {
     size_t alignedSize = XR_ALIGN16(size);
-    void* mem = g_allocator->Allocate(alignedSize);
-    return new (mem)ConstBuffer(size);
+    void* mem = malloc(alignedSize);
+    return new (mem) ConstBuffer(size);
   }
 
   static void Destroy(ConstBuffer* cb)
   {
     cb->~ConstBuffer();
-    g_allocator->Deallocate(cb);
+    free(cb);
   }
 
   bool AtEnd() const

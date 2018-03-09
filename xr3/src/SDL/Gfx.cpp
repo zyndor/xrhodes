@@ -1073,7 +1073,7 @@ struct Context
 
       size_t requiredBytes = u.arraySize * kUniformTypeSize[uint8_t(u.type)];
       void*& data = m_uniformData[h.id];
-      data = g_allocator->Allocate(requiredBytes);
+      data = malloc(requiredBytes);
       std::memset(data, 0x00, requiredBytes);
 
       ur.inst = u;
@@ -1095,7 +1095,7 @@ struct Context
     --ur.refCount;
     if (ur.refCount == 0)
     {
-      g_allocator->Deallocate(m_uniformData[h.id]);
+      free(m_uniformData[h.id]);
       m_uniformData[h.id] = nullptr;
 
       std::memset(&ur.inst, 0x00, sizeof(Uniform));
@@ -1651,19 +1651,12 @@ Context* s_impl = nullptr;
 } //
 
 //=============================================================================
-void Init(void * window, Allocator* alloc)
+void Init(void * window)
 {
   XR_ASSERTMSG(Gfx, !s_impl, ("Already initialized."));
   auto sdlWindow = static_cast<SDL_Window*>(window);
 
-  if (!alloc)
-  {
-    static Mallocator mallocator;
-    alloc = &mallocator;
-  }
-  g_allocator = alloc;
-
-  s_impl = new (g_allocator->Allocate(sizeof(Context))) Context(sdlWindow);
+  s_impl = new Context(sdlWindow);
 }
 
 //=============================================================================
@@ -1682,11 +1675,8 @@ uint16_t GetHeight()
 void Exit()
 {
   XR_ASSERTMSG(Gfx, s_impl, ("Not initialized."));
-  s_impl->~Context();
-  g_allocator->Deallocate(s_impl);
+  delete s_impl;
   s_impl = nullptr;
-
-  g_allocator = nullptr;
 }
 
 //=============================================================================

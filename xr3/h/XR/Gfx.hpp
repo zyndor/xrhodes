@@ -235,7 +235,7 @@ struct FrameBufferAttachment
 //=============================================================================
 ///@brief Initialises Gfx with the given window handle, which must match the
 /// implementation of Device.
-void Init(void* window, Allocator* alloc = nullptr);
+void Init(void* window);
 
 ///@return Logical width of screen in pixels.
 uint16_t GetWidth();
