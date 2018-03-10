@@ -7,14 +7,14 @@
 #include <algorithm>
 #include "XR/IndexMesh.hpp"
 #include "XR/SpriteRenderer.hpp"
+#include "XR/VertexFormats.hpp"
 
 namespace XR
 {
 
 //==============================================================================
 SpriteRenderer::SpriteRenderer()
-: m_hVertexFormat(Vertex::Register()),
-  m_pool(),
+: m_pool(),
   m_records(nullptr)
 {}
 
@@ -25,8 +25,6 @@ SpriteRenderer::~SpriteRenderer()
   m_pool.Flush();
 
   m_records = nullptr;
-
-  Gfx::Destroy(m_hVertexFormat);
 }
 
 //==============================================================================
@@ -212,8 +210,9 @@ void  SpriteRenderer::Render()
 
     // render
     auto vertsBytes = reinterpret_cast<uint8_t const*>(vertsHead);
-    Gfx::VertexBufferHandle vbo = Gfx::CreateVertexBuffer(m_hVertexFormat,
-      { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
+    Gfx::VertexBufferHandle vbo =
+      Gfx::CreateVertexBuffer(XR::Vertex::Formats::GetHandle<Vertex>(),
+        { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
     Gfx::Draw(vbo, m_ibo, PrimType::TRI_LIST, 0, numIndices);
     Gfx::Destroy(vbo);
 

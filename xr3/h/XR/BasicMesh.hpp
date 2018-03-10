@@ -9,6 +9,7 @@
 //==============================================================================
 #include "FloatBuffer.hpp"
 #include "Material.hpp"
+#include "VertexFormats.hpp"
 
 namespace XR {
 
@@ -47,17 +48,6 @@ public:
   // types
   using PosType = decltype(VertexFormat::pos);
 
-  // static
-  static void RegisterVertexFormat()
-  {
-    s_hVertexFormat = VertexFormat::Register();
-  }
-
-  static void UnregisterVertexFormat()
-  {
-    Gfx::Destroy(s_hVertexFormat);
-  }
-
   // structors
   BasicMesh(uint32_t numVertices = 0);
 
@@ -81,14 +71,7 @@ public:
 
   float CalculateRadius() const;
   void CalculateExtents(PosType& minOut, PosType& maxOut) const;
-
-protected:
-  // static
-  static Gfx::VertexFormatHandle s_hVertexFormat;
 };
-
-template <class VertexFormat>
-Gfx::VertexFormatHandle BasicMesh<VertexFormat>::s_hVertexFormat;
 
 //==============================================================================
 // implementation
@@ -120,9 +103,9 @@ inline
 void BasicMesh<VertexFormat>::CreateVbo(uint32_t flags)
 {
   Gfx::Destroy(m_vbo);
-  XR_ASSERT(BasicMesh, s_hVertexFormat.IsValid());
   XR_ASSERT(BasicMesh, m_vertices.GetRaw() != nullptr);
-  m_vbo = Gfx::CreateVertexBuffer(s_hVertexFormat, GetVertexBuffer(), flags);
+  m_vbo = Gfx::CreateVertexBuffer(Vertex::Formats::GetHandle<VertexFormat>(),
+    GetVertexBuffer(), flags);
 }
 
 //==============================================================================

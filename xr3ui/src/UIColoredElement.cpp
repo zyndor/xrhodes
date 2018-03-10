@@ -5,7 +5,6 @@
 //
 //==============================================================================
 #include "XR/UIColoredElement.hpp"
-#include "XR/Renderer.hpp"
 
 namespace XR
 {

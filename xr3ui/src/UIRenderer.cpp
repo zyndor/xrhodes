@@ -6,14 +6,14 @@
 //==============================================================================
 #include "XR/UIRenderer.hpp"
 #include "XR/IndexMesh.hpp"
+#include "XR/VertexFormats.hpp"
 
 namespace XR
 {
 
 //==============================================================================
 UIRenderer::UIRenderer()
-: m_hVertexFormat(Vertex::Register()),
-  m_numSprites(0),
+: m_numSprites(0),
   m_vertices(),
   m_numSpritesRenderable(0),
   m_numSpritesRendered(0)
@@ -81,8 +81,9 @@ void UIRenderer::Render()
     const uint32_t numIndices = numSprites * Sprite::kNumIndices;
 
     auto vertsBytes = reinterpret_cast<uint8_t const*>(verts);
-    Gfx::VertexBufferHandle vbo = Gfx::CreateVertexBuffer(m_hVertexFormat,
-      { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
+    Gfx::VertexBufferHandle vbo =
+      Gfx::CreateVertexBuffer(XR::Vertex::Formats::GetHandle<Vertex>(),
+        { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
 
     (*i)->Apply();
     Gfx::Draw(vbo, m_ibo, PrimType::TRI_LIST, 0, numIndices);

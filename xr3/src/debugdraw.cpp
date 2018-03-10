@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "XR/debugdraw.hpp"
+#include "XR/ScratchBuffer.hpp"
 
 namespace XR
 {
@@ -13,143 +14,147 @@ namespace DebugDraw
 {
 
 //==============================================================================
-static uint32_t   s_lastFlush = -1;
-static Material::Ptr  s_material;
-
-static void SetMaterial()
+namespace
 {
-  uint32_t  flushId(Renderer::GetFlushId());
-  if (s_lastFlush < flushId || flushId + INT32_MAX > s_lastFlush + INT32_MAX)
+
+Gfx::UniformHandle s_xruColor;
+Material::Ptr  s_material;
+
+#define XR_STRINGIFY(x) #x
+
+char const* const kVertexShader = "#version 300 es"
+XR_STRINGIFY(
+
+in vec3 aPosition;
+
+uniform mat4 xruModelViewProjection;
+
+void main()
+{
+  gl_Position = xruModelViewProjection * aPosition;
+}
+);
+
+char const* const kFragmentShader = "#version 300 es"
+XR_STRINGIFY(
+
+uniform vec4 s_xruColor;
+
+out vec4 fragColor;
+
+void main()
+[
+  fragColor = xruColor;
+}
+);
+
+void SetMaterial(Material::Ptr material)
+{
+  if (!material)
   {
-    s_material.Release();
-    s_material.Reset(Renderer::AllocMaterial());
-    s_lastFlush = flushId;
+    if (!s_material)
+    {
+      s_xruColor = Gfx::CreateUniform("s_xruColor", Gfx::UniformType::Vec4);
+
+      Asset::FlagType flags = Asset::UnmanagedFlag;
+      s_material.Reset(Material::Create(0, flags)->Cast<Material>());
+
+      ShaderComponent::Ptr vertexShader(ShaderComponent::Create(0, flags)->Cast<ShaderComponent>());
+      vertexShader->SetSource(Gfx::ShaderType::Vertex, kVertexShader);
+
+      ShaderComponent::Ptr fragmentShader(ShaderComponent::Create(0, flags)->Cast<ShaderComponent>());
+      fragmentShader->SetSource(Gfx::ShaderType::Fragment, kFragmentShader);
+
+      Shader::Ptr shader(Shader::Create(0, flags)->Cast<Shader>());
+      shader->SetComponents(vertexShader, fragmentShader);
+
+      s_material->SetShader(shader);
+    }
+
+    material = s_material;
+  }
+  material->Apply();
+}
+
+void  DrawLineInternal(const Vector3* positions, int numVerts, Material::Ptr const& material,
+  PrimType primitive)
+{
+  SetMaterial(material);
+  auto verts = ScratchBuffer::Start3d(numVerts);
+  auto end = verts + numVerts;
+  while (verts != end)
+  {
+    verts->pos = *positions;
+    ++positions;
+    ++verts;
   }
 
-  s_material->Apply();
+  ScratchBuffer::Finish(primitive);
 }
+
+uint32_t GetCircleNumVerts(float radius)
+{
+  XR_ASSERT(GetCircleNumVerts, radius >= .0f);
+  return static_cast<uint32_t>(std::ceil(kPi * radius * .333f));
+}
+
+} // namespace
 
 //==============================================================================
 void  Line(const Vector3& v, Material::Ptr const& material)
 {
-  FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), 2));
-  pStream->Set(0, Vector3::Zero());
-  pStream->Set(1, v);
+  SetMaterial(material);
 
-  if (!material)
-  {
-    SetMaterial();
-  }
-  else
-  {
-    s_material->Apply();
-  }
-  Renderer::SetVertStream(*pStream);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::LINE_STRIP);
+  auto verts = ScratchBuffer::Start3d(2);
+  verts[0].pos = Vector3::Zero();
+  verts[1].pos = v;
+
+  ScratchBuffer::Finish(PrimType::LINE_STRIP);
 }
 
 //==============================================================================
-void  LineStrip(const Vector3* verts, int numVerts, Material::Ptr const& material)
+void  LineStrip(const Vector3* positions, int numVerts, Material::Ptr const& material)
 {
-  FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  for (int i = 0; i < numVerts; ++i)
-  {
-    pStream->Set(i, *verts);
-    ++verts;
-  }
-
-  if (!material)
-  {
-    SetMaterial();
-  }
-  else
-  {
-    material->Apply();
-  }
-  Renderer::SetVertStream(*pStream);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::LINE_STRIP);
+  DrawLineInternal(positions, numVerts, material, PrimType::LINE_STRIP);
 }
 
 //==============================================================================
-void  LineList(const Vector3* verts, int numVerts, Material::Ptr const& material)
+void  LineList(const Vector3* positions, int numVerts, Material::Ptr const& material)
 {
-  FloatBuffer*  pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  for (int i = 0; i < numVerts; ++i)
-  {
-    pStream->Set(i, *verts);
-    ++verts;
-  }
-
-  if (!material)
-  {
-    SetMaterial();
-  }
-  else
-  {
-    material->Apply();
-  }
-  Renderer::SetVertStream(*pStream);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::LINE_LIST);
+  DrawLineInternal(positions, numVerts, material, PrimType::LINE_LIST);
 }
 
 //==============================================================================
 void  Rect(float hw, float hh, Material::Ptr const& material)
 {
-  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), 5));
-  pStream->Set(0, Vector3(-hw, -hh, .0f));
-  pStream->Set(1, Vector3(-hw, hh, .0f));
-  pStream->Set(2, Vector3(hw, hh, .0f));
-  pStream->Set(3, Vector3(hw, -hh, .0f));
-  pStream->Set(4, pStream->Get<Vector3>(0));
+  SetMaterial(material);
+  auto verts = ScratchBuffer::Start3d(5);
+  verts[0].pos = Vector3(-hw, -hh, .0f);
+  verts[1].pos = Vector3(-hw, hh, .0f);
+  verts[2].pos = Vector3(hw, hh, .0f);
+  verts[3].pos = Vector3(hw, -hh, .0f);
+  verts[4] = verts[0];
 
-  if (!material)
-  {
-    SetMaterial();
-  }
-  else
-  {
-    material->Apply();
-  }
-  Renderer::SetVertStream(*pStream);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::LINE_STRIP);
+  ScratchBuffer::Finish(PrimType::LINE_STRIP);
 }
 
 //==============================================================================
 void  FillRect(float hw, float hh, Material::Ptr const& material)
 {
-  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), 4));
-  pStream->Set(0, Vector3(-hw, -hh, .0f));
-  pStream->Set(1, Vector3(-hw, hh, .0f));
-  pStream->Set(2, Vector3(hw, -hh, .0f));
-  pStream->Set(3, Vector3(hw, hh, .0f));
+  SetMaterial(material);
+  auto verts = ScratchBuffer::Start3d(4);
+  verts[0].pos = Vector3(-hw, -hh, .0f);
+  verts[1].pos = Vector3(-hw, hh, .0f);
+  verts[2].pos = Vector3(hw, -hh, .0f);
+  verts[3].pos = Vector3(hw, hh, .0f);
 
-  if (!material)
-  {
-    SetMaterial();
-  }
-  else
-  {
-    material->Apply();
-  }
-  Renderer::SetVertStream(*pStream);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::TRI_STRIP);
+  ScratchBuffer::Finish(PrimType::TRI_STRIP);
 }
 
 //==============================================================================
-int GetCircleNumVerts(float radius)
-{
-  XR_ASSERT(GetCircleNumVerts, radius >= .0f);
-  return int(std::ceil(kPi * radius * .333f));
-}
-
 void  Circle(float radius, Material::Ptr const& material)
 {
-  uint32_t numVerts(GetCircleNumVerts(radius));
+  uint32_t numVerts = GetCircleNumVerts(radius);
   float theta = float(M_PI / numVerts);
   float c = std::cosf(theta);
   float s = std::sinf(theta);
@@ -157,63 +162,48 @@ void  Circle(float radius, Material::Ptr const& material)
 
   numVerts *= 2;
   ++numVerts;
-  FloatBuffer* pStream(Renderer::AllocBuffer(uint32_t(sizeof(Vector3)), numVerts));
-  for (uint32_t i = 0; i < numVerts; ++i)
+
+  SetMaterial(material);
+  auto verts = ScratchBuffer::Start3d(numVerts);
+  auto endVerts = verts + numVerts;
+  while (verts != endVerts)
   {
-    pStream->Set(i, v);
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
+    verts->pos = v;
+    ++verts;
   }
 
-  if (!material)
-  {
-    SetMaterial();
-  }
-  else
-  {
-    material->Apply();
-  }
-  Renderer::SetVertStream(*pStream);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::LINE_STRIP);
+  ScratchBuffer::Finish(PrimType::LINE_STRIP);
 }
 
 //==============================================================================
 void  FillCircle(float radius, Material::Ptr const& material)
 {
-  int numVerts(GetCircleNumVerts(radius));
+  SetMaterial(material);
+
+  uint32_t numVerts = GetCircleNumVerts(radius);
   float theta = float(M_PI / numVerts);
   float c = cosf(theta);
   float s = sinf(theta);
   Vector3 v(radius, .0f, .0f);
 
-  int numIter = numVerts - 1;
   numVerts *= 2;
-  FloatBuffer* pStream(Renderer::AllocBuffer(sizeof(Vector3), numVerts));
-  Vector3* pWrite = pStream->Get<Vector3>();
-  *pWrite = v;
-  ++pWrite;
-  for (int i = 0; i < numIter; ++i)
+  auto verts = ScratchBuffer::Start3d(numVerts);
+  auto endVerts = verts + numVerts - 1;
+  verts->pos = v;
+  ++verts;
+  while (verts != endVerts)
   {
     v = Vector3(v.x * c + v.y * s, v.y * c - v.x * s, .0f);
-    *pWrite = Vector3(v.x, -v.y, .0f);
-    ++pWrite;
-    *pWrite = v;
-    ++pWrite;
+    verts->pos = Vector3(v.x, -v.y, .0f);
+    ++verts;
+    verts->pos = v;
+    ++verts;
   }
 
-  *pWrite = Vector3(-radius, .0f, .0f);
+  verts->pos = Vector3(-radius, .0f, .0f);
 
-  if (!material)
-  {
-    SetMaterial();
-  }
-  else
-  {
-    material->Apply();
-  }
-  Renderer::SetVertStream(*pStream);
-  Renderer::SetColStream();
-  Renderer::DrawPrims(PrimType::TRI_STRIP);
+  ScratchBuffer::Finish(PrimType::TRI_STRIP);
 }
 
 } // DebugDraw

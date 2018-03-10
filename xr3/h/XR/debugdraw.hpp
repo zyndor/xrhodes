@@ -7,7 +7,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "Renderer.hpp"
+#include "Vector3.hpp"
+#include "Material.hpp"
 
 namespace XR
 {

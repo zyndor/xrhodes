@@ -6,6 +6,7 @@
 //==============================================================================
 #include "XR/UILabel.hpp"
 #include "XR/UIRenderer.hpp"
+#include "XR/Transforms.hpp"
 #include <cstring>
 #include <cstdlib>
 
@@ -38,13 +39,9 @@ void UILabel::Render() const
   XR_ASSERT(UILabel, m_text.GetFont());
   m_text.GetFont()->GetMaterial()->Apply();
 
-  Renderer::SetAmbientColor(color);
-
-  static Matrix m;
-  Renderer::GetModelMatrix(m);
-  Renderer::SetModelMatrix(Matrix(Vector3(float(x + w / 2), float(y + h / 2), .0f)));
+  Matrix model(Vector3(float(x + w / 2), float(y + h / 2), .0f));
+  Transforms::ScopedModel m(model);
   m_text.RenderOnly(PrimType::TRI_LIST);
-  Renderer::SetModelMatrix(m);
 }
 
 //==============================================================================

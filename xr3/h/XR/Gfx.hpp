@@ -7,11 +7,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/Color.hpp"
 #include "XR/memory.hpp"
 #include "XR/utils.hpp"
 #include "XR/Hash.hpp"
+#include "XR/Rect.hpp"
+#include "XR/Callback.hpp"
 #include "XR/PrimType.hpp"
 #include "XR/Buffer.hpp"
 #include "XR/debug.hpp"
@@ -183,21 +184,15 @@ enum class UniformType: uint8_t
 };
 
 //=============================================================================
-struct Rect
-{
-  int16_t x;
-  int16_t y;
-  uint16_t width;
-  uint16_t height;
-};
-
-//=============================================================================
-namespace
-{
 struct HandleCoreCore {
   enum : uint16_t { INVALID_ID = 0xffff };
 
-  uint16_t id = INVALID_ID;
+  uint16_t id;
+
+  HandleCoreCore()
+  : id{ INVALID_ID }
+  {}
+
   bool IsValid() const
   {
     return id != INVALID_ID;
@@ -216,7 +211,6 @@ struct HandleCore : HandleCoreCore
   bool operator!=(T const& rhs) const { return !operator==(rhs); }
   bool operator<(T const& rhs) const { return id < rhs.id; }
 };
-}
 
 #define GFX_HANDLE_DECL(name) struct name: HandleCore<name> {}
 GFX_HANDLE_DECL(VertexFormatHandle);
@@ -241,10 +235,7 @@ struct FrameBufferAttachment
 //=============================================================================
 ///@brief Initialises Gfx with the given window handle, which must match the
 /// implementation of Device.
-void Init(void* window, Allocator* alloc = nullptr);
-
-///@brief shuts down the renderer.
-void Exit();
+void Init(void* window);
 
 ///@return Logical width of screen in pixels.
 uint16_t GetWidth();
@@ -357,7 +348,7 @@ void Destroy(ProgramHandle h);
 void SetViewport(Rect const& rect);
 
 ///@brief Sets rectangle for scissor testing; if null, disables scissor test.
-void SetScissor(Rect const& rect);
+void SetScissor(Rect const* rect);
 
 ///@brief Sets a value for the given uniform.
 void SetUniform(UniformHandle h, uint8_t num, void const* data);
@@ -391,6 +382,15 @@ void Clear(uint32_t flags, Color color = Color(0xff000000), float depth = 1.0f,
 
 void Flush();
 void Present(bool resetState = true);
+
+///@brief Registers a function to be called upon Flush().
+void RegisterFlushCallback(Callback fn, void* userData);
+
+///@brief Registers a function to be called upon Exit().
+void RegisterExitCallback(Callback fn, void* userData);
+
+///@brief shuts down the renderer.
+void Exit();
 
 } // GFX
 } // XR

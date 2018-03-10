@@ -22,6 +22,8 @@ namespace XR
 {
 namespace Gfx
 {
+namespace
+{
 
 #define UINT_PTR_CAST(x) reinterpret_cast<void*>(static_cast<uintptr_t>(x))
 
@@ -371,6 +373,7 @@ struct Program: ResourceGL
 };
 
 //=============================================================================
+#ifdef XR_DEBUG
 char const* GetGLSLTypeName(GLenum type)
 {
 #define GLSL_TYPE(t) case t: return #t
@@ -438,70 +441,7 @@ char const* GetGLSLTypeName(GLenum type)
   }
 #undef GLSL_TYPE
 }
-//=============================================================================
-UniformType ImportGLSLType(GLenum type)
-{
-  switch (type)
-  {
-  case GL_INT:
-  case GL_UNSIGNED_INT:
-
-  case GL_SAMPLER_2D:
-  case GL_SAMPLER_2D_ARRAY:
-  case GL_SAMPLER_2D_MULTISAMPLE:
-
-  case GL_INT_SAMPLER_2D:
-  case GL_INT_SAMPLER_2D_ARRAY:
-  case GL_INT_SAMPLER_2D_MULTISAMPLE:
-
-  case GL_UNSIGNED_INT_SAMPLER_2D:
-  case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
-  case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE:
-
-  case GL_SAMPLER_2D_SHADOW:
-  case GL_SAMPLER_2D_ARRAY_SHADOW:
-
-  case GL_SAMPLER_3D:
-  case GL_INT_SAMPLER_3D:
-  case GL_UNSIGNED_INT_SAMPLER_3D:
-
-  case GL_SAMPLER_CUBE:
-  case GL_INT_SAMPLER_CUBE:
-  case GL_UNSIGNED_INT_SAMPLER_CUBE:
-
-  case GL_IMAGE_1D:
-  case GL_INT_IMAGE_1D:
-  case GL_UNSIGNED_INT_IMAGE_1D:
-
-  case GL_IMAGE_2D:
-  case GL_INT_IMAGE_2D:
-  case GL_UNSIGNED_INT_IMAGE_2D:
-
-  case GL_IMAGE_3D:
-  case GL_INT_IMAGE_3D:
-  case GL_UNSIGNED_INT_IMAGE_3D:
-
-  case GL_IMAGE_CUBE:
-  case GL_INT_IMAGE_CUBE:
-  case GL_UNSIGNED_INT_IMAGE_CUBE:
-    return UniformType::Int1;
-
-  case GL_FLOAT:
-  case GL_FLOAT_VEC2:
-  case GL_FLOAT_VEC3:
-  case GL_FLOAT_VEC4:
-    return UniformType::Vec4;
-
-  case GL_FLOAT_MAT3:
-    return UniformType::Mat3;
-
-  case GL_FLOAT_MAT4:
-    return UniformType::Mat4;
-
-  default:
-    return UniformType::kCount;
-  }
-}
+#endif
 
 //=============================================================================
 struct Context
@@ -566,7 +506,7 @@ struct Context
   Context(SDL_Window* window)
   {
     XR_TRACE(Gfx, ("Gfx init start..."));
-    XR_ASSERTMSG(Renderer, window, ("Window must not be null!"));
+    XR_ASSERTMSG(Gfx, window, ("Window must not be null!"));
     m_window = window;
 
     // Window must be created at this point. In SDL, we do it in Device.
@@ -601,8 +541,8 @@ struct Context
     SDL_RendererInfo  info;
     SDL_GetRendererInfo(m_ownRenderer, &info);
 
-    XR_ASSERT(Renderer, info.flags & SDL_RENDERER_ACCELERATED);
-    XR_ASSERT(Renderer, info.flags & SDL_RENDERER_TARGETTEXTURE);
+    XR_ASSERT(Gfx, info.flags & SDL_RENDERER_ACCELERATED);
+    XR_ASSERT(Gfx, info.flags & SDL_RENDERER_TARGETTEXTURE);
 
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
@@ -651,16 +591,17 @@ struct Context
     kDefaultTextureCube.id = decltype(m_textures)::kSize - 3;
     CreateDefaultTexture(kDefaultTextureCube, GL_TEXTURE_CUBE_MAP);
 
-    // initialise frame pool
-    int poolSize(Device::GetConfigInt("GFX", "framePoolSize", 128000));
-    m_framePool.SetBuffer(poolSize, true, 0);
-
     XR_TRACE(Gfx, ("Gfx init complete."));
   }
 
   ~Context()
   {
     XR_TRACE(Gfx, ("Gfx shutting down."));
+    for (auto& cb: m_onExit)
+    {
+      cb.Call(nullptr);
+    }
+
     if (m_vao != 0)
     {
       XR_GL_CALL(glDeleteVertexArrays(1, &m_vao));
@@ -1070,7 +1011,7 @@ struct Context
 
       size_t requiredBytes = u.arraySize * kUniformTypeSize[uint8_t(u.type)];
       void*& data = m_uniformData[h.id];
-      data = g_allocator->Allocate(requiredBytes);
+      data = malloc(requiredBytes);
       std::memset(data, 0x00, requiredBytes);
 
       ur.inst = u;
@@ -1092,7 +1033,7 @@ struct Context
     --ur.refCount;
     if (ur.refCount == 0)
     {
-      g_allocator->Deallocate(m_uniformData[h.id]);
+      free(m_uniformData[h.id]);
       m_uniformData[h.id] = nullptr;
 
       std::memset(&ur.inst, 0x00, sizeof(Uniform));
@@ -1350,12 +1291,17 @@ struct Context
 
   void SetViewport(Rect const& rect)
   {
-    XR_GL_CALL(glViewport(rect.x, rect.y, rect.width, rect.height));
+    XR_GL_CALL(glViewport(rect.x, rect.y, rect.w, rect.h));
   }
 
-  void SetScissor(Rect const& rect)
+  void SetScissor(Rect const* rect)
   {
-    XR_GL_CALL(glScissor(rect.x, rect.y, rect.width, rect.height));
+    bool state = rect != nullptr;
+    GL::SwitchEnabledState(GL_SCISSOR_TEST, state);
+    if (state)
+    {
+      XR_GL_CALL(glScissor(rect->x, rect->y, rect->w, rect->h));
+    }
   }
 
   void SetUniform(UniformHandle h, uint8_t num, void const* data)
@@ -1527,14 +1473,27 @@ struct Context
   void Flush()
   {
     XR_GL_CALL(glFlush());
-    m_framePool.Flush();
-    //++m_flushId;
+
+    for (auto& cb : m_onFlush)
+    {
+      cb.Call(nullptr);
+    }
   }
 
   void Present(bool resetState)
   {
     Flush();
     SDL_GL_SwapWindow(m_window);
+  }
+
+  void RegisterFlushCallback(Callback fn, void* userData)
+  {
+    m_onFlush.push_back({ fn, userData });
+  }
+
+  void RegisterExitCallback(Callback fn, void* userData)
+  {
+    m_onExit.push_back({ fn, userData });
   }
 
 private:
@@ -1565,14 +1524,15 @@ private:
   uint32_t m_activeState = F_STATE_NONE;
 
   InstanceDataBufferHandle m_hActiveInstDataBuffer;
-  uint16_t m_activeInstDataBufferStride;
-  uint16_t m_instanceOffset;
-  uint16_t m_instanceCount;
+  uint16_t m_activeInstDataBufferStride = 0;
+  uint16_t m_instanceOffset = 0;
+  uint16_t m_instanceCount = 0;
 
   ProgramHandle m_activeProgram;
   FrameBufferHandle m_activeFrameBuffer;
 
-  Pool m_framePool;
+  std::vector<CallbackObject> m_onFlush;
+  std::vector<CallbackObject> m_onExit;
 
   // internal
   VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
@@ -1624,28 +1584,17 @@ private:
   }
 };
 
-//==============================================================================
-void ContextDeleter(Context* ctx)
-{
-  ctx->~Context();
-  g_allocator->Deallocate(ctx);
-};
+Context* s_impl = nullptr;
 
-std::unique_ptr<Context, std::function<void(Context*)> > s_impl(nullptr, ContextDeleter);
+} //
 
 //=============================================================================
-void Init(void * window, Allocator* alloc)
+void Init(void * window)
 {
+  XR_ASSERTMSG(Gfx, !s_impl, ("Already initialized."));
   auto sdlWindow = static_cast<SDL_Window*>(window);
 
-  if (!alloc)
-  {
-    static Mallocator mallocator;
-    alloc = &mallocator;
-  }
-  g_allocator = alloc;
-
-  s_impl.reset(new (g_allocator->Allocate(sizeof(Context))) Context(sdlWindow));
+  s_impl = new Context(sdlWindow);
 }
 
 //=============================================================================
@@ -1663,8 +1612,9 @@ uint16_t GetHeight()
 //=============================================================================
 void Exit()
 {
-  s_impl.reset();
-  g_allocator = nullptr;
+  XR_ASSERTMSG(Gfx, s_impl, ("Not initialized."));
+  delete s_impl;
+  s_impl = nullptr;
 }
 
 //=============================================================================
@@ -1868,7 +1818,7 @@ void SetViewport(Rect const& rect)
 }
 
 //==============================================================================
-void SetScissor(Rect const& rect)
+void SetScissor(Rect const* rect)
 {
   s_impl->SetScissor(rect);
 }
@@ -1933,6 +1883,18 @@ void Flush()
 void Present(bool resetState)
 {
   s_impl->Present(resetState);
+}
+
+//==============================================================================
+void RegisterFlushCallback(Callback fn, void* userData)
+{
+  s_impl->RegisterFlushCallback(fn, userData);
+}
+
+//==============================================================================
+void RegisterExitCallback(Callback fn, void* userData)
+{
+  s_impl->RegisterExitCallback(fn, userData);
 }
 
 }

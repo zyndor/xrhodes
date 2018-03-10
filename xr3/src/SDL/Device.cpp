@@ -9,7 +9,6 @@
 #include "XR/FileWriter.hpp"
 #include "XR/JsonReader.hpp"
 #include "XR/JsonWriter.hpp"
-#include "XR/Renderer.hpp"
 #include "XR/jsonutils.hpp"
 #include "XR/utils.hpp"
 #include "XR/stringutils.hpp"
@@ -51,6 +50,8 @@ static struct
   bool                  isYielding;
   JSON::Entity*         pConfig;
   SDL_Window*           mainWindow;
+  uint32_t              windowWidth;
+  uint32_t              windowHeight;
 } s_deviceImpl;
 
 }
@@ -152,8 +153,8 @@ void Device::Init(char const* title)
     title = "XRhodes Application";
   }
 
-  int   width(Device::GetConfigInt("Display", "width", 800));
-  int   height(Device::GetConfigInt("Display", "height", 600));
+  s_deviceImpl.windowWidth = Device::GetConfigInt("Display", "width", 800);
+  s_deviceImpl.windowHeight = Device::GetConfigInt("Display", "height", 600);
 
   uint32_t flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
   if (Device::GetConfigInt("Display", "windowed", false) == 0)
@@ -163,7 +164,7 @@ void Device::Init(char const* title)
 
   s_deviceImpl.mainWindow = SDL_CreateWindow(title,
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    width, height, flags);
+    s_deviceImpl.windowWidth, s_deviceImpl.windowHeight, flags);
 
   // start listening to events
   SDL_AddEventWatch(FilterEvents, 0);
@@ -440,12 +441,12 @@ void  Device::YieldOS(int32_t ms)
     {
       if (InputImpl::s_pInstance)
       {
-        int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
-        int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
+        int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
+        int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
 
         Input::TouchActionEvent  eTouch =
         {
-          // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
+          // NOTE: keep an eye on these guys; the exact range of their possible values isn't clear.
           static_cast<uint32_t>(e.tfinger.touchId),
           static_cast<uint32_t>(e.tfinger.fingerId),
           x,
@@ -461,12 +462,12 @@ void  Device::YieldOS(int32_t ms)
     {
       if (InputImpl::s_pInstance)
       {
-        int16_t x((int16_t)Round(e.tfinger.x * Renderer::GetScreenWidth()));
-        int16_t y((int16_t)Round(e.tfinger.y * Renderer::GetScreenHeight()));
+        int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
+        int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
 
         Input::TouchMotionEvent eTouch =
         {
-          // NOTE: keep an eye on these guys; not clear what is the exact range of their possible values.
+          // NOTE: keep an eye on these guys; the exact range of their possible values isn't clear.
           static_cast<uint32_t>(e.tfinger.touchId),
           static_cast<uint32_t>(e.tfinger.fingerId),
           x,

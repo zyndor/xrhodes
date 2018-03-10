@@ -6,7 +6,7 @@
 //==============================================================================
 #include "XR/UIVerticalScrollingLayout.hpp"
 #include "XR/UIRenderer.hpp"
-#include "XR/Renderer.hpp"
+#include "XR/Gfx.hpp"
 
 namespace XR
 {
@@ -85,7 +85,7 @@ void UIVerticalScrollingLayout::_AlignElement( UIElement* pElem )
   case  AL_HIGH:
     pElem->x = x + w - pElem->w;
     break;
-    
+
   case  AL_NOALIGN:
     break;
   }
@@ -123,12 +123,12 @@ void UIVerticalScrollingLayout::Render(IUIRenderer& renderer) const
 {
   renderer.Render();
 
-  Renderer::SetScissorRect(*this);
+  Gfx::SetScissor(this);
 
   UIVerticalLayout::Render(renderer);
   renderer.Render();
 
-  Renderer::ClearScissorRect();
+  Gfx::SetScissor(nullptr);
 }
 
 //==============================================================================

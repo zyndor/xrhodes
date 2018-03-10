@@ -1,0 +1,56 @@
+#ifndef XR_PROJECTIONHELPER_HPP
+#define XR_PROJECTIONHELPER_HPP
+//==============================================================================
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+//==============================================================================
+#include "XR/fundamentals.hpp"
+
+namespace XR
+{
+
+//==============================================================================
+///@brief A collection of helper functions required to calculate projections.
+class ProjectionHelper
+{
+  XR_NONOBJECT_DECL(ProjectionHelper)
+
+public:
+  enum { kNumMatrixElems = 16 };
+
+  ///@brief Calculates an orthographic projection from intended @a left,
+  /// @a right, @a bottom, @a top coordinates, and distances of the near and
+  /// far panes.
+  ///@note @a matrix must point to an array of at least kNumMatrixElems elements.
+  static void CalculateOrthographic(float left, float right, float bottom,
+    float top, float zNear, float zFar, float matrix[kNumMatrixElems]);
+
+  ///@brief Calculates an orthographic projection from intendend @a width and
+  /// @a height, meaning that the top left of the resultant projection is
+  /// (0; 0), X goes right and Y goes up. i.e. UI layout should go in the
+  /// negative Y.
+  ///@note @a matrix must point to an array of at least kNumMatrixElems elements.
+  static void CalculateOrthographic(float width, float height, float zNear,
+    float zFar, float matrix[kNumMatrixElems]);
+
+  ///@brief Calculates orthographics projection equilateral in X and Y, i.e. left /
+  /// bottom and right / top clipping planes are all at + / - @a size / 2.
+  static void CalculateOrthographic(float size, float zNear, float zFar,
+    float matrix[kNumMatrixElems]);
+
+  ///@brief Calculates a perspective projection with the given vertical
+  /// field of view, aspect radio and distances of near and far viewing
+  /// panes. The tangent of the half vertical FOV may be stored in
+  /// @a pTanVerticalFOVHalf.
+  ///@note @a matrix must point to an array of at least kNumMatrixElems elements.
+  static void CalculatePerspective(float verticalFOV, float aspectRatio,
+    float zNear, float zFar, float matrix[kNumMatrixElems],
+    float* pTanVerticalFOVHalf = nullptr);
+};
+
+} // XR
+
+#endif// XR_PROJECTIONHELPER_HPP

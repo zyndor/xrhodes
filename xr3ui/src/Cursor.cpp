@@ -22,7 +22,7 @@ void  Cursor::OnMotion(void* pSystem, void* pUser)
   yDelta *= yDelta;
   xDelta += yDelta;
   xDelta = static_cast<int32_t>(sqrtf(static_cast<float>(xDelta)));
-  int hScr(Renderer::GetScreenHeight());
+  int hScr = Gfx::GetHeight();
   if(xDelta >= hScr * pCursor->m_moveTreshold ||
     (pCursor->m_timer > 0 && xDelta >= hScr * pCursor->m_keepAliveTreshold))
   {

@@ -9,6 +9,7 @@
 //==============================================================================
 
 #include "Vector3.hpp"
+#include "maths.hpp"
 #include "XR/debug.hpp"
 #include <algorithm>
 #include <cstring>
@@ -21,7 +22,7 @@ namespace XR
 //==============================================================================
 ///@brief Row-order matrix with a 3x3 linear transformation (rotation, scaling)
 /// and 1x3 translation components.
-struct Matrix 
+struct Matrix
 {
   // types
   enum
@@ -46,7 +47,7 @@ struct Matrix
   {
     return Matrix();
   }
-  
+
   // data
   union
   {
@@ -63,7 +64,7 @@ struct Matrix
     };
   };
   Vector3 t;
-  
+
   // structors
   Matrix()
   : Matrix(Vector3::Zero())
@@ -119,7 +120,7 @@ struct Matrix
     yy *= s;
     yz *= s;
   }
-  
+
   ///@brief Scales the z component of the linear transformation by the scalar @a s.
   void  ScaleZ(float s)
   {
@@ -127,7 +128,7 @@ struct Matrix
     zy *= s;
     zz *= s;
   }
-  
+
   ///@brief Scales the linear transformation part of this Matrix by the scalar @a s.
   void  ScaleRot(float s)
   {
@@ -144,7 +145,7 @@ struct Matrix
 
   ///@brief Sets the matrix to represent a rotation around the X axis,
   /// with the option to reset the translation part (@a resetTrans)
-  /// and set the value of the components that aren't involved in the 
+  /// and set the value of the components that aren't involved in the
   /// rotation, to zero (@a setZeros).
   void  SetRotX(float theta, bool resetTrans, bool setZeros)
   {
@@ -152,7 +153,7 @@ struct Matrix
     {
       t = Vector3::Zero();
     }
-    
+
     if (setZeros)
     {
       xy = .0f;
@@ -165,10 +166,10 @@ struct Matrix
     yy = zz = cosf(theta);
     yz = -(zy = sinf(theta));
   }
-  
+
   ///@brief Sets the matrix to represent a rotation around the Y axis,
   /// with the option to reset the translation part (@a resetTrans)
-  /// and set the value of the components that aren't involved in the 
+  /// and set the value of the components that aren't involved in the
   /// rotation, to zero (@a setZeros).
   void  SetRotY(float theta, bool resetTrans, bool setZeros)
   {
@@ -192,7 +193,7 @@ struct Matrix
 
   ///@brief Sets the matrix to represent a rotation around the Z axis,
   /// with the option to reset the translation part (@a resetTrans)
-  /// and set the value of the components that aren't involved in the 
+  /// and set the value of the components that aren't involved in the
   /// rotation, to zero (@a setZeros).
   void  SetRotZ(float theta, bool resetTrans, bool setZeros)
   {
@@ -213,7 +214,7 @@ struct Matrix
     xx = yy = cosf(theta);
     xy = -(yx = sinf(theta));
   }
-  
+
   ///@brief Transform the linear transformation partof the matrix only, by
   /// rotating it @a theta degrees around the X axis.
   void  RotateX(float theta)
@@ -248,7 +249,7 @@ struct Matrix
     Vector3 v(RotateVec(Vector3::UnitX()));
     return  atan2f(v.y, v.z);
   }
-  
+
   ///@brief Calculates the amount of rotation the matrix represents around the
   /// Y axis.
   float DirY() const
@@ -256,7 +257,7 @@ struct Matrix
     Vector3 v(RotateVec(Vector3::UnitY()));
     return  atan2f(v.x, v.z);
   }
-  
+
   ///@brief Calculates the amount of rotation the matrix represents around the
   /// Z axis.
   float DirZ() const
@@ -264,19 +265,19 @@ struct Matrix
     Vector3 v(RotateVec(Vector3::UnitZ()));
     return  atan2f(v.y, v.x);
   }
-  
+
   ///@brief Copies the linear transformation part from the given array.
   void  CopyLinear(const float parLinear[kNumLinearComponents])
   {
     memcpy(arLinear, parLinear, sizeof(arLinear));
   }
-  
+
   ///@brief Copies the linear transformation part of the given matrix.
   void  CopyLinear(Matrix const& m)
   {
     CopyLinear(m.arLinear);
   }
-  
+
   ///@brief Multiplies the linear transformation component of this Matrix
   /// by the linear transformation component the other Matrix @a m.
   /// No translation applied or modified.
@@ -293,7 +294,7 @@ struct Matrix
     CalculateComponentProduct(m, n, Vector3::Z, Vector3::Y);
     CalculateComponentProduct(m, n, Vector3::Z, Vector3::Z);
   }
-  
+
   void  CalculateComponentProduct(Matrix const& m, Matrix const& n, int i, int j)
   {
     XR_ASSERT(Matrix, i >= 0);
@@ -322,13 +323,13 @@ struct Matrix
       v.x * xy + v.y * yy + v.z * zy,
       v.x * xz + v.y * yz + v.z * zz);
   }
-  
+
   ///@brief Transforms the vector by this matrix.
   Vector3  TransformVec(Vector3 const& v) const
   {
     return RotateVec(v) + t;
   }
-  
+
   ///@brief Calculates a transformation looking from the position @a from to
   /// @a to, with the given @a up vector.
   void  LookAt(Vector3 const& from, Vector3 const& to, Vector3 const& up)
@@ -359,6 +360,47 @@ struct Matrix
     LookAt(Vector3(t.x, t.y, t.z), to, up);
   }
 
+  ///@brief Attempts to calculates the inverse of the linear transformation part
+  /// and if succeeded, replaces it with the inverse.
+  bool  Invert()
+  {
+    // Calculate minors and cofactors 2 in 1.
+    decltype(arLinear) adj;
+    adj[XX] = arLinear[YY] * arLinear[ZZ] - arLinear[ZY] * arLinear[YZ];
+    adj[XY] = arLinear[ZX] * arLinear[YZ] - arLinear[YX] * arLinear[ZZ]; // negated
+    adj[XZ] = arLinear[YX] * arLinear[ZY] - arLinear[YY] * arLinear[ZX];
+
+    adj[YX] = arLinear[ZY] * arLinear[XZ] - arLinear[XY] * arLinear[ZZ]; // negated
+    adj[YY] = arLinear[XX] * arLinear[ZZ] - arLinear[XZ] * arLinear[ZX];
+    adj[YZ] = arLinear[XY] * arLinear[ZX] - arLinear[XX] * arLinear[ZY]; // negated
+
+    adj[ZX] = arLinear[XY] * arLinear[YZ] - arLinear[XZ] * arLinear[YY];
+    adj[ZY] = arLinear[XZ] * arLinear[YX] - arLinear[XX] * arLinear[YZ]; // negated
+    adj[ZZ] = arLinear[XX] * arLinear[YY] - arLinear[XY] * arLinear[YX];
+
+    float determinant = arLinear[XX] * adj[XX] + arLinear[XY] * adj[XY] +
+      arLinear[XZ] * adj[XZ];
+    const bool result = determinant * determinant > kEpsilon;
+    if (result)
+    {
+      // Transpose to get adjugate matrix.
+      std::swap(adj[XY], adj[YX]);
+      std::swap(adj[XZ], adj[ZX]);
+      std::swap(adj[YZ], adj[ZY]);
+
+      determinant = 1.0f / determinant;
+
+      // Scale by inverse detereminant and write back.
+      auto writep = arLinear;
+      std::for_each(adj, adj + std::extent<decltype(adj)>::value,
+        [determinant, &writep](float v) {
+          *writep = v * determinant;
+          ++writep;
+        });
+    }
+    return result;
+  }
+
   ///@brief Changes the linear transformation part of this matrix to its transpose.
   Matrix&  Transpose()
   {
@@ -367,7 +409,7 @@ struct Matrix
     std::swap(arLinear[YZ], arLinear[ZY]);
     return *this;
   }
-  
+
   ///@brief Calculates the transpose of the linear transformation partof this matrix.
   Matrix  Transposed() const
   {
