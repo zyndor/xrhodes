@@ -1,14 +1,14 @@
+#ifndef  XR_ANIMATION_HPP
+#define XR_ANIMATION_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#if !defined	XR_ANIMATION_HPP
-#define XR_ANIMATION_HPP
-
+#include "XR/debug.hpp"
 #include <vector>
-#include "ResManager.hpp"
 
 namespace XR
 {
@@ -39,8 +39,6 @@ protected:
 template	<class T>
 class	Animation:  protected AnimationCore
 {
-  XR_MANAGED_DECL(Animation<T>)
-
 public:
 	// types
 	typedef T	Type;

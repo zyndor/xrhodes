@@ -1237,12 +1237,12 @@ const char* const  UIBuilder::karpElementName[] =
 const UIBuilder::Configuration  UIBuilder::kDefaultConfig =
 {
   16,
-  Sprite::Manager::Get,
-  0,
+  nullptr,
+  nullptr,
   NewAllocate,
-  0,
+  nullptr,
   NewDeallocate,
-  0
+  nullptr
 };
 
 //==============================================================================
@@ -1342,11 +1342,10 @@ void UIBuilder::SetMaxDepth(int maxDepth)
 }
 
 //==============================================================================
-void UIBuilder::SetGetSpriteCallback(Sprite::GetCallback pGetSpriteCb,
-  void* pCbData)
+void UIBuilder::SetGetSpriteCallback(GetSpriteCallback getSpriteCb, void* cbData)
 {
-  m_cfg.pGetSprite = pGetSpriteCb;
-  m_cfg.pGetSpriteData = pCbData;
+  m_cfg.pGetSprite = getSpriteCb;
+  m_cfg.pGetSpriteData = cbData;
 }
 
 //==============================================================================

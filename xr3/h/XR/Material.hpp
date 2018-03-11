@@ -32,14 +32,6 @@ public:
     ALPHA_DEFAULT
   };
 
-  // TODO: remove and replace with asset dependency in Font and TexturePack.
-  struct Manager
-  {
-    static Material* Get(char const* name, void* data) { return nullptr; }
-  };
-  using GetCallback = Material*(*)(char const* name, void* data);
-  // end remove
-
   enum { kMaxTextureStages = 8 };  // TODO: expose in Gfx, remove from here.
 
   // general
