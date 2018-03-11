@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Animation.hpp"
 #include "XR/Hash.hpp"
 #include <map>
@@ -19,8 +18,6 @@ namespace XR
 template <class T>
 class Actor
 {
-  XR_MANAGED_DECL(Actor<T>)
-
 public:
   // types
   typedef T               Type;

@@ -28,11 +28,12 @@ public:
   typedef bool(*InitCallback)(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     UIContainer* pContainer, const UIBuilder& builder);
   typedef std::string(*ProcessStringCallback)(const char* pName, void* pUser);
+  using GetSpriteCallback = Sprite const*(*)(char const* name, void* userData);
 
   struct  Configuration
   {
     int                     maxDepth;
-    Sprite::GetCallback     pGetSprite;
+    GetSpriteCallback       pGetSprite;
     void*                   pGetSpriteData;
     AllocateCallback        pAllocate;
     void*                   pAllocateData;
@@ -100,7 +101,7 @@ public:
 
   void          SetAllocateCallback(AllocateCallback pAllocateCb, void* pCbData);
   void          SetDeallocateCallback(DeallocateCallback pAllocateCb, void* pCbData);
-  void          SetGetSpriteCallback(Sprite::GetCallback pGetSpriteCb, void* pCbData);
+  void          SetGetSpriteCallback(GetSpriteCallback pGetSpriteCb, void* pCbData);
 
   void*         Allocate(int size);
   void          Deallocate(void* pBuffer);

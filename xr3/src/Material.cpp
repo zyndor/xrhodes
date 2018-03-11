@@ -282,8 +282,7 @@ bool Material::OnLoaded(Buffer buffer)
   for (decltype(numTextures) i = 0; success && i < numTextures; ++i)
   {
     desc.hash = textures[i].hash;
-    auto ptr = Asset::Manager::Load(static_cast<Descriptor<Texture>&>(desc),
-      flags); // TODO: remove Asset::
+    auto ptr = Manager::Load(static_cast<Descriptor<Texture>&>(desc), flags);
     success = ptr.Get() != nullptr;
     if (success)
     {
@@ -304,7 +303,7 @@ bool Material::OnLoaded(Buffer buffer)
 
   if (success)  // get shader
   {
-    auto ptr = Asset::Manager::Load(static_cast<Descriptor<Shader>&>(desc), flags); // TODO: remove Asset::
+    auto ptr = Manager::Load(static_cast<Descriptor<Shader>&>(desc), flags);
     m_shader = ptr;
     success = ptr.Get() != nullptr;
     LTRACEIF(!success, ("%s: failed to retrieve shader %llx.", m_debugPath.c_str(),

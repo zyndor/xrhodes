@@ -12,9 +12,6 @@
 #include "Vertex.hpp"
 #include "XR/fundamentals.hpp"
 
-// TODO: Remove these includes.
-#include "XR/ResManager.hpp"
-
 namespace XR
 {
 
@@ -23,8 +20,6 @@ using SpriteVertexFormat = Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vect
 
 class Sprite: public BasicMesh<SpriteVertexFormat>
 {
-  XR_MANAGED_DECL(Sprite)
-
 public:
   // typedef
   enum  VertexId
