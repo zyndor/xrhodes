@@ -110,6 +110,36 @@ bool HasAlphaHelper(Gfx::TextureFormat format)
 }
 
 //==============================================================================
+void Texture::RegisterSamplerUniform(char const* name, uint32_t textureStage)
+{
+  struct HandleHolder: Linked<HandleHolder>
+  {
+    Gfx::UniformHandle value;
+
+    HandleHolder(char const* name, uint32_t stage)
+    : Linked<HandleHolder>(*this),
+      value{ Gfx::CreateUniform(name, Gfx::UniformType::Int1) }
+    {
+      Gfx::SetUniform(value, 1, &stage);
+
+      static bool initialized = false;
+      if (!initialized)
+      {
+        Gfx::RegisterExitCallback([](void*, void* ) {
+          ForEach([](HandleHolder& hh) {
+            Gfx::Destroy(hh.value);
+            hh.value.Invalidate();
+          });
+          initialized = false;  // Gfx was torn down.
+        }, nullptr);
+        initialized = true;
+      }
+    }
+  };
+  new HandleHolder(name, textureStage); // Let Linked<> take care of it.
+}
+
+//==============================================================================
 bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height, Buffer buffer)
 {
   OnUnload();

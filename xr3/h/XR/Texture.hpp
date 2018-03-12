@@ -21,6 +21,7 @@ class Texture: public Asset
 public:
   XR_ASSET_DECL(Texture);
 
+  // types
   enum Flags : FlagType
   {
     WrapFlag = XR_MASK_ID(FlagType, 8),
@@ -28,6 +29,13 @@ public:
     MipMapsFlag = XR_MASK_ID(FlagType, 10),
     SrgbFlag = XR_MASK_ID(FlagType, 11),
   };
+
+  // static
+  ///@brief Convenience function to register a sampler uniform with the given
+  /// @a name, for the given @a textureStage. This is assumed to not change
+  /// value, and the handle is therefore not returned; it's cleaned up when
+  /// Gfx::Exit()s.
+  static void RegisterSamplerUniform(char const* name, uint32_t textureStage);
 
   // general
   ///@return The number of texels the texture has horizontally at the highest

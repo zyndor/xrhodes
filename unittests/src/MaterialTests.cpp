@@ -120,7 +120,7 @@ namespace XR
 #ifdef ENABLE_ASSET_BUILDING
   TEST_F(MaterialTests, Textures)
   {
-    auto hSamp = Gfx::CreateUniform("xruSampler0", Gfx::UniformType::Int1);
+    Texture::RegisterSamplerUniform("xruSampler0", 0);
 
     FilePath path("assets/xrhodes.mtl");
 
@@ -139,9 +139,6 @@ namespace XR
       ASSERT_EQ(texture->GetHeight(), 128);
       ASSERT_EQ(texture->GetFlags(), Asset::ReadyFlag | testFlags);
     }
-
-    int32_t textureStage = 0;
-    Gfx::SetUniform(hSamp, 1, &textureStage);
 
     using PosUvColor = Vertex::Format<
       Vertex::Pos<Vector3>,
@@ -217,8 +214,6 @@ namespace XR
 
     material.Reset(nullptr);
     Asset::Manager::UnloadUnused();
-
-    Gfx::Destroy(hSamp);
   }
 #endif
 }
