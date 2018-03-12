@@ -25,9 +25,9 @@ public:
 
   Buffer GetIndexBuffer() const;
 
-  void  SetIndexPattern(const uint16_t* pInds, int numInds, int repeat);
-  void  SetIndexPattern(const uint16_t* pInds, int numInds, uint16_t shift,
-    int repeat);
+  void  SetIndexPattern(const uint16_t* pInds, uint32_t numInds, uint32_t numSets);
+  void  SetIndexPattern(const uint16_t* pInds, uint32_t numInds, uint16_t offset,
+    uint32_t numSets);
 
   void CreateIbo(uint32_t flags = Gfx::F_BUFFER_NONE);
 

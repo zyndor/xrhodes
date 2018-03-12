@@ -359,7 +359,8 @@ void Text::Update()
 
   // Allocate buffer, set index pattern
   AllocBuffer(m.numGlyphs * Sprite::kNumVertices);
-  SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, static_cast<int>(m.numGlyphs));
+  SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, Sprite::kNumVertices,
+    m.numGlyphs);
 
   GenerateMesh(m, m_font, m_scale, m_boxSize, m_horizontalAlignment, m_verticalAlignment, GetVertices(),
     &m_stats);

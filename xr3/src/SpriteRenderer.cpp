@@ -60,7 +60,8 @@ void  SpriteRenderer::Init(int numRecords)
   Gfx::Destroy(m_ibo);
 
   IndexMeshCore imc;
-  imc.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numRecords);
+  imc.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, Sprite::kNumVertices,
+    numRecords);
   m_ibo = Gfx::CreateIndexBuffer(imc.GetIndexBuffer(), 0);
 }
 
