@@ -12,6 +12,7 @@
 #include "XR/Gfx.hpp"
 #include "XR/ScopeGuard.hpp"
 #include "XR/VertexFormats.hpp"
+#include "XR/Transforms.hpp"
 
 #include <numeric>
 
@@ -103,6 +104,10 @@ namespace XR
 
       XR::Device::Init();
       XR::Gfx::Init(XR::Device::GetMainWindow());
+      XR::Transforms::Init();
+
+      XR::Transforms::Updater().SetOrthographicProjection(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f).
+        SetViewerTransform(XR::Matrix(XR::Vector3(.0f, .0f, .0f)));
     }
 
     ~MaterialTests()
