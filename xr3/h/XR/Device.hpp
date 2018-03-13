@@ -7,9 +7,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "File.hpp"
-#include "Log.hpp"
 #include "XR/Callback.hpp"
 #include "XR/fundamentals.hpp"
 #include <string>

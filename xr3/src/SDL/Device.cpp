@@ -161,8 +161,6 @@ void Device::Init(char const* title)
 
   // start listening to events
   SDL_AddEventWatch(FilterEvents, 0);
-
-  Log::Init();
 }
 
 //==============================================================================
@@ -193,8 +191,6 @@ void Device::Exit()
 
   delete s_deviceImpl.pConfig;
   s_deviceImpl.pConfig = 0;
-
-  Log::Exit();
 }
 
 //==============================================================================
