@@ -48,7 +48,7 @@ static struct
   bool                  isQuitRequested;
   bool                  isPauseRequested;
   bool                  isYielding;
-  JSON::Entity*         pConfig;
+  JSON::Entity*         config;
   SDL_Window*           mainWindow;
   uint32_t              windowWidth;
   uint32_t              windowHeight;
@@ -138,7 +138,7 @@ void Device::Init(char const* title)
     }
   }
 
-  s_deviceImpl.pConfig = LoadJSON(kConfigName, 64, false);
+  s_deviceImpl.config = LoadJSON(kConfigName, 64, false);
 
   // create window
   if (!title)
@@ -178,22 +178,6 @@ void Device::SetMainWindowTitle(char const* title)
 }
 
 //==============================================================================
-void Device::Exit()
-{
-  XR_ASSERT(Device, !s_deviceImpl.isYielding);
-
-  SDL_DestroyWindow(s_deviceImpl.mainWindow);
-  s_deviceImpl.mainWindow = nullptr;
-
-  SDL_VideoQuit();
-
-  SDL_Quit();
-
-  delete s_deviceImpl.pConfig;
-  s_deviceImpl.pConfig = 0;
-}
-
-//==============================================================================
 bool Device::IsQuitting()
 {
   return s_deviceImpl.isQuitRequested;
@@ -210,14 +194,13 @@ std::string Device::GetConfig(const char* pGroup, const char* pId)
 {
   XR_ASSERT(Device, pId != 0);
   std::string result;
-  if (s_deviceImpl.pConfig != 0)
+  if (s_deviceImpl.config)
   {
     if (pGroup != 0)
     {
-      JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pGroup,
-        JSON::OBJECT));
       XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a group in root.", pGroup));
       if (pEntity != 0)
+      JSON::Entity* pEntity(s_deviceImpl.config->GetChild(group, JSON::OBJECT));
       {
         JSON::Object* pGroupData(pEntity->ToObject());
         pEntity = pGroupData->GetChild(pId, JSON::VALUE);
@@ -230,10 +213,9 @@ std::string Device::GetConfig(const char* pGroup, const char* pId)
     }
     else
     {
-      JSON::Entity* pEntity(s_deviceImpl.pConfig->GetChild(pId,
-        JSON::VALUE));
       XR_ASSERTMSG(Device, pEntity != 0, ("'%s' is not a value in root.", pId));
       if (pEntity != 0)
+      JSON::Entity* pEntity(s_deviceImpl.config->GetChild(name, JSON::VALUE));
       {
         result = GetStringSafe(pEntity->GetValue());
       }
@@ -500,6 +482,20 @@ void  Device::YieldOS(int32_t ms)
 bool Device::IsYielding()
 {
   return s_deviceImpl.isYielding;
+}
+
+//==============================================================================
+void Device::Shutdown()
+{
+  XR_ASSERT(Device, !s_deviceImpl.isYielding);
+
+  SDL_DestroyWindow(s_deviceImpl.mainWindow);
+  s_deviceImpl.mainWindow = nullptr;
+
+  SDL_Quit();
+
+  delete s_deviceImpl.config;
+  s_deviceImpl.config = nullptr;
 }
 
 } // XR

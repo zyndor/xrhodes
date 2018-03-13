@@ -48,12 +48,10 @@ public:
   ///@brief Gets native window representation of the main window; primarily for
   /// context creation in Gfx - obviously, Device and Gfx
   /// implementations still need to match. This window only exists between
-  /// calls to Init() and Exit().
   static void*        GetMainWindow();
+  /// calls to Init() and Shutdown().
 
   static void         SetMainWindowTitle(char const* title);
-
-  static void         Exit();
 
   static bool         IsQuitting();
   static bool         IsPaused();
@@ -67,6 +65,7 @@ public:
 
   static void         YieldOS(int32_t ms);
   static bool         IsYielding();
+  static void Shutdown();
 };
 
 } // XR
