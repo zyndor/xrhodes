@@ -25,9 +25,9 @@ namespace
 static const char* const  kConfigName = "xr.json";
 
 //==============================================================================
-static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* pSystem)
+static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* systemData)
 {
-  const SDL_Event*  pEvent(static_cast<SDL_Event*>(pSystem));
+  const SDL_Event*  pEvent(static_cast<SDL_Event*>(systemData));
   Device::ScreenChangeEvent e =
   {
     false,
@@ -270,7 +270,7 @@ bool Device::RegisterCallback( Event ev, Callback pCallback, void* pUserData )
   for (CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
     i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
   {
-    if (i0->pCallback == pCallback)
+    if (i0->callback == pCallback)
     {
       return false;
     }
@@ -282,7 +282,7 @@ bool Device::RegisterCallback( Event ev, Callback pCallback, void* pUserData )
     for(CallbackObject::List::iterator i0(s_deviceImpl.arPostponedAdd[ev].begin()),
       i1(s_deviceImpl.arPostponedAdd[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCallback == pCallback)
+      if(i0->callback == pCallback)
       {
         return false;
       }
@@ -308,7 +308,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCallback )
     for(CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
       i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCallback == pCallback)
+      if(i0->callback == pCallback)
       {
         s_deviceImpl.arPostponedRemove[ev].push_back(*i0);
         return true;
@@ -319,7 +319,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCallback )
     for(CallbackObject::List::iterator i0(s_deviceImpl.arPostponedAdd[ev].begin()),
       i1(s_deviceImpl.arPostponedAdd[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCallback == pCallback)
+      if(i0->callback == pCallback)
       {
         i0 = s_deviceImpl.arPostponedAdd[ev].erase(i0);
         return true;
@@ -332,7 +332,7 @@ bool Device::UnregisterCallback( Event ev, Callback pCallback )
     for(CallbackObject::List::iterator i0(s_deviceImpl.arCallback[ev].begin()),
       i1(s_deviceImpl.arCallback[ev].end()); i0 != i1; ++i0)
     {
-      if(i0->pCallback == pCallback)
+      if(i0->callback == pCallback)
       {
         s_deviceImpl.arCallback[ev].erase(i0);
         return true;
@@ -493,7 +493,7 @@ void  Device::YieldOS(int32_t ms)
     CallbackObject::List& lRemove(s_deviceImpl.arPostponedRemove[i]);
     while(!lRemove.empty())
     {
-      XR_DEBUG_ONLY(bool result =) UnregisterCallback(e, lRemove.front().pCallback);
+      XR_DEBUG_ONLY(bool result =) UnregisterCallback(e, lRemove.front().callback);
       XR_ASSERT(Device, result);
       lRemove.pop_front();
     }
@@ -502,7 +502,7 @@ void  Device::YieldOS(int32_t ms)
     while(!lAdd.empty())
     {
       CallbackObject& cbo(lAdd.front());
-      XR_DEBUG_ONLY(bool result =) RegisterCallback(e, cbo.pCallback, cbo.pUserData);
+      XR_DEBUG_ONLY(bool result =) RegisterCallback(e, cbo.callback, cbo.userData);
       XR_ASSERT(Device, result);
       lAdd.pop_front();
     }

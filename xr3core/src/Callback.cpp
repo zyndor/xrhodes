@@ -10,24 +10,24 @@ namespace XR
 {
 
 //==============================================================================
-void  CallbackObject::CallList(List& l, void* pSystem)
+void  CallbackObject::CallList(List& l, void* systemData)
 {
   for (List::iterator i0(l.begin()), i1(l.end()); i0 != i1; ++i0)
   {
-    i0->Call(pSystem);
+    i0->Call(systemData);
   }
 }
 
 //==============================================================================
 CallbackObject::CallbackObject()
-: pCallback(0),
-  pUserData(0)
+: callback(nullptr),
+  userData(nullptr)
 {}
 
 //==============================================================================
-CallbackObject::CallbackObject(Callback pCb_, void* pCbData_)
-: pCallback(pCb_),
-  pUserData(pCbData_)
+CallbackObject::CallbackObject(Callback callback_, void* userData_)
+: callback(callback_),
+  userData(userData_)
 {}
 
 //==============================================================================
@@ -35,10 +35,10 @@ CallbackObject::~CallbackObject()
 {}
 
 //==============================================================================
-void  CallbackObject::Set(Callback pCb_, void* pCbData_)
+void  CallbackObject::Set(Callback callback_, void* userData_)
 {
-  pCallback = pCb_;
-  pUserData = pCbData_;
+  callback = callback_;
+  userData = userData_;
 }
 
 } // XR
