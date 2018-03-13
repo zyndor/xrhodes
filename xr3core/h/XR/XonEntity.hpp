@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "fundamentals.hpp"
 #include <map>
 #include <vector>
@@ -28,12 +27,13 @@ public:
     Object,
     Value,
   };
-  
+
   ///@brief Exception type thrown for attempting to access functionality
   /// invalid for a given concrete XON object, i.e. trying to get elements
   /// of a Value or the value of an Object.
   struct Exception : public std::runtime_error
   {
+    // types
     enum class Type
     {
       InvalidType,
@@ -41,9 +41,11 @@ public:
       InvalidKey,
     };
 
-    Exception(Type type, std::string const& message);
-
+    // data
     Type const type;
+
+    // structors
+    Exception(Type type, std::string const& message);
   };
 
   // structors
