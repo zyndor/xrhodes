@@ -364,14 +364,12 @@ void  Device::YieldOS(int32_t ms)
       // translate event
       switch (e.window.event)
       {
-      //case  SDL_WINDOWEVENT_HIDDEN:
-      case  SDL_WINDOWEVENT_LEAVE:
+      case  SDL_WINDOWEVENT_FOCUS_LOST:
         e.type = SDL_APP_WILLENTERBACKGROUND;
         SDL_PushEvent(&e);
         break;
 
-      //case  SDL_WINDOWEVENT_SHOWN:
-      case  SDL_WINDOWEVENT_ENTER:
+      case  SDL_WINDOWEVENT_FOCUS_GAINED:
         e.type = SDL_APP_DIDENTERFOREGROUND;
         SDL_PushEvent(&e);
         break;
