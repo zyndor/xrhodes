@@ -122,13 +122,6 @@ void Device::Init(char const* title)
       WriteValue("framePoolSize", 256000).
       CloseScope();
 
-    writer.WriteObject("Audio").
-      WriteValue("sampleRate", 22050).
-      WriteValue("bufferSize", 4096).
-      WriteValue("mixingChannels", 16).
-      WriteValue("forceMono", false).
-      CloseScope();
-
     writer.WriteObject("Input").
       WriteValue("ignoreControllers", false).
       CloseScope();
