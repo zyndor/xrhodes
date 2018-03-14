@@ -115,7 +115,7 @@ namespace XR
       Asset::Manager::Exit();
 
       Gfx::Exit();
-      Device::Exit();
+      Device::Shutdown();
     }
 
   private:
