@@ -26,13 +26,13 @@ class Device
 
 public:
   // types
-  enum Event
+  enum class Event
   {
-    EV_PAUSE, // system data is nullptr
-    EV_RESUME, // system data is nullptr
-    EV_QUIT, // system data is nullptr
-    EV_SCREEN_CHANGE, // system data is ScreenChangeEvent const*
-    kMaxEvents
+    Pause, // system data is nullptr
+    Resume, // system data is nullptr
+    Quit, // system data is nullptr
+    ScreenChange, // system data is ScreenChangeEvent const*
+    kCount
   };
 
   struct ScreenChangeEvent

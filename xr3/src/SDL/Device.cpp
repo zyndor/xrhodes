@@ -42,9 +42,9 @@ static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* systemDat
 static struct
 {
   // data
-  CallbackObject::List  callbacks[Device::kMaxEvents];
-  CallbackObject::List  postponedAdd[Device::kMaxEvents];
-  CallbackObject::List  postponedRemove[Device::kMaxEvents];
+  CallbackObject::List  callbacks[static_cast<int>(Device::Event::kCount)];
+  CallbackObject::List  postponedAdd[static_cast<int>(Device::Event::kCount)];
+  CallbackObject::List  postponedRemove[static_cast<int>(Device::Event::kCount)];
   bool                  isQuitRequested;
   bool                  isPauseRequested;
   bool                  isYielding;
@@ -52,6 +52,12 @@ static struct
   SDL_Window*           mainWindow;
   uint32_t              windowWidth;
   uint32_t              windowHeight;
+
+  inline
+  CallbackObject::List& GetCallbacks(Device::Event e)
+  {
+    return callbacks[static_cast<int>(e)];
+  }
 } s_deviceImpl;
 
 }
@@ -59,28 +65,30 @@ static struct
 //==============================================================================
 static int  FilterEvents(void* /*userData*/, SDL_Event* pEvent)
 {
+  int handled = 0;
   switch (pEvent->type)
   {
   case  SDL_APP_WILLENTERBACKGROUND:
     s_deviceImpl.isPauseRequested = true;
-    CallbackObject::CallList(s_deviceImpl.callbacks[Device::EV_PAUSE], 0);
-    return 0;
+    CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Pause), nullptr);
     break;
 
   case  SDL_APP_DIDENTERFOREGROUND:
     s_deviceImpl.isPauseRequested = false;
-    CallbackObject::CallList(s_deviceImpl.callbacks[Device::EV_RESUME], 0);
-    return 0;
+    CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Resume), nullptr);
     break;
 
   case  SDL_APP_TERMINATING:
     XR_ASSERT(FilterEvents, s_deviceImpl.isQuitRequested != true);
     s_deviceImpl.isQuitRequested = true;
-    CallbackObject::CallList(s_deviceImpl.callbacks[Device::EV_QUIT], 0);
-    return 0;
+    CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Quit), nullptr);
+    break;
+
+  default:
+    handled = 1;
     break;
   }
-  return 1;
+  return handled;
 }
 
 //==============================================================================
@@ -238,11 +246,12 @@ int Device::GetConfigInt(const char* groupName, const char* varName, int default
 //==============================================================================
 bool Device::RegisterCallback( Event ev, Callback callback, void* userData )
 {
-  XR_ASSERT(Device, ev < kMaxEvents);
+  XR_ASSERT(Device, ev != Event::kCount);
   XR_ASSERT(Device, callback != nullptr);
   // check if already added
-  for (CallbackObject::List::iterator i0(s_deviceImpl.callbacks[ev].begin()),
-    i1(s_deviceImpl.callbacks[ev].end()); i0 != i1; ++i0)
+  const int iEv = static_cast<int>(ev);
+  for (CallbackObject::List::iterator i0(s_deviceImpl.callbacks[iEv].begin()),
+    i1(s_deviceImpl.callbacks[iEv].end()); i0 != i1; ++i0)
   {
     if (i0->callback == callback)
     {
@@ -253,8 +262,8 @@ bool Device::RegisterCallback( Event ev, Callback callback, void* userData )
   if(s_deviceImpl.isYielding)
   {
     // check for a postponed add as well
-    for(CallbackObject::List::iterator i0(s_deviceImpl.postponedAdd[ev].begin()),
-      i1(s_deviceImpl.postponedAdd[ev].end()); i0 != i1; ++i0)
+    for(CallbackObject::List::iterator i0(s_deviceImpl.postponedAdd[iEv].begin()),
+      i1(s_deviceImpl.postponedAdd[iEv].end()); i0 != i1; ++i0)
     {
       if(i0->callback == callback)
       {
@@ -262,11 +271,11 @@ bool Device::RegisterCallback( Event ev, Callback callback, void* userData )
       }
     }
 
-    s_deviceImpl.postponedAdd[ev].push_back(CallbackObject(callback, userData));
+    s_deviceImpl.postponedAdd[iEv].push_back(CallbackObject(callback, userData));
   }
   else
   {
-    s_deviceImpl.callbacks[ev].push_back(CallbackObject(callback, userData));
+    s_deviceImpl.callbacks[iEv].push_back(CallbackObject(callback, userData));
   }
   return true;
 }
@@ -274,28 +283,29 @@ bool Device::RegisterCallback( Event ev, Callback callback, void* userData )
 //==============================================================================
 bool Device::UnregisterCallback( Event ev, Callback callback )
 {
-  XR_ASSERT(Device, ev < kMaxEvents);
+  XR_ASSERT(Device, ev != Event::kCount);
   XR_ASSERT(Device, callback != nullptr);
+  const int iEv = static_cast<int>(ev);
   if(s_deviceImpl.isYielding)
   {
     // if got it, add to remove list
-    for(CallbackObject::List::iterator i0(s_deviceImpl.callbacks[ev].begin()),
-      i1(s_deviceImpl.callbacks[ev].end()); i0 != i1; ++i0)
+    for(CallbackObject::List::iterator i0(s_deviceImpl.callbacks[iEv].begin()),
+      i1(s_deviceImpl.callbacks[iEv].end()); i0 != i1; ++i0)
     {
       if(i0->callback == callback)
       {
-        s_deviceImpl.postponedRemove[ev].push_back(*i0);
+        s_deviceImpl.postponedRemove[iEv].push_back(*i0);
         return true;
       }
     }
 
     // if on postponed add list, remove it
-    for(CallbackObject::List::iterator i0(s_deviceImpl.postponedAdd[ev].begin()),
-      i1(s_deviceImpl.postponedAdd[ev].end()); i0 != i1; ++i0)
+    for(CallbackObject::List::iterator i0(s_deviceImpl.postponedAdd[iEv].begin()),
+      i1(s_deviceImpl.postponedAdd[iEv].end()); i0 != i1; ++i0)
     {
       if(i0->callback == callback)
       {
-        i0 = s_deviceImpl.postponedAdd[ev].erase(i0);
+        i0 = s_deviceImpl.postponedAdd[iEv].erase(i0);
         return true;
       }
     }
@@ -303,12 +313,12 @@ bool Device::UnregisterCallback( Event ev, Callback callback )
   else
   {
     // if got it, remove
-    for(CallbackObject::List::iterator i0(s_deviceImpl.callbacks[ev].begin()),
-      i1(s_deviceImpl.callbacks[ev].end()); i0 != i1; ++i0)
+    for(CallbackObject::List::iterator i0(s_deviceImpl.callbacks[iEv].begin()),
+      i1(s_deviceImpl.callbacks[iEv].end()); i0 != i1; ++i0)
     {
       if(i0->callback == callback)
       {
-        s_deviceImpl.callbacks[ev].erase(i0);
+        s_deviceImpl.callbacks[iEv].erase(i0);
         return true;
       }
     }
@@ -330,7 +340,7 @@ void  Device::YieldOS(int32_t ms)
       if (!s_deviceImpl.isQuitRequested)
       {
         s_deviceImpl.isQuitRequested = true;
-        CallbackObject::CallList(s_deviceImpl.callbacks[Device::EV_QUIT], 0);
+        CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Quit), nullptr);
       }
       break;
 
@@ -354,7 +364,7 @@ void  Device::YieldOS(int32_t ms)
         break;
 
       case  SDL_WINDOWEVENT_RESIZED:
-        ScreenChangeEventHandler(s_deviceImpl.callbacks[EV_SCREEN_CHANGE], &e);
+        ScreenChangeEventHandler(s_deviceImpl.GetCallbacks(Event::ScreenChange), &e);
         break;
       }
       break;
@@ -459,7 +469,7 @@ void  Device::YieldOS(int32_t ms)
   }
   s_deviceImpl.isYielding = false;
 
-  for(int i = 0; i < kMaxEvents; ++i)
+  for(int i = 0; i < static_cast<int>(Event::kCount); ++i)
   {
     Event e(static_cast<Event>(i));
     CallbackObject::List& lRemove(s_deviceImpl.postponedRemove[i]);
