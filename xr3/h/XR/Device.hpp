@@ -24,14 +24,10 @@ public:
   // types
   enum Event
   {
-    EV_PAUSE, // system data is 0
-    EV_RESUME, // system data is 0
-    EV_QUIT, // system data is 0
-    EV_VOL_UP, // system data is 0
-    EV_VOL_DOWN, // system data is 0
-    EV_NETWORK_ON, // system data is 0
-    EV_NETWORK_OFF, // system data is 0
-    EV_SCREEN_CHANGE, // system data is ScreenChangeEvent
+    EV_PAUSE, // system data is nullptr
+    EV_RESUME, // system data is nullptr
+    EV_QUIT, // system data is nullptr
+    EV_SCREEN_CHANGE, // system data is ScreenChangeEvent const*
     kMaxEvents
   };
 
