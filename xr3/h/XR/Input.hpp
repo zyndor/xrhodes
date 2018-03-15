@@ -37,7 +37,7 @@ public:
   struct  KeyEvent
   {
     KeyCode key;
-    bool    state;
+    bool    isPressed;
   };
 
   struct  MouseActionEvent
