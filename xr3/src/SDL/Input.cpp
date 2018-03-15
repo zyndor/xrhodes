@@ -22,8 +22,8 @@ void Input::Init()
 
   memset(InputImpl::s_pInstance->arKeyState, 0x00,
     sizeof(InputImpl::s_pInstance->arKeyState));
-  memset(InputImpl::s_pInstance->arMouseButtonState, 0x00,
-    sizeof(InputImpl::s_pInstance->arMouseButtonState));
+  memset(InputImpl::s_pInstance->mouseButtonStates, 0x00,
+    sizeof(InputImpl::s_pInstance->mouseButtonStates));
 }
 
 //==============================================================================
@@ -48,12 +48,15 @@ void Input::Update()
   }
 
   int32_t x, y;
-  uint32_t  mbState(SDL_GetMouseState(&x, &y));
+  uint32_t  mbState = SDL_GetMouseState(&x, &y);
+  InputImpl::s_pInstance->mousePosition = SVector2(x, y);
+
+  auto mbStates = InputImpl::s_pInstance->mouseButtonStates;
   for (int i = 0; i < kMouseButtonCount; ++i)
   {
-    uint32_t  state(InputImpl::s_pInstance->arMouseButtonState[i] >> 1);
-    InputImpl::s_pInstance->arMouseButtonState[i] = state |
-      (((mbState & SDL_BUTTON(karMouseButtonNative[i])) != 0) << 1);
+    int b = SDL_BUTTON(kMouseButtonNative[i]);
+    uint8_t currentState = (((mbState & b) != 0) << 1);
+    mbStates[i] = (mbStates[i] >> 1) | currentState;
   }
 }
 
@@ -65,18 +68,16 @@ uint8_t Input::GetKeyState(KeyCode k)
 }
 
 //==============================================================================
-SVector2 Input::GetMousePos()
+SVector2 Input::GetMousePosition()
 {
-  int x, y;
-  SDL_GetMouseState(&x, &y);
-  return SVector2(x, y);
+  return InputImpl::s_pInstance->mousePosition;
 }
 
 //==============================================================================
 uint8_t Input::GetMouseState(MouseButton mb)
 {
   XR_ASSERT(Input, mb < kMouseButtonCount);
-  return InputImpl::s_pInstance->arMouseButtonState[mb];
+  return InputImpl::s_pInstance->mouseButtonStates[mb];
 }
 
 //==============================================================================

@@ -11,7 +11,7 @@
 namespace XR {
 
 //==============================================================================
-const int karMouseButtonNative[] =
+const int kMouseButtonNative[] =
 {
   SDL_BUTTON_LEFT,
   SDL_BUTTON_RIGHT,
@@ -23,9 +23,9 @@ const int karMouseButtonNative[] =
 //==============================================================================
 MouseButton TranslateMouseButtonNative(int mb)
 {
-  const int*  iFind(std::find(karMouseButtonNative, karMouseButtonNative +
+  const int*  iFind(std::find(kMouseButtonNative, kMouseButtonNative +
     kMouseButtonCount, mb));
-  return static_cast<MouseButton>(iFind - karMouseButtonNative);
+  return static_cast<MouseButton>(iFind - kMouseButtonNative);
 }
 
 } // XR

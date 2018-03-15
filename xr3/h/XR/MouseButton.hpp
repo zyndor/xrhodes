@@ -18,13 +18,13 @@ enum  MouseButton
   MB_MIDDLE,
   MB_EXTRA1,
   MB_EXTRA2,
-  
+
   kMouseButtonCount,
   MB_UNKNOWN = kMouseButtonCount
 };
 
 //==============================================================================
-extern const int karMouseButtonNative[kMouseButtonCount];
+extern const int kMouseButtonNative[kMouseButtonCount];
 
 //==============================================================================
 MouseButton TranslateMouseButtonNative(int mb);

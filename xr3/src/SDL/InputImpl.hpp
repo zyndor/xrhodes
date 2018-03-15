@@ -19,9 +19,9 @@ struct  InputImpl
   // data
   uint8_t               arKeyState[kKeyCount];
   
-  SVector2              mousePosition;
-  uint8_t               arMouseButtonState[5];
-  
+  SVector2  mousePosition;
+  uint8_t mouseButtonStates[5];
+
   CallbackObject::List  arCallback[static_cast<int>(Input::Event::kCount)];
 
   // general

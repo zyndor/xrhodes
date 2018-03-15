@@ -84,7 +84,7 @@ public:
   // new
   static uint8_t  GetKeyState(KeyCode k);
 
-  static SVector2 GetMousePos();
+  static SVector2 GetMousePosition();
   static uint8_t  GetMouseState(MouseButton mb);
 
   static bool     RegisterCallback(Event ev, Callback pCb, void* pData);
