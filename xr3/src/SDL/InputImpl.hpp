@@ -14,21 +14,21 @@ namespace XR {
 struct  InputImpl
 {
   // static
-  static InputImpl* s_pInstance;
+  static InputImpl* s_instance;
 
   // data
-  uint8_t               arKeyState[kKeyCount];
-  
-  SVector2  mousePosition;
-  uint8_t mouseButtonStates[5];
+  ButtonState::Type keyStates[kKeyCount];
 
-  CallbackObject::List  arCallback[static_cast<int>(Input::Event::kCount)];
+  SVector2  mousePosition;
+  ButtonState::Type mouseButtonStates[5];
+
+  CallbackObject::List  callbacks[static_cast<int>(Input::Event::kCount)];
 
   // general
   inline
   CallbackObject::List& GetCallbacks(Input::Event ev)
   {
-    return arCallback[static_cast<int>(ev)];
+    return callbacks[static_cast<int>(ev)];
   }
 };
 

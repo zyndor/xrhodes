@@ -372,21 +372,21 @@ void  Device::YieldOS(int32_t ms)
     case  SDL_KEYDOWN:
     case  SDL_KEYUP:
     {
-      if (InputImpl::s_pInstance)
+      if (InputImpl::s_instance)
       {
         Input::KeyEvent eKey =
         {
           TranslateKeyCodeNative(e.key.keysym.scancode),
           e.key.state == SDL_PRESSED
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::Key), &eKey);
+        CallbackObject::CallList(InputImpl::s_instance->GetCallbacks(Input::Event::Key), &eKey);
       }
       break;
     }
 
     case  SDL_MOUSEMOTION:
     {
-      if (InputImpl::s_pInstance)
+      if (InputImpl::s_instance)
       {
         Input::MouseMotionEvent  eMouse =
         {
@@ -394,7 +394,7 @@ void  Device::YieldOS(int32_t ms)
           static_cast<int16_t>(e.motion.x),
           static_cast<int16_t>(e.motion.y)
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::MouseMotion), &eMouse);
+        CallbackObject::CallList(InputImpl::s_instance->GetCallbacks(Input::Event::MouseMotion), &eMouse);
       }
       break;
     }
@@ -403,7 +403,7 @@ void  Device::YieldOS(int32_t ms)
     case  SDL_MOUSEBUTTONUP:
     case  SDL_MOUSEWHEEL:
     {
-      if (InputImpl::s_pInstance)
+      if (InputImpl::s_instance)
       {
         Input::MouseActionEvent  eMouse =
         {
@@ -413,7 +413,7 @@ void  Device::YieldOS(int32_t ms)
           static_cast<int16_t>(e.button.y),
           e.button.state == SDL_PRESSED
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::MouseAction), &eMouse);
+        CallbackObject::CallList(InputImpl::s_instance->GetCallbacks(Input::Event::MouseAction), &eMouse);
       }
       break;
     }
@@ -421,7 +421,7 @@ void  Device::YieldOS(int32_t ms)
     case  SDL_FINGERUP:
     case  SDL_FINGERDOWN:
     {
-      if (InputImpl::s_pInstance)
+      if (InputImpl::s_instance)
       {
         int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
         int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
@@ -435,14 +435,14 @@ void  Device::YieldOS(int32_t ms)
           y,
           e.tfinger.type == SDL_FINGERDOWN
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::TouchAction), &eTouch);
+        CallbackObject::CallList(InputImpl::s_instance->GetCallbacks(Input::Event::TouchAction), &eTouch);
       }
       break;
     }
 
     case  SDL_FINGERMOTION:
     {
-      if (InputImpl::s_pInstance)
+      if (InputImpl::s_instance)
       {
         int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
         int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
@@ -455,7 +455,7 @@ void  Device::YieldOS(int32_t ms)
           x,
           y
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::TouchMotion), &eTouch);
+        CallbackObject::CallList(InputImpl::s_instance->GetCallbacks(Input::Event::TouchMotion), &eTouch);
         break;
       }
     }

@@ -18,6 +18,13 @@ namespace XR
 {
 
 //==============================================================================
+///@brief Provides an abstraction for input handling with two approaches:
+/// 1, events based. Register you callbacks and get notifications of key /
+/// mouse / touch state changes. For buttons this only means positive / negative
+/// edge information.
+/// 2, polling. You call Update() and get button states and pointer positions.
+/// For buttons this means their current state, i.e. whether it was up, just
+/// pressed, held, or just released.
 class Input
 {
   XR_NONOBJECT_DECL(Input)
@@ -76,19 +83,37 @@ public:
   // static
   static const int kMaxPointer = 20;
 
+  ///@brief Initializes the input subsystem. Requires Device::Init() to
+  /// have been called for correct functioning.
   static void     Init();
-  static void     Exit();
 
+  ///@brief Polls the system for input changes to return from the Get*
+  /// functions.
+  ///@note Device::YieldOS() will need to be called beforehand.
   static void     Update();
 
-  // new
+  ///@brief Gets the state of the given key @a k.
   static ButtonState::Type  GetKeyState(KeyCode k);
 
+  ///@return The current position of the main mouse.
   static SVector2 GetMousePosition();
+
+  ///@return The current state of the main mouse's given button @a mb.
   static ButtonState::Type  GetMouseState(MouseButton mb);
 
-  static bool     RegisterCallback(Event ev, Callback pCb, void* pData);
-  static bool     UnregisterCallback(Event ev, Callback pCb);
+  ///@brief Registers a callback for the given input event @a ev, with the
+  /// given @a userData.
+  ///@return The success of the operation -- will fail if the @a callback has
+  /// already been registered.
+  static bool RegisterCallback(Event ev, Callback callback, void* userData);
+
+  ///@brief Removes a registration of the given @a callback for the given
+  /// event @a ev.
+  ///@return The success of the operation. Will fail if the @a callback has
+  /// not been registered.
+  static bool UnregisterCallback(Event ev, Callback callback);
+
+  static void Exit();
 };
 
 } // XR
