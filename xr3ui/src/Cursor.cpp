@@ -89,13 +89,13 @@ void  Cursor::SetEnabled(bool state)
   m_isEnabled = state;
   if(state)
   {
-    Input::RegisterCallback(Input::EV_MOUSE_MOTION, OnMotion, this);
-    Input::RegisterCallback(Input::EV_MOUSE_ACTION, OnAction, this);
+    Input::RegisterCallback(Input::Event::MouseMotion, OnMotion, this);
+    Input::RegisterCallback(Input::Event::MouseAction, OnAction, this);
   }
   else
   {
-    Input::UnregisterCallback(Input::EV_MOUSE_MOTION, OnMotion);
-    Input::UnregisterCallback(Input::EV_MOUSE_ACTION, OnAction);
+    Input::UnregisterCallback(Input::Event::MouseMotion, OnMotion);
+    Input::UnregisterCallback(Input::Event::MouseAction, OnAction);
     m_isPressed = false;
   }
 }

@@ -80,34 +80,34 @@ uint8_t Input::GetMouseState(MouseButton mb)
 }
 
 //==============================================================================
-bool Input::RegisterCallback( Event ev, Callback pCb, void* pData )
+bool Input::RegisterCallback(Event ev, Callback callback, void* userData)
 {
-  XR_ASSERT(Input, ev < kMaxEvents);
-  XR_ASSERT(Input, pCb != 0);
-  for (CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
-    i1(InputImpl::s_pInstance->arCallback[ev].end()); i0 != i1; ++i0)
+  XR_ASSERT(Input, ev != Event::kCount);
+  XR_ASSERT(Input, callback != nullptr);
+  auto& cbs = InputImpl::s_pInstance->GetCallbacks(ev);
+  for (auto& i: cbs)
   {
-    if (i0->callback == pCb)
+    if (i.callback == callback)
     {
       return false;
     }
   }
 
-  InputImpl::s_pInstance->arCallback[ev].push_back(CallbackObject(pCb, pData));
+  cbs.push_back(CallbackObject(callback, userData));
   return true;
 }
 
 //==============================================================================
-bool Input::UnregisterCallback( Event ev, Callback pCb )
+bool Input::UnregisterCallback(Event ev, Callback callback)
 {
-  XR_ASSERT(Input, ev < kMaxEvents);
-  XR_ASSERT(Input, pCb != 0);
-  for (CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
-    i1(InputImpl::s_pInstance->arCallback[ev].end()); i0 != i1; ++i0)
+  XR_ASSERT(Input, ev != Event::kCount);
+  XR_ASSERT(Input, callback != nullptr);
+  auto& cbs = InputImpl::s_pInstance->GetCallbacks(ev);
+  for (auto i0 = cbs.begin(), i1 = cbs.end(); i0 != i1; ++i0)
   {
-    if (i0->callback == pCb)
+    if (i0->callback == callback)
     {
-      InputImpl::s_pInstance->arCallback[ev].erase(i0);
+      cbs.erase(i0);
       return true;
     }
   }

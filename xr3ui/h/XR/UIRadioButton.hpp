@@ -31,7 +31,7 @@ public:
   // structors
   UIRadioButton();
   ~UIRadioButton();
-  
+
   // general
   uint32_t      GetGroupHash() const;
 
@@ -41,7 +41,7 @@ public:
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
 
   virtual void  OnSelectedStateChanged();
-  
+
 protected:
   // types
   typedef std::list<UIRadioButton*> List;

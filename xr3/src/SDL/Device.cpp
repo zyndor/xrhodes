@@ -379,7 +379,7 @@ void  Device::YieldOS(int32_t ms)
           TranslateKeyCodeNative(e.key.keysym.scancode),
           e.key.state == SDL_PRESSED
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_KEY], &eKey);
+        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::Key), &eKey);
       }
       break;
     }
@@ -394,7 +394,7 @@ void  Device::YieldOS(int32_t ms)
           static_cast<int16_t>(e.motion.x),
           static_cast<int16_t>(e.motion.y)
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_MOTION], &eMouse);
+        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::MouseMotion), &eMouse);
       }
       break;
     }
@@ -413,7 +413,7 @@ void  Device::YieldOS(int32_t ms)
           static_cast<int16_t>(e.button.y),
           e.button.state == SDL_PRESSED
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_MOUSE_ACTION], &eMouse);
+        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::MouseAction), &eMouse);
       }
       break;
     }
@@ -435,7 +435,7 @@ void  Device::YieldOS(int32_t ms)
           y,
           e.tfinger.type == SDL_FINGERDOWN
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_ACTION], &eTouch);
+        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::TouchAction), &eTouch);
       }
       break;
     }
@@ -455,7 +455,7 @@ void  Device::YieldOS(int32_t ms)
           x,
           y
         };
-        CallbackObject::CallList(InputImpl::s_pInstance->arCallback[Input::EV_TOUCH_MOTION], &eTouch);
+        CallbackObject::CallList(InputImpl::s_pInstance->GetCallbacks(Input::Event::TouchMotion), &eTouch);
         break;
       }
     }
