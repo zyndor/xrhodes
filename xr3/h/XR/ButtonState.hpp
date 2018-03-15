@@ -7,18 +7,24 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
+#include <cstdint>
 
 namespace XR
 {
 
 //==============================================================================
-enum  ButtonState
+namespace ButtonState
 {
-  BUTTON_UP,          // 0x0
-  BUTTON_WAS_PRESSED, // 0x1
-  BUTTON_IS_PRESSED,  // 0x2
-  BUTTON_DOWN,        // 0x3
+using Type = uint8_t;
+
+enum Value: Type
+{
+  Up,          // 0x0
+  WasPressed, // 0x1
+  IsPressed,  // 0x2
+  Down,        // 0x3
 };
+}
 
 } // XR
 

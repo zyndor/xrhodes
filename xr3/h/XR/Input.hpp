@@ -26,11 +26,11 @@ public:
   // types
   enum class Event
   {
-    Key,
-    MouseAction,
-    MouseMotion,
-    TouchAction,
-    TouchMotion,
+    Key,  // Key pressed or released
+    MouseAction,  // Mouse button pressed or released
+    MouseMotion,  // Mouse moved
+    TouchAction,  // Touch pressed or released
+    TouchMotion,  // Touch motion between press and release
     kCount
   };
 
@@ -82,10 +82,10 @@ public:
   static void     Update();
 
   // new
-  static uint8_t  GetKeyState(KeyCode k);
+  static ButtonState::Type  GetKeyState(KeyCode k);
 
   static SVector2 GetMousePosition();
-  static uint8_t  GetMouseState(MouseButton mb);
+  static ButtonState::Type  GetMouseState(MouseButton mb);
 
   static bool     RegisterCallback(Event ev, Callback pCb, void* pData);
   static bool     UnregisterCallback(Event ev, Callback pCb);
