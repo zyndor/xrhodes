@@ -40,17 +40,6 @@ public:
     bool    state;
   };
 
-  struct  PointerEvent
-  {
-    int       id;
-    int16_t   x0;
-    int16_t   y0;
-    int16_t   x;
-    int16_t   y;
-    bool      isPressed;
-    uint64_t  ustPressed;
-  };
-
   struct  MouseActionEvent
   {
     uint32_t  device;
