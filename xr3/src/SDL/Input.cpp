@@ -44,9 +44,9 @@ void Input::Update()
   InputImpl::s_instance->mousePosition = SVector2(x, y);
 
   auto mbStates = InputImpl::s_instance->mouseButtonStates;
-  for (int i = 0; i < kMouseButtonCount; ++i)
+  for (int i = 0; i < MouseButton::kCount; ++i)
   {
-    int b = SDL_BUTTON(kMouseButtonNative[i]);
+    int b = SDL_BUTTON(MouseButton::kNative[i]);
     ButtonState::Type currentState = (((mbState & b) != 0) << 1);
     mbStates[i] = (mbStates[i] >> 1) | currentState;
   }
@@ -66,9 +66,9 @@ SVector2 Input::GetMousePosition()
 }
 
 //==============================================================================
-ButtonState::Type Input::GetMouseState(MouseButton mb)
+ButtonState::Type Input::GetMouseButtonState(MouseButton::Type mb)
 {
-  XR_ASSERT(Input, mb < kMouseButtonCount);
+  XR_ASSERT(Input, mb < MouseButton::kCount);
   return InputImpl::s_instance->mouseButtonStates[mb];
 }
 

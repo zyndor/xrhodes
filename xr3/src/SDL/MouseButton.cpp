@@ -8,10 +8,12 @@
 #include "SDL_mouse.h"
 #include "XR/MouseButton.hpp"
 
-namespace XR {
-
+namespace XR
+{
+namespace MouseButton
+{
 //==============================================================================
-const int kMouseButtonNative[] =
+const int kNative[] =
 {
   SDL_BUTTON_LEFT,
   SDL_BUTTON_RIGHT,
@@ -21,11 +23,11 @@ const int kMouseButtonNative[] =
 };
 
 //==============================================================================
-MouseButton TranslateMouseButtonNative(int mb)
+Type TranslateNative(int mb)
 {
-  const int*  iFind(std::find(kMouseButtonNative, kMouseButtonNative +
-    kMouseButtonCount, mb));
-  return static_cast<MouseButton>(iFind - kMouseButtonNative);
+  auto iFind = std::find(kNative, kNative + kCount, mb);
+  return static_cast<Type>(iFind - kNative);
 }
 
+} // MouseButton
 } // XR

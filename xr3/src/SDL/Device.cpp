@@ -408,7 +408,7 @@ void  Device::YieldOS(int32_t ms)
         Input::MouseActionEvent  eMouse =
         {
           e.button.which,
-          TranslateMouseButtonNative(e.button.button),
+          MouseButton::TranslateNative(e.button.button),
           static_cast<int16_t>(e.button.x),
           static_cast<int16_t>(e.button.y),
           e.button.state == SDL_PRESSED

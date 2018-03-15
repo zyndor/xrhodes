@@ -7,27 +7,32 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
+#include <cstdint>
 
 namespace XR {
 
 //==============================================================================
-enum  MouseButton
+namespace MouseButton
 {
-  MB_LEFT,
-  MB_RIGHT,
-  MB_MIDDLE,
-  MB_EXTRA1,
-  MB_EXTRA2,
+enum  Type
+{
+  Left,
+  Right,
+  Middle,
+  Extra1,
+  Extra2,
 
-  kMouseButtonCount,
-  MB_UNKNOWN = kMouseButtonCount
+  kCount,
+  Unknown = kCount
 };
 
 //==============================================================================
-extern const int kMouseButtonNative[kMouseButtonCount];
+extern const int kNative[kCount];
 
 //==============================================================================
-MouseButton TranslateMouseButtonNative(int mb);
+Type TranslateNative(int mb);
+
+} // MouseButton
 
 } // XR
 

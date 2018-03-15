@@ -50,9 +50,9 @@ public:
   struct  MouseActionEvent
   {
     uint32_t  device;
-    int       button;
     int16_t   x;
     int16_t   y;
+    MouseButton::Type button;
     bool      isPressed;
   };
 
@@ -99,7 +99,7 @@ public:
   static SVector2 GetMousePosition();
 
   ///@return The current state of the main mouse's given button @a mb.
-  static ButtonState::Type  GetMouseState(MouseButton mb);
+  static ButtonState::Type  GetMouseButtonState(MouseButton::Type mb);
 
   ///@brief Registers a callback for the given input event @a ev, with the
   /// given @a userData.
