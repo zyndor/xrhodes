@@ -29,26 +29,14 @@ void Input::Init()
 //==============================================================================
 void Input::Update()
 {
-  int numKeys;
-  const uint8_t*  sdlKeys = SDL_GetKeyboardState(&numKeys);
-  auto keyStates = InputImpl::s_instance->keyStates;
-  for (int i = 0; i < kKeyCount; ++i)
+  for (auto& k: InputImpl::s_instance->keyStates)
   {
-    int k = karKeyCodeNative[i];
-    ButtonState::Type currentState = (sdlKeys[k] ? 1 : 0) << 1;
-    keyStates[i] = (keyStates[i] >> 1) | currentState;
+    ButtonState::Poll(k);
   }
 
-  int32_t x, y;
-  uint32_t  mbState = SDL_GetMouseState(&x, &y);
-  InputImpl::s_instance->mousePosition = SVector2(x, y);
-
-  auto mbStates = InputImpl::s_instance->mouseButtonStates;
-  for (int i = 0; i < MouseButton::kCount; ++i)
+  for (auto& m: InputImpl::s_instance->mouseButtonStates)
   {
-    int b = SDL_BUTTON(MouseButton::kNative[i]);
-    ButtonState::Type currentState = (((mbState & b) != 0) << 1);
-    mbStates[i] = (mbStates[i] >> 1) | currentState;
+    ButtonState::Poll(m);
   }
 }
 

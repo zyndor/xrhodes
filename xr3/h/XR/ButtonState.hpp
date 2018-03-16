@@ -22,8 +22,25 @@ enum Value: Type
   Up,          // 0x0
   WasPressed, // 0x1
   IsPressed,  // 0x2
-  Down,        // 0x3
+  Down,        // 0x3,
+  kAbsoluteStateBit  // 0x4
 };
+
+///@brief Updates the button state given its binary state.
+inline
+void SetAbsolute(bool isPressed, Type& button)
+{
+  button = isPressed ? (button | kAbsoluteStateBit) : (button & ~kAbsoluteStateBit);
+}
+
+///@brief Performs per-frame update of a button state.
+///@note This reserves the 3rd bit for storing the binary up / down state.
+inline
+void Poll(Type& button)
+{
+  button = (button & ~IsPressed) | (button >> 1);
+}
+
 }
 
 } // XR

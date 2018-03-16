@@ -50,17 +50,17 @@ public:
   struct  MouseActionEvent
   {
     uint32_t  device;
-    int16_t   x;
-    int16_t   y;
     MouseButton::Type button;
+    int32_t   x;
+    int32_t   y;
     bool      isPressed;
   };
 
   struct  MouseMotionEvent
   {
     uint32_t  device;
-    int16_t   x;
-    int16_t   y;
+    int32_t   x;
+    int32_t   y;
   };
 
   struct  TouchActionEvent

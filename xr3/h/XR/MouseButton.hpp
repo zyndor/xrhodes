@@ -22,8 +22,18 @@ enum  Type
   Extra1,
   Extra2,
 
+  // Mouse wheel states. Note that the SDL implementation does not send button
+  // up notifications of these. Either poll for them, or assume that they are
+  // momentary (i.e. followed by a button up event).
+  WheelUp,
+  WheelDown,
+  WheelLeft,
+  WheelRight,
+
   kCount,
-  Unknown = kCount
+  Unknown = kCount,
+
+  kFirstWheel = WheelUp // The first value mapped to mouse wheel
 };
 
 //==============================================================================
