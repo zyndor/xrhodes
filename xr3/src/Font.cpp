@@ -24,7 +24,7 @@
 #include <list>
 #include <regex>
 
-#define ENABLE_GLYPH_DEBUG
+//#define ENABLE_GLYPH_DEBUG
 
 #ifdef ENABLE_GLYPH_DEBUG
 #include "XR/Image.hpp"
@@ -450,24 +450,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           stbtt_MakeGlyphBitmap(&stbFont, glyphBitmapPadded + bufferOffset,
             w, h, glyphSizePadded, pixelScale, pixelScale, iGlyph);
 
-#ifdef ENABLE_GLYPH_DEBUG
-          //LTRACE(("0x%x (%c) Bitmap @ %d x %d (+ %d, %d)", i0, i0, w, h, xPixelOffs, yPixelOffs));
-          //{
-          //  auto pp = glyphBitmapPadded + bufferOffset;
-          //  auto rowDiff = glyphSizePadded - w;
-          //  for(int yy = 0; yy < h; ++yy)
-          //  {
-          //    for(int xx = 0; xx < w; ++xx)
-          //    {
-          //      printf("%x", *pp / 16);
-          //      ++pp;
-          //    }
-          //    printf("\n");
-          //    pp += rowDiff;
-          //  }
-          //}
-#endif
-
           // Calculate SDF metrics & generate SDF around glyph.
           auto sx0 = std::max(xPixelOffs - sdfSize, 0);
           auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
@@ -478,22 +460,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           bufferOffset = sx0 + sy0 * glyphSizePadded;
           sdf.Generate(glyphBitmapPadded + bufferOffset, glyphSizePadded, sw, sh);
           sdf.ConvertToBitmap(sw, sh, glyphBitmap.data());
-
-#ifdef ENABLE_GLYPH_DEBUG
-          //LTRACE(("0x%x (%c) SDF Bitmap @ %d x %d", i0, i0, sw, sh));
-          //{
-          //  auto pp = glyphBitmap.data();
-          //  for (int yy = 0; yy < sh; ++yy)
-          //  {
-          //    for (int xx = 0; xx < sw; ++xx)
-          //    {
-          //      printf("%x", *pp / 16);
-          //      ++pp;
-          //    }
-          //    printf("\n");
-          //  }
-          //}
-#endif
 
           glyph.fieldWidth = sw;
           glyph.fieldHeight = sh;
