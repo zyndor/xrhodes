@@ -14,7 +14,16 @@ namespace XR
 
 //==============================================================================
 struct Buffer
-{ 
+{
+  // static
+  ///@brief Convenience method to create a buffer from an array.
+  template <typename T, size_t n>
+  inline
+  static Buffer FromArray(T(&ar)[n])
+  {
+    return { sizeof(ar), reinterpret_cast<const uint8_t*>(ar) };
+  }
+
   // data
   size_t size;
   uint8_t const* data;
