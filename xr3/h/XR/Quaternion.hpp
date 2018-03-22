@@ -298,7 +298,22 @@ public:
     Quaternion temp(*this);
     return temp *= rhs;
   }
-  
+
+  Quaternion& operator*=(float s)
+  {
+    w *= s;
+    i *= s;
+    j *= s;
+    k *= s;
+    return *this;
+  }
+
+  Quaternion operator*(float s) const
+  {
+    Quaternion temp(*this);
+    return temp *= s;
+  }
+
   operator Matrix() const
   {
     const float ij(2.0f * i * j);
