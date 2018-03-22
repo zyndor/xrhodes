@@ -38,17 +38,17 @@ public:
 
   ///@brief Creates a quaternion from a vector of pitch, yaw, roll rotations.
   ///@note The angles are in radians.
-  static void CreateFromEuler(Vector3 pitchYawRoll, Quaternion& q)
+  static void FromPitchYawRoll(Vector3 pitchYawRoll, Quaternion& q)
   {
     pitchYawRoll *= .5f;
-  
+
     const float c1(cosf(pitchYawRoll.y));
     const float c2(cosf(pitchYawRoll.x));
     const float c3(cosf(pitchYawRoll.z));
     const float s1(sinf(pitchYawRoll.y));
     const float s2(sinf(pitchYawRoll.x));
     const float s3(sinf(pitchYawRoll.z));
-  
+
     const float c2c3(c2 * c3);
     const float s2s3(s2 * s3);
     const float s2c3(s2 * c3);
@@ -60,17 +60,17 @@ public:
     q.w = c1 * c2c3 - s1 * s2s3;
   }
 
-  static Quaternion CreateFromEuler(Vector3 const& pitchYawRoll)
+  static Quaternion FromPitchYawRoll(Vector3 const& pitchYawRoll)
   {
     Quaternion  q;
-    CreateFromEuler(pitchYawRoll, q);
+    FromPitchYawRoll(pitchYawRoll, q);
     return q;
   }
 
   ///@brief Creates a quaternion that rotates by @a angle radians around the
   /// given @axis.
   ///@note The angle needs to be in radians.
-  static void CreateFromAxisAngle(Vector3 const& axis, float angle, Quaternion& q)
+  static void FromAxisAngle(Vector3 const& axis, float angle, Quaternion& q)
   {
     angle *= .5f;
     q.w = cosf(angle);
@@ -82,16 +82,16 @@ public:
     q.Normalise();
   }
 
-  static Quaternion CreateFromAxisAngle(Vector3 const& axis, float angle)
+  static Quaternion FromAxisAngle(Vector3 const& axis, float angle)
   {
     Quaternion  q;
-    CreateFromAxisAngle(axis, angle, q);
+    FromAxisAngle(axis, angle, q);
     return q;
   }
 
   ///@brief Offers more efficient creation of a quaternion that rotates from
   /// @a from to @a to. The vectors must be normalised.
-  static void CreateFromToDirectionNormalised(Vector3 const& from, Vector3 const& to, Quaternion& q)
+  static void FromPositionsNormalised(Vector3 const& from, Vector3 const& to, Quaternion& q)
   {
     float d = from.Dot(to);
     if (d * d < 1.0f)
@@ -102,16 +102,16 @@ public:
     }
   }
 
-  static Quaternion CreateFromToDirectionNormalised(Vector3 const& from, Vector3 const& to)
+  static Quaternion FromPositionsNormalised(Vector3 const& from, Vector3 const& to)
   {
     Quaternion  q;
-    CreateFromToDirectionNormalised(from, to, q);
+    FromPositionsNormalised(from, to, q);
     return q;
   }
 
   ///@brief Creates a quaternion that rotates from @a from to @a to. These
   /// vectors will be normalised.
-  static void CreateFromToDirection(Vector3 from, Vector3 to, Quaternion& q)
+  static void FromPositions(Vector3 from, Vector3 to, Quaternion& q)
   {
     float dFrom = from.Dot();
     if (dFrom > .0f)
@@ -125,13 +125,13 @@ public:
       to *= 1.0f / sqrtf(dTo);
     }
 
-    CreateFromToDirectionNormalised(from, to, q);
+    FromPositionsNormalised(from, to, q);
   }
 
-  static Quaternion CreateFromToDirection(Vector3 const& from, Vector3 const& to)
+  static Quaternion FromPositions(Vector3 const& from, Vector3 const& to)
   {
     Quaternion  q;
-    CreateFromToDirection(from, to, q);
+    FromPositions(from, to, q);
     return q;
   }
 
@@ -144,7 +144,7 @@ public:
       float i, j, k, w;
     };
   };
-  
+
   // structors
   Quaternion()
   : i(.0f), j(.0f), k(.0f), w(1.0f)
@@ -154,14 +154,14 @@ public:
   {
     memcpy(arData, arDataIn, sizeof(arData));
   }
-  
+
   Quaternion(float i_, float j_, float k_, float w_)
   : i(i_),
     j(j_),
     k(k_),
     w(w_)
   {}
-  
+
   // general
   /// Calculates the conjugate of this quaternion.
   void  Conjugate()
@@ -170,7 +170,7 @@ public:
     j = -j;
     k = -k;
   }
-  
+
   ///@brief Calculates the magnitude of this quaternion.
   float Magnitude() const
   {
@@ -191,7 +191,7 @@ public:
     k *= mag;
     w *= mag;
   }
-  
+
   ///@brief Calculates an axis and an angle that describe the rotation
   /// that the quaternion represents, and stores it in the given values.
   void  GetAxisAngle(float& x, float& y, float& z, float& theta) const
@@ -212,14 +212,14 @@ public:
       z = .0f;
     }
   }
-  
+
   ///@brief Calculates an axis and an angle that describe the rotation
   /// that the quaternion represents, and stores it in the given values.
   void  GetAxisAngle(Vector3& v, float& theta) const
   {
     GetAxisAngle(v.x, v.y, v.z, theta);
   }
-  
+
   ///@brief Rotates the vector @a v around the origin by this quaternion.
   void  RotateVec(Vector3& v) const
   {
@@ -238,12 +238,12 @@ public:
     const float vxi2(v.x * i * i);
     const float vyj2(v.y * j * j);
     const float vzk2(v.z * k * k);
-    
+
     v.x = vxi2 + wpx - vxpx;
     v.y = vyj2 + wpy - vxpy;
     v.z = vzk2 + wpz - vxpz;
   }
-  
+
   ///@brief Rotates the vector @a v around the given pivot by this quaternion.
   void  RotateVec(Vector3 const& pivot, Vector3& v)
   {
@@ -292,7 +292,7 @@ public:
     k = w0 * k1 + i0 * j1 - j0 * i1 + k0 * w1;
     return *this;
   }
-  
+
   Quaternion  operator*(Quaternion const& rhs) const
   {
     Quaternion temp(*this);
