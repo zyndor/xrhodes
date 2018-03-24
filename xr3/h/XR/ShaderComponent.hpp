@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Asset.hpp"
 #include "Gfx.hpp"
 
@@ -23,26 +22,32 @@ public:
   XR_ASSET_DECL(ShaderComponent)
 
   // general
-  Gfx::ShaderType GetType() const // TODO: we need an uninitialised value for our enum before we can pick up girls with this.
+  ///@return The type of the shader.
+  ///@note Its results are only meaningful if GetHandle().IsValid().
+  Gfx::ShaderType GetType() const
   {
     return m_type;
   }
 
-  Gfx::ShaderHandle GetHandle() const // no ownership transfer
+  ///@return The handle to the underlying Gfx shader.
+  ///@note Does not transfer ownership; intended as read only.
+  Gfx::ShaderHandle GetHandle() const
   {
     return m_handle;
   }
 
+  ///@brief (Re-)compiles the underlying shader from the given @a source.
   bool SetSource(Gfx::ShaderType type, char const* source);
-
-  bool OnLoaded(Buffer buffer) override;
-  void OnUnload() override;
 
 protected:
   // data
   Gfx::ShaderType m_type;
   Gfx::ShaderHandle m_handle;
   std::vector<uint8_t> m_data; // If KeepSourceDataFlag is set.
+
+  // internal
+  bool OnLoaded(Buffer buffer) override;
+  void OnUnload() override;
 };
 
 } // XR

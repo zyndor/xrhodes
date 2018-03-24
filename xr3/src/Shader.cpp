@@ -95,12 +95,14 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 //==============================================================================
 bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fragment)
 {
-  bool success = vertex->GetType() == Gfx::ShaderType::Vertex;
+  auto hVertex = vertex->GetHandle();
+  auto hFragment = fragment->GetHandle();
+  bool success = hVertex.IsValid() && vertex->GetType() == Gfx::ShaderType::Vertex;
   LTRACEIF(!success, ("%s: vertex input has invalid type.", m_debugPath.c_str()));
 
   if (success)
   {
-    success = fragment->GetType() == Gfx::ShaderType::Fragment;
+    success = hFragment.IsValid() && fragment->GetType() == Gfx::ShaderType::Fragment;
     LTRACEIF(!success, ("%s: fragment input has invalid type.",
       m_debugPath.c_str()));
   }
@@ -108,7 +110,7 @@ bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fra
   if (success)
   {
     Gfx::Destroy(m_handle);
-    m_handle = Gfx::CreateProgram(vertex->GetHandle(), fragment->GetHandle());
+    m_handle = Gfx::CreateProgram(hVertex, hFragment);
 
     success = m_handle.IsValid();
     LTRACEIF(!success, ("%s: failed to create shader program.", m_debugPath.c_str()));
