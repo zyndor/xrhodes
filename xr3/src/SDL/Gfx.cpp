@@ -656,7 +656,7 @@ struct Context
 
   void Destroy(VertexFormatHandle h)
   {
-    VertexFormatRef vfr = m_vertexFormats[h.id];
+    VertexFormatRef& vfr = m_vertexFormats[h.id];
     XR_ASSERT(Gfx, vfr.refCount > 0);
     --vfr.refCount;
     if (vfr.refCount == 0)
@@ -670,6 +670,9 @@ struct Context
 
   VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
   {
+    XR_ASSERT(Gfx, hFormat.IsValid());
+    ++m_vertexFormats[hFormat.id].refCount;
+
     XR_TRACEIF(Gfx, CheckAllMaskBits(flags, F_BUFFER_INSTANCE_DATA),
       ("Ignored instance data buffer request in CreateVertexBuffer()."));
     return CreateVertexBufferInternal(hFormat, buffer, flags & ~F_BUFFER_INSTANCE_DATA);
@@ -680,6 +683,11 @@ struct Context
     VertexBufferObject& vbo = m_vbos[h.id];
     XR_GL_CALL(glBindBuffer(vbo.target, 0));
     XR_GL_CALL(glDeleteBuffers(1, &vbo.name));
+
+    if (vbo.hFormat.IsValid())  // instance data buffers don't have this.
+    {
+      Destroy(vbo.hFormat);
+    }
 
     std::memset(&vbo, 0x00, sizeof(vbo));
     m_vbos.server.Release(h.id);
@@ -979,7 +987,6 @@ struct Context
 
   UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize)
   {
-    // TODO: reserved uniforms
     uint32_t const hash = Hash::String32(name);
     auto iFind = m_uniformHandles.find(hash);
     UniformHandle h;
