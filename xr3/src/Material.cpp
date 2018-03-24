@@ -79,16 +79,20 @@ public:
         switch (state.GetType())
         {
         case XonEntity::Type::Value:
-          InterpretState(state.GetValue(), flags);
+          if(!InterpretState(state.GetValue(), flags))
+          {
+            LTRACE(("%s: Unsupported state: %s", rawNameExt, state.GetValue()));
+          }
           break;
 
         case XonEntity::Type::Object:
           for (size_t i = 0; i < state.GetNumElements(); ++i)
           {
             auto& elem = state[i];
-            if (elem.GetType() == XonEntity::Type::Value)
+            if (elem.GetType() == XonEntity::Type::Value &&
+              !InterpretState(elem.GetValue(), flags))
             {
-              InterpretState(elem.GetValue(), flags);
+              LTRACE(("%s: Unsupported state: %s", rawNameExt, elem.GetValue()));
             }
           }
           break;
@@ -199,17 +203,15 @@ public:
 
   std::unordered_map<uint32_t, uint32_t> m_states;
 
-  void InterpretState(char const* value, uint32_t& flags) const
+  bool InterpretState(char const* value, uint32_t& flags) const
   {
     auto iFind = m_states.find(Hash::String32(value));
-    if (iFind != m_states.end())
+    bool success = iFind != m_states.end();
+    if (success)
     {
       flags |= iFind->second;
     }
-    else
-    {
-      LTRACE(("Unsupported state: %s", value));
-    }
+    return success;
   }
 } materialBuilder;
 #endif
