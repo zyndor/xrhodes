@@ -1252,15 +1252,25 @@ struct Context
     XR_GL_CALL(glDeleteProgram(p.name));
     p.name = 0;
     p.linked = false;
-    p.hVertex = ShaderHandle();
-    p.hFragment = ShaderHandle();
+
+    if (p.hVertex.IsValid())
+    {
+      Destroy(p.hVertex);
+      p.hVertex.Invalidate();
+    }
+
+    if (p.hFragment.IsValid())
+    {
+      Destroy(p.hFragment);
+      p.hFragment.Invalidate();
+    }
 
     if (p.uniforms)
     {
       p.ReleaseUniforms(m_uniforms.server.GetNumActive(), m_uniforms.data);
       ConstBuffer::Destroy(p.uniforms);
     }
-    p.uniforms = 0;
+    p.uniforms = nullptr;
 
     m_programs.server.Release(h.id);
   }
