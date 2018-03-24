@@ -18,7 +18,7 @@ namespace Vertex
 
 //==============================================================================
 ///@brief A vertex position component for a Vertex::Format<>.
-template <typename V>
+template <typename V = Vector3>
 struct Pos
 {
   using Value = V;
@@ -38,7 +38,7 @@ struct Pos
 //==============================================================================
 ///@brief One of the 8 supported UV components for a Vertex::Format<>.
 #define XR_UV_GENERATOR_(i)\
-  template <typename V> \
+  template <typename V = Vector2> \
   struct UV##i \
   {\
     using Value = V;\
