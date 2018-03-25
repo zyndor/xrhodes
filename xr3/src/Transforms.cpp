@@ -74,16 +74,6 @@ public:
     XR_ASSERT(Transforms, zNear < zFar);
     XR_ASSERT(Transforms, aspectRatio > .0f);
 
-    //  float f(1.0f / tanf(verticalFov * .5f));
-    //  float dz(1.0f / (zFar - zNear));
-    //  float arData[16] =
-    //  {
-    //    f, .0f, .0f, .0f,
-    //    .0f, f / aspectRatio, .0f, .0f,
-    //    .0f, .0f, (zNear + zFar) * dz, (2.0f * zNear * zFar) * dz,
-    //    .0f, .0f, 1.0f, .0f
-    //  };
-
     ProjectionHelper::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
       m_projection, &m_tanHalfVerticalFov);
     m_zNear = zNear;
@@ -136,12 +126,7 @@ public:
     if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY | VIEW_DIRTY | PROJECTION_DIRTY))
     {
       float model[16];
-      float viewProjection[16];
-      float mvp[16];
-
       Matrix4Helper::FromMatrix(m_modelStack.back(), model);
-      Matrix4Helper::Multiply(m_projection, m_view, viewProjection);
-
       if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY))
       {
         Gfx::SetUniform(m_xruModel, 1, model);
@@ -150,17 +135,23 @@ public:
       if (CheckAnyMaskBits(m_dirtyFlags, VIEW_DIRTY))
       {
         Gfx::SetUniform(m_xruView, 1, m_view);
-
-        Matrix4Helper::Multiply(m_view, model, mvp);  // hitch a ride
-        Gfx::SetUniform(m_xruModelView, 1, mvp);
-
-        Gfx::SetUniform(m_xruViewProjection, 1, viewProjection);
       }
 
       if (CheckAnyMaskBits(m_dirtyFlags, PROJECTION_DIRTY))
       {
         Gfx::SetUniform(m_xruProjection, 1, m_projection);
       }
+
+      float mvp[16];
+      if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY | VIEW_DIRTY))
+      {
+        Matrix4Helper::Multiply(m_view, model, mvp);  // hitch a ride
+        Gfx::SetUniform(m_xruModelView, 1, mvp);
+      }
+
+      float viewProjection[16];
+      Matrix4Helper::Multiply(m_projection, m_view, viewProjection);
+      Gfx::SetUniform(m_xruViewProjection, 1, viewProjection);
 
       Matrix4Helper::Multiply(viewProjection, model, mvp);
       Gfx::SetUniform(m_xruModelViewProjection, 1, mvp);
@@ -360,11 +351,6 @@ void  Transforms::GetViewerTransform(Matrix& m)
 //==============================================================================
 void  Transforms::GetView(float matrix[kNumMatrixElems])
 {
-  //m = s_TransformsImpl->m_view;
-  //m.Transpose();
-  //m.zx *= -1.0f;
-  //m.zy *= -1.0f;
-  //m.zz *= -1.0f;
   s_impl->GetView(matrix);
 }
 
