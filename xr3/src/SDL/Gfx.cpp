@@ -1321,11 +1321,12 @@ struct Context
     }
   }
 
-  void SetUniform(UniformHandle h, uint8_t num, void const* data)
+  void SetUniform(UniformHandle h, uint8_t elem, void const* data)
   {
     UniformRef& ur = m_uniforms[h.id];
     XR_ASSERT(GFX, ur.refCount > 0);
-    size_t bytes = kUniformTypeSize[uint8_t(ur.inst.type)] * std::min(ur.inst.arraySize, num);
+    elem = std::min(ur.inst.arraySize, elem);
+    size_t bytes = kUniformTypeSize[uint8_t(ur.inst.type)] * elem;
     std::memcpy(m_uniformData[h.id], data, bytes);
   }
 
@@ -1838,6 +1839,12 @@ void SetViewport(Rect const& rect)
 void SetScissor(Rect const* rect)
 {
   s_impl->SetScissor(rect);
+}
+
+//==============================================================================
+void SetUniform(UniformHandle h, void const * data)
+{
+  s_impl->SetUniform(h, 1, data);
 }
 
 //==============================================================================

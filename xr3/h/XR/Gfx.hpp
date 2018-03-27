@@ -350,8 +350,11 @@ void SetViewport(Rect const& rect);
 ///@brief Sets rectangle for scissor testing; if null, disables scissor test.
 void SetScissor(Rect const* rect);
 
-///@brief Sets a value for the given uniform.
-void SetUniform(UniformHandle h, uint8_t num, void const* data);
+///@brief Sets a value for the given uniform('s first element, if it is an array).
+void SetUniform(UniformHandle h, void const* data);
+
+///@brief Sets a value for the given uniform array's first @a numElems elements.
+void SetUniform(UniformHandle h, uint8_t numElems, void const* data);
 
 ///@brief Binds the given texture for a texture stage.
 void SetTexture(TextureHandle h, uint32_t stage = 0);
