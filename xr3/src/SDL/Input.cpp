@@ -12,106 +12,95 @@ namespace XR
 {
 
 //==============================================================================
-InputImpl*  InputImpl::s_pInstance(0);
+InputImpl*  InputImpl::s_instance = nullptr;
 
 //==============================================================================
 void Input::Init()
 {
-  XR_ASSERT(Input, InputImpl::s_pInstance == 0);
-  InputImpl::s_pInstance = new InputImpl();
+  XR_ASSERTMSG(Input, InputImpl::s_instance == nullptr, ("Already initialized."));
+  InputImpl::s_instance = new InputImpl();
 
-  memset(InputImpl::s_pInstance->arKeyState, 0x00,
-    sizeof(InputImpl::s_pInstance->arKeyState));
-  memset(InputImpl::s_pInstance->arMouseButtonState, 0x00,
-    sizeof(InputImpl::s_pInstance->arMouseButtonState));
-}
-
-//==============================================================================
-void Input::Exit()
-{
-  XR_ASSERT(Input, InputImpl::s_pInstance != 0);
-  delete InputImpl::s_pInstance;
-  InputImpl::s_pInstance = 0;
+  memset(InputImpl::s_instance->keyStates, 0x00,
+    sizeof(InputImpl::s_instance->keyStates));
+  memset(InputImpl::s_instance->mouseButtonStates, 0x00,
+    sizeof(InputImpl::s_instance->mouseButtonStates));
 }
 
 //==============================================================================
 void Input::Update()
 {
-  int numKeys;
-  const uint8_t*  parKeys(SDL_GetKeyboardState(&numKeys));
-  for (int i = 0; i < kKeyCount; ++i)
+  for (auto& k: InputImpl::s_instance->keyStates)
   {
-    int k(karKeyCodeNative[i]);
-    InputImpl::s_pInstance->arKeyState[i] =
-      (InputImpl::s_pInstance->arKeyState[i] >> 1) |
-      ((parKeys[k] ? 1 : 0) << 1);
+    ButtonState::Poll(k);
   }
 
-  int32_t x, y;
-  uint32_t  mbState(SDL_GetMouseState(&x, &y));
-  for (int i = 0; i < kMouseButtonCount; ++i)
+  for (auto& m: InputImpl::s_instance->mouseButtonStates)
   {
-    uint32_t  state(InputImpl::s_pInstance->arMouseButtonState[i] >> 1);
-    InputImpl::s_pInstance->arMouseButtonState[i] = state |
-      (((mbState & SDL_BUTTON(karMouseButtonNative[i])) != 0) << 1);
+    ButtonState::Poll(m);
   }
 }
 
 //==============================================================================
-uint8_t Input::GetKeyState(KeyCode k)
+ButtonState::Type Input::GetKeyState(KeyCode k)
 {
   XR_ASSERT(Input, k < kKeyCount);
-  return InputImpl::s_pInstance->arKeyState[k];
+  return InputImpl::s_instance->keyStates[k];
 }
 
 //==============================================================================
-SVector2 Input::GetMousePos()
+SVector2 Input::GetMousePosition()
 {
-  int x, y;
-  SDL_GetMouseState(&x, &y);
-  return SVector2(x, y);
+  return InputImpl::s_instance->mousePosition;
 }
 
 //==============================================================================
-uint8_t Input::GetMouseState(MouseButton mb)
+ButtonState::Type Input::GetMouseButtonState(MouseButton::Type mb)
 {
-  XR_ASSERT(Input, mb < kMouseButtonCount);
-  return InputImpl::s_pInstance->arMouseButtonState[mb];
+  XR_ASSERT(Input, mb < MouseButton::kCount);
+  return InputImpl::s_instance->mouseButtonStates[mb];
 }
 
 //==============================================================================
-bool Input::RegisterCallback( Event ev, Callback pCb, void* pData )
+bool Input::RegisterCallback(Event ev, Callback callback, void* userData)
 {
-  XR_ASSERT(Input, ev < kMaxEvents);
-  XR_ASSERT(Input, pCb != 0);
-  for (CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
-    i1(InputImpl::s_pInstance->arCallback[ev].end()); i0 != i1; ++i0)
+  XR_ASSERT(Input, ev != Event::kCount);
+  XR_ASSERT(Input, callback != nullptr);
+  auto& cbs = InputImpl::s_instance->GetCallbacks(ev);
+  for (auto& i: cbs)
   {
-    if (i0->callback == pCb)
+    if (i.callback == callback)
     {
       return false;
     }
   }
 
-  InputImpl::s_pInstance->arCallback[ev].push_back(CallbackObject(pCb, pData));
+  cbs.push_back(CallbackObject(callback, userData));
   return true;
 }
 
 //==============================================================================
-bool Input::UnregisterCallback( Event ev, Callback pCb )
+bool Input::UnregisterCallback(Event ev, Callback callback)
 {
-  XR_ASSERT(Input, ev < kMaxEvents);
-  XR_ASSERT(Input, pCb != 0);
-  for (CallbackObject::List::iterator i0(InputImpl::s_pInstance->arCallback[ev].begin()),
-    i1(InputImpl::s_pInstance->arCallback[ev].end()); i0 != i1; ++i0)
+  XR_ASSERT(Input, ev != Event::kCount);
+  XR_ASSERT(Input, callback != nullptr);
+  auto& cbs = InputImpl::s_instance->GetCallbacks(ev);
+  for (auto i0 = cbs.begin(), i1 = cbs.end(); i0 != i1; ++i0)
   {
-    if (i0->callback == pCb)
+    if (i0->callback == callback)
     {
-      InputImpl::s_pInstance->arCallback[ev].erase(i0);
+      cbs.erase(i0);
       return true;
     }
   }
   return false;
+}
+
+//==============================================================================
+void Input::Exit()
+{
+  XR_ASSERTMSG(Input, InputImpl::s_instance != nullptr, ("Not initialized."));
+  delete InputImpl::s_instance;
+  InputImpl::s_instance = nullptr;
 }
 
 } // XR

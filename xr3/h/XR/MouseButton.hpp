@@ -7,27 +7,42 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
+#include <cstdint>
 
 namespace XR {
 
 //==============================================================================
-enum  MouseButton
+namespace MouseButton
 {
-  MB_LEFT,
-  MB_RIGHT,
-  MB_MIDDLE,
-  MB_EXTRA1,
-  MB_EXTRA2,
-  
-  kMouseButtonCount,
-  MB_UNKNOWN = kMouseButtonCount
+enum  Type
+{
+  Left,
+  Right,
+  Middle,
+  Extra1,
+  Extra2,
+
+  // Mouse wheel states. Note that the SDL implementation does not send button
+  // up notifications of these. Either poll for them, or assume that they are
+  // momentary (i.e. followed by a button up event).
+  WheelUp,
+  WheelDown,
+  WheelLeft,
+  WheelRight,
+
+  kCount,
+  Unknown = kCount,
+
+  kFirstWheel = WheelUp // The first value mapped to mouse wheel
 };
 
 //==============================================================================
-extern const int karMouseButtonNative[kMouseButtonCount];
+extern const int kNative[kCount];
 
 //==============================================================================
-MouseButton TranslateMouseButtonNative(int mb);
+Type TranslateNative(int mb);
+
+} // MouseButton
 
 } // XR
 

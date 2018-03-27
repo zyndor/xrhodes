@@ -20,10 +20,10 @@ MouseHandler::~MouseHandler()
 //==============================================================================
 void  MouseHandler::RegisterMouseCallbacks()
 {
-  Input::RegisterCallback(Input::EV_MOUSE_ACTION,
+  Input::RegisterCallback(Input::Event::MouseAction,
     CallbackAdaptor<const Input::MouseActionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseAction>,
     this);
-  Input::RegisterCallback(Input::EV_MOUSE_MOTION,
+  Input::RegisterCallback(Input::Event::MouseMotion,
     CallbackAdaptor<const Input::MouseMotionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseMotion>,
     this);
 }
@@ -31,9 +31,9 @@ void  MouseHandler::RegisterMouseCallbacks()
 //==============================================================================
 void  MouseHandler::UnregisterMouseCallbacks()
 {
-  Input::UnregisterCallback(Input::EV_MOUSE_MOTION,
+  Input::UnregisterCallback(Input::Event::MouseMotion,
     CallbackAdaptor<const Input::MouseMotionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseMotion>);
-  Input::UnregisterCallback(Input::EV_MOUSE_ACTION,
+  Input::UnregisterCallback(Input::Event::MouseAction,
     CallbackAdaptor<const Input::MouseActionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseAction>);
 }
 

@@ -17,7 +17,7 @@ void  UIEventNotifier::UIPointerActionCallback(void* pSystem, void* pUser)
 
   bool  zeroHit(!pDispatcher->m_actionNotifier.Notify(*pEvent) &&
     pDispatcher->m_pZeroHitCb != 0);
-  
+
   if (zeroHit)
   {
     (*pDispatcher->m_pZeroHitCb)(*pEvent, pDispatcher->m_pZeroHitCbData);
@@ -48,18 +48,18 @@ UIEventNotifier::~UIEventNotifier()
 //==============================================================================
 bool  UIEventNotifier::Register()
 {
-  return  Input::RegisterCallback(Input::EV_MOUSE_ACTION,
+  return  Input::RegisterCallback(Input::Event::MouseAction,
       UIPointerActionCallback, this) &&
-    Input::RegisterCallback(Input::EV_MOUSE_MOTION,
+    Input::RegisterCallback(Input::Event::MouseMotion,
       UIPointerMotionCallback, this);
 }
 
 //==============================================================================
 bool  UIEventNotifier::Unregister()
 {
-  return  Input::UnregisterCallback(Input::EV_MOUSE_ACTION,
+  return  Input::UnregisterCallback(Input::Event::MouseAction,
       UIPointerActionCallback) &&
-    Input::UnregisterCallback(Input::EV_MOUSE_MOTION,
+    Input::UnregisterCallback(Input::Event::MouseMotion,
       UIPointerMotionCallback);
 }
 
