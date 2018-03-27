@@ -31,6 +31,7 @@ namespace
 static TextureHandle kDefaultTexture2D;
 static TextureHandle kDefaultTexture3D;
 static TextureHandle kDefaultTextureCube;
+static FrameBufferHandle kDefaultFrameBuffer;
 
 //=============================================================================
 char const *const  kAttributeName[] =
@@ -581,7 +582,7 @@ struct Context
       XR_GL_CALL(glBindVertexArray(m_vao));
     }
 
-    // create default texturess
+    // create default textures and framebuffer
     kDefaultTexture2D.id = decltype(m_textures)::kSize - 1;
     CreateDefaultTexture(kDefaultTexture2D, GL_TEXTURE_2D);
 
@@ -590,6 +591,11 @@ struct Context
 
     kDefaultTextureCube.id = decltype(m_textures)::kSize - 3;
     CreateDefaultTexture(kDefaultTextureCube, GL_TEXTURE_CUBE_MAP);
+
+    kDefaultFrameBuffer.id = decltype(m_fbos)::kSize - 1;
+    auto& defaultFbo = m_fbos[kDefaultFrameBuffer.id];
+    defaultFbo.numColorAttachments = 2;
+    defaultFbo.name = 0;
 
     XR_TRACE(Gfx, ("Gfx init complete."));
   }
@@ -1435,8 +1441,7 @@ struct Context
   void SetFrameBuffer(FrameBufferHandle h)
   {
     m_activeFrameBuffer = h;
-    GLint name = h.IsValid() ? m_fbos[h.id].name : 0;
-    XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, name));
+    XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, m_fbos[h.id].name));
   }
 
   void Draw(VertexBufferHandle vbh, PrimType pt, uint32_t offset, uint32_t count)
@@ -1529,7 +1534,7 @@ private:
   ServicedArray<VertexBufferObject, 4096> m_vbos;
   ServicedArray<IndexBufferObject, 4096> m_ibos;
   ServicedArray<TextureRef, 1024, 3> m_textures;
-  ServicedArray<FrameBuffer, 256> m_fbos;
+  ServicedArray<FrameBuffer, 256, 1> m_fbos;
 
   ServicedArray<UniformRef, 1024> m_uniforms;
   void* m_uniformData[decltype(m_uniforms)::kSize];
@@ -1741,6 +1746,12 @@ FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32
   uint32_t flags)
 {
   return s_impl->CreateFrameBuffer(format, width, height, flags);
+}
+
+//=============================================================================
+FrameBufferHandle GetDefaultFrameBuffer()
+{
+  return kDefaultFrameBuffer;
 }
 
 //=============================================================================

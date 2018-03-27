@@ -286,6 +286,9 @@ void Destroy(TextureHandle h);
 FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width,
   uint32_t height, uint32_t flags);
 
+// default framebuffer. The front and back buffers are color attachments 0 and 1.
+FrameBufferHandle GetDefaultFrameBuffer();
+
 ///@brief Creates a render target, attaching the given @a hTextures. If
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
