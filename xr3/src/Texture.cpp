@@ -140,6 +140,30 @@ void Texture::RegisterSamplerUniform(char const* name, uint32_t textureStage)
 }
 
 //==============================================================================
+Texture::Ptr Texture::FromHandle(Gfx::TextureHandle handle)
+{
+  XR_ASSERT(Texture, handle.IsValid());
+
+  const auto info = Gfx::GetTextureInfo(handle);
+  const bool isCube = CheckAllMaskBits(info.flags, Gfx::F_TEXTURE_CUBE);
+  XR_ASSERTMSG(Texture, !isCube, ("2D texture handle required, %s given.", "cubemap"));
+  const bool is3d = info.depth > 0;
+  XR_ASSERTMSG(Texture, !is3d, ("2D texture handle required, %s given.", "3D texture"));
+
+  Texture::Ptr texture;
+  if (!(isCube || is3d))
+  {
+    texture.Reset(Create(0, 0)->Cast<Texture>());
+    texture->m_handle = handle;
+    texture->m_width = info.width;
+    texture->m_height = info.height;
+    texture->m_hasAlpha = HasAlphaHelper(info.format);
+  }
+
+  return texture;
+}
+
+//==============================================================================
 bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height, Buffer buffer)
 {
   OnUnload();

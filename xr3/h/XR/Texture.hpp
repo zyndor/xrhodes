@@ -37,6 +37,10 @@ public:
   /// Gfx::Exit()s.
   static void RegisterSamplerUniform(char const* name, uint32_t textureStage);
 
+  ///@brief Attempts to create a texture from the given @a handle.
+  ///@note It must be a valid handle to a 2D texture.
+  static Texture::Ptr FromHandle(Gfx::TextureHandle handle);
+
   // general
   ///@return The number of texels the texture has horizontally at the highest
   /// mipmap level.
