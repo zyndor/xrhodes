@@ -53,8 +53,7 @@ public:
     /// that all PopModel() calls must correspond to a previous PushModel().
     Updater& PopModel();
 
-    ///@brief Sets the view matrix from viewer position and orientation,
-    /// meaning that it will be inverted first.
+    ///@brief Calculates the view matrix from viewer position and orientation.
     Updater& SetViewerTransform(Matrix const& m);
 
     ///@brief Sets the view to the given @a matrix.

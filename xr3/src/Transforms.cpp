@@ -90,7 +90,7 @@ public:
   void SetViewerTransform(Matrix m)
   {
     m.Invert();
-    m.t = -m.t;
+    m.t = m.RotateVec(-m.t);
     Matrix4Helper::FromMatrix(m, m_view);
     m_dirtyFlags |= VIEW_DIRTY;
   }
