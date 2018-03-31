@@ -38,10 +38,10 @@ void SetAbsolute(bool isPressed, Type& button)
 inline
 void Poll(Type& button)
 {
-  button = (button & ~IsPressed) | (button >> 1);
+  button = (button & ~Down) | (button >> 1);
 }
 
-}
+} // ButtonState
 
 } // XR
 
