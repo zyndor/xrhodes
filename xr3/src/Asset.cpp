@@ -309,12 +309,10 @@ std::map<uint32_t, ReflectorMap::iterator> s_extensions;
 std::unordered_map<Asset::TypeId, Asset::Builder const*> s_assetBuilders;
 #endif
 
-static std::unique_ptr<AssetManagerImpl> s_assetMan;
-
-}
+std::unique_ptr<AssetManagerImpl> s_assetMan;
 
 //==============================================================================
-static void RegisterReflector(Asset::Reflector const& r)
+void RegisterReflector(Asset::Reflector const& r)
 {
   // Register reflector.
   auto iReflector = s_reflectors.find(r.type);
@@ -347,7 +345,7 @@ static void RegisterReflector(Asset::Reflector const& r)
 
 //==============================================================================
 #ifdef ENABLE_ASSET_BUILDING
-static void RegisterBuilder(Asset::Builder const& builder)
+void RegisterBuilder(Asset::Builder const& builder)
 {
   auto iBuilder = s_assetBuilders.find(builder.type);
   XR_ASSERTMSG(Asset::Manager, iBuilder == s_assetBuilders.end(),
@@ -357,7 +355,7 @@ static void RegisterBuilder(Asset::Builder const& builder)
 #endif  // ENABLE_ASSET_BUILDING
 
 //==============================================================================
-static void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset::FlagType flags)
+void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset::FlagType flags)
 {
   FilePath path = Asset::Manager::GetAssetPath() / asset->GetDescriptor().ToPath();
   File::Handle hFile = File::Open(path, "rb");
@@ -464,6 +462,8 @@ static void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset
   }
 }
 
+}
+
 //==============================================================================
 char const* const Asset::Manager::kDefaultPath = "assets";
 
@@ -566,7 +566,7 @@ Asset::Ptr Asset::Manager::LoadReflected(FilePath const& path, FlagType flags)
       if (iFind != s_reflectors.end())
       {
         auto reflector = iFind->second;
-        asset.Reset((*reflector->fn)(desc.hash, flags));
+        asset.Reset((*reflector->create)(desc.hash, flags));
         if (!CheckAllMaskBits(flags, UnmanagedFlag))
         {
           Manage(asset);
@@ -603,8 +603,13 @@ bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
 
 //==============================================================================
 #ifdef ENABLE_ASSET_BUILDING
-static void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr const& asset)
+namespace
 {
+
+void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr const& asset)
+{
+  bool forceBuild = CheckAllMaskBits(asset->GetFlags(), Asset::ForceBuildFlag);
+
   // Check the name -- are we trying to load a raw or a built asset?
   // Strip ram/rom and asset roots.
   FilePath rawPath(File::StripRoots(path));
@@ -616,7 +621,6 @@ static void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::
   auto desc = asset->GetDescriptor();
   FilePath builtPath = desc.ToPath();
   bool rebuild = builtPath != rawPath;
-  bool forceBuild = CheckAllMaskBits(asset->GetFlags(), Asset::ForceBuildFlag);
   if (rebuild || forceBuild) // If we're building, we'll need the correct asset path.
   {
     builtPath = Asset::Manager::GetAssetPath() / builtPath;
@@ -635,10 +639,7 @@ static void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::
     {
       auto hFile = File::Open(builtPath, "rb");
       auto guard = MakeScopeGuard([&hFile] {
-        if (hFile)
-        {
-          File::Close(hFile);
-        }
+        File::Close(hFile);
       });
 
       // Try to see what type / version we've got here. If the file doesn't exist
@@ -735,8 +736,11 @@ static void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::
     }
   }
 }
+
+}
 #endif
 
+//==============================================================================
 void Asset::Manager::LoadInternal(VersionType version, FilePath const& path,
   Asset::Ptr const& asset, FlagType flags)
 {
@@ -824,7 +828,7 @@ Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
 {
   auto iFind = s_reflectors.find(typeId);
   XR_ASSERT(Asset, iFind != s_reflectors.end());
-  return (*iFind->second->fn)(hash, flags);
+  return (*iFind->second->create)(hash, flags);
 }
 
 //==============================================================================

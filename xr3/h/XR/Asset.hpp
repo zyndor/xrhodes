@@ -123,20 +123,20 @@ public:
   {
     // types
     using Base = Linked<Reflector const>;
-    using Fn = Asset*(*)(HashType, FlagType);
+    using CreateFn = Asset*(*)(HashType, FlagType);
 
     // structors
-    Reflector(TypeId type_, VersionType version_, Fn fn_, char const* extensions_)
+    Reflector(TypeId type_, VersionType version_, CreateFn create_, char const* extensions_)
     : Linked<Reflector const>(*this),
       type(type_),
       version(version_),
-      fn(fn_),
+      create(create_),
       extensions(extensions_)
     {}
 
     TypeId type;
     VersionType version;
-    Fn fn;
+    CreateFn create;
     char const* extensions;
   };
 
