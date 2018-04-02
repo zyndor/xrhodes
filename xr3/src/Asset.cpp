@@ -719,13 +719,14 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
         done = !(assetWriter.Write(DependencyPathLenType(i0->size())) &&
           assetWriter.Write(i0->data(), 1, i0->size()));
       }
+      LTRACEIF(done, ("%s: failed to write dependencies to %s.", path.c_str(),
+        builtPath.c_str()));
+    }
 
-      if (!done)
-      {
-        auto str = assetData.str();
-        done = !assetWriter.Write(str.data(), 1, str.size());
-      }
-
+    if (!done)
+    {
+      auto str = assetData.str();
+      done = !assetWriter.Write(str.data(), 1, str.size());
       LTRACEIF(done, ("%s: failed to write asset data to %s.", path.c_str(),
         builtPath.c_str()));
     }
