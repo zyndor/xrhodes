@@ -559,20 +559,25 @@ Asset::Ptr Asset::Manager::LoadReflected(FilePath const& path, FlagType flags)
       asset = Find(desc);
     }
 
-    if (!asset)
+    auto iFind = s_reflectors.find(desc.type);
+    XR_ASSERT(Asset::Manager, iFind != s_reflectors.end());
+
+    auto reflector = iFind->second;
+    XR_ASSERT(Asset::Manager, reflector);
+
+    if (!asset) // then create it.
     {
-      // We can now try to build / load asset.
-      auto iFind = s_reflectors.find(desc.type);
-      if (iFind != s_reflectors.end())
+      asset.Reset((*reflector->create)(desc.hash, flags));
+      if (!CheckAllMaskBits(flags, UnmanagedFlag))
       {
-        auto reflector = iFind->second;
-        asset.Reset((*reflector->create)(desc.hash, flags));
-        if (!CheckAllMaskBits(flags, UnmanagedFlag))
-        {
-          Manage(asset);
-        }
-        LoadInternal(reflector->version, path, asset, flags);
+        Manage(asset);
       }
+    }
+
+    auto foundFlags = asset->GetFlags();
+    if (IsLoadable(foundFlags, flags))
+    {
+      LoadInternal(reflector->version, path, asset, flags);
     }
   }
 
