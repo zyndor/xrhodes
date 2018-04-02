@@ -638,9 +638,7 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     XR_ASSERTMSG(Asset::Manager, tsRaw > 0, ("'%s' doesn't exist.", path.c_str()));
     auto tsBuilt = File::GetModifiedTime(builtPath.c_str());
 
-    // If built asset doesn't exist or is older, then rebuild it.
-    rebuild = tsBuilt < tsRaw;
-    if (!rebuild) // if built asset exists and isn't older, then check version
+    if (tsBuilt > 0 && tsBuilt >= tsRaw) // if built asset exists and isn't older
     {
       auto hFile = File::Open(builtPath, "rb");
       auto guard = MakeScopeGuard([&hFile] {
@@ -651,18 +649,19 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
       // or can't be read, we'll rebuild. Persistent I/O errors will be dealt with
       // later.
       AssetHeader header = { 0, 0 };
-      bool gotHeader = hFile &&
-        File::Read(hFile, sizeof(header), 1, &header) == 1;
-      if(gotHeader && header.typeId != desc.type)
+      if (File::Read(hFile, sizeof(header), 1, &header) == 1) // asset [header] is readable
       {
-        LTRACE(("%s: Hash clash detected trying to build %s, pre-existing type: %.*s.",
-          path.c_str(), builtPath.c_str(), sizeof(header.typeId), header.typeId));
-        asset->FlagError();
-        rebuild = false;
-      }
-      else
-      {
-        rebuild = header.version != version;
+        if(header.typeId != desc.type)
+        {
+          LTRACE(("%s: Hash clash detected trying to build %s, pre-existing type: %.*s.",
+            path.c_str(), builtPath.c_str(), sizeof(header.typeId), header.typeId));
+          asset->FlagError();
+          rebuild = false;  // hash clash -- error;
+        }
+        else if(header.version == version)
+        {
+          rebuild = false;  // version matches -- rebuild not required;
+        }
       }
     }
   }
