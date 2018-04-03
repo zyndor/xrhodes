@@ -197,6 +197,22 @@ public:
     return m_zFar;
   }
 
+  Ray GetViewRay(float nx, float ny) const
+  {
+    XR::Matrix viewer;
+    GetViewerTransform(viewer);
+
+    float hProj = m_zNear * m_tanHalfVerticalFov;
+    float wProj = (hProj * Gfx::GetWidth()) / Gfx::GetHeight();
+
+    Vector3 zNearHit = viewer.GetColumn(Vector3::Z) * -m_zNear +
+      viewer.GetColumn(Vector3::X).Normalise(wProj * nx) +
+      viewer.GetColumn(Vector3::Y).Normalise(hProj * ny);
+    zNearHit.Normalise();
+
+    return Ray(viewer.t, zNearHit, std::numeric_limits<float>::max());
+  }
+
 private:
   // types
   enum DirtyFlags
@@ -376,6 +392,12 @@ float Transforms::GetZNearClippingPlane()
 float Transforms::GetZFarClippingPlane()
 {
   return s_impl->GetZFarClippingPlane();
+}
+
+//==============================================================================
+Ray Transforms::GetViewRay(float nx, float ny)
+{
+  return s_impl->GetViewRay(nx, ny);
 }
 
 } // XR

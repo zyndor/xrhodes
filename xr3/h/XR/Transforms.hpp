@@ -8,6 +8,7 @@
 //
 //==============================================================================
 #include "Matrix.hpp"
+#include "Ray.hpp"
 #include "XR/fundamentals.hpp"
 
 namespace XR
@@ -133,6 +134,10 @@ public:
   ///@return The position along view-space Z at which objects appear at scale 1.
   /// As the name implies, it's only meaningful using a perspective projection.
   static float GetPerspectiveMultiple();
+
+  ///@brief Calculates a ray that intersects the near clipping plane at the
+  /// given normalised screen coordinates @a nx and @a ny.
+  static Ray GetViewRay(float nx, float ny);
 };
 
 } // XR
