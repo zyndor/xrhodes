@@ -110,7 +110,7 @@ public:
     }
     else
     {
-      m_modelStack.push_back(m_modelStack.back() * m);
+      m_modelStack.push_back(m * m_modelStack.back());
     }
     m_dirtyFlags |= MODEL_DIRTY;
   }
@@ -160,24 +160,24 @@ public:
     }
   }
 
-  void GetModelMatrix(Matrix& m)
+  void GetModelMatrix(Matrix& m) const
   {
     m = m_modelStack.back();
   }
 
-  void GetViewerTransform(Matrix& m)
+  void GetViewerTransform(Matrix& m) const
   {
     Matrix4Helper::ToMatrix(m_view, m);
     m.Invert();
     m.t = -m.t;
   }
 
-  void GetView(float matrix[Transforms::kNumMatrixElems])
+  void GetView(float matrix[Transforms::kNumMatrixElems]) const
   {
     memcpy(matrix, m_view, sizeof(m_view));
   }
 
-  void GetProjection(float matrix[Transforms::kNumMatrixElems])
+  void GetProjection(float matrix[Transforms::kNumMatrixElems]) const
   {
     memcpy(matrix, m_projection, sizeof(m_view));
   }
@@ -192,7 +192,7 @@ public:
     return m_zNear;
   }
 
-  float GetZFarClippingPlane()
+  float GetZFarClippingPlane() const
   {
     return m_zFar;
   }

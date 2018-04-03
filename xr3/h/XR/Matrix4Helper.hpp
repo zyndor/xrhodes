@@ -87,29 +87,27 @@ public:
     SetIdentityDiagonalOnly(matrix, 1.0f);
   }
 
-  ///@brief Gets the translation part of a column-major matrix;
-  ///TODO: resolve column / row major differences.
+  ///@brief Gets the translation part of a column-major order matrix;
   static Vector3 GetTranslation(float const matrix[kNumElems])
   {
     return Vector3(matrix[12], matrix[13], matrix[14]);
   }
 
   ///@brief Writes data from the matrix @a m into the given array in
-  /// 4x4 column-major format.
-  ///TODO: resolve column / row major differences.
+  /// 4x4 column-major order format.
   static void FromMatrix(Matrix const& m, float result[kNumElems])
   {
     XR_ASSERT(Matrix4Helper, result);
     result[0] = m.xx;
-    result[1] = m.yx;
-    result[2] = m.zx;
+    result[1] = m.xy;
+    result[2] = m.xz;
     result[3] = .0f;
-    result[4] = m.xy;
+    result[4] = m.yx;
     result[5] = m.yy;
-    result[6] = m.zy;
+    result[6] = m.yz;
     result[7] = .0f;
-    result[8] = m.xz;
-    result[9] = m.yz;
+    result[8] = m.zx;
+    result[9] = m.zy;
     result[10] = m.zz;
     result[11] = .0f;
     result[12] = m.t.x;
@@ -118,19 +116,18 @@ public:
     result[15] = 1.0f;
   }
 
-  ///@brief Copies data from 4x4 column-major matrix @a source into the given
-  /// Matrix @a m.
-  ///TODO: resolve column / row major differences.
+  ///@brief Copies data from 4x4 column-major order matrix @a source into the
+  /// given Matrix @a m.
   static void ToMatrix(float const source[kNumElems], Matrix& m)
   {
     m.xx = source[0];
-    m.yx = source[1];
-    m.zx = source[2];
-    m.xy = source[4];
+    m.xy = source[1];
+    m.xz = source[2];
+    m.yx = source[4];
     m.yy = source[5];
-    m.zy = source[6];
-    m.xz = source[8];
-    m.yz = source[9];
+    m.yz = source[6];
+    m.zx = source[8];
+    m.zy = source[9];
     m.zz = source[10];
     m.t.x = source[12];
     m.t.y = source[13];

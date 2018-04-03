@@ -20,8 +20,8 @@ namespace XR
 {
 
 //==============================================================================
-///@brief Row-order matrix with a 3x3 linear transformation (rotation, scaling)
-/// and 1x3 translation components.
+///@brief Row-major order matrix with a 3x3 linear transformation (rotation,
+/// scaling) and 1x3 translation components.
 struct Matrix
 {
   // types
@@ -215,7 +215,7 @@ struct Matrix
     xy = -(yx = sinf(theta));
   }
 
-  ///@brief Transform the linear transformation partof the matrix only, by
+  ///@brief Transform the linear transformation part of the matrix only, by
   /// rotating it @a theta degrees around the X axis.
   void  RotateX(float theta)
   {
@@ -224,7 +224,7 @@ struct Matrix
     RotateBy(m);
   }
 
-  ///@brief Transform the linear transformation partof the matrix only, by
+  ///@brief Transform the linear transformation part of the matrix only, by
   /// rotating it @a theta degrees around the Y axis.
   void  RotateY(float theta)
   {
@@ -233,7 +233,7 @@ struct Matrix
     RotateBy(m);
   }
 
-  ///@brief Transform the linear transformation partof the matrix only, by
+  ///@brief Transform the linear transformation part of the matrix only, by
   /// rotating it @a theta degrees around the Z axis.
   void  RotateZ(float theta)
   {
@@ -360,7 +360,7 @@ struct Matrix
     LookAt(Vector3(t.x, t.y, t.z), to, up);
   }
 
-  ///@brief Attempts to calculates the inverse of the linear transformation part
+  ///@brief Attempts to calculate the inverse of the linear transformation part
   /// and if succeeded, replaces it with the inverse.
   bool  Invert()
   {
@@ -410,7 +410,7 @@ struct Matrix
     return *this;
   }
 
-  ///@brief Calculates the transpose of the linear transformation partof this matrix.
+  ///@brief Calculates the transpose of the linear transformation part of this matrix.
   Matrix  Transposed() const
   {
     return Matrix(*this).Transpose();
