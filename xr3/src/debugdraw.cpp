@@ -17,13 +17,15 @@ namespace DebugDraw
 namespace
 {
 
-Gfx::UniformHandle s_xruColor;
+Gfx::UniformHandle s_uColor;
 Material::Ptr  s_material;
 
 #define XR_STRINGIFY(x) #x
 
-char const* const kVertexShader = "#version 300 es"
+char const* const kVertexShader = "#version 300 es\n"
 XR_STRINGIFY(
+
+precision mediump float;
 
 in vec3 aPosition;
 
@@ -31,22 +33,36 @@ uniform mat4 xruModelViewProjection;
 
 void main()
 {
-  gl_Position = xruModelViewProjection * aPosition;
+  gl_Position = xruModelViewProjection * vec4(aPosition, 1.0);
 }
 );
 
-char const* const kFragmentShader = "#version 300 es"
+char const* const kFragmentShader = "#version 300 es\n"
 XR_STRINGIFY(
+precision mediump float;
 
-uniform vec4 s_xruColor;
+uniform vec4 xruColor;
 
 out vec4 fragColor;
 
 void main()
-[
+{
   fragColor = xruColor;
 }
 );
+
+//==============================================================================
+void EnsureUniformExists()
+{
+  if(!s_uColor.IsValid())
+  {
+    s_uColor = Gfx::CreateUniform("xruColor", Gfx::UniformType::Vec4);
+    Gfx::RegisterExitCallback([](void*, void*) {
+      Gfx::Destroy(s_uColor);
+      s_uColor.Invalidate();
+    }, nullptr);
+  }
+}
 
 void SetMaterial(Material::Ptr material)
 {
@@ -54,7 +70,7 @@ void SetMaterial(Material::Ptr material)
   {
     if (!s_material)
     {
-      s_xruColor = Gfx::CreateUniform("s_xruColor", Gfx::UniformType::Vec4);
+      EnsureUniformExists();
 
       Asset::FlagType flags = Asset::UnmanagedFlag;
       s_material.Reset(Material::Create(0, flags)->Cast<Material>());
@@ -69,6 +85,10 @@ void SetMaterial(Material::Ptr material)
       shader->SetComponents(vertexShader, fragmentShader);
 
       s_material->SetShader(shader);
+
+      Gfx::RegisterExitCallback([](void*, void*){
+        s_material.Reset(nullptr);
+      }, nullptr);
     }
 
     material = s_material;
@@ -99,6 +119,13 @@ uint32_t GetCircleNumVerts(float radius)
 }
 
 } // namespace
+
+//==============================================================================
+void  SetColor(Color const& color)
+{
+  EnsureUniformExists();
+  Gfx::SetUniform(s_uColor, &color);
+}
 
 //==============================================================================
 void  Line(const Vector3& v, Material::Ptr const& material)

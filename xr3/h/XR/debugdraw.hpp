@@ -16,6 +16,8 @@ namespace DebugDraw
 {
 
 //==============================================================================
+void  SetColor(Color const& color);
+
 void  Line(const Vector3& v, Material::Ptr const& material = nullptr);
 void  LineStrip(const Vector3* verts, int numVerts, Material::Ptr const& material = nullptr);
 void  LineList(const Vector3* verts, int numVerts, Material::Ptr const& material = nullptr);
