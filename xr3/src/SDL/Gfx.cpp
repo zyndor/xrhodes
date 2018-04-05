@@ -1297,8 +1297,17 @@ struct Context
       flagls |= GL_COLOR_BUFFER_BIT;
     }
 
+    bool tempDepthWrite = false;
     if (CheckAllMaskBits(flags, F_CLEAR_DEPTH))
     {
+      // States in Gfx are understood as states for drawing. With OpenGL, we
+      // do have to temporarily enable depth writes to clear the depth buffer,
+      // even if it wasn't the state set.
+      tempDepthWrite = !CheckAllMaskBits(m_activeState, F_STATE_DEPTH_WRITE);
+      if (tempDepthWrite)
+      {
+        XR_GL_CALL(glDepthMask(GL_TRUE));
+      }
       XR_GL_CALL(glClearDepth(depth));
       flagls |= GL_DEPTH_BUFFER_BIT;
     }
@@ -1310,6 +1319,10 @@ struct Context
     }
 
     XR_GL_CALL(glClear(flagls));
+    if (tempDepthWrite)
+    {
+      XR_GL_CALL(glDepthMask(GL_FALSE));
+    }
   }
 
   void SetViewport(Rect const& rect)
@@ -1589,8 +1602,6 @@ private:
       VertexBufferObject const& instBuffer = m_vbos[m_hActiveInstDataBuffer.id];
       instBuffer.Bind();
       program.BindInstanceData(m_activeInstDataBufferStride, m_instanceOffset);
-
-      m_hActiveInstDataBuffer = InstanceDataBufferHandle();
     }
     else
     {
