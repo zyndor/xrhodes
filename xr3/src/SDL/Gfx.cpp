@@ -129,6 +129,12 @@ struct ResourceGL
 //=============================================================================
 struct VertexBufferObject : ResourceGL
 {
+  static uint32_t EncodeInstanceDataStride(uint16_t stride)
+  {
+    return F_BUFFER_INSTANCE_DATA |
+      (stride << (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(stride))));
+  }
+
   VertexFormatHandle hFormat;
   uint32_t flags = F_BUFFER_NONE;
   GLenum  target;
@@ -136,6 +142,13 @@ struct VertexBufferObject : ResourceGL
   void Bind() const
   {
     XR_GL_CALL(glBindBuffer(target, name));
+  }
+
+  uint16_t DecodeInstanceDataStride() const
+  {
+    XR_ASSERT(Gfx, CheckAllMaskBits(flags, F_BUFFER_INSTANCE_DATA));
+    return (flags & ~F_BUFFER_INSTANCE_DATA) >>
+      (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(uint16_t)));
   }
 };
 
@@ -736,8 +749,7 @@ struct Context
     // for instance data.
 
     // Encode stride in flags.
-    uint32_t flags = F_BUFFER_INSTANCE_DATA |
-      (stride << (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(stride))));
+    uint32_t flags = VertexBufferObject::EncodeInstanceDataStride(stride);
 
     InstanceDataBufferHandle h;
     h.id = CreateVertexBufferInternal(VertexFormatHandle(), buffer, flags).id;
@@ -1435,9 +1447,7 @@ struct Context
     if (h.IsValid())
     {
       VertexBufferObject& idbo = m_vbos[h.id];
-      XR_ASSERT(Gfx, CheckAllMaskBits(idbo.flags, F_BUFFER_INSTANCE_DATA));
-      m_activeInstDataBufferStride = (idbo.flags & ~F_BUFFER_INSTANCE_DATA) >>
-        (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(uint16_t)));
+      m_activeInstDataBufferStride = idbo.DecodeInstanceDataStride();
       m_instanceOffset = offset;
       m_instanceCount = count;
     }
