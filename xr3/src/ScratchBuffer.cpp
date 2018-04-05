@@ -100,6 +100,11 @@ ScratchBufferImpl*  s_impl = nullptr;
 void ScratchBuffer::Init(size_t poolSize)
 {
   s_impl = new ScratchBufferImpl(poolSize);
+
+  Gfx::RegisterFlushCallback([](void*, void*) {
+    Flush();
+  }, nullptr);
+
   Gfx::RegisterExitCallback([](void*, void*) {
     delete s_impl;
     s_impl = nullptr;
