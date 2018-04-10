@@ -143,6 +143,6 @@ public:
 } // XR
 
 //==============================================================================
-#define XR_Transforms_ALLOC(c, n) static_cast<c*>(XR::Transforms::Alloc(sizeof(c) * (n)))
+#define XR_TRANSFORMS_SCOPED_MODEL(m) XR::Transforms::ScopedModel xrScopedModel ## __COUNTER__ (m);
 
 #endif // XR_TRANSFORMS_HPP
