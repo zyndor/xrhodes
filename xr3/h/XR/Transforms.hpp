@@ -137,12 +137,15 @@ public:
 
   ///@brief Calculates a ray that intersects the near clipping plane at the
   /// given normalised screen coordinates @a nx and @a ny.
+  ///@note The position and direction of the ray is in world space.
   static Ray GetViewRay(float nx, float ny);
 };
 
 } // XR
 
 //==============================================================================
+///@brief Facilitates the usage of Transforms::ScopedModel without having to
+/// come up with a new name for the object instance.
 #define XR_TRANSFORMS_SCOPED_MODEL(m) XR::Transforms::ScopedModel xrScopedModel ## __COUNTER__ (m);
 
 #endif // XR_TRANSFORMS_HPP

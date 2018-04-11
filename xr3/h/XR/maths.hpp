@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include <cmath>
 #include <stdlib.h>
 #include <algorithm>
@@ -73,13 +72,14 @@ T  Clamp(T val, T min, T max);
 ///@return  The value @a val clamped to @a min and @a max.
 float Saturate(float val);
 
-///@return  Linear interpolated value between @a v0 and @A v1 at @a blend.
+///@return  Linear interpolated value between @a v0 and @A v1 at @a blendFactor.
 template  <typename T>
-T  Lerp(T v0, T v1, float blend);
+T  Lerp(T v0, T v1, float blendFactor);
 
-///@brief 
-template  <typename T, size_t kNumSamples>
-T Bezier(const T* parSamples, float blend);
+///@brief Calculates a value based on the given @a controlPoints and @a blendFactor
+/// between .0 and 1.0.
+template  <typename T, size_t N>
+T Bezier(T* const controlPoints, float blendFactor);
 
 ///@return	Interpolated value between @a edge0 and @a edge1.
 float SmoothStep(float edge0, float edge1, float x);
@@ -103,7 +103,7 @@ float CalcScalingPerFrame(float v, float fps);
 ///@return  Whether the quadratic has a solution.
 ///@note If the quadratic doesn't have a solution, the values of @a x0 and @a x1
 /// will not be changed and should be ignored.
-bool  CalcQuadRoots(float a, float b, float c, float& x0, float& x1);
+bool  SolveQuadratic(float a, float b, float c, float& x0, float& x1);
 
 //==============================================================================
 // implementation
@@ -112,7 +112,7 @@ template  <typename T>
 inline
 int Sign(T t)
 {
-  return static_cast<int>((t > 0) - (t < 0)); 
+  return static_cast<int>((t > 0) - (t < 0));
 }
 
 //==============================================================================
@@ -162,47 +162,43 @@ float Saturate(float val)
 //==============================================================================
 template  <typename T>
 inline
-T Lerp(T v0, T v1, float blend)
+T Lerp(T v0, T v1, float blendFactor)
 {
-  return v0 + (v1 - v0) * blend;
+  return v0 + (v1 - v0) * blendFactor;
 }
 
 //==============================================================================
-namespace
-{
 template  <typename T, size_t kNumSamples>
 struct  BezierImpl
 {
   static_assert(kNumSamples > 0, "Invalid number of samples.B");
 
-  static T Calculate(const T* parSamples, float blend)
+  static T Calculate(const T* controlPoints, float blendFactor)
   {
     T arResult[kNumSamples - 1];
     for(int i = 1; i < kNumSamples; ++i)
     {
       const size_t im1(i - 1);
-      arResult[im1] = Lerp(parSamples[im1], parSamples[i], blend); 
+      arResult[im1] = Lerp(controlPoints[im1], controlPoints[i], blendFactor);
     }
-    return BezierImpl<T, kNumSamples - 1>::Calculate(arResult, blend);
+    return BezierImpl<T, kNumSamples - 1>::Calculate(arResult, blendFactor);
   }
 };
 
 template  <typename T>
 struct  BezierImpl<T, 1>
 {
-  static T Calculate(const T* parSamples, float blend)
+  static T Calculate(const T* parSamples, float blendFactor)
   {
     return parSamples[0];
   }
 };
 
-}
-
 template  <typename T, size_t kNumSamples>
 inline
-T Bezier(const T* parSamples, float blend)
+T Bezier(T const* controlPoints, float blendFactor)
 {
-  return BezierImpl<T, kNumSamples>::Calculate(parSamples, blend);
+  return BezierImpl<T, kNumSamples>::Calculate(controlPoints, blendFactor);
 }
 
 //==============================================================================
@@ -210,7 +206,7 @@ inline
 float SmoothStep(float edge0, float edge1, float x)
 {
   x = Saturate((x - edge0) / (edge1 - edge0));
-  return x * x * (3.0f - 2.0f * x); 
+  return x * x * (3.0f - 2.0f * x);
 }
 
 //==============================================================================
@@ -218,7 +214,7 @@ inline
 float SmootherStep(float edge0, float edge1, float x)
 {
   x = Saturate((x - edge0) / (edge1 - edge0));
-  return x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f); 
+  return x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f);
 }
 
 }  // XR

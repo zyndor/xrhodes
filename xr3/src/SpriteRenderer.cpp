@@ -94,7 +94,7 @@ void  SpriteRenderer::Add(Color tint, const XR::Sprite* sprite,
 
   if (s != 1.0f)
   {
-    r.xForm.ScaleRot(s);
+    r.xForm.ScaleLinear(s);
   }
 
   if (rz != .0f)

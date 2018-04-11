@@ -90,6 +90,7 @@ struct Matrix
   {}
 
   // general
+  ///@return Column @a i of the linear transformation part.
   Vector3 GetColumn(size_t i) const
   {
     XR_ASSERT(Matrix, i < Vector3::kNumComponents);
@@ -97,6 +98,7 @@ struct Matrix
       arLinear[i + 2 * Vector3::kNumComponents]);
   }
 
+  ///@brief Convenience method to set column @a i of the linear transformation part.
   void SetColumn(size_t i, Vector3 const& v)
   {
     XR_ASSERT(Matrix, i < Vector3::kNumComponents);
@@ -130,7 +132,7 @@ struct Matrix
   }
 
   ///@brief Scales the linear transformation part of this Matrix by the scalar @a s.
-  void  ScaleRot(float s)
+  void  ScaleLinear(float s)
   {
     xx *= s;
     xy *= s;
@@ -147,7 +149,7 @@ struct Matrix
   /// with the option to reset the translation part (@a resetTrans)
   /// and set the value of the components that aren't involved in the
   /// rotation, to zero (@a setZeros).
-  void  SetRotX(float theta, bool resetTrans, bool setZeros)
+  void  SetRotationX(float theta, bool resetTrans, bool setZeros)
   {
     if (resetTrans)
     {
@@ -171,7 +173,7 @@ struct Matrix
   /// with the option to reset the translation part (@a resetTrans)
   /// and set the value of the components that aren't involved in the
   /// rotation, to zero (@a setZeros).
-  void  SetRotY(float theta, bool resetTrans, bool setZeros)
+  void  SetRotationY(float theta, bool resetTrans, bool setZeros)
   {
     if (resetTrans)
     {
@@ -195,7 +197,7 @@ struct Matrix
   /// with the option to reset the translation part (@a resetTrans)
   /// and set the value of the components that aren't involved in the
   /// rotation, to zero (@a setZeros).
-  void  SetRotZ(float theta, bool resetTrans, bool setZeros)
+  void  SetRotationZ(float theta, bool resetTrans, bool setZeros)
   {
     if (resetTrans)
     {
@@ -220,7 +222,7 @@ struct Matrix
   void  RotateX(float theta)
   {
     Matrix  m;
-    m.SetRotX(theta, true, true);
+    m.SetRotationX(theta, true, true);
     RotateBy(m);
   }
 
@@ -229,7 +231,7 @@ struct Matrix
   void  RotateY(float theta)
   {
     Matrix  m;
-    m.SetRotY(theta, true, true);
+    m.SetRotationY(theta, true, true);
     RotateBy(m);
   }
 
@@ -238,7 +240,7 @@ struct Matrix
   void  RotateZ(float theta)
   {
     Matrix  m;
-    m.SetRotZ(theta, true, true);
+    m.SetRotationZ(theta, true, true);
     RotateBy(m);
   }
 

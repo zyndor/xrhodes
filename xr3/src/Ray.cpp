@@ -52,10 +52,10 @@ bool  Ray::IntersectSphere(const Vector3& pos, float radiusSqr, float& t0,
   XR_ASSERTMSG(Ray, fabsf(direction.Dot() - 1.0f) < kEpsilon,
     ("Ray direction is not normalised."));
 #endif
-  float   a(direction.Dot());
-  float   b(2.0f * direction.Dot(rel));
-  float   c(rel.Dot() - radiusSqr);
-  bool    result(CalcQuadRoots(a, b, c, t0, t1) && t1 > .0f && t0 < length);
+  float a = direction.Dot();
+  float b = 2.0f * direction.Dot(rel);
+  float c = rel.Dot() - radiusSqr;
+  bool  result = SolveQuadratic(a, b, c, t0, t1) && t1 > .0f && t0 < length;
   return result;
 }
 
@@ -67,8 +67,8 @@ bool  Ray::IntersectPlane(const Vector3& pos, const Vector3& normal, float& t)
   XR_ASSERTMSG(Ray, fabsf(direction.Dot() - 1.0f) < kEpsilon,
     ("Ray direction is not normalised."));
 #endif
-  float d(normal.Dot(direction));
-  bool  result(d < .0f);
+  float d = normal.Dot(direction);
+  bool  result = d < .0f;
   if (result)
   {
     Vector3 rel(pos - position);
