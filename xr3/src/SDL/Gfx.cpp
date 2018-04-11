@@ -1457,7 +1457,6 @@ struct Context
   {
     Program& program = m_programs[h.id];
     XR_GL_CALL(glUseProgram(program.name));
-    program.UpdateUniforms(m_uniforms.server.GetNumActive(), m_uniformData);
     m_activeProgram = h;
   }
 
@@ -1474,6 +1473,7 @@ struct Context
     XR_ASSERT(Gfx, program.linked == true);
 
     program.ResetAttribBindings();
+    program.UpdateUniforms(m_uniforms.server.GetNumActive(), m_uniformData);
 
     VertexBufferObject const& vbo = m_vbos[vbh.id];
     VertexFormatRef const& vfr = m_vertexFormats[vbo.hFormat.id];
@@ -1496,6 +1496,7 @@ struct Context
     XR_ASSERT(Gfx, program.linked == true);
 
     program.ResetAttribBindings();
+    program.UpdateUniforms(m_uniforms.server.GetNumActive(), m_uniformData);
 
     VertexBufferObject const& vbo = m_vbos[vbh.id];
     VertexFormatRef const& vfr = m_vertexFormats[vbo.hFormat.id];
