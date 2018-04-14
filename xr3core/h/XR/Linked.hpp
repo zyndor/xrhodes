@@ -7,41 +7,48 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
+#include <functional>
 
 namespace XR
 {
 
 //==============================================================================
-///@brief Intrusive doubly linked list, whose primary intended use is for global
-/// (static) objects. The use of the Curiously Recurring Template Pattern is
-/// recommended, i.e. derive YourClass from Linked<YourClass>.
+///@brief Intrusive doubly linked list template, which allows processing every
+/// one of its elements in one go. Each new instance adds itself to the end of
+/// its Linked<> list upon construction, and unlinks itself upon destruction.
+/// The primary intended use of Linked<> is to tie together objects that may be
+/// defined in different translation units, typically as globals (file statics).
+/// As such, no assumption should be made about the order of these objects in
+/// the list.
+/// The use of the Curiously Recurring Template Pattern is recommended, i.e.
+/// derive YourClass from Linked<YourClass>.
 template <typename T>
 class Linked
 {
 public:
   // static
-  static void ForEach(void(*fn)(T&))
+  static void ForEach(std::function<void(T&)> fn)
   {
-    Linked<T>* p = s_root;
+    Linked<T>* p = s_head;
     while (p)
     {
-      (*fn)(*p->data);
-      p = p->m_next;
+      fn(*p->data);
+      p = p->m_prev;
     }
   }
 
   // structors
   Linked(T& obj)
   : data(&obj),
-    m_prev(nullptr),
-    m_next(s_root)
+    m_prev(s_head),
+    m_next(nullptr)
   {
-    if (s_root)
+    if (s_head)
     {
-      s_root->m_prev = this;
+      s_head->m_next = this;
     }
 
-    s_root = this;
+    s_head = this;
   }
 
   ~Linked()
@@ -62,15 +69,15 @@ protected:
 
 private:
   // static
-  static Linked<T>* s_root;
+  static Linked<T>* s_head;
 
   // data
-  Linked* m_prev;
-  Linked* m_next;
+  Linked<T>* m_prev;
+  Linked<T>* m_next;
 };
 
 template <typename T>
-Linked<T>* Linked<T>::s_root = nullptr;
+Linked<T>* Linked<T>::s_head = nullptr;
 
 }
 
