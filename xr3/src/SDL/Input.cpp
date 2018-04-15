@@ -44,7 +44,7 @@ void Input::Update()
 ButtonState::Type Input::GetKeyState(KeyCode k)
 {
   XR_ASSERT(Input, k < kKeyCount);
-  return InputImpl::s_instance->keyStates[k];
+  return InputImpl::s_instance->keyStates[k] & ButtonState::Down;
 }
 
 //==============================================================================
@@ -57,7 +57,7 @@ SVector2 Input::GetMousePosition()
 ButtonState::Type Input::GetMouseButtonState(MouseButton::Type mb)
 {
   XR_ASSERT(Input, mb < MouseButton::kCount);
-  return InputImpl::s_instance->mouseButtonStates[mb];
+  return InputImpl::s_instance->mouseButtonStates[mb] & ButtonState::Down;
 }
 
 //==============================================================================
