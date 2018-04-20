@@ -266,10 +266,17 @@ IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, uint32_t flags = F_BU
 
 void Destroy(IndexBufferHandle h);
 
-///@brief Uploads texture. Texel data isn't kept around by Gfx.
-TextureHandle CreateTexture(TextureFormat hFormat, uint32_t width,
+///@brief Creates a texture with the given parameters and texel data in @a buffer.
+///@note The texel data isn't kept around by Gfx.
+TextureHandle CreateTexture(TextureFormat format, uint32_t width,
   uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
   size_t numBuffers = 1);
+
+///@brief Creates a texture width the given parameters and no texel data. Suxh
+/// a texture may be suitable for a render target (framebuffer attachment).
+///@note @a format may only be one of the non-compressed ones.
+TextureHandle CreateTexture(TextureFormat format, uint32_t width,
+  uint32_t height, uint32_t depth, uint32_t flags);
 
 // default textures.
 TextureHandle GetDefaultTexture2D();

@@ -800,7 +800,7 @@ struct Context
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MIN_FILTER, filterMode));
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MAG_FILTER, filterMode));
 
-    auto& formatDesc = kTextureFormats[int(format)];
+    auto& formatDesc = kTextureFormats[static_cast<int>(format)];
     GLenum fmtInternal = (CheckAllMaskBits(flags, F_TEXTURE_SRGB) && formatDesc.srgbInternal != GL_ZERO) ?
       formatDesc.srgbInternal : formatDesc.internal;
 
@@ -884,8 +884,7 @@ struct Context
   FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
     uint32_t flags)
   {
-    Buffer buffer = { 0, 0 };
-    TextureHandle h = CreateTexture(format, width, height, 0, flags, &buffer, 1);
+    TextureHandle h = Gfx::CreateTexture(format, width, height, 0, flags);
     return CreateFrameBuffer(1, &h, true);
   }
 
@@ -1463,7 +1462,7 @@ struct Context
   void SetFrameBuffer(FrameBufferHandle h)
   {
     m_activeFrameBuffer = h;
-    XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, m_fbos[h.id].name));
+    m_fbos[h.id].Bind();
   }
 
   void Draw(VertexBufferHandle vbh, PrimType pt, uint32_t offset, uint32_t count)
@@ -1728,6 +1727,15 @@ TextureHandle CreateTexture(TextureFormat format, uint32_t width,
   size_t numBuffers)
 {
   return s_impl->CreateTexture(format, width, height, depth, flags, buffer, numBuffers);
+}
+
+//=============================================================================
+TextureHandle CreateTexture(TextureFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t flags)
+{
+  XR_ASSERTMSG(Gfx, !kTextureFormats[static_cast<int>(format)].compressed,
+    ("Cannot create compressed texture without buffer."));
+  Buffer buffer { 0, nullptr };
+  return CreateTexture(format, width, height, depth, flags, &buffer, 1);
 }
 
 //=============================================================================
