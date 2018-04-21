@@ -180,7 +180,7 @@ namespace XR
 
     Gfx::Clear(Gfx::F_CLEAR_DEPTH);
     material->Apply();
-    Gfx::Draw(vbo, PrimType::TRI_STRIP, 0, 4);
+    Gfx::Draw(vbo, Primitive::TriStrip, 0, 4);
     Gfx::Present();
 
     Image cap;

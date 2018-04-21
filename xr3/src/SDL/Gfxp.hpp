@@ -7,9 +7,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/Gfx.hpp"
 #include "XR/IndexServer.hpp"
+#include "XR/memory.hpp"
 
 #define XR_ALIGN16(val) XR::Align<uint32_t>(val, 16)
 

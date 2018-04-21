@@ -1,5 +1,5 @@
-#ifndef XR_PRIMTYPE_HPP
-#define XR_PRIMTYPE_HPP
+#ifndef XR_PRIMITIVE_HPP
+#define XR_PRIMITIVE_HPP
 //==============================================================================
 //
 // XRhodes
@@ -11,14 +11,15 @@
 namespace XR {
 
 //==============================================================================
-enum class PrimType
+///@brief Drawing primitives supported by XRhodes.
+enum class Primitive
 {
-  LINE_LIST,
-  LINE_STRIP,
-  TRI_LIST,
-  TRI_STRIP,
+  LineList,
+  LineStrip,
+  TriList,
+  TriStrip,
 };
 
 } // XR
 
-#endif // XR_PRIMTYPE_HPP
+#endif // XR_PRIMITIVE_HPP

@@ -41,7 +41,7 @@ void UILabel::Render() const
 
   Matrix model(Vector3(float(x + w / 2), float(y + h / 2), .0f));
   Transforms::ScopedModel m(model);
-  m_text.RenderOnly(PrimType::TRI_LIST);
+  m_text.RenderOnly(Primitive::TriList);
 }
 
 //==============================================================================

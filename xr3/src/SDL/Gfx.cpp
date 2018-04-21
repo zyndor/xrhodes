@@ -1465,7 +1465,7 @@ struct Context
     m_fbos[h.id].Bind();
   }
 
-  void Draw(VertexBufferHandle vbh, PrimType pt, uint32_t offset, uint32_t count)
+  void Draw(VertexBufferHandle vbh, Primitive pt, uint32_t offset, uint32_t count)
   {
     XR_ASSERT(Gfx, m_activeProgram.id != ProgramHandle::INVALID_ID);
     Program& program = m_programs[m_activeProgram.id];
@@ -1488,7 +1488,7 @@ struct Context
       instCount));
   }
 
-  void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType pt, uint32_t offset, uint32_t count)
+  void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive pt, uint32_t offset, uint32_t count)
   {
     XR_ASSERT(Gfx, m_activeProgram.id != ProgramHandle::INVALID_ID);
     Program& program = m_programs[m_activeProgram.id];
@@ -1926,16 +1926,16 @@ void SetFrameBuffer(FrameBufferHandle h)
 }
 
 //==============================================================================
-void Draw(VertexBufferHandle vbh, PrimType primitiveType, uint32_t offset, uint32_t count)
+void Draw(VertexBufferHandle vbh, Primitive primitive, uint32_t offset, uint32_t count)
 {
-  s_impl->Draw(vbh, primitiveType, offset, count);
+  s_impl->Draw(vbh, primitive, offset, count);
 }
 
 //=============================================================================
-void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType primitiveType,
+void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive primitive,
   uint32_t offset, uint32_t count)
 {
-  s_impl->Draw(vbh, ibh, primitiveType, offset, count);
+  s_impl->Draw(vbh, ibh, primitive, offset, count);
 }
 
 //==============================================================================

@@ -53,11 +53,11 @@ public:
 
   ///@brief Renders the mesh using the index information, without setting the
   /// material.
-  void RenderOnly(PrimType primitiveType) const;
+  void RenderOnly(Primitive primitive) const;
 
   ///@brief Renders the mesh using @a count indices starting from @a offset,
   /// of the index information, without setting the material.
-  void RenderOnly(PrimType primitiveType, uint32_t offset, uint32_t count) const;
+  void RenderOnly(Primitive primitive, uint32_t offset, uint32_t count) const;
 };
 
 //==============================================================================
@@ -88,20 +88,20 @@ inline Buffer IndexMeshCore::GetIndexBuffer() const
 //==============================================================================
 template<class VertexFormat>
 inline
-void IndexMesh<VertexFormat>::RenderOnly(PrimType primitiveType) const
+void IndexMesh<VertexFormat>::RenderOnly(Primitive primitive) const
 {
-  RenderOnly(primitiveType, 0, static_cast<uint32_t>(m_indices.size()));
+  RenderOnly(primitive, 0, static_cast<uint32_t>(m_indices.size()));
 }
 
 //==============================================================================
 template<class VertexFormat>
 inline
-void IndexMesh<VertexFormat>::RenderOnly(PrimType primitiveType, uint32_t offset,
+void IndexMesh<VertexFormat>::RenderOnly(Primitive primitive, uint32_t offset,
   uint32_t count) const
 {
   XR_ASSERT(IndexMesh, Base::m_vbo.IsValid());
   XR_ASSERT(IndexMesh, m_ibo.IsValid());
-  Gfx::Draw(Base::m_vbo, m_ibo, primitiveType, offset, count);
+  Gfx::Draw(Base::m_vbo, m_ibo, primitive, offset, count);
 }
 
 } // XR

@@ -53,7 +53,7 @@ struct ScratchBufferImpl
     return static_cast<uint16_t*>(buffer);
   }
 
-  void RenderBuffers(PrimType primitive)
+  void RenderBuffers(Primitive primitive)
   {
     XR_ASSERTMSG(ScratchBuffer, m_vertices.data, ("No vertices allocated for drawing."));
     auto vbo = Gfx::CreateVertexBuffer(m_hFormat, m_vertices);
@@ -172,7 +172,7 @@ uint16_t * ScratchBuffer::AllocateIndices(uint32_t numIndices)
 }
 
 //==============================================================================
-void ScratchBuffer::Finish(PrimType primitive)
+void ScratchBuffer::Finish(Primitive primitive)
 {
   s_impl->RenderBuffers(primitive);
 }

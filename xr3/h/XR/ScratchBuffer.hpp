@@ -49,7 +49,7 @@ public:
 
   static uint16_t* AllocateIndices(uint32_t numIndices);
 
-  static void Finish(PrimType primitive);
+  static void Finish(Primitive primitive);
 
   static void Flush();
 };

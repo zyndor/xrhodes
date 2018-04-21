@@ -214,7 +214,7 @@ void  SpriteRenderer::Render()
     Gfx::VertexBufferHandle vbo =
       Gfx::CreateVertexBuffer(XR::Vertex::Formats::GetHandle<Vertex>(),
         { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
-    Gfx::Draw(vbo, m_ibo, PrimType::TRI_LIST, 0, numIndices);
+    Gfx::Draw(vbo, m_ibo, Primitive::TriList, 0, numIndices);
     Gfx::Destroy(vbo);
 
     vertexOffset += numVertices;

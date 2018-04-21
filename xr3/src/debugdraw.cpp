@@ -97,7 +97,7 @@ void SetMaterial(Material::Ptr material)
 }
 
 void  DrawLineInternal(const Vector3* positions, int numVerts, Material::Ptr const& material,
-  PrimType primitive)
+  Primitive primitive)
 {
   SetMaterial(material);
   auto verts = ScratchBuffer::Start3d(numVerts);
@@ -136,19 +136,19 @@ void  Line(const Vector3& v, Material::Ptr const& material)
   verts[0].pos = Vector3::Zero();
   verts[1].pos = v;
 
-  ScratchBuffer::Finish(PrimType::LINE_STRIP);
+  ScratchBuffer::Finish(Primitive::LineStrip);
 }
 
 //==============================================================================
 void  LineStrip(const Vector3* positions, int numVerts, Material::Ptr const& material)
 {
-  DrawLineInternal(positions, numVerts, material, PrimType::LINE_STRIP);
+  DrawLineInternal(positions, numVerts, material, Primitive::LineStrip);
 }
 
 //==============================================================================
 void  LineList(const Vector3* positions, int numVerts, Material::Ptr const& material)
 {
-  DrawLineInternal(positions, numVerts, material, PrimType::LINE_LIST);
+  DrawLineInternal(positions, numVerts, material, Primitive::LineList);
 }
 
 //==============================================================================
@@ -162,7 +162,7 @@ void  Rect(float hw, float hh, Material::Ptr const& material)
   verts[3].pos = Vector3(hw, -hh, .0f);
   verts[4] = verts[0];
 
-  ScratchBuffer::Finish(PrimType::LINE_STRIP);
+  ScratchBuffer::Finish(Primitive::LineStrip);
 }
 
 //==============================================================================
@@ -175,7 +175,7 @@ void  FillRect(float hw, float hh, Material::Ptr const& material)
   verts[2].pos = Vector3(hw, -hh, .0f);
   verts[3].pos = Vector3(hw, hh, .0f);
 
-  ScratchBuffer::Finish(PrimType::TRI_STRIP);
+  ScratchBuffer::Finish(Primitive::TriStrip);
 }
 
 //==============================================================================
@@ -200,7 +200,7 @@ void  Circle(float radius, Material::Ptr const& material)
     ++verts;
   }
 
-  ScratchBuffer::Finish(PrimType::LINE_STRIP);
+  ScratchBuffer::Finish(Primitive::LineStrip);
 }
 
 //==============================================================================
@@ -230,7 +230,7 @@ void  FillCircle(float radius, Material::Ptr const& material)
 
   verts->pos = Vector3(-radius, .0f, .0f);
 
-  ScratchBuffer::Finish(PrimType::TRI_STRIP);
+  ScratchBuffer::Finish(Primitive::TriStrip);
 }
 
 } // DebugDraw

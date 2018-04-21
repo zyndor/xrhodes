@@ -8,12 +8,11 @@
 //
 //==============================================================================
 #include "XR/Color.hpp"
-#include "XR/memory.hpp"
 #include "XR/utils.hpp"
 #include "XR/Hash.hpp"
 #include "XR/Rect.hpp"
 #include "XR/Callback.hpp"
-#include "XR/PrimType.hpp"
+#include "XR/Primitive.hpp"
 #include "XR/Buffer.hpp"
 #include "XR/debug.hpp"
 
@@ -386,11 +385,11 @@ void SetFrameBuffer(FrameBufferHandle h);
 
 ///@brief Draws the contents of the given vertex buffer; @a count vertices
 /// starting from @a offset.
-void Draw(VertexBufferHandle vbh, PrimType primitiveType, uint32_t offset, uint32_t count);
+void Draw(VertexBufferHandle vbh, Primitive primitive, uint32_t offset, uint32_t count);
 
 ///@brief Draws the contents of the given vertex buffer, using @a count indices
 /// starting from @a offset.
-void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, PrimType primitiveType, uint32_t offset, uint32_t count);
+void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive primitive, uint32_t offset, uint32_t count);
 
 void Clear(uint32_t flags, Color color = Color(0xff000000), float depth = 1.0f,
   uint8_t stencil = 0x00);

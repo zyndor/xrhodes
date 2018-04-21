@@ -27,11 +27,11 @@ public:
 
   ///@brief Renders the mesh as the given primitive type, without setting the
   /// material.
-  void RenderOnly(PrimType primitiveType) const;
+  void RenderOnly(Primitive primitive) const;
 
   ///@brief Renders @a count vertices from @a offset, of the mesh, as the given
   /// primitive type, without setting the material.
-  void RenderOnly(PrimType primitiveType, uint32_t offset, uint32_t count) const;
+  void RenderOnly(Primitive primitive, uint32_t offset, uint32_t count) const;
 
 protected:
   // data
@@ -84,17 +84,17 @@ Material::Ptr BasicMeshCore::GetMaterial() const
 
 //==============================================================================
 inline
-void BasicMeshCore::RenderOnly(PrimType primitiveType) const
+void BasicMeshCore::RenderOnly(Primitive primitive) const
 {
-  RenderOnly(primitiveType, 0, m_vertices.GetNumElements());
+  RenderOnly(primitive, 0, m_vertices.GetNumElements());
 }
 
 //==============================================================================
 inline
-void BasicMeshCore::RenderOnly(PrimType primitiveType, uint32_t offset, uint32_t count) const
+void BasicMeshCore::RenderOnly(Primitive primitive, uint32_t offset, uint32_t count) const
 {
   XR_ASSERT(BasicMesh, m_vbo.IsValid());
-  Gfx::Draw(m_vbo, primitiveType, offset, count);
+  Gfx::Draw(m_vbo, primitive, offset, count);
 }
 
 //==============================================================================
