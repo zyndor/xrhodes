@@ -311,7 +311,7 @@ struct Program: ResourceGL
     {
       uniforms->ReadHandle(ignoreType, ignoreSize, ignoreLoc, hUniform);
       XR_ASSERT(Gfx, hUniform.id < numUniforms);
-      --(uniformData[hUniform.id].refCount);
+      Destroy(hUniform);
       uniforms->Read(ignoreGlLoc);
     }
 

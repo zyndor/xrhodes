@@ -351,6 +351,8 @@ void Destroy(ShaderHandle h);
 ///@return Handle, if linking was successful. INVALID_HANDLE if not.
 ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment);
 
+///@brief Destroys the given program and decrements the ref count of the shaders
+/// and uniforms it uses.
 void Destroy(ProgramHandle h);
 
 // State and drawing
