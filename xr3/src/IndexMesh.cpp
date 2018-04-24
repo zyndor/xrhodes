@@ -9,6 +9,12 @@
 namespace XR {
 
 //==============================================================================
+IndexMeshCore::~IndexMeshCore()
+{
+  Gfx::Destroy(m_ibo);
+}
+
+//==============================================================================
 void  IndexMeshCore::SetIndexPattern(const uint16_t* pInds, uint32_t numInds, uint32_t numSets)
 {
   XR_ASSERT(IndexMesh, pInds != nullptr);

@@ -19,6 +19,9 @@ public:
   // types
   using IndexArray = std::vector<uint16_t>;
 
+  // structors
+  ~IndexMeshCore();
+
   // general
   IndexArray& GetIndices();
   const IndexArray& GetIndices() const;
