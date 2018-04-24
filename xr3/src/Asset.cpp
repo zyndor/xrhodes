@@ -654,7 +654,7 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
         if(header.typeId != desc.type)
         {
           LTRACE(("%s: Hash clash detected trying to build %s, pre-existing type: %.*s.",
-            path.c_str(), builtPath.c_str(), sizeof(header.typeId), header.typeId));
+            path.c_str(), builtPath.c_str(), sizeof(header.typeId), &header.typeId));
           asset->FlagError();
           rebuild = false;  // hash clash -- error;
         }
