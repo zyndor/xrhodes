@@ -144,8 +144,12 @@ public:
 } // XR
 
 //==============================================================================
+#define XR_TRANSFORMS_SCOPED_MODEL_NAME_(l) xrScopedModel ## l
+#define XR_TRANSFORMS_SCOPED_MODEL_NAME(l) XR_TRANSFORMS_SCOPED_MODEL_NAME_(l)
+
 ///@brief Facilitates the usage of Transforms::ScopedModel without having to
-/// come up with a new name for the object instance.
-#define XR_TRANSFORMS_SCOPED_MODEL(m) XR::Transforms::ScopedModel xrScopedModel ## __COUNTER__ (m);
+/// come up with a new name for the object instance (as long as it isn't used
+/// more than once per line).
+#define XR_TRANSFORMS_SCOPED_MODEL(m) XR::Transforms::ScopedModel XR_TRANSFORMS_SCOPED_MODEL_NAME(__LINE__)(m);
 
 #endif // XR_TRANSFORMS_HPP
