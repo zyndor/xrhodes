@@ -180,6 +180,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     {
       auto& fontPath = root->Find("font");
       success = ttfData.Open(fontPath.GetValue(), false);
+      LTRACEIF(!success, ("%s: failed to load '%s'.", rawNameExt, fontPath.GetValue()));
     }
     catch(XonEntity::Exception&)
     {
