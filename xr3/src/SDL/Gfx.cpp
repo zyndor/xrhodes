@@ -1362,9 +1362,13 @@ struct Context
 
   void SetTexture(TextureHandle h, uint32_t stage)
   {
-    XR_GL_CALL(glActiveTexture(GL_TEXTURE0 + stage));
-    TextureRef& t = m_textures[h.id];
-    t.inst.Bind();
+    if (m_activeTextures[stage] != h)
+    {
+      m_activeTextures[stage] = h;
+      XR_GL_CALL(glActiveTexture(GL_TEXTURE0 + stage));
+      TextureRef& t = m_textures[h.id];
+      t.inst.Bind();
+    }
   }
 
   void SetState(uint32_t flags)
@@ -1454,15 +1458,21 @@ struct Context
 
   void SetProgram(ProgramHandle h)
   {
-    Program& program = m_programs[h.id];
-    XR_GL_CALL(glUseProgram(program.name));
-    m_activeProgram = h;
+    if (m_activeProgram != h)
+    {
+      Program& program = m_programs[h.id];
+      XR_GL_CALL(glUseProgram(program.name));
+      m_activeProgram = h;
+    }
   }
 
   void SetFrameBuffer(FrameBufferHandle h)
   {
-    m_activeFrameBuffer = h;
-    m_fbos[h.id].Bind();
+    if (m_activeFrameBuffer != h)
+    {
+      m_activeFrameBuffer = h;
+      m_fbos[h.id].Bind();
+    }
   }
 
   void Draw(VertexBufferHandle vbh, Primitive pt, uint32_t offset, uint32_t count)
@@ -1574,8 +1584,9 @@ private:
   uint16_t m_instanceOffset = 0;
   uint16_t m_instanceCount = 0;
 
-  ProgramHandle m_activeProgram;
-  FrameBufferHandle m_activeFrameBuffer;
+  TextureHandle m_activeTextures[kMaxTextureStages];  // no ownership
+  ProgramHandle m_activeProgram;  // no ownership
+  FrameBufferHandle m_activeFrameBuffer;  // no ownership
 
   std::vector<CallbackObject> m_onFlush;
   std::vector<CallbackObject> m_onExit;

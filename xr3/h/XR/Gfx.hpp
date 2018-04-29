@@ -379,8 +379,7 @@ void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count
 ///@brief Sets a shader program to be used for the subsequent Draw calls.
 void SetProgram(ProgramHandle h);
 
-///@brief Sets a render target to render to. To set the default render target,
-/// pass invalid handle.
+///@brief Sets a frame buffer that subsequent Draw() calls will to render to.
 void SetFrameBuffer(FrameBufferHandle h);
 
 ///@brief Draws the contents of the given vertex buffer; @a count vertices
