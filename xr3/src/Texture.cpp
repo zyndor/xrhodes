@@ -128,7 +128,7 @@ void Texture::RegisterSamplerUniform(char const* name, uint32_t textureStage)
         Gfx::RegisterExitCallback([](void*, void* ) {
           ForEach([](HandleHolder& hh) {
             Gfx::Destroy(hh.value);
-            hh.value.Invalidate();
+            delete &hh;
           });
           initialized = false;  // Gfx was torn down.
         }, nullptr);

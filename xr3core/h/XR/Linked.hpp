@@ -32,8 +32,9 @@ public:
     Linked<T>* p = s_head;
     while (p)
     {
+      auto pp = p->m_prev;
       fn(*p->data);
-      p = p->m_prev;
+      p = pp;
     }
   }
 
