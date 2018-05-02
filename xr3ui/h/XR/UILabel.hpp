@@ -8,7 +8,7 @@
 //
 //==============================================================================
 #include "UIColoredElement.hpp"
-#include "XR/Text.hpp"
+#include "XR/BoxText.hpp"
 
 namespace XR
 {
@@ -26,21 +26,22 @@ public:
 
   // general
   Font::Ptr GetFont() const;
+  BoxText::Alignment  GetHorizontalAlignment() const;
+  BoxText::Alignment  GetVerticalAlignment() const;
+  float GetScale() const;
+  char const* GetText() const;
+
   void  SetFont(Font::Ptr const& pFont);
-
-  Text::Alignment  GetHorizontalAlignment() const;
-  Text::Alignment  GetVerticalAlignment() const;
-
-  void  SetHorizontalAlignment(Text::Alignment a);
-  void  SetVerticalAlignment(Text::Alignment a);
+  void  SetHorizontalAlignment(BoxText::Alignment a);
+  void  SetVerticalAlignment(BoxText::Alignment a);
+  void  SetScale(float scale);
+  void  SetText(const char* pText);
 
   void  SetWidthToText();
   void  SetHeightToText();
   void  SetSizeToText();
 
-  void  PrepareText(const char* pText);
-
-  const Text& GetText() const;
+  void UpdateText();
 
   virtual void OnChange();
 
@@ -48,9 +49,14 @@ public:
 
 protected:
   // data
-  mutable Text  m_text;
-  int16_t       m_oldWidth;
-  int16_t       m_oldHeight;
+  IndexMesh<TextVertexFormat> m_textMesh;
+  BoxText  m_textParams;
+  bool m_textDirty;
+  std::string m_text;
+  BoxText::Stats m_textStats;
+
+  int16_t  m_oldWidth;
+  int16_t  m_oldHeight;
 
   // internal
   void Render() const;  // deprecate
@@ -62,29 +68,43 @@ protected:
 inline
 Font::Ptr UILabel::GetFont() const
 {
-  return m_text.GetFont();
+  return m_textParams.GetFont();
 }
 
 //==============================================================================
 inline
-Text::Alignment  UILabel::GetHorizontalAlignment() const
+BoxText::Alignment  UILabel::GetHorizontalAlignment() const
 {
-  return m_text.GetHorizontalAlignment();
+  return m_textParams.GetHorizontalAlignment();
 }
 
 //==============================================================================
 inline
-Text::Alignment  UILabel::GetVerticalAlignment() const
+BoxText::Alignment  UILabel::GetVerticalAlignment() const
 {
-  return m_text.GetVerticalAlignment();
+  return m_textParams.GetVerticalAlignment();
 }
 
 //==============================================================================
 inline
-const Text& UILabel::GetText() const
+float UILabel::GetScale() const
 {
-  return m_text;
+  return m_textParams.GetScale();
 }
+
+////==============================================================================
+inline
+char const* UILabel::GetText() const
+{
+  return m_text.c_str();
+}
+
+////==============================================================================
+//inline
+//const BoxText& UILabel::GetText() const
+//{
+//  return m_textParams;
+//}
 
 } // XR
 

@@ -1,5 +1,5 @@
-#ifndef XR_TEXT_HPP
-#define XR_TEXT_HPP
+#ifndef XR_BOXTEXT_HPP
+#define XR_BOXTEXT_HPP
 //==============================================================================
 //
 // XRhodes
@@ -19,9 +19,10 @@ namespace XR {
 using TextVertexFormat =
   Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
 
-///@brief Offers capabilities to generate a Text mesh given a font, a scale and
-/// a rectangle size.
-class Text: public IndexMesh<TextVertexFormat>
+///@brief Holds the parameters of a text block that is to be presented line by
+/// line, horizontally in a rectangular area of given size, and performs the
+/// creation of the text mesh using the given Font.
+class BoxText
 {
 public:
   // types
@@ -34,20 +35,20 @@ public:
     Far,  // Right / Bottom
   };
 
-  ///@brief A line of text, with width information to support horizontal alignment.
-  ///@note Does not own its pointers; must not outlive the underlying text buffer.
-  struct Line
-  {
-    char const* start;
-    char const* end;
-    float width;  // scaled
-  };
-
   ///@brief The result of preprocessing a string of text. Specifies the size of
   /// the text block, the number of printable glyphs and the text broken into lines.
   ///@note Does not own its pointers; must not outlive the underlying text buffer.
   struct Measurement
   {
+    ///@brief A line of text, with width information to support horizontal alignment.
+    ///@note Does not own its pointers; must not outlive the underlying text buffer.
+    struct Line
+    {
+      char const* start;
+      char const* end;
+      float width;  // scaled
+    };
+
     Vector2 size;
     uint32_t numGlyphs; // printable only; x4 vertices required.
     std::vector<Line> lines;
@@ -63,64 +64,9 @@ public:
     float height;
   };
 
-  ///@brief Convenience functionality allowing to chain a number of setters, followed
-  /// by an automatic update of the underlying font.
-  class Updater
-  {
-    XR_NONCOPY_DECL(Updater)
-
-  public:
-    Updater(Text& text)
-    : m_text(text)
-    {}
-
-    ~Updater()
-    {
-      m_text.Update();
-    }
-
-    Updater& SetFont(Font::Ptr const& font) { m_text.SetFont(font); return *this; }
-    Updater& SetScale(float scale) { m_text.SetScale(scale); return *this; }
-    Updater& SetBoxSize(float width, float height) { m_text.SetBoxSize(width, height); return *this; }
-    Updater& SetHorizontalAlignment(Alignment a) { m_text.SetHorizontalAlignment(a); return *this; }
-    Updater& SetVerticalAlignment(Alignment a) { m_text.SetVerticalAlignment(a); return *this; }
-    Updater& SetText(const char* text) { m_text.SetText(text); return *this; }
-
-  private:
-    Text& m_text;
-  };
-
-  // static
-  ///@brief Pre-processes UTF-8 encoded @a text, attempting to fit it into a
-  /// rectangle of @a maxSize size, after applying @a scale, breaking the text
-  /// into lines, at word boundaries (if one was found). The output is
-  /// the number of glyphs and a vector of lines, written into @a m.
-  static void Measure(char const* text, Font::Ptr font, float scale,
-    Vector2 maxSize, Measurement& m);
-
-  ///@brief Generates the mesh for the given text.
-  ///@note Expects to have at least m.numGlyphs * 4 elements in the @a positions
-  /// and @a uvs arrays.
-  static void GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
-    Vector2 maxSize, Alignment hAlign, Alignment vAlign, uint32_t attribStride,
-    Vector3* positions, Vector2* uvs, Stats* statsOut);
-
-  ///@brief Convenience function to geenrate the mesh for the given text into
-  /// the given array of vertices in the given vertex format. Currently
-  /// restricted to using UV stream 0.
-  ///@note Expects to have at least m.numGlyps * 4 elements in the @a verts
-  /// array.
-  template <class VertexFormat>
-  static void GenerateMesh(Measurement const& m, Font::Ptr font, float scale,
-    Vector2 maxSize, Alignment hAlign, Alignment vAlign, VertexFormat* verts, Stats* statsOut)
-  {
-    GenerateMesh(m, font, scale, maxSize, hAlign, vAlign, VertexFormat::kSize,
-      &verts->pos, &verts->uv0, statsOut);
-  }
-
   // structors
-  Text();
-  ~Text();
+  BoxText();
+  ~BoxText();
 
   // general
   Font::Ptr     GetFont() const;
@@ -134,18 +80,35 @@ public:
   void          SetBoxSize(float width, float hight);
   void          SetHorizontalAlignment(Alignment a);
   void          SetVerticalAlignment(Alignment a);
-  void          SetText(const char* text);
 
-  ///@brief Create the mesh based on the given font, scale, box size, alignments.
-  ///@note No check made for [lack of] changes - a full blown recreation of text
-  /// each time.
-  void          Update();
+  ///@brief Pre-processes UTF-8 encoded @a text, attempting to fit it into a
+  /// rectangle of @a boxSize size, after applying @a scale, breaking the text
+  /// into lines, at word boundaries (if one was found). The output is
+  /// the number of glyphs and a vector of lines, written into @a m.
+  void Measure(char const* text, Measurement& m) const;
 
-  Stats const& GetStats() const;
+  ///@brief Generates the mesh for the given text.
+  ///@note Expects to have at least m.numGlyphs * 4 elements in the @a positions
+  /// and @a uvs arrays.
+  void Generate(Measurement const& m, uint32_t attribStride,
+    Vector3* positions, Vector2* uvs, Stats* statsOut);
 
-  ///@brief Erases the text, destroys and recreates the vertex and index
-  /// buffers as empty, and zeroes out stats.
-  void          Clear();
+  ///@brief Convenience function to geenrate the mesh for the given text into
+  /// the given array of vertices in the given vertex format. Currently
+  /// restricted to using UV stream 0.
+  ///@note Expects to have at least m.numGlyps * 4 elements in the @a verts
+  /// array.
+  template <class VertexFormat>
+  inline
+  void Generate(Measurement const& m, VertexFormat* verts, Stats* statsOut)
+  {
+    Generate(m, VertexFormat::kSize, &verts->pos, &verts->uv0, statsOut);
+  }
+
+  ///@brief Convenience function to update an IndexMesh with the given text.
+  template <class VertexFormat>
+  void UpdateMesh(const char* text, IndexMesh<VertexFormat>& mesh,
+    Stats* statsOut);
 
 protected:
   // data
@@ -154,55 +117,66 @@ protected:
   Vector2       m_boxSize;
   Alignment     m_horizontalAlignment;
   Alignment     m_verticalAlignment;
-  std::string   m_text;
-
-  Stats m_stats;
 };
 
 //==============================================================================
 //  implementation
 //==============================================================================
 inline
-Font::Ptr Text::GetFont() const
+Font::Ptr BoxText::GetFont() const
 {
   return m_font;
 }
 
 //==============================================================================
 inline
-float Text::GetScale() const
+float BoxText::GetScale() const
 {
   return m_scale;
 }
 
 //==============================================================================
 inline
-Vector2 Text::GetBoxSize() const
+Vector2 BoxText::GetBoxSize() const
 {
   return m_boxSize;
 }
 
 //==============================================================================
 inline
-Text::Alignment  Text::GetHorizontalAlignment() const
+BoxText::Alignment  BoxText::GetHorizontalAlignment() const
 {
   return m_horizontalAlignment;
 }
 
 //==============================================================================
 inline
-Text::Alignment  Text::GetVerticalAlignment() const
+BoxText::Alignment  BoxText::GetVerticalAlignment() const
 {
   return m_verticalAlignment;
 }
 
 //==============================================================================
-inline
-Text::Stats const& Text::GetStats() const
+template <class VertexFormat>
+void BoxText::UpdateMesh(const char* text, IndexMesh<VertexFormat>& mesh,
+  Stats* statsOut)
 {
-  return m_stats;
+  // Prepare measurement
+  Measurement m;
+  Measure(text, m);
+
+  // Allocate buffer, set index pattern
+  mesh.AllocBuffer(m.numGlyphs * Sprite::kNumVertices);
+  mesh.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, Sprite::kNumVertices,
+    m.numGlyphs);
+
+  Generate(m, mesh.GetVertices(), statsOut);
+
+  // Create GPU objects.
+  mesh.CreateVbo();
+  mesh.CreateIbo();
 }
 
 } // XR
 
-#endif // XR_TEXT_HPP
+#endif // XR_BOXTEXT_HPP

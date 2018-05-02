@@ -307,7 +307,7 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
       int value = static_cast<int32_t>(pFind - karHorizontalAlignNameHash);
       if (value < ARRAY_SIZE(karHorizontalAlignNameHash))
       {
-        pLabel->SetHorizontalAlignment(static_cast<Text::Alignment>(value));
+        pLabel->SetHorizontalAlignment(static_cast<BoxText::Alignment>(value));
       }
     }
 
@@ -321,7 +321,7 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
       int value = static_cast<int32_t>(pFind - karVerticalAlignNameHash);
       if (value < ARRAY_SIZE(karVerticalAlignNameHash))
       {
-        pLabel->SetVerticalAlignment(static_cast<Text::Alignment>(value));
+        pLabel->SetVerticalAlignment(static_cast<BoxText::Alignment>(value));
       }
     }
 
@@ -347,7 +347,7 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem, UIContainer
 
           if (success)
           {
-            pLabel->PrepareText(builder.ProcessText(pText).c_str());
+            pLabel->SetText(builder.ProcessText(pText).c_str());
           }
           break;
         }
