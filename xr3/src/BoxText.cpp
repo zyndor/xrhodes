@@ -254,7 +254,8 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
   if (m.numGlyphs > 0)
   {
     // Calculate the starting position -- offset by ascent (i.e. to baseline).
-    Vector3 cursor = Vector3::Zero();
+    const float x0 = m_boxSize.x * -.5f;
+    Vector3 cursor = Vector3(x0, m_boxSize.y * .5f, .0f);
     switch (m_verticalAlignment)
     {
     case Alignment::Center:
@@ -332,7 +333,7 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
       }
 
       cursor.y -= lineHeight;
-      cursor.x = .0f;
+      cursor.x = x0;
     }
   }
 
