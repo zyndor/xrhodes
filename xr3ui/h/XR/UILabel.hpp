@@ -20,6 +20,10 @@ public:
   // static
   static Font::Ptr s_defaultFont;
 
+  // data
+  uint32_t renderState; // TODO: UIBuilder support
+  Shader::Ptr shader; // TODO: UIBuilder support
+
   // structors
   UILabel();
   virtual ~UILabel();

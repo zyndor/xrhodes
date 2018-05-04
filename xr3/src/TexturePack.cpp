@@ -19,7 +19,7 @@ namespace XR
 {
 
 //==============================================================================
-XR_ASSET_DEF(TexturePack, "xtpk", 1, "xtp")
+XR_ASSET_DEF(TexturePack, "xtpk", 2, "xtp")
 
 struct SpriteData
 {
@@ -330,9 +330,6 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 #endif
 
 //==============================================================================
-Asset::Descriptor<Shader> TexturePack::s_descDefaultShader;
-
-//==============================================================================
 Sprite* TexturePack::Get(const char* name, bool allowMissing)
 {
   XR_ASSERT(TexturePack, name != nullptr);
@@ -402,69 +399,17 @@ bool TexturePack::OnLoaded(Buffer buffer)
   bool success = reader.Read(textureHash);
   LTRACEIF(!success, ("%s: failed to read texture id.", m_debugPath.c_str()));
 
-  Descriptor<Shader> descShader;
-  if (success)
-  {
-    reader.Read(descShader.hash);
-    LTRACEIF(!success, ("%s: failed to read shader id.", m_debugPath.c_str()));
-  }
-
   FlagType flags = 0;
   if (success)
   {
     flags = GetFlags();
   }
 
-  Texture::Ptr texture;
   if (success)
   {
-    texture = Manager::Find(Descriptor<Texture>(textureHash));
-    success = texture != nullptr;
+    m_texture = Manager::Find(Descriptor<Texture>(textureHash));
+    success = m_texture != nullptr;
     LTRACEIF(!success, ("%s: failed to retrieve texture.", m_debugPath.c_str()));
-  }
-
-  Shader::Ptr shader;
-  if (success)
-  {
-    // If a shader wasn't defined, attempt to fall back to default.
-    const bool useDefault = !descShader.IsValid() && s_descDefaultShader.IsValid();
-    if (useDefault)
-    {
-      descShader = s_descDefaultShader;
-    }
-
-    success = descShader.IsValid();
-    if (success)
-    {
-      // NOTE: should we check / assert that the (default) shader is loaded at this point?
-      shader = Manager::Find(descShader);
-      success = shader != nullptr;
-      if (!success)
-      {
-        LTRACE(("%s: failed to retrieve shader 0x%llx%s.", m_debugPath.c_str(),
-          descShader.hash, useDefault ? " (bad default shader!)" : ""));
-      }
-    }
-    else
-    {
-      LTRACE(("%s: missing shader definition and no default shader set.",
-        m_debugPath.c_str()));
-    }
-
-    if (success && !s_descDefaultShader.IsValid())
-    {
-      s_descDefaultShader = descShader;
-      LTRACE(("%s: setting default shader to 0x%llx now.", m_debugPath.c_str(),
-        descShader.hash));
-    }
-  }
-
-  if(success)
-  {
-    Material* material = Material::Create(0, GetFlags())->Cast<Material>();
-    material->SetTexture(0, texture);
-    material->SetShader(shader);
-    m_material.Reset(material);
   }
 
   NumSpritesType numSprites;
@@ -498,7 +443,7 @@ bool TexturePack::OnLoaded(Buffer buffer)
 //==============================================================================
 void TexturePack::OnUnload()
 {
-  m_material.Reset(nullptr);
+  m_texture.Reset(nullptr);
   m_sprites.clear();
 }
 
