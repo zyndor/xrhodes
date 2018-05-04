@@ -10,6 +10,7 @@
 #include "Texture.hpp"
 #include "Asset.hpp"
 #include "AABB.hpp"
+#include "IMaterialisable.hpp"
 #include "Vector2.hpp"
 #include <map>
 
@@ -30,7 +31,7 @@ namespace XR
 ///   a single font); optional, default: 0 (first font).
 /// sdfSize: the amount of pixels the Signed Distance Field will extend from
 ///   the glyph; optional, default: 4. Minimum: 1. Maximum: (font size / 2) - 1.
-class Font: public Asset
+class Font: public Asset, public IMaterialisable
 {
 public:
   XR_ASSET_DECL(Font)
@@ -93,7 +94,7 @@ public:
   void ClearCache();
 
   ///@brief Returns the Texture used by the Font as glyph cache.
-  Texture::Ptr GetTexture() const;
+  Texture::Ptr GetTexture() const override;
 
 protected:
   // types

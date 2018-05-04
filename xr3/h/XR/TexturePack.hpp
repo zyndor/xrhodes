@@ -11,13 +11,14 @@
 #include "Sprite.hpp"
 #include "Material.hpp"
 #include "Asset.hpp"
+#include "IMaterialisable.hpp"
 
 namespace XR
 {
 
 //==============================================================================
 ///@brief A texture atlas based on TexturePacker's Generic XML format.
-class TexturePack: public Asset
+class TexturePack: public Asset, public IMaterialisable
 {
 public:
   XR_ASSET_DECL(TexturePack)
@@ -26,7 +27,7 @@ public:
   typedef std::map<uint32_t, Sprite>  SpriteMap;
 
   // general
-  Texture::Ptr      GetTexture() const;
+  Texture::Ptr      GetTexture() const override;
 
   size_t            CountSprites() const;
 
