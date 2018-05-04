@@ -7,9 +7,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include <map>
 #include "Sprite.hpp"
+#include "Material.hpp"
 #include "Asset.hpp"
 
 namespace XR

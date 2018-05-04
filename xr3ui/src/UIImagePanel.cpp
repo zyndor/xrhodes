@@ -25,7 +25,7 @@ UIImagePanel::~UIImagePanel()
 //==============================================================================
 void UIImagePanel::Render(IUIRenderer& renderer) const
 {
-  XR_ASSERTMSG(UIImagePanel, sprite.GetMaterial() != nullptr,
+  XR_ASSERTMSG(UIImagePanel, material != nullptr,
     ("Material needs to be set in UIImagePanel::sprite before Render()"));
 
   auto spriteVerts = sprite.GetVertices();
@@ -156,7 +156,7 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
     {
       for (int j = ix0; j < ix1; ++j)
       {
-        auto verts = renderer.NewSprite(sprite.GetMaterial());
+        auto verts = renderer.NewSprite(material);
 
         verts[0].pos = Vector3(arXCoords[j], arYCoords[i], .0f);
         verts[1].pos = Vector3(arXCoords[j], arYCoords[i + 1], .0f);

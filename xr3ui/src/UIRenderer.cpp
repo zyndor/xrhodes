@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "XR/UIRenderer.hpp"
-#include "XR/IndexMesh.hpp"
+#include "XR/Mesh.hpp"
 #include "XR/VertexFormats.hpp"
 
 namespace XR
@@ -36,9 +36,9 @@ void UIRenderer::Init(int numSprites)
   int numVertices(numSprites * Sprite::kNumVertices);
   m_vertices.SetBuffer<Vertex>(numVertices);
 
-  IndexMeshCore imc;
-  imc.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numSprites);
-  m_ibo = Gfx::CreateIndexBuffer(imc.GetIndexBuffer(), 0);
+  IndexMesh im(0, 0);
+  im.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numSprites);
+  m_ibo = Gfx::CreateIndexBuffer(im.GetIndexBuffer(), 0);
 
   m_numSprites = numSprites;
 }

@@ -8,7 +8,7 @@
 //
 //==============================================================================
 #include "Font.hpp"
-#include "IndexMesh.hpp"
+#include "Mesh.hpp"
 #include "Vertex.hpp"
 #include <string>
 #include <list>
@@ -64,6 +64,8 @@ public:
     float height;
   };
 
+  template <class VertexFormat> using Mesh = Mesh<VertexFormat, IndexMesh>;
+
   // structors
   BoxText();
   ~BoxText();
@@ -82,9 +84,9 @@ public:
   void          SetVerticalAlignment(Alignment a);
 
   ///@brief Pre-processes UTF-8 encoded @a text, attempting to fit it into a
-  /// rectangle of @a boxSize size, after applying @a scale, breaking the text
+  /// rectangle of @a boxSize size (after applying scale), breaking the text
   /// into lines, at word boundaries (if one was found). The output is
-  /// the number of glyphs and a vector of lines, written into @a m.
+  /// the number of glyphs and a vector of Lines, written into @a m.
   void Measure(char const* text, Measurement& m) const;
 
   ///@brief Generates the mesh for the given text.
@@ -107,8 +109,7 @@ public:
 
   ///@brief Convenience function to update an IndexMesh with the given text.
   template <class VertexFormat>
-  void UpdateMesh(const char* text, IndexMesh<VertexFormat>& mesh,
-    Stats* statsOut);
+  void UpdateMesh(const char* text, Mesh<VertexFormat>& mesh, Stats* statsOut);
 
 protected:
   // data
@@ -158,7 +159,7 @@ BoxText::Alignment  BoxText::GetVerticalAlignment() const
 
 //==============================================================================
 template <class VertexFormat>
-void BoxText::UpdateMesh(const char* text, IndexMesh<VertexFormat>& mesh,
+void BoxText::UpdateMesh(const char* text, Mesh<VertexFormat>& mesh,
   Stats* statsOut)
 {
   // Prepare measurement

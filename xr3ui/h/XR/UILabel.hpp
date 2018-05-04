@@ -49,7 +49,7 @@ public:
 
 protected:
   // data
-  IndexMesh<TextVertexFormat> m_textMesh;
+  BoxText::Mesh<TextVertexFormat> m_textMesh;
   BoxText  m_textParams;
   bool m_textDirty;
   std::string m_text;

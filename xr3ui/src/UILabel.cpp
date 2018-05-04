@@ -139,7 +139,7 @@ void UILabel::Render() const
 
   Matrix model(Vector3(float(x + w / 2), float(y + h / 2), .0f));
   XR_TRANSFORMS_SCOPED_MODEL(model);
-  m_textMesh.RenderOnly(Primitive::TriList);
+  m_textMesh.Render(Primitive::TriList);
 }
 
 } // XR

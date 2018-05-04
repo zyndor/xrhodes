@@ -8,7 +8,7 @@
 //
 //==============================================================================
 #include "AABB.hpp"
-#include "BasicMesh.hpp"
+#include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "XR/fundamentals.hpp"
 
@@ -18,7 +18,7 @@ namespace XR
 //==============================================================================
 using SpriteVertexFormat = Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
 
-class Sprite: public BasicMesh<SpriteVertexFormat>
+class Sprite: public Mesh<SpriteVertexFormat>
 {
 public:
   // typedef
@@ -48,8 +48,8 @@ public:
   /// parSprites, shifting the AABB across and down.
   ///@note  @a parSprites must have space for at least @a maxSlices or
   /// @a across x @a down Sprites, whichever is smaller.
-  static void Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices,
-    Material::Ptr const& material, Sprite* sprites);
+  static void Slice(AABB base, uint32_t textureWidth, uint32_t textureHeight,
+    uint32_t across, uint32_t down, uint32_t maxSlices, Sprite* sprites);
 
   ///@brief Sets the UVs on @a verts from the given @a aabb, based on whether
   /// it is @a rotated or not. UV rotation means a sprite rotated 90 degrees
@@ -121,11 +121,11 @@ public:
   void  Import(Vertex const verts[kNumVertices]);
 
   void  SetUVs(const AABB& uvs);
-  void  SetUVsProportional(const AABB& uvs);
+  void  SetUVsProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight);
 
   // from a rotated definition (90 degs clockwise)
   void  SetUVsRotated(const AABB& uvs);
-  void  SetUVsRotatedProportional(const AABB& uvs);
+  void  SetUVsRotatedProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight);
 
   void  Scale(float s);
   void  Scale(float sx, float sy);

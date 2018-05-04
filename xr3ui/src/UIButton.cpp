@@ -13,7 +13,7 @@ namespace XR
 //==============================================================================
 UIButton::UIButton()
 : UIColoredElement(),
-  arSprite(),
+  sprites(),
   pOnPressed(0),
   pOnReleased(0),
   pCallbackData(0),
@@ -102,14 +102,16 @@ bool  UIButton::OnMouseMotion(const Input::MouseMotionEvent& e )
 //==============================================================================
 void UIButton::Render(IUIRenderer& renderer) const
 {
-  const Sprite* pSprite(arSprite + GetSpriteId());
-  XR_ASSERTMSG(UIButton, pSprite->GetMaterial() != nullptr,
+  auto const spriteId = GetSpriteId();
+  const Sprite* sprite(sprites + spriteId);
+  auto const& material = materials[spriteId];
+  XR_ASSERTMSG(UIButton, material != nullptr,
     ("Material needs to be set in UIButton::arSprites[%d] before Render()",
     GetSpriteId()));
 
-  auto verts = renderer.NewSprite(pSprite->GetMaterial());
-  pSprite->CopyUVsTo(verts);
-  _CalculateSpriteVerts(pSprite, verts);
+  auto verts = renderer.NewSprite(material);
+  sprite->CopyUVsTo(verts);
+  _CalculateSpriteVerts(sprite, verts);
   _ApplyColor(verts);
 }
 
@@ -117,7 +119,7 @@ void UIButton::Render(IUIRenderer& renderer) const
 void  UIButton::SetSprites(const Sprite* pSprite, float scale)
 {
   XR_ASSERT(UIButton, pSprite != 0);
-  arSprite[S_UP] = arSprite[S_DOWN] = arSprite[S_OFF] = *pSprite;
+  sprites[S_UP] = sprites[S_DOWN] = sprites[S_OFF] = *pSprite;
 
   SetSizeToSprite(scale);
 }
@@ -128,7 +130,7 @@ void  UIButton::SetSprites(const Sprite* arpSprite[kNumStates], float scale)
   XR_ASSERT(UIButton, arpSprite != 0);
   for (int i = 0; i < kNumStates; ++i)
   {
-    arSprite[i] = *arpSprite[i];
+    sprites[i] = *arpSprite[i];
   }
 
   SetSizeToSprite(scale);
@@ -138,8 +140,8 @@ void  UIButton::SetSprites(const Sprite* arpSprite[kNumStates], float scale)
 void UIButton::SetSizeToSprite(float scale)
 {
   scale *= 2.0f;
-  w = static_cast<int32_t>(Round(arSprite[0].GetHalfWidth() * scale));
-  h = static_cast<int32_t>(Round(arSprite[0].GetHalfHeight() * scale));
+  w = static_cast<int32_t>(Round(sprites[0].GetHalfWidth() * scale));
+  h = static_cast<int32_t>(Round(sprites[0].GetHalfHeight() * scale));
 }
 
 //==============================================================================

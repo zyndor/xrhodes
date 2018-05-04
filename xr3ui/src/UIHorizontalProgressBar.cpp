@@ -55,7 +55,7 @@ void UIHorizontalProgressBar::Render(IUIRenderer& renderer) const
       uv1 = Lerp(spriteVerts[Sprite::VI_NW].uv0.x, spriteVerts[Sprite::VI_NE].uv0.x, uv1);
     }
 
-    auto verts = renderer.NewSprite(sprite.GetMaterial());
+    auto verts = renderer.NewSprite(material);
     sprite.CopyUVsTo(verts);
 
     x1 += x;

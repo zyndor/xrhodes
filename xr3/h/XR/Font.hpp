@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "BasicMesh.hpp"
 #include "Material.hpp"
 #include "Asset.hpp"
 #include "AABB.hpp"

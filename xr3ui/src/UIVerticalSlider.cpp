@@ -90,13 +90,13 @@ bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionEvent& e )
 void UIVerticalSlider::Render(IUIRenderer& renderer) const
 {
   // render the rail
-  if (sprite.GetMaterial())
+  if (material)
   {
     UIImage::Render(renderer);
   }
 
   // render the slider
-  XR_ASSERTMSG(UIVerticalSlider, sliderSprite.GetMaterial() != nullptr,
+  XR_ASSERTMSG(UIVerticalSlider, sliderMaterial != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
   float left = x + w / 2 - sliderSprite.GetHalfWidth() + sliderSprite.GetLeftPadding();
@@ -104,7 +104,7 @@ void UIVerticalSlider::Render(IUIRenderer& renderer) const
   float right = left + sliderSprite.GetQuadWidth();
   float bottom = top + sliderSprite.GetQuadHeight();
 
-  auto verts = renderer.NewSprite(sliderSprite.GetMaterial());
+  auto verts = renderer.NewSprite(sliderMaterial);
   verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);
   verts[Sprite::VI_SW].pos = Vector3(left, bottom, .0f);
   verts[Sprite::VI_SE].pos = Vector3(right, bottom, .0f);

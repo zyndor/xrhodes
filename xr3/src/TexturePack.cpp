@@ -483,7 +483,6 @@ bool TexturePack::OnLoaded(Buffer buffer)
     if (success)
     {
       Sprite& spr = m_sprites[spriteHash];
-      spr.SetMaterial(m_material);
       spr.Import(sprData.vertices);
       spr.SetHalfSize(sprData.halfSize.x, sprData.halfSize.y, false);
       ++i;

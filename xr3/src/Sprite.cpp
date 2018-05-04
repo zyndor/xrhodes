@@ -18,10 +18,11 @@ const AABB Sprite::kWholeTexture = { .0f, .0f, 1.0f, 1.0f };
 const AABB Sprite::kNullTexture =  { .0f, .0f, .0f, .0f };
 
 //==============================================================================
-void Sprite::Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices,
-  Material::Ptr const& material, Sprite* sprites)
+void Sprite::Slice(AABB base, uint32_t textureWidth, uint32_t textureHeight,
+  uint32_t across, uint32_t down, uint32_t maxSlices, Sprite* sprites)
 {
-  XR_ASSERTMSG(Sprite, material, ("Trying to Slice() null material."));
+  XR_ASSERT(Sprite, textureWidth > 0);
+  XR_ASSERT(Sprite, textureHeight > 0);
   if (maxSlices <= 0)
   {
     maxSlices = down * across;
@@ -35,8 +36,7 @@ void Sprite::Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices
   {
     for (decltype(across) j = 0; j < across && slices < maxSlices; ++j)
     {
-      sprites->SetMaterial(material);
-      sprites->SetUVsProportional(base);
+      sprites->SetUVsProportional(base, textureWidth, textureHeight);
 
       base.left = base.right;
       base.right += width;
@@ -85,7 +85,7 @@ void Sprite::CopyIndicesTo(uint16_t indices[kNumIndices])
 
 //==============================================================================
 Sprite::Sprite()
-: BasicMesh(),
+: Mesh(),
   m_halfWidth(.0f),
   m_halfHeight(.0f),
   m_isUVRotated(false),
@@ -175,15 +175,14 @@ void Sprite::SetUVs(const AABB& tc)
 }
 
 //==============================================================================
-void Sprite::SetUVsProportional(const AABB& tc)
+void Sprite::SetUVsProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight)
 {
-  XR_ASSERT(Sprite, m_material);
-  XR_ASSERT(Sprite, m_material->GetTexture(0));
+  XR_ASSERT(Sprite, textureWidth > 0);
+  XR_ASSERT(Sprite, textureHeight > 0);
+  SetUVs(uvs);
 
-  SetUVs(tc);
-
-  float hw = (tc.right - tc.left) * .5f * m_material->GetTexture(0)->GetWidth();
-  float hh = (tc.bottom - tc.top) * .5f * m_material->GetTexture(0)->GetHeight();
+  float hw = (uvs.right - uvs.left) * .5f * textureWidth;
+  float hh = (uvs.bottom - uvs.top) * .5f * textureHeight;
   SetHalfSize(hw, hh, true);
 }
 
@@ -195,15 +194,14 @@ void Sprite::SetUVsRotated(const AABB& tc)
 }
 
 //==============================================================================
-void Sprite::SetUVsRotatedProportional(const AABB& tc)
+void Sprite::SetUVsRotatedProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight)
 {
-  XR_ASSERT(Sprite, m_material);
-  XR_ASSERT(Sprite, m_material->GetTexture(0));
+  XR_ASSERT(Sprite, textureWidth > 0);
+  XR_ASSERT(Sprite, textureHeight > 0);
+  SetUVsRotated(uvs);
 
-  SetUVsRotated(tc);
-
-  float hw = (tc.bottom - tc.top) * .5f * m_material->GetTexture(0)->GetHeight();
-  float hh = (tc.right - tc.left) * .5f * m_material->GetTexture(0)->GetWidth();
+  float hw = (uvs.bottom - uvs.top) * .5f * textureWidth;
+  float hh = (uvs.right - uvs.left) * .5f * textureHeight;
   SetHalfSize(hw, hh, true);
 }
 

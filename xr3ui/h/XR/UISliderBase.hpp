@@ -22,6 +22,7 @@ public:
 
   // data
   Sprite                sliderSprite;
+  Material::Ptr         sliderMaterial; // TODO: UIBuilder support
 
   ValueChangedCallback  pOnValueChangeCb;
   void*                 pOnValueChangeCbData;

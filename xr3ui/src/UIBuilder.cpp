@@ -656,8 +656,8 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 
       if (success)
       {
-        const Sprite*  pSprite(builder.GetSprite(pValue));
-        success = pSprite != 0;
+        const Sprite*  pSprite = builder.GetSprite(pValue);
+        success = pSprite != nullptr;
         if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for img{Up}.", pValue));
@@ -667,7 +667,7 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_UP] = success;
 
-          Sprite& sprOut(pButton->arSprite[UIButton::S_UP]);
+          Sprite& sprOut = pButton->sprites[UIButton::S_UP];
           UIBSetUISprite(pSprite, sprOut, pButton);
           sprOut.Scale(scale);
         }
@@ -677,10 +677,10 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     if (success)
     {
       pValue = pXml->Attribute("imgDown");
-      if (pValue != 0)
+      if (pValue != nullptr)
       {
-        const Sprite*  pSprite(builder.GetSprite(pValue));
-        success = pSprite != 0;
+        const Sprite*  pSprite = builder.GetSprite(pValue);
+        success = pSprite != nullptr;
         if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for imgDown.", pValue));
@@ -690,7 +690,7 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_DOWN] = success;
 
-          Sprite& sprOut(pButton->arSprite[UIButton::S_DOWN]);
+          Sprite& sprOut = pButton->sprites[UIButton::S_DOWN];
           UIBSetUISprite(pSprite, sprOut, pButton);
           sprOut.Scale(scale);
         }
@@ -700,10 +700,10 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     if (success)
     {
       pValue = pXml->Attribute("imgOff");
-      if (pValue != 0)
+      if (pValue != nullptr)
       {
-        const Sprite*  pSprite(builder.GetSprite(pValue));
-        success = pSprite != 0;
+        const Sprite*  pSprite = builder.GetSprite(pValue);
+        success = pSprite != nullptr;
         if (!success)
         {
           XR_TRACE(UIBuilder, ("Couldn't find Sprite '%s' for imgOff.", pValue));
@@ -713,7 +713,7 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
         {
           arIsSet[UIButton::S_OFF] = success;
 
-          Sprite& sprOut(pButton->arSprite[UIButton::S_OFF]);
+          Sprite& sprOut = pButton->sprites[UIButton::S_OFF];
           UIBSetUISprite(pSprite, sprOut, pButton);
           sprOut.Scale(scale);
         }
@@ -724,14 +724,12 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
     {
       if (!arIsSet[UIButton::S_DOWN])
       {
-        pButton->arSprite[UIButton::S_DOWN] =
-          pButton->arSprite[UIButton::S_UP];
+        pButton->sprites[UIButton::S_DOWN] = pButton->sprites[UIButton::S_UP];
       }
 
       if (!arIsSet[UIButton::S_OFF])
       {
-        pButton->arSprite[UIButton::S_OFF] =
-          pButton->arSprite[UIButton::S_DOWN];
+        pButton->sprites[UIButton::S_OFF] = pButton->sprites[UIButton::S_DOWN];
       }
     }
   }
