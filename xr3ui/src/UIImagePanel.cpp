@@ -60,13 +60,13 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   float arU[4];
   if (sprite.IsUVRotated())
   {
-    arU[0] = spriteVerts[Sprite::VI_SW].uv0.x;
-    arU[3] = spriteVerts[Sprite::VI_NW].uv0.x;
+    arU[0] = spriteVerts[Quad::Vertex::SW].uv0.x;
+    arU[3] = spriteVerts[Quad::Vertex::NW].uv0.x;
   }
   else
   {
-    arU[0] = spriteVerts[Sprite::VI_NW].uv0.x;
-    arU[3] = spriteVerts[Sprite::VI_NE].uv0.x;
+    arU[0] = spriteVerts[Quad::Vertex::NW].uv0.x;
+    arU[3] = spriteVerts[Quad::Vertex::NE].uv0.x;
   }
 
   arU[1] = Lerp(arU[0], arU[3], hSplit);
@@ -75,13 +75,13 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   float arV[4];
   if (sprite.IsUVRotated())
   {
-    arV[0] = spriteVerts[Sprite::VI_SW].uv0.y;
-    arV[3] = spriteVerts[Sprite::VI_SE].uv0.y;
+    arV[0] = spriteVerts[Quad::Vertex::SW].uv0.y;
+    arV[3] = spriteVerts[Quad::Vertex::SE].uv0.y;
   }
   else
   {
-    arV[0] = spriteVerts[Sprite::VI_NW].uv0.y;
-    arV[3] = spriteVerts[Sprite::VI_SW].uv0.y;
+    arV[0] = spriteVerts[Quad::Vertex::NW].uv0.y;
+    arV[3] = spriteVerts[Quad::Vertex::SW].uv0.y;
   }
 
   arV[1] = Lerp(arV[0], arV[3], vSplit);
@@ -93,8 +93,8 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   {
     // scale sprite to ui
     float scale(w / wSprite);
-    arXCoords[0] = x + std::round(scale * (spriteVerts[Sprite::VI_NW].pos.x + hwSprite));
-    arXCoords[1] = x + std::round(scale * (spriteVerts[Sprite::VI_NE].pos.x + hwSprite));
+    arXCoords[0] = x + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.x + hwSprite));
+    arXCoords[1] = x + std::round(scale * (spriteVerts[Quad::Vertex::NE].pos.x + hwSprite));
 
     arU[1] = arU[3];
     ix1 = 1;
@@ -122,8 +122,8 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   {
     // scale sprite to ui
     float scale(h / hSprite);
-    arYCoords[0] = y + std::round(scale * (spriteVerts[Sprite::VI_NW].pos.y + hhSprite));
-    arYCoords[1] = y + std::round(scale * (spriteVerts[Sprite::VI_SW].pos.y + hhSprite));
+    arYCoords[0] = y + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.y + hhSprite));
+    arYCoords[1] = y + std::round(scale * (spriteVerts[Quad::Vertex::SW].pos.y + hhSprite));
 
     arV[1] = arV[3];
     iy1 = 1;
@@ -148,7 +148,7 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   int32_t hQuads(ix1 - ix0);
   int32_t vQuads(iy1 - iy0);
 
-  int numVertices(hQuads * vQuads * Sprite::kNumVertices);
+  int numVertices(hQuads * vQuads * Quad::Vertex::kCount);
   if (numVertices > 0)
   {
     FloatBuffer  fbUVs;

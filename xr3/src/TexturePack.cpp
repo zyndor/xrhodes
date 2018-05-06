@@ -23,7 +23,7 @@ XR_ASSET_DEF(TexturePack, "xtpk", 2, "xtp")
 
 struct SpriteData
 {
-  SpriteVertexFormat  vertices[Sprite::kNumVertices];
+  SpriteVertexFormat  vertices[Quad::Vertex::kCount];
   Vector2 halfSize;
   Vector2 offset;
 
@@ -34,13 +34,13 @@ struct SpriteData
     bool rotated = Sprite::IsUVRotated(vertices);
     if(rotated)
     {
-      width *= (vertices[Sprite::VI_NE].uv0 - vertices[Sprite::VI_SE].uv0).Magnitude();
-      height *= (vertices[Sprite::VI_SW].uv0 - vertices[Sprite::VI_SE].uv0).Magnitude();
+      width *= (vertices[Quad::Vertex::NE].uv0 - vertices[Quad::Vertex::SE].uv0).Magnitude();
+      height *= (vertices[Quad::Vertex::SW].uv0 - vertices[Quad::Vertex::SE].uv0).Magnitude();
     }
     else
     {
-      width *= (vertices[Sprite::VI_SE].uv0 - vertices[Sprite::VI_SW].uv0).Magnitude();
-      height *= (vertices[Sprite::VI_SW].uv0 - vertices[Sprite::VI_NW].uv0).Magnitude();
+      width *= (vertices[Quad::Vertex::SE].uv0 - vertices[Quad::Vertex::SW].uv0).Magnitude();
+      height *= (vertices[Quad::Vertex::SW].uv0 - vertices[Quad::Vertex::NW].uv0).Magnitude();
     }
 
     width *= .5f;
@@ -53,10 +53,10 @@ struct SpriteData
       std::swap(width, height);
     }
 
-    vertices[Sprite::VI_NW].pos = Vector3(-width, height, .0f);
-    vertices[Sprite::VI_SW].pos = Vector3(-width, -height, .0f);
-    vertices[Sprite::VI_SE].pos = Vector3(width, -height, .0f);
-    vertices[Sprite::VI_NE].pos = Vector3(width, height, .0f);
+    vertices[Quad::Vertex::NW].pos = Vector3(-width, height, .0f);
+    vertices[Quad::Vertex::SW].pos = Vector3(-width, -height, .0f);
+    vertices[Quad::Vertex::SE].pos = Vector3(width, -height, .0f);
+    vertices[Quad::Vertex::NE].pos = Vector3(width, height, .0f);
   }
 
   void AddOffset(float x, float y)
@@ -65,10 +65,10 @@ struct SpriteData
     offset.y += y;
 
     Vector3 t(x, y, .0f);
-    vertices[Sprite::VI_NW].pos += t;
-    vertices[Sprite::VI_SW].pos += t;
-    vertices[Sprite::VI_SE].pos += t;
-    vertices[Sprite::VI_NE].pos += t;
+    vertices[Quad::Vertex::NW].pos += t;
+    vertices[Quad::Vertex::SW].pos += t;
+    vertices[Quad::Vertex::SE].pos += t;
+    vertices[Quad::Vertex::NE].pos += t;
   }
 };
 

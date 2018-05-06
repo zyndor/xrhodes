@@ -30,8 +30,8 @@ public:
 protected:
   // internal
   void _CalculateSpriteVerts(const Sprite* pSprite,
-    IUIRenderer::Vertex verts[Sprite::kNumVertices]) const;
-  void _ApplyColor(IUIRenderer::Vertex verts[Sprite::kNumVertices]) const;
+    IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const;
+  void _ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const;
 };
 
 } // XR

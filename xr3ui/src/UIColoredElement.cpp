@@ -21,7 +21,7 @@ UIColoredElement::~UIColoredElement()
 
 //==============================================================================
 void  UIColoredElement::_CalculateSpriteVerts(const Sprite* sprite,
-  IUIRenderer::Vertex verts[Sprite::kNumVertices]) const
+  IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const
 {
   XR_ASSERT(UIColoredElement, sprite != 0);
 
@@ -32,16 +32,16 @@ void  UIColoredElement::_CalculateSpriteVerts(const Sprite* sprite,
   float top = y + Round(sprite->GetTopPadding() * hs);
   float bottom = y + h - Round(sprite->GetBottomPadding() * hs);
 
-  verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);
-  verts[Sprite::VI_SW].pos = Vector3(left, bottom, .0f);
-  verts[Sprite::VI_SE].pos = Vector3(right, bottom, .0f);
-  verts[Sprite::VI_NE].pos = Vector3(right, top, .0f);
+  verts[Quad::Vertex::NW].pos = Vector3(left, top, .0f);
+  verts[Quad::Vertex::SW].pos = Vector3(left, bottom, .0f);
+  verts[Quad::Vertex::SE].pos = Vector3(right, bottom, .0f);
+  verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
 }
 
 //==============================================================================
-void UIColoredElement::_ApplyColor(IUIRenderer::Vertex verts[Sprite::kNumVertices]) const
+void UIColoredElement::_ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const
 {
-  for(int i = 0; i < Sprite::kNumVertices; ++i)
+  for(int i = 0; i < Quad::Vertex::kCount; ++i)
   {
     verts[i].color0 = color;
   }

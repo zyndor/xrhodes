@@ -105,10 +105,10 @@ void UIVerticalSlider::Render(IUIRenderer& renderer) const
   float bottom = top + sliderSprite.GetQuadHeight();
 
   auto verts = renderer.NewSprite(sliderMaterial);
-  verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);
-  verts[Sprite::VI_SW].pos = Vector3(left, bottom, .0f);
-  verts[Sprite::VI_SE].pos = Vector3(right, bottom, .0f);
-  verts[Sprite::VI_NE].pos = Vector3(right, top, .0f);
+  verts[Quad::Vertex::NW].pos = Vector3(left, top, .0f);
+  verts[Quad::Vertex::SW].pos = Vector3(left, bottom, .0f);
+  verts[Quad::Vertex::SE].pos = Vector3(right, bottom, .0f);
+  verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
 
   sliderSprite.CopyUVsTo(verts);
 

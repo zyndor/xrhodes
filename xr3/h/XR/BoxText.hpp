@@ -10,6 +10,7 @@
 #include "Font.hpp"
 #include "Mesh.hpp"
 #include "Vertex.hpp"
+#include "Quad.hpp"
 #include <string>
 #include <list>
 
@@ -167,8 +168,8 @@ void BoxText::UpdateMesh(const char* text, Mesh<VertexFormat>& mesh,
   Measure(text, m);
 
   // Allocate buffer, set index pattern
-  mesh.AllocBuffer(m.numGlyphs * Sprite::kNumVertices);
-  mesh.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, Sprite::kNumVertices,
+  mesh.AllocBuffer(m.numGlyphs * Quad::Vertex::kCount);
+  mesh.SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
     m.numGlyphs);
 
   Generate(m, mesh.GetVertices(), statsOut);
