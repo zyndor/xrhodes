@@ -88,6 +88,8 @@ public:
 
   ///@brief Updates the texture used for caching the glyphs; this needs to be
   /// called after caching glyphs.
+  ///@note It will only re-upload the texture if any glyphs have been successfully
+  /// cached since last call.
   void UpdateCache();
 
   ///@brief Removes all cached glyphs.
