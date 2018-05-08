@@ -336,7 +336,7 @@ void Material::SetShader(Shader::Ptr const & shader)
 }
 
 //==============================================================================
-Shader::Ptr Material::GetShader()
+Shader::Ptr Material::GetShader() const
 {
   return m_shader;
 }

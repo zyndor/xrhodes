@@ -20,6 +20,10 @@ public:
   // static
   static Font::Ptr s_defaultFont;
 
+  // data
+  uint32_t renderState; // TODO: UIBuilder support
+  Shader::Ptr shader; // TODO: UIBuilder support
+
   // structors
   UILabel();
   virtual ~UILabel();
@@ -49,7 +53,7 @@ public:
 
 protected:
   // data
-  IndexMesh<TextVertexFormat> m_textMesh;
+  BoxText::Mesh<TextVertexFormat> m_textMesh;
   BoxText  m_textParams;
   bool m_textDirty;
   std::string m_text;

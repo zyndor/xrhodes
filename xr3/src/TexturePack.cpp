@@ -19,11 +19,11 @@ namespace XR
 {
 
 //==============================================================================
-XR_ASSET_DEF(TexturePack, "xtpk", 1, "xtp")
+XR_ASSET_DEF(TexturePack, "xtpk", 2, "xtp")
 
 struct SpriteData
 {
-  SpriteVertexFormat  vertices[Sprite::kNumVertices];
+  SpriteVertexFormat  vertices[Quad::Vertex::kCount];
   Vector2 halfSize;
   Vector2 offset;
 
@@ -34,13 +34,13 @@ struct SpriteData
     bool rotated = Sprite::IsUVRotated(vertices);
     if(rotated)
     {
-      width *= (vertices[Sprite::VI_NE].uv0 - vertices[Sprite::VI_SE].uv0).Magnitude();
-      height *= (vertices[Sprite::VI_SW].uv0 - vertices[Sprite::VI_SE].uv0).Magnitude();
+      width *= (vertices[Quad::Vertex::NE].uv0 - vertices[Quad::Vertex::SE].uv0).Magnitude();
+      height *= (vertices[Quad::Vertex::SW].uv0 - vertices[Quad::Vertex::SE].uv0).Magnitude();
     }
     else
     {
-      width *= (vertices[Sprite::VI_SE].uv0 - vertices[Sprite::VI_SW].uv0).Magnitude();
-      height *= (vertices[Sprite::VI_SW].uv0 - vertices[Sprite::VI_NW].uv0).Magnitude();
+      width *= (vertices[Quad::Vertex::SE].uv0 - vertices[Quad::Vertex::SW].uv0).Magnitude();
+      height *= (vertices[Quad::Vertex::SW].uv0 - vertices[Quad::Vertex::NW].uv0).Magnitude();
     }
 
     width *= .5f;
@@ -53,10 +53,10 @@ struct SpriteData
       std::swap(width, height);
     }
 
-    vertices[Sprite::VI_NW].pos = Vector3(-width, height, .0f);
-    vertices[Sprite::VI_SW].pos = Vector3(-width, -height, .0f);
-    vertices[Sprite::VI_SE].pos = Vector3(width, -height, .0f);
-    vertices[Sprite::VI_NE].pos = Vector3(width, height, .0f);
+    vertices[Quad::Vertex::NW].pos = Vector3(-width, height, .0f);
+    vertices[Quad::Vertex::SW].pos = Vector3(-width, -height, .0f);
+    vertices[Quad::Vertex::SE].pos = Vector3(width, -height, .0f);
+    vertices[Quad::Vertex::NE].pos = Vector3(width, height, .0f);
   }
 
   void AddOffset(float x, float y)
@@ -65,10 +65,10 @@ struct SpriteData
     offset.y += y;
 
     Vector3 t(x, y, .0f);
-    vertices[Sprite::VI_NW].pos += t;
-    vertices[Sprite::VI_SW].pos += t;
-    vertices[Sprite::VI_SE].pos += t;
-    vertices[Sprite::VI_NE].pos += t;
+    vertices[Quad::Vertex::NW].pos += t;
+    vertices[Quad::Vertex::SW].pos += t;
+    vertices[Quad::Vertex::SE].pos += t;
+    vertices[Quad::Vertex::NE].pos += t;
   }
 };
 
@@ -330,9 +330,6 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 #endif
 
 //==============================================================================
-Asset::Descriptor<Shader> TexturePack::s_descDefaultShader;
-
-//==============================================================================
 Sprite* TexturePack::Get(const char* name, bool allowMissing)
 {
   XR_ASSERT(TexturePack, name != nullptr);
@@ -402,69 +399,17 @@ bool TexturePack::OnLoaded(Buffer buffer)
   bool success = reader.Read(textureHash);
   LTRACEIF(!success, ("%s: failed to read texture id.", m_debugPath.c_str()));
 
-  Descriptor<Shader> descShader;
-  if (success)
-  {
-    reader.Read(descShader.hash);
-    LTRACEIF(!success, ("%s: failed to read shader id.", m_debugPath.c_str()));
-  }
-
   FlagType flags = 0;
   if (success)
   {
     flags = GetFlags();
   }
 
-  Texture::Ptr texture;
   if (success)
   {
-    texture = Manager::Find(Descriptor<Texture>(textureHash));
-    success = texture != nullptr;
+    m_texture = Manager::Find(Descriptor<Texture>(textureHash));
+    success = m_texture != nullptr;
     LTRACEIF(!success, ("%s: failed to retrieve texture.", m_debugPath.c_str()));
-  }
-
-  Shader::Ptr shader;
-  if (success)
-  {
-    // If a shader wasn't defined, attempt to fall back to default.
-    const bool useDefault = !descShader.IsValid() && s_descDefaultShader.IsValid();
-    if (useDefault)
-    {
-      descShader = s_descDefaultShader;
-    }
-
-    success = descShader.IsValid();
-    if (success)
-    {
-      // NOTE: should we check / assert that the (default) shader is loaded at this point?
-      shader = Manager::Find(descShader);
-      success = shader != nullptr;
-      if (!success)
-      {
-        LTRACE(("%s: failed to retrieve shader 0x%llx%s.", m_debugPath.c_str(),
-          descShader.hash, useDefault ? " (bad default shader!)" : ""));
-      }
-    }
-    else
-    {
-      LTRACE(("%s: missing shader definition and no default shader set.",
-        m_debugPath.c_str()));
-    }
-
-    if (success && !s_descDefaultShader.IsValid())
-    {
-      s_descDefaultShader = descShader;
-      LTRACE(("%s: setting default shader to 0x%llx now.", m_debugPath.c_str(),
-        descShader.hash));
-    }
-  }
-
-  if(success)
-  {
-    Material* material = Material::Create(0, GetFlags())->Cast<Material>();
-    material->SetTexture(0, texture);
-    material->SetShader(shader);
-    m_material.Reset(material);
   }
 
   NumSpritesType numSprites;
@@ -483,7 +428,6 @@ bool TexturePack::OnLoaded(Buffer buffer)
     if (success)
     {
       Sprite& spr = m_sprites[spriteHash];
-      spr.SetMaterial(m_material);
       spr.Import(sprData.vertices);
       spr.SetHalfSize(sprData.halfSize.x, sprData.halfSize.y, false);
       ++i;
@@ -499,7 +443,7 @@ bool TexturePack::OnLoaded(Buffer buffer)
 //==============================================================================
 void TexturePack::OnUnload()
 {
-  m_material.Reset(nullptr);
+  m_texture.Reset(nullptr);
   m_sprites.clear();
 }
 

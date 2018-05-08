@@ -63,7 +63,7 @@ public:
   void  SetShader(Shader::Ptr const& shader);
 
   ///@return The Shader used by this Material.
-  Shader::Ptr GetShader();
+  Shader::Ptr GetShader() const;
 
   ///@brief Sets the Material for the subsequent drawing commands,
   /// passing its state, texture and shader information to Gfx.

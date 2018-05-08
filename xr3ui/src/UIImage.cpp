@@ -40,10 +40,10 @@ void UIImage::SetSizeToSprite(float scale)
 //==============================================================================
 void UIImage::Render(IUIRenderer& renderer) const
 {
-  XR_ASSERTMSG(UIImage, sprite.GetMaterial() != nullptr,
+  XR_ASSERTMSG(UIImage, material != nullptr,
     ("Material needs to be set in UIImage::sprite before Render()"));
 
-  auto verts = renderer.NewSprite(sprite.GetMaterial());
+  auto verts = renderer.NewSprite(material);
   sprite.CopyUVsTo(verts);
   _CalculateSpriteVerts(&sprite, verts);
   _ApplyColor(verts);

@@ -19,6 +19,7 @@ class UIImage:  public UIColoredElement
 public:
   // data
   Sprite  sprite;
+  Material::Ptr material; // TODO: UIBuilder support
 
   // structors
   UIImage();

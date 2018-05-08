@@ -85,10 +85,10 @@ void UICheckBox::Render(IUIRenderer& renderer) const
 
   if (IsSelected())
   {
-    XR_ASSERTMSG(IW_ASSERTION_CHANNEL_DEFAULT, setSprite.GetMaterial() != nullptr,
+    XR_ASSERTMSG(IW_ASSERTION_CHANNEL_DEFAULT, setMaterial != nullptr,
       ("Material needs to be set in UICheckBox::setSprite before Render()"));
 
-    auto verts = renderer.NewSprite(setSprite.GetMaterial());
+    auto verts = renderer.NewSprite(setMaterial);
     setSprite.CopyUVsTo(verts);
     _CalculateSpriteVerts(&setSprite, verts);
     _ApplyColor(verts);

@@ -8,8 +8,9 @@
 //
 //==============================================================================
 #include "AABB.hpp"
-#include "BasicMesh.hpp"
+#include "Mesh.hpp"
 #include "Vertex.hpp"
+#include "Quad.hpp"
 #include "XR/fundamentals.hpp"
 
 namespace XR
@@ -18,27 +19,15 @@ namespace XR
 //==============================================================================
 using SpriteVertexFormat = Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
 
-class Sprite: public BasicMesh<SpriteVertexFormat>
+class Sprite: public Mesh<SpriteVertexFormat>
 {
 public:
   // typedef
-  enum  VertexId
-  {
-    VI_NW,
-    VI_SW,
-    VI_SE,
-    VI_NE,
-    kNumVertices
-  };
-
   using Vertex = SpriteVertexFormat;
 
   // static
-  static const int32_t  kNumIndices = 6;
-  static const uint16_t karIndices[kNumIndices];
-
-  static const int32_t  kUVsSize = kNumVertices * sizeof(Vector2);
-  static const int32_t  kVertsSize = kNumVertices * sizeof(Vector3);
+  static const uint32_t  kUVsSize = Quad::Vertex::kCount * sizeof(Vector2);
+  static const uint32_t  kVertsSize = Quad::Vertex::kCount * sizeof(Vector3);
 
   static const AABB   kWholeTexture;
   static const AABB   kNullTexture;
@@ -48,18 +37,18 @@ public:
   /// parSprites, shifting the AABB across and down.
   ///@note  @a parSprites must have space for at least @a maxSlices or
   /// @a across x @a down Sprites, whichever is smaller.
-  static void Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices,
-    Material::Ptr const& material, Sprite* sprites);
+  static void Slice(AABB base, uint32_t textureWidth, uint32_t textureHeight,
+    uint32_t across, uint32_t down, uint32_t maxSlices, Sprite* sprites);
 
   ///@brief Sets the UVs on @a verts from the given @a aabb, based on whether
   /// it is @a rotated or not. UV rotation means a sprite rotated 90 degrees
   /// clockwise, which we need to offset.
-  static void CalculateUVs(AABB const& aabb, bool rotate, Vertex verts[kNumVertices]);
+  static void CalculateUVs(AABB const& aabb, bool rotate, Vertex verts[Quad::Vertex::kCount]);
 
   ///@brief Determines whether the given vertices have uv rotation.
-  static bool IsUVRotated(Vertex const verts[kNumVertices]);
+  static bool IsUVRotated(Vertex const verts[Quad::Vertex::kCount]);
 
-  static void  CopyIndicesTo(uint16_t indices[kNumIndices]);
+  static void  CopyIndicesTo(uint16_t indices[Quad::Vertex::kCount]);
 
   // structors
   Sprite();
@@ -118,14 +107,14 @@ public:
 
   ///@brief Copies vertex data, determines UV rotation, halfSize and offset
   /// (for padding).
-  void  Import(Vertex const verts[kNumVertices]);
+  void  Import(Vertex const verts[Quad::Vertex::kCount]);
 
   void  SetUVs(const AABB& uvs);
-  void  SetUVsProportional(const AABB& uvs);
+  void  SetUVsProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight);
 
   // from a rotated definition (90 degs clockwise)
   void  SetUVsRotated(const AABB& uvs);
-  void  SetUVsRotatedProportional(const AABB& uvs);
+  void  SetUVsRotatedProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight);
 
   void  Scale(float s);
   void  Scale(float sx, float sy);
@@ -177,7 +166,7 @@ inline
 float Sprite::GetQuadWidth() const
 {
   auto verts = GetVertices();
-  return verts[VI_NE].pos.x - verts[VI_NW].pos.x;
+  return verts[Quad::Vertex::NE].pos.x - verts[Quad::Vertex::NW].pos.x;
 }
 
 //==============================================================================
@@ -185,35 +174,35 @@ inline
 float Sprite::GetQuadHeight() const
 {
   auto verts = GetVertices();
-  return verts[VI_SW].pos.y - verts[VI_NW].pos.y;
+  return verts[Quad::Vertex::SW].pos.y - verts[Quad::Vertex::NW].pos.y;
 }
 
 //==============================================================================
 inline
 float Sprite::GetLeftPadding() const
 {
-  return m_halfWidth + GetVertices()[VI_NW].pos.x;
+  return m_halfWidth + GetVertices()[Quad::Vertex::NW].pos.x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetTopPadding() const
 {
-  return m_halfHeight + GetVertices()[VI_NW].pos.y;
+  return m_halfHeight + GetVertices()[Quad::Vertex::NW].pos.y;
 }
 
 //==============================================================================
 inline
 float Sprite::GetRightPadding() const
 {
-  return m_halfWidth - GetVertices()[VI_NE].pos.x;
+  return m_halfWidth - GetVertices()[Quad::Vertex::NE].pos.x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetBottomPadding() const
 {
-  return m_halfHeight - GetVertices()[VI_SW].pos.y;
+  return m_halfHeight - GetVertices()[Quad::Vertex::SW].pos.y;
 }
 
 //==============================================================================
@@ -228,7 +217,7 @@ template <typename VertexFormat>
 inline
 void Sprite::CopyUVsTo(VertexFormat* verts) const
 {
-  auto vertsEnd = verts + kNumVertices;
+  auto vertsEnd = verts + Quad::Vertex::kCount;
   auto source = GetVertices();
   while(verts != vertsEnd)
   {
@@ -243,7 +232,7 @@ template <typename VertexFormat>
 inline
 void Sprite::CopyPositionsTo(VertexFormat* verts) const
 {
-  auto vertsEnd = verts + kNumVertices;
+  auto vertsEnd = verts + Quad::Vertex::kCount;
   auto source = GetVertices();
   while (verts != vertsEnd)
   {
@@ -258,7 +247,7 @@ template <typename VertexFormat>
 inline
 void Sprite::CopyVerticesTo(VertexFormat* verts) const
 {
-  auto vertsEnd = verts + kNumVertices;
+  auto vertsEnd = verts + Quad::Vertex::kCount;
   auto source = GetVertices();
   while (verts != vertsEnd)
   {

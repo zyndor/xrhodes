@@ -243,7 +243,7 @@ namespace
 #define ADVANCE_PTR(p, stride) p = reinterpret_cast<decltype(p)>(reinterpret_cast<uint8_t*>(p) + (stride))
 
 void BoxText::Generate(Measurement const& m, uint32_t attribStride,
-  Vector3* positions, Vector2* uvs, Stats* statsOut)
+  Vector3* positions, Vector2* uvs, bool updateGlyphCache, Stats* statsOut)
 {
   Font& font = *m_font;
 
@@ -335,6 +335,11 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
       cursor.y -= lineHeight;
       cursor.x = x0;
     }
+  }
+
+  if (updateGlyphCache)
+  {
+    m_font->UpdateCache();
   }
 
   if (statsOut)

@@ -8,6 +8,7 @@
 //
 //==============================================================================
 #include "XR/Sprite.hpp"
+#include "XR/Material.hpp"
 
 namespace XR
 {

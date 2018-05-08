@@ -31,7 +31,8 @@ public:
   typedef void(*Callback)(UIButton *, void *pData);
 
   // data
-  Sprite    arSprite[kNumStates];
+  Sprite    sprites[kNumStates];
+  Material::Ptr materials[kNumStates]; // TODO: UIBuilder support
   Callback  pOnPressed;
   Callback  pOnReleased;
   void*     pCallbackData;

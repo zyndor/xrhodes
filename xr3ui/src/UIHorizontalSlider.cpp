@@ -90,13 +90,13 @@ bool UIHorizontalSlider::OnMouseMotion(const Input::MouseMotionEvent& e)
 void UIHorizontalSlider::Render(IUIRenderer& renderer) const
 {
   // render the rail
-  if (sprite.GetMaterial())
+  if (material)
   {
     UIImage::Render(renderer);
   }
 
   // render the slider
-  XR_ASSERTMSG(UIHorizontalSlider, sliderSprite.GetMaterial() != nullptr,
+  XR_ASSERTMSG(UIHorizontalSlider, sliderMaterial != nullptr,
     ("Material needs to be set in sliderSprite before Render()"));
 
   float left = x + CalculateValue() + sliderSprite.GetLeftPadding();
@@ -105,11 +105,11 @@ void UIHorizontalSlider::Render(IUIRenderer& renderer) const
   float right = left + sliderSprite.GetQuadWidth();
   float bottom = top + sliderSprite.GetQuadHeight();
 
-  auto verts = renderer.NewSprite(sliderSprite.GetMaterial());
-  verts[Sprite::VI_NW].pos = Vector3(left, top, .0f);
-  verts[Sprite::VI_SW].pos = Vector3(left, bottom, .0f);
-  verts[Sprite::VI_SE].pos = Vector3(right, bottom, .0f);
-  verts[Sprite::VI_NE].pos = Vector3(right, top, .0f);
+  auto verts = renderer.NewSprite(sliderMaterial);
+  verts[Quad::Vertex::NW].pos = Vector3(left, top, .0f);
+  verts[Quad::Vertex::SW].pos = Vector3(left, bottom, .0f);
+  verts[Quad::Vertex::SE].pos = Vector3(right, bottom, .0f);
+  verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
 
   sliderSprite.CopyUVsTo(verts);
 

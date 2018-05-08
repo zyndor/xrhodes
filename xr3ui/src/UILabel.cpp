@@ -19,6 +19,7 @@ Font::Ptr UILabel::s_defaultFont;
 //==============================================================================
 UILabel::UILabel()
 : UIColoredElement(),
+  renderState(Gfx::F_STATE_ALPHA_BLEND),
   m_textParams(),
   m_textDirty(false),
   m_oldWidth(0),
@@ -111,7 +112,7 @@ void UILabel::UpdateText()
 {
   if (m_textDirty)
   {
-    m_textParams.UpdateMesh(m_text.c_str(), m_textMesh, &m_textStats);
+    m_textParams.UpdateMesh(m_text.c_str(), m_textMesh, true, &m_textStats);
     m_textDirty = false;
   }
 }
@@ -135,11 +136,14 @@ void UILabel::Render() const
   XR_ASSERT(UILabel, m_textParams.GetFont());
   const_cast<UILabel*>(this)->UpdateText();
 
-  m_textParams.GetFont()->GetMaterial()->Apply();
+  Material material(Asset::Descriptor<Material>(0), 0); // TODO: Renderable
+  material.OverrideStateFlags(0, renderState);
+  material.SetShader(shader);
+  material.SetTexture(0, m_textParams.GetFont()->GetTexture());
 
   Matrix model(Vector3(float(x + w / 2), float(y + h / 2), .0f));
   XR_TRANSFORMS_SCOPED_MODEL(model);
-  m_textMesh.RenderOnly(Primitive::TriList);
+  m_textMesh.Render(Primitive::TriList);
 }
 
 } // XR

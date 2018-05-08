@@ -7,18 +7,18 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include <map>
 #include "Sprite.hpp"
+#include "Material.hpp"
 #include "Asset.hpp"
+#include "IMaterialisable.hpp"
 
 namespace XR
 {
 
 //==============================================================================
-///@brief A texture atlas based on TexturePacker's Generic XML format, with a
-/// simple addition: it supports a shaderPath attribute on the root element.
-class TexturePack: public Asset
+///@brief A texture atlas based on TexturePacker's Generic XML format.
+class TexturePack: public Asset, public IMaterialisable
 {
 public:
   XR_ASSET_DECL(TexturePack)
@@ -26,15 +26,8 @@ public:
   // types
   typedef std::map<uint32_t, Sprite>  SpriteMap;
 
-  // static
-  ///@brief Descriptor of a default Shader, for TexturePacks that don't define
-  /// one. If not set [by application code], then it will be set to the first
-  /// Shader that's defined by a TexturePack that's being loaded.
-  ///@note Must be of a Shader that's loaded and managed by the Asset::Manager.
-  static Asset::Descriptor<Shader> s_descDefaultShader;
-
   // general
-  Material::Ptr     GetMaterial() const;
+  Texture::Ptr      GetTexture() const override;
 
   size_t            CountSprites() const;
 
@@ -58,7 +51,7 @@ public:
 
 protected:
   // data
-  Material::Ptr m_material;
+  Texture::Ptr m_texture;
   SpriteMap  m_sprites;
 };
 
@@ -66,9 +59,9 @@ protected:
 // implementation
 //==============================================================================
 inline
-Material::Ptr TexturePack::GetMaterial() const
+Texture::Ptr TexturePack::GetTexture() const
 {
-  return m_material;
+  return m_texture;
 }
 
 //==============================================================================

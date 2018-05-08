@@ -23,6 +23,7 @@ public:
   // data
   Callback  pOnSelectedStateChanged;
   Sprite    setSprite;
+  Material::Ptr setMaterial; // TODO: UIBuilder support
 
   // structors
   UICheckBox();

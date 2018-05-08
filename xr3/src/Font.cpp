@@ -37,7 +37,7 @@ namespace XR
 {
 
 //==============================================================================
-XR_ASSET_DEF(Font, "xfnt", 1, "fnt")
+XR_ASSET_DEF(Font, "xfnt", 2, "fnt")
 
 /*
   {
@@ -528,8 +528,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
 #endif
 
 //==============================================================================
-Asset::Descriptor<Shader> Font::s_descDefaultShader;
-
 bool Font::OnLoaded(Buffer buffer)
 {
   BufferReader reader(buffer);
@@ -616,55 +614,10 @@ bool Font::OnLoaded(Buffer buffer)
     }
   }
 
-  Descriptor<Shader> descShader;
-  if (success)
-  {
-    success = reader.Read(descShader.hash);
-    LTRACEIF(!success, ("%s: failed to read shader descriptor.",
-      m_debugPath.c_str()));
-  }
-
-  Shader::Ptr shader;
-  if (success)
-  {
-    bool useDefault = !descShader.IsValid() && s_descDefaultShader.IsValid();
-    if (useDefault)
-    {
-      descShader = s_descDefaultShader;
-    }
-
-    success = descShader.IsValid();
-    if (success)
-    {
-      shader = Manager::Find(descShader);
-      success = shader != nullptr;
-      if (!success)
-      {
-        LTRACE(("%s: failed to set shader 0x%llx%s.", m_debugPath.c_str(),
-          descShader.hash, useDefault ? " (bad default shader!)": ""));
-      }
-    }
-    else
-    {
-      LTRACE(("%s: missing shader definition and no default shader set.",
-        m_debugPath.c_str()));
-    }
-
-    if (success && !s_descDefaultShader.IsValid())
-    {
-      s_descDefaultShader = descShader;
-      LTRACE(("%s: setting default shader to 0x%llx now.", m_debugPath.c_str(),
-        descShader.hash));
-    }
-  }
-
   if (success)
   {
     uint32_t flags = GetFlags() | UnmanagedFlag;  // shouldn't need explicit unmanage.
-    m_material.Reset(Material::Create(0, flags)->Cast<Material>());
-    m_material->OverrideStateFlags(0, Gfx::F_STATE_ALPHA_BLEND);
-    m_material->SetShader(shader);
-    m_material->SetTexture(0, Texture::Create(0, flags)->Cast<Texture>());
+    m_texture.Reset(Texture::Create(0, flags)->Cast<Texture>());
 
     m_textureCache = new TextureCache(m_cacheSideSizePixels,
       TextureCache::Format::U8, 8, maxHeight);
@@ -687,7 +640,7 @@ void Font::OnUnload()
   m_textureCache = nullptr;
   m_cacheDirty = false;
 
-  m_material.Reset(nullptr);
+  m_texture.Reset(nullptr);
 }
 
 //==============================================================================
@@ -702,24 +655,13 @@ Font::CachedGlyph const* Font::CacheGlyph(uint32_t codePoint)
 }
 
 //==============================================================================
-void Font::ClearCache()
-{
-  m_cachedGlyphs.clear();
-  if(m_textureCache)
-  {
-    m_textureCache->Reset();
-  }
-}
-
-//==============================================================================
-Material::Ptr Font::GetMaterial()
+void Font::UpdateCache()
 {
   XR_ASSERT(Font, m_textureCache);
   if (m_cacheDirty)
   {
-    Texture::Ptr texture = m_material->GetTexture(0);
     auto size = m_textureCache->GetSize();
-    texture->Upload(Gfx::TextureFormat::R8, size, size, { size *
+    m_texture->Upload(Gfx::TextureFormat::R8, size, size, { size *
       m_textureCache->GetPitch(), m_textureCache->GetBuffer() });
     m_cacheDirty = false;
 
@@ -731,8 +673,22 @@ Material::Ptr Font::GetMaterial()
     img.Save("font-cache.tga", true);
 #endif
   }
+}
 
-  return m_material;
+//==============================================================================
+void Font::ClearCache()
+{
+  m_cachedGlyphs.clear();
+  if(m_textureCache)
+  {
+    m_textureCache->Reset();
+  }
+}
+
+//==============================================================================
+Texture::Ptr Font::GetTexture() const
+{
+  return m_texture;
 }
 
 //==============================================================================

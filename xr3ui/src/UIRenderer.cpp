@@ -5,7 +5,7 @@
 //
 //==============================================================================
 #include "XR/UIRenderer.hpp"
-#include "XR/IndexMesh.hpp"
+#include "XR/Mesh.hpp"
 #include "XR/VertexFormats.hpp"
 
 namespace XR
@@ -33,12 +33,12 @@ void UIRenderer::Init(int numSprites)
 
   m_materials.resize(numSprites);
 
-  int numVertices(numSprites * Sprite::kNumVertices);
+  int numVertices(numSprites * Quad::Vertex::kCount);
   m_vertices.SetBuffer<Vertex>(numVertices);
 
-  IndexMeshCore imc;
-  imc.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, numSprites);
-  m_ibo = Gfx::CreateIndexBuffer(imc.GetIndexBuffer(), 0);
+  IndexMesh im(0, 0);
+  im.SetIndexPattern(Quad::kIndices, Quad::kIndexCount, numSprites);
+  m_ibo = Gfx::CreateIndexBuffer(im.GetIndexBuffer(), 0);
 
   m_numSprites = numSprites;
 }
@@ -56,7 +56,7 @@ UIRenderer::Vertex*  UIRenderer::NewSprite(Material::Ptr const& pMaterial)
 
   m_materials[iSprite] = pMaterial;
 
-  iSprite *= Sprite::kNumVertices;
+  iSprite *= Quad::Vertex::kCount;
 
   return m_vertices.Get<Vertex>() + iSprite;
 }
@@ -64,7 +64,7 @@ UIRenderer::Vertex*  UIRenderer::NewSprite(Material::Ptr const& pMaterial)
 //==============================================================================
 void UIRenderer::Render()
 {
-  auto verts = m_vertices.Get<Vertex>() + m_numSpritesRendered * Sprite::kNumVertices;
+  auto verts = m_vertices.Get<Vertex>() + m_numSpritesRendered * Quad::Vertex::kCount;
 
   auto i = m_materials.data() + m_numSpritesRendered;
   auto iEnd = i + (m_numSpritesRenderable - m_numSpritesRendered);
@@ -77,8 +77,8 @@ void UIRenderer::Render()
     }
 
     const uint32_t numSprites = static_cast<uint32_t>(iCompare - i);
-    const uint32_t numVertices = numSprites * Sprite::kNumVertices;
-    const uint32_t numIndices = numSprites * Sprite::kNumIndices;
+    const uint32_t numVertices = numSprites * Quad::Vertex::kCount;
+    const uint32_t numIndices = numSprites * Quad::kIndexCount;
 
     auto vertsBytes = reinterpret_cast<uint8_t const*>(verts);
     Gfx::VertexBufferHandle vbo =

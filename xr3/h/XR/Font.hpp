@@ -7,10 +7,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "BasicMesh.hpp"
-#include "Material.hpp"
+#include "Texture.hpp"
 #include "Asset.hpp"
 #include "AABB.hpp"
+#include "IMaterialisable.hpp"
 #include "Vector2.hpp"
 #include <map>
 
@@ -31,8 +31,7 @@ namespace XR
 ///   a single font); optional, default: 0 (first font).
 /// sdfSize: the amount of pixels the Signed Distance Field will extend from
 ///   the glyph; optional, default: 4. Minimum: 1. Maximum: (font size / 2) - 1.
-/// shader: path to the shader to use for the font.
-class Font: public Asset
+class Font: public Asset, public IMaterialisable
 {
 public:
   XR_ASSET_DECL(Font)
@@ -64,13 +63,6 @@ public:
     AABB uvs;
   };
 
-  // static
-  ///@brief Descriptor of a default Shader, for Fonts that don't define one.
-  /// If not set [by application code], then it will be set to the first Shader
-  /// that's defined by a Font that's being loaded.
-  ///@note Must be of a Shader that's loaded and managed by the Asset::Manager.
-  static Asset::Descriptor<Shader> s_descDefaultShader;
-
   // general
   ///@return The height of a line in pixels / world units, i.e. the amount of
   /// vertical space you need for a single line of text.
@@ -94,13 +86,17 @@ public:
   /// a subsequent call to CacheGlyph(), therefore you should not store it.
   CachedGlyph const* CacheGlyph(uint32_t codePoint);
 
+  ///@brief Updates the texture used for caching the glyphs; this needs to be
+  /// called after caching glyphs.
+  ///@note It will only re-upload the texture if any glyphs have been successfully
+  /// cached since last call.
+  void UpdateCache();
+
   ///@brief Removes all cached glyphs.
   void ClearCache();
 
-  ///@brief Returns the material managed by the Font. If one or more glyphs
-  /// has been cached since the last call to it, it will update the underlying
-  /// texture.
-  Material::Ptr GetMaterial();
+  ///@brief Returns the Texture used by the Font as glyph cache.
+  Texture::Ptr GetTexture() const override;
 
 protected:
   // types
@@ -117,7 +113,7 @@ protected:
   float m_ascent;
 
   std::vector<CachedGlyphInternal> m_cachedGlyphs;
-  Material::Ptr m_material;
+  Texture::Ptr m_texture;
   class TextureCache* m_textureCache = nullptr;
   bool m_cacheDirty = false;
 

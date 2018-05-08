@@ -12,16 +12,15 @@ namespace XR
 {
 
 //==============================================================================
-const uint16_t  Sprite::karIndices[] = { 0, 1, 2, 0, 2, 3 };
-
 const AABB Sprite::kWholeTexture = { .0f, .0f, 1.0f, 1.0f };
 const AABB Sprite::kNullTexture =  { .0f, .0f, .0f, .0f };
 
 //==============================================================================
-void Sprite::Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices,
-  Material::Ptr const& material, Sprite* sprites)
+void Sprite::Slice(AABB base, uint32_t textureWidth, uint32_t textureHeight,
+  uint32_t across, uint32_t down, uint32_t maxSlices, Sprite* sprites)
 {
-  XR_ASSERTMSG(Sprite, material, ("Trying to Slice() null material."));
+  XR_ASSERT(Sprite, textureWidth > 0);
+  XR_ASSERT(Sprite, textureHeight > 0);
   if (maxSlices <= 0)
   {
     maxSlices = down * across;
@@ -35,8 +34,7 @@ void Sprite::Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices
   {
     for (decltype(across) j = 0; j < across && slices < maxSlices; ++j)
     {
-      sprites->SetMaterial(material);
-      sprites->SetUVsProportional(base);
+      sprites->SetUVsProportional(base, textureWidth, textureHeight);
 
       base.left = base.right;
       base.right += width;
@@ -51,47 +49,47 @@ void Sprite::Slice(AABB base, uint32_t across, uint32_t down, uint32_t maxSlices
 }
 
 //==============================================================================
-void Sprite::CalculateUVs(AABB const & aabb, bool rotate, Vertex verts[kNumVertices])
+void Sprite::CalculateUVs(AABB const & aabb, bool rotate, Vertex verts[Quad::Vertex::kCount])
 {
   if(rotate)
   {
-    verts[VI_NW].uv0 = Vector2(aabb.right, aabb.top);
-    verts[VI_SW].uv0 = Vector2(aabb.left, aabb.top);
-    verts[VI_SE].uv0 = Vector2(aabb.left, aabb.bottom);
-    verts[VI_NE].uv0 = Vector2(aabb.right, aabb.bottom);
+    verts[Quad::Vertex::NW].uv0 = Vector2(aabb.right, aabb.top);
+    verts[Quad::Vertex::SW].uv0 = Vector2(aabb.left, aabb.top);
+    verts[Quad::Vertex::SE].uv0 = Vector2(aabb.left, aabb.bottom);
+    verts[Quad::Vertex::NE].uv0 = Vector2(aabb.right, aabb.bottom);
   }
   else
   {
-    verts[VI_NW].uv0 = Vector2(aabb.left, aabb.top);
-    verts[VI_SW].uv0 = Vector2(aabb.left, aabb.bottom);
-    verts[VI_SE].uv0 = Vector2(aabb.right, aabb.bottom);
-    verts[VI_NE].uv0 = Vector2(aabb.right, aabb.top);
+    verts[Quad::Vertex::NW].uv0 = Vector2(aabb.left, aabb.top);
+    verts[Quad::Vertex::SW].uv0 = Vector2(aabb.left, aabb.bottom);
+    verts[Quad::Vertex::SE].uv0 = Vector2(aabb.right, aabb.bottom);
+    verts[Quad::Vertex::NE].uv0 = Vector2(aabb.right, aabb.top);
   }
 }
 
 //==============================================================================
-bool Sprite::IsUVRotated(Vertex const verts[kNumVertices])
+bool Sprite::IsUVRotated(Vertex const verts[Quad::Vertex::kCount])
 {
-  return verts[VI_NW].uv0.y != verts[VI_NE].uv0.y &&
-    verts[VI_NW].uv0.x != verts[VI_SW].uv0.x;
+  return verts[Quad::Vertex::NW].uv0.y != verts[Quad::Vertex::NE].uv0.y &&
+    verts[Quad::Vertex::NW].uv0.x != verts[Quad::Vertex::SW].uv0.x;
 }
 
 //==============================================================================
-void Sprite::CopyIndicesTo(uint16_t indices[kNumIndices])
+void Sprite::CopyIndicesTo(uint16_t indices[Quad::kIndexCount])
 {
   XR_ASSERT(Sprite, indices != 0);
-  memcpy(indices, karIndices, sizeof(karIndices));
+  memcpy(indices, Quad::kIndices, sizeof(Quad::kIndices));
 }
 
 //==============================================================================
 Sprite::Sprite()
-: BasicMesh(),
+: Mesh(),
   m_halfWidth(.0f),
   m_halfHeight(.0f),
   m_isUVRotated(false),
   m_offset(Vector2::Zero())
 {
-  AllocBuffer(kNumVertices);
+  AllocBuffer(Quad::Vertex::kCount);
 }
 
 //==============================================================================
@@ -110,10 +108,10 @@ void Sprite::SetHalfSize(float hw, float hh, bool calculateVertices)
   if (calculateVertices)
   {
     auto verts = GetVertices();
-    verts[VI_NW].pos = Vector3(-hw, -hh, .0f);
-    verts[VI_SW].pos = Vector3(-hw, hh, .0f);
-    verts[VI_SE].pos = Vector3(hw, hh, .0f);
-    verts[VI_NE].pos = Vector3(hw, -hh, .0f);
+    verts[Quad::Vertex::NW].pos = Vector3(-hw, -hh, .0f);
+    verts[Quad::Vertex::SW].pos = Vector3(-hw, hh, .0f);
+    verts[Quad::Vertex::SE].pos = Vector3(hw, hh, .0f);
+    verts[Quad::Vertex::NE].pos = Vector3(hw, -hh, .0f);
   }
 }
 
@@ -123,7 +121,7 @@ void Sprite::AddOffset(float x, float y, bool updateVertices)
   if (updateVertices)
   {
     auto verts = GetVertices();
-    for (int i = 0; i < kNumVertices; ++i)
+    for (int i = 0; i < Quad::Vertex::kCount; ++i)
     {
       verts[i].pos.x += x;
       verts[i].pos.y += y;
@@ -135,9 +133,9 @@ void Sprite::AddOffset(float x, float y, bool updateVertices)
 }
 
 //==============================================================================
-void Sprite::Import(Vertex const verts[kNumVertices])
+void Sprite::Import(Vertex const verts[Quad::Vertex::kCount])
 {
-  memcpy(GetVertices(), verts, Vertex::kSize * kNumVertices);
+  memcpy(GetVertices(), verts, Vertex::kSize * Quad::Vertex::kCount);
 
   // determine uv rotation
   const bool isUVRotated = IsUVRotated(verts);
@@ -146,24 +144,24 @@ void Sprite::Import(Vertex const verts[kNumVertices])
   // determine halfsize
   if (isUVRotated)
   {
-    m_halfWidth = (verts[VI_SE].pos - verts[VI_NE].pos).Magnitude() * .5f;
-    m_halfHeight = (verts[VI_SW].pos - verts[VI_SE].pos).Magnitude() * .5f;
+    m_halfWidth = (verts[Quad::Vertex::SE].pos - verts[Quad::Vertex::NE].pos).Magnitude() * .5f;
+    m_halfHeight = (verts[Quad::Vertex::SW].pos - verts[Quad::Vertex::SE].pos).Magnitude() * .5f;
   }
   else
   {
-    m_halfWidth = (verts[VI_SE].pos - verts[VI_SW].pos).Magnitude() * .5f;
-    m_halfHeight = (verts[VI_NW].pos - verts[VI_SW].pos).Magnitude() * .5f;
+    m_halfWidth = (verts[Quad::Vertex::SE].pos - verts[Quad::Vertex::SW].pos).Magnitude() * .5f;
+    m_halfHeight = (verts[Quad::Vertex::NW].pos - verts[Quad::Vertex::SW].pos).Magnitude() * .5f;
   }
 
   // determine offset
-  auto vertsEnd = verts + kNumVertices;
+  auto vertsEnd = verts + Quad::Vertex::kCount;
   Vector2 pos(.0f, .0f);
   while (verts != vertsEnd)
   {
     pos += verts->pos.XY();
     ++verts;
   }
-  pos *= 1.0f / kNumVertices;
+  pos *= 1.0f / Quad::Vertex::kCount;
   m_offset = pos;
 }
 
@@ -175,15 +173,14 @@ void Sprite::SetUVs(const AABB& tc)
 }
 
 //==============================================================================
-void Sprite::SetUVsProportional(const AABB& tc)
+void Sprite::SetUVsProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight)
 {
-  XR_ASSERT(Sprite, m_material);
-  XR_ASSERT(Sprite, m_material->GetTexture(0));
+  XR_ASSERT(Sprite, textureWidth > 0);
+  XR_ASSERT(Sprite, textureHeight > 0);
+  SetUVs(uvs);
 
-  SetUVs(tc);
-
-  float hw = (tc.right - tc.left) * .5f * m_material->GetTexture(0)->GetWidth();
-  float hh = (tc.bottom - tc.top) * .5f * m_material->GetTexture(0)->GetHeight();
+  float hw = (uvs.right - uvs.left) * .5f * textureWidth;
+  float hh = (uvs.bottom - uvs.top) * .5f * textureHeight;
   SetHalfSize(hw, hh, true);
 }
 
@@ -195,15 +192,14 @@ void Sprite::SetUVsRotated(const AABB& tc)
 }
 
 //==============================================================================
-void Sprite::SetUVsRotatedProportional(const AABB& tc)
+void Sprite::SetUVsRotatedProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight)
 {
-  XR_ASSERT(Sprite, m_material);
-  XR_ASSERT(Sprite, m_material->GetTexture(0));
+  XR_ASSERT(Sprite, textureWidth > 0);
+  XR_ASSERT(Sprite, textureHeight > 0);
+  SetUVsRotated(uvs);
 
-  SetUVsRotated(tc);
-
-  float hw = (tc.bottom - tc.top) * .5f * m_material->GetTexture(0)->GetHeight();
-  float hh = (tc.right - tc.left) * .5f * m_material->GetTexture(0)->GetWidth();
+  float hw = (uvs.bottom - uvs.top) * .5f * textureWidth;
+  float hh = (uvs.right - uvs.left) * .5f * textureHeight;
   SetHalfSize(hw, hh, true);
 }
 
@@ -220,7 +216,7 @@ void Sprite::Scale( float sx, float sy )
   m_halfHeight *= fabsf(sy);
 
   auto verts = GetVertices();
-  for (int i = 0; i < kNumVertices; ++i)
+  for (int i = 0; i < Quad::Vertex::kCount; ++i)
   {
     verts[i].pos.x *= sx;
     verts[i].pos.y *= sy;
@@ -233,7 +229,7 @@ void Sprite::ScaleX( float sx )
   m_halfWidth *= fabsf(sx);
 
   auto verts = GetVertices();
-  for (int i = 0; i < kNumVertices; ++i)
+  for (int i = 0; i < Quad::Vertex::kCount; ++i)
   {
     verts[i].pos.x *= sx;
   }
@@ -245,7 +241,7 @@ void Sprite::ScaleY( float sy )
   m_halfHeight *= fabsf(sy);
 
   auto verts = GetVertices();
-  for (int i = 0; i < kNumVertices; ++i)
+  for (int i = 0; i < Quad::Vertex::kCount; ++i)
   {
     verts[i].pos.y *= sy;
   }
@@ -262,7 +258,7 @@ void Sprite::FlipX()
 void Sprite::FlipVerticesX()
 {
   auto verts = GetVertices();
-  for (int i = 0; i < kNumVertices; ++i)
+  for (int i = 0; i < Quad::Vertex::kCount; ++i)
   {
     verts[i].pos.x *= -1.0f;
   }
@@ -275,31 +271,31 @@ void Sprite::FlipUVsX()
   auto verts = GetVertices();
   if (m_isUVRotated)
   {
-    Vector2 vLeft(verts[VI_NW].uv0);
-    Vector2 vRight(verts[VI_NE].uv0);
+    Vector2 vLeft(verts[Quad::Vertex::NW].uv0);
+    Vector2 vRight(verts[Quad::Vertex::NE].uv0);
     std::swap(vLeft.y, vRight.y);
-    verts[VI_NW].uv0 = vLeft;
-    verts[VI_NE].uv0 = vRight;
+    verts[Quad::Vertex::NW].uv0 = vLeft;
+    verts[Quad::Vertex::NE].uv0 = vRight;
 
-    vLeft = verts[VI_SW].uv0;
-    vRight = verts[VI_SE].uv0;
+    vLeft = verts[Quad::Vertex::SW].uv0;
+    vRight = verts[Quad::Vertex::SE].uv0;
     std::swap(vLeft.y, vRight.y);
-    verts[VI_SW].uv0 = vLeft;
-    verts[VI_SE].uv0 = vRight;
+    verts[Quad::Vertex::SW].uv0 = vLeft;
+    verts[Quad::Vertex::SE].uv0 = vRight;
   }
   else
   {
-    Vector2 vLeft(verts[VI_NW].uv0);
-    Vector2 vRight(verts[VI_NE].uv0);
+    Vector2 vLeft(verts[Quad::Vertex::NW].uv0);
+    Vector2 vRight(verts[Quad::Vertex::NE].uv0);
     std::swap(vLeft.x, vRight.x);
-    verts[VI_NW].uv0 = vLeft;
-    verts[VI_NE].uv0 = vRight;
+    verts[Quad::Vertex::NW].uv0 = vLeft;
+    verts[Quad::Vertex::NE].uv0 = vRight;
 
-    vLeft = verts[VI_SW].uv0;
-    vRight = verts[VI_SE].uv0;
+    vLeft = verts[Quad::Vertex::SW].uv0;
+    vRight = verts[Quad::Vertex::SE].uv0;
     std::swap(vLeft.x, vRight.x);
-    verts[VI_SW].uv0 = vLeft;
-    verts[VI_SE].uv0 = vRight;
+    verts[Quad::Vertex::SW].uv0 = vLeft;
+    verts[Quad::Vertex::SE].uv0 = vRight;
   }
 }
 
@@ -314,7 +310,7 @@ void Sprite::FlipY()
 void Sprite::FlipVerticesY()
 {
   auto verts = GetVertices();
-  for (int i = 0; i < kNumVertices; ++i)
+  for (int i = 0; i < Quad::Vertex::kCount; ++i)
   {
     verts[i].pos.y *= -1.0f;
   }
@@ -327,31 +323,31 @@ void Sprite::FlipUVsY()
   auto verts = GetVertices();
   if (m_isUVRotated)
   {
-    Vector2 vLeft(verts[VI_NW].uv0);
-    Vector2 vRight(verts[VI_NE].uv0);
+    Vector2 vLeft(verts[Quad::Vertex::NW].uv0);
+    Vector2 vRight(verts[Quad::Vertex::NE].uv0);
     std::swap(vLeft.x, vRight.x);
-    verts[VI_NW].uv0 = vLeft;
-    verts[VI_NE].uv0 = vRight;
+    verts[Quad::Vertex::NW].uv0 = vLeft;
+    verts[Quad::Vertex::NE].uv0 = vRight;
 
-    vLeft = verts[VI_SW].uv0;
-    vRight = verts[VI_SE].uv0;
+    vLeft = verts[Quad::Vertex::SW].uv0;
+    vRight = verts[Quad::Vertex::SE].uv0;
     std::swap(vLeft.x, vRight.x);
-    verts[VI_SW].uv0 = vLeft;
-    verts[VI_SE].uv0 = vRight;
+    verts[Quad::Vertex::SW].uv0 = vLeft;
+    verts[Quad::Vertex::SE].uv0 = vRight;
   }
   else
   {
-    Vector2 vLeft(verts[VI_NW].uv0);
-    Vector2 vRight(verts[VI_SW].uv0);
+    Vector2 vLeft(verts[Quad::Vertex::NW].uv0);
+    Vector2 vRight(verts[Quad::Vertex::SW].uv0);
     std::swap(vLeft.y, vRight.y);
-    verts[VI_NW].uv0 = vLeft;
-    verts[VI_SW].uv0 = vRight;
+    verts[Quad::Vertex::NW].uv0 = vLeft;
+    verts[Quad::Vertex::SW].uv0 = vRight;
 
-    vLeft = verts[VI_NE].uv0;
-    vRight = verts[VI_SE].uv0;
+    vLeft = verts[Quad::Vertex::NE].uv0;
+    vRight = verts[Quad::Vertex::SE].uv0;
     std::swap(vLeft.y, vRight.y);
-    verts[VI_NE].uv0 = vLeft;
-    verts[VI_SE].uv0 = vRight;
+    verts[Quad::Vertex::NE].uv0 = vLeft;
+    verts[Quad::Vertex::SE].uv0 = vRight;
   }
 }
 

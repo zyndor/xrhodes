@@ -8,8 +8,9 @@
 //
 //==============================================================================
 #include "Font.hpp"
-#include "IndexMesh.hpp"
+#include "Mesh.hpp"
 #include "Vertex.hpp"
+#include "Quad.hpp"
 #include <string>
 #include <list>
 
@@ -64,6 +65,8 @@ public:
     float height;
   };
 
+  template <class VertexFormat> using Mesh = Mesh<VertexFormat, IndexMesh>;
+
   // structors
   BoxText();
   ~BoxText();
@@ -82,32 +85,36 @@ public:
   void          SetVerticalAlignment(Alignment a);
 
   ///@brief Pre-processes UTF-8 encoded @a text, attempting to fit it into a
-  /// rectangle of @a boxSize size, after applying @a scale, breaking the text
+  /// rectangle of @a boxSize size (after applying scale), breaking the text
   /// into lines, at word boundaries (if one was found). The output is
-  /// the number of glyphs and a vector of lines, written into @a m.
+  /// the number of glyphs and a vector of Lines, written into @a m.
   void Measure(char const* text, Measurement& m) const;
 
   ///@brief Generates the mesh for the given text.
   ///@note Expects to have at least m.numGlyphs * 4 elements in the @a positions
   /// and @a uvs arrays.
   void Generate(Measurement const& m, uint32_t attribStride,
-    Vector3* positions, Vector2* uvs, Stats* statsOut);
+    Vector3* positions, Vector2* uvs, bool updateGlyphCache, Stats* statsOut);
 
-  ///@brief Convenience function to geenrate the mesh for the given text into
+  ///@brief Convenience function to generate the mesh for the given text into
   /// the given array of vertices in the given vertex format. Currently
   /// restricted to using UV stream 0.
+  /// If @a updateGlyphCache is set, it will update the glyph cache of the font.
   ///@note Expects to have at least m.numGlyps * 4 elements in the @a verts
   /// array.
   template <class VertexFormat>
   inline
-  void Generate(Measurement const& m, VertexFormat* verts, Stats* statsOut)
+  void Generate(Measurement const& m, VertexFormat* verts, bool updateGlyphCache,
+    Stats* statsOut)
   {
-    Generate(m, VertexFormat::kSize, &verts->pos, &verts->uv0, statsOut);
+    Generate(m, VertexFormat::kSize, &verts->pos, &verts->uv0, updateGlyphCache,
+      statsOut);
   }
 
   ///@brief Convenience function to update an IndexMesh with the given text.
+  /// If @a updateGlyphCache is set, it will update the glyph cache of the font.
   template <class VertexFormat>
-  void UpdateMesh(const char* text, IndexMesh<VertexFormat>& mesh,
+  void UpdateMesh(const char* text, Mesh<VertexFormat>& mesh, bool updateGlyphCache,
     Stats* statsOut);
 
 protected:
@@ -158,19 +165,19 @@ BoxText::Alignment  BoxText::GetVerticalAlignment() const
 
 //==============================================================================
 template <class VertexFormat>
-void BoxText::UpdateMesh(const char* text, IndexMesh<VertexFormat>& mesh,
-  Stats* statsOut)
+void BoxText::UpdateMesh(const char* text, Mesh<VertexFormat>& mesh,
+  bool updateGlyphCache, Stats* statsOut)
 {
   // Prepare measurement
   Measurement m;
   Measure(text, m);
 
   // Allocate buffer, set index pattern
-  mesh.AllocBuffer(m.numGlyphs * Sprite::kNumVertices);
-  mesh.SetIndexPattern(Sprite::karIndices, Sprite::kNumIndices, Sprite::kNumVertices,
+  mesh.AllocBuffer(m.numGlyphs * Quad::Vertex::kCount);
+  mesh.SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
     m.numGlyphs);
 
-  Generate(m, mesh.GetVertices(), statsOut);
+  Generate(m, mesh.GetVertices(), updateGlyphCache, statsOut);
 
   // Create GPU objects.
   mesh.CreateVbo();
