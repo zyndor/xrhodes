@@ -28,6 +28,7 @@ public:
 
   ~TransformsImpl()
   {
+    Gfx::Destroy(m_xruNormal);
     Gfx::Destroy(m_xruModelViewProjection);
     Gfx::Destroy(m_xruViewProjection);
     Gfx::Destroy(m_xruModelView);
@@ -145,8 +146,14 @@ public:
       float mvp[16];
       if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY | VIEW_DIRTY))
       {
-        Matrix4Helper::Multiply(m_view, model, mvp);  // hitch a ride
+        Matrix4Helper::Multiply(m_view, model, mvp);  // hijack mvp for the model view calculation.
         Gfx::SetUniform(m_xruModelView, 1, mvp);
+
+        Matrix normal;
+        Matrix4Helper::ToMatrix(mvp, normal);
+        normal.Invert();
+        normal.Transpose();
+        Gfx::SetUniform(m_xruNormal, normal.arLinear);
       }
 
       float viewProjection[16];
@@ -230,6 +237,8 @@ private:
   Gfx::UniformHandle m_xruModelView = Gfx::CreateUniform("xruModelView", Gfx::UniformType::Mat4);
   Gfx::UniformHandle m_xruViewProjection = Gfx::CreateUniform("xruViewProjection", Gfx::UniformType::Mat4);
   Gfx::UniformHandle m_xruModelViewProjection = Gfx::CreateUniform("xruModelViewProjection", Gfx::UniformType::Mat4);
+
+  Gfx::UniformHandle m_xruNormal = Gfx::CreateUniform("xruNormal", Gfx::UniformType::Mat3);
 
   std::vector<Matrix> m_modelStack;
   float m_view[Transforms::kNumMatrixElems];
