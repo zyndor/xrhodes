@@ -15,11 +15,18 @@ namespace XR
 {
 
 //==============================================================================
-///@brief Enables the management of model-view-projection transformations. It
-/// offers a stack for model matrices and a single view and projection matrix,
+///@brief Enables the management of model-view-projection transformations,
+/// offering a stack for model matrices and a single view and projection matrix,
 /// whose value updates the following set of built in uniforms:
-/// xruModel, xruModelView, xruView, xruViewProjection, xruProjection,
-/// xruModelViewProjection.
+/// xruModel                mat4
+/// xruModelView            mat4
+/// xruView                 mat4
+/// xruViewProjection       mat4
+/// xruProjection           mat4
+/// xruModelViewProjection  mat4
+/// xruNormal               mat3 - normal matrix (inverse transpose of xruModelView).
+/// Upon initialisation, model and view are set to identity, and a perspective
+/// projection is set up.
 class Transforms
 {
   XR_NONOBJECT_DECL(Transforms)
@@ -62,8 +69,9 @@ public:
 
     ///@brief Sets the projection to the given @a matrix. Transforms can cache
     /// the near / far values for the frustum and the tangent of the half of vertical
-    /// field of view (required for GetPerspectiveMultiple()) if you pass them
-    /// in here.
+    /// field of view if you pass them in here.
+    ///@note @a tanHalfVerticalFov is required for GetPerspectiveMultiple() to
+    /// work correctly.
     Updater& SetProjection(const float matrix[kNumMatrixElems], float zNear = .0f,
       float zFar = .0f, float tanHalfVerticalFov = .0f);
 
