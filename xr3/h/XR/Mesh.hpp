@@ -186,7 +186,7 @@ template <class VertexFormat, class Base>
 void  Mesh<VertexFormat, Base>::AllocBuffer(uint32_t numVertices)
 {
   XR_ASSERT(Mesh, numVertices >= 0);
-  m_vertices.SetBuffer(VertexFormat::kSize, numVertices);
+  Base::m_vertices.SetBuffer(VertexFormat::kSize, numVertices);
 }
 
 //==============================================================================
@@ -194,7 +194,7 @@ template<class VertexFormat, class Base>
 inline
 VertexFormat* Mesh<VertexFormat, Base>::GetVertices()
 {
-  return m_vertices.Get<VertexFormat>();
+  return Base::m_vertices.template Get<VertexFormat>();
 }
 
 //==============================================================================
@@ -202,7 +202,7 @@ template<class VertexFormat, class Base>
 inline
 const VertexFormat* Mesh<VertexFormat, Base>::GetVertices() const
 {
-  return m_vertices.Get<VertexFormat>();
+  return Base::m_vertices.template Get<VertexFormat>();
 }
 
 //==============================================================================
@@ -210,10 +210,10 @@ template <class VertexFormat, class Base>
 inline
 void Mesh<VertexFormat, Base>::CreateVbo(uint32_t flags)
 {
-  Gfx::Destroy(m_vbo);
-  XR_ASSERT(Mesh, m_vertices.GetRaw() != nullptr);
-  m_vbo = Gfx::CreateVertexBuffer(Vertex::Formats::GetHandle<VertexFormat>(),
-    GetVertexBuffer(), flags);
+  Gfx::Destroy(Base::m_vbo);
+  XR_ASSERT(Mesh, Base::m_vertices.GetRaw() != nullptr);
+  Base::m_vbo = Gfx::CreateVertexBuffer(Vertex::Formats::GetHandle<VertexFormat>(),
+    Base::GetVertexBuffer(), flags);
 }
 
 //==============================================================================
@@ -222,7 +222,7 @@ typename Mesh<VertexFormat, Base>::PosType
   Mesh<VertexFormat, Base>::CalculateCentre() const
 {
   PosType centre = PosType::Zero();
-  const auto n = m_vertices.GetNumElements();
+  const auto n = Base::m_vertices.GetNumElements();
   if (n > 0)
   {
     for (auto i0 = GetVertices(), i1 = i0 + n; i0 != i1; ++i0)
@@ -239,7 +239,7 @@ template <class VertexFormat, class Base>
 float Mesh<VertexFormat, Base>::CalculateRadius() const
 {
   float radius = .0f;
-  const auto n = m_vertices.GetNumElements();
+  const auto n = Base::m_vertices.GetNumElements();
   if (n > 0)
   {
     for (auto i0 = GetVertices(), i1 = i0 + n; i0 != i1; ++i0)
@@ -259,7 +259,7 @@ float Mesh<VertexFormat, Base>::CalculateRadius() const
 template <class VertexFormat, class Base>
 void  Mesh<VertexFormat, Base>::CalculateExtents(PosType& minOut, PosType& maxOut) const
 {
-  const auto n = m_vertices.GetNumElements();
+  const auto n = Base::m_vertices.GetNumElements();
   if (n > 0)
   {
     for (int i = 0; i < PosType::kNumComponents; ++i)
