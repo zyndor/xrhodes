@@ -26,21 +26,25 @@ struct Vector2
   };
 
   // static
+  inline
   static Vector2  Zero()
   {
     return Vector2(.0f, .0f);
   }
 
+  inline
   static Vector2  One()
   {
     return Vector2(1.0f, 1.0f);
   }
 
+  inline
   static Vector2  UnitX()
   {
     return Vector2(1.0f, .0f);
   }
 
+  inline
   static Vector2  UnitY()
   {
     return Vector2(.0f, 1.0f);

@@ -17,6 +17,7 @@ namespace XR
 struct SVector2
 {
   // static
+  inline
   static SVector2  Zero()
   {
     return SVector2(0, 0);

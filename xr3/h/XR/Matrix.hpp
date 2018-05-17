@@ -43,12 +43,14 @@ struct Matrix
   };
 
   // static
+  inline
   static Matrix Identity()
   {
     return Matrix();
   }
 
-  inline static void Transpose(float data[kNumLinearComponents])
+  inline
+  static void Transpose(float data[kNumLinearComponents])
   {
     std::swap(data[XY], data[YX]);
     std::swap(data[ZX], data[XZ]);

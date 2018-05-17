@@ -31,9 +31,10 @@ class Quaternion
 {
 public:
   // static
-  static Quaternion Unit()
+  inline
+  static Quaternion Identity()
   {
-    return Quaternion();
+    return Quaternion(.0f, .0f, .0f, 1.0f);
   }
 
   ///@brief Creates a quaternion from a vector of pitch, yaw, roll rotations.

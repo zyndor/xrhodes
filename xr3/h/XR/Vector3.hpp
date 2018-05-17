@@ -28,26 +28,31 @@ struct Vector3
   };
 
   // static
+  inline
   static Vector3  Zero()
   {
     return Vector3(.0f, .0f, .0f);
   }
 
+  inline
   static Vector3  One()
   {
     return Vector3(1.0f, 1.0f, 1.0f);
   }
 
+  inline
   static Vector3  UnitX()
   {
     return Vector3(1.0f, .0f, .0f);
   }
 
+  inline
   static Vector3  UnitY()
   {
     return Vector3(.0f, 1.0f, .0f);
   }
 
+  inline
   static Vector3  UnitZ()
   {
     return Vector3(.0f, .0f, 1.0f);
