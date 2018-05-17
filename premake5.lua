@@ -130,6 +130,7 @@ workspace "xr3.SDL"
 			"-std=c++14",
 			"-Wall",
 			"-Werror",
+			"-fvisibility-ms-compat",
 		}
 	end
 	
