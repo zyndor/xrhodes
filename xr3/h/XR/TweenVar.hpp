@@ -17,22 +17,22 @@ namespace XR
 struct  TweenVarCore
 {
   // static
-  static void OnFrameCallback(void* pData);
-  static void OnFinishedCallback(void* pData);
+  static void OnFrameCallback(void* data);
+  static void OnFinishedCallback(void* data);
 
   // data
-  void*             pValue;
+  void*             value;
   float             fValue;
-  Tweener::Callback pOnFrameCb;
-  Tweener::Callback pOnFinishedCb;
-  void*             pCallbackData;
-  Tweener*          pTweener;
+  Tweener::Callback onFrame;
+  Tweener::Callback onFinished;
+  void*             callbackData;
+  Tweener*          tweener;
 
   // general
   void  Clear();
 
-  void  Tween(void* pValue_, Tweener::Callback pOnFrameCb_,
-    Tweener::Callback pOnFinishedCb_, void* pCallbackData_, Tweener& t);
+  void  Tween(void* value_, Tweener::Callback onFrame_,
+    Tweener::Callback onFinished_, void* callbackData_, Tweener& t);
 };
 
 //==============================================================================
@@ -46,36 +46,36 @@ struct  TweenVar: protected  TweenVarCore
   using TweenVarCore::Clear;
 
   // static
-  static void OnFrameCallback(void* pData);
-  
+  static void OnFrameCallback(void* data);
+
   // general
-  void  Tween(float duration, Tweener::Function pFunction, Type target,
-    Type& value, Tweener::Callback pOnFrameCb_,
-    Tweener::Callback pOnFinishedCb_, void* pCallbackData_, Tweener& t);
+  void  Tween(float duration, Tweener::Function function, Type target,
+    Type& value, Tweener::Callback onFrame_,
+    Tweener::Callback onFinished_, void* callbackData_, Tweener& t);
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 template  <typename T>
-void TweenVar<T>::OnFrameCallback( void* pData )
+void TweenVar<T>::OnFrameCallback( void* data )
 {
-  TweenVar<Type>* pVar(static_cast<TweenVar<Type>*>(pData));
-  *static_cast<Type*>(pVar->pValue) = static_cast<Type>(pVar->fValue);
+  TweenVar<Type>* variable(static_cast<TweenVar<Type>*>(data));
+  *static_cast<Type*>(variable->value) = static_cast<Type>(variable->fValue);
 
-  TweenVarCore::OnFrameCallback(pData);
+  TweenVarCore::OnFrameCallback(data);
 }
 
 //==============================================================================
 template  <typename T>
-void TweenVar<T>::Tween( float duration, Tweener::Function pFunction,
-  Type target, Type& value, Tweener::Callback pOnFrameCb_,
-  Tweener::Callback pOnFinishedCb_, void* pCallbackData_, Tweener& t )
+void TweenVar<T>::Tween( float duration, Tweener::Function function,
+  Type target, Type& value, Tweener::Callback onFrame_,
+  Tweener::Callback onFinished_, void* callbackData_, Tweener& t )
 {
   fValue = static_cast<Type>(value);
-  TweenVarCore::Tween(&value, pOnFrameCb_, pOnFinishedCb_, pCallbackData_, t);
-  t.Add(duration, pFunction, float(target), fValue,
-    OnFrameCallback, (pOnFinishedCb_ != 0) ? OnFinishedCallback : 0, this);
+  TweenVarCore::Tween(&value, onFrame_, onFinished_, callbackData_, t);
+  t.Add(duration, function, float(target), fValue,
+    OnFrameCallback, (onFinished_ != 0) ? OnFinishedCallback : 0, this);
 }
 
 } // XR

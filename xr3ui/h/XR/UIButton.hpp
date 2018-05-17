@@ -28,14 +28,14 @@ public:
     kNumStates
   };
 
-  typedef void(*Callback)(UIButton *, void *pData);
+  typedef void(*Callback)(UIButton *, void *data);
 
   // data
   Sprite    sprites[kNumStates];
   Material::Ptr materials[kNumStates]; // TODO: UIBuilder support
-  Callback  pOnPressed;
-  Callback  pOnReleased;
-  void*     pCallbackData;
+  Callback  onPressed;
+  Callback  onReleased;
+  void*     callbackData;
 
   // structors
   UIButton();
@@ -50,16 +50,16 @@ public:
 
   int   GetSpriteId() const;
 
-  void  SetSprites(const Sprite* pSprite, float scale);
-  void  SetSprites(const Sprite* arpSprite[kNumStates], float scale);
+  void  SetSprites(const Sprite* sprite, float scale);
+  void  SetSprites(const Sprite* sprites_[kNumStates], float scale);
   void  SetSizeToSprite(float scale);
 
-  void  SetActiveArea(const Rect* pActiveArea); // no ownership transfer
+  void  SetActiveArea(const Rect* activeArea); // no ownership transfer
 
   bool  OnMouseAction(const Input::MouseActionEvent& e) override;
   bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
 
-  void  Render(IUIRenderer& pRenderer) const override;
+  void  Render(IUIRenderer& renderer) const override;
 
   void  OnPressed();
   void  OnReleased();
@@ -75,7 +75,7 @@ protected:
   };
 
   // data
-  const Rect*  m_pActiveArea; // no ownership
+  const Rect*  m_activeArea; // no ownership
 
   uint8_t m_state;
 

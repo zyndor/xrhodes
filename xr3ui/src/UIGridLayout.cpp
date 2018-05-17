@@ -63,9 +63,9 @@ UIGridLayout::~UIGridLayout()
 {}
 
 //==============================================================================
-void UIGridLayout::_AlignElement( UIElement* pElem )
+void UIGridLayout::_AlignElement( UIElement* elem )
 {
-  const int numElements = static_cast<int>(m_lElements.size());
+  const int numElements = static_cast<int>(m_elements.size());
   const int row = numElements / m_numColumns;
   const int column = numElements - (row * m_numColumns);
 
@@ -78,17 +78,17 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      xElem += (m_cellWidth - pElem->w) / 2;
+      xElem += (m_cellWidth - elem->w) / 2;
       break;
 
     case  AL_HIGH:
-      xElem += m_cellWidth - pElem->w;
+      xElem += m_cellWidth - elem->w;
       break;
-      
+
     case  AL_NOALIGN:
       break;
     }
-    pElem->x = xElem;
+    elem->x = xElem;
   }
 
   if (m_vAlign != AL_NOALIGN)
@@ -100,20 +100,20 @@ void UIGridLayout::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      yElem += (m_cellHeight - pElem->h) / 2;
+      yElem += (m_cellHeight - elem->h) / 2;
       break;
 
     case  AL_HIGH:
-      yElem += m_cellHeight - pElem->h;
+      yElem += m_cellHeight - elem->h;
       break;
-      
+
     case  AL_NOALIGN:
       break;
     }
-    pElem->y = yElem;
+    elem->y = yElem;
   }
 
-  pElem->OnChange();
+  elem->OnChange();
 }
 
 //==============================================================================
@@ -248,7 +248,7 @@ void UIGridLayout::SetAlignment( Alignment hAlign, Alignment vAlign )
 void UIGridLayout::_SetWidthToContent()
 {
   int wNew(0);
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
     int wElem((*i0)->w);
     if (wElem > wNew)
@@ -265,7 +265,7 @@ void UIGridLayout::_SetWidthToContent()
 void UIGridLayout::_SetHeightToContent()
 {
   int hNew(0);
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
     int hElem((*i0)->h);
     if (hElem > hNew)

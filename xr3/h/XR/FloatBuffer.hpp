@@ -76,11 +76,11 @@ public:
   /// of floats this was holding. Releases reference to adapted buffers.
   void ReleaseData();
 
-  ///@brief Sets the first @a numElems elements of @a pData in this, starting
+  ///@brief Sets the first @a numElems elements of @a data in this, starting
   /// at @a offset (as T).
   ///@note This is indexed as an array of T.
   template <typename T>
-  void Set(uint32_t numElems, T const* pData, uint32_t offset = 0);
+  void Set(uint32_t numElems, T const* data, uint32_t offset = 0);
 
   ///@brief Sets the @a i-th element in this as T, to a@ value. The
   /// buffer must contain GetNumElements() items of type T, and sizeof(T)
@@ -125,13 +125,13 @@ private:
   static float* AllocateBuffer(uint32_t elemSize, uint32_t numElems);
 
   // data members
-  uint32_t              m_elemSizeFloats;
-  uint32_t              m_numElems;
-  float*              m_parData;  // ownership if m_pAdapted == nullptr && m_ownData
+  uint32_t            m_elemSizeFloats;
+  uint32_t            m_numElems;
+  float*              m_data;  // ownership if m_adapted == nullptr && m_ownData
 
-  FloatBuffer const*  m_pAdapted; // no ownership
+  FloatBuffer const*  m_adapted; // no ownership
   bool                m_ownData : 1;
-  mutable uint32_t      m_numDependents : 31;
+  mutable uint32_t    m_numDependents : 31;
 
   // internal
   FloatBuffer(FloatBuffer& other, uint32_t offset, uint32_t size = kSizeRest);
@@ -155,18 +155,18 @@ void FloatBuffer::SetBuffer(uint32_t numElems, T * parBuffer)
 //=============================================================================
 template<typename T>
 inline
-void FloatBuffer::Set(uint32_t numElems, T const * pData, uint32_t offset)
+void FloatBuffer::Set(uint32_t numElems, T const * data, uint32_t offset)
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
-  XR_ASSERT(FloatBuffer, m_parData != nullptr);
+  XR_ASSERT(FloatBuffer, m_data != nullptr);
   XR_ASSERT(FloatBuffer, offset + numElems <= m_numElems);
-  T const* pEnd = pData + numElems;
+  T const* dataEnd = data + numElems;
   auto write = Get<T>() + offset;
-  while (pData != pEnd)
+  while (data != dataEnd)
   {
-    *write = *pData;
+    *write = *data;
     ++write;
-    ++pData;
+    ++data;
   }
 }
 
@@ -176,7 +176,7 @@ inline
 void FloatBuffer::Set(uint32_t i, T const & value)
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
-  XR_ASSERT(FloatBuffer, m_parData != nullptr);
+  XR_ASSERT(FloatBuffer, m_data != nullptr);
   XR_ASSERT(FloatBuffer, i < m_numElems);
   Get<T>(i) = value;
 }
@@ -185,14 +185,14 @@ void FloatBuffer::Set(uint32_t i, T const & value)
 inline
 float * FloatBuffer::GetRaw()
 {
-  return m_parData;
+  return m_data;
 }
 
 //=============================================================================
 inline
 float const * FloatBuffer::GetRaw() const
 {
-  return m_parData;
+  return m_data;
 }
 
 //=============================================================================
@@ -201,7 +201,7 @@ inline
 T * FloatBuffer::Get()
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
-  T* p = reinterpret_cast<T*>(m_parData);
+  T* p = reinterpret_cast<T*>(m_data);
   return p;
 }
 
@@ -211,7 +211,7 @@ inline
 T const * FloatBuffer::Get() const
 {
   XR_ASSERT(FloatBuffer, sizeof(T) == GetElementSizeBytes());
-  const T* p = reinterpret_cast<T const*>(m_parData);
+  const T* p = reinterpret_cast<T const*>(m_data);
   return p;
 }
 

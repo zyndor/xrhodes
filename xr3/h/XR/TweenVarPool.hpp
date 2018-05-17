@@ -26,7 +26,7 @@ public:
 
   // data
   int       m_numVars;
-  VarCore*  m_parVarBuffer;
+  VarCore*  m_varPool;
 
   // structors
   TweenVarPoolCore(int numVars);
@@ -46,9 +46,9 @@ public:
   ~TweenVarPool();
 
   // general
-  void  Add(float duration, Tweener::Function pFunction, Type target,
-    Type& value, Tweener::Callback pOnFrameCb, Tweener::Callback pOnFinishedCb,
-    void* pCallbackData, Tweener& tweener);
+  void  Add(float duration, Tweener::Function function, Type target,
+    Type& value, Tweener::Callback onFrame, Tweener::Callback onFinished,
+    void* callbackData, Tweener& tweener);
 
   bool  Remove(Type& v, bool finish);
 
@@ -56,8 +56,8 @@ public:
 
 protected:
   // static
-  static void OnFrameCallback(void* pData);
-  static void OnFinishedCallback(void* pData);
+  static void OnFrameCallback(void* data);
+  static void OnFinishedCallback(void* data);
 };
 
 //==============================================================================
@@ -75,14 +75,14 @@ TweenVarPool<T>::~TweenVarPool()
 
 //==============================================================================
 template  <typename T>
-void  TweenVarPool<T>::Add( float duration, Tweener::Function pFunction,
-        Type target, Type& value, Tweener::Callback pOnFrameCb,
-        Tweener::Callback pOnFinishedCb, void* pCallbackData, Tweener& tweener)
+void  TweenVarPool<T>::Add( float duration, Tweener::Function function,
+        Type target, Type& value, Tweener::Callback onFrame,
+        Tweener::Callback onFinished, void* callbackData, Tweener& tweener)
 {
-  int iInsert(0);
+  int iInsert = 0;
   while (iInsert < m_numVars)
   {
-    if (m_parVarBuffer[iInsert].pValue == 0)
+    if (m_varPool[iInsert].value)
     {
       break;
     }
@@ -92,25 +92,25 @@ void  TweenVarPool<T>::Add( float duration, Tweener::Function pFunction,
   XR_ASSERTMSG(TweenVarPool, iInsert < m_numVars,
     ("Not enough variables available on TweenVarPool %p, try increasing the maximum (%d).", this, m_numVars));
 
-  VarCore&  var(m_parVarBuffer[iInsert]);
+  VarCore&  var = m_varPool[iInsert];
   var.fValue = float(value);
-  var.Tween(&value, pOnFrameCb, pOnFinishedCb, pCallbackData, tweener);
+  var.Tween(&value, onFrame, onFinished, callbackData, tweener);
 
-  tweener.Add(duration, pFunction, float(target),
-    m_parVarBuffer[iInsert].fValue, OnFrameCallback, OnFinishedCallback,
-    &m_parVarBuffer[iInsert]);
+  tweener.Add(duration, function, float(target),
+    m_varPool[iInsert].fValue, OnFrameCallback, OnFinishedCallback,
+    &m_varPool[iInsert]);
 }
 
 //==============================================================================
 template  <typename T>
 bool TweenVarPool<T>::Remove( Type& v, bool finish )
 {
-  bool  success(false);
+  bool  success = false;
   for (int i = 0; i < m_numVars; ++i)
   {
-    if (m_parVarBuffer[i].pValue == &v)
+    if (m_varPool[i].value == &v)
     {
-      success = m_parVarBuffer[i].pTweener->Remove(m_parVarBuffer[i].fValue, true);
+      success = m_varPool[i].tweener->Remove(m_varPool[i].fValue, true);
       break;
     }
   }
@@ -123,35 +123,35 @@ void TweenVarPool<T>::Clear()
 {
   for (int i = 0; i < m_numVars; ++i)
   {
-    if (m_parVarBuffer[i].pValue != 0)
+    if (m_varPool[i].value)
     {
-      m_parVarBuffer[i].pTweener->Remove(m_parVarBuffer[i].fValue, false);
-      m_parVarBuffer[i].Clear();
+      m_varPool[i].tweener->Remove(m_varPool[i].fValue, false);
+      m_varPool[i].Clear();
     }
   }
 }
 
 //==============================================================================
 template  <typename T>
-void TweenVarPool<T>::OnFrameCallback( void* pData )
+void TweenVarPool<T>::OnFrameCallback( void* data )
 {
-  TweenVarCore* pVar(static_cast<VarCore*>(pData));
-  *static_cast<Type*>(pVar->pValue) = static_cast<Type>(pVar->fValue);
+  TweenVarCore* variable = static_cast<VarCore*>(data);
+  *static_cast<Type*>(variable->value) = static_cast<Type>(variable->fValue);
 
-  TweenVarCore::OnFrameCallback(pData);
+  TweenVarCore::OnFrameCallback(data);
 }
 
 //==============================================================================
 template  <typename T>
-void TweenVarPool<T>::OnFinishedCallback( void* pData )
+void TweenVarPool<T>::OnFinishedCallback( void* data )
 {
-  TweenVarCore* pVar(static_cast<VarCore*>(pData));
-  if (pVar->pOnFinishedCb != 0)
+  TweenVarCore* variable = static_cast<VarCore*>(data);
+  if (variable->onFinished)
   {
-    (*pVar->pOnFinishedCb)(pVar->pCallbackData);
+    (*variable->onFinished)(variable->callbackData);
   }
 
-  pVar->Clear();
+  variable->Clear();
 }
 
 } // XR

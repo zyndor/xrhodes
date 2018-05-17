@@ -23,12 +23,12 @@ class  ValueFunctorCore
 protected:
   // types
   typedef T  Type;
-  
+
   // structors
   explicit ValueFunctorCore(T value)
   : m_value(value)
   {}
-  
+
   ///@brief Sets the underlying value to @a d.
   void  Set(T d)
   {
@@ -40,15 +40,15 @@ protected:
 };
 
 //==============================================================================
-///@brief Sends data down the std::ostream @a pTarget that you have specified
+///@brief Sends data down the std::ostream @a stream that you have specified
 /// on construction.
 template  <typename T>
 struct  OStreamer: protected ValueFunctorCore<std::ostream*>
 {
   typedef ValueFunctorCore<std::ostream*> BaseType;
 
-  OStreamer(std::ostream* pTarget, char delimiter)
-  : BaseType(pTarget),
+  OStreamer(std::ostream* stream, char delimiter)
+  : BaseType(stream),
     m_delimiter(delimiter)
   {}
 
@@ -56,7 +56,7 @@ struct  OStreamer: protected ValueFunctorCore<std::ostream*>
   {
     (*BaseType::m_value) << t << m_delimiter;
   }
-  
+
 protected:
   char  m_delimiter;
 };
@@ -87,19 +87,19 @@ class Minimizer:  protected ValueFunctorCore<T>
 {
 public:
   typedef ValueFunctorCore<T> BaseType;
-  
+
   using BaseType::Set;
-  
+
   explicit Minimizer(T d)
   : ValueFunctorCore<T>(d)
   {}
-  
+
   ///@return  The current smallest of all values passed to this Minimizer.
   T  Evaluate() const
   {
     return BaseType::m_value;
   }
-  
+
   void  operator()(T d)
   {
     if (d < BaseType::m_value)
@@ -123,7 +123,7 @@ public:
   explicit Maximizer(T d)
   : ValueFunctorCore<T>(d)
   {}
-  
+
   ///@return  The current largest of all values passed to this Maximizer.
   T  Evaluate() const
   {
@@ -174,15 +174,15 @@ struct  Passer: ValueFunctorCore<Callee&>
 
   Passer(Callee& o, Method pm)
   : BaseType(o),
-    m_pMethod(pm)
+    m_method(pm)
   {}
 
   Return  operator()(Arg o)
   {
-    return (BaseType::m_value.*m_pMethod)(o);
+    return (BaseType::m_value.*m_method)(o);
   }
 
-  Method  m_pMethod;
+  Method  m_method;
 };
 
 //==============================================================================
@@ -196,22 +196,22 @@ struct  Caller
     Return(Callee::*)(Arg)const,
     Return(Callee::*)(Arg)>::Type Method;
 
-  Caller(Method pm, Arg a)
-  : m_pMethod(pm),
+  Caller(Method method, Arg a)
+  : m_method(method),
     m_arg(a)
   {}
 
-  Return  operator()(Callee& obj) const
+  Return  operator()(Callee& object) const
   {
-    return (obj.*m_pMethod)(m_arg);
+    return (object.*m_method)(m_arg);
   }
 
-  Return operator()(Callee* pObj) const
+  Return operator()(Callee* object) const
   {
-    return (pObj->*m_pMethod)(m_arg);
+    return (object->*m_method)(m_arg);
   }
 
-  Method  m_pMethod;
+  Method  m_method;
   Arg m_arg;
 };
 
@@ -223,21 +223,21 @@ struct  Caller<Callee, Return, void>
     Return(Callee::*)()const,
     Return(Callee::*)()>::Type Method;
 
-  explicit Caller(Method pm)
-  : m_pMethod(pm)
+  explicit Caller(Method method)
+  : m_method(method)
   {}
 
-  Return  operator()(Callee& obj) const
+  Return  operator()(Callee& object) const
   {
-    return (obj.*m_pMethod)();
+    return (object.*m_method)();
   }
 
-  Return operator()(Callee* pObj) const
+  Return operator()(Callee* object) const
   {
-    return (pObj->*m_pMethod)();
+    return (object->*m_method)();
   }
 
-  Method  m_pMethod;
+  Method  m_method;
 };
 
 //==============================================================================
@@ -254,7 +254,7 @@ struct  Bind1st
   {
     return op(arg1, arg2);
   }
-  
+
   Operation op;
   Arg1      arg1;
 };
@@ -273,7 +273,7 @@ struct  Bind2nd
   {
     return op(arg1, arg2);
   }
-  
+
   Operation op;
   Arg2      arg2;
 };

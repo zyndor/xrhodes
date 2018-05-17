@@ -13,25 +13,25 @@ namespace XR
 namespace
 {
 //==============================================================================
-void ThrowInvalidTypeError(char const* pOperation)
+void ThrowInvalidTypeError(char const* operationName)
 {
-  char arBuffer[128];
-  sprintf(arBuffer, "Invalid type: %s not supported.", pOperation);
-  throw XonEntity::Exception(XonEntity::Exception::Type::InvalidType, arBuffer);
+  char msgBuffer[128];
+  sprintf(msgBuffer, "Invalid type: %s not supported.", operationName);
+  throw XonEntity::Exception(XonEntity::Exception::Type::InvalidType, msgBuffer);
 }
 
 //==============================================================================
 void ThrowIndexOutOfBoundsError(size_t index, size_t bounds)
 {
-  char arBuffer[256];
-  sprintf(arBuffer, "Index (%zd) out of bounds (%zd).", index, bounds);
-  throw XonEntity::Exception(XonEntity::Exception::Type::IndexOutOfBounds, arBuffer);
+  char msgBuffer[256];
+  sprintf(msgBuffer, "Index (%zd) out of bounds (%zd).", index, bounds);
+  throw XonEntity::Exception(XonEntity::Exception::Type::IndexOutOfBounds, msgBuffer);
 }
 
 //==============================================================================
 void ThrowInvalidKeyError(const char* name)
 {
-  char arBuffer[128];
+  char msgBuffer[128];
   auto len = strlen(name);
   const size_t kMaxSize = 100;
   bool overSized = len > kMaxSize;
@@ -39,8 +39,8 @@ void ThrowInvalidKeyError(const char* name)
   {
     name += len - kMaxSize;
   }
-  sprintf(arBuffer, "Invalid key '%s%s'.", overSized ? "..." : "", name);
-  throw XonEntity::Exception(XonEntity::Exception::Type::InvalidKey, arBuffer);
+  sprintf(msgBuffer, "Invalid key '%s%s'.", overSized ? "..." : "", name);
+  throw XonEntity::Exception(XonEntity::Exception::Type::InvalidKey, msgBuffer);
 }
 
 } //
@@ -193,13 +193,13 @@ XonValue::XonValue()
 {}
 
 //==============================================================================
-XonValue::XonValue(const char * pValue, size_t length)
+XonValue::XonValue(const char * value, size_t length)
 : XonEntity(Type::Value),
-  m_value(pValue != nullptr ? new char[length + 1] : nullptr)
+  m_value(value != nullptr ? new char[length + 1] : nullptr)
 {
-  if (pValue)
+  if (value)
   {
-    memcpy(m_value, pValue, length);
+    memcpy(m_value, value, length);
     m_value[length] = '\0';
   }
 }

@@ -41,7 +41,7 @@ protected:
 
   // static
   ScreenList          m_stack; // no ownership
-  Screen*             m_pPrevious;  // no ownership
+  Screen*             m_previous;  // no ownership
 
   UIContainer         m_container;
   UIEventNotifier     m_notifier;

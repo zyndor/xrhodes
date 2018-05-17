@@ -41,7 +41,7 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   int32_t ixSplit = static_cast<int32_t>(std::round(xSplit));
   int32_t iySplit = static_cast<int32_t>(std::round(ySplit));
 
-  float arXCoords[4] =
+  float xCoords[4] =
   {
     float(x + std::round(sprite.GetLeftPadding())),
     float(x + ixSplit),
@@ -49,7 +49,7 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
     float(x + w - std::round(sprite.GetRightPadding()))
   };
 
-  float arYCoords[4] =
+  float yCoords[4] =
   {
     float(y + std::round(sprite.GetTopPadding())),
     float(y + iySplit),
@@ -57,90 +57,90 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
     float(y + h - std::round(sprite.GetBottomPadding()))
   };
 
-  float arU[4];
+  float uCoords[4];
   if (sprite.IsUVRotated())
   {
-    arU[0] = spriteVerts[Quad::Vertex::SW].uv0.x;
-    arU[3] = spriteVerts[Quad::Vertex::NW].uv0.x;
+    uCoords[0] = spriteVerts[Quad::Vertex::SW].uv0.x;
+    uCoords[3] = spriteVerts[Quad::Vertex::NW].uv0.x;
   }
   else
   {
-    arU[0] = spriteVerts[Quad::Vertex::NW].uv0.x;
-    arU[3] = spriteVerts[Quad::Vertex::NE].uv0.x;
+    uCoords[0] = spriteVerts[Quad::Vertex::NW].uv0.x;
+    uCoords[3] = spriteVerts[Quad::Vertex::NE].uv0.x;
   }
 
-  arU[1] = Lerp(arU[0], arU[3], hSplit);
-  arU[2] = arU[1];
+  uCoords[1] = Lerp(uCoords[0], uCoords[3], hSplit);
+  uCoords[2] = uCoords[1];
 
-  float arV[4];
+  float vCoords[4];
   if (sprite.IsUVRotated())
   {
-    arV[0] = spriteVerts[Quad::Vertex::SW].uv0.y;
-    arV[3] = spriteVerts[Quad::Vertex::SE].uv0.y;
+    vCoords[0] = spriteVerts[Quad::Vertex::SW].uv0.y;
+    vCoords[3] = spriteVerts[Quad::Vertex::SE].uv0.y;
   }
   else
   {
-    arV[0] = spriteVerts[Quad::Vertex::NW].uv0.y;
-    arV[3] = spriteVerts[Quad::Vertex::SW].uv0.y;
+    vCoords[0] = spriteVerts[Quad::Vertex::NW].uv0.y;
+    vCoords[3] = spriteVerts[Quad::Vertex::SW].uv0.y;
   }
 
-  arV[1] = Lerp(arV[0], arV[3], vSplit);
-  arV[2] = arV[1];
+  vCoords[1] = Lerp(vCoords[0], vCoords[3], vSplit);
+  vCoords[2] = vCoords[1];
 
   int32_t ix0 = 0;
   int32_t ix1 = 3;
-  if (arXCoords[1] > arXCoords[2]) // ui width is smaller than sprite width
+  if (xCoords[1] > xCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(w / wSprite);
-    arXCoords[0] = x + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.x + hwSprite));
-    arXCoords[1] = x + std::round(scale * (spriteVerts[Quad::Vertex::NE].pos.x + hwSprite));
+    xCoords[0] = x + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.x + hwSprite));
+    xCoords[1] = x + std::round(scale * (spriteVerts[Quad::Vertex::NE].pos.x + hwSprite));
 
-    arU[1] = arU[3];
+    uCoords[1] = uCoords[3];
     ix1 = 1;
   }
   else
   {
-    if (arXCoords[0] > arXCoords[1])
+    if (xCoords[0] > xCoords[1])
     {
       // ignore low half
-      arU[2] = arU[0];
+      uCoords[2] = uCoords[0];
       ix0 += 2;
     }
 
-    if (arXCoords[3] < arXCoords[2])
+    if (xCoords[3] < xCoords[2])
     {
       // ignore high half
-      arU[1] = arU[3];
+      uCoords[1] = uCoords[3];
       ix1 -= 2;
     }
   }
 
   int32_t iy0 = 0;
   int32_t iy1 = 3;
-  if (arYCoords[1] > arYCoords[2]) // ui width is smaller than sprite width
+  if (yCoords[1] > yCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
     float scale(h / hSprite);
-    arYCoords[0] = y + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.y + hhSprite));
-    arYCoords[1] = y + std::round(scale * (spriteVerts[Quad::Vertex::SW].pos.y + hhSprite));
+    yCoords[0] = y + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.y + hhSprite));
+    yCoords[1] = y + std::round(scale * (spriteVerts[Quad::Vertex::SW].pos.y + hhSprite));
 
-    arV[1] = arV[3];
+    vCoords[1] = vCoords[3];
     iy1 = 1;
   }
   else
   {
-    if (arYCoords[0] > arYCoords[1])
+    if (yCoords[0] > yCoords[1])
     {
       // ignore low half
-      arV[2] = arV[0];
+      vCoords[2] = vCoords[0];
       iy0 += 2;
     }
 
-    if (arYCoords[3] < arYCoords[2])
+    if (yCoords[3] < yCoords[2])
     {
       // ignore high half
-      arV[1] = arV[3];
+      vCoords[1] = vCoords[3];
       iy1 -= 2;
     }
   }
@@ -148,7 +148,7 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   int32_t hQuads(ix1 - ix0);
   int32_t vQuads(iy1 - iy0);
 
-  int numVertices(hQuads * vQuads * Quad::Vertex::kCount);
+  const int numVertices = hQuads * vQuads * Quad::Vertex::kCount;
   if (numVertices > 0)
   {
     FloatBuffer  fbUVs;
@@ -158,15 +158,15 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
       {
         auto verts = renderer.NewSprite(material);
 
-        verts[0].pos = Vector3(arXCoords[j], arYCoords[i], .0f);
-        verts[1].pos = Vector3(arXCoords[j], arYCoords[i + 1], .0f);
-        verts[2].pos = Vector3(arXCoords[j + 1], arYCoords[i + 1], .0f);
-        verts[3].pos = Vector3(arXCoords[j + 1], arYCoords[i], .0f);
+        verts[0].pos = Vector3(xCoords[j], yCoords[i], .0f);
+        verts[1].pos = Vector3(xCoords[j], yCoords[i + 1], .0f);
+        verts[2].pos = Vector3(xCoords[j + 1], yCoords[i + 1], .0f);
+        verts[3].pos = Vector3(xCoords[j + 1], yCoords[i], .0f);
 
-        verts[0].uv0 = Vector2(arU[j], arV[i]);
-        verts[1].uv0 = Vector2(arU[j], arV[i + 1]);
-        verts[2].uv0 = Vector2(arU[j + 1], arV[i + 1]);
-        verts[3].uv0 = Vector2(arU[j + 1], arV[i]);
+        verts[0].uv0 = Vector2(uCoords[j], vCoords[i]);
+        verts[1].uv0 = Vector2(uCoords[j], vCoords[i + 1]);
+        verts[2].uv0 = Vector2(uCoords[j + 1], vCoords[i + 1]);
+        verts[3].uv0 = Vector2(uCoords[j + 1], vCoords[i]);
 
         verts[0].color0 = color;
         verts[1].color0 = color;

@@ -57,11 +57,11 @@ bool  CheckInt16(int value);
 
 ///@return Index of item in array of values, @a numValues if not found.
 template <typename T>
-size_t FindItemId(T const* parValues, size_t numValues, T const& pValue);
+size_t FindItemId(T const* values, size_t numValues, T const& value);
 
 ///@brief Count number of elements in a null terminated array.
 template <typename T>
-size_t CountArrayItems(T const* pItems);
+size_t CountArrayItems(T const* items);
 
 //==============================================================================
 ///@brief For find_if ()ing an object based on the pointer to it.
@@ -69,15 +69,15 @@ template  <typename T>
 struct  PtrFindPredicate
 {
   explicit PtrFindPredicate(const T* p)
-  : pObject(p)
+  : object(p)
   {}
 
   bool  operator()(const T& a) const
   {
-    return &a == pObject;
+    return &a == object;
   }
 
-  const T* const pObject;
+  const T* const object;
 };
 
 //==============================================================================
@@ -123,26 +123,26 @@ bool  CheckInt16(int value)
 //==============================================================================
 template <typename T>
 inline
-size_t FindItemId(T const* parValues, size_t numValues, T const& item)
+size_t FindItemId(T const* values, size_t numValues, T const& item)
 {
-  XR_ASSERT(FindItemId, parValues != 0);
+  XR_ASSERT(FindItemId, values != nullptr);
   XR_ASSERT(FindItemId, numValues >= 0);
-  const T* pFind(std::find(parValues, parValues + numValues, item));
-  return pFind - parValues;
+  const T* iFind = std::find(values, values + numValues, item);
+  return iFind - values;
 }
 
 //==============================================================================
 template <typename T>
-size_t CountArrayItems(T const* pItems)
+size_t CountArrayItems(T const* items)
 {
-  XR_ASSERT(CountArrayItems, pItems != nullptr);
-  T const* pCursor = pItems;
-  while (*pCursor != nullptr)
+  XR_ASSERT(CountArrayItems, items != nullptr);
+  T const* cursor = items;
+  while (*cursor != nullptr)
   {
-    ++pCursor;
+    ++cursor;
   }
 
-  size_t count(pCursor - pItems);
+  size_t count = cursor - items;
   return count;
 }
 

@@ -31,26 +31,26 @@ public:
   // general
   const ParserCore& GetState() const;
 
-  ///@brief Parses the string in @a parBuffer.
+  ///@brief Parses the given JSON-encoded @a string.
   ///@return  Pointer to root entity. You gain ownership of this object.
-  Entity* Read(const char* parBuffer, size_t size);
+  Entity* Read(const char* string, size_t size);
 
 protected:
   // types
   typedef std::vector<Entity*>  EntityVector;
 
   // static
-  static void OnParserEvent(Parser::Event e, const Parser::String* pString,
-                void* pUser);
+  static void OnParserEvent(Parser::Event e, const Parser::String* string,
+                void* userData);
 
   // data
   Parser          m_parser;
   Parser::String  m_key;
   EntityVector    m_entities;
-  Entity*         m_pRoot;
+  Entity*         m_root;
 
   // internal
-  void  _HandleEvent(Parser::Event e, const Parser::String* pString);
+  void  _HandleEvent(Parser::Event e, const Parser::String* string);
 };
 
 //==============================================================================

@@ -25,7 +25,7 @@ public:
   };
 
   // static
-  static void GroupRemoveAll(const char* pGroupName);
+  static void GroupRemoveAll(const char* groupName);
   static void GroupRemoveAll(uint32_t groupHash);
 
   // structors
@@ -35,7 +35,7 @@ public:
   // general
   uint32_t      GetGroupHash() const;
 
-  void          SetGroup(const char* pGroupName);
+  void          SetGroup(const char* groupName);
   void          SetGroup(uint32_t groupHash);
 
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
@@ -50,7 +50,7 @@ protected:
   static List s_lButtons; // no ownership
 
   static void GroupClear(uint32_t groupHash);
-  static void GroupClearExcept(uint32_t groupHash, const UIRadioButton* pButton);
+  static void GroupClearExcept(uint32_t groupHash, const UIRadioButton* button);
 
   // data
   uint32_t  m_groupHash;

@@ -53,7 +53,7 @@ struct Vector2
     {
       float x, y;
     };
-    float arData[kNumComponents];
+    float data[kNumComponents];
   };
 
   // structors
@@ -65,9 +65,9 @@ struct Vector2
   : x(x_), y(y_)
   {}
 
-  explicit Vector2(const float parData[kNumComponents])
-  : x(parData[X]),
-    y(parData[Y])
+  explicit Vector2(const float data_[kNumComponents])
+  : x(data_[X]),
+    y(data_[Y])
   {}
 
   // general

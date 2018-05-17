@@ -26,92 +26,91 @@ UINavigator::~UINavigator()
 {}
 
 //==============================================================================
-bool  UINavigator::Add(UIElement* pElem, UIElement* pRelative,
+bool  UINavigator::Add(UIElement* elem, UIElement* relativeTo,
         Direction dir)
 {
-  bool  success(true);
-  if(pRelative == 0)
+  bool  success = true;
+  if(!relativeTo)
   {
     Entry e;
     memset(&e, 0x00, sizeof(Entry));
 
-    m_entries[pElem] = e;
+    m_entries[elem] = e;
   }
   else
   {
     XR_ASSERT(UINavigator, dir < kNumDirections);
-    EntryMap::iterator  iFind(m_entries.find(pRelative));
+    EntryMap::iterator  iFind = m_entries.find(relativeTo);
     success = iFind != m_entries.end();
     if(success)
     {
-      Entry&  e(m_entries[pElem]);
+      Entry&  e = m_entries[elem];
 
-      Direction opp(GetOpposite(dir));
-      if(iFind->second.arNeighbors[dir] != 0)
+      Direction opp = GetOpposite(dir);
+      if(iFind->second.neighbors[dir] != 0)
       {
-        // insert pElem between pRelative and its neighbor in the direction of insertion
-        e.arNeighbors[dir] = iFind->second.arNeighbors[dir];
+        // insert elem between relativeTo and its neighbor in the direction of insertion
+        e.neighbors[dir] = iFind->second.neighbors[dir];
 
-        EntryMap::iterator  iFind2(m_entries.find(iFind->second.arNeighbors[dir]));
-        iFind2->second.arNeighbors[opp] = pElem;
+        EntryMap::iterator  iFind2 = m_entries.find(iFind->second.neighbors[dir]);
+        iFind2->second.neighbors[opp] = elem;
       }
 
-      e.arNeighbors[opp] = iFind->first;
-      iFind->second.arNeighbors[dir] = pElem;
+      e.neighbors[opp] = iFind->first;
+      iFind->second.neighbors[dir] = elem;
     }
   }
   return success;
 }
 
 //==============================================================================
-bool  UINavigator::Remove(UIElement* pElem)
+bool  UINavigator::Remove(UIElement* elem)
 {
-  EntryMap::iterator  iFind(m_entries.find(pElem));
-  bool  success(iFind == m_entries.end());
+  EntryMap::iterator  iFind = m_entries.find(elem);
+  bool  success = iFind == m_entries.end();
   if(success)
   {
     EntryMap::iterator  iFindRelative[kNumDirections] =
     {
-      m_entries.find(iFind->second.arNeighbors[LEFT]),
-      m_entries.find(iFind->second.arNeighbors[UP]),
-      m_entries.find(iFind->second.arNeighbors[RIGHT]),
-      m_entries.find(iFind->second.arNeighbors[DOWN]),
+      m_entries.find(iFind->second.neighbors[LEFT]),
+      m_entries.find(iFind->second.neighbors[UP]),
+      m_entries.find(iFind->second.neighbors[RIGHT]),
+      m_entries.find(iFind->second.neighbors[DOWN]),
     };
 
-    EntryMap::iterator  iEnd(m_entries.end());
-
+    EntryMap::iterator  iEnd = m_entries.end();
     if(iFindRelative[LEFT] != iEnd)
     {
       if(iFindRelative[RIGHT] != iEnd)
       {
-        iFindRelative[LEFT]->second.arNeighbors[RIGHT] = iFindRelative[RIGHT]->first;
-        iFindRelative[RIGHT]->second.arNeighbors[LEFT] = iFindRelative[LEFT]->first;
+        iFindRelative[LEFT]->second.neighbors[RIGHT] = iFindRelative[RIGHT]->first;
+        iFindRelative[RIGHT]->second.neighbors[LEFT] = iFindRelative[LEFT]->first;
       }
       else
       {
-        iFindRelative[LEFT]->second.arNeighbors[RIGHT] = 0;
+        iFindRelative[LEFT]->second.neighbors[RIGHT] = 0;
       }
     }
     else if(iFindRelative[RIGHT] != iEnd)
     {
-      iFindRelative[RIGHT]->second.arNeighbors[LEFT] = 0;
+      iFindRelative[RIGHT]->second.neighbors[LEFT] = 0;
     }
 
     if(iFindRelative[UP] != iEnd)
     {
       if(iFindRelative[DOWN] != iEnd)
       {
-        iFindRelative[UP]->second.arNeighbors[DOWN] = iFindRelative[DOWN]->first;
-        iFindRelative[DOWN]->second.arNeighbors[UP] = iFindRelative[UP]->first;
+        iFindRelative[UP]->second.neighbors[DOWN] = iFindRelative[DOWN]->first;
+        iFindRelative[DOWN]->second.neighbors[UP] = iFindRelative[UP]->first;
       }
       else
       {
-        iFindRelative[UP]->second.arNeighbors[DOWN] = 0;
+        iFindRelative[UP]->second.neighbors[DOWN] = 0;
       }
     }
     else if(iFindRelative[DOWN] != iEnd)
     {
-      iFindRelative[DOWN]->second.arNeighbors[UP] = 0;
+      iFindRelative[DOWN]->second.neighbors[UP] = 0;
     }
   }
   return success;
@@ -124,16 +123,16 @@ void  UINavigator::Clear()
 }
 
 //==============================================================================
-UIElement*  UINavigator::Get(UIElement* pRelative, Direction dir)
+UIElement*  UINavigator::Get(UIElement* relativeTo, Direction dir)
 {
   XR_ASSERT(UINavigator, dir < kNumDirections);
-  UIElement*  p(0);
-  EntryMap::iterator  iFind(m_entries.find(pRelative));
+  UIElement*  elem = nullptr;
+  EntryMap::iterator  iFind = m_entries.find(relativeTo);
   if(iFind != m_entries.end())
   {
-    p = iFind->second.arNeighbors[dir];
+    elem = iFind->second.neighbors[dir];
   }
-  return p;
+  return elem;
 }
 
 } // XR

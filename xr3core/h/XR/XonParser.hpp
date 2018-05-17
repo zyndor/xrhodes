@@ -42,7 +42,7 @@ public:
 
   struct String
   {
-    const char* pStart;
+    const char* start;
     size_t      length;
     bool        isQuoted;
   };
@@ -50,14 +50,14 @@ public:
   ///@brief Event handling callback.
   ///@return Whether the parsing should continue. This provides an opportunity
   /// to break on semantic errors.
-  typedef bool(*Callback)(Event e, String const* pData, void* pUser);
+  typedef bool(*Callback)(Event e, String const* data, void* userData);
 
   struct State
   {
     int row;
     int column;
     int depth;
-    const char* pCurrent;
+    const char* cursor;
   };
 
   // static
@@ -72,7 +72,7 @@ public:
   // general
   State const& GetState() const;
 
-  bool Parse(char const* pBuffer, size_t length, Callback pCallback, void* pUser);
+  bool Parse(char const* string, size_t length, Callback callback, void* userData);
 
 private:
   // types
@@ -89,15 +89,15 @@ private:
 
   // data
   State       m_state;
-  Callback    m_pCallback;
-  void*       m_pCallbackUser;
+  Callback    m_callback;
+  void*       m_callbackUser;
 
   // internal
   bool          ParseObject(ParserCore& pc);
   ElementResult ParseElement(ParserCore& pc, String& strOut);
   bool          ParseString(ParserCore& pc, String& strOut);
   const char*   ProcessComments(ParserCore& pc);
-  bool          DoCallback(Event e, String const* pString);
+  bool          DoCallback(Event e, String const* string);
 };
 
 //==============================================================================

@@ -70,52 +70,52 @@ bool UIHorizontalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e
 }
 
 //==============================================================================
-void UIHorizontalScrollingLayout::_AlignElement( UIElement* pElem )
+void UIHorizontalScrollingLayout::_AlignElement( UIElement* elem )
 {
   switch (m_align)
   {
   case  AL_LOW:
-    pElem->y = y;
+    elem->y = y;
     break;
 
   case  AL_CENTER:
-    pElem->y = y + (h - pElem->h) / 2;
+    elem->y = y + (h - elem->h) / 2;
     break;
 
   case  AL_HIGH:
-    pElem->y = y + h - pElem->h;
+    elem->y = y + h - elem->h;
     break;
 
   case  AL_NOALIGN:
     break;
   }
 
-  if (m_lElements.size() > 0)
+  if (m_elements.size() > 0)
   {
     if (m_growDir == GD_POSITIVE)
     {
-      pElem->x = m_lElements.back()->x + m_lElements.back()->w + m_spacing;
+      elem->x = m_elements.back()->x + m_elements.back()->w + m_spacing;
     }
     else
     {
-      pElem->x = m_lElements.back()->x - (pElem->w + m_spacing);
+      elem->x = m_elements.back()->x - (elem->w + m_spacing);
     }
   }
   else
   {
     if (m_growDir == GD_POSITIVE)
     {
-      pElem->x = x;
+      elem->x = x;
     }
     else
     {
-      pElem->x = x + w - pElem->w;
+      elem->x = x + w - elem->w;
     }
 
-    pElem->x += m_xOffset;
+    elem->x += m_xOffset;
   }
 
-  pElem->OnChange();
+  elem->OnChange();
 }
 
 //==============================================================================

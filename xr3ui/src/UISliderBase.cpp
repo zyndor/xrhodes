@@ -13,8 +13,8 @@ namespace XR
 //==============================================================================
 UISliderBase::UISliderBase()
 : UIImage(),
-  pOnValueChangeCb(0),
-  pOnValueChangeCbData(0),
+  onValueChangeCb(nullptr),
+  onValueChangeCbData(nullptr),
   m_percentage(.0f),
   m_isTouched(false),
   m_touchPosition(0)
@@ -53,9 +53,9 @@ void UISliderBase::SetPercentage( float percentage )
   if (diff * diff > std::numeric_limits<float>::epsilon())
   {
     m_percentage = percentage;
-    if (pOnValueChangeCb != 0)
+    if (onValueChangeCb != 0)
     {
-      (*pOnValueChangeCb)(this, pOnValueChangeCbData);
+      (*onValueChangeCb)(this, onValueChangeCbData);
     }
   }
 }

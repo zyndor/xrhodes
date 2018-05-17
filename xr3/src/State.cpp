@@ -61,13 +61,13 @@ void  State::Manager::Update(int32_t ms)
     switch(result.operation)
     {
     case  Result::PUSH:
-      XR_ASSERT(State::Manager, result.pState != 0);
-      Push(*result.pState);
+      XR_ASSERT(State::Manager, result.state != nullptr);
+      Push(*result.state);
       break;
 
     case  Result::CHANGE:
-      XR_ASSERT(State::Manager, result.pState != 0);
-      Change(*result.pState);
+      XR_ASSERT(State::Manager, result.state != nullptr);
+      Change(*result.state);
       break;
 
     case  Result::POP:

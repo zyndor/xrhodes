@@ -27,17 +27,17 @@ public:
   ///@return Interpolated value given initial @a v0 and target @a v1 values
   /// and blend factor @a t (.0...1.0).
   typedef float(*Function)(float v0, float v1, float t);
-  
+
   ///@brief Callback for OnFrame and OnFinished events.
   typedef void(*Callback)(void*);
 
   // structors
   Tweener();
   ~Tweener();
-  
+
   // general use
-  void  Add(float duration, Function pFunction, float target, float& value,
-    Callback pOnFrame, Callback pOnFinished, void* pData);
+  void  Add(float duration, Function function, float target, float& value,
+    Callback onFrame, Callback onFinished, void* data);
   bool  Remove(float& value, bool finish);
   void  Update(float tDelta);
 
@@ -52,20 +52,20 @@ private:
     {
       bool  operator()(const Param& lhs, const Param& rhs) const
       {
-        return lhs.pValue < rhs.pValue;
+        return lhs.value < rhs.value;
       }
     };
-    
+
     // data
     float     progress;
-    float     base;  // reciprocal of duration
-    Function  pFunction;
+    float     invDuration;
+    Function  function;
     float     vStart;
     float     vTarget;
-    float*    pValue;
-    Callback  pOnFrame;
-    Callback  pOnFinished;
-    void*     pCallbackData;
+    float*    value;
+    Callback  onFrame;
+    Callback  onFinished;
+    void*     callbackData;
 
     // general use
     bool  Update(float tDelta);

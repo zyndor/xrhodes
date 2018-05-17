@@ -12,7 +12,7 @@ namespace XR
 {
 
 //==============================================================================
-const int karKeyCodeNative[] =
+const int kKeyCodesNative[] =
 {
   SDL_SCANCODE_LSHIFT, //225,
   SDL_SCANCODE_LCTRL, //224,
@@ -20,7 +20,7 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_RSHIFT, //229,
   SDL_SCANCODE_RCTRL, //228,
   SDL_SCANCODE_RALT, //230, /**< alt gr, option */
-  
+
   SDL_SCANCODE_LEFT, //80,
   SDL_SCANCODE_UP, //82,
   SDL_SCANCODE_DOWN, //81,
@@ -39,9 +39,9 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_PAGEDOWN, //78,
   SDL_SCANCODE_END, //77,
   SDL_SCANCODE_DELETE, //76,
-  
+
   SDL_SCANCODE_PAUSE,
-  
+
   SDL_SCANCODE_F1, //58,
   SDL_SCANCODE_F2, //59,
   SDL_SCANCODE_F3, //60,
@@ -65,7 +65,7 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_8, //37,
   SDL_SCANCODE_9, //38,
   SDL_SCANCODE_0, //39,
-  
+
   SDL_SCANCODE_A, //4,
   SDL_SCANCODE_B, //5,
   SDL_SCANCODE_C, //6,
@@ -105,7 +105,7 @@ const int karKeyCodeNative[] =
   SDL_SCANCODE_PERIOD, //55,
   SDL_SCANCODE_SLASH, //56,
   SDL_SCANCODE_BACKSLASH, //49,
-  
+
   SDL_SCANCODE_AC_BACK, // 270
   SDL_SCANCODE_MENU,  // 118
   SDL_SCANCODE_SELECT // 119 -- might not
@@ -114,8 +114,8 @@ const int karKeyCodeNative[] =
 //==============================================================================
 KeyCode TranslateKeyCodeNative(int kc)
 {
-  const int*  iFind(std::find(karKeyCodeNative, karKeyCodeNative + kKeyCount, kc));
-  return static_cast<KeyCode>(iFind - karKeyCodeNative);
+  const int*  iFind = std::find(kKeyCodesNative, kKeyCodesNative + kKeyCount, kc);
+  return static_cast<KeyCode>(iFind - kKeyCodesNative);
 }
 
 } // XR

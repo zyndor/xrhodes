@@ -18,10 +18,10 @@ class UICheckBox: public UIButton
 {
 public:
   // types
-  typedef void(*Callback)(UICheckBox* pCheckBox, void* pData);
+  typedef void(*Callback)(UICheckBox* checkBox, void* userData);
 
   // data
-  Callback  pOnSelectedStateChanged;
+  Callback  onSelectedStateChanged;
   Sprite    setSprite;
   Material::Ptr setMaterial; // TODO: UIBuilder support
 

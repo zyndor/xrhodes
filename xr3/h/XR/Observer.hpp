@@ -18,13 +18,13 @@ class Observer
 {
 public:
   typedef T Type;
-  typedef void(*Callback)(const Type& value, void* pData);
+  typedef void(*Callback)(const Type& value, void* data);
 
   Observer();
   ~Observer();
 
-  void  Register(const Type& value, Callback pCallback, void* pData);
-  void  Unregister(const Type& value, Callback pCallback);
+  void  Register(const Type& value, Callback callback, void* data);
+  void  Unregister(const Type& value, Callback callback);
 
   void  Update();
 
@@ -32,9 +32,9 @@ protected:
   // types
   struct  Record
   {
-    const Type* pValue;
-    Callback    pCallback;
-    void*       pData;
+    const Type* value;
+    Callback    callback;
+    void*       data;
     Type        lastValue;
 
     bool  IsChanged() const;
@@ -56,8 +56,8 @@ template  <typename T>
 inline
 bool Observer<T>::Record::IsChanged() const
 {
-  XR_ASSERT(Observer, pValue != 0);
-  return *pValue != lastValue;
+  XR_ASSERT(Observer, value != 0);
+  return *value != lastValue;
 }
 
 template  <typename T>
@@ -65,8 +65,8 @@ void Observer<T>::Record::Process()
 {
   if (IsChanged())
   {
-    (pCallback)(*pValue, pData);
-    lastValue = *pValue;
+    (callback)(*value, data);
+    lastValue = *value;
   }
 }
 
@@ -74,7 +74,7 @@ template <typename T>
 inline
 bool  Observer<T>::Record::operator==(const Record& rhs)
 {
-  return pValue == rhs.pValue && pCallback == rhs.pCallback;
+  return value == rhs.value && callback == rhs.callback;
 }
 
 template <typename T>
@@ -87,16 +87,16 @@ Observer<T>::~Observer()
 {}
 
 template <typename T>
-void  Observer<T>::Register(const Type& value, Callback pCallback, void* pData)
+void  Observer<T>::Register(const Type& value, Callback callback, void* data)
 {
-  Record  r = { &value, pCallback, pData, value };
+  Record  r = { &value, callback, data, value };
   m_records.push_back(r);
 }
 
 template <typename T>
-void  Observer<T>::Unregister(const Type& value, Callback pCallback)
+void  Observer<T>::Unregister(const Type& value, Callback callback)
 {
-  Record  r = { &value, pCallback, 0, value };
+  Record  r = { &value, callback, 0, value };
   m_records.remove(r);
 }
 

@@ -29,7 +29,7 @@ public:
 
 protected:
   // internal
-  void _CalculateSpriteVerts(const Sprite* pSprite,
+  void _CalculateSpriteVerts(const Sprite* sprite,
     IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const;
   void _ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const;
 };

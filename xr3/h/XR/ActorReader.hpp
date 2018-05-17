@@ -7,11 +7,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
-#include "AnimationReader.hpp"
-#include "Actor.hpp"
 #include "XR/HardString.hpp"
 #include "XR/fundamentals.hpp"
+#include "AnimationReader.hpp"
+#include "Actor.hpp"
 
 namespace XR
 {
@@ -28,13 +27,13 @@ enum  type
 }
 
 //==============================================================================
-extern const char*  karActorTag[ActorTag::kCount];
+extern const char*  kActorTags[ActorTag::kCount];
 
 //==============================================================================
 struct  ActorSessionDataCore
 {
-  const char* pActorName;
-  void*       pGetFrameDataCbData;
+  const char* actorName;
+  void*       getFrameDataCbData;
 };
 
 //==============================================================================
@@ -49,19 +48,19 @@ public:
   typedef Actor<Type> ActorType;
 
   // static
-  static bool Read(tinyxml2::XMLElement* pXml,
-    typename AnimationReader<Type>::GetFrameDataCallback pGetFrameDataCb,
-    void* pGetFrameDataCbData, bool clearActions, ActorType& actor);
-  
+  static bool Read(tinyxml2::XMLElement* xml,
+    typename AnimationReader<Type>::GetFrameDataCallback getFrameDataCb,
+    void* getFrameDataCbData, bool clearActions, ActorType& actor);
+
 private:
   // types
   struct  SessionData:  ActorSessionDataCore
   {
-    typename AnimationReader<T>::GetFrameDataCallback  pGetFrameDataCb;
+    typename AnimationReader<T>::GetFrameDataCallback  getFrameDataCb;
   };
 
   // static
-  static bool GetFrameDataCallback(const char* pName, int index, void* pData,
+  static bool GetFrameDataCallback(const char* name, int index, void* data,
     Type& frame);
 };
 
@@ -69,59 +68,59 @@ private:
 // implementation
 //==============================================================================
 template  <class Type>
-bool ActorReader<Type>::Read(tinyxml2::XMLElement* pXml,
-  typename AnimationReader<Type>::GetFrameDataCallback pGetFrameDataCb,
-  void* pGetFrameDataCbData, bool clearActions, Actor<Type>& actor)
+bool ActorReader<Type>::Read(tinyxml2::XMLElement* xml,
+  typename AnimationReader<Type>::GetFrameDataCallback getFrameDataCb,
+  void* getFrameDataCbData, bool clearActions, Actor<Type>& actor)
 {
-  XR_ASSERT(ActorReader, pXml != 0);
+  XR_ASSERT(ActorReader, xml != nullptr);
   if (clearActions)
   {
     actor.actions.clear();
   }
 
-  const char* pName(pXml->Attribute(karActorTag[ActorTag::NAME]));
-  bool  success(pName != 0);
+  const char* name = xml->Attribute(kActorTags[ActorTag::NAME]);
+  bool  success(name != nullptr);
   if (!success)
   {
     XR_TRACE(ActorReader, ("Attribute '%s' is required in actor.",
-      karActorTag[ActorTag::NAME]));
+      kActorTags[ActorTag::NAME]));
   }
 
   if (success)
   {
-    pXml = pXml->FirstChildElement(karActorTag[ActorTag::ACTION]);
+    xml = xml->FirstChildElement(kActorTags[ActorTag::ACTION]);
 
     SessionData sd;
-    sd.pActorName = pName;
-    sd.pGetFrameDataCbData = pGetFrameDataCbData;
-    sd.pGetFrameDataCb = pGetFrameDataCb;
+    sd.actorName = name;
+    sd.getFrameDataCbData = getFrameDataCbData;
+    sd.getFrameDataCb = getFrameDataCb;
 
-    while (pXml != 0)
+    while (xml)
     {
-      const char* pActionName(pXml->Attribute(karAnimationTag[AnimationTag::NAME]));
-      success = pActionName != 0;
+      const char* actionName(xml->Attribute(kAnimationTags[AnimationTag::NAME]));
+      success = actionName != nullptr;
       if (!success)
       {
         XR_TRACE(ActorReader,
           ("Attribute '%s' is required in action in actor %s.",
-          karAnimationTag[AnimationTag::NAME], pName));
+          kAnimationTags[AnimationTag::NAME], name));
         break;
       }
 
       if (success)
       {
-        const uint32_t  hash(XR::Hash::String(pActionName));
+        const uint32_t  hash(XR::Hash::String(actionName));
         if (actor.actions.find(hash) != actor.actions.end())
         {
           XR_TRACE(ActorReader,
             ("Action named '%s' already exists in actor '%s' and will be overwritten.",
-              pActionName, pName));
+              actionName, name));
         }
 
-        success = AnimationReader<Type>::Read(pXml, GetFrameDataCallback,
+        success = AnimationReader<Type>::Read(xml, GetFrameDataCallback,
           &sd, actor.actions[hash]);
       }
-      pXml = pXml->NextSiblingElement(karActorTag[ActorTag::ACTION]);
+      xml = xml->NextSiblingElement(kActorTags[ActorTag::ACTION]);
     }
   }
   return success;
@@ -129,19 +128,19 @@ bool ActorReader<Type>::Read(tinyxml2::XMLElement* pXml,
 
 //==============================================================================
 template  <class Type>
-bool ActorReader<Type>::GetFrameDataCallback(const char* pName, int index,
-      void* pData, Type& frame)
+bool ActorReader<Type>::GetFrameDataCallback(const char* name, int index,
+      void* data, Type& frame)
 {
-  XR_ASSERT(ActorReader, pName != 0);
-  XR_ASSERT(ActorReader, pData != 0);
-  SessionData*  pSessionData(static_cast<SessionData*>(pData));
+  XR_ASSERT(ActorReader, name != nullptr);
+  XR_ASSERT(ActorReader, data != nullptr);
+  SessionData*  sessionData = static_cast<SessionData*>(data);
 
-  HardString<128> name(pSessionData->pActorName);
-  name += "_";
-  name += pName;
+  HardString<128> hsName(sessionData->actorName);
+  hsName += "_";
+  hsName += name;
 
-  return (*pSessionData->pGetFrameDataCb)(name.c_str(), index,
-    pSessionData->pGetFrameDataCbData, frame);
+  return (*sessionData->getFrameDataCb)(hsName.c_str(), index,
+    sessionData->getFrameDataCbData, frame);
 }
 
 } // XR

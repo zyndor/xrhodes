@@ -119,7 +119,7 @@ class XonValue : public XonEntity
 public:
   // structors
   XonValue();
-  XonValue(const char* pValue, size_t length);
+  XonValue(const char* value, size_t length);
   ~XonValue();
 
   // general

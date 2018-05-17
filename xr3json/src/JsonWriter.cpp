@@ -17,7 +17,7 @@ namespace JSON
 const char  Writer::kIndent = '\t';
 
 const char* const Writer::kEscapeChars = "\"\\/\b\f\n\r\t";
-const char* const Writer::karEscapeSub[] =
+const char* const Writer::kEscapeSequences[] =
 {
   "\\\"",
   "\\\\",
@@ -70,11 +70,11 @@ Writer&  Writer::Start(Type rootType)
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
+Writer&  Writer::WriteValue( const char* key, const char* value )
 {
-  _WriteKey(pKey);
+  _WriteKey(key);
 
-  if (pValue == 0)
+  if (value == 0)
   {
     m_stream << kNull;
   }
@@ -83,11 +83,11 @@ Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
     m_stream.put(kQuot);
     if (m_autoEscapeString)
     {
-      _ProcessEscaped(pValue);
+      _ProcessEscaped(value);
     }
     else
     {
-      m_stream << pValue;
+      m_stream << value;
     }
     m_stream.put(kQuot);
   }
@@ -96,59 +96,59 @@ Writer&  Writer::WriteValue( const char* pKey, const char* pValue )
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* pKey, const int32_t value )
+Writer&  Writer::WriteValue( const char* key, const int32_t value )
 {
-  _WriteKey(pKey);
+  _WriteKey(key);
   m_stream << value;
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* pKey, const double value )
+Writer&  Writer::WriteValue( const char* key, const double value )
 {
-  _WriteKey(pKey);
+  _WriteKey(key);
   m_stream << value;
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* pKey, bool value )
+Writer&  Writer::WriteValue( const char* key, bool value )
 {
-  _WriteKey(pKey);
+  _WriteKey(key);
   m_stream << std::boolalpha << value << std::noboolalpha;
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteObject( const char* pKey )
+Writer&  Writer::WriteObject( const char* key )
 {
   XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type != ARRAY,
     ("Current scope is an array, named objects are invalid. Use WriteArrayObject() instead."));
-  _WriteKey(pKey);
+  _WriteKey(key);
   _PushScope(OBJECT);
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteArray( const char* pKey )
+Writer&  Writer::WriteArray( const char* key )
 {
   XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type != ARRAY,
     ("Current scope is an array, named arrays are invalid. Use WriteArrayArray() instead."));
-  _WriteKey(pKey);
+  _WriteKey(key);
   _PushScope(ARRAY);
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteArrayElement( const char* pValue )
+Writer&  Writer::WriteArrayElement( const char* value )
 {
   _WriteComma();
-  _WriteStringValue(pValue);
+  _WriteStringValue(value);
 
   return *this;
 }
@@ -217,11 +217,11 @@ Writer&  Writer::CloseScope()
   case OBJECT:
     m_stream.put(kObjectEnd);
     break;
-  
+
   case ARRAY:
     m_stream.put(kArrayEnd);
     break;
-    
+
   default:
     break;
   }
@@ -243,24 +243,24 @@ std::string Writer::Finish( bool force )
   XR_ASSERTMSG(Json::Writer, m_depth == 0,
     ("CloseScope() needs to be called for %d scopes (or call Finish(true)).",
     m_depth));
-  
+
   return m_stream.str();
 }
 
 //==============================================================================
-void  Writer::_WriteKey( const char* pKey )
+void  Writer::_WriteKey( const char* key )
 {
-  XR_ASSERT(MG, pKey != nullptr);
+  XR_ASSERT(MG, key != nullptr);
   _WriteComma();
 
   m_stream.put(kQuot);
   if (m_autoEscapeString)
   {
-    _ProcessEscaped(pKey);  
+    _ProcessEscaped(key);
   }
   else
   {
-    m_stream << pKey;
+    m_stream << key;
   }
   m_stream.put(kQuot).put(kColon);
 
@@ -283,7 +283,7 @@ void  Writer::_WriteComma()
 }
 
 //==============================================================================
-static const char  karScopeBegin[2] =
+static const char  kScopeOpeners[2] =
 {
   kObjectBegin,
   kArrayBegin
@@ -291,14 +291,13 @@ static const char  karScopeBegin[2] =
 
 void  Writer::_PushScope(Type type)
 {
-  XR_ASSERT(Json::Writer, type > INVALID);
-  XR_ASSERT(Json::Writer, type <= ARRAY);
+  XR_ASSERT(Json::Writer, type == OBJECT || type == ARRAY);
   XR_ASSERT(Json::Writer, m_depth + 1 < m_scopes.size());
   ++m_depth;
   m_scopes[m_depth].type = type;
   m_scopes[m_depth].isEmpty = true;
 
-  m_stream.put(karScopeBegin[type]);
+  m_stream.put(kScopeOpeners[type]);
   _AddLinebreak();
 }
 
@@ -338,48 +337,48 @@ void Writer::_AddSpace()
 }
 
 //==============================================================================
-void Writer::_WriteStringValue( const char* pValue )
+void Writer::_WriteStringValue( const char* value )
 {
-  if (pValue == nullptr)
+  if (value == nullptr)
   {
     m_stream << kNull;
   }
   else
   {
-    ((m_stream.put(kQuot)) << pValue).put(kQuot);
+    ((m_stream.put(kQuot)) << value).put(kQuot);
   }
 }
 
 //==============================================================================
-void Writer::_ProcessEscaped( const char* pValue )
+void Writer::_ProcessEscaped( const char* value )
 {
-  const char* pEnd(strchr(pValue, '\0'));
-  while (pValue != pEnd)
+  const char* end = strchr(value, '\0');
+  while (value != end)
   {
-    const char* pNextEscape = strpbrk(pValue, kEscapeChars);
-    bool  found(pNextEscape != nullptr);
+    const char* nextEscape = strpbrk(value, kEscapeChars);
+    bool  found(nextEscape != nullptr);
     if (!found)
     {
-      pNextEscape = pEnd;
+      nextEscape = end;
     }
 
-    while (pValue != pNextEscape)
+    while (value != nextEscape)
     {
-      m_stream << *pValue;
-      ++pValue;
+      m_stream << *value;
+      ++value;
     }
 
     if (found)
     {
       // process escape
-      pNextEscape = strchr(kEscapeChars, pValue[0]);
-      if (pNextEscape != nullptr)
+      nextEscape = strchr(kEscapeChars, value[0]);
+      if (nextEscape != nullptr)
       {
-        m_stream << karEscapeSub[pNextEscape - kEscapeChars];
-        ++pValue;
+        m_stream << kEscapeSequences[nextEscape - kEscapeChars];
+        ++value;
       }
     }
-  }  
+  }
 }
 
 } // JSON

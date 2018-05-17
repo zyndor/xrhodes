@@ -11,12 +11,12 @@ namespace XR
 {
 
 //==============================================================================
-int       QuadtreeCore::s_maxSubdivisions(5);
-AABB      QuadtreeCore::s_candidateBox;
-void*     QuadtreeCore::s_pCandidate(0);
+int       QuadtreeCore::s_maxSubdivisions = 5;
+AABB      QuadtreeCore::s_hitBox;
+void*     QuadtreeCore::s_callbackData = nullptr;
 
-QuadtreeCore::UnaryCallback   QuadtreeCore::s_pUnaryCallback(0);
-QuadtreeCore::BinaryCallback  QuadtreeCore::s_pBinaryCallback(0);
+QuadtreeCore::UnaryCallback   QuadtreeCore::s_unaryCallback = nullptr;
+QuadtreeCore::BinaryCallback  QuadtreeCore::s_binaryCallback = nullptr;
 
 //==============================================================================
 void QuadtreeCore::SetMaxSubdivisions(int maxSubdivisions)

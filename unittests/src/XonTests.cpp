@@ -48,7 +48,7 @@ namespace XR
     EventSequencer seq;
     bool success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), SimpleEventHandler, &seq);
     ASSERT_TRUE(success);
-    ASSERT_EQ(parser.GetState().pCurrent, buffer.CastData<char>() + buffer.GetSize());
+    ASSERT_EQ(parser.GetState().cursor, buffer.CastData<char>() + buffer.GetSize());
 
     std::list<XonParser::Event> testEvents = {
       XonParser::Event::ObjectBegin,
@@ -119,8 +119,8 @@ namespace XR
     auto iStrings = testStrings.begin();
     for (auto& i : seq.strings)
     {
-      ASSERT_TRUE(i.pStart == nullptr ? i.pStart == iStrings->first :
-        strncmp(i.pStart, iStrings->first, i.length) == 0);
+      ASSERT_TRUE(i.start == nullptr ? i.start == iStrings->first :
+        strncmp(i.start, iStrings->first, i.length) == 0);
       ASSERT_EQ(i.isQuoted, iStrings->second);
       ++iStrings;
     }
@@ -159,7 +159,7 @@ namespace XR
       buffer.Open("xontest1.xon", false);
       success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
       ASSERT_TRUE(success);
-      ASSERT_EQ(parser.GetState().pCurrent, buffer.CastData<char>() + buffer.GetSize());
+      ASSERT_EQ(parser.GetState().cursor, buffer.CastData<char>() + buffer.GetSize());
 
       buffer.Open("invalid1.xon", false);
       success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
@@ -177,7 +177,7 @@ namespace XR
     XonParser::State  readState;
     std::unique_ptr<XonObject> root(XonBuildTree(buffer.CastData<char>(), buffer.GetSize(), &readState));
     ASSERT_NE(root, nullptr);
-    ASSERT_EQ(readState.pCurrent, buffer.CastData<char>() + buffer.GetSize());
+    ASSERT_EQ(readState.cursor, buffer.CastData<char>() + buffer.GetSize());
 
     ASSERT_EQ(root->GetNumElements(), 7);
 

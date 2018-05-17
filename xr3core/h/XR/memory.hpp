@@ -17,7 +17,7 @@ namespace XR
 
 //==============================================================================
 typedef void*(*AllocateCallback)(size_t size, void* userData);
-typedef void(*DeallocateCallback)(void* pMemory, void* userData);
+typedef void(*DeallocateCallback)(void* buffer, void* userData);
 
 //==============================================================================
 class Allocator
@@ -39,7 +39,7 @@ public:
 
   // virtual
   virtual void* Allocate(size_t numBytes) =0;
-  virtual void Deallocate(void* memory) =0;
+  virtual void Deallocate(void* buffer) =0;
 };
 
 //==============================================================================
@@ -51,9 +51,9 @@ public:
     return malloc(numBytes);
   }
 
-  virtual void Deallocate(void* memory)
+  virtual void Deallocate(void* buffer)
   {
-    free(memory);
+    free(buffer);
   }
 };
 

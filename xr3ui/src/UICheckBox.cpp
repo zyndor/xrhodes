@@ -13,7 +13,7 @@ namespace XR
 //==============================================================================
 UICheckBox::UICheckBox()
 : UIButton(),
-  pOnSelectedStateChanged(0),
+  onSelectedStateChanged(nullptr),
   setSprite()
 {}
 
@@ -34,11 +34,11 @@ bool  UICheckBox::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   bool  isHandled(false);
-  if ((m_pActiveArea == 0 ||
-    (e.x >= m_pActiveArea->x &&
-    e.y >= m_pActiveArea->y &&
-    e.x < m_pActiveArea->x + m_pActiveArea->w &&
-    e.y < m_pActiveArea->y + m_pActiveArea->h)) &&
+  if ((m_activeArea == 0 ||
+    (e.x >= m_activeArea->x &&
+    e.y >= m_activeArea->y &&
+    e.x < m_activeArea->x + m_activeArea->w &&
+    e.y < m_activeArea->y + m_activeArea->h)) &&
     (e.x >= x && e.x < kRight &&
     e.y >= y && e.y < kBottom))
   {
@@ -98,9 +98,9 @@ void UICheckBox::Render(IUIRenderer& renderer) const
 //==============================================================================
 void  UICheckBox::OnSelectedStateChanged()
 {
-  if (pOnSelectedStateChanged != 0)
+  if (onSelectedStateChanged != 0)
   {
-    (*pOnSelectedStateChanged)(this, pCallbackData);
+    (*onSelectedStateChanged)(this, callbackData);
   }
 }
 

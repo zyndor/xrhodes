@@ -73,7 +73,7 @@ protected:
   int32_t m_rowPadding;
 
   // internal
-  virtual void _AlignElement( UIElement* pElem );
+  virtual void _AlignElement( UIElement* elem );
 
   virtual void _SetWidthToContent();
   virtual void _SetHeightToContent();

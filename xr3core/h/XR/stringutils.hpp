@@ -14,7 +14,7 @@
 namespace XR
 {
 
-///@return @a pString, or if it's null, an empty string.
+///@return @a original, or if it's null, an empty string.
 char const* GetStringSafe(char const* original);
 
 ///@brief Attempts to convert @a from to @a to.

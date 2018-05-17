@@ -53,9 +53,9 @@ Deflator::IdType Deflator::RegisterObject(Inflatable const& obj)
 }
 
 //==============================================================================
-Deflator::IdType Deflator::GetId(Inflatable const* pObj) const
+Deflator::IdType Deflator::GetId(Inflatable const* object) const
 {
-  auto iFind = m_objects.find(pObj);
+  auto iFind = m_objects.find(object);
   return iFind != m_objects.end() ? iFind->second : IdGenerator::kInvalidId;
 }
 

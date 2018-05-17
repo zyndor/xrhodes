@@ -14,10 +14,10 @@ namespace XR
 UIButton::UIButton()
 : UIColoredElement(),
   sprites(),
-  pOnPressed(0),
-  pOnReleased(0),
-  pCallbackData(0),
-  m_pActiveArea(0),
+  onPressed(0),
+  onReleased(0),
+  callbackData(0),
+  m_activeArea(0),
   m_state(MASK_ENABLED),
   m_lastTouch(-1, -1)
 {}
@@ -45,11 +45,11 @@ bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   bool  isHandled(false);
-  if ((m_pActiveArea == 0 ||
-      (e.x >= m_pActiveArea->x &&
-        e.y >= m_pActiveArea->y &&
-        e.x < m_pActiveArea->x + m_pActiveArea->w &&
-        e.y < m_pActiveArea->y + m_pActiveArea->h)) &&
+  if ((m_activeArea == 0 ||
+      (e.x >= m_activeArea->x &&
+        e.y >= m_activeArea->y &&
+        e.x < m_activeArea->x + m_activeArea->w &&
+        e.y < m_activeArea->y + m_activeArea->h)) &&
     (e.x >= x && e.x < kRight &&
       e.y >= y && e.y < kBottom))
   {
@@ -106,8 +106,7 @@ void UIButton::Render(IUIRenderer& renderer) const
   const Sprite* sprite(sprites + spriteId);
   auto const& material = materials[spriteId];
   XR_ASSERTMSG(UIButton, material != nullptr,
-    ("Material needs to be set in UIButton::arSprites[%d] before Render()",
-    GetSpriteId()));
+    ("Material[%d] needs to be set before Render().", GetSpriteId()));
 
   auto verts = renderer.NewSprite(material);
   sprite->CopyUVsTo(verts);
@@ -116,21 +115,21 @@ void UIButton::Render(IUIRenderer& renderer) const
 }
 
 //==============================================================================
-void  UIButton::SetSprites(const Sprite* pSprite, float scale)
+void  UIButton::SetSprites(const Sprite* sprite, float scale)
 {
-  XR_ASSERT(UIButton, pSprite != 0);
-  sprites[S_UP] = sprites[S_DOWN] = sprites[S_OFF] = *pSprite;
+  XR_ASSERT(UIButton, sprite != 0);
+  sprites[S_UP] = sprites[S_DOWN] = sprites[S_OFF] = *sprite;
 
   SetSizeToSprite(scale);
 }
 
 //==============================================================================
-void  UIButton::SetSprites(const Sprite* arpSprite[kNumStates], float scale)
+void  UIButton::SetSprites(const Sprite* sprites_[kNumStates], float scale)
 {
-  XR_ASSERT(UIButton, arpSprite != 0);
+  XR_ASSERT(UIButton, sprites_ != 0);
   for (int i = 0; i < kNumStates; ++i)
   {
-    sprites[i] = *arpSprite[i];
+    sprites[i] = *sprites_[i];
   }
 
   SetSizeToSprite(scale);
@@ -152,24 +151,24 @@ int UIButton::GetSpriteId() const
 
 void UIButton::SetActiveArea( const Rect* pActiveArea )
 {
-  m_pActiveArea = pActiveArea;
+  m_activeArea = pActiveArea;
 }
 
 //==============================================================================
 void UIButton::OnPressed()
 {
-  if (pOnPressed != 0)
+  if (onPressed != 0)
   {
-    (*pOnPressed)(this, pCallbackData);
+    (*onPressed)(this, callbackData);
   }
 }
 
 //==============================================================================
 void UIButton::OnReleased()
 {
-  if (pOnReleased != 0)
+  if (onReleased != 0)
   {
-    (*pOnReleased)(this, pCallbackData);
+    (*onReleased)(this, callbackData);
   }
 }
 

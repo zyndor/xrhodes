@@ -19,7 +19,7 @@ UIVerticalLayout::~UIVerticalLayout()
 {}
 
 //==============================================================================
-void UIVerticalLayout::_AlignElement( UIElement* pElem )
+void UIVerticalLayout::_AlignElement( UIElement* elem )
 {
   if (m_align != AL_NOALIGN)
   {
@@ -30,23 +30,23 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      xElem += (w - pElem->w) / 2;
+      xElem += (w - elem->w) / 2;
       break;
 
     case  AL_HIGH:
-      xElem += w - pElem->w;
+      xElem += w - elem->w;
       break;
-      
+
     case  AL_NOALIGN:
       break;
     }
-    pElem->x = xElem;
+    elem->x = xElem;
   }
 
   int yElem(0);
-  if (m_lElements.size() > 0)
+  if (m_elements.size() > 0)
   {
-    UIElement*  pLast(m_lElements.back());
+    UIElement*  pLast(m_elements.back());
     yElem = pLast->y;
     if (m_growDir == GD_POSITIVE)
     {
@@ -54,7 +54,7 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
     }
     else
     {
-      yElem -= (pElem->h + m_spacing);
+      yElem -= (elem->h + m_spacing);
     }
   }
   else
@@ -62,26 +62,26 @@ void UIVerticalLayout::_AlignElement( UIElement* pElem )
     yElem = y;
     if (m_growDir != GD_POSITIVE)
     {
-      yElem += h - pElem->h;
+      yElem += h - elem->h;
     }
   }
-  pElem->y = yElem;
+  elem->y = yElem;
 
-  pElem->OnChange();
+  elem->OnChange();
 }
 
 //==============================================================================
 void UIVerticalLayout::_SetHeightToContent()
 {
   int32_t hNew = 0;
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
     hNew += (*i0)->h;
   }
 
-  if (m_lElements.size() > 0)
+  if (m_elements.size() > 0)
   {
-    hNew += static_cast<int32_t>(m_lElements.size() - 1) * m_spacing;
+    hNew += static_cast<int32_t>(m_elements.size() - 1) * m_spacing;
   }
 
   h = hNew;

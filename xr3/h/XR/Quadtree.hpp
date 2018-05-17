@@ -34,16 +34,16 @@ public:
     NE,
     kNumLeaves
   };
-  
+
   // types
   ///@brief A unary function that you pass to Quadtree::Process() and will be
   /// called with each collision candidate as arguments.
-  typedef void(*UnaryCallback)(void* pSystem); 
+  typedef void(*UnaryCallback)(void* systemData);
 
   ///@brief A binary function that you pass to Quadtree::Process() and will be
   /// called with each collision candidate as arguments: the first one is the
   /// one in the Quadtree, the second one is the one you passed to Process().
-  typedef void(*BinaryCallback)(void* pSystem, void* pUser); 
+  typedef void(*BinaryCallback)(void* systemData, void* userData);
 
   // static
   ///@return The maximum number of subdivisions for quadtrees created with no
@@ -66,7 +66,7 @@ public:
   ///@return  The AABB that has been most recently passed for an Add, Process or
   /// Remove operation.
   static const AABB&  GetCandidateBox();
-  
+
   // structors
   QuadtreeCore();
   QuadtreeCore(const Vector2& pos, float hw, float hh);
@@ -75,15 +75,15 @@ public:
   // general
   ///@return  If the Quadtree can split, i.e. if child nodes are created.
   bool  CanSplit() const;
-  
+
 protected:
   // static
   static int  s_maxSubdivisions;
-  
-  static AABB           s_candidateBox;
-  static void*          s_pCandidate;
-  static UnaryCallback  s_pUnaryCallback;
-  static BinaryCallback s_pBinaryCallback;
+
+  static AABB           s_hitBox;
+  static void*          s_callbackData;
+  static UnaryCallback  s_unaryCallback;
+  static BinaryCallback s_binaryCallback;
 
   // data
   bool  m_canSplit;
@@ -108,55 +108,55 @@ public:
   Quadtree(const Vector2& pos, float hw, float hh, float min = 0,
     AllocType a = AllocType());
   ~Quadtree();
-  
+
   // general use
   SelfType* GetLeaf(Leaf l) const;
 
   ///@brief Adds the object @a p with the AABB @a box, to the Quadtree.
-  void  Add(const AABB& box, void* p);
+  void  Add(const AABB& box, void* object);
 
   ///@brief Adds the point object @a p at position @a pos, to the Quadtree.
-  void  Add(const Vector2& pos, void* p);
-  
+  void  Add(const Vector2& pos, void* object);
+
   ///@brief Checks the objects in the Quadtree against the AABB @a box. The
-  /// collision candidates are passed to the UnaryCallback @a pUnary.
+  /// collision candidates are passed to the UnaryCallback @a cb.
   ///@note  You will need to check for actual collision.
-  void  Process(const AABB& box, UnaryCallback pUnary);
+  void  Process(const AABB& box, UnaryCallback cb);
 
   ///@brief Checks the objects in the Quadtree against the point @a pos. The
-  /// collision candidates are passed to the UnaryCallback @a pUnary.
+  /// collision candidates are passed to the UnaryCallback @a cb.
   ///@note  You will need to check for actual collision.
-  void  Process(const Vector2& pos, UnaryCallback pUnary);
+  void  Process(const Vector2& pos, UnaryCallback cb);
 
-  ///@brief Passes all objects in the Quadtree to the UnaryCallback @a pUnary.
-  void  ProcessAll(UnaryCallback pUnary);
-  
+  ///@brief Passes all objects in the Quadtree to the UnaryCallback @a cb.
+  void  ProcessAll(UnaryCallback cb);
+
   ///@brief Checks the objects in the Quadtree against the AABB @a box. The
-  /// collision candidates are passed to the BinaryCallback @a pBinary.
+  /// collision candidates are passed to the BinaryCallback @a cb.
   ///@note  You will need to check for actual collision.
-  void  Process(const AABB& box, BinaryCallback pBinary, void *pObject);
+  void  Process(const AABB& box, BinaryCallback cb, void* userData);
 
   ///@brief Checks the objects in the Quadtree against the point @a pos. The
-  /// collision candidates are passed to the BinaryCallback @a pBinary.
+  /// collision candidates are passed to the BinaryCallback @a cb.
   ///@note  You will need to check for actual collision.
-  void  Process(const Vector2& pos, BinaryCallback pBinary, void *pObject);
+  void  Process(const Vector2& pos, BinaryCallback cb, void* userData);
 
-  ///@brief Passes all objects in the Quadtree to the BinaryCallback @a pBinary.
-  void  ProcessAll(BinaryCallback pUnary, void *pObject);
-  
+  ///@brief Passes all objects in the Quadtree to the BinaryCallback @a cb.
+  void  ProcessAll(BinaryCallback cb, void* userData);
+
   ///@brief Removes from the Quadtree the first object at the address pointed
   /// to by @a p.
   ///@note  The assumption is made that the object has been inserted into the
   /// Quadtree once at most.
-  void  Remove(void* p);
-  
+  void  Remove(void* object);
+
   ///@brief Convenience function to remove an object and reinsert it at using
   /// @a box as its new boundaries.
-  void  Update(const AABB& box, void* p);
-  
+  void  Update(const AABB& box, void* object);
+
   ///@brief Clears the Quadtree of objects.
   void  Clear();
-  
+
   ///@brief Empties the list of objects and deletes all four leaves.
   ///@note  Does not reset position.
   void  Destroy();
@@ -178,7 +178,7 @@ private:
 
   // data
   QueueType m_objects;
-  SelfType  *m_arpLeaves[kNumLeaves];
+  SelfType  *m_leaves[kNumLeaves];
 };
 
 //==============================================================================
@@ -211,7 +211,7 @@ bool  QuadtreeCore::CalculateCanSplit(float hw, float hh, float min)
 inline
 const AABB& QuadtreeCore::GetCandidateBox()
 {
-  return s_candidateBox;
+  return s_hitBox;
 }
 
 //==============================================================================
@@ -226,9 +226,9 @@ template  <template <typename> class Alloc>
 Quadtree<Alloc>::Quadtree(AllocType a)
 : QuadtreeCore(),
   m_objects(a),
-  m_arpLeaves()
+  m_leaves()
 {
-  memset(m_arpLeaves, 0x00, sizeof(m_arpLeaves));
+  memset(m_leaves, 0x00, sizeof(m_leaves));
 }
 
 //==============================================================================
@@ -237,9 +237,9 @@ Quadtree<Alloc>::Quadtree(const Vector2 &pos, float hw, float hh, float min,
   AllocType a)
 : QuadtreeCore(pos, hw, hh),
   m_objects(a),
-  m_arpLeaves()
+  m_leaves()
 {
-  memset(m_arpLeaves, 0x00, sizeof(m_arpLeaves));
+  memset(m_leaves, 0x00, sizeof(m_leaves));
   _Create(min);
 }
 
@@ -255,57 +255,45 @@ template  <template <typename> class Alloc>
 Quadtree<Alloc>*  Quadtree<Alloc>::GetLeaf(Leaf l) const
 {
   XR_ASSERT(Quadtree, l < kNumLeaves);
-  return m_arpLeaves[l];
+  return m_leaves[l];
 }
 
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::Add(const AABB& box, void* p)
+void  Quadtree<Alloc>::Add(const AABB& box, void* object)
 {
-  XR_ASSERT(Quadtree, p != 0);
+  XR_ASSERT(Quadtree, object != 0);
   XR_ASSERT(Quadtree, box.left <= box.right);
   XR_ASSERT(Quadtree, box.top <= box.bottom);
-  s_candidateBox = box;
-  s_pCandidate = p;
-  
+  s_hitBox = box;
+  s_callbackData = object;
+
   _AddRecursion();
 }
 
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::Add(const Vector2& pos, void* p)
+void  Quadtree<Alloc>::Add(const Vector2& pos, void* object)
 {
-  XR_ASSERT(Quadtree, p != 0);
-  s_candidateBox.Import(pos.x, pos.y, .0f, .0f);
-  s_pCandidate = p;
-  
+  XR_ASSERT(Quadtree, object != 0);
+  s_hitBox.Import(pos.x, pos.y, .0f, .0f);
+  s_callbackData = object;
+
   _AddRecursion();
 }
 
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::Process(const AABB& box, UnaryCallback pUnary)
+void  Quadtree<Alloc>::Process(const AABB& box, UnaryCallback cb)
 {
-  XR_ASSERT(Quadtree, pUnary != 0);
+  XR_ASSERT(Quadtree, cb != nullptr);
   XR_ASSERT(Quadtree, box.left <= box.right);
   XR_ASSERT(Quadtree, box.top <= box.bottom);
-  s_candidateBox = box;
-  s_pUnaryCallback = pUnary;
-  
-  _ProcessRecursionUnary();
-}
-
-//==============================================================================
-template  <template <typename> class Alloc>
-inline
-void  Quadtree<Alloc>::Process(const Vector2& pos, UnaryCallback pUnary)
-{
-  XR_ASSERT(Quadtree, pUnary != 0);
-  s_candidateBox.Import(pos.x, pos.y, .0f, .0f);
-  s_pUnaryCallback = pUnary;
+  s_hitBox = box;
+  s_unaryCallback = cb;
 
   _ProcessRecursionUnary();
 }
@@ -313,10 +301,22 @@ void  Quadtree<Alloc>::Process(const Vector2& pos, UnaryCallback pUnary)
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::ProcessAll(UnaryCallback pUnary)
+void  Quadtree<Alloc>::Process(const Vector2& pos, UnaryCallback cb)
 {
-  XR_ASSERT(Quadtree, pUnary != 0);
-  s_pUnaryCallback = pUnary;
+  XR_ASSERT(Quadtree, cb != nullptr);
+  s_hitBox.Import(pos.x, pos.y, .0f, .0f);
+  s_unaryCallback = cb;
+
+  _ProcessRecursionUnary();
+}
+
+//==============================================================================
+template  <template <typename> class Alloc>
+inline
+void  Quadtree<Alloc>::ProcessAll(UnaryCallback cb)
+{
+  XR_ASSERT(Quadtree, cb != nullptr);
+  s_unaryCallback = cb;
 
   _ProcessAllRecursionUnary();
 }
@@ -324,29 +324,14 @@ void  Quadtree<Alloc>::ProcessAll(UnaryCallback pUnary)
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::Process(const AABB& box, BinaryCallback pBinary,
-  void *pObject)
+void  Quadtree<Alloc>::Process(const AABB& box, BinaryCallback cb, void* userData)
 {
-  XR_ASSERT(Quadtree, pBinary != 0);
+  XR_ASSERT(Quadtree, cb != nullptr);
   XR_ASSERT(Quadtree, box.left <= box.right);
   XR_ASSERT(Quadtree, box.top <= box.bottom);
-  s_candidateBox = box;
-  s_pCandidate = pObject;
-  s_pBinaryCallback = pBinary;
-  
-  _ProcessRecursionBinary();
-}
-
-//==============================================================================
-template  <template <typename> class Alloc>
-inline
-void  Quadtree<Alloc>::Process(const Vector2& pos, BinaryCallback pBinary,
-  void *pObject)
-{
-  XR_ASSERT(Quadtree, pBinary != 0);
-  s_candidateBox.Import(pos.x, pos.y, .0f, .0f);
-  s_pCandidate = pObject;
-  s_pBinaryCallback = pBinary;
+  s_hitBox = box;
+  s_callbackData = userData;
+  s_binaryCallback = cb;
 
   _ProcessRecursionBinary();
 }
@@ -354,11 +339,25 @@ void  Quadtree<Alloc>::Process(const Vector2& pos, BinaryCallback pBinary,
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::ProcessAll(BinaryCallback pBinary, void *pObject)
+void  Quadtree<Alloc>::Process(const Vector2& pos, BinaryCallback cb,
+  void* userData)
 {
-  XR_ASSERT(Quadtree, pBinary != 0);
-  s_pCandidate = pObject;
-  s_pBinaryCallback = pBinary;
+  XR_ASSERT(Quadtree, cb != nullptr);
+  s_hitBox.Import(pos.x, pos.y, .0f, .0f);
+  s_callbackData = userData;
+  s_binaryCallback = cb;
+
+  _ProcessRecursionBinary();
+}
+
+//==============================================================================
+template  <template <typename> class Alloc>
+inline
+void  Quadtree<Alloc>::ProcessAll(BinaryCallback cb, void* userData)
+{
+  XR_ASSERT(Quadtree, cb != nullptr);
+  s_callbackData = userData;
+  s_binaryCallback = cb;
 
   _ProcessAllRecursionBinary();
 }
@@ -366,21 +365,21 @@ void  Quadtree<Alloc>::ProcessAll(BinaryCallback pBinary, void *pObject)
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::Remove(void* p)
+void  Quadtree<Alloc>::Remove(void* object)
 {
-  XR_ASSERT(Quadtree, p != 0);
-  s_pCandidate = p;
-  
+  XR_ASSERT(Quadtree, object != nullptr);
+  s_callbackData = object;
+
   _RemoveRecursion();
 }
 
 //==============================================================================
 template  <template <typename> class Alloc>
 inline
-void  Quadtree<Alloc>::Update(const AABB& box, void* p)
+void  Quadtree<Alloc>::Update(const AABB& box, void* object)
 {
-  Remove(p);
-  Add(box, p);
+  Remove(object);
+  Add(box, object);
 }
 
 //==============================================================================
@@ -391,10 +390,10 @@ void  Quadtree<Alloc>::Clear()
   m_objects.clear();
   if (m_canSplit)
   {
-    m_arpLeaves[NW]->Clear();
-    m_arpLeaves[NE]->Clear();
-    m_arpLeaves[SW]->Clear();
-    m_arpLeaves[SE]->Clear();
+    m_leaves[NW]->Clear();
+    m_leaves[NE]->Clear();
+    m_leaves[SW]->Clear();
+    m_leaves[SE]->Clear();
   }
 }
 
@@ -404,74 +403,74 @@ void  Quadtree<Alloc>::_AddRecursion()
 {
   if (m_canSplit)
   {
-    if (s_candidateBox.bottom <= m_position.y)
+    if (s_hitBox.bottom <= m_position.y)
     {
-      if (s_candidateBox.right < m_position.x)
+      if (s_hitBox.right < m_position.x)
       {
-        m_arpLeaves[NW]->_AddRecursion();
+        m_leaves[NW]->_AddRecursion();
         return;
       }
-      else if (s_candidateBox.left >= m_position.x)
+      else if (s_hitBox.left >= m_position.x)
       {
-        m_arpLeaves[NE]->_AddRecursion();
+        m_leaves[NE]->_AddRecursion();
         return;
       }
     }
-    else if (s_candidateBox.top > m_position.y)
+    else if (s_hitBox.top > m_position.y)
     {
-      if (s_candidateBox.right < m_position.x)
+      if (s_hitBox.right < m_position.x)
       {
-        m_arpLeaves[SW]->_AddRecursion();
+        m_leaves[SW]->_AddRecursion();
         return;
       }
-      else if (s_candidateBox.left >= m_position.x)
+      else if (s_hitBox.left >= m_position.x)
       {
-        m_arpLeaves[SE]->_AddRecursion();
+        m_leaves[SE]->_AddRecursion();
         return;
       }
     }
   }
 
-  m_objects.push_back(s_pCandidate);
+  m_objects.push_back(s_callbackData);
 }
 
 //==============================================================================
 template  <template <typename> class Alloc>
 void  Quadtree<Alloc>::_ProcessRecursionUnary()
 {
-  // All objects touching more than one leaf are candidates to collision - 
+  // All objects touching more than one leaf are candidates to collision -
   // these happen to reside in the node.
-  std::for_each(m_objects.begin(), m_objects.end(), s_pUnaryCallback);
+  std::for_each(m_objects.begin(), m_objects.end(), s_unaryCallback);
 
   // ...and process all objects in the child nodes that the box is touching
   if (m_canSplit)
   {
-    bool  west(s_candidateBox.left < m_position.x);
-    bool  east(s_candidateBox.right >= m_position.x);
+    bool  west(s_hitBox.left < m_position.x);
+    bool  east(s_hitBox.right >= m_position.x);
 
-    if (s_candidateBox.top <= m_position.y)
+    if (s_hitBox.top <= m_position.y)
     {
       if (west)
       {
-        m_arpLeaves[NW]->_ProcessRecursionUnary();
+        m_leaves[NW]->_ProcessRecursionUnary();
       }
 
       if (east)
       {
-        m_arpLeaves[NE]->_ProcessRecursionUnary();
+        m_leaves[NE]->_ProcessRecursionUnary();
       }
     }
 
-    if (s_candidateBox.bottom > m_position.y)
+    if (s_hitBox.bottom > m_position.y)
     {
       if (west)
       {
-        m_arpLeaves[SW]->_ProcessRecursionUnary();
+        m_leaves[SW]->_ProcessRecursionUnary();
       }
 
       if (east)
       {
-        m_arpLeaves[SE]->_ProcessRecursionUnary();
+        m_leaves[SE]->_ProcessRecursionUnary();
       }
     }
   }
@@ -483,15 +482,15 @@ void  Quadtree<Alloc>::_ProcessAllRecursionUnary()
 {
   // All objects touching all leaves are candidates to collision - these
   // happen to reside in the node.
-  std::for_each(m_objects.begin(), m_objects.end(), s_pUnaryCallback);
+  std::for_each(m_objects.begin(), m_objects.end(), s_unaryCallback);
 
   // ...and process all objects in the child nodes that the box is touching
   if (m_canSplit)
   {
-    m_arpLeaves[NW]->_ProcessRecursionUnary();
-    m_arpLeaves[NE]->_ProcessRecursionUnary();
-    m_arpLeaves[SW]->_ProcessRecursionUnary();
-    m_arpLeaves[SE]->_ProcessRecursionUnary();
+    m_leaves[NW]->_ProcessRecursionUnary();
+    m_leaves[NE]->_ProcessRecursionUnary();
+    m_leaves[SW]->_ProcessRecursionUnary();
+    m_leaves[SE]->_ProcessRecursionUnary();
   }
 }
 
@@ -499,40 +498,40 @@ void  Quadtree<Alloc>::_ProcessAllRecursionUnary()
 template  <template <typename> class Alloc>
 void  Quadtree<Alloc>::_ProcessRecursionBinary()
 {
-  // All objects touching more than one leaf are candidates to collision - 
+  // All objects touching more than one leaf are candidates to collision -
   // these happen to reside in the node.
   std::for_each(m_objects.begin(), m_objects.end(),
-    XR::Bind2nd<BinaryCallback, void*>(s_pBinaryCallback, s_pCandidate));
+    XR::Bind2nd<BinaryCallback, void*>(s_binaryCallback, s_callbackData));
 
   // ...and process all objects in the child nodes that the box is touching
   if (m_canSplit)
   {
-    bool  west(s_candidateBox.left < m_position.x);
-    bool  east(s_candidateBox.right >= m_position.x);
+    bool  west(s_hitBox.left < m_position.x);
+    bool  east(s_hitBox.right >= m_position.x);
 
-    if (s_candidateBox.top <= m_position.y)
+    if (s_hitBox.top <= m_position.y)
     {
       if (west)
       {
-        m_arpLeaves[NW]->_ProcessRecursionBinary();
+        m_leaves[NW]->_ProcessRecursionBinary();
       }
 
       if (east)
       {
-        m_arpLeaves[NE]->_ProcessRecursionBinary();
+        m_leaves[NE]->_ProcessRecursionBinary();
       }
     }
 
-    if (s_candidateBox.bottom > m_position.y)
+    if (s_hitBox.bottom > m_position.y)
     {
       if (west)
       {
-        m_arpLeaves[SW]->_ProcessRecursionBinary();
+        m_leaves[SW]->_ProcessRecursionBinary();
       }
 
       if (east)
       {
-        m_arpLeaves[SE]->_ProcessRecursionBinary();
+        m_leaves[SE]->_ProcessRecursionBinary();
       }
     }
   }
@@ -545,15 +544,15 @@ void  Quadtree<Alloc>::_ProcessAllRecursionBinary()
   // All objects touching all leaves are candidates to collision - these
   // happen to reside in the node.
   std::for_each(m_objects.begin(), m_objects.end(),
-    Bind2nd<BinaryCallback, void*>(s_pBinaryCallback, s_pCandidate));
+    Bind2nd<BinaryCallback, void*>(s_binaryCallback, s_callbackData));
 
   // ...and process all objects from the child nodes that the box is touching
   if (m_canSplit)
   {
-    m_arpLeaves[NW]->_ProcessRecursionBinary();
-    m_arpLeaves[NE]->_ProcessRecursionBinary();
-    m_arpLeaves[SW]->_ProcessRecursionBinary();
-    m_arpLeaves[SE]->_ProcessRecursionBinary();
+    m_leaves[NW]->_ProcessRecursionBinary();
+    m_leaves[NE]->_ProcessRecursionBinary();
+    m_leaves[SW]->_ProcessRecursionBinary();
+    m_leaves[SE]->_ProcessRecursionBinary();
   }
 }
 
@@ -563,7 +562,7 @@ void  Quadtree<Alloc>::_RemoveRecursion()
 {
   typename QueueType::iterator iEnd(m_objects.end());
   typename QueueType::iterator iFind(std::find(m_objects.begin(), iEnd,
-    s_pCandidate));
+    s_callbackData));
   if (iFind != iEnd)
   {
     m_objects.adopt(m_objects, iFind);  // smooth move
@@ -571,10 +570,10 @@ void  Quadtree<Alloc>::_RemoveRecursion()
   }
   else if (m_canSplit)
   {
-    m_arpLeaves[NW]->_RemoveRecursion();
-    m_arpLeaves[NE]->_RemoveRecursion();
-    m_arpLeaves[SW]->_RemoveRecursion();
-    m_arpLeaves[SE]->_RemoveRecursion();
+    m_leaves[NW]->_RemoveRecursion();
+    m_leaves[NE]->_RemoveRecursion();
+    m_leaves[SW]->_RemoveRecursion();
+    m_leaves[SE]->_RemoveRecursion();
   }
 }
 
@@ -586,13 +585,13 @@ void  Quadtree<Alloc>::Destroy()
   m_halfHeight = .0f;
   m_objects.clear();
   m_canSplit = false;
-  
+
   for (int i = 0; i < kNumLeaves; ++i)
   {
-    delete m_arpLeaves[i];
+    delete m_leaves[i];
   }
 
-  memset(m_arpLeaves, 0x00, sizeof(m_arpLeaves));
+  memset(m_leaves, 0x00, sizeof(m_leaves));
 }
 
 //==============================================================================
@@ -607,7 +606,7 @@ void  Quadtree<Alloc>::Create(const Vector2 &pos, float hw, float hh, float min)
   m_position = pos;
   m_halfWidth = hw;
   m_halfHeight = hh;
-  
+
   _Create(min);
 }
 
@@ -619,7 +618,7 @@ void  Quadtree<Alloc>::_Create(float min)
   {
     min = CalculateMin(m_halfWidth, m_halfHeight);
   }
-  
+
   if(min > .0f)
   {
     float hw(m_halfWidth * .5f);
@@ -628,13 +627,13 @@ void  Quadtree<Alloc>::_Create(float min)
 
     if (m_canSplit)
     {
-      m_arpLeaves[NW] = new Quadtree(Vector2(m_position.x - hw,
+      m_leaves[NW] = new Quadtree(Vector2(m_position.x - hw,
         m_position.y - hh), hw, hh, min, m_objects.get_allocator());
-      m_arpLeaves[NE] = new Quadtree(Vector2(m_position.x + hw,
+      m_leaves[NE] = new Quadtree(Vector2(m_position.x + hw,
         m_position.y - hh), hw, hh, min, m_objects.get_allocator());
-      m_arpLeaves[SW] = new Quadtree(Vector2(m_position.x - hw,
+      m_leaves[SW] = new Quadtree(Vector2(m_position.x - hw,
         m_position.y + hh), hw, hh, min, m_objects.get_allocator());
-      m_arpLeaves[SE] = new Quadtree(Vector2(m_position.x + hw,
+      m_leaves[SE] = new Quadtree(Vector2(m_position.x + hw,
         m_position.y + hh), hw, hh, min, m_objects.get_allocator());
     }
   }

@@ -26,7 +26,7 @@ public:
   virtual ~UIImage();
 
   // general use
-  void  SetSprite(const Sprite* pSprite, float scale = 1.0f);
+  void  SetSprite(const Sprite* sprite, float scale = 1.0f);
   void  SetSizeToSprite(float scale = 1.0f);
 
   virtual void Render(IUIRenderer& renderer) const;

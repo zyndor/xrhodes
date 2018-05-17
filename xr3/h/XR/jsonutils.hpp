@@ -19,7 +19,7 @@ namespace XR
 /// during processing should be flagged.
 ///@return Pointer to and ownership of the root element of the document. If
 /// an error has occurred, this will be nullptr.
-JSON::Entity* LoadJSON(const char* pFilename, int maxDepth, bool quietErrors);
+JSON::Entity* LoadJSON(const char* filename, int maxDepth, bool quietErrors);
 
 } //XR
 

@@ -14,13 +14,13 @@ namespace XR
 //==============================================================================
 UIElement::UIElement()
 : Rect(0, 0, 0, 0),
-  m_pParent(0)
+  m_parent(0)
 {}
 
 //==============================================================================
 UIElement::UIElement(int w, int h)
 : Rect(0, 0, w, h),
-  m_pParent(0)
+  m_parent(0)
 {}
 
 //==============================================================================
@@ -68,11 +68,11 @@ void UIElement::Move( int vx, int vy )
 }
 
 //==============================================================================
-void UIElement::Resize( const UIElement* pElem )
+void UIElement::Resize( const UIElement* elem )
 {
-  XR_ASSERTMSG(UIElement, pElem != 0,
+  XR_ASSERTMSG(UIElement, elem != 0,
     ("Trying to UIElement::Resize() to NULL."));
-  SetSize(pElem->w, pElem->h);
+  SetSize(elem->w, elem->h);
 }
 
 //==============================================================================
@@ -176,11 +176,11 @@ void UIElement::_AlignVertically( int y1, Alignment vAlign )
 }
 
 //==============================================================================
-void UIElement::OnChangeCaller( void* pData )
+void UIElement::OnChangeCaller( void* data )
 {
-  XR_ASSERTMSG(UIElement, pData != 0,
+  XR_ASSERTMSG(UIElement, data != 0,
     ("Trying to call OnChange() on NULL element."));
-  static_cast<UIElement*>(pData)->OnChange();
+  static_cast<UIElement*>(data)->OnChange();
 }
 
 //==============================================================================
@@ -196,9 +196,9 @@ bool  UIElement::Unregister( UIEventNotifier& disp )
 }
 
 //==============================================================================
-void UIElement::SetParent( UIContainer* pContainer )
+void UIElement::SetParent( UIContainer* container )
 {
-  m_pParent = pContainer;
+  m_parent = container;
 }
 
 } // XR

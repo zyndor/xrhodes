@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "XR/debug.hpp"
 #include "XR/fundamentals.hpp"
 #include <list>
@@ -40,7 +39,7 @@ protected:
       // operators
       bool  operator()(const ListenerBaseBase* p2) const
       {
-        return p1->pObject == p2->pObject;
+        return p1->object == p2->object;
       }
 
     protected:
@@ -49,20 +48,20 @@ protected:
     };
 
     // data
-    void* const pObject;
+    void* const object;
 
     // structors
-    ListenerBaseBase(void* p)
-    : pObject(p)
+    ListenerBaseBase(void* o)
+    : object(o)
     {}
-    
+
     virtual ~ListenerBaseBase()
     {}
   };
 
   typedef std::list<ListenerBaseBase*>  ListenerList;
   typedef std::list<void*>              PtrList;
-  
+
   struct  Postponed
   {
     // types
@@ -72,47 +71,47 @@ protected:
       REMOVE,
       CLEAR
     };
-    
+
     // data
     const Type  type;
-    void* const pData;  // this is a ListenerBaseBase* for ADD types and the owner of the Postponed object has ownership of it.
-    
+    void* const data;  // this is a ListenerBaseBase* for ADD types and the owner of the Postponed object has ownership of it.
+
     // structors
     explicit Postponed(Type t, void* p = 0)
     : type(t),
-      pData(p)
+      data(p)
     {}
-    
+
     // operators
     bool  operator==(const Postponed& rhs) const
     {
-      return type == rhs.type && pData == rhs.pData;
+      return type == rhs.type && data == rhs.data;
     }
   };
-  
+
   typedef std::list<Postponed> PostponedList;
-  
+
   // data
   ListenerList  m_listeners;  // yes ownership
   bool          m_isTraversing;
   PostponedList m_postponed;
-  
+
   // structors
   EventDispatcherCore();
   ~EventDispatcherCore();
-  
+
   // internal
   void  AddListenerImpl(ListenerBaseBase* p);
-  
+
   ListenerList::iterator  GetAdded(ListenerBaseBase* p);
-  
+
   PostponedList::iterator  GetPostponedAdded(ListenerBaseBase* p);
 
   bool  IsAdded(ListenerBaseBase* p) const;
-  
+
   bool  IsPostponedAdded(ListenerBaseBase* p) const;
-  
-  bool  RemoveListener(void* pListener); // no ownership transfer
+
+  bool  RemoveListener(void* object); // no ownership transfer
 
   void  ProcessPostponed();
 
@@ -131,18 +130,18 @@ class EventDispatcher:  protected EventDispatcherCore
 protected:
   // types
   typedef E Event;
-  
+
   class ListenerBase: public ListenerBaseBase
   {
   public:
     // structors
-    ListenerBase(void* p): ListenerBaseBase(p)  {}
+    ListenerBase(void* object): ListenerBaseBase(object)  {}
     virtual ~ListenerBase() {}
-    
+
     // virtual
     virtual Return Handle(E eventData) =0;
   };
-  
+
   template  <class T>
   class Listener: public ListenerBase
   {
@@ -150,37 +149,37 @@ protected:
     // types
     typedef T Type;
     typedef Return(Type::*Callback)(Event);
-    
+
     // data
-    Callback  pCallback;
-    
+    Callback  callback;
+
     // structors
-    Listener(T* pListener, Callback pCb)
-    : ListenerBase(pListener),
-      pCallback(pCb)
+    Listener(T* object, Callback cb)
+    : ListenerBase(object),
+      callback(cb)
     {}
-    
+
     // general
     virtual Return Handle(E eventData)
     {
-      return (static_cast<T*>(ListenerBaseBase::pObject)->*pCallback)(eventData);
+      return (static_cast<T*>(ListenerBaseBase::object)->*callback)(eventData);
     }
-    
+
     Listener* Clone() const
     {
-      return new Listener(static_cast<T*>(ListenerBaseBase::pObject), pCallback);
+      return new Listener(static_cast<T*>(ListenerBaseBase::object), callback);
     }
   };
-  
+
   // using
   using EventDispatcherCore::RemoveListener;
   using EventDispatcherCore::Clear;
-  
+
   // general
   template  <class T>
-  bool  AddListener(T& listener, typename Listener<T>::Callback pCallback)  // no ownership transfer
+  bool  AddListener(T& object, typename Listener<T>::Callback callback)  // no ownership transfer
   {
-    Listener<T>  l(&listener, pCallback);    
+    Listener<T>  l(&object, callback);
     return AddListenerInternal(l);
   }
 };
@@ -196,11 +195,11 @@ protected:
     // structors
     ListenerBase(void* p): ListenerBaseBase(p)  {}
     virtual ~ListenerBase() {}
-    
+
     // virtual
     virtual Return Handle() =0;
   };
-  
+
   template  <class T>
   class Listener: public ListenerBase
   {
@@ -208,33 +207,33 @@ protected:
     // types
     typedef T Type;
     typedef Return(Type::*Callback)();
-    
+
     // data
-    Callback  pCallback;
-    
+    Callback  callback;
+
     // structors
-    Listener(T* pListener, Callback pCb)
-    : ListenerBase(pListener),
-      pCallback(pCb)
+    Listener(T* object, Callback cb)
+    : ListenerBase(object),
+      callback(cb)
     {}
-    
+
     // general
     virtual Return Handle()
     {
-      return (static_cast<T*>(ListenerBaseBase::pObject)->*pCallback)();
+      return (static_cast<T*>(ListenerBaseBase::object)->*callback)();
     }
-    
+
     Listener* Clone() const
     {
-      return new Listener(static_cast<T*>(ListenerBaseBase::pObject), pCallback);
+      return new Listener(static_cast<T*>(ListenerBaseBase::object), callback);
     }
   };
-  
+
   // general
   template  <class T>
-  bool  AddListener(T& listener, typename Listener<T>::Callback pCallback)  // no ownership transfer
+  bool  AddListener(T& object, typename Listener<T>::Callback callback)  // no ownership transfer
   {
-    Listener<T>  l(&listener, pCallback);
+    Listener<T>  l(&object, callback);
     return AddListenerInternal(l);
   }
 };
@@ -287,7 +286,7 @@ bool  EventDispatcherCore::IsPostponedAdded(ListenerBaseBase* p) const
 template <class Listener>
 bool  EventDispatcherCore::AddListenerInternal(Listener& l)
 {
-  bool  result(!IsAdded(&l)); // || *iInsert != pListener;
+  bool  result(!IsAdded(&l)); // || *iInsert != %l;
   if (result)  // if not added
   {
     if (m_isTraversing)  // traversing

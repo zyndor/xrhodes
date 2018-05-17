@@ -22,11 +22,11 @@ UICascader::~UICascader()
 {}
 
 //==============================================================================
-void UICascader::_AlignElement( UIElement* pElem )
+void UICascader::_AlignElement( UIElement* elem )
 {
   if (m_hAlign != AL_NOALIGN)
   {
-    int x1 = static_cast<int32_t>(x + m_horizontalOffset * m_lElements.size());
+    int x1 = static_cast<int32_t>(x + m_horizontalOffset * m_elements.size());
 
     switch (m_hAlign)
     {
@@ -34,23 +34,23 @@ void UICascader::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      x1 += (w - pElem->w) / 2;
+      x1 += (w - elem->w) / 2;
       break;
 
     case  AL_HIGH:
-      x1 += w - pElem->w;
+      x1 += w - elem->w;
       break;
 
     case  AL_NOALIGN:
       break;
     }
 
-    pElem->x = x1;
+    elem->x = x1;
   }
 
   if (m_vAlign)
   {
-    int y1 = static_cast<int32_t>(y + m_verticalOffset * m_lElements.size());
+    int y1 = static_cast<int32_t>(y + m_verticalOffset * m_elements.size());
 
     switch (m_vAlign)
     {
@@ -58,21 +58,21 @@ void UICascader::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      y1 += (h - pElem->h) / 2;
+      y1 += (h - elem->h) / 2;
       break;
 
     case  AL_HIGH:
-      y1 += h - pElem->h;
+      y1 += h - elem->h;
       break;
 
     case  AL_NOALIGN:
       break;
     }
 
-    pElem->y = y1;
+    elem->y = y1;
   }
 
-  pElem->OnChange();
+  elem->OnChange();
 }
 
 //==============================================================================
@@ -100,15 +100,15 @@ void UICascader::_SetWidthToContent()
 {
   int xMin = std::numeric_limits<int>::max();
   int xMax = std::numeric_limits<int>::min();
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
-    const UIElement*  pElem(*i0);
-    if (pElem->x < xMin)
+    const UIElement*  elem(*i0);
+    if (elem->x < xMin)
     {
-      xMin = pElem->x;
+      xMin = elem->x;
     }
 
-    int right(pElem->CalculateRight());
+    int right(elem->CalculateRight());
     if (right > xMax)
     {
       xMax = right;
@@ -123,15 +123,15 @@ void UICascader::_SetHeightToContent()
 {
   int yMin(std::numeric_limits<int>::max());
   int yMax(std::numeric_limits<int>::min());
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
-    const UIElement*  pElem(*i0);
-    if (pElem->y < yMin)
+    const UIElement*  elem(*i0);
+    if (elem->y < yMin)
     {
-      yMin = pElem->y;
+      yMin = elem->y;
     }
 
-    int bottom(pElem->CalculateBottom());
+    int bottom(elem->CalculateBottom());
     if (bottom > yMax)
     {
       yMax = bottom;

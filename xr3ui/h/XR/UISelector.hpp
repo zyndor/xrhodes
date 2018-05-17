@@ -23,22 +23,22 @@ public:
   ~UISelector();
 
   // general
-  bool        Add(UIElement* pElem, UIElement* pAfter = 0);
-  bool        Remove(UIElement* pElem);
+  bool        Add(UIElement* elem, UIElement* previous = nullptr);
+  bool        Remove(UIElement* elem);
   void        Clear();
 
   UIElement*  GetFirst() const;
   UIElement*  GetLast() const;
 
-  UIElement*  GetPrevious(UIElement* pElem) const;
-  UIElement*  GetNext(UIElement* pElem) const;
+  UIElement*  GetPrevious(UIElement* elem) const;
+  UIElement*  GetNext(UIElement* elem) const;
 
 protected:
   // types
   struct  Entry
   {
-    UIElement*  pPrev;
-    UIElement*  pNext;
+    UIElement*  prev;
+    UIElement*  next;
   };
 
   typedef std::map<UIElement*, Entry>  ElementMap;

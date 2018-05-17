@@ -17,7 +17,7 @@ namespace XR
 namespace GL
 {
 
-GLint CheckError(char const* pText);
+GLint CheckError(char const* text);
 
 void SwitchEnabledState(GLenum name, bool state);
 
@@ -45,12 +45,12 @@ namespace GL
 
 //==============================================================================
 inline
-GLint  CheckError(char const* pText)
+GLint  CheckError(char const* text)
 {
   GLint error = glGetError();
   if (error != GL_NO_ERROR)
   {
-    XR_ERROR(("OpenGL error 0x%x occurred attempting '%s'.", error, pText));
+    XR_ERROR(("OpenGL error 0x%x occurred attempting '%s'.", error, text));
   }
   return error;
 }

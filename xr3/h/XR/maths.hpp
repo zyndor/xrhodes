@@ -175,13 +175,13 @@ struct  BezierImpl
 
   static T Calculate(const T* controlPoints, float blendFactor)
   {
-    T arResult[kNumSamples - 1];
+    T results[kNumSamples - 1];
     for(int i = 1; i < kNumSamples; ++i)
     {
-      const size_t im1(i - 1);
-      arResult[im1] = Lerp(controlPoints[im1], controlPoints[i], blendFactor);
+      const size_t iLess1 = i - 1;
+      results[iLess1] = Lerp(controlPoints[iLess1], controlPoints[i], blendFactor);
     }
-    return BezierImpl<T, kNumSamples - 1>::Calculate(arResult, blendFactor);
+    return BezierImpl<T, kNumSamples - 1>::Calculate(results, blendFactor);
   }
 };
 

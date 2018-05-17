@@ -20,8 +20,8 @@ FloatBuffer FloatBuffer::Adapt(FloatBuffer& other, uint32_t offset, uint32_t siz
 FloatBuffer::FloatBuffer()
 : m_elemSizeFloats(0),
   m_numElems(0),
-  m_parData(nullptr),
-  m_pAdapted(nullptr),
+  m_data(nullptr),
+  m_adapted(nullptr),
   m_ownData(false),
   m_numDependents(0)
 {}
@@ -30,14 +30,14 @@ FloatBuffer::FloatBuffer()
 FloatBuffer::FloatBuffer(uint32_t elemSize, uint32_t numElems, float* parBuffer)
 : m_elemSizeFloats(elemSize),
   m_numElems(numElems),
-  m_parData(parBuffer),
-  m_pAdapted(nullptr),
+  m_data(parBuffer),
+  m_adapted(nullptr),
   m_ownData(parBuffer == nullptr),
   m_numDependents(0)
 {
   if (parBuffer == nullptr)
   {
-    m_parData = AllocateBuffer(elemSize, numElems);
+    m_data = AllocateBuffer(elemSize, numElems);
   }
 }
 
@@ -45,20 +45,20 @@ FloatBuffer::FloatBuffer(uint32_t elemSize, uint32_t numElems, float* parBuffer)
 FloatBuffer::FloatBuffer(FloatBuffer const & other)  // copy constructor
 : m_elemSizeFloats(other.m_elemSizeFloats),
   m_numElems(other.m_numElems),
-  m_parData(other.m_parData),
-  m_pAdapted(other.m_pAdapted),
+  m_data(other.m_data),
+  m_adapted(other.m_adapted),
   m_ownData(other.m_ownData),
   m_numDependents(0)
 {
-  if (m_pAdapted)
+  if (m_adapted)
   {
-    ++m_pAdapted->m_numDependents;
+    ++m_adapted->m_numDependents;
   }
   else
   {
     if (m_ownData)
     {
-      m_parData = AllocateBuffer(m_elemSizeFloats, m_numElems);
+      m_data = AllocateBuffer(m_elemSizeFloats, m_numElems);
       CopyData(other);
     }
   }
@@ -79,7 +79,7 @@ void FloatBuffer::SetBuffer(uint32_t elemSize, uint32_t numElems, float* parBuff
   m_numElems = numElems;
 
   const bool ownData = parBuffer == nullptr;
-  m_parData = ownData ? AllocateBuffer(elemSize, numElems) : parBuffer;
+  m_data = ownData ? AllocateBuffer(elemSize, numElems) : parBuffer;
   m_ownData = ownData;
 }
 
@@ -89,26 +89,26 @@ void FloatBuffer::Move(FloatBuffer&& other)
   ReleaseData();
 
   XR_ASSERT(FloatBuffer, other.m_numDependents == 0);
-  m_pAdapted = other.m_pAdapted;
-  other.m_pAdapted = nullptr;
+  m_adapted = other.m_adapted;
+  other.m_adapted = nullptr;
 
   m_ownData = other.m_ownData;
   other.m_ownData = false;
   // if we're owning data, we're must not be adapted.
-  XR_ASSERT(FloatBuffer, !m_ownData || (m_ownData && m_pAdapted == nullptr));
+  XR_ASSERT(FloatBuffer, !m_ownData || (m_ownData && m_adapted == nullptr));
 
   m_numDependents = 0;
 
   m_elemSizeFloats = other.m_elemSizeFloats;
   m_numElems = other.m_numElems;
-  m_parData = other.m_parData;
-  other.m_parData = nullptr;
+  m_data = other.m_data;
+  other.m_data = nullptr;
 }
 
 //=============================================================================
 bool FloatBuffer::Own()
 {
-  const bool result = !m_ownData && m_pAdapted != nullptr;
+  const bool result = !m_ownData && m_adapted != nullptr;
   if (result)
   {
     FloatBuffer temp(*this);
@@ -122,7 +122,7 @@ bool FloatBuffer::Own()
 //=============================================================================
 void FloatBuffer::ReleaseData()
 {
-  if (m_pAdapted != nullptr)
+  if (m_adapted != nullptr)
   {
     XR_ASSERT(FloatBuffer, !m_ownData);
     DetachFromOwner();
@@ -132,14 +132,14 @@ void FloatBuffer::ReleaseData()
     XR_ASSERT(FloatBuffer, m_numDependents == 0);
     if (m_ownData)
     {
-      delete[] m_parData;
+      delete[] m_data;
       m_ownData = false;
     }
   }
 
   m_numElems = 0;
   m_elemSizeFloats = 0;
-  m_parData = nullptr;
+  m_data = nullptr;
 }
 
 //=============================================================================
@@ -169,12 +169,12 @@ float * FloatBuffer::AllocateBuffer(uint32_t elemSize, uint32_t numElems)
 FloatBuffer::FloatBuffer(FloatBuffer & other, uint32_t offset, uint32_t size)  // adapt constructor
 : m_elemSizeFloats(other.m_elemSizeFloats),
   m_numElems(other.ResolveSize(offset, size)),
-  m_parData(other.m_parData + offset * other.m_elemSizeFloats),
-  m_pAdapted(other.m_pAdapted ? other.m_pAdapted : &other),
+  m_data(other.m_data + offset * other.m_elemSizeFloats),
+  m_adapted(other.m_adapted ? other.m_adapted : &other),
   m_ownData(false),
   m_numDependents(0)
 {
-  ++m_pAdapted->m_numDependents;
+  ++m_adapted->m_numDependents;
 }
 
 //=============================================================================
@@ -182,16 +182,16 @@ void FloatBuffer::CopyData(FloatBuffer const & other)
 {
   XR_ASSERT(FloatBuffer, m_elemSizeFloats == other.m_elemSizeFloats);
   XR_ASSERT(FloatBuffer, m_numElems == other.m_numElems);
-  std::copy(other.m_parData, other.m_parData + (other.m_elemSizeFloats * other.m_numElems),
-    m_parData);
+  std::copy(other.m_data, other.m_data + (other.m_elemSizeFloats * other.m_numElems),
+    m_data);
 }
 
 //=============================================================================
 void FloatBuffer::DetachFromOwner()
 {
-  XR_ASSERT(FloatBuffer, m_pAdapted != nullptr);
-  --m_pAdapted->m_numDependents;
-  m_pAdapted = nullptr;
+  XR_ASSERT(FloatBuffer, m_adapted != nullptr);
+  --m_adapted->m_numDependents;
+  m_adapted = nullptr;
 }
 
 //=============================================================================

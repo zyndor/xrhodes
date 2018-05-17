@@ -17,72 +17,72 @@ struct XonTreeBuildState
 {
   struct Frame
   {
-    XonObject*            pObject;
+    XonObject*            object;
     XonParser::String     keyCache;
 
     void AddValue(XonEntity& v)
     {
-      if (keyCache.pStart)
+      if (keyCache.start)
       {
         XR_ASSERT(XonTreeBuildState, keyCache.length != -1);
-        pObject->AddValue(std::string(keyCache.pStart, keyCache.length), v);
-        keyCache.pStart = nullptr;  // consume key
+        object->AddValue(std::string(keyCache.start, keyCache.length), v);
+        keyCache.start = nullptr;  // consume key
       }
       else
       {
-        pObject->AddValue(v);
+        object->AddValue(v);
       }
     }
   };
 
-  static bool EventHandler(XonParser::Event e, XonParser::String const* pString,
-    void* pUserData)
+  static bool EventHandler(XonParser::Event e, XonParser::String const* string,
+    void* userDataData)
   {
-    return static_cast<XonTreeBuildState*>(pUserData)->HandleEvent(e, pString);
+    return static_cast<XonTreeBuildState*>(userDataData)->HandleEvent(e, string);
   }
 
   XonParser                   parser;
-  std::unique_ptr<XonObject>  pRoot;
+  std::unique_ptr<XonObject>  root;
 
   std::list<Frame> stack;
 
   void AddValue(XonParser::String s)
   {
     std::vector<char> buffer;
-    if (!s.isQuoted && strncmp(s.pStart, "null", s.length) == 0)
+    if (!s.isQuoted && strncmp(s.start, "null", s.length) == 0)
     {
-      s.pStart = nullptr;
+      s.start = nullptr;
       s.length = -1;
     }
     else if(s.isQuoted && s.length > 0)
     {
       buffer.resize(s.length);
       size_t replacedLen;
-      Replace(s.pStart, s.length, "\\\"", "\"", s.length, buffer.data(), replacedLen);
-      s.pStart = buffer.data();
+      Replace(s.start, s.length, "\\\"", "\"", s.length, buffer.data(), replacedLen);
+      s.start = buffer.data();
       s.length = replacedLen;
     }
-    stack.back().AddValue(*new XonValue(s.pStart, s.length));
+    stack.back().AddValue(*new XonValue(s.start, s.length));
   }
 
-  bool HandleEvent(XonParser::Event e, XonParser::String const* pString)
+  bool HandleEvent(XonParser::Event e, XonParser::String const* string)
   {
     switch (e)
     {
     case XonParser::Event::ObjectBegin:
       {
-        auto pObj = new XonObject;
-        const bool first = pRoot == nullptr;
+        auto object = new XonObject;
+        const bool first = root == nullptr;
         if (first)
         {
-          XR_ASSERT(XonTreeBuildState, !pRoot);
-          pRoot.reset(pObj);
+          XR_ASSERT(XonTreeBuildState, !root);
+          root.reset(object);
         }
         else
         {
-          stack.back().AddValue(*pObj);
+          stack.back().AddValue(*object);
         }
-        stack.push_back({ pObj });
+        stack.push_back({ object });
       }
       break;
 
@@ -94,13 +94,13 @@ struct XonTreeBuildState
       break;
 
     case XonParser::Event::Key:
-      XR_ASSERT(XonTreeBuildState, pString);
-      stack.back().keyCache = *pString;
+      XR_ASSERT(XonTreeBuildState, string);
+      stack.back().keyCache = *string;
       break;
 
     case XonParser::Event::Value:
-      XR_ASSERT(XonTreeBuildState, pString);
-      AddValue(*pString);
+      XR_ASSERT(XonTreeBuildState, string);
+      AddValue(*string);
       break;
     }
 
@@ -109,16 +109,16 @@ struct XonTreeBuildState
 };
 
 //==============================================================================
-XonObject* XonBuildTree(char const * pBuffer, size_t length, XonParser::State* pStateOut)
+XonObject* XonBuildTree(char const* string, size_t length, XonParser::State* outState)
 {
   XonTreeBuildState  rs;
-  bool success = rs.parser.Parse(pBuffer, length, XonTreeBuildState::EventHandler, &rs);
+  bool success = rs.parser.Parse(string, length, XonTreeBuildState::EventHandler, &rs);
 
-  if (pStateOut)
+  if (outState)
   {
-    *pStateOut = rs.parser.GetState();
+    *outState = rs.parser.GetState();
   }
-  return success ? rs.pRoot.release() : nullptr;
+  return success ? rs.root.release() : nullptr;
 }
 
 } // XR

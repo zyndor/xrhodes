@@ -43,7 +43,7 @@ protected:
   int16_t m_lastTouchX;
 
   // internal
-  void _AlignElement( UIElement* pElem ) override;
+  void _AlignElement( UIElement* elem ) override;
 };
 
 //==============================================================================

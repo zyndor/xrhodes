@@ -48,13 +48,16 @@ struct Matrix
     return Matrix();
   }
 
+  inline static void Transpose(float data[kNumLinearComponents])
+  {
+    std::swap(data[XY], data[YX]);
+    std::swap(data[ZX], data[XZ]);
+    std::swap(data[YZ], data[ZY]);
+  }
+
   // data
   union
   {
-    // As a 1D array
-    float  arLinear[kNumLinearComponents];
-    // As a 2D array
-    float  arLinear2D[Vector3::kNumComponents][Vector3::kNumComponents];
     // As individual components
     struct
     {
@@ -62,6 +65,10 @@ struct Matrix
               yx, yy, yz, // local y axis
               zx, zy, zz; // local z axis
     };
+    // Linear transformation component as a 1D array
+    float  linear[kNumLinearComponents];
+    // Linear transformation component as a 2D array
+    float  linear2d[Vector3::kNumComponents][Vector3::kNumComponents];
   };
   Vector3 t;
 
@@ -77,16 +84,16 @@ struct Matrix
     t(t_)
   {}
 
-  explicit Matrix(const float arData[kNumLinearComponents],
+  explicit Matrix(const float linearXform[kNumLinearComponents],
     Vector3 const& t_ = Vector3::Zero())
-  : xx(arData[XX]), xy(arData[XY]), xz(arData[XZ]),
-    yx(arData[YX]), yy(arData[YY]), yz(arData[YZ]),
-    zx(arData[ZX]), zy(arData[ZY]), zz(arData[ZZ]),
+  : xx(linearXform[XX]), xy(linearXform[XY]), xz(linearXform[XZ]),
+    yx(linearXform[YX]), yy(linearXform[YY]), yz(linearXform[YZ]),
+    zx(linearXform[ZX]), zy(linearXform[ZY]), zz(linearXform[ZZ]),
     t(t_)
   {}
 
   Matrix(Matrix const& rhs, Vector3 const& t_)
-  : Matrix(rhs.arLinear, t_)
+  : Matrix(rhs.linear, t_)
   {}
 
   // general
@@ -94,17 +101,17 @@ struct Matrix
   Vector3 GetColumn(size_t i) const
   {
     XR_ASSERT(Matrix, i < Vector3::kNumComponents);
-    return Vector3(arLinear[i], arLinear[i + Vector3::kNumComponents],
-      arLinear[i + 2 * Vector3::kNumComponents]);
+    return Vector3(linear[i], linear[i + Vector3::kNumComponents],
+      linear[i + 2 * Vector3::kNumComponents]);
   }
 
   ///@brief Convenience method to set column @a i of the linear transformation part.
   void SetColumn(size_t i, Vector3 const& v)
   {
     XR_ASSERT(Matrix, i < Vector3::kNumComponents);
-    arLinear[i] = v.x;
-    arLinear[i + Vector3::kNumComponents] = v.y;
-    arLinear[i + 2 * Vector3::kNumComponents] = v.z;
+    linear[i] = v.x;
+    linear[i + Vector3::kNumComponents] = v.y;
+    linear[i + 2 * Vector3::kNumComponents] = v.z;
   }
 
   ///@brief Scales the x component of the linear transformation by the scalar @a s.
@@ -271,13 +278,13 @@ struct Matrix
   ///@brief Copies the linear transformation part from the given array.
   void  CopyLinear(const float parLinear[kNumLinearComponents])
   {
-    memcpy(arLinear, parLinear, sizeof(arLinear));
+    memcpy(linear, parLinear, sizeof(linear));
   }
 
   ///@brief Copies the linear transformation part of the given matrix.
   void  CopyLinear(Matrix const& m)
   {
-    CopyLinear(m.arLinear);
+    CopyLinear(m.linear);
   }
 
   ///@brief Multiplies the linear transformation component of this Matrix
@@ -305,9 +312,9 @@ struct Matrix
     XR_ASSERT(Matrix, j < Vector3::kNumComponents);
 
     int y(j * Vector3::kNumComponents);
-    arLinear[y + i] = m.arLinear[y] * n.arLinear[i] +
-      m.arLinear[y + 1] * n.arLinear[i + Vector3::kNumComponents] +
-      m.arLinear[y + 2] * n.arLinear[i + Vector3::kNumComponents * 2];
+    linear[y + i] = m.linear[y] * n.linear[i] +
+      m.linear[y + 1] * n.linear[i + Vector3::kNumComponents] +
+      m.linear[y + 2] * n.linear[i + Vector3::kNumComponents * 2];
   }
 
   ///@brief Transforms this matrix by the matrix @a m, applying its
@@ -350,9 +357,9 @@ struct Matrix
 
     Vector3  vx(up.Cross(vz));  // local x axis
     Vector3  vy(vz.Cross(vx));  // local y axis
-    memcpy(arLinear + XX, vx.arData, sizeof(vx));
-    memcpy(arLinear + YX, vy.arData, sizeof(vy));
-    memcpy(arLinear + ZX, vz.arData, sizeof(vz));
+    memcpy(linear + XX, vx.data, sizeof(vx));
+    memcpy(linear + YX, vy.data, sizeof(vy));
+    memcpy(linear + ZX, vz.data, sizeof(vz));
   }
 
   ///@brief Calculates a transformation looking from the translation part
@@ -367,33 +374,31 @@ struct Matrix
   bool  Invert()
   {
     // Calculate minors and cofactors 2 in 1.
-    decltype(arLinear) adj;
-    adj[XX] = arLinear[YY] * arLinear[ZZ] - arLinear[ZY] * arLinear[YZ];
-    adj[XY] = arLinear[ZX] * arLinear[YZ] - arLinear[YX] * arLinear[ZZ]; // negated
-    adj[XZ] = arLinear[YX] * arLinear[ZY] - arLinear[YY] * arLinear[ZX];
+    decltype(linear) adj;
+    adj[XX] = linear[YY] * linear[ZZ] - linear[ZY] * linear[YZ];
+    adj[XY] = linear[ZX] * linear[YZ] - linear[YX] * linear[ZZ]; // negated
+    adj[XZ] = linear[YX] * linear[ZY] - linear[YY] * linear[ZX];
 
-    adj[YX] = arLinear[ZY] * arLinear[XZ] - arLinear[XY] * arLinear[ZZ]; // negated
-    adj[YY] = arLinear[XX] * arLinear[ZZ] - arLinear[XZ] * arLinear[ZX];
-    adj[YZ] = arLinear[XY] * arLinear[ZX] - arLinear[XX] * arLinear[ZY]; // negated
+    adj[YX] = linear[ZY] * linear[XZ] - linear[XY] * linear[ZZ]; // negated
+    adj[YY] = linear[XX] * linear[ZZ] - linear[XZ] * linear[ZX];
+    adj[YZ] = linear[XY] * linear[ZX] - linear[XX] * linear[ZY]; // negated
 
-    adj[ZX] = arLinear[XY] * arLinear[YZ] - arLinear[XZ] * arLinear[YY];
-    adj[ZY] = arLinear[XZ] * arLinear[YX] - arLinear[XX] * arLinear[YZ]; // negated
-    adj[ZZ] = arLinear[XX] * arLinear[YY] - arLinear[XY] * arLinear[YX];
+    adj[ZX] = linear[XY] * linear[YZ] - linear[XZ] * linear[YY];
+    adj[ZY] = linear[XZ] * linear[YX] - linear[XX] * linear[YZ]; // negated
+    adj[ZZ] = linear[XX] * linear[YY] - linear[XY] * linear[YX];
 
-    float determinant = arLinear[XX] * adj[XX] + arLinear[XY] * adj[XY] +
-      arLinear[XZ] * adj[XZ];
+    float determinant = linear[XX] * adj[XX] + linear[XY] * adj[XY] +
+      linear[XZ] * adj[XZ];
     const bool result = determinant * determinant > kEpsilon;
     if (result)
     {
       // Transpose to get adjugate matrix.
-      std::swap(adj[XY], adj[YX]);
-      std::swap(adj[XZ], adj[ZX]);
-      std::swap(adj[YZ], adj[ZY]);
+      Transpose(adj);
 
       determinant = 1.0f / determinant;
 
       // Scale by inverse detereminant and write back.
-      auto writep = arLinear;
+      auto writep = linear;
       std::for_each(adj, adj + std::extent<decltype(adj)>::value,
         [determinant, &writep](float v) {
           *writep = v * determinant;
@@ -406,9 +411,7 @@ struct Matrix
   ///@brief Changes the linear transformation part of this matrix to its transpose.
   Matrix&  Transpose()
   {
-    std::swap(arLinear[XY], arLinear[YX]);
-    std::swap(arLinear[ZX], arLinear[XZ]);
-    std::swap(arLinear[YZ], arLinear[ZY]);
+    Transpose(linear);
     return *this;
   }
 

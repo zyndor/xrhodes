@@ -25,7 +25,7 @@ public:
 
 protected:
   // internal
-  virtual void _AlignElement( UIElement* pElem );
+  virtual void _AlignElement( UIElement* elem );
 
   virtual void _SetHeightToContent();
 };
@@ -36,9 +36,9 @@ protected:
 inline
 int UIVerticalLayout::CalculateElementsExtent() const
 {
-  return m_lElements.empty() ? 0 : (m_growDir == GD_POSITIVE ?
-    (m_lElements.back()->CalculateBottom() - m_lElements.front()->y) :
-    (m_lElements.front()->CalculateBottom() - m_lElements.back()->y));
+  return m_elements.empty() ? 0 : (m_growDir == GD_POSITIVE ?
+    (m_elements.back()->CalculateBottom() - m_elements.front()->y) :
+    (m_elements.front()->CalculateBottom() - m_elements.back()->y));
 }
 
 } // XR

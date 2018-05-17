@@ -16,28 +16,28 @@ namespace XR
 /// with the @a pFunction.
 bool  Tweener::Param::Update(float tDelta)
 {
-  tDelta *= base;
+  tDelta *= invDuration;
   bool  over(progress + tDelta >= 1.0f);
   if (over)
   {
-    *pValue = vTarget;
-    if (pOnFrame != 0)
+    *value = vTarget;
+    if (onFrame)
     {
-      (*pOnFrame)(pCallbackData);
+      (*onFrame)(callbackData);
     }
 
-    if (pOnFinished != 0)
+    if (onFinished)
     {
-      (*pOnFinished)(pCallbackData);
+      (*onFinished)(callbackData);
     }
   }
   else
   {
     progress += tDelta;
-    *pValue = (*pFunction)(vStart, vTarget, progress);
-    if (pOnFrame != 0)
+    *value = (*function)(vStart, vTarget, progress);
+    if (onFrame)
     {
-      (*pOnFrame)(pCallbackData);
+      (*onFrame)(callbackData);
     }
   }
   return over;
@@ -54,19 +54,19 @@ Tweener::~Tweener()
 
 //==============================================================================
 ///@brief Registers a Param for tweening.
-void  Tweener::Add(float duration, Function pFunction, float target,
-        float& value, Callback pOnFrame, Callback pOnFinished, void* pData)
+void  Tweener::Add(float duration, Function function, float target,
+        float& value, Callback onFrame, Callback onFinished, void* data)
 {
-  XR_ASSERT(Tweener, pFunction != 0);
+  XR_ASSERT(Tweener, function != nullptr);
   XR_ASSERT(Tweener, duration >= .0f);
   if (duration > .0f)
   {
-    Param  p = { .0f, 1.0f / duration, pFunction, value, target, &value,
-      pOnFrame, pOnFinished, pData };
+    Param  p = { .0f, 1.0f / duration, function, value, target, &value,
+      onFrame, onFinished, data };
 
     ParamList::iterator iInsert(std::lower_bound(m_params.begin(),
       m_params.end(), p, Param::ComparePredicate()));
-    if (iInsert != m_params.end() && iInsert->pValue == p.pValue)
+    if (iInsert != m_params.end() && iInsert->value == p.value)
     {
       *iInsert = p;
     }
@@ -78,33 +78,33 @@ void  Tweener::Add(float duration, Function pFunction, float target,
   else
   {
     value = target;
-    if (pOnFinished != 0)
+    if (onFinished)
     {
-      (*pOnFinished)(pData);
+      (*onFinished)(data);
     }
   }
 }
 
 //==============================================================================
 ///@brief Removes the Param for the given value (if found). @a finish indicates
-/// whether the value should be set to its target and its pOnFinishedCb (if
+/// whether the value should be set to its target and its onFinishedCb (if
 /// any) be called.
 ///@return  Whether a value was removed.
 bool  Tweener::Remove( float& value, bool finish )
 {
-  Param pComp = { .0f, .0f, 0, .0f, .0f, &value, 0, 0, 0 };
-  ParamList::iterator iRemove(std::lower_bound(m_params.begin(), m_params.end(), 
+  Param pComp = { .0f, .0f, 0, .0f, .0f, &value, nullptr, nullptr, nullptr };
+  ParamList::iterator iRemove(std::lower_bound(m_params.begin(), m_params.end(),
     pComp, Param::ComparePredicate()));
-  bool  success(iRemove != m_params.end() && iRemove->pValue == pComp.pValue);
+  bool  success(iRemove != m_params.end() && iRemove->value == pComp.value);
   if (success)
   {
     if (finish)
-    { 
+    {
       value = iRemove->vTarget;
-      Callback  pOnFinished(iRemove->pOnFinished);
-      if (pOnFinished != 0)
+      Callback  onFinished(iRemove->onFinished);
+      if (onFinished)
       {
-        (*pOnFinished)(iRemove->pCallbackData);
+        (*onFinished)(iRemove->callbackData);
       }
     }
     m_params.erase(iRemove);

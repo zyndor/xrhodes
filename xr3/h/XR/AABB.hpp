@@ -58,7 +58,7 @@ struct  AABB
   };
 
   // static
-  static const char* const karTag[kNumTags];
+  static const char* const kTags[kNumTags];
 
   // data
   ///@brief The left side of the AABB.

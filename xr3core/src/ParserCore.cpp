@@ -33,7 +33,7 @@ void  ParserCore::SetBuffer(const char* parBuffer, size_t size)
   {
     size = strlen(parBuffer);
   }
-  
+
   m_p0 = parBuffer;
   m_p1 = parBuffer + size;
   m_row = 1;
@@ -51,7 +51,7 @@ const char* ParserCore::ExpectChar()
   return m_p0;
 }
 
-//==============================================================================  
+//==============================================================================
 const char* ParserCore::RequireChar(int c)
 {
   XR_ASSERT(ParserCore, m_p0 != 0);
@@ -74,10 +74,10 @@ const char* ParserCore::SkipChar()
     const bool isNewLine = isCR || *p0 == '\n';
     if (isCR) // CR might be CRLF in the making, which we'll handle as one line break.
     {
-      auto pNext = p0 + 1;
-      if (pNext != m_p1 && *pNext == '\n')
+      auto next = p0 + 1;
+      if (next != m_p1 && *next == '\n')
       {
-        p0 = pNext;
+        p0 = next;
       }
     }
     ++p0;
@@ -103,13 +103,13 @@ const char* ParserCore::SkipChar()
 const char* ParserCore::FastForward(int numChars)
 {
   XR_ASSERT(ParserCore, numChars >= 0);
-  const char* pResult(m_p1);
+  const char* result = m_p1;
   while(numChars > 0 && m_p0 != m_p1)
   {
-    pResult = SkipChar();
+    result = SkipChar();
     --numChars;
   }
-  return pResult;
+  return result;
 }
 
 } // XR

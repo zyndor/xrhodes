@@ -30,7 +30,7 @@ public:
 
 protected:
   // internal use
-  virtual void _AlignElement( UIElement* pElem );
+  virtual void _AlignElement( UIElement* elem );
 
   // data
   Alignment m_hAlign;

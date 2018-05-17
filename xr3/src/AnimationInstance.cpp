@@ -12,7 +12,7 @@ namespace XR
 //==============================================================================
 AnimationInstanceCore::AnimationInstanceCore()
 :	timeScale(1.0),
-  pFinishedCbData(0),
+  onFinishedData(nullptr),
   m_tFrame(.0f),
   m_frameId(0),
   m_numLoops(0)

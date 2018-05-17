@@ -13,23 +13,23 @@ namespace XR
 {
 
 //==============================================================================
-bool XonParser::Parse(char const* pBuffer, size_t length, Callback pCallback, void* pUser)
+bool XonParser::Parse(char const* string, size_t length, Callback callback, void* userData)
 {
-  XR_ASSERT(XonParser, pBuffer != nullptr);
-  m_state = { 0, 0, 0, pBuffer };
+  XR_ASSERT(XonParser, string != nullptr);
+  m_state = { 0, 0, 0, string };
 
   ParserCore core;
-  core.SetBuffer(pBuffer, length);
+  core.SetBuffer(string, length);
 
-  m_pCallback = pCallback;
-  m_pCallbackUser = pUser;
+  m_callback = callback;
+  m_callbackUser = userData;
 
   // Look for an object. Drop whitespace and comments, find {, skip it.
   // After parsing the root object and processing all whitespace and comments,
   // we should be at the end of the buffer.
-  const char* pChar = ProcessComments(core);
-  bool success = !core.IsOver(pChar)
-    && *pChar == kObjectBegin
+  const char* charp = ProcessComments(core);
+  bool success = !core.IsOver(charp)
+    && *charp == kObjectBegin
     && !core.IsOver(core.SkipChar())
     && ParseObject(core)
     && core.IsOver(ProcessComments(core));
@@ -42,18 +42,18 @@ bool XonParser::Parse(char const* pBuffer, size_t length, Callback pCallback, vo
 bool XonParser::ParseObject(ParserCore& pc)
 {
   bool result = DoCallback(Event::ObjectBegin, nullptr);
-  const char* pChar = nullptr;
+  const char* charp = nullptr;
   if (result)
   {
     ++m_state.depth;
 
-    pChar = ProcessComments(pc);
-    result = !pc.IsOver(pChar);
+    charp = ProcessComments(pc);
+    result = !pc.IsOver(charp);
   }
 
   if (result)
   {
-    if (*pChar == kObjectEnd) // empty object
+    if (*charp == kObjectEnd) // empty object
     {
       pc.SkipChar();
       --m_state.depth;
@@ -72,8 +72,8 @@ bool XonParser::ParseObject(ParserCore& pc)
         break;
       }
 
-      pChar = ProcessComments(pc);
-      result = !pc.IsOver(pChar);
+      charp = ProcessComments(pc);
+      result = !pc.IsOver(charp);
       if (!result)
       {
         break;
@@ -81,7 +81,7 @@ bool XonParser::ParseObject(ParserCore& pc)
 
       // A colon is only a legal next character if we've parsed a string;
       // this will now be a key.
-      if (*pChar == kKey)
+      if (*charp == kKey)
       {
         // Unquoted empty / null string is invalid.
         result = er.type == ElementResult::Type::String
@@ -89,16 +89,16 @@ bool XonParser::ParseObject(ParserCore& pc)
           && DoCallback(Event::Key, &str);
         if (result)
         {
-          pChar = pc.SkipChar();
+          charp = pc.SkipChar();
 
-          result = !pc.IsOver(pChar);
+          result = !pc.IsOver(charp);
           if (!result)
           {
             break;
           }
 
-          pChar = ProcessComments(pc);
-          result = !pc.IsOver(pChar);
+          charp = ProcessComments(pc);
+          result = !pc.IsOver(charp);
           if (!result)
           {
             break;
@@ -117,22 +117,22 @@ bool XonParser::ParseObject(ParserCore& pc)
         }
       }
 
-      pChar = ProcessComments(pc);
-      result = !pc.IsOver(pChar);
+      charp = ProcessComments(pc);
+      result = !pc.IsOver(charp);
       if (!result)
       {
         break;
       }
 
       // Require comma or object end.
-      const bool isObjectEnd = *pChar == kObjectEnd;
-      result = (*pChar == kNextValue || isObjectEnd);
+      const bool isObjectEnd = *charp == kObjectEnd;
+      result = (*charp == kNextValue || isObjectEnd);
       if (result)
       {
         // Length == -1 signifies an unquoted empty string, which is not invalid
         // here, but we'll ignore it, EXCEPT if it's a null string.
         if (er.type == ElementResult::Type::String
-          && (str.length > 0 || str.isQuoted || str.pStart == nullptr))
+          && (str.length > 0 || str.isQuoted || str.start == nullptr))
         {
           result = DoCallback(Event::Value, &str);
         }
@@ -160,9 +160,9 @@ bool XonParser::ParseObject(ParserCore& pc)
 //==============================================================================
 XonParser::ElementResult XonParser::ParseElement(ParserCore& pc, String& strOut)
 {
-  const char* pStart = pc.GetChar();
-  XR_ASSERT(XonParser, !pc.IsOver(pStart));
-  ElementResult er = { true, *pStart == kObjectBegin ?
+  const char* start = pc.GetChar();
+  XR_ASSERT(XonParser, !pc.IsOver(start));
+  ElementResult er = { true, *start == kObjectBegin ?
     ElementResult::Type::Object : ElementResult::Type::String };
   switch(er.type)
   {
@@ -180,20 +180,20 @@ XonParser::ElementResult XonParser::ParseElement(ParserCore& pc, String& strOut)
 //==============================================================================
 bool XonParser::ParseString(ParserCore& pc, String& strOut)
 {
-  const char* pStart = pc.GetChar();
+  const char* start = pc.GetChar();
 
-  XR_ASSERT(XonParser, !pc.IsOver(pStart));
-  XR_ASSERT(XonParser, !isspace(*pStart));
-  bool result = !(*pStart == kKey || *pStart == kNextValue);
+  XR_ASSERT(XonParser, !pc.IsOver(start));
+  XR_ASSERT(XonParser, !isspace(*start));
+  bool result = !(*start == kKey || *start == kNextValue);
   if (result)
   {
-    const bool isQuoted = *pStart == kQuot;
+    const bool isQuoted = *start == kQuot;
     strOut.isQuoted = isQuoted;
     if (isQuoted)
     {
       // Find the first unescaped quote.
-      pStart = pc.SkipChar();
-      result = !pc.IsOver(pStart);
+      start = pc.SkipChar();
+      result = !pc.IsOver(start);
       while(result)
       {
         result = !pc.IsOver(pc.RequireChar(kQuot));
@@ -214,8 +214,8 @@ bool XonParser::ParseString(ParserCore& pc, String& strOut)
 
       if (result)
       {
-        strOut.length = pc.GetChar() - pStart;
-        strOut.pStart = pStart;
+        strOut.length = pc.GetChar() - start;
+        strOut.start = start;
         pc.SkipChar();
       }
     }
@@ -224,20 +224,20 @@ bool XonParser::ParseString(ParserCore& pc, String& strOut)
       // No quotes; find the end of the string: special character, space or end of
       // buffer. Even though the buffer really should not end at this point, this is
       // not an error from the viewpoint of the string, so we're not flagging it here.
-      const char* pEnd = pc.GetChar(); // same as start
-      while (!isspace(*pEnd) &&
-        !(*pEnd == kNextValue || *pEnd == kKey || *pEnd == kComment || *pEnd == kObjectEnd ||
-          *pEnd == kObjectBegin))
+      const char* end = pc.GetChar(); // same as start
+      while (!isspace(*end) &&
+        !(*end == kNextValue || *end == kKey || *end == kComment || *end == kObjectEnd ||
+          *end == kObjectBegin))
       {
-        pEnd = pc.SkipChar();
-        if (pc.IsOver(pEnd))
+        end = pc.SkipChar();
+        if (pc.IsOver(end))
         {
           break;
         }
       }
 
-      strOut.length = pEnd - pStart;
-      strOut.pStart = pStart;
+      strOut.length = end - start;
+      strOut.start = start;
     }
   }
 
@@ -247,24 +247,24 @@ bool XonParser::ParseString(ParserCore& pc, String& strOut)
 //==============================================================================
 const char* XonParser::ProcessComments(ParserCore& pc)
 {
-  const char* pChar(pc.ExpectChar());
-  while (!pc.IsOver(pChar) && *pChar == kComment)
+  const char* charp(pc.ExpectChar());
+  while (!pc.IsOver(charp) && *charp == kComment)
   {
     // Skip all characters in this row.
     int row = pc.GetRow();
     while (!pc.IsOver(pc.SkipChar()) && pc.GetRow() == row)
     {}
 
-    pChar = pc.ExpectChar();
+    charp = pc.ExpectChar();
   }
-  return pChar;
+  return charp;
 }
 
 //==============================================================================
-bool  XonParser::DoCallback(Event e, const String* pData)
+bool  XonParser::DoCallback(Event e, const String* data)
 {
-  XR_ASSERT(XonParser, m_pCallback != nullptr);
-  return (*m_pCallback)(e, pData, m_pCallbackUser);
+  XR_ASSERT(XonParser, m_callback != nullptr);
+  return (*m_callback)(e, data, m_callbackUser);
 }
 
 } // XR

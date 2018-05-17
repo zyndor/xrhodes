@@ -10,8 +10,8 @@ namespace XR
 {
 
 //==============================================================================
-SharedPoolAllocatorCore::SharedPoolAllocatorCore(Pool* pPool) throw()
-: m_pPool(pPool)
+SharedPoolAllocatorCore::SharedPoolAllocatorCore(Pool* pool) throw()
+: m_pool(pool)
 {}
 
 //==============================================================================

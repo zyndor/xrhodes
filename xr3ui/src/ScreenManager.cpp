@@ -13,7 +13,7 @@ namespace XR
 //==============================================================================
 ScreenManager::ScreenManager()
 : m_stack(),
-  m_pPrevious(0),
+  m_previous(0),
   m_container(),
   m_notifier()
 {}
@@ -34,7 +34,7 @@ void  ScreenManager::Change(Screen& screen, int32_t delayMs)
     pPrevious->Hide(delayMs);
     m_stack.pop_back();
   }
-  m_pPrevious = pPrevious;
+  m_previous = pPrevious;
 
   m_stack.push_back(&screen);
   screen.Show(*this, delayMs);
@@ -62,7 +62,7 @@ void  ScreenManager::Pop(int32_t delayMs)
   _ClearExiting();
 
   Screen* pCurrent(m_stack.back());
-  m_pPrevious = pCurrent;
+  m_previous = pCurrent;
 
   pCurrent->Hide(delayMs);
   m_stack.pop_back();
@@ -85,12 +85,12 @@ void  ScreenManager::Update(int32_t ms)
     m_stack.back()->Update(ms);
   }
 
-  if (m_pPrevious != 0)
+  if (m_previous != 0)
   {
-    m_pPrevious->Update(ms);
-    if (m_pPrevious->GetState() == Screen::S_HIDDEN)
+    m_previous->Update(ms);
+    if (m_previous->GetState() == Screen::S_HIDDEN)
     {
-      m_pPrevious = 0;
+      m_previous = 0;
     }
   }
 }
@@ -120,13 +120,13 @@ void  ScreenManager::Shutdown()
 //==============================================================================
 void  ScreenManager::_ClearExiting()
 {
-  if (m_pPrevious != 0)
+  if (m_previous != 0)
   {
-    if (m_pPrevious->GetState() <= Screen::S_HIDING)
+    if (m_previous->GetState() <= Screen::S_HIDING)
     {
-      m_pPrevious->Hide(0);
+      m_previous->Hide(0);
     }
-    m_pPrevious = 0;
+    m_previous = 0;
   }
 }
 

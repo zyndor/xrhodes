@@ -70,52 +70,52 @@ bool UIVerticalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e )
 }
 
 //==============================================================================
-void UIVerticalScrollingLayout::_AlignElement( UIElement* pElem )
+void UIVerticalScrollingLayout::_AlignElement( UIElement* elem )
 {
   switch (m_align)
   {
   case  AL_LOW:
-    pElem->x = x;
+    elem->x = x;
     break;
 
   case  AL_CENTER:
-    pElem->x = x + (w - pElem->w) / 2;
+    elem->x = x + (w - elem->w) / 2;
     break;
 
   case  AL_HIGH:
-    pElem->x = x + w - pElem->w;
+    elem->x = x + w - elem->w;
     break;
 
   case  AL_NOALIGN:
     break;
   }
 
-  if (m_lElements.size() > 0)
+  if (m_elements.size() > 0)
   {
     if (m_growDir == GD_POSITIVE)
     {
-      pElem->y = m_lElements.back()->y + m_lElements.back()->h + m_spacing;
+      elem->y = m_elements.back()->y + m_elements.back()->h + m_spacing;
     }
     else
     {
-      pElem->y = m_lElements.back()->y - (pElem->h + m_spacing);
+      elem->y = m_elements.back()->y - (elem->h + m_spacing);
     }
   }
   else
   {
     if (m_growDir == GD_POSITIVE)
     {
-      pElem->y = y;
+      elem->y = y;
     }
     else
     {
-      pElem->y = y + h - pElem->h;
+      elem->y = y + h - elem->h;
     }
 
-    pElem->y += m_yOffset;
+    elem->y += m_yOffset;
   }
 
-  pElem->OnChange();
+  elem->OnChange();
 }
 
 //==============================================================================
