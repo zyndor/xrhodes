@@ -22,7 +22,7 @@ namespace JSON
 class Writer
 {
   XR_NONCOPY_DECL(Writer)
-  
+
 public:
   //
   enum  Type
@@ -31,7 +31,7 @@ public:
     OBJECT,
     ARRAY
   };
-  
+
   enum  EscapedChar
   {
     EC_QUOT,
@@ -49,7 +49,7 @@ public:
   static const char   kIndent;
 
   static const char* const kEscapeChars;
-  static const char* const karEscapeSub[kNumEscapedChars];
+  static const char* const kEscapeSequences[kNumEscapedChars];
 
   // structors
   explicit Writer(uint32_t maxDepth = kMaxParseDepthDefault);
@@ -62,15 +62,15 @@ public:
 
   Writer& Start(Type rootType);
 
-  Writer& WriteValue(const char* pKey, const char* pValue);
-  Writer& WriteValue(const char* pKey, const int32_t value);
-  Writer& WriteValue(const char* pKey, const double value);
-  Writer& WriteValue(const char* pKey, bool value);
+  Writer& WriteValue(const char* key, const char* value);
+  Writer& WriteValue(const char* key, const int32_t value);
+  Writer& WriteValue(const char* key, const double value);
+  Writer& WriteValue(const char* key, bool value);
 
-  Writer& WriteObject(const char* pKey);
-  Writer& WriteArray(const char* pKey);
+  Writer& WriteObject(const char* key);
+  Writer& WriteArray(const char* key);
 
-  Writer& WriteArrayElement(const char* pValue);
+  Writer& WriteArrayElement(const char* value);
   Writer& WriteArrayElement(int32_t value);
   Writer& WriteArrayElement(double value);
   Writer& WriteArrayElement(bool value);
@@ -84,7 +84,7 @@ public:
 
 protected:
   // types
-  struct Scope 
+  struct Scope
   {
     Type  type;
     bool  isEmpty;
@@ -95,10 +95,10 @@ protected:
   void  _AddIndent();
   void  _AddSpace();
   void  _PushScope(Type type);
-  void  _WriteKey( const char* pKey );
+  void  _WriteKey( const char* key );
   void  _WriteComma();
-  void  _WriteStringValue( const char* pValue );
-  void  _ProcessEscaped( const char* pValue );
+  void  _WriteStringValue( const char* value );
+  void  _ProcessEscaped( const char* value );
 
   // data
   bool  m_allowLinebreaks = false;

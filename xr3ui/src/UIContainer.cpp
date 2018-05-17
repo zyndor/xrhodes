@@ -14,7 +14,7 @@ namespace XR
 //==============================================================================
 UIContainer::UIContainer()
 : UIElement(),
-  m_lElements()
+  m_elements()
 {}
 
 //==============================================================================
@@ -24,31 +24,31 @@ UIContainer::~UIContainer()
 //==============================================================================
 void UIContainer::Render(IUIRenderer& renderer) const
 {
-  std::for_each(m_lElements.begin(), m_lElements.end(),
+  std::for_each(m_elements.begin(), m_elements.end(),
     Caller<const UIElement, void, IUIRenderer&>(&UIElement::Render, renderer));
 }
 
 //==============================================================================
-bool  UIContainer::AddElement(UIElement* pElem)
+bool  UIContainer::AddElement(UIElement* elem)
 {
-  XR_ASSERTMSG(UIContainer, pElem != 0,
+  XR_ASSERTMSG(UIContainer, elem != 0,
     ("Trying to add NULL element to UIContainer."));
-  XR_ASSERTMSG(UIContainer, pElem != this,
+  XR_ASSERTMSG(UIContainer, elem != this,
     ("Trying to add UIContainer to itself."));
 
-  UIElement::List::iterator i0(std::find(m_lElements.begin(), m_lElements.end(), pElem));
-  bool  success(i0 == m_lElements.end());
+  UIElement::List::iterator i0(std::find(m_elements.begin(), m_elements.end(), elem));
+  bool  success(i0 == m_elements.end());
   if (success)
   {
-    UIContainer*  pParent(pElem->GetParent());
-    if (pParent != 0)
+    UIContainer*  parent = elem->GetParent();
+    if (parent != 0)
     {
-      pParent->RemoveElement(pElem);
+      parent->RemoveElement(elem);
     }
 
-    pElem->SetParent(this);
+    elem->SetParent(this);
 
-    _AddChild(pElem);
+    _AddChild(elem);
   }
   //else
   //{
@@ -58,20 +58,20 @@ bool  UIContainer::AddElement(UIElement* pElem)
 }
 
 //==============================================================================
-bool  UIContainer::RemoveElement(UIElement* pElem)
+bool  UIContainer::RemoveElement(UIElement* elem)
 {
-  UIElement::List::iterator i0(std::find(m_lElements.begin(), m_lElements.end(), pElem));
-  bool  success(i0 != m_lElements.end());
+  UIElement::List::iterator i0(std::find(m_elements.begin(), m_elements.end(), elem));
+  bool  success(i0 != m_elements.end());
   if (success)
   {
     (*i0)->SetParent(0);
-    _RealignElements(m_lElements.erase(i0));
+    _RealignElements(m_elements.erase(i0));
   }
   return success;
 }
 
 //==============================================================================
-void UIContainer::_AlignElement(UIElement* pElem)
+void UIContainer::_AlignElement(UIElement* elem)
 {
   // do some nothings
 }
@@ -80,7 +80,7 @@ void UIContainer::_AlignElement(UIElement* pElem)
 void UIContainer::_RealignElements(UIElement::List::iterator i)
 {
   UIElement::List el;
-  el.splice(el.end(), m_lElements, i, m_lElements.end());
+  el.splice(el.end(), m_elements, i, m_elements.end());
 
   for (UIElement::List::iterator i0(el.begin()), i1(el.end()); i0 != i1; ++i0)
   {
@@ -91,24 +91,24 @@ void UIContainer::_RealignElements(UIElement::List::iterator i)
 //==============================================================================
 void UIContainer::RemoveAllElements()
 {
-  for (UIElement::List::iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
     (*i0)->SetParent(0);
   }
-  m_lElements.clear();
+  m_elements.clear();
 }
 
 //==============================================================================
-void UIContainer::_AddChild(UIElement* pElem)
+void UIContainer::_AddChild(UIElement* elem)
 {
-  _AlignElement(pElem);
-  m_lElements.push_back(pElem);
+  _AlignElement(elem);
+  m_elements.push_back(elem);
 }
 
 //==============================================================================
 void UIContainer::OnChange()
 {
-  _RealignElements(m_lElements.begin());
+  _RealignElements(m_elements.begin());
 }
 
 //==============================================================================
@@ -137,7 +137,7 @@ void UIContainer::SetSizeToContent()
 void UIContainer::_SetWidthToContent()
 {
   int wNew(0);
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
     int wElem((*i0)->w);
     if (wElem > wNew)
@@ -153,7 +153,7 @@ void UIContainer::_SetWidthToContent()
 void UIContainer::_SetHeightToContent()
 {
   int hNew(0);
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
     int hElem((*i0)->h);
     if (hElem > hNew)
@@ -166,12 +166,12 @@ void UIContainer::_SetHeightToContent()
 }
 
 //==============================================================================
-bool UIContainer::MoveUpElement(UIElement* pElem)
+bool UIContainer::MoveUpElement(UIElement* elem)
 {
-  bool  success(RemoveElement(pElem));
+  bool  success(RemoveElement(elem));
   if (success)
   {
-    _AddChild(pElem);
+    _AddChild(elem);
   }
   return success;
 }
@@ -180,11 +180,11 @@ bool UIContainer::MoveUpElement(UIElement* pElem)
 bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e)
 {
   bool  isHandled(false);
-  for (UIElement::List::iterator i0(m_lElements.begin()), i1(m_lElements.end());
+  for (UIElement::List::iterator i0(m_elements.begin()), i1(m_elements.end());
     i0 != i1; ++i0)
   {
-    UIElement*  pElem(*i0);
-    if (pElem->OnMouseAction(e))
+    UIElement*  elem(*i0);
+    if (elem->OnMouseAction(e))
     {
       isHandled = true;
       break;
@@ -197,11 +197,11 @@ bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e)
 bool UIContainer::OnMouseMotion(const Input::MouseMotionEvent& e)
 {
   bool  handled(false);
-  for (UIElement::List::iterator i0(m_lElements.begin()), i1(m_lElements.end());
+  for (UIElement::List::iterator i0(m_elements.begin()), i1(m_elements.end());
     i0 != i1; ++i0)
   {
-    UIElement*  pElem(*i0);
-    if (pElem->OnMouseMotion(e))
+    UIElement*  elem(*i0);
+    if (elem->OnMouseMotion(e))
     {
       handled = true;
       break;

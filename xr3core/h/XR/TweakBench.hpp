@@ -36,7 +36,7 @@ public:
     };
 
     Type  type;
-    void* pVariable;
+    void* variable;
   };
 
   // structors
@@ -50,7 +50,7 @@ public:
   bool    Register(uint32_t name, float& var);
   bool    Register(uint32_t name, int& var);
   bool    Register(uint32_t name, bool& var);
-  
+
   template  <typename T>
   bool    Get(uint32_t name, T& val) const;
 
@@ -64,7 +64,7 @@ public:
   bool    Set(uint32_t name, float val);
   bool    Set(uint32_t name, int val);
   bool    Set(uint32_t name, bool val);
-  
+
   Variable::Type  GetType(uint32_t name) const;
 
 protected:

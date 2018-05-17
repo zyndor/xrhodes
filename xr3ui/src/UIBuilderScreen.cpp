@@ -22,7 +22,7 @@ enum
   kNumTags
 };
 
-static const char* const karTag[kNumTags] =
+static const char* const kTags[kNumTags] =
 {
   "listener",
   "tweening",
@@ -30,7 +30,7 @@ static const char* const karTag[kNumTags] =
 };
 
 //==============================================================================
-const char* const UIBuilderScreen::karAnchorName[] =
+const char* const UIBuilderScreen::kAnchorName[] =
 {
   "top-left",
   "top",
@@ -49,10 +49,10 @@ UIBuilderScreen::UIBuilderScreen(const UIBuilder::Configuration& cfg)
   m_root(),
   m_builder(),
   m_padding(0),
-  m_pTweenIn(0),
-  m_pTweenInData(0),
-  m_pTweenOut(0),
-  m_pTweenOutData(0)
+  m_tweenIn(nullptr),
+  m_tweenInData(nullptr),
+  m_tweenOut(nullptr),
+  m_tweenOutData(nullptr)
 {}
 
 //==============================================================================
@@ -68,22 +68,22 @@ void  UIBuilderScreen::SetConfiguration(const UIBuilder::Configuration& cfg)
 }
 
 //==============================================================================
-bool  UIBuilderScreen::Build(tinyxml2::XMLElement* pXml)
+bool  UIBuilderScreen::Build(tinyxml2::XMLElement* xml)
 {
 #ifdef  XR_DEBUG
-  tinyxml2::XMLDocument*  pDoc = pXml->GetDocument();
-  m_debugName = pDoc ? pDoc->Value() : "unknown";
+  tinyxml2::XMLDocument*  doc = xml->GetDocument();
+  m_debugName = doc ? doc->Value() : "unknown";
 #endif  //XR_DEBUG
 
   Destroy();
 
-  XR_ASSERT(UIBuilderScreen, pXml != 0);
+  XR_ASSERT(UIBuilderScreen, xml != 0);
 
-  bool  result(m_builder.Build(pXml, m_root));
+  bool  result(m_builder.Build(xml, m_root));
   if(result)
   {
-    _ProcessListeners(pXml);
-    _ProcessTweening(pXml);
+    _ProcessListeners(xml);
+    _ProcessTweening(xml);
 
     Reposition(Gfx::GetWidth(), Gfx::GetHeight());
   }
@@ -108,17 +108,17 @@ void  UIBuilderScreen::SetPadding(int padding)
 }
 
 //==============================================================================
-void  UIBuilderScreen::SetTweenIn(TweenCallback pOnTweenIn, void* pData)
+void  UIBuilderScreen::SetTweenIn(TweenCallback onTweenIn, void* data)
 {
-  m_pTweenIn = pOnTweenIn;
-  m_pTweenInData = pData;
+  m_tweenIn = onTweenIn;
+  m_tweenInData = data;
 }
 
 //==============================================================================
-void  UIBuilderScreen::SetTweenOut(TweenCallback pOnTweenOut, void* pData)
+void  UIBuilderScreen::SetTweenOut(TweenCallback onTweenOut, void* data)
 {
-  m_pTweenOut= pOnTweenOut;
-  m_pTweenOutData = pData;
+  m_tweenOut= onTweenOut;
+  m_tweenOutData = data;
 }
 
 //==============================================================================
@@ -133,20 +133,20 @@ void  UIBuilderScreen::MoveTweening(int x, int y)
 //==============================================================================
 void  UIBuilderScreen::_AddElements()
 {
-  m_pManager->GetContainer().AddElement(&m_root);
+  m_manager->GetContainer().AddElement(&m_root);
 }
 
 //==============================================================================
 void  UIBuilderScreen::_Show(uint32_t ms)
 {
-  if (m_pTweenIn != 0 && !m_tweening.empty())
+  if (m_tweenIn != 0 && !m_tweening.empty())
   {
-    float     percent(1.0f / GetNumTweening());
+    float     percent = 1.0f / GetNumTweening();
     Tweenable t = { 0, 0, percent, ms };
     while (t.id < GetNumTweening())
     {
-      t.pElem = m_tweening[t.id];
-      (*m_pTweenIn)(t, m_pTweenInData);
+      t.elem = m_tweening[t.id];
+      (*m_tweenIn)(t, m_tweenInData);
       t.percent += percent;
       ++t.id;
     }
@@ -156,14 +156,14 @@ void  UIBuilderScreen::_Show(uint32_t ms)
 //==============================================================================
 void  UIBuilderScreen::_Hide(uint32_t ms)
 {
-  if (m_pTweenOut != 0 && !m_tweening.empty())
+  if (m_tweenOut != 0 && !m_tweening.empty())
   {
-    float     percent(1.0f / GetNumTweening());
+    float     percent = 1.0f / GetNumTweening();
     Tweenable t = { 0, 0, percent, ms };
     while (t.id < GetNumTweening())
     {
-      t.pElem = m_tweening[t.id];
-      (*m_pTweenOut)(t, m_pTweenOutData);
+      t.elem = m_tweening[t.id];
+      (*m_tweenOut)(t, m_tweenOutData);
       t.percent += percent;
       ++t.id;
     }
@@ -173,7 +173,7 @@ void  UIBuilderScreen::_Hide(uint32_t ms)
 //==============================================================================
 void  UIBuilderScreen::_RemoveElements()
 {
-  m_pManager->GetContainer().RemoveElement(&m_root);
+  m_manager->GetContainer().RemoveElement(&m_root);
 }
 
 //==============================================================================
@@ -185,12 +185,12 @@ void  UIBuilderScreen::Reposition(int width, int height)
   const int arY[3] = { m_padding, height / 2, height - m_padding };
   for(int i = 0; i < kNumAnchors; ++i)
   {
-    UIElement*  p(m_builder.GetElement(karAnchorName[i]));
-    if(p != 0)
+    UIElement*  elem = m_builder.GetElement(kAnchorName[i]);
+    if(elem != 0)
     {
       int y(i / 3);
       int x(i - (y * 3));
-      p->Align(arX[x], arY[y],
+      elem->Align(arX[x], arY[y],
         static_cast<UIElement::Alignment>(x + UIElement::AL_LOW),
         static_cast<UIElement::Alignment>(y + UIElement::AL_LOW));
     }
@@ -200,7 +200,7 @@ void  UIBuilderScreen::Reposition(int width, int height)
 //==============================================================================
 void  UIBuilderScreen::_Register()
 {
-  UIEventNotifier&  dispatcher(m_pManager->GetNotifier());
+  UIEventNotifier&  dispatcher = m_manager->GetNotifier();
   for(auto l: m_listeners)
   {
     dispatcher.AddListener(l);
@@ -210,7 +210,7 @@ void  UIBuilderScreen::_Register()
 //==============================================================================
 void  UIBuilderScreen::_Unregister()
 {
-  UIEventNotifier&  dispatcher(m_pManager->GetNotifier());
+  UIEventNotifier&  dispatcher = m_manager->GetNotifier();
   for (auto l : m_listeners)
   {
     dispatcher.RemoveListener(l);
@@ -218,46 +218,46 @@ void  UIBuilderScreen::_Unregister()
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessListeners(tinyxml2::XMLElement* pXml)
+void  UIBuilderScreen::_ProcessListeners(tinyxml2::XMLElement* xml)
 {
-  tinyxml2::XMLElement* pListenerXml(pXml->FirstChildElement(karTag[TAG_LISTENER]));
-  UIElementList l;
-  while (pListenerXml != 0)
+  tinyxml2::XMLElement* listenerXml = xml->FirstChildElement(kTags[TAG_LISTENER]);
+  UIElementList l;  // TODO: replace with vector, reserve, then std::move.
+  while (listenerXml)
   {
-    const char* pHandle(pListenerXml->Attribute(karTag[TAG_ID]));
-    XR_ASSERTMSG(UIBuilderScreen, pHandle != 0, ("'%s' is required in '%s'",
-      karTag[TAG_ID], karTag[TAG_LISTENER]));
+    const char* handle = listenerXml->Attribute(kTags[TAG_ID]);
+    XR_ASSERTMSG(UIBuilderScreen, handle != 0, ("'%s' is required in '%s'",
+      kTags[TAG_ID], kTags[TAG_LISTENER]));
 
-    UIElement*  pElem(m_builder.GetElement(pHandle));
-    XR_ASSERTMSG(UIBuilderScreen, pElem != 0, ("the %s '%s' is undefined.",
-      karTag[TAG_ID], pHandle));
+    UIElement*  elem = m_builder.GetElement(handle);
+    XR_ASSERTMSG(UIBuilderScreen, elem != 0, ("the %s '%s' is undefined.",
+      kTags[TAG_ID], handle));
 
-    l.push_back(pElem);
+    l.push_back(elem);
 
-    pListenerXml = pListenerXml->NextSiblingElement(karTag[TAG_LISTENER]);
+    listenerXml = listenerXml->NextSiblingElement(kTags[TAG_LISTENER]);
   }
 
   m_listeners.assign(l.begin(), l.end());
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* pXml)
+void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* xml)
 {
-  tinyxml2::XMLElement* pTweeningXml(pXml->FirstChildElement(karTag[TAG_TWEENING]));
-  UIElementList l;
-  while (pTweeningXml != 0)
+  tinyxml2::XMLElement* tweeningXml = xml->FirstChildElement(kTags[TAG_TWEENING]);
+  UIElementList l;  // TODO: replace with vector, reserve, then std::move.
+  while (tweeningXml)
   {
-    const char* pHandle(pTweeningXml->Attribute(karTag[TAG_ID]));
-    XR_ASSERTMSG(UIBuilderScreen, pHandle != 0, ("'%s' is required in '%s'",
-      karTag[TAG_ID], karTag[TAG_TWEENING]));
+    const char* handle = tweeningXml->Attribute(kTags[TAG_ID]);
+    XR_ASSERTMSG(UIBuilderScreen, handle != 0, ("'%s' is required in '%s'",
+      kTags[TAG_ID], kTags[TAG_TWEENING]));
 
-    UIElement*  pElem(m_builder.GetElement(pHandle));
-    XR_ASSERTMSG(UIBuilderScreen, pElem != 0, ("the %s '%s' is undefined.",
-      karTag[TAG_ID], pHandle));
+    UIElement*  elem = m_builder.GetElement(handle);
+    XR_ASSERTMSG(UIBuilderScreen, elem != 0, ("the %s '%s' is undefined.",
+      kTags[TAG_ID], handle));
 
-    l.push_back(pElem);
+    l.push_back(elem);
 
-    pTweeningXml = pTweeningXml->NextSiblingElement(karTag[TAG_TWEENING]);
+    tweeningXml = tweeningXml->NextSiblingElement(kTags[TAG_TWEENING]);
   }
 
   m_tweening.assign(l.begin(), l.end());

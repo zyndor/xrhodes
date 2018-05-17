@@ -29,8 +29,8 @@ public:
   // static
   static const int  kMaxFrames = 8;
 
-  static void* Allocate(size_t size, void* pUser);
-  static void  Deallocate(void* pMem, void* pUser);
+  static void* Allocate(size_t size, void* userData);
+  static void  Deallocate(void* buffer, void* userData);
 
   // structors
   Pool();
@@ -41,9 +41,9 @@ public:
 
   ///@brief Constructs a Pool with a buffer of @a size bytes. @a isAuto
   /// signifies that the Pool will delete[] the memory on destruction or
-  /// SetBuffer(). If a size > 0 is specified with a @a parBuffer of 0,
+  /// SetBuffer(). If a size > 0 is specified with a @a buffer of 0,
   /// the buffer will be allocated with new[].
-  Pool(size_t size, bool isAuto, Byte* parBuffer); // ownership transfer
+  Pool(size_t size, bool isAuto, Byte* buffer); // ownership transfer
 
   ~Pool();
 
@@ -56,18 +56,18 @@ public:
   Byte* RegainBuffer();
 
   ///@brief Sets a buffer for the Pool. @a isAuto signifies ownership transfer
-  /// of @a parBuffer to the pool. This memory will be delete[]d on destruction
+  /// of @a buffer to the pool. This memory will be delete[]d on destruction
   /// of the Pool or the next SetBuffer() call, whichever is sooner. If a
-  /// @a size > 0 is specified with a @a parBuffer of 0, the buffer will be
+  /// @a size > 0 is specified with a @a buffer of 0, the buffer will be
   /// allocated with new[] and @a isAuto will be set to true.
-  ///@note  You have to make sure that @a parBuffer (unless is a 0 pointer),
+  ///@note  You have to make sure that @a buffer (unless is a 0 pointer),
   /// does span @a size bytes.
-  void  SetBuffer(size_t size, bool isAuto, Byte* parBuffer); // ownership transfer
+  void  SetBuffer(size_t size, bool isAuto, Byte* buffer); // ownership transfer
 
   ///@return  A @a size bytes chunk of memory, or 0 if there was not enough
   /// memory left in the pool.
   void* Allocate(size_t numBytes);
-  
+
   ///@brief Returns the allocation pointer to the beginning of the frame,
   /// making its memory available to be allocated again.
   ///@note  You will have to make sure that the objects on the frame are
@@ -89,7 +89,7 @@ public:
 
   ///@return  The number of frames on the Pool.
   size_t GetNumFrames() const;
-  
+
   ///@brief Creates a frame beginning at the point of the next allocation.
   void  Push();
 
@@ -106,12 +106,12 @@ protected:
   typedef std::list<Byte*> FrameStack;
 
   // data
-  Byte* m_parBuffer;
+  Byte* m_buffer;
   bool  m_isAuto;
 
   FrameStack  m_frames;
-  Byte*       m_pNext;
-  Byte*       m_pEnd;
+  Byte*       m_next;
+  Byte*       m_end;
 };
 
 //==============================================================================
@@ -120,35 +120,35 @@ protected:
 inline
 bool  Pool::HasBuffer() const
 {
-  return m_parBuffer != nullptr;
+  return m_buffer != nullptr;
 }
 
 //==============================================================================
 inline
 size_t Pool::CalculateSize() const
 {
-  return m_pEnd - m_parBuffer;
+  return m_end - m_buffer;
 }
 
 //==============================================================================
 inline
 size_t Pool::CalculateUsed() const
 {
-  return m_pNext - m_parBuffer;
+  return m_next - m_buffer;
 }
 
 //==============================================================================
 inline
 size_t Pool::CalculateFrameSize() const
 {
-  return m_pNext - (m_frames.empty() ? m_parBuffer : m_frames.back());
+  return m_next - (m_frames.empty() ? m_buffer : m_frames.back());
 }
 
 //==============================================================================
 inline
 size_t Pool::CalculateFree() const
 {
-  return m_pEnd - m_pNext;
+  return m_end - m_next;
 }
 
 //==============================================================================

@@ -16,7 +16,7 @@ namespace XR
 {
 
 //==============================================================================
-struct Vector3 
+struct Vector3
 {
   // types
   enum
@@ -61,24 +61,24 @@ struct Vector3
   // data
   union
   {
-    struct 
+    struct
     {
       float  x, y, z;
     };
-    float  arData[kNumComponents];
+    float  data[kNumComponents];
   };
 
   // structors
   Vector3()
   : x(.0f), y(.0f), z(.0f)
   {}
-  
-  explicit Vector3(float const parData[kNumComponents])
-  : x(parData[X]),
-    y(parData[Y]),
-    z(parData[Z])
+
+  explicit Vector3(float const data_[kNumComponents])
+  : x(data_[X]),
+    y(data_[Y]),
+    z(data_[Z])
   {}
-  
+
   Vector3(float x_, float y_, float z_)
   : x(x_),
     y(y_),
@@ -172,7 +172,7 @@ struct Vector3
   {
     return Vector3(x - rhs.x, y - rhs.y, z - rhs.z);
   }
-  
+
   Vector3 operator -() const
   {
     return Vector3(-x, -y, -z);

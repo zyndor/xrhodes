@@ -35,18 +35,18 @@ public:
 
   struct  Tweenable
   {
-    UIElement*  pElem;
+    UIElement*  elem;
     size_t      id;
     float       percent;
     uint32_t    delayMs;
   };
 
-  typedef void(*TweenCallback)(Tweenable& t, void* pUser);
+  typedef void(*TweenCallback)(Tweenable& t, void* userData);
 
   typedef std::vector<UIElement*> UIElementVector;
 
   // static
-  static const char* const    karAnchorName[kNumAnchors];
+  static const char* const    kAnchorName[kNumAnchors];
 
   // structors
   explicit UIBuilderScreen(const UIBuilder::Configuration& cfg = UIBuilder::kDefaultConfig);
@@ -57,15 +57,15 @@ public:
 
   void                SetConfiguration(const UIBuilder::Configuration& cfg);
 
-  bool                Build(tinyxml2::XMLElement* pXml);
-  UIElement*          GetElement(const char* pName);
+  bool                Build(tinyxml2::XMLElement* xml);
+  UIElement*          GetElement(const char* handle);
   UIElement*          GetElement(uint32_t hash);
 
   int                 GetPadding() const;
   void                SetPadding(int padding);
 
-  void                SetTweenIn(TweenCallback pOnTweenIn, void* pData);
-  void                SetTweenOut(TweenCallback pOnTweenIn, void* pData);
+  void                SetTweenIn(TweenCallback onTweenIn, void* userData);
+  void                SetTweenOut(TweenCallback onTweenIn, void* userData);
 
   size_t              GetNumListeners() const;
   UIElementVector const&  GetListeners() const; // no ownership transfer
@@ -89,11 +89,11 @@ protected:
   std::vector<UIElement*> m_listeners;
   std::vector<UIElement*> m_tweening;
 
-  TweenCallback m_pTweenIn;
-  void*         m_pTweenInData;
+  TweenCallback m_tweenIn;
+  void*         m_tweenInData;
 
-  TweenCallback m_pTweenOut;
-  void*         m_pTweenOutData;
+  TweenCallback m_tweenOut;
+  void*         m_tweenOutData;
 
   // internal
   virtual void  _AddElements();
@@ -104,17 +104,17 @@ protected:
   virtual void  _Register();
   virtual void  _Unregister();
 
-  void          _ProcessListeners(tinyxml2::XMLElement* pXml);
-  void          _ProcessTweening(tinyxml2::XMLElement* pXml);
+  void          _ProcessListeners(tinyxml2::XMLElement* xml);
+  void          _ProcessTweening(tinyxml2::XMLElement* xml);
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-UIElement*  UIBuilderScreen::GetElement(const char* pHandle)
+UIElement*  UIBuilderScreen::GetElement(const char* handle)
 {
-  return m_builder.GetElement(pHandle);
+  return m_builder.GetElement(handle);
 }
 
 //==============================================================================

@@ -49,7 +49,7 @@ bool  EventDispatcherCore::RemoveListener(void* pListener) // no ownership trans
     result = iFindPostponed != m_postponed.end();
     if (result)  // found it in postponed - remove instantly
     {
-      delete static_cast<ListenerBaseBase*>(iFindPostponed->pData);
+      delete static_cast<ListenerBaseBase*>(iFindPostponed->data);
       m_postponed.erase(iFindPostponed);
     }
   }
@@ -64,11 +64,11 @@ void  EventDispatcherCore::ProcessPostponed()
     switch(i.type)
     {
     case Postponed::ADD:
-      AddListenerImpl(static_cast<ListenerBaseBase*>(i.pData));
+      AddListenerImpl(static_cast<ListenerBaseBase*>(i.data));
       break;
 
     case Postponed::REMOVE:
-      RemoveListener(i.pData);
+      RemoveListener(i.data);
       break;
 
     case Postponed::CLEAR:
@@ -76,7 +76,7 @@ void  EventDispatcherCore::ProcessPostponed()
       break;
     }
   }
-  
+
   m_postponed.clear();
 }
 
@@ -98,7 +98,7 @@ void  EventDispatcherCore::Clear()
     {
       if (i.type == Postponed::ADD)
       {
-        delete static_cast<ListenerBaseBase*>(i.pData);
+        delete static_cast<ListenerBaseBase*>(i.data);
       }
     }
     m_postponed.clear();

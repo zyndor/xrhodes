@@ -31,27 +31,27 @@ IndexMesh::~IndexMesh()
 }
 
 //==============================================================================
-void  IndexMesh::SetIndexPattern(const uint16_t* pInds, uint32_t numInds, uint32_t numSets)
+void  IndexMesh::SetIndexPattern(const uint16_t* indices, uint32_t numInds, uint32_t numSets)
 {
-  XR_ASSERT(IndexMesh, pInds != nullptr);
+  XR_ASSERT(IndexMesh, indices != nullptr);
 
   uint16_t  shift = 0;
   for (decltype(numInds) i = 0; i < numInds; ++i)
   {
-    if (pInds[i] > shift)
+    if (indices[i] > shift)
     {
-      shift = pInds[i];
+      shift = indices[i];
     }
   }
 
-  SetIndexPattern(pInds, numInds, shift + 1, numSets);
+  SetIndexPattern(indices, numInds, shift + 1, numSets);
 }
 
 //==============================================================================
-void IndexMesh::SetIndexPattern(const uint16_t * pInds, uint32_t numInds,
+void IndexMesh::SetIndexPattern(const uint16_t * indices, uint32_t numInds,
   uint16_t shift, uint32_t numSets)
 {
-  XR_ASSERT(IndexMesh, pInds != nullptr);
+  XR_ASSERT(IndexMesh, indices != nullptr);
 
   uint32_t indexOffset = 0;
   uint32_t vertexOffset = 0;
@@ -60,7 +60,7 @@ void IndexMesh::SetIndexPattern(const uint16_t * pInds, uint32_t numInds,
   {
     for (decltype(numInds) j = 0; j < numInds; ++j)
     {
-      m_indices[indexOffset + j] = pInds[j] + vertexOffset;
+      m_indices[indexOffset + j] = indices[j] + vertexOffset;
     }
     indexOffset += numInds;
     vertexOffset += shift;

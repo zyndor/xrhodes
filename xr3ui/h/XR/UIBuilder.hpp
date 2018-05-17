@@ -24,25 +24,25 @@ class UIBuilder
 {
 public:
   // types
-  typedef UIElement*(*CreateCallback)(AllocateCallback pAllocate, void* pUser);
-  typedef bool(*InitCallback)(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-    UIContainer* pContainer, const UIBuilder& builder);
-  typedef std::string(*ProcessStringCallback)(const char* pName, void* pUser);
+  typedef UIElement*(*CreateCallback)(AllocateCallback allocate, void* userData);
+  typedef bool(*InitCallback)(tinyxml2::XMLElement* xml, UIElement* uiElem,
+    UIContainer* container, const UIBuilder& builder);
+  typedef std::string(*ProcessStringCallback)(const char* name, void* userData);
   using GetSpriteCallback = Sprite const*(*)(char const* name, void* userData);
 
   struct  Configuration
   {
     int                     maxDepth;
-    GetSpriteCallback       pGetSprite;
-    void*                   pGetSpriteData;
-    AllocateCallback        pAllocate;
-    void*                   pAllocateData;
-    DeallocateCallback      pDeallocate;
-    void*                   pDeallocateData;
-    ProcessStringCallback   pProcessText;
-    void*                   pProcessTextUser;
-    ProcessStringCallback   pFormatFileName;
-    void*                   pFormatFileNameUser;
+    GetSpriteCallback       getSprite;
+    void*                   getSpriteUserData;
+    AllocateCallback        allocate;
+    void*                   allocateUserData;
+    DeallocateCallback      deallocate;
+    void*                   deallocateUserData;
+    ProcessStringCallback   processText;
+    void*                   processTextUserData;
+    ProcessStringCallback   formatFileName;
+    void*                   formatFileNameUserData;
   };
 
   enum  XmlAlignValue
@@ -80,14 +80,14 @@ public:
   // static
   static const char* const    kInclude;
   static const uint32_t       kIncludeHash;
-  static const char* const    karpAlignValues[kNumAlignValues];
-  static const uint32_t       karAlignValueHash[kNumAlignValues];
+  static const char* const    kAlignValues[kNumAlignValues];
+  static const uint32_t       kAlignValueHashes[kNumAlignValues];
 
-  static const char* const    karpElementName[kNumUIElementTypes];
+  static const char* const    kElementNames[kNumUIElementTypes];
 
   static const Configuration  kDefaultConfig;
 
-  static int    GetXmlAlignment(tinyxml2::XMLElement* pXml, const char* pAttribName);
+  static int    GetXmlAlignment(tinyxml2::XMLElement* xml, const char* attribName);
 
   // structors
   explicit UIBuilder(const Configuration& cfg = kDefaultConfig);
@@ -99,24 +99,24 @@ public:
 
   void          SetMaxDepth(int maxDepth);
 
-  void          SetAllocateCallback(AllocateCallback pAllocateCb, void* pCbData);
-  void          SetDeallocateCallback(DeallocateCallback pAllocateCb, void* pCbData);
-  void          SetGetSpriteCallback(GetSpriteCallback pGetSpriteCb, void* pCbData);
+  void          SetAllocateCallback(AllocateCallback allocate, void* userData);
+  void          SetDeallocateCallback(DeallocateCallback allocate, void* userData);
+  void          SetGetSpriteCallback(GetSpriteCallback getSprite, void* userData);
 
   void*         Allocate(int size);
-  void          Deallocate(void* pBuffer);
-  const Sprite* GetSprite(const char* pName) const;
-  std::string   ProcessText(const char* pText) const;
+  void          Deallocate(void* buffer);
+  const Sprite* GetSprite(const char* name) const;
+  std::string   ProcessText(const char* text) const;
 
-  void          RegisterCreator(const char* pName, CreateCallback pCreateCb,
-                  InitCallback pInitCb, bool isContainer);
+  void          RegisterCreator(const char* name, CreateCallback createCb,
+                  InitCallback initCb, bool isContainer);
 
-  bool          RegisterNamedElement(const char* pName, UIElement* pUIElem);
+  bool          RegisterNamedElement(const char* name, UIElement* uiElem);
 
-  bool          Build(tinyxml2::XMLElement* pXml, UIContainer& container);
+  bool          Build(tinyxml2::XMLElement* xml, UIContainer& container);
 
   UIElement*    GetElement(uint32_t hash) const;
-  UIElement*    GetElement(const char* pHandle) const;
+  UIElement*    GetElement(const char* handle) const;
 
   void          Destroy();
 
@@ -124,12 +124,12 @@ protected:
   // types
   struct UICreatorRecord
   {
-    CreateCallback  pCreateCb;
-    InitCallback    pInitCb;
+    CreateCallback  createCb;
+    InitCallback    initCb;
     bool            isContainer;
 
 #if defined XR_DEBUG
-    const char* pName;
+    const char* name;
 #endif
   };
 
@@ -139,53 +139,51 @@ protected:
   typedef std::map<uint32_t, UIElement*>      ElementMap;
 
   // internal
-  bool  _Build(tinyxml2::XMLElement* pXml, UIContainer* pContainer, int& depth);
+  bool  _Build(tinyxml2::XMLElement* xml, UIContainer* container, int& depth);
 
-  void  _PostProcess(tinyxml2::XMLElement* pXml, UIElement* pUIElem);
-  void  _PostProcessContainer(tinyxml2::XMLElement* pXml, UIContainer* pUIContainer);
+  void  _PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem);
+  void  _PostProcessContainer(tinyxml2::XMLElement* xml, UIContainer* container);
 
   // data
   CreatorMap          m_creators;
   Configuration       m_cfg;
 
-  UIContainer*        m_pRoot;
+  UIContainer*        m_root;
   int                 m_depth;
-  UIElementList*      m_parLevels;
+  UIElementList*      m_levels;
 
   ElementMap          m_handles;
 };
 
 //==============================================================================
-void* NewAllocate(size_t size, void* pUser);
-void  NewDeallocate(void* pMem, void* pUser);
+void* NewAllocate(size_t size, void* userData);
+void  NewDeallocate(void* buffer, void* userData);
 
 //==============================================================================
-UIElement* UIBCreateUISpacer(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUILabel(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUIImage(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUIImagePanel(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalProgressBar(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIVerticalProgressBar(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalSlider(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIVerticalSlider(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIButton(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUICheckBox(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUIRadioButton(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUIAligner(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUICascader(AllocateCallback pAllocCb, void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalLayout(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIVerticalLayout(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIHorizontalScrollingLayout(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIVerticalScrollingLayout(AllocateCallback pAllocCb,
-  void* pAllocCbData);
-UIElement* UIBCreateUIGridLayout(AllocateCallback pAllocCb, void* pAllocCbData);
+UIElement* UIBCreateUISpacer(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUILabel(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIImage(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIImagePanel(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIHorizontalProgressBar(AllocateCallback allocCb,
+  void* userData);
+UIElement* UIBCreateUIVerticalProgressBar(AllocateCallback allocCb,
+  void* userData);
+UIElement* UIBCreateUIHorizontalSlider(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIVerticalSlider(AllocateCallback allocCb,
+  void* userData);
+UIElement* UIBCreateUIButton(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUICheckBox(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIRadioButton(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIAligner(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUICascader(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIHorizontalLayout(AllocateCallback allocCb,
+  void* userData);
+UIElement* UIBCreateUIVerticalLayout(AllocateCallback allocCb, void* userData);
+UIElement* UIBCreateUIHorizontalScrollingLayout(AllocateCallback allocCb,
+  void* userData);
+UIElement* UIBCreateUIVerticalScrollingLayout(AllocateCallback allocCb,
+  void* userData);
+UIElement* UIBCreateUIGridLayout(AllocateCallback allocCb, void* userData);
 
 //==============================================================================
 /// PLEASE NOTE THAT THE ATTRIBUTE NAMES ARE CASE SENSITIVE.
@@ -198,8 +196,8 @@ UIElement* UIBCreateUIGridLayout(AllocateCallback pAllocCb, void* pAllocCbData);
 /// *The notations #%, #.# and #x are supported and are used for scaling the
 /// value in the xml by Base (in the case of #%, percent scaling, meaning that
 /// the 1/100th of the value is used).
-bool UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIElement(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 //==============================================================================
 ///@brief Initialises a UIColoredElement from xml. Supported attributes:
@@ -207,8 +205,8 @@ bool UIBInitUIElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 ///  digit.
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIColoredElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIColoredElement(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 //==============================================================================
 ///@brief Initialises a UILabel from xml. The content of the element is used to
@@ -223,16 +221,16 @@ bool UIBInitUIColoredElement(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 ///  the height) characters.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUILabel(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUILabel(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 //==============================================================================
 ///@brief Initialises a UIImage from xml. Supported attributes:
 /// img: the name of the sprite to use. Compulsory.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIImage(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIImage(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 //==============================================================================
 ///@brief Initialises a UIImagePanel from xml. Supported attributes:
@@ -240,8 +238,8 @@ bool UIBInitUIImage(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 /// vSplit: vertical split as percentage of the image height. Defaults to .5.
 ///@note Passes the processing to UIBInitUIImage, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIImagePanel(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIImagePanel(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 //==============================================================================
 ///@brief Initialises a UIProgressBarBase from xml. Used for both horizontal
@@ -252,16 +250,16 @@ bool UIBInitUIImagePanel(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 ///  [.0, 1.0] range.
 ///@note Passes the processing to UIBInitUIImage, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIProgressBarBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIProgressBarBase(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UISliderBase from xml. Supported attributes:
 /// imgSlider: the name of the sprite to use as the slider. Compulsory.
 ///@note One of the bgMaterial and uv attributes is compulsory.
 ///@note Passes the processing to UIBInitUIImage, therefore the
 /// attributes listed there are handled.
-bool UIBInitUISliderBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUISliderBase(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UIButton from xml. Supported attributes:
 /// enabled: set to 0 / n{...} / N{...} to disable the button. The default is
@@ -274,23 +272,23 @@ bool UIBInitUISliderBase(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 ///  If not defined, will default to the value of imgDown.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIButton(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UICheckBox from xml. Supported attributes:
 /// selected: set to >0 / y{...} / Y{...} to check the box.
 /// imgSet: the sprite to superimpose it when the box is checked.
 ///@note Passes the processing to UIBInitUIButton, therefore the
 /// attributes listed there are handled.
-bool UIBInitUICheckBox(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUICheckBox(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UIRadioButton from xml. Supported attributes:
 /// group: the name of the UIRadioButton::Group to add the button to.
 ///@note Passes the processing to UIBInitUIColoredElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIRadioButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIRadioButton(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UIAligner from xml. Supported attributes:
 /// hAlign: horizontal alignment applied to the child elements. Accepted values
@@ -299,8 +297,8 @@ bool UIBInitUIRadioButton(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 ///  are: low/center/high/none.
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIAligner(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIAligner(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UICascader from xml. Supported attributes:
 /// hOffset: horizontal offset of cascading. *Base: own width.
@@ -310,8 +308,8 @@ bool UIBInitUIAligner(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 /// the 1/100th of the value is used).
 ///@note Passes the processing to UIBInitUIAligner, therefore the
 /// attributes listed there are handled.
-bool UIBInitUICascader(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUICascader(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UIGrowingLayout from xml. Supported attributes:
 /// align: alignment applied to the child elements. Accepted values are:
@@ -326,24 +324,24 @@ bool UIBInitUICascader(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
 /// the 1/100th of the value is used).
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIGrowingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIGrowingLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UIVerticalScrollingLayout from xml. Supported
 /// attributes:
 /// yOffset: the vertical offset into the container.
 ///@note Passes the processing to UIBInitUIGrowingLayout, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIVerticalScrollingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIVerticalScrollingLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UIHorizontalScrollingLayout from xml. Supported
 /// attributes:
 /// xOffset: the horoizontal offset into the container.
 ///@note Passes the processing to UIBInitUIGrowingLayout, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIHorizontalScrollingLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIHorizontalScrollingLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 ///@brief Initialises a UIGridLayout from xml. Supported Attributes:
 /// rows: number of rows for the layout.
@@ -361,8 +359,8 @@ bool UIBInitUIHorizontalScrollingLayout(tinyxml2::XMLElement* pXml, UIElement* p
 /// the 1/100th of the value is used).
 ///@note Passes the processing to UIBInitUIElement, therefore the
 /// attributes listed there are handled.
-bool UIBInitUIGridLayout(tinyxml2::XMLElement* pXml, UIElement* pUIElem,
-  UIContainer* pParent, const UIBuilder* pBuilder);
+bool UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  UIContainer* parent, const UIBuilder* builder);
 
 /// UIBuilder supports a few miscellaneous attributes. These are the following:
 /// handle: an id that you can then use to reference the element. Must be

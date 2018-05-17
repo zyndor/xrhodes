@@ -13,15 +13,15 @@ namespace XR
 {
 
 //==============================================================================
-JSON::Entity* LoadJSON(const char * pFilename, int maxDepth, bool quietErrors)
+JSON::Entity* LoadJSON(const char* filename, int maxDepth, bool quietErrors)
 {
-  XR_ASSERT(LoadJSON, pFilename != nullptr);
+  XR_ASSERT(LoadJSON, filename != nullptr);
   XR::FileBuffer  file;
-  if (!file.Open(pFilename, false))
+  if (!file.Open(filename, false))
   {
     if (!quietErrors)
     {
-      XR_ERROR(("Failed to open file '%s'", pFilename));
+      XR_ERROR(("Failed to open file '%s'", filename));
     }
     return nullptr;
   }
@@ -37,7 +37,7 @@ JSON::Entity* LoadJSON(const char * pFilename, int maxDepth, bool quietErrors)
   if (pJson == nullptr && !quietErrors)
   {
     XR_ERROR(("Failed to parse '%s': error around row %d char %d",
-      pFilename, reader.GetState().GetRow(), reader.GetState().GetColumn()));
+      filename, reader.GetState().GetRow(), reader.GetState().GetColumn()));
   }
 
   return pJson;

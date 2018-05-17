@@ -12,7 +12,7 @@ namespace XR
 
 //==============================================================================
 ActorInstanceCore::ActorInstanceCore()
-: pActionFinishedCbData(0),
+: onActionFinishedData(nullptr),
   m_nameHashNextAction(0),
   m_timeScaleNextAction(1.0f)
 {}

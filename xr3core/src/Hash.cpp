@@ -17,6 +17,7 @@ namespace XR
 namespace
 {
 
+//==============================================================================
 uint8_t ByteNoOp(uint8_t c)
 {
   return c;
@@ -128,9 +129,9 @@ uint32_t Hash::String32(const char* str)
 }
 
 //==============================================================================
-uint32_t Hash::String32(const char* str, size_t size)
+uint32_t Hash::String32(const char* string, size_t size)
 {
-  return Hash32<ToLower>(str, size, static_cast<uint32_t>(s_seed));
+  return Hash32<ToLower>(string, size, static_cast<uint32_t>(s_seed));
 }
 
 //==============================================================================
@@ -140,21 +141,21 @@ uint32_t Hash::Data32(const void* data, size_t size)
 }
 
 //==============================================================================
-uint64_t  Hash::String(const char* pString, bool assertUnique)
+uint64_t  Hash::String(const char* string, bool assertUnique)
 {
-  return String(pString, strlen(pString), assertUnique);
+  return String(string, strlen(string), assertUnique);
 }
 
 //==============================================================================
-uint64_t  Hash::String(const char* pString, size_t size, bool assertUnique)
+uint64_t  Hash::String(const char* string, size_t size, bool assertUnique)
 {
-  return MurmurHash64B<ToLower>(pString, size, s_seed);
+  return MurmurHash64B<ToLower>(string, size, s_seed);
 }
 
 //==============================================================================
-uint64_t  Hash::Data(const void* pData, size_t size)
+uint64_t  Hash::Data(const void* data, size_t size)
 {
-  return MurmurHash64B<ByteNoOp>(pData, size, s_seed);
+  return MurmurHash64B<ByteNoOp>(data, size, s_seed);
 }
 
 } // XR

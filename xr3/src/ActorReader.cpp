@@ -12,7 +12,7 @@ namespace XR
 //==============================================================================
 const int kMaxAnimationFrames = 256;
 
-const char* karActorTag[] =
+const char* kActorTags[] =
 {
   "name",
   "action"

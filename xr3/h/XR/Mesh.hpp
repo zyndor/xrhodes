@@ -62,12 +62,12 @@ public:
   ///@return Sets the indices to be a repeating pattern of @a numInds indices,
   /// copied @a numSets times, offset each time by the largest index + 1. i.e.
   /// SetIndexPattern({ 0, 2, 1 }, 3, 2) will create { 0, 2, 1, 3, 5, 4 }.
-  void  SetIndexPattern(const uint16_t* pInds, uint32_t numInds, uint32_t numSets);
+  void  SetIndexPattern(const uint16_t* indices, uint32_t numInds, uint32_t numSets);
 
   ///@return Sets the indices to be a repeating pattern of @a numInds indices,
   /// copied @a numSets times, offset each time by @a offset. i.e.
   /// SetIndexPattern({ 0, 2, 1 }, 3, 10, 2) will create { 0, 2, 1, 10, 12, 11 }.
-  void  SetIndexPattern(const uint16_t* pInds, uint32_t numInds, uint16_t offset,
+  void  SetIndexPattern(const uint16_t* indices, uint32_t numInds, uint16_t offset,
     uint32_t numSets);
 
   ///@return Creates the Index Buffer Object based on the current index data,
@@ -264,22 +264,22 @@ void  Mesh<VertexFormat, Base>::CalculateExtents(PosType& minOut, PosType& maxOu
   {
     for (int i = 0; i < PosType::kNumComponents; ++i)
     {
-      minOut.arData[i] = std::numeric_limits<float>::max();
-      maxOut.arData[i] = std::numeric_limits<float>::min();
+      minOut.data[i] = std::numeric_limits<float>::max();
+      maxOut.data[i] = std::numeric_limits<float>::min();
     }
 
     for (auto i0 = GetVertices(), i1 = i0 + n; i0 != i1; ++i0)
     {
       for (int j = 0; j < PosType::kNumComponents; ++j)
       {
-        if (i0->pos.arData[j] < minOut.arData[j])
+        if (i0->pos.data[j] < minOut.data[j])
         {
-          minOut.arData[j] = i0->pos.arData[j];
+          minOut.data[j] = i0->pos.data[j];
         }
 
-        if (i0->pos.arData[j] > maxOut.arData[j])
+        if (i0->pos.data[j] > maxOut.data[j])
         {
-          minOut.arData[j] = i0->pos.arData[j];
+          minOut.data[j] = i0->pos.data[j];
         }
       }
     }

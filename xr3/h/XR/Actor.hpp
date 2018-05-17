@@ -22,19 +22,19 @@ public:
   // types
   typedef T               Type;
   typedef Animation<Type> AnimationType;
-  
+
   typedef std::map<uint32_t, AnimationType>  MapType;
-  
+
   // data
   MapType actions;
-  
+
   // structors
   Actor();
   ~Actor();
-  
+
   // general
   const AnimationType*  GetAction(uint32_t nameHash) const;
-  const AnimationType*  GetAction(const char* pName) const;
+  const AnimationType*  GetAction(const char* name) const;
 };
 
 //==============================================================================
@@ -60,13 +60,13 @@ const typename Actor<T>::AnimationType* Actor<T>::GetAction( uint32_t nameHash )
 
 //==============================================================================
 template <class T>
-const typename Actor<T>::AnimationType* Actor<T>::GetAction( const char* pName ) const
+const typename Actor<T>::AnimationType* Actor<T>::GetAction( const char* name ) const
 {
-  XR_ASSERT(Actor, pName != 0);
-  const AnimationType*  pAction(GetAction(Hash::String(pName)));
-  XR_ASSERTMSG(Actor, pAction != 0,
-    ("Action '%s' could not be found in Actor %p", pName, this));
-  return pAction;
+  XR_ASSERT(Actor, name != nullptr);
+  const AnimationType*  action = GetAction(Hash::String(name));
+  XR_ASSERTMSG(Actor, action != nullptr,
+    ("Action '%s' could not be found in Actor %p", name, this));
+  return action;
 }
 
 } // XR

@@ -21,9 +21,9 @@ public:
   ~UIContainer();
 
   // general
-  bool                    AddElement(UIElement* pElem);
-  bool                    RemoveElement(UIElement* pElem);
-  bool                    MoveUpElement(UIElement* pElem);
+  bool                    AddElement(UIElement* elem);
+  bool                    RemoveElement(UIElement* elem);
+  bool                    MoveUpElement(UIElement* elem);
 
   const UIElement::List&  GetElements() const;
   size_t                  GetNumElements() const;
@@ -44,16 +44,16 @@ public:
 
 protected:
   // data
-  UIElement::List m_lElements; // no ownership
+  UIElement::List m_elements; // no ownership
 
   // internal use
-  virtual void  _AlignElement(UIElement* pElem);
+  virtual void  _AlignElement(UIElement* elem);
 
   virtual void  _SetWidthToContent();
   virtual void  _SetHeightToContent();
 
   void          _RealignElements(UIElement::List::iterator i);
-  void          _AddChild( UIElement* pElem );
+  void          _AddChild( UIElement* elem );
 };
 
 //==============================================================================
@@ -62,14 +62,14 @@ protected:
 inline
 size_t UIContainer::GetNumElements() const
 {
-  return m_lElements.size();
+  return m_elements.size();
 }
 
 //==============================================================================
 inline
 const UIElement::List&  UIContainer::GetElements() const
 {
-  return m_lElements;
+  return m_elements;
 }
 
 } // XR

@@ -51,7 +51,7 @@ public:
     {
       float  r, g, b, a;
     };
-    float arData[kNumComponents];
+    float data[kNumComponents];
   };
 
   // structors
@@ -70,8 +70,8 @@ public:
   : Color(r_, g_, b_, 1.0f)
   {}
   
-  explicit Color(const float arData[kNumComponents])
-  : Color(arData[R], arData[G], arData[B], arData[A])
+  explicit Color(const float data[kNumComponents])
+  : Color(data[R], data[G], data[B], data[A])
   {}
 
   explicit Color(uint32_t abgr)

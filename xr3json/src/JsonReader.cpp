@@ -13,10 +13,10 @@ namespace JSON
 {
 
 //==============================================================================
-void  Reader::OnParserEvent(Parser::Event e, const Parser::String* pString,
-        void* pUser)
+void  Reader::OnParserEvent(Parser::Event e, const Parser::String* string,
+  void* userData)
 {
-  static_cast<Reader*>(pUser)->_HandleEvent(e, pString);
+  static_cast<Reader*>(userData)->_HandleEvent(e, string);
 }
 
 //==============================================================================
@@ -24,7 +24,7 @@ Reader::Reader(int depth)
 : m_parser(depth),
   m_key(),
   m_entities(depth),
-  m_pRoot(0)
+  m_root(nullptr)
 {}
 
 //==============================================================================
@@ -32,48 +32,48 @@ Reader::~Reader()
 {}
 
 //==============================================================================
-Entity* Reader::Read(const char* parBuffer, size_t size)
+Entity* Reader::Read(const char* string, size_t size)
 {
-  XR_ASSERT(Json::Reader, parBuffer != nullptr);
+  XR_ASSERT(Json::Reader, string != nullptr);
   XR_ASSERT(Json::Reader, size >= 0);
-  m_key.pString = nullptr;
+  m_key.string = nullptr;
   m_key.length = 0;
   m_entities.clear();
-  m_pRoot = nullptr;
-  if(!m_parser.Parse(parBuffer, size, OnParserEvent, this))
+  m_root = nullptr;
+  if(!m_parser.Parse(string, size, OnParserEvent, this))
   {
-    delete m_pRoot;
-    m_pRoot = nullptr;
+    delete m_root;
+    m_root = nullptr;
   }
 
-  return m_pRoot;
+  return m_root;
 }
 
 //==============================================================================
-void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
+void  Reader::_HandleEvent(Parser::Event e, const Parser::String* string)
 {
-  Entity* pParent(m_entities.size() > 0 ? m_entities.back() : nullptr);
+  Entity* parent(m_entities.size() > 0 ? m_entities.back() : nullptr);
   switch(e)
   {
   case  Parser::E_KEY:
-    m_key = *pString;
+    m_key = *string;
     break;
 
   case  Parser::E_VALUE:
     {
-      XR_ASSERT(Json::Reader, pParent != nullptr);
-      XR_ASSERT(Json::Reader, pParent->GetType() != VALUE);
+      XR_ASSERT(Json::Reader, parent != nullptr);
+      XR_ASSERT(Json::Reader, parent->GetType() != VALUE);
       XR_ASSERT(Json::Reader, m_key.length > 0);
-      XR_ASSERT(Json::Reader, m_key.pString != 0);
-      Entity* pValue(new Value(pString->pString, pString->length));
-      switch(pParent->GetType())
+      XR_ASSERT(Json::Reader, m_key.string != 0);
+      Entity* value(new Value(string->string, string->length));
+      switch(parent->GetType())
       {
       case  OBJECT:
-        pParent->ToObject()->AddChild(m_key.pString, m_key.length, pValue);
+        parent->ToObject()->AddChild(m_key.string, m_key.length, value);
         break;
 
       case  ARRAY:
-        pParent->ToArray()->AddElement(pValue);
+        parent->ToArray()->AddElement(value);
         break;
 
       default:
@@ -85,26 +85,26 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 
   case  Parser::E_OBJECT_BEGIN:
     {
-      Object* pObject = new Object();
-      m_entities.push_back(pObject);
+      Object* object = new Object();
+      m_entities.push_back(object);
 
-      if(pParent == nullptr)
+      if(parent == nullptr)
       {
-        XR_ASSERT(Json::Reader, m_pRoot == nullptr);
-        m_pRoot = pObject;
+        XR_ASSERT(Json::Reader, m_root == nullptr);
+        m_root = object;
       }
       else
       {
-        switch(pParent->GetType())
+        switch(parent->GetType())
         {
         case  OBJECT:
           XR_ASSERT(Json::Reader, m_key.length > 0);
-          XR_ASSERT(Json::Reader, m_key.pString != nullptr);
-          pParent->ToObject()->AddChild(m_key.pString, m_key.length, pObject);
+          XR_ASSERT(Json::Reader, m_key.string != nullptr);
+          parent->ToObject()->AddChild(m_key.string, m_key.length, object);
           break;
 
         case  ARRAY:
-          pParent->ToArray()->AddElement(pObject);
+          parent->ToArray()->AddElement(object);
           break;
 
         default:
@@ -125,26 +125,26 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* pString)
 
   case  Parser::E_ARRAY_BEGIN:
     {
-      Array* pArray = new Array();
-      m_entities.push_back(pArray);
+      Array* array = new Array();
+      m_entities.push_back(array);
 
-      if(pParent == 0)
+      if(parent == 0)
       {
-        XR_ASSERT(Json::Reader, m_pRoot == nullptr);
-        m_pRoot = pArray;
+        XR_ASSERT(Json::Reader, m_root == nullptr);
+        m_root = array;
       }
       else
       {
-        switch(pParent->GetType())
+        switch(parent->GetType())
         {
         case  OBJECT:
           XR_ASSERT(Json::Reader, m_key.length > 0);
-          XR_ASSERT(Json::Reader, m_key.pString != nullptr);
-          pParent->ToObject()->AddChild(m_key.pString, m_key.length, pArray);
+          XR_ASSERT(Json::Reader, m_key.string != nullptr);
+          parent->ToObject()->AddChild(m_key.string, m_key.length, array);
           break;
 
         case  ARRAY:
-          pParent->ToArray()->AddElement(pArray);
+          parent->ToArray()->AddElement(array);
           break;
 
         default:

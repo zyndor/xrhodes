@@ -32,11 +32,11 @@ public:
   static const AABB   kWholeTexture;
   static const AABB   kNullTexture;
 
-  ///@brief Using @a base as the UVs of the initial sprite on @a pMaterial,
-  /// creates @a across * @a down (but no more than @a maxSlices) Sprites in @a
-  /// parSprites, shifting the AABB across and down.
-  ///@note  @a parSprites must have space for at least @a maxSlices or
-  /// @a across x @a down Sprites, whichever is smaller.
+  ///@brief Using @a base as the UVs of the initial sprite over a @a textureWidth
+  /// by @a textureHeight texture, it creates @a across * @a down (but no more
+  /// than @a maxSlices) Sprites in @a sprites, shifting the AABB across and down.
+  ///@note  @a sprites must have space for at least @a maxSlices or @a across x
+  /// @a down Sprites, whichever is smaller.
   static void Slice(AABB base, uint32_t textureWidth, uint32_t textureHeight,
     uint32_t across, uint32_t down, uint32_t maxSlices, Sprite* sprites);
 

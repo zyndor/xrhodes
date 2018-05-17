@@ -22,8 +22,8 @@ class  StringFormatter
 {
 public:
   // structors
-  explicit StringFormatter(char const* pString)
-  : m_string(pString),
+  explicit StringFormatter(char const* string)
+  : m_string(string),
     m_subs(0)
   {}
 
@@ -65,7 +65,7 @@ public:
     }
 
     return *this;
-  }  
+  }
 
 private:
   // types

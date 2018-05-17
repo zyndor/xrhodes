@@ -42,21 +42,21 @@ public:
   /// its diagonal.
   static void SetIdentity(float matrix[kNumElems], float value)
   {
-    float* pWrite = matrix;
+    float* writep = matrix;
     for (int i = 0; i < 3; ++i)
     {
-      *pWrite = value;
-      ++pWrite;
+      *writep = value;
+      ++writep;
 
-      float* pEnd = pWrite + 4;
-      while(pWrite != pEnd)
+      float* runEnd = writep + 4;
+      while(writep != runEnd)
       {
-        *pWrite = .0f;
-        ++pWrite;
+        *writep = .0f;
+        ++writep;
       }
     }
 
-    *pWrite = value;
+    *writep = value;
   }
 
   ///@brief Sets @matrix as an identity matrix.
@@ -70,14 +70,14 @@ public:
   /// to zero.
   static void SetIdentityDiagonalOnly(float matrix[kNumElems], float value)
   {
-    float* pWrite = matrix;
+    float* writep = matrix;
     for (int i = 0; i < 3; ++i)
     {
-      *pWrite = value;
-      pWrite += 5;
+      *writep = value;
+      writep += 5;
     }
 
-    *pWrite = value;
+    *writep = value;
   }
 
   ///@brief Sets @matrix as an identity matrix. Only writes diagonal. Useful

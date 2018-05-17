@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Inflatable.hpp"
 #include "XR/IdGenerator.hpp"
 #include "XR/fundamentals.hpp"
@@ -43,12 +42,12 @@ public:
 
   ///@brief Registers an object that will be serialized, and will have
   /// pointers to it serialized.
-  IdType RegisterObject(Inflatable const& obj);
+  IdType RegisterObject(Inflatable const& object);
 
   ///@brief Retrieves the ID associated with a Inflatable.
   ///@note As there's no way to register a nullptr (null reference), this will
   /// return kInvalidId for a nullptr, which is what we want.
-  IdType GetId(Inflatable const* pObj) const;
+  IdType GetId(Inflatable const* object) const;
 
 private:
   IdGenerator m_generator;

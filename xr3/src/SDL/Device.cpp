@@ -63,10 +63,10 @@ static struct
 }
 
 //==============================================================================
-static int  FilterEvents(void* /*userData*/, SDL_Event* pEvent)
+static int  FilterEvents(void* /*userData*/, SDL_Event* event)
 {
   int handled = 0;
-  switch (pEvent->type)
+  switch (event->type)
   {
   case  SDL_APP_WILLENTERBACKGROUND:
     s_deviceImpl.isPauseRequested = true;

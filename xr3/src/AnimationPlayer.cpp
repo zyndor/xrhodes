@@ -25,11 +25,7 @@ bool AnimationPlayerCore::IsLeastActivePredicate(const AnimationPlayerCore& play
 //==============================================================================
 AnimationPlayerCore::AnimationPlayerCore()
 : tLife(.0f),
-  m_pTarget(0)
-{}
-
-//==============================================================================
-AnimationPlayerCore::~AnimationPlayerCore()
+  m_target(nullptr)
 {}
 
 

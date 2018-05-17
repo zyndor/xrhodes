@@ -10,7 +10,7 @@ namespace XR
 {
 
 //==============================================================================
-const char* karAnimationTag[] =
+const char* kAnimationTags[] =
 {
   "name",
   "resName",

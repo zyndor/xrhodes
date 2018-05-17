@@ -36,17 +36,17 @@ public:
   ~UINavigator();
 
   // general
-  bool  Add(UIElement* pElem, UIElement* pRelative, Direction dir);
-  bool  Remove(UIElement* pElem);
+  bool  Add(UIElement* elem, UIElement* relativeTo, Direction dir);
+  bool  Remove(UIElement* elem);
   void  Clear();
 
-  UIElement*  Get(UIElement* pRelative, Direction dir);
+  UIElement*  Get(UIElement* relativeTo, Direction dir);
 
 protected:
   // types
   struct  Entry
   {
-    UIElement*  arNeighbors[kNumDirections];
+    UIElement*  neighbors[kNumDirections];
   };
 
   typedef std::map<UIElement*, Entry> EntryMap;

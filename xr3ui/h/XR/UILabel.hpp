@@ -35,11 +35,11 @@ public:
   float GetScale() const;
   char const* GetText() const;
 
-  void  SetFont(Font::Ptr const& pFont);
+  void  SetFont(Font::Ptr const& font);
   void  SetHorizontalAlignment(BoxText::Alignment a);
   void  SetVerticalAlignment(BoxText::Alignment a);
   void  SetScale(float scale);
-  void  SetText(const char* pText);
+  void  SetText(const char* text);
 
   void  SetWidthToText();
   void  SetHeightToText();

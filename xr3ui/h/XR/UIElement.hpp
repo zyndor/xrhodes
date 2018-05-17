@@ -36,7 +36,7 @@ public:
   typedef std::list<UIElement*> List;
 
   // static
-  static void  OnChangeCaller(void* pData);
+  static void  OnChangeCaller(void* data);
 
   // structors
   UIElement();
@@ -51,9 +51,9 @@ public:
   ///@return  A pointer to the container the UIElement is added to, if any.
   UIContainer*  GetParent() const;
 
-  ///@brief Sets the UIContainer pointed to by @a pContainer as the parent of
+  ///@brief Sets the UIContainer pointed to by @a container as the parent of
   /// this UIElement.
-  void          SetParent(UIContainer* pContainer);
+  void          SetParent(UIContainer* container);
 
   ///@brief Calculates the x coordinate of the UIElement's right side based on
   /// position and width.
@@ -71,7 +71,7 @@ public:
 
   ///@brief Convenience method to set the size of the element to another
   /// element.
-  void          Resize(const UIElement* pElem);
+  void          Resize(const UIElement* elem);
 
   ///@brief Aligns the element horizontally to the given x coordinate and with
   /// the given alignment, then calls OnChange().
@@ -122,7 +122,7 @@ public:
 
 protected:
   // data
-  UIContainer*  m_pParent;
+  UIContainer*  m_parent;
 
   // internal
   ///@brief Centers the UIElement horizontally on the screen without calling
@@ -162,7 +162,7 @@ int UIElement::CalculateBottom() const
 inline
 UIContainer* UIElement::GetParent() const
 {
-  return m_pParent;
+  return m_parent;
 }
 
 } // XR

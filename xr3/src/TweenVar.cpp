@@ -9,40 +9,40 @@
 namespace XR
 {
 
-void TweenVarCore::OnFrameCallback( void* pData )
+void TweenVarCore::OnFrameCallback( void* data )
 {
-  TweenVarCore* pVar(static_cast<TweenVarCore*>(pData));
-  if (pVar->pOnFrameCb != 0)
+  TweenVarCore* var = static_cast<TweenVarCore*>(data);
+  if (var->onFrame)
   {
-    (*pVar->pOnFrameCb)(pVar->pCallbackData);
+    (*var->onFrame)(var->callbackData);
   }
 }
 
-void TweenVarCore::OnFinishedCallback( void* pData )
+void TweenVarCore::OnFinishedCallback( void* data )
 {
-  TweenVarCore* pVar(static_cast<TweenVarCore*>(pData));
-  if (pVar->pOnFinishedCb != 0)
+  TweenVarCore* var = static_cast<TweenVarCore*>(data);
+  if (var->onFinished)
   {
-    (*pVar->pOnFinishedCb)(pVar->pCallbackData);
+    (*var->onFinished)(var->callbackData);
   }
 }
 
 void TweenVarCore::Clear()
 {
-  pValue = 0;
-  pOnFrameCb = 0;
-  pOnFinishedCb = 0;
-  pTweener = 0;
+  value = 0;
+  onFrame = nullptr;
+  onFinished = nullptr;
+  tweener = nullptr;
 }
 
-void  TweenVarCore::Tween(void* pValue_, Tweener::Callback pOnFrameCb_,
-        Tweener::Callback pOnFinishedCb_, void* pCallbackData_, Tweener& t)
+void  TweenVarCore::Tween(void* value_, Tweener::Callback onFrameCb_,
+        Tweener::Callback onFinishedCb_, void* callbackData_, Tweener& t)
 {
-  pValue = pValue_;
-  pOnFrameCb = pOnFrameCb_;
-  pOnFinishedCb = pOnFinishedCb_;
-  pCallbackData = pCallbackData_;
-  pTweener = &t;
+  value = value_;
+  onFrame = onFrameCb_;
+  onFinished = onFinishedCb_;
+  callbackData = callbackData_;
+  tweener = &t;
 }
 
 } // XR

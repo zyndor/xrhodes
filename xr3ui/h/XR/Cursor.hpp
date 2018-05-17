@@ -25,7 +25,7 @@ public:
   void  SetTimeOut(int ms);
   void  SetMoveTreshold(float hPcnt);
   void  SetKeepAliveTreshold(float hPcnt);
-  void  SetSprite(const Sprite* pSprite);
+  void  SetSprite(const Sprite* sprite);
   void  SetEnabled(bool state);
   void  SetPosition(int x, int y);
 
@@ -36,8 +36,8 @@ public:
 
 private:
   // static
-  static void OnMotion(void* pSystem, void* pUser);
-  static void OnAction(void* pSystem, void* pUser);
+  static void OnMotion(void* systemData, void* userData);
+  static void OnAction(void* systemData, void* userData);
 
   // data
   bool  m_isEnabled;

@@ -12,7 +12,7 @@ namespace XR
 {
 
 //==============================================================================
-const char* const Parse::karErrorMessage[] =
+const char* const Parse::kErrorMessages[] =
 {
   "OK",
   "Failed to parse null string.",
@@ -28,16 +28,16 @@ int Parse::GetErrorCode()
 }
 
 //==============================================================================
-bool Parse::BooleanPositive( const char* pValue )
+bool Parse::BooleanPositive( const char* value )
 {
   s_errorCode = ERR_NONE;
 
-  bool  result(true);
-  if (pValue != 0 && pValue[0] != '\0')
+  bool  result = true;
+  if (value != 0 && value[0] != '\0')
   {
     int dummy;
-    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy == 0) ||
-      pValue[0] == 'n' || pValue[0] == 'N')
+    if ((sscanf(value, "%d", &dummy) > 0 && dummy == 0) ||
+      value[0] == 'n' || value[0] == 'N')
     {
       result = false;
     }
@@ -46,16 +46,16 @@ bool Parse::BooleanPositive( const char* pValue )
 }
 
 //==============================================================================
-bool Parse::BooleanNegative( const char* pValue )
+bool Parse::BooleanNegative( const char* value )
 {
   s_errorCode = ERR_NONE;
 
-  bool  result(false);
-  if (pValue != 0 && pValue[0] != '\0')
+  bool  result = false;
+  if (value != 0 && value[0] != '\0')
   {
     int dummy;
-    if ((sscanf(pValue, "%d", &dummy) > 0 && dummy > 0) ||
-      pValue[0] == 'y' || pValue[0] == 'Y')
+    if ((sscanf(value, "%d", &dummy) > 0 && dummy > 0) ||
+      value[0] == 'y' || value[0] == 'Y')
     {
       result = true;
     }
@@ -64,10 +64,10 @@ bool Parse::BooleanNegative( const char* pValue )
 }
 
 //==============================================================================
-int   Parse::Int(const char* pValue)
+int   Parse::Int(const char* value)
 {
   int v;
-  if (!Int(pValue, v))
+  if (!Int(value, v))
   {
     v = 0;
   }
@@ -76,10 +76,10 @@ int   Parse::Int(const char* pValue)
 }
 
 //==============================================================================
-int   Parse::Int(int base, const char* pValue)
+int   Parse::Int(int base, const char* value)
 {
   int v;
-  if (!Int(base, pValue, v))
+  if (!Int(base, value, v))
   {
     v = 0;
   }
@@ -88,51 +88,48 @@ int   Parse::Int(int base, const char* pValue)
 }
 
 //==============================================================================
-bool  Parse::Int( const char* pValue, int& v)
+bool  Parse::Int( const char* value, int& v)
 {
   s_errorCode = ERR_NONE;
 
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
   }
 
-  int value(0);
+  int intValue = 0;
   if (success)
   {
-    success = sscanf(pValue, "%d", &value) == 1;
+    success = sscanf(value, "%d", &intValue) == 1;
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
     }
   }
 
-  if (success)
-  {
-    v  = value;
-  }
+  v = intValue;
   return success;
 }
 
 //==============================================================================
-bool  Parse::Int(int base, const char* pValue, int& v)
+bool  Parse::Int(int base, const char* value, int& v)
 {
   s_errorCode = ERR_NONE;
 
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
   }
 
-  int value(0);
+  int intValue = 0;
   if (success)
   {
-    if (strchr(pValue, '%') != 0)
+    if (strchr(value, '%') != 0)
     {
       double  percent;
-      success = sscanf(pValue, "%lf", &percent) == 1;
+      success = sscanf(value, "%lf", &percent) == 1;
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
@@ -140,19 +137,19 @@ bool  Parse::Int(int base, const char* pValue, int& v)
 
       if (success)
       {
-        value = static_cast<int>(Round(float(percent * base / 100.0)));
+        intValue = static_cast<int>(std::round(float(percent * base / 100.0)));
       }
     }
-    else if (strchr(pValue, 'x') != 0)
+    else if (strchr(value, 'x') != 0)
     {
       double  multi;
-      const char* pTemp(pValue);
-      if (pTemp[0] == 'x')
+      const char* temp = value;
+      if (temp[0] == 'x')
       {
-        ++pTemp;
+        ++temp;
       }
 
-      success = sscanf(pTemp, "%lf", &multi) == 1;
+      success = sscanf(temp, "%lf", &multi) == 1;
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
@@ -160,13 +157,13 @@ bool  Parse::Int(int base, const char* pValue, int& v)
 
       if (success)
       {
-        value = static_cast<int>(Round(float(multi * base)));
+        intValue = static_cast<int>(Round(float(multi * base)));
       }
     }
-    else if (strchr(pValue, '.') != 0)
+    else if (strchr(value, '.') != 0)
     {
       double  scalar;
-      success = sscanf(pValue, "%lf", &scalar) == 1;
+      success = sscanf(value, "%lf", &scalar) == 1;
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
@@ -174,12 +171,12 @@ bool  Parse::Int(int base, const char* pValue, int& v)
 
       if (success)
       {
-        value = static_cast<int>(Round(float(scalar * base)));
+        intValue = static_cast<int>(Round(float(scalar * base)));
       }
     }
     else
     {
-      success = sscanf(pValue, "%d", &value) == 1;
+      success = sscanf(value, "%d", &intValue) == 1;
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
@@ -187,15 +184,15 @@ bool  Parse::Int(int base, const char* pValue, int& v)
     }
   }
 
-  v = value;
+  v = intValue;
   return success;
 }
 
 //==============================================================================
-float Parse::Float(const char* pValue)
+float Parse::Float(const char* value)
 {
   float v;
-  if (!Float(pValue, v))
+  if (!Float(value, v))
   {
     v = .0f;
   }
@@ -204,23 +201,23 @@ float Parse::Float(const char* pValue)
 }
 
 //==============================================================================
-bool  Parse::Float(const char* pValue, float& v)
+bool  Parse::Float(const char* value, float& v)
 {
   s_errorCode = ERR_NONE;
 
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
   }
 
-  float value(.0f);
+  float floatValue = .0f;
   if (success)
   {
-    if (strchr(pValue, '%') != 0)
+    if (strchr(value, '%') != 0)
     {
       double  percent;
-      success = sscanf(pValue, "%lf", &percent) == 1;
+      success = sscanf(value, "%lf", &percent) == 1;
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
@@ -228,12 +225,12 @@ bool  Parse::Float(const char* pValue, float& v)
 
       if (success)
       {
-        value = float(percent / 100.0);
+        floatValue = float(percent / 100.0);
       }
     }
     else
     {
-      success = sscanf(pValue, "%f", &value) == 1;
+      success = sscanf(value, "%f", &floatValue) == 1;
       if (!success)
       {
         s_errorCode = ERR_INVALID_VALUE;
@@ -241,26 +238,26 @@ bool  Parse::Float(const char* pValue, float& v)
     }
   }
 
-  v = value;
+  v = floatValue;
   return success;
 }
 
 //==============================================================================
-bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
+bool  Parse::FloatSpeedPerSecond(const char* value, float fps, float& v)
 {
   s_errorCode = ERR_NONE;
 
   XR_ASSERT(Parse::FloatSpeedPerSecond, fps > .0f);
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
   }
 
-  float value(.0f);
+  float floatValue = .0f;
   if (success)
   {
-    success = sscanf(pValue, "%f", &value) == 1;
+    success = sscanf(value, "%f", &floatValue) == 1;
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
@@ -268,30 +265,30 @@ bool  Parse::FloatSpeedPerSecond(const char* pValue, float fps, float& v)
 
     if (success)
     {
-      value = CalcSpeedPerFrame(value, fps);
+      floatValue = CalcSpeedPerFrame(floatValue, fps);
     }
   }
 
-  v = value;
+  v = floatValue;
   return success;
 }
 
 //==============================================================================
-bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
+bool  Parse::FloatAccelerationPerSecond(const char* value, float fps, float& v)
 {
   s_errorCode = ERR_NONE;
 
   XR_ASSERT(Parse::FloatAccelerationPerSecond, fps > .0f);
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
   }
 
-  float value(.0f);
+  float floatValue = .0f;
   if (success)
   {
-    success = sscanf(pValue, "%f", &value) == 1;
+    success = sscanf(value, "%f", &floatValue) == 1;
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
@@ -299,30 +296,30 @@ bool  Parse::FloatAccelerationPerSecond(const char* pValue, float fps, float& v)
 
     if (success)
     {
-      value = CalcAccelerationPerFrame(value, fps);
+      floatValue = CalcAccelerationPerFrame(floatValue, fps);
     }
   }
 
-  v = value;
+  v = floatValue;
   return success;
 }
 
 //==============================================================================
-bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
+bool  Parse::FloatScalingPerSecond(const char* value, float fps, float& v)
 {
   s_errorCode = ERR_NONE;
 
   XR_ASSERT(Parse::FloatScalingPerSecond, fps > .0f);
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
   }
 
-  float value(.0f);
+  float floatValue = .0f;
   if (success)
   {
-    success = sscanf(pValue, "%f", &value) == 1;
+    success = sscanf(value, "%f", &floatValue) == 1;
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
@@ -330,20 +327,20 @@ bool  Parse::FloatScalingPerSecond(const char* pValue, float fps, float& v)
 
     if (success)
     {
-      value = CalcScalingPerFrame(value, fps);
+      floatValue = CalcScalingPerFrame(floatValue, fps);
     }
   }
 
-  v = value;
+  v = floatValue;
   return success;
 }
 
 //==============================================================================
-bool Parse::Range( const char* pValue, int& r0, int& r1 )
+bool Parse::Range( const char* value, int& r0, int& r1 )
 {
   s_errorCode = ERR_NONE;
 
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
@@ -352,8 +349,8 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
   r0 = r1 = 0;
   if (success)
   {
-    size_t len = strlen(pValue);
-    success = len > 0 && sscanf(pValue, "%d", &r0) == 1;
+    size_t len = strlen(value);
+    success = len > 0 && sscanf(value, "%d", &r0) == 1;
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
@@ -361,21 +358,21 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
 
     if (success)
     {
-      const char* pEnd(pValue + len);
-      pValue = strchr(pValue, '-');
-      if (pValue != 0 && r0 < 0)
+      const char* valueEnd = value + len;
+      value = strchr(value, '-');
+      if (value != 0 && r0 < 0)
       {
-        pValue = strchr(pValue + 1, '-');
+        value = strchr(value + 1, '-');
       }
 
-      if (pValue == 0)
+      if (value == 0)
       {
         r1 = r0;
       }
       else
       {
-        ++pValue;
-        success = pValue != pEnd && sscanf(pValue, "%d", &r1) == 1 && r1 >= r0;
+        ++value;
+        success = value != valueEnd && sscanf(value, "%d", &r1) == 1 && r1 >= r0;
       }
     }
   }
@@ -383,11 +380,11 @@ bool Parse::Range( const char* pValue, int& r0, int& r1 )
 }
 
 //==============================================================================
-bool Parse::Range( const char* pValue, float& r0, float& r1 )
+bool Parse::Range( const char* value, float& r0, float& r1 )
 {
   s_errorCode = ERR_NONE;
 
-  bool  success(pValue != 0);
+  bool  success = value != nullptr;
   if (!success)
   {
     s_errorCode = ERR_NULL_STRING;
@@ -396,8 +393,8 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
   r0 = r1 = 0;
   if (success)
   {
-    size_t len = strlen(pValue);
-    success = len > 0 && sscanf(pValue, "%f", &r0) == 1;
+    size_t len = strlen(value);
+    success = len > 0 && sscanf(value, "%f", &r0) == 1;
     if (!success)
     {
       s_errorCode = ERR_INVALID_VALUE;
@@ -405,21 +402,21 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
 
     if (success)
     {
-      const char* pEnd(pValue + len);
-      pValue = strchr(pValue, '-');
-      if (pValue != 0 && r0 < .0f)
+      const char* valueEnd = value + len;
+      value = strchr(value, '-');
+      if (value != 0 && r0 < .0f)
       {
-        pValue = strchr(pValue + 1, '-');
+        value = strchr(value + 1, '-');
       }
 
-      if (pValue == 0)
+      if (value == 0)
       {
         r1 = r0;
       }
       else
       {
-        ++pValue;
-        success = pValue != pEnd && sscanf(pValue, "%f", &r1) == 1 && r1 >= r0;
+        ++value;
+        success = value != valueEnd && sscanf(value, "%f", &r1) == 1 && r1 >= r0;
       }
     }
   }
@@ -427,17 +424,17 @@ bool Parse::Range( const char* pValue, float& r0, float& r1 )
 }
 
 //==============================================================================
-XR::Color Parse::Color( const char* pValue )
+XR::Color Parse::Color( const char* value )
 {
   s_errorCode = ERR_NONE;
 
   XR::Color col(0xffffffff);
-  if (pValue != 0)
+  if (value != 0)
   {
     uint32_t  rgba;
-    if (sscanf(pValue, "%x", &rgba) > 0)
+    if (sscanf(value, "%x", &rgba) > 0)
     {
-      if (strlen(pValue) <= 6)
+      if (strlen(value) <= 6)
       {
         rgba <<= 8;
         col.a = 1.0f;

@@ -28,13 +28,13 @@ public:
 
   static void     SetSeed(uint64_t seed);
 
-  static uint32_t String32(const char* pData);
-  static uint32_t String32(const char* pData, size_t size);
-  static uint32_t Data32(const void* pData, size_t size);
+  static uint32_t String32(const char* data);
+  static uint32_t String32(const char* data, size_t size);
+  static uint32_t Data32(const void* data, size_t size);
 
-  static uint64_t String(const char* pString, bool assertUnique = true);
-  static uint64_t String(const char* pString, size_t size, bool assertUnique = true);
-  static uint64_t Data(const void* pData, size_t size);
+  static uint64_t String(const char* string, bool assertUnique = true);
+  static uint64_t String(const char* string, size_t size, bool assertUnique = true);
+  static uint64_t Data(const void* data, size_t size);
 };
 
 } // XR

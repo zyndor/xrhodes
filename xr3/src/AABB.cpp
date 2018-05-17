@@ -12,7 +12,7 @@ namespace XR
 {
 
 //==============================================================================
-const char* const AABB::karTag[] =
+const char* const AABB::kTags[] =
 {
   "left",
   "bottom",
@@ -30,7 +30,7 @@ void  AABB::Import(float x, float y, float hw, float hh)
 }
 
 //==============================================================================
-void  AABB::Export(float& x, float& y, float& hw, float& hh) const 
+void  AABB::Export(float& x, float& y, float& hw, float& hh) const
 {
   x = (left + right) / 2;
   y = (top + bottom) / 2;

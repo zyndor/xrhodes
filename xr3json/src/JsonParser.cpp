@@ -24,10 +24,10 @@ Parser::Parser(int maxDepth)
 : m_state(),
   m_depth(0),
   m_maxDepth(maxDepth),
-  m_pCallback(nullptr),
-  m_pCallbackUser(nullptr),
-  m_pMaxDepthCallback(nullptr),
-  m_pMaxDepthCallbackUser(nullptr)
+  m_callback(nullptr),
+  m_callbackUser(nullptr),
+  m_onMaxDepthReached(nullptr),
+  m_onMaxDepthReachedData(nullptr)
 {
   XR_ASSERTMSG(Json::Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
     maxDepth));
@@ -38,22 +38,22 @@ Parser::~Parser ()
 {}
 
 //==============================================================================
-bool  Parser::Parse(const char* parBuffer, size_t size, Callback pCallback,
-        void* pUser)
+bool  Parser::Parse(const char* string, size_t size, Callback callback,
+        void* userData)
 {
-  XR_ASSERT(Json::Parser, parBuffer != nullptr);
+  XR_ASSERT(Json::Parser, string != nullptr);
   XR_ASSERT(Json::Parser, size >= 0);
-  m_state.SetBuffer(parBuffer, size);
+  m_state.SetBuffer(string, size);
   m_depth = 0;
-  m_pCallback = pCallback;
-  m_pCallbackUser = pUser;
+  m_callback = callback;
+  m_callbackUser = userData;
 
-  const char* pChar(m_state.ExpectChar()); // drop leading whitespace
-  bool        result(!m_state.IsOver(pChar));
+  const char* charp(m_state.ExpectChar()); // drop leading whitespace
+  bool        result(!m_state.IsOver(charp));
   if (result)
   {
-    bool  isObject(*pChar == kObjectBegin);
-    bool  isArray(*pChar == kArrayBegin);
+    bool  isObject(*charp == kObjectBegin);
+    bool  isArray(*charp == kArrayBegin);
 
     result = (isObject || isArray) && !m_state.IsOver(m_state.SkipChar());
     if (result) // check exceeding max depth (not an error)
@@ -70,11 +70,11 @@ bool  Parser::_ParseArray()
 {
   _DoCallback(E_ARRAY_BEGIN, nullptr);
   _IncreaseDepth();
-  const char* pChar(m_state.ExpectChar()); // look for array end or value
-  bool result(!m_state.IsOver(pChar));
+  const char* charp = m_state.ExpectChar(); // look for array end or value
+  bool result = !m_state.IsOver(charp);
   if (result)
   {
-    if (*pChar == kArrayEnd)
+    if (*charp == kArrayEnd)
     {
       _DecreaseDepth();
       m_state.SkipChar();
@@ -87,16 +87,16 @@ bool  Parser::_ParseArray()
         break;
       }
 
-      pChar = m_state.ExpectChar();
-      result = !m_state.IsOver(pChar) &&
-        (*pChar == kComma || *pChar == kArrayEnd);
+      charp = m_state.ExpectChar();
+      result = !m_state.IsOver(charp) &&
+        (*charp == kComma || *charp == kArrayEnd);
       if (!result)
       {
         break;
       }
 
       m_state.SkipChar(); // leave character
-      if (*pChar == kArrayEnd)
+      if (*charp == kArrayEnd)
       {
         _DecreaseDepth();
         break;
@@ -112,40 +112,40 @@ bool  Parser::_ParseObject()
 {
   _DoCallback(E_OBJECT_BEGIN, nullptr);
   _IncreaseDepth();
-  const char* pChar(m_state.ExpectChar());
-  bool  result(!m_state.IsOver(pChar));
+  const char* charp(m_state.ExpectChar());
+  bool  result(!m_state.IsOver(charp));
   if (result)
   {
-    if (*pChar == kObjectEnd)
+    if (*charp == kObjectEnd)
     {
       _DecreaseDepth();
       m_state.SkipChar();
     }
     else while (result)
     {
-      pChar = m_state.ExpectChar();
-      result = *pChar == kQuot;
+      charp = m_state.ExpectChar();
+      result = *charp == kQuot;
       if (!result)
       {
         break;
       }
 
-      const char* pKey(m_state.SkipChar()); // leave the quot
-      result = !m_state.IsOver(pKey);
+      const char* key(m_state.SkipChar()); // leave the quot
+      result = !m_state.IsOver(key);
       if (!result)
       {
         break;
       }
 
-      const char* pKeyEnd(m_state.RequireChar(kQuot)); // get other quot
-      result = !m_state.IsOver(pKeyEnd);
+      const char* keyEnd(m_state.RequireChar(kQuot)); // get other quot
+      result = !m_state.IsOver(keyEnd);
       if (!result)
       {
         break;
       }
 
-      XR_ASSERT(Json::Parser, pKeyEnd >= pKey);
-      String  str = { pKey, size_t(pKeyEnd - pKey) };
+      XR_ASSERT(Json::Parser, keyEnd >= key);
+      String  str = { key, size_t(keyEnd - key) };
       _DoCallback(E_KEY, &str);
 
       result = !m_state.IsOver(m_state.SkipChar());
@@ -154,8 +154,8 @@ bool  Parser::_ParseObject()
         break;
       }
 
-      pChar = m_state.ExpectChar();  // look for colon
-      result = !m_state.IsOver(pChar) && *pChar == kColon;
+      charp = m_state.ExpectChar();  // look for colon
+      result = !m_state.IsOver(charp) && *charp == kColon;
       if (!result)
       {
         break;
@@ -173,16 +173,16 @@ bool  Parser::_ParseObject()
         break;
       }
 
-      pChar = m_state.ExpectChar();
-      result = !m_state.IsOver(pChar) &&
-        (*pChar == kComma || *pChar == kObjectEnd);
+      charp = m_state.ExpectChar();
+      result = !m_state.IsOver(charp) &&
+        (*charp == kComma || *charp == kObjectEnd);
       if (!result)
       {
         break;
       }
 
       m_state.SkipChar();
-      if (*pChar == kObjectEnd)
+      if (*charp == kObjectEnd)
       {
         _DecreaseDepth();
         break;
@@ -196,92 +196,92 @@ bool  Parser::_ParseObject()
 //==============================================================================
 bool  Parser::_ParseValue()
 {
-  const char* pChar = m_state.ExpectChar();
-  bool  result(!m_state.IsOver(pChar));
+  const char* charp = m_state.ExpectChar();
+  bool  result(!m_state.IsOver(charp));
   if (result)
   {
     const size_t kBufferSize = 64; // bytes enough for everyone? (for conversion of numericals.)
-    char  arBuffer[kBufferSize];
+    char  buffer[kBufferSize];
 
-    if (*pChar == kQuot) // string
+    if (*charp == kQuot) // string
     {
-      pChar = m_state.SkipChar();
-      result = !m_state.IsOver(pChar);
+      charp = m_state.SkipChar();
+      result = !m_state.IsOver(charp);
       if (result)
       {
         const char* pValueEnd(m_state.RequireChar(kQuot)); // look for quot pair
         result = !m_state.IsOver(pValueEnd);
         if (result)
         {
-          String  str = { pChar, size_t(pValueEnd - pChar) };
+          String  str = { charp, size_t(pValueEnd - charp) };
           _DoCallback(E_VALUE, &str);
           m_state.SkipChar();
         }
       }
     }
-    else if (isdigit(*pChar) || *pChar == '-')
+    else if (isdigit(*charp) || *charp == '-')
     {
-      const char* pValueEnd(m_state.SkipChar());
+      const char* valueEnd(m_state.SkipChar());
       const char* pExponential = nullptr;
       const char* pDecimal = nullptr;
-      while (result && !m_state.IsOver(pValueEnd) &&
-        !(*pValueEnd == kComma || *pValueEnd == kObjectEnd || *pValueEnd == kArrayEnd ||
-          isspace(*pValueEnd)))
+      while (result && !m_state.IsOver(valueEnd) &&
+        !(*valueEnd == kComma || *valueEnd == kObjectEnd || *valueEnd == kArrayEnd ||
+          isspace(*valueEnd)))
       {
-        const bool  isExponential(*pValueEnd == kExponential);
-        const bool  isDecimal(*pValueEnd == kDecimal);
-        result = isdigit(*pValueEnd) ||
+        const bool  isExponential(*valueEnd == kExponential);
+        const bool  isDecimal(*valueEnd == kDecimal);
+        result = isdigit(*valueEnd) ||
           // first decimal point
-          (*pValueEnd == kDecimal && pDecimal == nullptr) ||
+          (*valueEnd == kDecimal && pDecimal == nullptr) ||
           // first exponential, not straight after a minus sign
-          (isExponential && pExponential == nullptr && *(pValueEnd - 1) != '-') ||
+          (isExponential && pExponential == nullptr && *(valueEnd - 1) != '-') ||
           // minus sign following an exponential
-          (*pValueEnd == '-' && pExponential == pValueEnd - 1);
+          (*valueEnd == '-' && pExponential == valueEnd - 1);
         if(result)
         {
           if(isDecimal)
           {
-            pDecimal = pValueEnd;
+            pDecimal = valueEnd;
           }
           else if(isExponential)
           {
-            pExponential = pValueEnd;
+            pExponential = valueEnd;
           }
 
-          pValueEnd = m_state.SkipChar();
-          result = !m_state.IsOver(pValueEnd);
+          valueEnd = m_state.SkipChar();
+          result = !m_state.IsOver(valueEnd);
         }
       }
 
       if (result)
       {
-        result = !m_state.IsOver(pValueEnd);
+        result = !m_state.IsOver(valueEnd);
       }
 
       if (result)
       {
-        size_t len = pValueEnd - pChar;
+        size_t len = valueEnd - charp;
 
-        double  value(atof(pChar));
-        double  absValue(std::abs(value));
+        double  value = atof(charp);
+        double  absValue = std::abs(value);
         if(absValue - std::floor(absValue) < std::numeric_limits<double>::epsilon())
         {
-          len = std::snprintf(arBuffer, kBufferSize - 1, "%d", int(value));
+          len = std::snprintf(buffer, kBufferSize - 1, "%d", int(value));
         }
         else
         {
           len = std::min(kBufferSize - 1, len);
-          std::strncpy(arBuffer, pChar, len);
-          arBuffer[len] = '\0';
+          std::strncpy(buffer, charp, len);
+          buffer[len] = '\0';
         }
 
-        String  str = { arBuffer, static_cast<size_t>(len) };
+        String  str = { buffer, static_cast<size_t>(len) };
         _DoCallback(E_VALUE, &str);
       }
     }
-    else if (isalpha(*pChar))
+    else if (isalpha(*charp))
     {
-      const char* pValueEnd(m_state.SkipChar());
+      const char* pValueEnd = m_state.SkipChar();
       while (!m_state.IsOver(pValueEnd) &&
         !(*pValueEnd == kComma || *pValueEnd == kObjectEnd || *pValueEnd == kArrayEnd ||
           isspace(*pValueEnd)))
@@ -289,20 +289,20 @@ bool  Parser::_ParseValue()
         pValueEnd = m_state.SkipChar();
       }
 
-      const size_t len = pValueEnd - pChar;
-      if (strncmp(pChar, kFalse, len) == 0)
+      const size_t len = pValueEnd - charp;
+      if (strncmp(charp, kFalse, len) == 0)
       {
-        auto size = size_t(std::snprintf(arBuffer, kBufferSize - 1, "0"));
-        String  str = { arBuffer, size };
+        auto size = size_t(std::snprintf(buffer, kBufferSize - 1, "0"));
+        String  str = { buffer, size };
         _DoCallback(E_VALUE, &str);
       }
-      else if (strncmp(pChar, kTrue, len) == 0)
+      else if (strncmp(charp, kTrue, len) == 0)
       {
-        auto size = size_t(std::snprintf(arBuffer, kBufferSize - 1, "1"));
-        String  str = { arBuffer, size };
+        auto size = size_t(std::snprintf(buffer, kBufferSize - 1, "1"));
+        String  str = { buffer, size };
         _DoCallback(E_VALUE, &str);
       }
-      else if (strncmp(pChar, kNull, len) == 0)
+      else if (strncmp(charp, kNull, len) == 0)
       {
         String  str = { nullptr, 0 };
         _DoCallback(E_VALUE, &str);
@@ -312,14 +312,14 @@ bool  Parser::_ParseValue()
         result = false;
       }
     }
-    else if (*pChar == kObjectBegin)
+    else if (*charp == kObjectBegin)
     {
       if (!m_state.IsOver(m_state.SkipChar()))
       {
         result = _ParseObject();
       }
     }
-    else if (*pChar == kArrayBegin)
+    else if (*charp == kArrayBegin)
     {
       if (!m_state.IsOver(m_state.SkipChar()))
       {
@@ -335,11 +335,11 @@ bool  Parser::_ParseValue()
 }
 
 //==============================================================================
-void  Parser::_DoCallback(Event e, const String* pData)
+void  Parser::_DoCallback(Event e, const String* data)
 {
-  if (m_pCallback != nullptr && m_depth <= m_maxDepth)
+  if (m_callback != nullptr && m_depth <= m_maxDepth)
   {
-    (*m_pCallback)(e, pData, m_pCallbackUser);
+    (*m_callback)(e, data, m_callbackUser);
   }
 }
 
@@ -366,9 +366,9 @@ void Parser::_DecreaseDepth()
 //==============================================================================
 void Parser::_DoDepthCallback(bool entered)
 {
-  if (m_pMaxDepthCallback != nullptr)
+  if (m_onMaxDepthReached != nullptr)
   {
-    (*m_pMaxDepthCallback)(&entered, m_pMaxDepthCallbackUser);
+    (*m_onMaxDepthReached)(&entered, m_onMaxDepthReachedData);
   }
 }
 

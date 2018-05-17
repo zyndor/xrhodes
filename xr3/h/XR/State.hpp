@@ -49,10 +49,10 @@ public:
 	protected:
 		// types
 		typedef std::list<State*>	Stack;
-		
+
 		// data
 		Stack	m_states;
-		
+
 		// internal
 		void	_Push(State& s);
 		void	_Pop();
@@ -76,23 +76,23 @@ public:
 		// structors
 		Result()
 		:	operation(NONE),
-			pState(0)
+			state(nullptr)
 		{}
 
-		Result(Operation op, State* p = 0)
+		Result(Operation op, State* p = nullptr)
 		:	operation(op),
-			pState(p)
+			state(p)
 		{}
 
 		// data
 		Operation	operation;
-		State*		pState;
+		State*		state;
 	};
-	
+
 	// structors
 	State();
 	virtual ~State();
-	
+
 	// general
 	virtual void	Init()	{}
 	virtual void	Enter() =0;

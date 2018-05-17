@@ -290,7 +290,7 @@ size_t File::Tell(Handle hFile)
 }
 
 //==============================================================================
-static const int  karSeekOriginMappings[] =
+static const int  kSeekOriginMappings[] =
 {
   SEEK_SET,
   SEEK_CUR,
@@ -307,7 +307,7 @@ bool File::Seek(Handle hFile, size_t offset, SeekFrom sf)
 {
   XR_ASSERT_HANDLE_VALID(hFile);
   return XR_FSEEK(static_cast<FILE*>(hFile), offset,
-    karSeekOriginMappings[static_cast<int>(sf)]) == 0;
+    kSeekOriginMappings[static_cast<int>(sf)]) == 0;
 }
 
 //==============================================================================

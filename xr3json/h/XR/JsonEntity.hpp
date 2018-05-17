@@ -49,7 +49,7 @@ public:
   Array*              ToArray();
   Object*             ToObject();
 
-  Entity*             GetChild(const char* pKey) const;
+  Entity*             GetChild(const char* key) const;
   Entity*             GetElement(int id) const;
 
   Entity*             GetPrevSibling() const;
@@ -67,7 +67,7 @@ public:
 
   virtual const char* GetValue() const =0;  // values. objects and arrays return 0
 
-  virtual Entity*     GetChild(const char* pKey, Type acceptType) const =0;  // retrieve child from object
+  virtual Entity*     GetChild(const char* key, Type acceptType) const =0;  // retrieve child from object
   virtual Entity*     GetElement(int id, Type acceptType) const =0;  // retrieve child from array
 
 private:
@@ -93,12 +93,12 @@ public:
   explicit Value(std::string value);
   explicit Value(int i);
   explicit Value(double d);
-  Value(const char* pValue, size_t len);
+  Value(const char* value, size_t len);
   ~Value();
 
   // general
-  void                SetValue(const char* pValue);
-  void                SetValue(const char* pValue, size_t len);
+  void                SetValue(const char* value);
+  void                SetValue(const char* value, size_t len);
   void                SetValue(int i);
   void                SetValue(double d);
   void                SetValue(std::string str);
@@ -111,7 +111,7 @@ public:
 
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 
-  virtual Entity*     GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
+  virtual Entity*     GetChild(const char* key, Type acceptType) const;  // retrieve child from object
   virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
 
 protected:
@@ -151,9 +151,9 @@ public:
 
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 
-  void                AddChild(const char* pKey, Entity* pEntity);
-  void                AddChild(const char* pKey, size_t keySize, Entity* pEntity);
-  void                AddChild(std::string name, Entity* pEntity);
+  void                AddChild(const char* key, Entity* entity);
+  void                AddChild(const char* key, size_t keySize, Entity* entity);
+  void                AddChild(std::string name, Entity* entity);
 
   void                GetChildNames(StringList& sl) const;
 
@@ -163,7 +163,7 @@ public:
   Entity*             GetFirstChild();
   Entity*             GetLastChild();
 
-  virtual Entity*     GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
+  virtual Entity*     GetChild(const char* key, Type acceptType) const;  // retrieve child from object
   virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
 
 protected:
@@ -183,7 +183,7 @@ protected:
 
     // data
     std::string  name;
-    Entity*      pEntity;
+    Entity*      entity;
   };
 
   // data
@@ -220,9 +220,9 @@ public:
 
   virtual const char* GetValue() const;  // values. objects and arrays return 0
 
-  void                AddElement(Entity* pEntity);
+  void                AddElement(Entity* entity);
 
-  virtual Entity*     GetChild(const char* pKey, Type acceptType) const;  // retrieve child from object
+  virtual Entity*     GetChild(const char* key, Type acceptType) const;  // retrieve child from object
   virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
 
 protected:
@@ -274,9 +274,9 @@ Object* Entity::ToObject()
 
 //==============================================================================
 inline
-Entity* Entity::GetChild(const char* pKey) const
+Entity* Entity::GetChild(const char* key) const
 {
-  return GetChild(pKey, ANY);
+  return GetChild(key, ANY);
 }
 
 //==============================================================================

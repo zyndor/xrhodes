@@ -65,7 +65,7 @@ bool  TweakBench::Get(uint32_t name, float& val) const
           iFind->second.type == Variable::T_FLOAT);
   if(success)
   {
-    val = *static_cast<const float*>(iFind->second.pVariable);
+    val = *static_cast<const float*>(iFind->second.variable);
   }
   return success;
 }
@@ -78,7 +78,7 @@ bool  TweakBench::Get(uint32_t name, int& val) const
           iFind->second.type == Variable::T_INT);
   if(success)
   {
-    val = *static_cast<const int*>(iFind->second.pVariable);
+    val = *static_cast<const int*>(iFind->second.variable);
   }
   return success;
 }
@@ -91,7 +91,7 @@ bool  TweakBench::Get(uint32_t name, bool& val) const
           iFind->second.type == Variable::T_BOOL);
   if(success)
   {
-    val = *static_cast<const bool*>(iFind->second.pVariable);
+    val = *static_cast<const bool*>(iFind->second.variable);
   }
   return success;
 }
@@ -104,7 +104,7 @@ bool  TweakBench::Set(uint32_t name, float val)
           iFind->second.type == Variable::T_FLOAT);
   if(success)
   {
-    *static_cast<float*>(iFind->second.pVariable) = val;
+    *static_cast<float*>(iFind->second.variable) = val;
   }
   return success;
 }
@@ -117,7 +117,7 @@ bool  TweakBench::Set(uint32_t name, int val)
           iFind->second.type == Variable::T_INT);
   if(success)
   {
-    *static_cast<int*>(iFind->second.pVariable) = val;
+    *static_cast<int*>(iFind->second.variable) = val;
   }
   return success;
 }
@@ -130,7 +130,7 @@ bool  TweakBench::Set(uint32_t name, bool val)
           iFind->second.type == Variable::T_BOOL);
   if(success)
   {
-    *static_cast<bool*>(iFind->second.pVariable) = val;
+    *static_cast<bool*>(iFind->second.variable) = val;
   }
   return success;
 }

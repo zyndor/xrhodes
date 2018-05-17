@@ -10,35 +10,35 @@ namespace XR
 {
 
 //==============================================================================
-void  UIEventNotifier::UIPointerActionCallback(void* pSystem, void* pUser)
+void  UIEventNotifier::UIPointerActionCallback(void* systemData, void* userData)
 {
-  UIEventNotifier   *pDispatcher(static_cast<UIEventNotifier*>(pUser));
-  Input::MouseActionEvent *pEvent(static_cast<Input::MouseActionEvent*>(pSystem));
+  UIEventNotifier   *dispatcher(static_cast<UIEventNotifier*>(userData));
+  Input::MouseActionEvent *event(static_cast<Input::MouseActionEvent*>(systemData));
 
-  bool  zeroHit(!pDispatcher->m_actionNotifier.Notify(*pEvent) &&
-    pDispatcher->m_pZeroHitCb != 0);
+  bool  zeroHit(!dispatcher->m_actionNotifier.Notify(*event) &&
+    dispatcher->m_onZeroHit != 0);
 
   if (zeroHit)
   {
-    (*pDispatcher->m_pZeroHitCb)(*pEvent, pDispatcher->m_pZeroHitCbData);
+    (*dispatcher->m_onZeroHit)(*event, dispatcher->m_onZeroHitData);
   }
 }
 
 //==============================================================================
-void  UIEventNotifier::UIPointerMotionCallback(void* pSystem, void* pUser)
+void  UIEventNotifier::UIPointerMotionCallback(void* systemData, void* userData)
 {
-  UIEventNotifier    *pDispatcher(static_cast<UIEventNotifier*>(pUser));
-  Input::MouseMotionEvent *pEvent(static_cast<Input::MouseMotionEvent*>(pSystem));
+  UIEventNotifier    *dispatcher(static_cast<UIEventNotifier*>(userData));
+  Input::MouseMotionEvent *event(static_cast<Input::MouseMotionEvent*>(systemData));
 
-  pDispatcher->m_motionNotifier.Notify(*pEvent);
+  dispatcher->m_motionNotifier.Notify(*event);
 }
 
 //==============================================================================
 UIEventNotifier::UIEventNotifier()
 : m_actionNotifier(),
   m_motionNotifier(),
-  m_pZeroHitCb(0),
-  m_pZeroHitCbData(0)
+  m_onZeroHit(nullptr),
+  m_onZeroHitData(nullptr)
 {}
 
 //==============================================================================
@@ -64,18 +64,18 @@ bool  UIEventNotifier::Unregister()
 }
 
 //==============================================================================
-bool  UIEventNotifier::AddListener(UIElement* pListener)
+bool  UIEventNotifier::AddListener(UIElement* listener)
 {
-  m_actionNotifier.AddListener(*pListener, &UIElement::OnMouseAction);
-  m_motionNotifier.AddListener(*pListener, &UIElement::OnMouseMotion);
+  m_actionNotifier.AddListener(*listener, &UIElement::OnMouseAction);
+  m_motionNotifier.AddListener(*listener, &UIElement::OnMouseMotion);
   return true;
 }
 
 //==============================================================================
-bool  UIEventNotifier::RemoveListener(UIElement* pListener)
+bool  UIEventNotifier::RemoveListener(UIElement* listener)
 {
-  m_actionNotifier.RemoveListener(pListener);
-  m_motionNotifier.RemoveListener(pListener);
+  m_actionNotifier.RemoveListener(listener);
+  m_motionNotifier.RemoveListener(listener);
   return true;
 }
 
@@ -87,10 +87,10 @@ void UIEventNotifier::RemoveAllListeners()
 }
 
 //==============================================================================
-void UIEventNotifier::SetZeroHitCallback(ZeroHitCallback pZeroHitCb, void* pCbData)
+void UIEventNotifier::SetZeroHitCallback(ZeroHitCallback onZeroHit, void* userData)
 {
-  m_pZeroHitCb = pZeroHitCb;
-  m_pZeroHitCbData = pCbData;
+  m_onZeroHit = onZeroHit;
+  m_onZeroHitData = userData;
 }
 
 } // XR

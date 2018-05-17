@@ -21,7 +21,7 @@ UIAligner::~UIAligner()
 {}
 
 //==============================================================================
-void UIAligner::_AlignElement( UIElement* pElem )
+void UIAligner::_AlignElement( UIElement* elem )
 {
   if (m_hAlign != AL_NOALIGN)
   {
@@ -35,15 +35,15 @@ void UIAligner::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      x1 += (w - pElem->w) / 2;
+      x1 += (w - elem->w) / 2;
       break;
 
     case  AL_HIGH:
-      x1 += w - pElem->w;
+      x1 += w - elem->w;
       break;
     }
 
-    pElem->x = x1;
+    elem->x = x1;
   }
 
   if (m_vAlign != AL_NOALIGN)
@@ -58,18 +58,18 @@ void UIAligner::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      y1 += (h - pElem->h) / 2;
+      y1 += (h - elem->h) / 2;
       break;
 
     case  AL_HIGH:
-      y1 += h - pElem->h;
+      y1 += h - elem->h;
       break;
     }
-    
-    pElem->y = y1;
+
+    elem->y = y1;
   }
 
-  pElem->OnChange();
+  elem->OnChange();
 }
 
 //==============================================================================

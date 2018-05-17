@@ -24,10 +24,10 @@ public:
   // structors
   Name();
   explicit Name(uint32_t value);
-  explicit Name(const char* pName, size_t length);
+  explicit Name(const char* name, size_t length);
   explicit Name(const std::string& name);
   ~Name();
-  
+
   // general
 #ifdef  XR_DEBUG
   const char* GetDebugValue() const;
@@ -64,7 +64,7 @@ inline
   Name::operator uint32_t() const
 {
   return m_value;
-} 
+}
 
 //==============================================================================
 #ifdef  XR_DEBUG

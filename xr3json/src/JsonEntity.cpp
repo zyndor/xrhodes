@@ -83,11 +83,11 @@ Value::Value(const Value& rhs)
 }
 
 //==============================================================================
-Value::Value(const char* pValue, size_t len)
+Value::Value(const char* value, size_t len)
 : Entity(VALUE),
   m_parValue()
 {
-  SetValue(pValue, len);
+  SetValue(value, len);
 }
 
 //==============================================================================
@@ -137,7 +137,7 @@ const char* Value::GetValue() const
 }
 
 //==============================================================================
-Entity* Value::GetChild(const char* pKey, Type acceptType) const
+Entity* Value::GetChild(const char* key, Type acceptType) const
 {
   return nullptr;
 }
@@ -149,38 +149,38 @@ Entity* Value::GetElement(int id, Type acceptType) const
 }
 
 //==============================================================================
-void Value::SetValue(const char* pValue)
+void Value::SetValue(const char* value)
 {
   delete[] m_parValue;
 
-  if (pValue == nullptr)
+  if (value == nullptr)
   {
     m_parValue = nullptr;
   }
   else
   {
-    size_t len(strlen(pValue));
+    size_t len(strlen(value));
 
     m_parValue = new char[len + 1];
-    strncpy(m_parValue, pValue, len);
+    strncpy(m_parValue, value, len);
     m_parValue[len] = '\0';
   }
 }
 
 //==============================================================================
-void Value::SetValue(const char* pValue, size_t len)
+void Value::SetValue(const char* value, size_t len)
 {
   XR_ASSERT(Json::Value, len >= 0);
   delete[] m_parValue;
 
-  if (pValue == nullptr)
+  if (value == nullptr)
   {
     m_parValue = nullptr;
   }
   else
   {
     m_parValue = new char[len + 1];
-    strncpy(m_parValue, pValue, len);
+    strncpy(m_parValue, value, len);
     m_parValue[len] = '\0';
   }
 }
@@ -230,7 +230,7 @@ Object::Object(const Object& rhs)
   for (Child::Map::iterator i0 = m_children.begin(), i1 = m_children.end();
     i0 != i1; ++i0)
   {
-    i0->second.pEntity = i0->second.pEntity->Clone();
+    i0->second.entity = i0->second.entity->Clone();
   }
 }
 
@@ -240,7 +240,7 @@ Object::~Object()
   for (Child::Map::iterator i0 = m_children.begin(), i1 = m_children.end();
     i0 != i1; ++i0)
   {
-    delete i0->second.pEntity;
+    delete i0->second.entity;
   }
 }
 
@@ -275,19 +275,19 @@ const char* Object::GetValue() const
 }
 
 //==============================================================================
-Entity* Object::GetChild(const char* pKey, Type acceptType) const
+Entity* Object::GetChild(const char* key, Type acceptType) const
 {
-  XR_ASSERT(Json::Object, pKey != nullptr);
-  const uint64_t  hash = Hash::String(pKey);
+  XR_ASSERT(Json::Object, key != nullptr);
+  const uint64_t  hash = Hash::String(key);
   Child::Map::const_iterator iFind(m_children.find(hash));
-  Entity* pResult = nullptr;
+  Entity* result = nullptr;
   if (iFind != m_children.end())
   {
     XR_ASSERT(Json::Object, acceptType == ANY ||
-      iFind->second.pEntity->GetType() == acceptType);
-    pResult = iFind->second.pEntity;
+      iFind->second.entity->GetType() == acceptType);
+    result = iFind->second.entity;
   }
-  return pResult;
+  return result;
 }
 
 //==============================================================================
@@ -297,34 +297,34 @@ Entity* Object::GetElement(int id, Type acceptType) const
 }
 
 //==============================================================================
-void  Object::AddChild(const char* pKey, Entity* pEntity)
+void  Object::AddChild(const char* key, Entity* entity)
 {
-  XR_ASSERT(Json::Object, pEntity != nullptr);
-  AddChild(std::string(pKey), pEntity);
+  XR_ASSERT(Json::Object, entity != nullptr);
+  AddChild(std::string(key), entity);
 }
 
 //==============================================================================
-void  Object::AddChild(const char* pKey, size_t keySize, Entity* pEntity)
+void  Object::AddChild(const char* key, size_t keySize, Entity* entity)
 {
-  XR_ASSERT(Json::Object, pEntity != nullptr);
-  AddChild(std::string(pKey, keySize), pEntity);
+  XR_ASSERT(Json::Object, entity != nullptr);
+  AddChild(std::string(key, keySize), entity);
 }
 
 //==============================================================================
-void  Object::AddChild(std::string name, Entity* pEntity)
+void  Object::AddChild(std::string name, Entity* entity)
 {
-  XR_ASSERT(Json::Object, pEntity != nullptr);
+  XR_ASSERT(Json::Object, entity != nullptr);
   const uint64_t  hash = Hash::String(name.c_str());
   Child::Map::iterator iFind(m_children.find(hash));
   if (iFind != m_children.end())
   {
-    delete iFind->second.pEntity;
-    iFind->second.pEntity = pEntity;
+    delete iFind->second.entity;
+    iFind->second.entity = entity;
   }
   else
   {
     Child&  c(m_children[hash]);
-    c.pEntity = pEntity;
+    c.entity = entity;
     c.name = name;
     iFind = m_children.find(hash);
   }
@@ -337,14 +337,14 @@ void  Object::AddChild(std::string name, Entity* pEntity)
   if (hasPrev)
   {
     --iPrev;
-    XR_ASSERT(Json::Object, hasNext || iPrev->second.pEntity->GetNextSibling() == nullptr);
-    iPrev->second.pEntity->LinkNextSibling(pEntity);
+    XR_ASSERT(Json::Object, hasNext || iPrev->second.entity->GetNextSibling() == nullptr);
+    iPrev->second.entity->LinkNextSibling(entity);
   }
 
   if (hasNext)
   {
-    XR_ASSERT(Json::Object, hasPrev || iPrev->second.pEntity->GetPrevSibling() == nullptr);
-    iNext->second.pEntity->LinkPrevSibling(pEntity);
+    XR_ASSERT(Json::Object, hasPrev || iPrev->second.entity->GetPrevSibling() == nullptr);
+    iNext->second.entity->LinkPrevSibling(entity);
   }
 }
 
@@ -359,28 +359,28 @@ void  Object::GetChildNames(StringList& sl) const
 Entity* Object::GetFirstChild()
 {
   Child::Map::iterator i0(m_children.begin());
-  return i0 != m_children.end() ? i0->second.pEntity : nullptr;
+  return i0 != m_children.end() ? i0->second.entity : nullptr;
 }
 
 //==============================================================================
 Entity* Object::GetLastChild()
 {
   Child::Map::reverse_iterator i0(m_children.rbegin());
-  return i0 != m_children.rend() ? i0->second.pEntity : nullptr;
+  return i0 != m_children.rend() ? i0->second.entity : nullptr;
 }
 
 //==============================================================================
 const Entity* Object::GetFirstChild() const
 {
   Child::Map::const_iterator i0(m_children.begin());
-  return i0 != m_children.end() ? i0->second.pEntity : nullptr;
+  return i0 != m_children.end() ? i0->second.entity : nullptr;
 }
 
 //==============================================================================
 const Entity* Object::GetLastChild() const
 {
   Child::Map::const_reverse_iterator i0(m_children.rbegin());
-  return i0 != m_children.rend() ? i0->second.pEntity : nullptr;
+  return i0 != m_children.rend() ? i0->second.entity : nullptr;
 }
 
 //==============================================================================
@@ -435,21 +435,21 @@ size_t Array::GetValueSize() const
 }
 
 //==============================================================================
-void Array::AddElement(Entity* pEntity)
+void Array::AddElement(Entity* entity)
 {
-  XR_ASSERT(Json::Array, pEntity != nullptr);
-  Entity* pPrev(nullptr);
+  XR_ASSERT(Json::Array, entity != nullptr);
+  Entity* prev(nullptr);
   if (m_elements.size() > 0)
   {
-    pPrev = *m_elements.rbegin();
+    prev = *m_elements.rbegin();
   }
-  pEntity->LinkPrevSibling(pPrev);
+  entity->LinkPrevSibling(prev);
 
-  m_elements.push_back(pEntity);
+  m_elements.push_back(entity);
 }
 
 //==============================================================================
-Entity* Array::GetChild(const char* pKey, Type acceptType) const
+Entity* Array::GetChild(const char* key, Type acceptType) const
 {
   return nullptr;
 }

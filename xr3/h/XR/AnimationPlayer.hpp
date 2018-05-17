@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Animation.hpp"
 
 namespace XR
@@ -27,13 +26,12 @@ protected:
 
   // structors
   AnimationPlayerCore();
-  ~AnimationPlayerCore();
 
   // general
   bool  IsActive() const;
 
   // data
-  void*  m_pTarget; // no ownership
+  void*  m_target; // no ownership
 };
 
 //==============================================================================
@@ -45,7 +43,7 @@ public:
   typedef T Type;
   typedef Animation<Type> AnimationType;
   typedef typename AnimationType::Instance  AnimationInstance;
-  
+
   // using
   using AnimationPlayerCore::tLife;
   using AnimationPlayerCore::IsActivePredicate;
@@ -54,17 +52,16 @@ public:
 
   // data
   AnimationInstance anim;
-  
+
   // structors
   AnimationPlayer();
-  ~AnimationPlayer();
-    
+
   // general
   void  SetTarget(Type& target);
-  
-  void  Start(const AnimationType* pAnim, float timeScale, float lifespan,
-    Type& pTarget);
-    
+
+  void  Start(const AnimationType* anim, float timeScale, float lifespan,
+    Type& target);
+
   void  Update(float tDelta);
 };
 
@@ -83,30 +80,25 @@ AnimationPlayer<T>::AnimationPlayer()
 : AnimationPlayerCore(),
   anim()
 {}
-  
-//==============================================================================
-template  <class T>
-AnimationPlayer<T>::~AnimationPlayer()
-{}
-  
+
 //==============================================================================
 template  <class T>
 void  AnimationPlayer<T>::SetTarget(Type& target)
 {
-  m_pTarget = &target;
+  m_target = &target;
   target = anim.GetCurrentFrameData();
 }
-  
+
 //==============================================================================
 template  <class T>
-void  AnimationPlayer<T>::Start(const AnimationType* pAnim, float timeScale,
-  float lifespan, T& pTarget)
+void  AnimationPlayer<T>::Start(const AnimationType* anim_, float timeScale,
+  float lifespan, T& target)
 {
-  XR_ASSERT(AnimationPlayer, pAnim != 0);
-  SetTarget(pTarget);
-  anim.SetAnimation(pAnim, timeScale);
+  XR_ASSERT(AnimationPlayer, anim_ != nullptr);
+  SetTarget(target);
+  anim.SetAnimation(anim_, timeScale);
 }
-  
+
 //==============================================================================
 template  <class T>
 void  AnimationPlayer<T>::Update(float tDelta)
@@ -116,7 +108,7 @@ void  AnimationPlayer<T>::Update(float tDelta)
   {
     tLife -= tDelta;
     anim.Update(tDelta);
-    *static_cast<Type*>(m_pTarget) = anim.GetCurrentFrameData();
+    *static_cast<Type*>(m_target) = anim.GetCurrentFrameData();
   }
 }
 

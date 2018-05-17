@@ -30,7 +30,7 @@ public:
     S_HIDDEN
   };
 
-  typedef void(*BecomeActiveCallback)(Screen* pScreen, void* pUser);
+  typedef void(*BecomeActiveCallback)(Screen* screen, void* userData);
 
   // structors
   Screen();
@@ -44,7 +44,7 @@ public:
   bool            IsRegistered() const;
   ScreenManager*  GetManager() const;  // no ownership transfer
 
-  void            SetOnBecomeActive(BecomeActiveCallback pCb, void* pData);
+  void            SetOnBecomeActive(BecomeActiveCallback becomeActive, void* userData);
 
   void            Show(ScreenManager& sm, int32_t ms);
   void            Register();
@@ -55,7 +55,7 @@ public:
 
 protected:
   // data
-  ScreenManager*  m_pManager;  // no ownership
+  ScreenManager*  m_manager;  // no ownership
 
   // virtual
   virtual void    _AddElements() =0;
@@ -72,8 +72,8 @@ private:
   uint32_t        m_timer;
   bool            m_isRegistered;
 
-  BecomeActiveCallback  m_pOnBecomeActive;
-  void*                 m_pOnBecomeActiveData;
+  BecomeActiveCallback  m_onBecomeActive;
+  void*                 m_onBecomeActiveData;
 
   // internal
   void            _MakeActive();
@@ -100,7 +100,7 @@ bool  Screen::IsRegistered() const
 inline
 ScreenManager*  Screen::GetManager() const
 {
-  return m_pManager;
+  return m_manager;
 }
 
 } // XR

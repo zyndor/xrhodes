@@ -20,19 +20,19 @@ enum  KeyCode
   K_RSHIFT,
   K_RCTRL,
   K_RALT,
-  
+
   K_LEFT,
   K_UP,
   K_DOWN,
   K_RIGHT,
-  
+
   K_ESC,
   K_BACKSPACE,
   K_TAB,
   K_CAPSLOCK,
   K_ENTER,
   K_SPACE,
-  
+
   K_INS,
   K_HOME,
   K_PGUP,
@@ -41,7 +41,7 @@ enum  KeyCode
   K_DEL,
 
   K_PAUSE,
-  
+
   K_F1,
   K_F2,
   K_F3,
@@ -54,7 +54,7 @@ enum  KeyCode
   K_F10,
   K_F11,
   K_F12,
-                
+
   K_1,
   K_2,
   K_3,
@@ -65,7 +65,7 @@ enum  KeyCode
   K_8,
   K_9,
   K_0,
-  
+
   K_A,
   K_B,
   K_C,
@@ -92,7 +92,7 @@ enum  KeyCode
   K_X,
   K_Y,
   K_Z,
-  
+
   K_BACKTICK,   //`
   K_LBRACKET,   //[
   K_RBRACKET,   //]
@@ -109,13 +109,13 @@ enum  KeyCode
   K_BACK,
   K_MENU,
   K_OK,
-  
+
   kKeyCount,
   K_UNKNOWN = kKeyCount
 };
 
 //==============================================================================
-extern const int karKeyCodeNative[kKeyCount];
+extern const int kKeyCodesNative[kKeyCount];
 
 //==============================================================================
 KeyCode TranslateKeyCodeNative(int kc);

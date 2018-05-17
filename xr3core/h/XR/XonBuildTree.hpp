@@ -15,16 +15,16 @@
 namespace XR
 {
 
-///@brief Attempts to parse @a pBuffer as XON and build a tree of XON entities.
+///@brief Attempts to parse @a string as XON and build a tree of XON entities.
 /// Adds some semantics-related handling to the XON parser: an unquoted 'null'
 /// string is interpreted as a null value.
-///@param pBuffer - the buffer to parse. Does not have to be 0-terminated.
+///@param string - the buffer to parse. Does not have to be 0-terminated.
 ///@param length - the size of the buffer.
-///@param pStateOut - optional; if provided, the parser state will be written
+///@param stateOut - optional; if provided, the parser state will be written
 /// to it.
 ///@return The root object of the XON document.
-XonObject* XonBuildTree(char const* pBuffer, size_t length,
-  XonParser::State* pStateOut = nullptr);
+XonObject* XonBuildTree(char const* string, size_t length,
+  XonParser::State* outState = nullptr);
 
 } // XR
 

@@ -31,25 +31,25 @@ public:
   bool  Register();
   bool  Unregister();
 
-  void  SetZeroHitCallback(ZeroHitCallback pZeroHitCb, void* pCbData);
+  void  SetZeroHitCallback(ZeroHitCallback onZeroHit, void* userData);
 
-  bool  AddListener(UIElement* pListener);
-  bool  AddListenerPriority(UIElement* pListener);
-  bool  RemoveListener(UIElement* pListener);
+  bool  AddListener(UIElement* listener);
+  bool  AddListenerPriority(UIElement* listener); // TODO: implement or remove
+  bool  RemoveListener(UIElement* listener);
 
   void  RemoveAllListeners();
 
 protected:
   // static
-  static void UIPointerActionCallback(void* pSystem, void* pUser);
-  static void UIPointerMotionCallback(void* pSystem, void* pUser);
+  static void UIPointerActionCallback(void* systemData, void* userData);
+  static void UIPointerMotionCallback(void* systemData, void* userData);
 
   // data
   EventNotifier<const Input::MouseActionEvent&> m_actionNotifier;
   EventNotifier<const Input::MouseMotionEvent&> m_motionNotifier;
 
-  ZeroHitCallback m_pZeroHitCb;
-  void*           m_pZeroHitCbData;
+  ZeroHitCallback m_onZeroHit;
+  void*           m_onZeroHitData;
 };
 
 } // XR

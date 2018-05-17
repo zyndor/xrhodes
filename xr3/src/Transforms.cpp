@@ -153,7 +153,7 @@ public:
         Matrix4Helper::ToMatrix(mvp, normal);
         normal.Invert();
         normal.Transpose();
-        Gfx::SetUniform(m_xruNormal, normal.arLinear);
+        Gfx::SetUniform(m_xruNormal, normal.linear);
       }
 
       float viewProjection[16];

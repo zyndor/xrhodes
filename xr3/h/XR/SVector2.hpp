@@ -29,7 +29,7 @@ struct SVector2
     {
       int16_t x, y;
     };
-    int16_t arData[2];
+    int16_t data[2];
   };
 
   // structors
@@ -41,9 +41,9 @@ struct SVector2
   : x(x_), y(y_)
   {}
 
-  explicit SVector2(const int16_t parData[2])
-  : x(parData[0]),
-    y(parData[1])
+  explicit SVector2(const int16_t data_[2])
+  : x(data_[0]),
+    y(data_[1])
   {}
 
   // general

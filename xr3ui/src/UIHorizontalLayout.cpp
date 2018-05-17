@@ -19,7 +19,7 @@ UIHorizontalLayout::~UIHorizontalLayout()
 {}
 
 //==============================================================================
-void UIHorizontalLayout::_AlignElement( UIElement* pElem )
+void UIHorizontalLayout::_AlignElement( UIElement* elem )
 {
   if (m_align != AL_NOALIGN)
   {
@@ -30,24 +30,24 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
       break;
 
     case  AL_CENTER:
-      yElem += (h - pElem->h) / 2;
+      yElem += (h - elem->h) / 2;
       break;
 
     case  AL_HIGH:
-      yElem += h - pElem->h;
+      yElem += h - elem->h;
       break;
-      
+
     case  AL_NOALIGN:
       break;
     }
 
-    pElem->y = yElem;
+    elem->y = yElem;
   }
 
   int16_t xElem(0);
-  if (m_lElements.size() > 0)
+  if (m_elements.size() > 0)
   {
-    UIElement*  pLast(m_lElements.back());
+    UIElement*  pLast(m_elements.back());
     xElem = pLast->x;
     if (m_growDir == GD_POSITIVE)
     {
@@ -55,7 +55,7 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
     }
     else
     {
-      xElem -= (pElem->w + m_spacing);
+      xElem -= (elem->w + m_spacing);
     }
   }
   else
@@ -63,26 +63,26 @@ void UIHorizontalLayout::_AlignElement( UIElement* pElem )
     xElem = x;
     if (m_growDir != GD_POSITIVE)
     {
-      xElem += w - pElem->w;
+      xElem += w - elem->w;
     }
   }
-  pElem->x = xElem;
+  elem->x = xElem;
 
-  pElem->OnChange();
+  elem->OnChange();
 }
 
 //==============================================================================
 void UIHorizontalLayout::_SetWidthToContent()
 {
   int32_t wNew = 0;
-  for (UIElement::List::const_iterator i0(m_lElements.begin()), i1(m_lElements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
     wNew += (*i0)->w;
   }
 
-  if (m_lElements.size() > 0)
+  if (m_elements.size() > 0)
   {
-    wNew += static_cast<int32_t>(m_lElements.size() - 1) * m_spacing;
+    wNew += static_cast<int32_t>(m_elements.size() - 1) * m_spacing;
   }
 
   w = wNew;

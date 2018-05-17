@@ -62,10 +62,10 @@ void Inflator::ResolveMappings()
     }
 
     // Write the pointer back.
-    auto pRestored = iFind->second;
+    auto restored = iFind->second;
     for (auto pp : mapping.second)
     {
-      *static_cast<Inflatable**>(pp) = pRestored;
+      *static_cast<Inflatable**>(pp) = restored;
     }
   }
 

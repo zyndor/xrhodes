@@ -138,11 +138,11 @@ public:
   // data
   union
   {
-    float arData[kNumQuaternionInds];
     struct
     {
       float i, j, k, w;
     };
+    float data[kNumQuaternionInds];
   };
 
   // structors
@@ -150,9 +150,9 @@ public:
   : i(.0f), j(.0f), k(.0f), w(1.0f)
   {}
 
-  explicit Quaternion(const float arDataIn[kNumQuaternionInds])
+  explicit Quaternion(const float data_[kNumQuaternionInds])
   {
-    memcpy(arData, arDataIn, sizeof(arData));
+    memcpy(data, data_, sizeof(data));
   }
 
   Quaternion(float i_, float j_, float k_, float w_)
@@ -328,13 +328,13 @@ public:
     const float jSqr(j * j);
     const float kSqr(k * k);
 
-    const float arMatrix[Matrix::kNumLinearComponents] =
+    const float matrixData[Matrix::kNumLinearComponents] =
     {
       wSqr + iSqr - jSqr - kSqr, ij - wk, ik + wj,
       ij + wk, wSqr - iSqr + jSqr - kSqr, jk - wi,
       ik - wj, jk + wi, wSqr - iSqr - jSqr + kSqr
     };
-    return Matrix(arMatrix);
+    return Matrix(matrixData);
   }
 };
 

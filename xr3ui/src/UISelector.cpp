@@ -19,36 +19,36 @@ UISelector::~UISelector()
 {}
 
 //==============================================================================
-bool  UISelector::Add(UIElement* pElem, UIElement* pAfter)
+bool  UISelector::Add(UIElement* elem, UIElement* previous)
 {
-  bool  result(pAfter == 0 || pAfter == pElem);
+  bool  result(previous == nullptr || previous == elem);
   if(result)
   {
-    Entry e = { pAfter, pAfter };
-    m_elements[pElem] = e;
+    Entry e = { previous, previous };
+    m_elements[elem] = e;
   }
   else
   {
-    ElementMap::iterator  iFind(m_elements.find(pAfter));
+    ElementMap::iterator  iFind(m_elements.find(previous));
     result = iFind != m_elements.end();
     if(result)
     {
-      UIElement*  pNext(iFind->second.pNext);
-      if(pNext != 0)
+      UIElement*  next = iFind->second.next;
+      if(next != nullptr)
       {
         // if inserting
-        ElementMap::iterator  iFindNext(m_elements.find(pNext));
+        ElementMap::iterator  iFindNext(m_elements.find(next));
         XR_ASSERT(UISelector, iFindNext != m_elements.end());
 
         // replace next's previous with elem
-        iFindNext->second.pPrev = pElem;
+        iFindNext->second.prev = elem;
       }
 
-      // replace pAfter's next with inserted elem
-      iFind->second.pNext = pElem;
+      // replace previous' next with inserted elem
+      iFind->second.next = elem;
 
-      Entry e = { pAfter, pNext };
-      m_elements[pElem] = e;
+      Entry e = { previous, next };
+      m_elements[elem] = e;
     }
   }
 
@@ -56,25 +56,25 @@ bool  UISelector::Add(UIElement* pElem, UIElement* pAfter)
 }
 
 //==============================================================================
-bool  UISelector::Remove(UIElement* pElem)
+bool  UISelector::Remove(UIElement* elem)
 {
-  ElementMap::iterator  iFind(m_elements.find(pElem));
+  ElementMap::iterator  iFind(m_elements.find(elem));
   bool  result(iFind != m_elements.end());
   if(result)
   {
-    UIElement*  pPrev(iFind->second.pPrev);
-    UIElement*  pNext(iFind->second.pNext);
+    UIElement*  prev = iFind->second.prev;
+    UIElement*  next = iFind->second.next;
 
-    ElementMap::iterator  iFindPrev(m_elements.find(pPrev));
+    ElementMap::iterator  iFindPrev(m_elements.find(prev));
     if(iFindPrev != m_elements.end())
     {
-      iFindPrev->second.pNext = pNext;
+      iFindPrev->second.next = next;
     }
 
-    ElementMap::iterator  iFindNext(m_elements.find(pNext));
+    ElementMap::iterator  iFindNext(m_elements.find(next));
     if(iFindNext != m_elements.end())
     {
-      iFindNext->second.pPrev = pPrev;
+      iFindNext->second.prev = prev;
     }
 
     m_elements.erase(iFind);
@@ -89,19 +89,19 @@ void  UISelector::Clear()
 }
 
 //==============================================================================
-UIElement* UISelector::GetPrevious(UIElement* pElem) const
+UIElement* UISelector::GetPrevious(UIElement* elem) const
 {
-  ElementMap::const_iterator  iFind(m_elements.find(pElem));
-  return iFind != m_elements.end() ? (iFind->second.pPrev != 0 ? 
-    iFind->second.pPrev : pElem) : 0;
+  ElementMap::const_iterator  iFind(m_elements.find(elem));
+  return iFind != m_elements.end() ? (iFind->second.prev != nullptr ?
+    iFind->second.prev : elem) : nullptr;
 }
 
 //==============================================================================
-UIElement* UISelector::GetNext(UIElement* pElem) const
+UIElement* UISelector::GetNext(UIElement* elem) const
 {
-  ElementMap::const_iterator  iFind(m_elements.find(pElem));
-  return iFind != m_elements.end() ? (iFind->second.pNext != 0 ? 
-    iFind->second.pNext : pElem) : 0;
+  ElementMap::const_iterator  iFind(m_elements.find(elem));
+  return iFind != m_elements.end() ? (iFind->second.next != nullptr ?
+    iFind->second.next : elem) : nullptr;
 }
 
 } // XR

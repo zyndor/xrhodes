@@ -33,7 +33,7 @@ enum  type
 //==============================================================================
 extern const int    kMaxAnimationFrames;
 
-extern const char*  karAnimationTag[AnimationTag::kCount];
+extern const char*  kAnimationTags[AnimationTag::kCount];
 
 //==============================================================================
 template  <class T>
@@ -46,55 +46,55 @@ public:
   typedef T               Type;
   typedef Animation<Type> AnimationType;
 
-  typedef bool(*GetFrameDataCallback)(const char* pName, int index, void* pData,
+  typedef bool(*GetFrameDataCallback)(const char* name, int index, void* data,
     Type& frame);
 
   // static
-  static bool  Read(tinyxml2::XMLElement* pXml, GetFrameDataCallback pGetFrameDataCb,
-    void* pGetFrameDataCbData, AnimationType& anim);
+  static bool  Read(tinyxml2::XMLElement* xml, GetFrameDataCallback getFrameDataCb,
+    void* getFrameDataCbData, AnimationType& anim);
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 template  <class T>
-bool  AnimationReader<T>::Read(tinyxml2::XMLElement* pXml,
-  GetFrameDataCallback pGetFrameDataCb, void* pGetFrameDataCbData,
+bool  AnimationReader<T>::Read(tinyxml2::XMLElement* xml,
+  GetFrameDataCallback getFrameDataCb, void* getFrameDataCbData,
   AnimationType& anim)
 {
-  XR_ASSERT(AnimationReader, pXml != 0);
-  XR_ASSERT(AnimationReader, pGetFrameDataCb != 0);
+  XR_ASSERT(AnimationReader, xml != nullptr);
+  XR_ASSERT(AnimationReader, getFrameDataCb != nullptr);
 
   bool  success;
   // name
-  const char* pName(pXml->Attribute(karAnimationTag[AnimationTag::NAME]));
-  success = pName != 0;
+  const char* name = xml->Attribute(kAnimationTags[AnimationTag::NAME]);
+  success = name != nullptr;
   if (!success)
   {
     XR_TRACE(AnimationReader, ("Attribute '%s' is required in animation",
-      karAnimationTag[AnimationTag::NAME]));
+      kAnimationTags[AnimationTag::NAME]));
   }
 
   // resource name
-  const char* pResourceName(0);
+  const char* resourceName(0);
   if (success)
   {
-    pResourceName = pXml->Attribute(karAnimationTag[AnimationTag::RESOURCE_NAME]);
-    if (pResourceName == 0)
+    resourceName = xml->Attribute(kAnimationTags[AnimationTag::RESOURCE_NAME]);
+    if (resourceName == nullptr)
     {
-      pResourceName = pName;  // default to name
+      resourceName = name;  // default to name
     }
   }
 
   // frame delay
   if (success)
   {
-    success = Parse::Float(pXml->Attribute(karAnimationTag[AnimationTag::FRAME_DELAY]),
+    success = Parse::Float(xml->Attribute(kAnimationTags[AnimationTag::FRAME_DELAY]),
       anim.frameDelay);
     if (!success)
     {
       XR_TRACE(AnimationReader, ("Failed to parse '%s' for animation",
-        karAnimationTag[AnimationTag::FRAME_DELAY]));
+        kAnimationTags[AnimationTag::FRAME_DELAY]));
     }
   }
 
@@ -102,7 +102,7 @@ bool  AnimationReader<T>::Read(tinyxml2::XMLElement* pXml,
   if (success)
   {
     int iTemp;
-    if (Parse::Int(pXml->Attribute(karAnimationTag[AnimationTag::LOOP_FRAME]),
+    if (Parse::Int(xml->Attribute(kAnimationTags[AnimationTag::LOOP_FRAME]),
       iTemp))
     {
       anim.SetLoopFrame(iTemp);
@@ -118,45 +118,45 @@ bool  AnimationReader<T>::Read(tinyxml2::XMLElement* pXml,
     bool  gotFrame(false);
     do
     {
-      gotFrame = (*pGetFrameDataCb)(pResourceName, frames.size(),
-        pGetFrameDataCbData, frame);
+      gotFrame = (*getFrameDataCb)(resourceName, frames.size(),
+        getFrameDataCbData, frame);
       if (gotFrame)
       {
         frames.push_back(frame);
       }
     } while (gotFrame && frames.size() < kMaxAnimationFrames);
-    
+
     if (frames.empty())
     {
       XR_TRACE(AnimationReader,
-        ("Animation '%s' has 0 frames (resource name: %s).", pName,
-          pResourceName));
+        ("Animation '%s' has 0 frames (resource name: %s).", name,
+          resourceName));
     }
     else
     {
       // have we got a comma separated list of frames as text?
-      tinyxml2::XMLNode*  pText(pXml->FirstChild());
-      while(!pText)
+      tinyxml2::XMLNode*  text(xml->FirstChild());
+      while(!text)
       {
-        if(pText->ToText())
+        if(text->ToText())
         {
           break;
         }
-        pText = pText->NextSibling();
+        text = text->NextSibling();
       }
 
       typename AnimationType::FrameVector  fv;
       fv.assign(frames.begin(), frames.end());
 
-      if(pText != nullptr && pText->ToText())
+      if(text != nullptr && text->ToText())
       {
         ParserCore  parser;
-        parser.SetBuffer(pText->Value(), strlen(pText->Value()));
+        parser.SetBuffer(text->Value(), strlen(text->Value()));
 
         frames.clear();
         while(!parser.IsOver(parser.ExpectChar()))
         {
-          int i(atoi(parser.GetChar()) - 1);
+          int i = atoi(parser.GetChar()) - 1;
           XR_ASSERT(AnimationReader, i >= 0 && i < fv.size());
 
           frames.push_back(fv[i]);

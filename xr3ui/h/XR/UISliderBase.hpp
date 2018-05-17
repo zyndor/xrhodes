@@ -18,14 +18,14 @@ class UISliderBase:  public UIImage
 {
 public:
   // types
-  typedef void(*ValueChangedCallback)(UISliderBase* pSlider, void* pVoid);
+  typedef void(*ValueChangedCallback)(UISliderBase* slider, void* userData);
 
   // data
   Sprite                sliderSprite;
   Material::Ptr         sliderMaterial; // TODO: UIBuilder support
 
-  ValueChangedCallback  pOnValueChangeCb;
-  void*                 pOnValueChangeCbData;
+  ValueChangedCallback  onValueChangeCb;
+  void*                 onValueChangeCbData;
 
   // structors
   UISliderBase();

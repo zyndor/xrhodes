@@ -12,15 +12,15 @@ namespace XR
 
 TweenVarPoolCore::TweenVarPoolCore( int numVars )
 : m_numVars(numVars),
-  m_parVarBuffer(0)
+  m_varPool(nullptr)
 {
   XR_ASSERT(TweenVarPoolCore, numVars >= 0);
-  m_parVarBuffer = new VarCore[numVars];
+  m_varPool = new VarCore[numVars];
 
   for (int i = 0; i < numVars; ++i)
   {
-    m_parVarBuffer[i].Clear();
-    m_parVarBuffer[i].offset = i;
+    m_varPool[i].Clear();
+    m_varPool[i].offset = i;
   }
 }
 
@@ -28,12 +28,12 @@ TweenVarPoolCore::~TweenVarPoolCore()
 {
   for (int i = 0; i < m_numVars; ++i)
   {
-    if (m_parVarBuffer[i].pTweener != 0)
+    if (m_varPool[i].tweener)
     {
-      m_parVarBuffer[i].pTweener->Remove(m_parVarBuffer[i].fValue, false);
+      m_varPool[i].tweener->Remove(m_varPool[i].fValue, false);
     }
   }
-  delete[] m_parVarBuffer;
+  delete[] m_varPool;
 }
 
 } // XR
