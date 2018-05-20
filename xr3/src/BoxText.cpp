@@ -240,8 +240,6 @@ namespace
   };
 }
 
-#define ADVANCE_PTR(p, stride) p = reinterpret_cast<decltype(p)>(reinterpret_cast<uint8_t*>(p) + (stride))
-
 void BoxText::Generate(Measurement const& m, uint32_t attribStride,
   Vector3* positions, Vector2* uvs, bool updateGlyphCache, Stats* statsOut)
 {
@@ -306,23 +304,23 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
 
             *positions = Vector3(gx, gy + gh, .0f);
             *uvs = Vector2(cg->uvs.left, cg->uvs.top);
-            ADVANCE_PTR(positions, attribStride);
-            ADVANCE_PTR(uvs, attribStride);
+            positions = XR_ADVANCE_PTR(positions, attribStride);
+            uvs = XR_ADVANCE_PTR(uvs, attribStride);
 
             *positions = Vector3(gx, gy, .0f);
             *uvs = Vector2(cg->uvs.left, cg->uvs.bottom);
-            ADVANCE_PTR(positions, attribStride);
-            ADVANCE_PTR(uvs, attribStride);
+            positions = XR_ADVANCE_PTR(positions, attribStride);
+            uvs = XR_ADVANCE_PTR(uvs, attribStride);
 
             *positions = Vector3(gx + gw, gy, .0f);
             *uvs = Vector2(cg->uvs.right, cg->uvs.bottom);
-            ADVANCE_PTR(positions, attribStride);
-            ADVANCE_PTR(uvs, attribStride);
+            positions = XR_ADVANCE_PTR(positions, attribStride);
+            uvs = XR_ADVANCE_PTR(uvs, attribStride);
 
             *positions = Vector3(gx + gw, gy + gh, .0f);
             *uvs = Vector2(cg->uvs.right, cg->uvs.top);
-            ADVANCE_PTR(positions, attribStride);
-            ADVANCE_PTR(uvs, attribStride);
+            positions = XR_ADVANCE_PTR(positions, attribStride);
+            uvs = XR_ADVANCE_PTR(uvs, attribStride);
           }
 
           cursor.x += cg->glyph->advance * m_scale;

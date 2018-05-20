@@ -7,8 +7,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
+#include "meshutil.hpp"
 #include "FloatBuffer.hpp"
 #include "VertexFormats.hpp"
+#include "XR/debug.hpp"
 #include <stdint.h>
 
 namespace XR {
@@ -218,76 +220,27 @@ void Mesh<VertexFormat, Base>::CreateVbo(uint32_t flags)
 
 //==============================================================================
 template <class VertexFormat, class Base>
+inline
 typename Mesh<VertexFormat, Base>::PosType
   Mesh<VertexFormat, Base>::CalculateCentre() const
 {
-  PosType centre = PosType::Zero();
-  const auto n = Base::m_vertices.GetNumElements();
-  if (n > 0)
-  {
-    for (auto i0 = GetVertices(), i1 = i0 + n; i0 != i1; ++i0)
-    {
-      centre += i0->pos;
-    }
-    centre *= 1.0f / n;
-  }
-  return centre;
+  return meshutil::CalculateCentre(Base::m_vertices.GetNumElements(), GetVertices());
 }
 
 //==============================================================================
 template <class VertexFormat, class Base>
+inline
 float Mesh<VertexFormat, Base>::CalculateRadius() const
 {
-  float radius = .0f;
-  const auto n = Base::m_vertices.GetNumElements();
-  if (n > 0)
-  {
-    for (auto i0 = GetVertices(), i1 = i0 + n; i0 != i1; ++i0)
-    {
-      float d = i0->pos.Dot();
-      if (d > radius)
-      {
-        radius = d;
-      }
-    }
-    radius = sqrtf(radius);
-  }
-  return radius;
+  return meshutil::CalculateRadius(Base::m_vertices.GetNumElements(), GetVertices());
 }
 
 //==============================================================================
 template <class VertexFormat, class Base>
-void  Mesh<VertexFormat, Base>::CalculateExtents(PosType& minOut, PosType& maxOut) const
+inline
+void  Mesh<VertexFormat, Base>::CalculateExtents(PosType& outMin, PosType& outMax) const
 {
-  const auto n = Base::m_vertices.GetNumElements();
-  if (n > 0)
-  {
-    for (int i = 0; i < PosType::kNumComponents; ++i)
-    {
-      minOut.data[i] = std::numeric_limits<float>::max();
-      maxOut.data[i] = std::numeric_limits<float>::min();
-    }
-
-    for (auto i0 = GetVertices(), i1 = i0 + n; i0 != i1; ++i0)
-    {
-      for (int j = 0; j < PosType::kNumComponents; ++j)
-      {
-        if (i0->pos.data[j] < minOut.data[j])
-        {
-          minOut.data[j] = i0->pos.data[j];
-        }
-
-        if (i0->pos.data[j] > maxOut.data[j])
-        {
-          minOut.data[j] = i0->pos.data[j];
-        }
-      }
-    }
-  }
-  else
-  {
-    minOut = maxOut = PosType::Zero();
-  }
+  meshutil::CalculateExtents(Base::m_vertices.GetNumElements(), GetVertices(), outMin, outMax);
 }
 
 } // XR
