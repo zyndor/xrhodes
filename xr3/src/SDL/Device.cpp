@@ -107,13 +107,14 @@ void Device::Init(char const* title)
 
   if (!File::CheckExists(kConfigName))
   {
-    JSON::Writer  writer;
+    std::ostringstream cfgStream;
+    JSON::Writer  writer(cfgStream);
     writer.SetLinebreaks(true);
-    writer.SetIndents(true);
-    writer.SetSpaceAfterColon(true);
+    writer.SetIndent("  ");
+    writer.SetSpaces(true);
     writer.SetAutoEscape(true);
 
-    writer.Start(JSON::Writer::OBJECT);
+    writer.WriteObject();
 
     writer.WriteObject("Device").
       WriteValue("logging", true).
@@ -134,8 +135,7 @@ void Device::Init(char const* title)
       WriteValue("ignoreControllers", false).
       CloseScope();
 
-    std::string json(writer.Finish(true));
-
+    std::string json = cfgStream.str();
     FileWriter file;
     result = file.Open(kConfigName, FileWriter::Mode::Truncate, false) &&
       file.Write(json.c_str(), json.size(), 1) == 1;
