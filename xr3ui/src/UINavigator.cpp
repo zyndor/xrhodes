@@ -46,18 +46,19 @@ bool  UINavigator::Add(UIElement* elem, UIElement* relativeTo,
     {
       Entry&  e = m_entries[elem];
 
-      Direction opp = GetOpposite(dir);
-      if(iFind->second.neighbors[dir] != 0)
+      auto& sameDirNeighbor = iFind->second.neighbors[dir];
+      const Direction opp = GetOpposite(dir);
+      if(sameDirNeighbor)
       {
         // insert elem between relativeTo and its neighbor in the direction of insertion
-        e.neighbors[dir] = iFind->second.neighbors[dir];
+        e.neighbors[dir] = sameDirNeighbor;
 
-        EntryMap::iterator  iFind2 = m_entries.find(iFind->second.neighbors[dir]);
-        iFind2->second.neighbors[opp] = elem;
+        EntryMap::iterator  iFindSameDirNeighbor = m_entries.find(sameDirNeighbor);
+        iFindSameDirNeighbor->second.neighbors[opp] = elem;
       }
 
       e.neighbors[opp] = iFind->first;
-      iFind->second.neighbors[dir] = elem;
+      sameDirNeighbor = elem;
     }
   }
   return success;
@@ -88,12 +89,12 @@ bool  UINavigator::Remove(UIElement* elem)
       }
       else
       {
-        iFindRelative[LEFT]->second.neighbors[RIGHT] = 0;
+        iFindRelative[LEFT]->second.neighbors[RIGHT] = nullptr;
       }
     }
     else if(iFindRelative[RIGHT] != iEnd)
     {
-      iFindRelative[RIGHT]->second.neighbors[LEFT] = 0;
+      iFindRelative[RIGHT]->second.neighbors[LEFT] = nullptr;
     }
 
     if(iFindRelative[UP] != iEnd)
@@ -105,12 +106,12 @@ bool  UINavigator::Remove(UIElement* elem)
       }
       else
       {
-        iFindRelative[UP]->second.neighbors[DOWN] = 0;
+        iFindRelative[UP]->second.neighbors[DOWN] = nullptr;
       }
     }
     else if(iFindRelative[DOWN] != iEnd)
     {
-      iFindRelative[DOWN]->second.neighbors[UP] = 0;
+      iFindRelative[DOWN]->second.neighbors[UP] = nullptr;
     }
   }
   return success;
