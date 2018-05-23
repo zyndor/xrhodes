@@ -24,6 +24,16 @@ class Writer
 {
   XR_NONCOPY_DECL(Writer)
 
+  ///@brief Wraps a Writer for a scope; calls CloseScope() upon destruction.
+  struct ScopeWrapper
+  {
+    ScopeWrapper(Writer& writer);
+    ~ScopeWrapper();
+
+  protected:
+    Writer* m_writer;
+  };
+
 public:
   // types
   enum  EscapedChar
@@ -37,6 +47,66 @@ public:
     EC_SLASH,
     EC_BACKSLASH,
     kNumEscapedChars
+  };
+
+  struct Object;
+
+  ///@brief Manages a JSON Array scope, closing it upon destruction.
+  struct Array: public ScopeWrapper
+  {
+    Array(Array&& a);
+
+    template <typename T>
+    Array& WriteValue(T const& value)
+    {
+      m_writer->WriteValue(value);
+      return *this;
+    }
+
+    ///@brief Opens an array scope. If @a oneLiner is true, no line breaks will be
+    /// written after child values.
+    ///@return An Array scope object which will close itself upon going out of scope.
+    Array OpenArray(bool oneLiner = false);
+
+    ///@brief Opens an object scope. If @a oneLiner is true, no line breaks will be
+    /// written after child values.
+    ///@return An Array scope object which will close itself upon going out of scope.
+    Object OpenObject(bool oneLiner = false);
+
+    // friends
+    friend class Writer;
+
+  private:
+    explicit Array(Writer& writer);
+  };
+
+  ///@brief Manages a JSON Object scope, closing it upon destruction.
+  struct Object : public ScopeWrapper
+  {
+    Object(Object&& o);
+
+    template <typename T>
+    Object& WriteValue(char const* key, T const& value)
+    {
+      m_writer->WriteValue(key, value);
+      return *this;
+    }
+
+    ///@brief Opens an array scope for the given @a key. If @a oneLiner is true,
+    /// no line breaks will be written after child values.
+    ///@return An Array scope object which will close itself upon going out of scope.
+    Array OpenArray(char const* key, bool oneLiner = false);
+
+    ///@brief Opens an object scope for the given @a key. If @a oneLiner is true,
+    /// no line breaks will be written after child values.
+    ///@return An Array scope object which will close itself upon going out of scope.
+    Object OpenObject(char const* key, bool oneLiner = false);
+
+    // friends
+    friend class Writer;
+
+  private:
+    explicit Object(Writer& writer);
   };
 
   // static
@@ -67,6 +137,30 @@ public:
   ///@brief Sets whether special characters in keys / values are automatically
   /// escaped. (See EscapedChars for listing of these.)
   void  SetAutoEscape(bool pref);
+
+  ///@brief Opens an array scope. If @a oneLiner is true, no line breaks will be
+  /// written after child values.
+  ///@return An Array scope object which will close itself upon going out of scope.
+  ///@note The Writer must either be at the root element or in an array scope.
+  Array OpenArray(bool oneLiner = false);
+
+  ///@brief Opens an object scope. If @a oneLiner is true, no line breaks will be
+  /// written after child values.
+  ///@return An Array scope object which will close itself upon going out of scope.
+  ///@note The Writer must either be at the root element or in an array scope.
+  Object OpenObject(bool oneLiner = false);
+
+  ///@brief Opens an array scope for the given @a key. If @a oneLiner is true,
+  /// no line breaks will be written after child values.
+  ///@return An Array scope object which will close itself upon going out of scope.
+  ///@note There must be a current scope and it must be of an object.
+  Array OpenArray(char const* key, bool oneLiner = false);
+
+  ///@brief Opens an object scope. If @a oneLiner is true, no line breaks will be
+  /// written after child values.
+  ///@return An Array scope object which will close itself upon going out of scope.
+  ///@note There must be a current scope and it must be of an object.
+  Object OpenObject(char const* key, bool oneLiner = false);
 
   ///@brief Writes a @a value.
   ///@note There must be a current scope and it must be of an array.

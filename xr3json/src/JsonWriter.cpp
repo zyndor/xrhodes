@@ -72,6 +72,30 @@ void Writer::SetAutoEscape( bool pref )
 }
 
 //==============================================================================
+Writer::Array Writer::OpenArray(bool oneLiner)
+{
+  return Array(WriteArray(oneLiner));
+}
+
+//==============================================================================
+Writer::Object Writer::OpenObject(bool oneLiner)
+{
+  return Object(WriteObject(oneLiner));
+}
+
+//==============================================================================
+Writer::Array Writer::OpenArray(char const * key, bool oneLiner)
+{
+  return Array(WriteArray(key, oneLiner));
+}
+
+//==============================================================================
+Writer::Object Writer::OpenObject(char const * key, bool oneLiner)
+{
+  return Object(WriteObject(key, oneLiner));
+}
+
+//==============================================================================
 Writer&  Writer::WriteValue( const char* value )
 {
   XR_ASSERT(Json::Write, !m_isComplete);
@@ -386,6 +410,68 @@ void Writer::_ProcessEscaped( const char* value )
       }
     }
   }
+}
+
+//==============================================================================
+Writer::ScopeWrapper::ScopeWrapper(Writer& writer)
+: m_writer(&writer)
+{}
+
+//==============================================================================
+Writer::ScopeWrapper::~ScopeWrapper()
+{
+  if (m_writer)
+  {
+    m_writer->CloseScope();
+  }
+}
+
+//==============================================================================
+Writer::Array::Array(Writer& writer)
+: ScopeWrapper(writer)
+{}
+
+//==============================================================================
+Writer::Array::Array(Array&& a)
+: ScopeWrapper(*a.m_writer)
+{
+  a.m_writer = nullptr;
+}
+
+//==============================================================================
+Writer::Array Writer::Array::OpenArray(bool oneLiner)
+{
+  return Array(m_writer->OpenArray(oneLiner));
+}
+
+//==============================================================================
+Writer::Object Writer::Array::OpenObject(bool oneLiner)
+{
+  return Object(m_writer->WriteObject(oneLiner));
+}
+
+//==============================================================================
+Writer::Object::Object(Writer& writer)
+: ScopeWrapper(writer)
+{}
+
+//==============================================================================
+Writer::Object::Object(Object && o)
+: ScopeWrapper(*o.m_writer)
+{
+  o.m_writer = nullptr;
+}
+
+//==============================================================================
+Writer::Array Writer::Object::OpenArray(char const* key, bool oneLiner)
+{
+  return Array(m_writer->OpenArray(key, oneLiner));
+}
+
+//==============================================================================
+Writer::Object Writer::Object::OpenObject(char const* key, bool oneLiner)
+{
+  return Object(m_writer->WriteObject(key, oneLiner));
 }
 
 } // JSON

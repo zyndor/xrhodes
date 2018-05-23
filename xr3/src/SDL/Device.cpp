@@ -114,26 +114,24 @@ void Device::Init(char const* title)
     writer.SetSpaces(true);
     writer.SetAutoEscape(true);
 
-    writer.WriteObject();
+    {
+      auto root = writer.OpenObject();
 
-    writer.WriteObject("Device").
-      WriteValue("logging", true).
-      CloseScope();
+      root.OpenObject("Device").
+        WriteValue("logging", true);
 
-    writer.WriteObject("Display").
-      WriteValue("width", 800).
-      WriteValue("height", 600).
-      WriteValue("windowed", true).
-      WriteValue("vsync", true).
-      CloseScope();
+      root.OpenObject("Display").
+        WriteValue("width", 800).
+        WriteValue("height", 600).
+        WriteValue("windowed", true).
+        WriteValue("vsync", true);
 
-    writer.WriteObject("GFX").
-      WriteValue("framePoolSize", 256000).
-      CloseScope();
+      root.OpenObject("GFX").
+        WriteValue("framePoolSize", 256000);
 
-    writer.WriteObject("Input").
-      WriteValue("ignoreControllers", false).
-      CloseScope();
+      root.OpenObject("Input").
+        WriteValue("ignoreControllers", false);
+    }
 
     std::string json = cfgStream.str();
     FileWriter file;
