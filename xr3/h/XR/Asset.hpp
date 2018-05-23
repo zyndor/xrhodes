@@ -239,6 +239,9 @@ public:
     ///@brief Attempts to load an asset of unknown type.
     static Ptr LoadReflected(FilePath const& path, FlagType flags = 0);
 
+    ///@brief Attempts to load an asset of unknown type from given descriptor.
+    static Ptr LoadReflected(DescriptorCore const& desc, FlagType flags = 0);
+
     ///@brief Attempts to retrieve an asset of the given descriptor, from the
     /// map of managed assets.
     static Ptr Find(DescriptorCore const& desc);
@@ -304,6 +307,9 @@ public:
 
     template <class T>
     static Counted<T> FindOrCreateInternal(DescriptorCore const& desc, FlagType flags);
+
+    static Ptr FindOrReflectorCreate(DescriptorCore const& desc, FlagType flags,
+      VersionType& outVersion);
 
     static bool IsLoadable(FlagType oldFlags, FlagType newFlags);
 

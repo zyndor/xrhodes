@@ -553,31 +553,34 @@ Asset::Ptr Asset::Manager::LoadReflected(FilePath const& path, FlagType flags)
   Ptr asset;
   if (desc.HasType())
   {
-    // Try to find our guy.
-    if (!CheckAllMaskBits(flags, UnmanagedFlag))
-    {
-      asset = Find(desc);
-    }
-
-    auto iFind = s_reflectors.find(desc.type);
-    XR_ASSERT(Asset::Manager, iFind != s_reflectors.end());
-
-    auto reflector = iFind->second;
-    XR_ASSERT(Asset::Manager, reflector);
-
-    if (!asset) // then create it.
-    {
-      asset.Reset((*reflector->create)(desc.hash, flags));
-      if (!CheckAllMaskBits(flags, UnmanagedFlag))
-      {
-        Manage(asset);
-      }
-    }
+    VersionType version;
+    asset = FindOrReflectorCreate(desc, flags, version);
 
     auto foundFlags = asset->GetFlags();
     if (IsLoadable(foundFlags, flags))
     {
-      LoadInternal(reflector->version, path, asset, flags);
+      LoadInternal(version, path, asset, flags);
+    }
+  }
+
+  return asset;
+}
+
+//==============================================================================
+Asset::Ptr Asset::Manager::LoadReflected(DescriptorCore const& desc, FlagType flags)
+{
+  flags &= ~PrivateMask;
+
+  Ptr asset;
+  if (desc.HasType())
+  {
+    VersionType version;
+    asset = FindOrReflectorCreate(desc, flags, version);
+
+    auto foundFlags = asset->GetFlags();
+    if (IsLoadable(foundFlags, flags))
+    {
+      LoadInternal(version, asset, flags);
     }
   }
 
@@ -596,6 +599,35 @@ bool Asset::Manager::Manage(Asset::Ptr const& asset)
   XR_ASSERT(Asset::Manager, asset);
   bool success = s_assetMan->Manage(asset);
   return success;
+}
+
+//==============================================================================
+Asset::Ptr Asset::Manager::FindOrReflectorCreate(DescriptorCore const & desc,
+  FlagType flags, VersionType & outVersion)
+{
+  Asset::Ptr asset;
+  if (!CheckAllMaskBits(flags, UnmanagedFlag))
+  {
+    asset = Find(desc);
+  }
+
+  auto iFind = s_reflectors.find(desc.type);
+  XR_ASSERT(Asset::Manager, iFind != s_reflectors.end());
+
+  auto reflector = iFind->second;
+  XR_ASSERT(Asset::Manager, reflector);
+
+  outVersion = reflector->version;
+
+  if (!asset)
+  {
+    asset.Reset((*reflector->create)(desc.hash, flags));
+    if (!CheckAllMaskBits(flags, Asset::UnmanagedFlag))
+    {
+      Asset::Manager::Manage(asset);
+    }
+  }
+  return asset;
 }
 
 //==============================================================================
