@@ -82,9 +82,13 @@ public:
   {}
 
   Counted(Counted<T>&& rhs)
-  : CountedCore(nullptr)
+  : CountedCore(nullptr),
+    m_d(nullptr)
   {
-    Swap(rhs);
+    m_p = rhs.m_p;
+    rhs.m_p = nullptr;
+
+    m_d.swap(rhs.m_d);
   }
 
   ~Counted()
@@ -135,7 +139,7 @@ public:
   void Swap(Counted<T>& rhs)
   {
     std::swap(m_p, rhs.m_p);
-    std::swap(m_d, rhs.m_d);
+    m_d.swap(rhs.m_d);
   }
 
   template <typename U, typename DU = std::default_delete<U>>
