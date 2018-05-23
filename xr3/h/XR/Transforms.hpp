@@ -7,6 +7,7 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
+#include "ViewRayCaster.hpp"
 #include "Matrix.hpp"
 #include "Ray.hpp"
 #include "XR/fundamentals.hpp"
@@ -40,10 +41,10 @@ public:
 
   ///@brief Provides facilities for concatenating updates to the model, view
   /// and / or projection matrices. It will issue the update of the uniforms
-  /// upon going out of scope.
+  /// upon going out of scope, at once.
   ///@note Ideally only created on stack within a function scope.
   ///@note Starting an update when one is already in progress will likely lead
-  /// to unexpected results.
+  /// to unexpected and incorrect results.
   class Updater
   {
   public:
@@ -143,10 +144,9 @@ public:
   /// As the name implies, it's only meaningful using a perspective projection.
   static float GetPerspectiveMultiple();
 
-  ///@brief Calculates a ray that intersects the near clipping plane at the
-  /// given normalised screen coordinates @a nx and @a ny.
-  ///@note The position and direction of the ray is in world space.
-  static Ray GetViewRay(float nx, float ny);
+  ///@brief Creates a ViewRayCaster with the current view and projection
+  /// settings.
+  static ViewRayCaster GetViewRayCaster();
 };
 
 } // XR
