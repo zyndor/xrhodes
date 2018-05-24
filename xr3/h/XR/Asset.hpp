@@ -521,6 +521,8 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 
 } // XR
 
+//==============================================================================
+///@brief Class declaration decorator for concrete Asset types.
 #define XR_ASSET_DECL(className)\
   using Ptr = XR::Counted<className>;\
 \
@@ -539,6 +541,15 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
     Unload();\
   }
 
+//==============================================================================
+///@brief Definition decorator for your concrete Asset type.
+///@param className name of your Asset type.
+///@param id four character ID actually given as string literal (including fifth, null
+/// terminator character; must be unique amongst all assets.
+///@param version Serialization version of the asset; should be incremented
+/// every time the _serialized_ format changes.
+///@param extensions accepted file types that the Asset will be built from.
+/// Must be unique.
 #define XR_ASSET_DEF(className, id, version, extensions)\
   static_assert(std::is_same<std::decay<decltype(id[0])>::type, char>::value, "Type ID for " #className " must be chars.");\
   static_assert(XR_ARRAY_SIZE(id) == 5 && id[4] == '\0', "Type ID for " #className " must be 4 characters.");\
@@ -552,6 +563,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
     className::kVersion, className::Create, extensions);\
   }
 
+//==============================================================================
 ///@brief Facilitates the declaration of a concrete Asset::Builder which compiles out
 /// when asset building is disabled. Place in .cpp
 #ifdef ENABLE_ASSET_BUILDING
@@ -567,7 +579,9 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 #define XR_ASSET_BUILDER_DECL(assetType)
 #endif
 
-///@brief Signature for the Build() function of @a assetType.
+//==============================================================================
+///@brief Signature for the Build() function of @a assetType 's builder that
+/// was declared with XR_ASSET_BUILDER_DECL.
 #define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
   bool assetType##Builder::Build(char const* rawNameExt, Buffer buffer,\
     std::vector<FilePath>& dependencies, std::ostream& data) const
