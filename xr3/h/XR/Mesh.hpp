@@ -155,6 +155,20 @@ void BasicMesh::Render(Primitive primitive, uint32_t offset, uint32_t count) con
 
 //==============================================================================
 inline
+IndexMesh::IndexArray& IndexMesh::GetIndices()
+{
+  return m_indices;
+}
+
+//==============================================================================
+inline
+const IndexMesh::IndexArray& IndexMesh::GetIndices() const
+{
+  return m_indices;
+}
+
+//==============================================================================
+inline
 Buffer IndexMesh::GetIndexBuffer() const
 {
   return { m_indices.size() * sizeof(decltype(m_indices)::value_type),
