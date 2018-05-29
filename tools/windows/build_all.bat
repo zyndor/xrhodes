@@ -12,7 +12,7 @@ pushd %~dp0
 cd ..\..\.projects\windows
 
 set MSBUILD="C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
-set SLN="xr3.SDL.sln"
+set SLN="xr3.sln"
 
 %MSBUILD% %SLN% /p:Configuration=Debug /p:Platform=win32
 %MSBUILD% %SLN% /p:Configuration=Debug /p:Platform=x64
