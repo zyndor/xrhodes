@@ -1,1 +1,0 @@
-call deploy.bat xr3 -u
