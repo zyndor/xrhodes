@@ -37,8 +37,10 @@ public:
   /// Gfx::Exit()s.
   static void RegisterSamplerUniform(char const* name, uint32_t textureStage);
 
-  ///@brief Attempts to create a texture from the given @a handle.
-  ///@note It must be a valid handle to a 2D texture.
+  ///@brief Creates a Texture, transferring the ownership of @a handle to it,
+  /// only if the handle is both valid, and is to a 2D texture. The resulting
+  /// Texture will be unmanaged or - if its type or the handle was invalid -
+  /// null.
   static Texture::Ptr FromHandle(Gfx::TextureHandle handle);
 
   // general

@@ -153,7 +153,12 @@ Texture::Ptr Texture::FromHandle(Gfx::TextureHandle handle)
   Texture::Ptr texture;
   if (!(isCube || is3d))
   {
-    texture.Reset(Create(0, 0)->Cast<Texture>());
+    texture.Reset(Create(0, UnmanagedFlag)->Cast<Texture>());
+    // NOTE: need ReadyFlag to be able to Unload(), but it can't be set with Create();
+    // NOTE: normally, synchronization should be used to access m_flags, but
+    // since the Texture is just being created, there's no way anyone else is
+    // accessing it.
+    texture->m_flags |= ReadyFlag;
     texture->m_handle = handle;
     texture->m_width = info.width;
     texture->m_height = info.height;
