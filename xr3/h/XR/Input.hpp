@@ -7,10 +7,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "SVector2.hpp"
 #include "KeyCode.hpp"
 #include "MouseButton.hpp"
 #include "ButtonState.hpp"
+#include "HatState.hpp"
+#include "SVector2.hpp"
+#include "Vector2.hpp"
 #include "XR/fundamentals.hpp"
 #include "XR/Callback.hpp"
 
@@ -38,6 +40,12 @@ public:
     MouseMotion,  // Mouse moved
     TouchAction,  // Touch pressed or released
     TouchMotion,  // Touch motion between press and release
+    JoyAdded, // A game controller is connected to the system.
+    JoyRemoved, // A game controller is disconnected form the system.
+    JoyAxisMotion,  // Motion along one of the given controller's axes.
+    JoyButton,  // A game controller button was pressed.
+    JoyHat, // A game controller hat's state has changed.
+    JoyBallMotion,  // A game controller's ball position has changed.
     kCount
   };
 
@@ -80,6 +88,40 @@ public:
     int       y;
   };
 
+  struct JoyDeviceEvent
+  {
+    uint32_t device;
+    const char* name;
+  };
+
+  struct JoyAxisEvent
+  {
+    uint32_t device;
+    uint8_t axis;
+    float value;
+  };
+
+  struct JoyButtonEvent
+  {
+    uint32_t device;
+    uint8_t button;
+    bool isPressed;
+  };
+
+  struct JoyHatEvent
+  {
+    uint32_t device;
+    uint8_t hat;
+    uint8_t state;
+  };
+
+  struct JoyBallEvent
+  {
+    uint32_t device;
+    uint8_t ball;
+    Vector2 value;  // relative motion
+  };
+
   // static
   static const int kMaxPointer = 20;
 
@@ -100,6 +142,44 @@ public:
 
   ///@return The current state of the main mouse's given button @a mb.
   static ButtonState::Type  GetMouseButtonState(MouseButton::Type mb);
+
+  ///@return Whether there is an active controller with the given id, @a device.
+  static bool IsJoyActive(uint32_t device);
+
+  ///@return The name of the given controller.
+  static char const* GetJoyName(uint32_t device);
+
+  ///@return The number of axes for the given controller, i.e. the maximum id
+  /// GetJoyAxis() can be queried with.
+  static uint32_t GetJoyNumAxes(uint32_t device);
+
+  ///@return The number of buttons for the given controller, i.e. the maximum id
+  /// GetJoyButton() can be queried with.
+  static uint32_t GetJoyNumButtons(uint32_t device);
+
+  ///@return The number of hats for the given controller, i.e. the maximum id
+  /// GetJoyHat() can be queried with.
+  static uint32_t GetJoyNumHats(uint32_t device);
+
+  ///@return The number of balls for the given controller, i.e. the maximum id
+  /// GetJoyBall() can be queried with.
+  static uint32_t GetJoyNumBalls(uint32_t device);
+
+  ///@return The current absolute state of the given @a axis of the @a device.
+  ///@note The device must be active.
+  static float GetJoyAxis(uint32_t device, uint32_t axis);
+
+  ///@return The current absolute state of the given @a button of the @a device.
+  ///@note The device must be active.
+  static ButtonState::Type GetJoyButton(uint32_t device, uint32_t button);
+
+  ///@return The current absolute state of the given @a hat of the @a device.
+  ///@note The device must be active.
+  static HatState::Type GetJoyHat(uint32_t device, uint32_t hat);
+
+  ///@return The current absolute position of the given @a ball of the @a device.
+  ///@note The device must be active.
+  static Vector2 GetJoyBall(uint32_t device, uint32_t ball);
 
   ///@brief Registers a callback for the given input event @a ev, with the
   /// given @a userData.

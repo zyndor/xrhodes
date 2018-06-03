@@ -437,10 +437,53 @@ void  Device::YieldOS(int32_t ms)
       }
       break;
 
+    case  SDL_JOYDEVICEADDED:
+      if (InputImpl::s_instance)
+      {
+        InputImpl::s_instance->OpenController(e.jdevice.which);
+      }
+      break;
+
+    case  SDL_JOYDEVICEREMOVED:
+      if (InputImpl::s_instance)
+      {
+        InputImpl::s_instance->CloseController(e.jdevice.which);
+      }
+      break;
+
+    case  SDL_JOYAXISMOTION:
+      if (InputImpl::s_instance)
+      {
+        InputImpl::s_instance->OnJoyAxis(e.jaxis);
+      }
+      break;
+
+    case  SDL_JOYBUTTONDOWN:
+    case  SDL_JOYBUTTONUP:
+      if (InputImpl::s_instance)
+      {
+        InputImpl::s_instance->OnJoyButton(e.jbutton);
+      }
+      break;
+
+    case  SDL_JOYHATMOTION:
+      if (InputImpl::s_instance)
+      {
+        InputImpl::s_instance->OnJoyHat(e.jhat);
+      }
+      break;
+
+    case  SDL_JOYBALLMOTION:
+      if (InputImpl::s_instance)
+      {
+        InputImpl::s_instance->OnJoyBall(e.jball);
+      }
+      break;
+
     case  SDL_CONTROLLERDEVICEADDED:
     case  SDL_CONTROLLERDEVICEREMOVED:
     case  SDL_CONTROLLERDEVICEREMAPPED:
-      // Input implementation
+      // TODO?
       break;
     }
   }

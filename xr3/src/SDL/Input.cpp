@@ -38,6 +38,11 @@ void Input::Update()
   {
     ButtonState::Poll(m);
   }
+
+  for (auto& c: InputImpl::s_instance->controllers)
+  {
+    c.Update();
+  }
 }
 
 //==============================================================================
@@ -58,6 +63,66 @@ ButtonState::Type Input::GetMouseButtonState(MouseButton::Type mb)
 {
   XR_ASSERT(Input, mb < MouseButton::kCount);
   return InputImpl::s_instance->mouseButtonStates[mb] & ButtonState::Down;
+}
+
+//==============================================================================
+bool Input::IsJoyActive(uint32_t device)
+{
+  return InputImpl::s_instance->controllers[device].IsActive();
+}
+
+//==============================================================================
+char const * Input::GetJoyName(uint32_t device)
+{
+  return InputImpl::s_instance->controllers[device].GetName();
+}
+
+//==============================================================================
+uint32_t Input::GetJoyNumAxes(uint32_t device)
+{
+  return InputImpl::s_instance->controllers[device].GetNumAxes();
+}
+
+//==============================================================================
+uint32_t Input::GetJoyNumButtons(uint32_t device)
+{
+  return InputImpl::s_instance->controllers[device].GetNumButtons();
+}
+
+//==============================================================================
+uint32_t Input::GetJoyNumHats(uint32_t device)
+{
+  return InputImpl::s_instance->controllers[device].GetNumHats();
+}
+
+//==============================================================================
+uint32_t Input::GetJoyNumBalls(uint32_t device)
+{
+  return InputImpl::s_instance->controllers[device].GetNumBalls();
+}
+
+//==============================================================================
+float Input::GetJoyAxis(uint32_t device, uint32_t axis)
+{
+  return InputImpl::s_instance->controllers[device].GetAxis(axis);
+}
+
+//==============================================================================
+ButtonState::Type Input::GetJoyButton(uint32_t device, uint32_t button)
+{
+  return InputImpl::s_instance->controllers[device].GetButton(button) & ButtonState::Down;
+}
+
+//==============================================================================
+HatState::Type Input::GetJoyHat(uint32_t device, uint32_t hat)
+{
+  return InputImpl::s_instance->controllers[device].GetHat(hat);
+}
+
+//==============================================================================
+Vector2 Input::GetJoyBall(uint32_t device, uint32_t ball)
+{
+  return InputImpl::s_instance->controllers[device].GetBall(ball);
 }
 
 //==============================================================================
