@@ -204,20 +204,12 @@ public:
     return m_zFar;
   }
 
-  Ray GetViewRay(float nx, float ny) const
+  ViewRayCaster GetViewRayCaster() const
   {
     XR::Matrix viewer;
     GetViewerTransform(viewer);
 
-    float hProj = m_zNear * m_tanHalfVerticalFov;
-    float wProj = (hProj * Gfx::GetWidth()) / Gfx::GetHeight();
-
-    Vector3 zNearHit = viewer.GetColumn(Vector3::Z) * -m_zNear +
-      viewer.GetColumn(Vector3::X).Normalise(wProj * nx) +
-      viewer.GetColumn(Vector3::Y).Normalise(hProj * ny);
-    zNearHit.Normalise();
-
-    return Ray(viewer.t, zNearHit, std::numeric_limits<float>::max());
+    return ViewRayCaster{ viewer, m_zNear, m_tanHalfVerticalFov };
   }
 
 private:
@@ -404,9 +396,9 @@ float Transforms::GetZFarClippingPlane()
 }
 
 //==============================================================================
-Ray Transforms::GetViewRay(float nx, float ny)
+ViewRayCaster Transforms::GetViewRayCaster()
 {
-  return s_impl->GetViewRay(nx, ny);
+  return s_impl->GetViewRayCaster();
 }
 
 } // XR
