@@ -20,7 +20,6 @@ end
 tbl_target_values = 
 {
 	{ "windows", "VS2015 projects targeting Windows 32/64 bits" },
-	{ "android", "VS2015 projects targeting Android ARM and Intel, 32/64 bits" },
     { "macosx", "Xcode4 projects targeting OS X" },
 }
 
@@ -42,7 +41,7 @@ if not target_env then
 end
 
 -- create solution
-workspace "xr3.SDL"
+workspace "xr3"
 
 	sln_location = ".projects/"..target_env
 	location(sln_location)
@@ -58,11 +57,6 @@ workspace "xr3.SDL"
 		table.insert(tbl_platforms, "x64")
 	elseif target_env == "macosx" then
 		table.insert(tbl_platforms, "Universal64")
-	elseif target_env == "android" then
-		table.insert(tbl_platforms, "x86")
-		table.insert(tbl_platforms, "x64")
-		table.insert(tbl_platforms, "arm")
-		table.insert(tbl_platforms, "arm64")
 	end
 	platforms(tbl_platforms)
 	
@@ -148,7 +142,7 @@ workspace "xr3.SDL"
 		system("windows")
 		systemversion "8.1"
 		
-		desktop = true
+		target_desktop = true
 	end
 
     -- Mac OSX
@@ -157,10 +151,10 @@ workspace "xr3.SDL"
 			"StaticRuntime"
 		}
 		
-		desktop = true
+		target_desktop = true
     end
 
-	if desktop then
+	if target_desktop then
 		filter { "Debug" }
 			defines  {
 				"ENABLE_ASSET_BUILDING"

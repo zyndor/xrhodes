@@ -34,7 +34,7 @@ project "unittests"
 		"gtest_main",
 		"xr3core",
 		"xr3json",
-		"xr3.SDL",
+		"xr3",
 		"xr3ui",
 	}
 
@@ -54,7 +54,6 @@ project "unittests"
             "opengl32",
 			
 			"SDL2",
-			--"SDL2_mixer",
 			
 			"tinyxml2",
         }
@@ -64,7 +63,6 @@ project "unittests"
             "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
             "../external/tinyxml2/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
             "../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
-            "../external/SDL2_mixer/lib/"..target_env.."/$(PlatformShortName)",
             "../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
             "../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
         }
@@ -75,13 +73,11 @@ project "unittests"
             links
             {
                 "SDL2.framework"
-				--"SDL2_mixer.framework"
             }
         
             -- note: unlike the libdirs, these are _two_ folders out. not entirely sure why.
             local framework_paths = {
                 "-F../../external/SDL2/",
-                "-F../../external/SDL2_mixer/",
             }
         
             buildoptions(framework_paths)
@@ -96,8 +92,6 @@ project "unittests"
                     libdirs
                     {
                         "../external/SDL2/lib/"..target_env..pc,
-                        "../external/SDL2_image/lib/"..target_env..pc,
-                        "../external/SDL2_mixer/lib/"..target_env..pc,
                     }
                 end
             end
@@ -139,7 +133,6 @@ project "unittests"
 				filter { "platforms:"..p, c }
 				postbuildcommands{
 					os.translateCommands("{COPY} "..external_rel_path.."SDL2/lib/"..target_env.."/"..p.."/*.dll "..artifacts_rel_path..pc),
-					os.translateCommands("{COPY} "..external_rel_path.."SDL2_mixer/lib/"..target_env.."/"..p.."/*.dll "..artifacts_rel_path..pc)
 				}
 			end
 		end
