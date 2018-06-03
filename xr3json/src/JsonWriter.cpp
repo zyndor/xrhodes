@@ -7,6 +7,7 @@
 #include "XR/JsonWriter.hpp"
 #include "XR/debug.hpp"
 #include <cstring>
+#include <algorithm>
 
 namespace XR
 {
@@ -14,25 +15,37 @@ namespace JSON
 {
 
 //==============================================================================
-const char  Writer::kIndent = '\t';
+const char Writer::kEscapeChars[] = { '\b', '\t', '\n', '\f', '\r', '"', '/', '\\' };
 
-const char* const Writer::kEscapeChars = "\"\\/\b\f\n\r\t";
 const char* const Writer::kEscapeSequences[] =
 {
-  "\\\"",
-  "\\\\",
-  "\\/",
   "\\b",
-  "\\f",
-  "\\n",
-  "\\r",
   "\\t"
+  "\\n",
+  "\\f",
+  "\\r",
+  "\\\"",
+  "\\/",
+  "\\\\",
 };
 
 //==============================================================================
-Writer::Writer(uint32_t maxDepth)
-: m_scopes(maxDepth)
-{}
+Writer::Writer(std::ostream& stream, uint32_t maxDepth)
+: m_allowLinebreaks(false),
+  m_allowSpace(false),
+  m_autoEscapeString(false),
+  m_isComplete(false),
+  m_stream(&stream)
+{
+  m_scopes.reserve(maxDepth);
+}
+
+//==============================================================================
+Writer::~Writer()
+{
+  XR_ASSERTMSG(Writer, m_scopes.empty(),
+    ("Scopes have remained open; the resulting JSON is likely invalid."));
+}
 
 //==============================================================================
 void Writer::SetLinebreaks( bool pref )
@@ -41,13 +54,13 @@ void Writer::SetLinebreaks( bool pref )
 }
 
 //==============================================================================
-void Writer::SetIndents( bool pref )
+void Writer::SetIndent(const char* indent)
 {
-  m_allowIndents = pref;
+  m_indent = indent ? indent : "";
 }
 
 //==============================================================================
-void Writer::SetSpaceAfterColon( bool pref )
+void Writer::SetSpaces( bool pref )
 {
   m_allowSpace = pref;
 }
@@ -59,94 +72,33 @@ void Writer::SetAutoEscape( bool pref )
 }
 
 //==============================================================================
-Writer&  Writer::Start(Type rootType)
+Writer::Array Writer::OpenArray(bool oneLiner)
 {
-  XR_ASSERT(Json::Writer, rootType != INVALID);
-  m_stream.str("");
-
-  _PushScope(rootType);
-
-  return *this;
+  return Array(WriteArray(oneLiner));
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* key, const char* value )
+Writer::Object Writer::OpenObject(bool oneLiner)
 {
-  _WriteKey(key);
-
-  if (value == 0)
-  {
-    m_stream << kNull;
-  }
-  else
-  {
-    m_stream.put(kQuot);
-    if (m_autoEscapeString)
-    {
-      _ProcessEscaped(value);
-    }
-    else
-    {
-      m_stream << value;
-    }
-    m_stream.put(kQuot);
-  }
-
-  return *this;
+  return Object(WriteObject(oneLiner));
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* key, const int32_t value )
+Writer::Array Writer::OpenArray(char const * key, bool oneLiner)
 {
-  _WriteKey(key);
-  m_stream << value;
-
-  return *this;
+  return Array(WriteArray(key, oneLiner));
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* key, const double value )
+Writer::Object Writer::OpenObject(char const * key, bool oneLiner)
 {
-  _WriteKey(key);
-  m_stream << value;
-
-  return *this;
+  return Object(WriteObject(key, oneLiner));
 }
 
 //==============================================================================
-Writer&  Writer::WriteValue( const char* key, bool value )
+Writer&  Writer::WriteValue( const char* value )
 {
-  _WriteKey(key);
-  m_stream << std::boolalpha << value << std::noboolalpha;
-
-  return *this;
-}
-
-//==============================================================================
-Writer&  Writer::WriteObject( const char* key )
-{
-  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type != ARRAY,
-    ("Current scope is an array, named objects are invalid. Use WriteArrayObject() instead."));
-  _WriteKey(key);
-  _PushScope(OBJECT);
-
-  return *this;
-}
-
-//==============================================================================
-Writer&  Writer::WriteArray( const char* key )
-{
-  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type != ARRAY,
-    ("Current scope is an array, named arrays are invalid. Use WriteArrayArray() instead."));
-  _WriteKey(key);
-  _PushScope(ARRAY);
-
-  return *this;
-}
-
-//==============================================================================
-Writer&  Writer::WriteArrayElement( const char* value )
-{
+  XR_ASSERT(Json::Write, !m_isComplete);
   _WriteComma();
   _WriteStringValue(value);
 
@@ -154,50 +106,136 @@ Writer&  Writer::WriteArrayElement( const char* value )
 }
 
 //==============================================================================
-Writer&  Writer::WriteArrayElement( int32_t value )
+Writer&  Writer::WriteValue( int32_t value )
 {
+  XR_ASSERT(Json::Write, !m_isComplete);
   _WriteComma();
-  m_stream << value;
+  *m_stream << value;
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteArrayElement( double value )
+Writer&  Writer::WriteValue( double value )
 {
+  XR_ASSERT(Json::Write, !m_isComplete);
   _WriteComma();
-  m_stream << value;
+  *m_stream << value;
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteArrayElement( bool value )
+Writer&  Writer::WriteValue( bool value )
 {
+  XR_ASSERT(Json::Write, !m_isComplete);
   _WriteComma();
-  m_stream << std::boolalpha << value << std::noboolalpha;
+  *m_stream << std::boolalpha << value << std::noboolalpha;
 
   return *this;
 }
 
 //==============================================================================
-Writer&  Writer::WriteArrayObject()
+Writer& Writer::WriteObject(bool oneLiner)
 {
-  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type == ARRAY,
-    ("Current scope is not an array; anonymous objects are invalid. Use WriteArrayArray() instead."));
+  XR_ASSERT(Json::Write, !m_isComplete);
+  XR_ASSERTMSG(Json::Writer, m_scopes.empty() || m_scopes.back().type == Scope::ARRAY,
+    ("Current scope is not root or an array; anonymous objects are invalid. Specify a key."));
   _WriteComma();
-  _PushScope(OBJECT);
+  _PushScope(Scope::OBJECT, oneLiner);
 
   return *this;
 }
 
 //==============================================================================
-Writer& Writer::WriteArrayArray()
+Writer& Writer::WriteArray(bool oneLiner)
 {
-  XR_ASSERTMSG(Json::Writer, m_scopes[m_depth].type == ARRAY,
-    ("Current scope is not an array; anonymous arrays are invalid. Use WriteArrayArray() instead."));
+  XR_ASSERT(Json::Write, !m_isComplete);
+  XR_ASSERTMSG(Json::Writer, m_scopes.empty() || m_scopes.back().type == Scope::ARRAY,
+    ("Current scope is not root or an array; anonymous arrays are invalid. Specify a key."));
   _WriteComma();
-  _PushScope(ARRAY);
+  _PushScope(Scope::ARRAY, oneLiner);
+
+  return *this;
+}
+
+//==============================================================================
+Writer&  Writer::WriteValue(const char* key, const char* value)
+{
+  XR_ASSERT(Json::Write, !m_isComplete);
+  _WriteKey(key);
+
+  if (!value)
+  {
+    *m_stream << kNull;
+  }
+  else
+  {
+    m_stream->put(kQuot);
+    if (m_autoEscapeString)
+    {
+      _ProcessEscaped(value);
+    }
+    else
+    {
+      *m_stream << value;
+    }
+    m_stream->put(kQuot);
+  }
+
+  return *this;
+}
+
+//==============================================================================
+Writer&  Writer::WriteValue(const char* key, const int32_t value)
+{
+  XR_ASSERT(Json::Write, !m_isComplete);
+  _WriteKey(key);
+  *m_stream << value;
+
+  return *this;
+}
+
+//==============================================================================
+Writer&  Writer::WriteValue(const char* key, const double value)
+{
+  XR_ASSERT(Json::Write, !m_isComplete);
+  _WriteKey(key);
+  *m_stream << value;
+
+  return *this;
+}
+
+//==============================================================================
+Writer&  Writer::WriteValue(const char* key, bool value)
+{
+  XR_ASSERT(Json::Write, !m_isComplete);
+  _WriteKey(key);
+  *m_stream << std::boolalpha << value << std::noboolalpha;
+
+  return *this;
+}
+
+//==============================================================================
+Writer& Writer::WriteObject(const char* key, bool oneLiner)
+{
+  XR_ASSERT(Json::Write, !m_isComplete);
+  XR_ASSERTMSG(Json::Writer, m_scopes.back().type != Scope::ARRAY,
+    ("Current scope is an array; a key must not be specified for a new object."));
+  _WriteKey(key);
+  _PushScope(Scope::OBJECT, oneLiner);
+
+  return *this;
+}
+
+//==============================================================================
+Writer& Writer::WriteArray(const char* key, bool oneLiner)
+{
+  XR_ASSERT(Json::Write, !m_isComplete);
+  XR_ASSERTMSG(Json::Writer, m_scopes.back().type != Scope::ARRAY,
+    ("Current scope is an array; a key must not be specified for a new object."));
+  _WriteKey(key);
+  _PushScope(Scope::ARRAY, oneLiner);
 
   return *this;
 }
@@ -205,64 +243,59 @@ Writer& Writer::WriteArrayArray()
 //==============================================================================
 Writer&  Writer::CloseScope()
 {
-  XR_ASSERT(Json::Writer, m_depth > 0);
+  XR_ASSERT(Json::Write, !m_isComplete);
 
-  const Type type(m_scopes[m_depth].type);
-  XR_ASSERT(Json::Writer, type != INVALID);
-  --m_depth;
+  const Scope scope = m_scopes.back();
+  m_scopes.pop_back();
 
-  _AddLinebreak();
-  switch (type)
+  _AddLinebreak(scope.oneLiner);
+
+  switch (scope.type)
   {
-  case OBJECT:
-    m_stream.put(kObjectEnd);
+  case Scope::OBJECT:
+    m_stream->put(kObjectEnd);
     break;
 
-  case ARRAY:
-    m_stream.put(kArrayEnd);
+  case Scope::ARRAY:
+    m_stream->put(kArrayEnd);
     break;
 
   default:
     break;
   }
 
+  if (m_scopes.empty())
+  {
+    m_isComplete = true;  // no further writing should take place.
+  }
+
   return *this;
 }
 
 //==============================================================================
-std::string Writer::Finish( bool force )
+void Writer::Reset(std::ostream & stream)
 {
-  if (force)
-  {
-    while (m_depth > 0)
-    {
-      CloseScope();
-    }
-  }
-
-  XR_ASSERTMSG(Json::Writer, m_depth == 0,
-    ("CloseScope() needs to be called for %d scopes (or call Finish(true)).",
-    m_depth));
-
-  return m_stream.str();
+  m_stream = &stream;
+  m_isComplete = false;
+  m_scopes.clear();
 }
 
 //==============================================================================
 void  Writer::_WriteKey( const char* key )
 {
-  XR_ASSERT(MG, key != nullptr);
+  XR_ASSERT(Json::Writer, key != nullptr);
   _WriteComma();
 
-  m_stream.put(kQuot);
+  m_stream->put(kQuot);
   if (m_autoEscapeString)
   {
     _ProcessEscaped(key);
   }
   else
   {
-    m_stream << key;
+    *m_stream << key;
   }
-  m_stream.put(kQuot).put(kColon);
+  m_stream->put(kQuot).put(kColon);
 
   _AddSpace();
 }
@@ -270,15 +303,17 @@ void  Writer::_WriteKey( const char* key )
 //==============================================================================
 void  Writer::_WriteComma()
 {
-  XR_ASSERT(Json::Writer, m_depth > 0);
-  if (m_scopes[m_depth].isEmpty)
+  if (!m_scopes.empty())
   {
-    m_scopes[m_depth].isEmpty = false;
-  }
-  else
-  {
-    m_stream.put(kComma);
-    _AddLinebreak();
+    if (m_scopes.back().isEmpty)
+    {
+      m_scopes.back().isEmpty = false;
+    }
+    else
+    {
+      m_stream->put(kComma);
+      _AddLinebreak(m_scopes.back().oneLiner);
+    }
   }
 }
 
@@ -289,24 +324,20 @@ static const char  kScopeOpeners[2] =
   kArrayBegin
 };
 
-void  Writer::_PushScope(Type type)
+void  Writer::_PushScope(Scope::Type type, bool oneLiner)
 {
-  XR_ASSERT(Json::Writer, type == OBJECT || type == ARRAY);
-  XR_ASSERT(Json::Writer, m_depth + 1 < m_scopes.size());
-  ++m_depth;
-  m_scopes[m_depth].type = type;
-  m_scopes[m_depth].isEmpty = true;
+  m_scopes.push_back({ type, oneLiner, true });
 
-  m_stream.put(kScopeOpeners[type]);
-  _AddLinebreak();
+  m_stream->put(kScopeOpeners[type]);
+  _AddLinebreak(oneLiner);
 }
 
 //==============================================================================
-void Writer::_AddLinebreak()
+void Writer::_AddLinebreak(bool oneLiner)
 {
-  if (m_allowLinebreaks)
+  if (m_allowLinebreaks && !oneLiner)
   {
-    m_stream << '\n';
+    *m_stream << '\n';
     _AddIndent();
   }
   else
@@ -318,11 +349,11 @@ void Writer::_AddLinebreak()
 //==============================================================================
 void Writer::_AddIndent()
 {
-  if (m_allowIndents)
+  if (!m_indent.empty())
   {
-    for (int i = m_depth; i > 0; --i)
+    for (auto i = m_scopes.size(); i > 0; --i)
     {
-      m_stream.put(kIndent);
+      *m_stream << m_indent;
     }
   }
 }
@@ -332,7 +363,7 @@ void Writer::_AddSpace()
 {
   if (m_allowSpace)
   {
-    m_stream.put(' ');
+    m_stream->put(' ');
   }
 }
 
@@ -341,11 +372,11 @@ void Writer::_WriteStringValue( const char* value )
 {
   if (value == nullptr)
   {
-    m_stream << kNull;
+    *m_stream << kNull;
   }
   else
   {
-    ((m_stream.put(kQuot)) << value).put(kQuot);
+    ((m_stream->put(kQuot)) << value).put(kQuot);
   }
 }
 
@@ -356,7 +387,7 @@ void Writer::_ProcessEscaped( const char* value )
   while (value != end)
   {
     const char* nextEscape = strpbrk(value, kEscapeChars);
-    bool  found(nextEscape != nullptr);
+    bool  found = nextEscape != nullptr;
     if (!found)
     {
       nextEscape = end;
@@ -364,21 +395,83 @@ void Writer::_ProcessEscaped( const char* value )
 
     while (value != nextEscape)
     {
-      m_stream << *value;
+      *m_stream << *value;
       ++value;
     }
 
     if (found)
     {
       // process escape
-      nextEscape = strchr(kEscapeChars, value[0]);
-      if (nextEscape != nullptr)
+      nextEscape = std::lower_bound(kEscapeChars, kEscapeChars + kNumEscapedChars, value[0]);
+      if (nextEscape != kEscapeChars + kNumEscapedChars)
       {
-        m_stream << kEscapeSequences[nextEscape - kEscapeChars];
+        *m_stream << kEscapeSequences[nextEscape - kEscapeChars];
         ++value;
       }
     }
   }
+}
+
+//==============================================================================
+Writer::ScopeWrapper::ScopeWrapper(Writer& writer)
+: m_writer(&writer)
+{}
+
+//==============================================================================
+Writer::ScopeWrapper::~ScopeWrapper()
+{
+  if (m_writer)
+  {
+    m_writer->CloseScope();
+  }
+}
+
+//==============================================================================
+Writer::Array::Array(Writer& writer)
+: ScopeWrapper(writer)
+{}
+
+//==============================================================================
+Writer::Array::Array(Array&& a)
+: ScopeWrapper(*a.m_writer)
+{
+  a.m_writer = nullptr;
+}
+
+//==============================================================================
+Writer::Array Writer::Array::OpenArray(bool oneLiner)
+{
+  return Array(m_writer->OpenArray(oneLiner));
+}
+
+//==============================================================================
+Writer::Object Writer::Array::OpenObject(bool oneLiner)
+{
+  return Object(m_writer->WriteObject(oneLiner));
+}
+
+//==============================================================================
+Writer::Object::Object(Writer& writer)
+: ScopeWrapper(writer)
+{}
+
+//==============================================================================
+Writer::Object::Object(Object && o)
+: ScopeWrapper(*o.m_writer)
+{
+  o.m_writer = nullptr;
+}
+
+//==============================================================================
+Writer::Array Writer::Object::OpenArray(char const* key, bool oneLiner)
+{
+  return Array(m_writer->OpenArray(key, oneLiner));
+}
+
+//==============================================================================
+Writer::Object Writer::Object::OpenObject(char const* key, bool oneLiner)
+{
+  return Object(m_writer->WriteObject(key, oneLiner));
 }
 
 } // JSON
