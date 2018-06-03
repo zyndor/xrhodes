@@ -66,7 +66,12 @@ public:
   : Counted(nullptr, d)
   {}
 
-  Counted(T* p = nullptr)
+  Counted(std::nullptr_t p = nullptr)
+  : CountedCore(p),
+    m_d(std::default_delete<T>())
+  {}
+
+  explicit Counted(T* p)
   : CountedCore(p),
     m_d(std::default_delete<T>())
   {}

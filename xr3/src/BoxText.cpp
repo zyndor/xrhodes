@@ -12,8 +12,7 @@ namespace XR {
 
 //==============================================================================
 BoxText::BoxText()
-: m_font(0),
-  m_scale(1.0f),
+: m_scale(1.0f),
   m_boxSize(.0f, .0f),
   m_horizontalAlignment(Alignment::Center),
   m_verticalAlignment(Alignment::Center)
