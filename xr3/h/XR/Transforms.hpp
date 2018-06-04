@@ -7,13 +7,14 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "ViewRayCaster.hpp"
-#include "Matrix.hpp"
-#include "Ray.hpp"
 #include "XR/fundamentals.hpp"
 
 namespace XR
 {
+
+struct Matrix;
+struct Matrix4;
+struct ViewRayCaster;
 
 //==============================================================================
 ///@brief Enables the management of model-view-projection transformations,
@@ -66,15 +67,15 @@ public:
     Updater& SetViewerTransform(Matrix const& m);
 
     ///@brief Sets the view to the given @a matrix.
-    Updater& SetView(const float matrix[kNumMatrixElems]);
+    Updater& SetView(Matrix4 const& matrix);
 
     ///@brief Sets the projection to the given @a matrix. Transforms can cache
     /// the near / far values for the frustum and the tangent of the half of vertical
     /// field of view if you pass them in here.
     ///@note @a tanHalfVerticalFov is required for GetPerspectiveMultiple() to
     /// work correctly.
-    Updater& SetProjection(const float matrix[kNumMatrixElems], float zNear = .0f,
-      float zFar = .0f, float tanHalfVerticalFov = .0f);
+    Updater& SetProjection(Matrix4 const& matrix, float zNear = .0f, float zFar = .0f,
+      float tanHalfVerticalFov = .0f);
 
     ///@brief Sets up orthographic projection.
     ///@param zNear distance of the near viewing plane.
@@ -129,10 +130,10 @@ public:
   static void GetViewerTransform(Matrix& m);
 
   ///@brief Copies the view matrix into @a matrix.
-  static void GetView(float matrix[kNumMatrixElems]);
+  static void GetView(Matrix4& matrix);
 
   ///@brief Copies the projection matrix into @a matrix.
-  static void GetProjection(float matrix[kNumMatrixElems]);
+  static void GetProjection(Matrix4& matrix);
 
   ///@return The distance of the near clipping plane from the viewer.
   static float GetZNearClippingPlane();

@@ -5,9 +5,10 @@
 //
 //==============================================================================
 #include "XR/Transforms.hpp"
+#include "XR/ViewRayCaster.hpp"
 #include "XR/Gfx.hpp"
 #include "XR/ProjectionHelper.hpp"
-#include "XR/Matrix4Helper.hpp"
+#include "XR/Matrix4.hpp"
 #include "XR/debug.hpp"
 #include <vector>
 #include <memory>
@@ -42,10 +43,10 @@ public:
     return m_dirtyFlags != 0;
   }
 
-  void SetProjection(float const matrix[16], float zNear, float zFar,
+  void SetProjection(Matrix4 const& matrix, float zNear, float zFar,
     float tanHalfVerticalFov)
   {
-    memcpy(m_projection, matrix, sizeof(m_projection));
+    m_projection = matrix;
     m_tanHalfVerticalFov = tanHalfVerticalFov;
     m_zNear = zNear;
     m_zFar = zFar;
@@ -62,7 +63,7 @@ public:
     }
 
     ProjectionHelper::CalculateOrthographic(left, right, bottom, top, zNear, zFar,
-      m_projection);
+      m_projection.data);
     m_zNear = zNear;
     m_zFar = zFar;
     m_tanHalfVerticalFov = .0f;
@@ -76,15 +77,15 @@ public:
     XR_ASSERT(Transforms, aspectRatio > .0f);
 
     ProjectionHelper::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
-      m_projection, &m_tanHalfVerticalFov);
+      m_projection.data, &m_tanHalfVerticalFov);
     m_zNear = zNear;
     m_zFar = zFar;
     m_dirtyFlags |= PROJECTION_DIRTY;
   }
 
-  void SetView(float const matrix[16])
+  void SetView(Matrix4 const& matrix)
   {
-    memcpy(m_view, matrix, sizeof(m_view));
+    m_view = matrix;
     m_dirtyFlags |= VIEW_DIRTY;
   }
 
@@ -92,7 +93,7 @@ public:
   {
     m.Invert();
     m.t = m.RotateVec(-m.t);
-    Matrix4Helper::FromMatrix(m, m_view);
+    m_view.Import(m);
     m_dirtyFlags |= VIEW_DIRTY;
   }
 
@@ -126,42 +127,42 @@ public:
   {
     if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY | VIEW_DIRTY | PROJECTION_DIRTY))
     {
-      float model[16];
-      Matrix4Helper::FromMatrix(m_modelStack.back(), model);
+      Matrix4 model;
+      model.Import(m_modelStack.back());
       if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY))
       {
-        Gfx::SetUniform(m_xruModel, 1, model);
+        Gfx::SetUniform(m_xruModel, 1, model.data);
       }
 
       if (CheckAnyMaskBits(m_dirtyFlags, VIEW_DIRTY))
       {
-        Gfx::SetUniform(m_xruView, 1, m_view);
+        Gfx::SetUniform(m_xruView, 1, m_view.data);
       }
 
       if (CheckAnyMaskBits(m_dirtyFlags, PROJECTION_DIRTY))
       {
-        Gfx::SetUniform(m_xruProjection, 1, m_projection);
+        Gfx::SetUniform(m_xruProjection, 1, m_projection.data);
       }
 
-      float mvp[16];
+      Matrix4 modelViewProjection;
       if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY | VIEW_DIRTY))
       {
-        Matrix4Helper::Multiply(m_view, model, mvp);  // hijack mvp for the model view calculation.
-        Gfx::SetUniform(m_xruModelView, 1, mvp);
+        model.Multiply(m_view, modelViewProjection);  // hijack mvp for the model view calculation.
+        Gfx::SetUniform(m_xruModelView, 1, modelViewProjection.data);
 
         Matrix normal;
-        Matrix4Helper::ToMatrix(mvp, normal);
+        modelViewProjection.Export(normal);
         normal.Invert();
         normal.Transpose();
         Gfx::SetUniform(m_xruNormal, normal.linear);
       }
 
-      float viewProjection[16];
-      Matrix4Helper::Multiply(m_projection, m_view, viewProjection);
-      Gfx::SetUniform(m_xruViewProjection, 1, viewProjection);
+      Matrix4 viewProjection;
+      m_view.Multiply(m_projection, viewProjection);
+      Gfx::SetUniform(m_xruViewProjection, 1, viewProjection.data);
 
-      Matrix4Helper::Multiply(viewProjection, model, mvp);
-      Gfx::SetUniform(m_xruModelViewProjection, 1, mvp);
+      model.Multiply(viewProjection, modelViewProjection);
+      Gfx::SetUniform(m_xruModelViewProjection, 1, modelViewProjection.data);
 
       m_dirtyFlags = 0;
     }
@@ -174,19 +175,19 @@ public:
 
   void GetViewerTransform(Matrix& m) const
   {
-    Matrix4Helper::ToMatrix(m_view, m);
+    m_view.Export(m);
     m.Invert();
     m.t = -m.t;
   }
 
-  void GetView(float matrix[Transforms::kNumMatrixElems]) const
+  void GetView(Matrix4& matrix) const
   {
-    memcpy(matrix, m_view, sizeof(m_view));
+    matrix = m_view;
   }
 
-  void GetProjection(float matrix[Transforms::kNumMatrixElems]) const
+  void GetProjection(Matrix4& matrix) const
   {
-    memcpy(matrix, m_projection, sizeof(m_view));
+    matrix = m_projection;
   }
 
   float GetPerspectiveMultiple() const
@@ -233,8 +234,8 @@ private:
   Gfx::UniformHandle m_xruNormal = Gfx::CreateUniform("xruNormal", Gfx::UniformType::Mat3);
 
   std::vector<Matrix> m_modelStack;
-  float m_view[Transforms::kNumMatrixElems];
-  float m_projection[Transforms::kNumMatrixElems];
+  Matrix4 m_view;
+  Matrix4 m_projection;
   uint8_t m_dirtyFlags = 0;
 
   float m_zNear;
@@ -295,7 +296,7 @@ Transforms::Updater&
 
 //==============================================================================
 Transforms::Updater&
-  Transforms::Updater::SetView(const float matrix[kNumMatrixElems])
+  Transforms::Updater::SetView(Matrix4 const& matrix)
 {
   s_impl->SetView(matrix);
   return *this;
@@ -303,7 +304,7 @@ Transforms::Updater&
 
 //==============================================================================
 Transforms::Updater&
-  Transforms::Updater::SetProjection(const float matrix[kNumMatrixElems],
+  Transforms::Updater::SetProjection(Matrix4 const& matrix,
     float zNear, float zFar, float tanHalfVerticalFov)
 {
   s_impl->SetProjection(matrix, zNear, zFar, tanHalfVerticalFov);
@@ -366,13 +367,13 @@ void  Transforms::GetViewerTransform(Matrix& m)
 }
 
 //==============================================================================
-void  Transforms::GetView(float matrix[kNumMatrixElems])
+void  Transforms::GetView(Matrix4& matrix)
 {
   s_impl->GetView(matrix);
 }
 
 //==============================================================================
-void  Transforms::GetProjection(float matrix[kNumMatrixElems])
+void  Transforms::GetProjection(Matrix4& matrix)
 {
   s_impl->GetProjection(matrix);
 }
