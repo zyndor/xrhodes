@@ -62,14 +62,14 @@ struct ScratchBufferImpl
       auto ibo = Gfx::CreateIndexBuffer(m_indices);
       Gfx::Draw(vbo, ibo, primitive, 0, m_numIndices);
 
-      Gfx::Destroy(ibo);
+      Gfx::Release(ibo);
     }
     else
     {
       Gfx::Draw(vbo, primitive, 0, m_numVertices);
     }
 
-    Gfx::Destroy(vbo);
+    Gfx::Release(vbo);
 
     m_vertices = { 0, nullptr };
     m_indices = { 0, nullptr };

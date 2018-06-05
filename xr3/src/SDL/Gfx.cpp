@@ -311,7 +311,7 @@ struct Program: ResourceGL
     {
       uniforms->ReadHandle(ignoreType, ignoreSize, ignoreLoc, hUniform);
       XR_ASSERT(Gfx, hUniform.id < numUniforms);
-      Destroy(hUniform);
+      Release(hUniform);
       uniforms->Read(ignoreGlLoc);
     }
 
@@ -673,7 +673,7 @@ struct Context
     return hFormat;
   }
 
-  void Destroy(VertexFormatHandle h)
+  void Release(VertexFormatHandle h)
   {
     VertexFormatRef& vfr = m_vertexFormats[h.id];
     XR_ASSERT(Gfx, vfr.refCount > 0);
@@ -697,7 +697,7 @@ struct Context
     return CreateVertexBufferInternal(hFormat, buffer, flags & ~F_BUFFER_INSTANCE_DATA);
   }
 
-  void Destroy(VertexBufferHandle h)
+  void Release(VertexBufferHandle h)
   {
     VertexBufferObject& vbo = m_vbos[h.id];
     XR_GL_CALL(glBindBuffer(vbo.target, 0));
@@ -705,7 +705,7 @@ struct Context
 
     if (vbo.hFormat.IsValid())  // instance data buffers don't have this.
     {
-      Destroy(vbo.hFormat);
+      Release(vbo.hFormat);
     }
 
     std::memset(&vbo, 0x00, sizeof(vbo));
@@ -729,7 +729,7 @@ struct Context
     return h;
   }
 
-  void Destroy(IndexBufferHandle h)
+  void Release(IndexBufferHandle h)
   {
     IndexBufferObject& ibo = m_ibos[h.id];
     XR_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
@@ -757,11 +757,11 @@ struct Context
     return h;
   }
 
-  void Destroy(InstanceDataBufferHandle h)
+  void Release(InstanceDataBufferHandle h)
   {
     VertexBufferHandle hConv;
     hConv.id = h.id;
-    Destroy(hConv);
+    Release(hConv);
   }
 
   TextureHandle CreateTexture(TextureFormat format, uint32_t width,
@@ -864,7 +864,7 @@ struct Context
     return m_textures[h.id].inst.info;
   }
 
-  void Destroy(TextureHandle h)
+  void Release(TextureHandle h)
   {
     TextureRef& texture = m_textures[h.id];
     if(texture.inst.name != 0)
@@ -960,7 +960,7 @@ struct Context
       {
         for (uint8_t i = 0; i < textureCount; ++i)
         {
-          Destroy(attachments[i].hTexture);
+          Release(attachments[i].hTexture);
         }
       }
     }
@@ -987,14 +987,14 @@ struct Context
     XR_GL_CALL(glReadPixels(x, y, width, height, formatGl, type, mem));
   }
 
-  void Destroy(FrameBufferHandle h)
+  void Release(FrameBufferHandle h)
   {
     FrameBuffer& fbo = m_fbos[h.id];
     fbo.Bind();
 
     for (uint8_t i = 0; i < fbo.numTextures; ++i)
     {
-      Destroy(fbo.hTextures[i]);
+      Release(fbo.hTextures[i]);
     }
     std::memset(&fbo, 0x00, sizeof(FrameBuffer));
 
@@ -1050,7 +1050,7 @@ struct Context
     return h;
   }
 
-  void Destroy(UniformHandle h)
+  void Release(UniformHandle h)
   {
     UniformRef& ur = m_uniforms[h.id];
     XR_ASSERT(Gfx, ur.refCount > 0);
@@ -1101,7 +1101,7 @@ struct Context
     return h;
   }
 
-  void Destroy(ShaderHandle h)
+  void Release(ShaderHandle h)
   {
     ShaderRef& sr = m_shaders[h.id];
     XR_ASSERT(Gfx, sr.refCount > 0);
@@ -1269,7 +1269,7 @@ struct Context
     return h;
   }
 
-  void Destroy(ProgramHandle h)
+  void Release(ProgramHandle h)
   {
     Program& p = m_programs[h.id];
     XR_GL_CALL(glUseProgram(0));
@@ -1279,13 +1279,13 @@ struct Context
 
     if (p.hVertex.IsValid())
     {
-      Destroy(p.hVertex);
+      Release(p.hVertex);
       p.hVertex.Invalidate();
     }
 
     if (p.hFragment.IsValid())
     {
-      Destroy(p.hFragment);
+      Release(p.hFragment);
       p.hFragment.Invalidate();
     }
 
@@ -1679,11 +1679,11 @@ VertexFormatHandle RegisterVertexFormat(VertexFormat const& format)
 }
 
 //=============================================================================
-void Destroy(VertexFormatHandle h)
+void Release(VertexFormatHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 
@@ -1694,11 +1694,11 @@ VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& 
 }
 
 //=============================================================================
-void Destroy(VertexBufferHandle h)
+void Release(VertexBufferHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 
@@ -1709,11 +1709,11 @@ IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
 }
 
 //=============================================================================
-void Destroy(IndexBufferHandle h)
+void Release(IndexBufferHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 
@@ -1724,11 +1724,11 @@ InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer, uint16_t
 }
 
 //=============================================================================
-void Destroy(InstanceDataBufferHandle h)
+void Release(InstanceDataBufferHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 
@@ -1774,12 +1774,18 @@ TextureInfo GetTextureInfo(TextureHandle h)
 }
 
 //=============================================================================
-void Destroy(TextureHandle h)
+void Release(TextureHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
+}
+
+//=============================================================================
+FrameBufferHandle GetDefaultFrameBuffer()
+{
+  return kDefaultFrameBuffer;
 }
 
 //=============================================================================
@@ -1787,12 +1793,6 @@ FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32
   uint32_t flags)
 {
   return s_impl->CreateFrameBuffer(format, width, height, flags);
-}
-
-//=============================================================================
-FrameBufferHandle GetDefaultFrameBuffer()
-{
-  return kDefaultFrameBuffer;
 }
 
 //=============================================================================
@@ -1822,11 +1822,11 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 }
 
 //=============================================================================
-void Destroy(FrameBufferHandle h)
+void Release(FrameBufferHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 
@@ -1837,11 +1837,11 @@ UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySiz
 }
 
 //=============================================================================
-void Destroy(UniformHandle h)
+void Release(UniformHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 
@@ -1852,11 +1852,11 @@ ShaderHandle CreateShader(ShaderType t, Buffer const& buffer)
 }
 
 //=============================================================================
-void Destroy(ShaderHandle h)
+void Release(ShaderHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 
@@ -1867,11 +1867,11 @@ ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment)
 }
 
 //=============================================================================
-void Destroy(ProgramHandle h)
+void Release(ProgramHandle h)
 {
   if (h.IsValid())
   {
-    s_impl->Destroy(h);
+    s_impl->Release(h);
   }
 }
 

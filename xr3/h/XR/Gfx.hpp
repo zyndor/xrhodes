@@ -244,26 +244,26 @@ uint16_t GetHeight();
 
 ///@brief Registers a vertex format definition.
 VertexFormatHandle RegisterVertexFormat(VertexFormat const& format);
-void Destroy(VertexFormatHandle h);
+void Release(VertexFormatHandle h);
 
 ///@brief Creates a vertex buffer with the given format, data and
 /// options.
 VertexBufferHandle  CreateVertexBuffer(VertexFormatHandle hFormat,
   Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
 
-void Destroy(VertexBufferHandle h);
+void Release(VertexBufferHandle h);
 
 ///@brief Creates an instance data buffer.
 InstanceDataBufferHandle  CreateInstanceDataBuffer(Buffer const& buffer,
   uint16_t stride);
 
-void Destroy(InstanceDataBufferHandle h);
+void Release(InstanceDataBufferHandle h);
 
 ///@brief Creates an index buffer with the given format, data and
 /// options.
 IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
 
-void Destroy(IndexBufferHandle h);
+void Release(IndexBufferHandle h);
 
 ///@brief Creates a texture with the given parameters and texel data in @a buffer.
 ///@note The texel data isn't kept around by Gfx.
@@ -271,7 +271,7 @@ TextureHandle CreateTexture(TextureFormat format, uint32_t width,
   uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
   size_t numBuffers = 1);
 
-///@brief Creates a texture width the given parameters and no texel data. Suxh
+///@brief Creates a texture width the given parameters and no texel data. Such
 /// a texture may be suitable for a render target (framebuffer attachment).
 ///@note @a format may only be one of the non-compressed ones.
 TextureHandle CreateTexture(TextureFormat format, uint32_t width,
@@ -284,16 +284,19 @@ TextureHandle GetDefaultTextureCube();
 
 TextureInfo GetTextureInfo(TextureHandle h);
 
-///@brief Decrements refcount of a texture, and if it has reached 0 zero,
-/// deletes it.
-void Destroy(TextureHandle h);
+///@brief Decrements the reference count of a texture, and if it has reached 0
+/// zero, deletes it.
+void Release(TextureHandle h);
 
-///@brief Creates a render target, attaching the given textures.
+///@return Handle to the default framebuffer. The front and back buffers are color
+/// attachments 0 and 1.
+FrameBufferHandle GetDefaultFrameBuffer();
+
+///@brief Creates a render target along with a 2D texture of the given format.
+/// Such a frame buffer may be suitable for use with ReadFrameBuffer() only,
+/// since there is no way to access its attachments' texture handle.
 FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width,
   uint32_t height, uint32_t flags);
-
-// default framebuffer. The front and back buffers are color attachments 0 and 1.
-FrameBufferHandle GetDefaultFrameBuffer();
 
 ///@brief Creates a render target, attaching the given @a hTextures. If
 /// @a ownTextures is set, the render target assumes ownership, i.e.
@@ -324,35 +327,38 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
   TextureFormat format, uint16_t colorAttachment, void* mem);
 
 ///@brief Deletes framebuffer, decrementing the refcount of all attached textures.
-void Destroy(FrameBufferHandle h);
+void Release(FrameBufferHandle h);
 
-///@brief Creates a Uniform, to be recognized in shaders to be loaded. This
-/// means that a uniform of a given name should always have the same type
-/// and array size across the board. Note that the maximum array size
+///@brief Creates a Uniform, to be recognized in shaders that are created following
+/// this call. This means that a uniform of a given name should always have the
+/// same type and array size across the board. Note that the maximum array size
 /// is 255.
 ///@note If a uniform with the given name (and matching type and size)
-/// already exists, its refCount is incremented instead.
+/// already exists, its reference count is incremented instead.
 UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize = 1);
 
-///@brief Decrements the refCount of a uniform, and if it reaches 0,
-/// deallocates it.
+///@brief Decrements the reference count of a uniform, and if it has reached 0,
+/// destroys it.
 ///@note Programs' usage of a uniform also increments its refCount.
-void Destroy(UniformHandle h);
+void Release(UniformHandle h);
 
 ///@brief Compiles preprocessed shader. Source isn't kept around.
 ///@return Handle, if the shader compilation was successful. INVALID_HANDLE
 /// if not.
 ShaderHandle CreateShader(ShaderType t, Buffer const& buffer);
-void Destroy(ShaderHandle h);
+
+///@brief Decrements the reference count of the shader and if it has reached 0,
+/// destroys it.
+void Release(ShaderHandle h);
 
 ///@brief Creates and links a shader program from the given vertex
 /// and fragment shaders.
 ///@return Handle, if linking was successful. INVALID_HANDLE if not.
 ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment);
 
-///@brief Destroys the given program and decrements the ref count of the shaders
-/// and uniforms it uses.
-void Destroy(ProgramHandle h);
+///@brief Destroys the given program and releases the shaders and uniforms that
+/// it uses.
+void Release(ProgramHandle h);
 
 // State and drawing
 ///@brief Sets the viewport.
@@ -390,10 +396,17 @@ void Draw(VertexBufferHandle vbh, Primitive primitive, uint32_t offset, uint32_t
 /// starting from @a offset.
 void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive primitive, uint32_t offset, uint32_t count);
 
+///@brief Clears the given buffers of the currently bound frame buffer to the
+/// specified values.
 void Clear(uint32_t flags, Color color = Color(0xff000000), float depth = 1.0f,
   uint8_t stencil = 0x00);
 
+///@brief Flushes the pipeline and calls all callbacks registered with
+/// RegisterFlushCallback().
 void Flush();
+
+///@brief Flushes the pipeline and performs the swapping of the front and back
+/// buffers.
 void Present(bool resetState = true);
 
 ///@brief Registers a function to be called upon Flush().

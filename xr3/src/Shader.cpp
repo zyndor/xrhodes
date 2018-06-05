@@ -109,7 +109,7 @@ bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fra
 
   if (success)
   {
-    Gfx::Destroy(m_handle);
+    Gfx::Release(m_handle);
     m_handle = Gfx::CreateProgram(hVertex, hFragment);
 
     success = m_handle.IsValid();
@@ -171,7 +171,7 @@ bool Shader::OnLoaded(Buffer buffer)
 //==============================================================================
 void Shader::OnUnload()
 {
-  Gfx::Destroy(m_handle);
+  Gfx::Release(m_handle);
   m_handle.Invalidate();
 
   m_vertexShader.Reset(nullptr);
