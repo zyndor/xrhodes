@@ -7,6 +7,7 @@
 #include "XR/UILabel.hpp"
 #include "XR/UIRenderer.hpp"
 #include "XR/Transforms.hpp"
+#include "XR/Matrix.hpp"
 #include <cstring>
 #include <cstdlib>
 

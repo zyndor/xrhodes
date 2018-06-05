@@ -13,6 +13,7 @@
 #include "XR/ScopeGuard.hpp"
 #include "XR/VertexFormats.hpp"
 #include "XR/Transforms.hpp"
+#include "XR/Matrix.hpp"
 
 #include <numeric>
 
