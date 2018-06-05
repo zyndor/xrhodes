@@ -18,11 +18,11 @@ void ProjectionHelper::CalculateOrthographic(float left, float right, float bott
 {
   XR_ASSERT(ProjectionHelper, left != right);
   XR_ASSERT(ProjectionHelper, top != bottom);
-  XR_ASSERT(ProjectionHelper, zFar > zNear);
+  XR_ASSERT(ProjectionHelper, zFar != zNear);
 
-  float dx(1.0f / (right - left));
-  float dy(1.0f / (top - bottom));
-  float dz(1.0f / (zNear - zFar));	// simplified -dz
+  float dx = 1.0f / (right - left);
+  float dy = 1.0f / (top - bottom);
+  float dz = -1.0f / (zFar - zNear); // NOTE: pre-negated.
 
   float*  writep = outMatrix;
   *writep = 2.0f * dx;
@@ -49,7 +49,7 @@ void ProjectionHelper::CalculateOrthographic(float width, float height, float zN
 {
   XR_ASSERT(ProjectionHelper, width > 0.0f);
   XR_ASSERT(ProjectionHelper, height > 0.0f);
-  XR_ASSERT(ProjectionHelper, zFar > zNear);
+  XR_ASSERT(ProjectionHelper, zFar != zNear);
 
   CalculateOrthographic(.0f, width, -height, .0f, zNear, zFar, outMatrix);
 }
@@ -75,8 +75,8 @@ void ProjectionHelper::CalculatePerspective(float verticalFOV, float aspectRatio
     *outTanVerticalFovHalf = tanVerticalFOVHalf;
   }
 
-  float f(1.0f / tanVerticalFOVHalf);
-  float dz(1.0f / (zNear - zFar));
+  float f = 1.0f / tanVerticalFOVHalf;
+  float dz = -1.0f / (zFar - zNear); // NOTE: pre-negated.
 
   float*  writep = outMatrix;
   *writep = f / aspectRatio;
