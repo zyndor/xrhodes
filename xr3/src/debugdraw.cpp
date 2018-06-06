@@ -58,7 +58,7 @@ void EnsureUniformExists()
   {
     s_uColor = Gfx::CreateUniform("xruColor", Gfx::UniformType::Vec4);
     Gfx::RegisterExitCallback([](void*, void*) {
-      Gfx::Destroy(s_uColor);
+      Gfx::Release(s_uColor);
       s_uColor.Invalidate();
     }, nullptr);
   }

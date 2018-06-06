@@ -29,13 +29,13 @@ public:
 
   ~TransformsImpl()
   {
-    Gfx::Destroy(m_xruNormal);
-    Gfx::Destroy(m_xruModelViewProjection);
-    Gfx::Destroy(m_xruViewProjection);
-    Gfx::Destroy(m_xruModelView);
-    Gfx::Destroy(m_xruProjection);
-    Gfx::Destroy(m_xruView);
-    Gfx::Destroy(m_xruModel);
+    Gfx::Release(m_xruNormal);
+    Gfx::Release(m_xruModelViewProjection);
+    Gfx::Release(m_xruViewProjection);
+    Gfx::Release(m_xruModelView);
+    Gfx::Release(m_xruProjection);
+    Gfx::Release(m_xruView);
+    Gfx::Release(m_xruModel);
   }
 
   bool IsUpdateInProgress() const

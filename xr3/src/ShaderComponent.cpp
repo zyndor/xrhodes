@@ -55,7 +55,7 @@ private:
 //==============================================================================
 bool ShaderComponent::SetSource(Gfx::ShaderType type, char const* source)
 {
-  Gfx::Destroy(m_handle);
+  Gfx::Release(m_handle);
   auto p = reinterpret_cast<uint8_t const*>(source);
   m_handle = Gfx::CreateShader(type, { strlen(source), p });
 
@@ -100,7 +100,7 @@ bool ShaderComponent::OnLoaded(Buffer buffer)
 //==============================================================================
 void XR::ShaderComponent::OnUnload()
 {
-  Gfx::Destroy(m_handle);
+  Gfx::Release(m_handle);
   m_handle.Invalidate();
 
   std::vector<uint8_t>().swap(m_data);

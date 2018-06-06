@@ -22,7 +22,7 @@ void Formats::HandleHolder::EnsureOnExitRegistration()
   {
     auto onExit = [](void*, void*) {
       ForEach([](HandleHolder& hh) {
-        Gfx::Destroy(hh.value);
+        Gfx::Release(hh.value);
         hh.value.Invalidate();
       });
       s_registeredOnExit = false; // Gfx is torn down.

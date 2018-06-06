@@ -16,7 +16,7 @@ BasicMesh::BasicMesh(uint32_t vertexSize, uint32_t numVertices)
 //==============================================================================
 BasicMesh::~BasicMesh()
 {
-  Gfx::Destroy(m_vbo);
+  Gfx::Release(m_vbo);
 }
 
 //==============================================================================
@@ -27,7 +27,7 @@ IndexMesh::IndexMesh(uint32_t vertexSize, uint32_t numVertices)
 //==============================================================================
 IndexMesh::~IndexMesh()
 {
-  Gfx::Destroy(m_ibo);
+  Gfx::Release(m_ibo);
 }
 
 //==============================================================================
@@ -53,7 +53,7 @@ void IndexMesh::SetIndexPattern(const uint16_t* indices, uint32_t indexCount,
 //==============================================================================
 void IndexMesh::CreateIbo(uint32_t flags)
 {
-  Gfx::Destroy(m_ibo);
+  Gfx::Release(m_ibo);
   m_ibo = Gfx::CreateIndexBuffer(GetIndexBuffer(), flags);
 }
 

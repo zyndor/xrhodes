@@ -88,7 +88,7 @@ void UIRenderer::Render()
 
     (*i)->Apply();
     Gfx::Draw(vbo, m_ibo, Primitive::TriList, 0, numIndices);
-    Gfx::Destroy(vbo);
+    Gfx::Release(vbo);
 
     verts += numVertices;
     i = iCompare;
@@ -117,7 +117,7 @@ void UIRenderer::Shutdown()
 
   std::vector<Material::Ptr>().swap(m_materials);
 
-  Gfx::Destroy(m_ibo);
+  Gfx::Release(m_ibo);
   m_ibo.Invalidate();
 
   m_vertices.ReleaseData();

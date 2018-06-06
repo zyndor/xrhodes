@@ -226,7 +226,7 @@ template <class VertexFormat, class Base>
 inline
 void Mesh<VertexFormat, Base>::CreateVbo(uint32_t flags)
 {
-  Gfx::Destroy(Base::m_vbo);
+  Gfx::Release(Base::m_vbo);
   XR_ASSERT(Mesh, Base::m_vertices.GetRaw() != nullptr);
   Base::m_vbo = Gfx::CreateVertexBuffer(Vertex::Formats::GetHandle<VertexFormat>(),
     Base::GetVertexBuffer(), flags);
