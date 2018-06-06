@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UICascader.hpp"
+#include "xr/UICascader.hpp"
 #include <limits>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -141,4 +141,4 @@ void UICascader::_SetHeightToContent()
   h = yMax - yMin;
 }
 
-} // XR
+} // xr

@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Mesh.hpp"
+#include "xr/Mesh.hpp"
 
-namespace XR {
+namespace xr {
 
 //==============================================================================
 BasicMesh::BasicMesh(uint32_t vertexSize, uint32_t numVertices)
@@ -58,4 +58,4 @@ void IndexMesh::CreateIbo(uint32_t flags)
 }
 
 
-} // XR
+} // xr

@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
-#include "XR/Deflator.hpp"
-#include "XR/streamutils.hpp"
+#include "xr/Deflator.hpp"
+#include "xr/streamutils.hpp"
 
-namespace XR
+namespace xr
 {
   namespace
   {
-    struct A : public XR::Inflatable
+    struct A : public xr::Inflatable
     {
       int a;
 

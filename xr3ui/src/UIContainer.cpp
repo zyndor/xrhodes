@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIContainer.hpp"
-#include "XR/functors.hpp"
+#include "xr/UIContainer.hpp"
+#include "xr/functors.hpp"
 #include <algorithm>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -210,4 +210,4 @@ bool UIContainer::OnMouseMotion(const Input::MouseMotionEvent& e)
   return handled;
 }
 
-} // XR
+} // xr

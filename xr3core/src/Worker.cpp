@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Worker.hpp"
-#include "XR/debug.hpp"
-#include "XR/RefHolder.hpp"
+#include "xr/Worker.hpp"
+#include "xr/debug.hpp"
+#include "xr/RefHolder.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -159,4 +159,4 @@ void  Worker::Loop()
   }
 }
 
-} // XR
+} // xr

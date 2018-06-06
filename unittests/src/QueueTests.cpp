@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "XR/Queue.hpp"
+#include "xr/Queue.hpp"
 
-namespace XR
+namespace xr
 {
 	TEST(Queue, BasicOperations)
 	{

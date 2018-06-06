@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/TextureCache.hpp"
-#include "XR/AABB.hpp"
+#include "xr/TextureCache.hpp"
+#include "xr/AABB.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIGrowingLayoutBase.hpp"
+#include "xr/UIGrowingLayoutBase.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -59,4 +59,4 @@ void UIGrowingLayoutBase::SetAlignment( Alignment align )
   m_align = align;
 }
 
-} // XR
+} // xr

@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/VertexFormats.hpp"
+#include "xr/VertexFormats.hpp"
 
-namespace XR
+namespace xr
 {
 namespace Vertex
 {

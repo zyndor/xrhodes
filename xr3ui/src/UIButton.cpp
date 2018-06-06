@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIButton.hpp"
-#include "XR/UIRenderer.hpp"
+#include "xr/UIButton.hpp"
+#include "xr/UIRenderer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -172,4 +172,4 @@ void UIButton::OnReleased()
   }
 }
 
-} // XR
+} // xr

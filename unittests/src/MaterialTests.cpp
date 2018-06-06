@@ -1,23 +1,23 @@
 #include "FileLifeCycleManager.hpp"
 
 #include "gtest/gtest.h"
-#include "XR/Asset.hpp"
-#include "XR/Hash.hpp"
+#include "xr/Asset.hpp"
+#include "xr/Hash.hpp"
 
-#include "XR/Image.hpp"
-#include "XR/Texture.hpp"
-#include "XR/Material.hpp"
+#include "xr/Image.hpp"
+#include "xr/Texture.hpp"
+#include "xr/Material.hpp"
 
-#include "XR/Device.hpp"
-#include "XR/Gfx.hpp"
-#include "XR/ScopeGuard.hpp"
-#include "XR/VertexFormats.hpp"
-#include "XR/Transforms.hpp"
-#include "XR/Matrix.hpp"
+#include "xr/Device.hpp"
+#include "xr/Gfx.hpp"
+#include "xr/ScopeGuard.hpp"
+#include "xr/VertexFormats.hpp"
+#include "xr/Transforms.hpp"
+#include "xr/Matrix.hpp"
 
 #include <numeric>
 
-namespace XR
+namespace xr
 {
   struct ImageDiff
   {
@@ -103,12 +103,12 @@ namespace XR
     {
       Asset::Manager::Init(".assets");
 
-      XR::Device::Init();
-      XR::Gfx::Init(XR::Device::GetMainWindow());
-      XR::Transforms::Init();
+      xr::Device::Init();
+      xr::Gfx::Init(xr::Device::GetMainWindow());
+      xr::Transforms::Init();
 
-      XR::Transforms::Updater().SetOrthographicProjection(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f).
-        SetViewerTransform(XR::Matrix(XR::Vector3(.0f, .0f, .0f)));
+      xr::Transforms::Updater().SetOrthographicProjection(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f).
+        SetViewerTransform(xr::Matrix(xr::Vector3(.0f, .0f, .0f)));
     }
 
     ~MaterialTests()

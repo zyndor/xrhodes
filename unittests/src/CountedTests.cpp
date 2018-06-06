@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "XR/Counted.hpp"
+#include "xr/Counted.hpp"
 
-namespace XR
+namespace xr
 {
   struct NoopDeleter
   {

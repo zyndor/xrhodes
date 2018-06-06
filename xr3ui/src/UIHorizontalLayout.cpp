@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIHorizontalLayout.hpp"
+#include "xr/UIHorizontalLayout.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -88,4 +88,4 @@ void UIHorizontalLayout::_SetWidthToContent()
   w = wNew;
 }
 
-} // XR
+} // xr

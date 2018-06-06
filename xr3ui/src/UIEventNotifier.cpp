@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIEventNotifier.hpp"
+#include "xr/UIEventNotifier.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -93,4 +93,4 @@ void UIEventNotifier::SetZeroHitCallback(ZeroHitCallback onZeroHit, void* userDa
   m_onZeroHitData = userData;
 }
 
-} // XR
+} // xr

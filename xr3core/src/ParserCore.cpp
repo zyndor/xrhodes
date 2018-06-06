@@ -6,10 +6,10 @@
 //==============================================================================
 #include <cstring>
 #include <string>
-#include "XR/ParserCore.hpp"
-#include "XR/debug.hpp"
+#include "xr/ParserCore.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -112,4 +112,4 @@ const char* ParserCore::FastForward(int numChars)
   return result;
 }
 
-} // XR
+} // xr

@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/AnimationInstance.hpp"
+#include "xr/AnimationInstance.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -31,4 +31,4 @@ void AnimationInstanceCore::ResetAnimation( float timeScale_ )
   m_numLoops = 0;
 }
 
-} // XR
+} // xr

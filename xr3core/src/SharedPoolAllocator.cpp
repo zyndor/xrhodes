@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/SharedPoolAllocator.hpp"
+#include "xr/SharedPoolAllocator.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -18,5 +18,5 @@ SharedPoolAllocatorCore::SharedPoolAllocatorCore(Pool* pool) throw()
 SharedPoolAllocatorCore::~SharedPoolAllocatorCore() throw()
 {}
 
-} // XR
+} // xr
 

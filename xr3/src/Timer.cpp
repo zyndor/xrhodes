@@ -4,13 +4,13 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Timer.hpp"
+#include "xr/Timer.hpp"
 #include <chrono>
 #include <ctime>
 
 namespace sc = std::chrono;
 
-namespace XR
+namespace xr
 {
 namespace
 {

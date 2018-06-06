@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "XR/stringutils.hpp"
+#include "xr/stringutils.hpp"
 #include <vector>
 
-namespace XR
+namespace xr
 {
     std::vector<char> buffer;
     size_t replacedSize;

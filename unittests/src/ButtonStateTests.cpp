@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "XR/ButtonState.hpp"
-#include "XR/utils.hpp"
+#include "xr/ButtonState.hpp"
+#include "xr/utils.hpp"
 
-namespace XR
+namespace xr
 {
 
 TEST(ButtonState, Basics)

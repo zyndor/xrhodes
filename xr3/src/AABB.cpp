@@ -5,10 +5,10 @@
 //
 //==============================================================================
 #include <limits>
-#include "XR/AABB.hpp"
-#include "XR/maths.hpp"
+#include "xr/AABB.hpp"
+#include "xr/maths.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

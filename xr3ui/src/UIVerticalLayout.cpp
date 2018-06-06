@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIVerticalLayout.hpp"
+#include "xr/UIVerticalLayout.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -87,4 +87,4 @@ void UIVerticalLayout::_SetHeightToContent()
   h = hNew;
 }
 
-} // XR
+} // xr

@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
-#include "XR/Worker.hpp"
-#include "XR/ScopeGuard.hpp"
+#include "xr/Worker.hpp"
+#include "xr/ScopeGuard.hpp"
 #include <list>
 #include <chrono>
 
-namespace XR
+namespace xr
 {
     static void BusyWait(int ms)
     {

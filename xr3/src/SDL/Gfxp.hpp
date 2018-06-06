@@ -7,13 +7,13 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Gfx.hpp"
-#include "XR/IndexServer.hpp"
-#include "XR/memory.hpp"
+#include "xr/Gfx.hpp"
+#include "xr/IndexServer.hpp"
+#include "xr/memory.hpp"
 
-#define XR_ALIGN16(val) XR::Align<uint32_t>(val, 16)
+#define XR_ALIGN16(val) xr::Align<uint32_t>(val, 16)
 
-namespace XR
+namespace xr
 {
 namespace Gfx
 {

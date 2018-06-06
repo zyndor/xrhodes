@@ -5,10 +5,10 @@
 //
 //==============================================================================
 #include <algorithm>
-#include "XR/utils.hpp"
-#include "XR/Sprite.hpp"
+#include "xr/utils.hpp"
+#include "xr/Sprite.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

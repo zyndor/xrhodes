@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/KeyCode.hpp"
+#include "xr/KeyCode.hpp"
 #include "SDL_scancode.h"
 #include <algorithm>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

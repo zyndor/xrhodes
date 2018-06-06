@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIHorizontalScrollingLayout.hpp"
-#include "XR/UIRenderer.hpp"
-#include "XR/Gfx.hpp"
+#include "xr/UIHorizontalScrollingLayout.hpp"
+#include "xr/UIRenderer.hpp"
+#include "xr/Gfx.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -166,4 +166,4 @@ void  UIHorizontalScrollingLayout::SetSensitivity(float s)
   m_sensitivity = s;
 }
 
-} // XR
+} // xr

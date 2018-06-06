@@ -4,12 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/ShaderComponent.hpp"
-#include "XR/BufferReader.hpp"
-#include "XR/streamutils.hpp"
+#include "xr/ShaderComponent.hpp"
+#include "xr/BufferReader.hpp"
+#include "xr/streamutils.hpp"
 #include <map>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -98,7 +98,7 @@ bool ShaderComponent::OnLoaded(Buffer buffer)
 }
 
 //==============================================================================
-void XR::ShaderComponent::OnUnload()
+void xr::ShaderComponent::OnUnload()
 {
   Gfx::Release(m_handle);
   m_handle.Invalidate();

@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "XR/FloatBuffer.hpp"
-#include "XR/Vector3.hpp"
+#include "xr/FloatBuffer.hpp"
+#include "xr/Vector3.hpp"
 
-namespace XR
+namespace xr
 {
     TEST(FloatBuffer, GetSet)
     {

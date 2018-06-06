@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIProgressBarBase.hpp"
+#include "xr/UIProgressBarBase.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -56,4 +56,4 @@ void UIProgressBarBase::SetPercentage( float perc )
   m_percentage = perc;
 }
 
-} // XR
+} // xr

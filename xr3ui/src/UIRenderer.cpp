@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIRenderer.hpp"
-#include "XR/meshutil.hpp"
-#include "XR/VertexFormats.hpp"
+#include "xr/UIRenderer.hpp"
+#include "xr/meshutil.hpp"
+#include "xr/VertexFormats.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -83,7 +83,7 @@ void UIRenderer::Render()
 
     auto vertsBytes = reinterpret_cast<uint8_t const*>(verts);
     Gfx::VertexBufferHandle vbo =
-      Gfx::CreateVertexBuffer(XR::Vertex::Formats::GetHandle<Vertex>(),
+      Gfx::CreateVertexBuffer(xr::Vertex::Formats::GetHandle<Vertex>(),
         { numVertices * sizeof(Vertex), vertsBytes }, Gfx::F_BUFFER_NONE);
 
     (*i)->Apply();
@@ -124,4 +124,4 @@ void UIRenderer::Shutdown()
   m_numSprites = 0;
 }
 
-} // XR
+} // xr

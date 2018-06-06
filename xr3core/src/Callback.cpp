@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Callback.hpp"
+#include "xr/Callback.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -41,4 +41,4 @@ void  CallbackObject::Set(Callback callback_, void* userData_)
   userData = userData_;
 }
 
-} // XR
+} // xr

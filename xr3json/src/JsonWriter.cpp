@@ -4,12 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/JsonWriter.hpp"
-#include "XR/debug.hpp"
+#include "xr/JsonWriter.hpp"
+#include "xr/debug.hpp"
 #include <cstring>
 #include <algorithm>
 
-namespace XR
+namespace xr
 {
 namespace JSON
 {
@@ -475,4 +475,4 @@ Writer::Object Writer::Object::OpenObject(char const* key, bool oneLiner)
 }
 
 } // JSON
-} // XR
+} // xr

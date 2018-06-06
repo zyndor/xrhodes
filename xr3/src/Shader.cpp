@@ -4,15 +4,15 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Shader.hpp"
-#include "XR/XonBuildTree.hpp"
-#include "XR/BufferReader.hpp"
-#include "XR/streamutils.hpp"
+#include "xr/Shader.hpp"
+#include "xr/XonBuildTree.hpp"
+#include "xr/BufferReader.hpp"
+#include "xr/streamutils.hpp"
 
 #define LTRACE(format) XR_TRACE(Shader, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Shader, condition, format)
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

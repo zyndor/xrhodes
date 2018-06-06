@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Deflator.hpp"
+#include "xr/Deflator.hpp"
 #include <sstream>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

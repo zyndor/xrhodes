@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/meshutil.hpp"
+#include "xr/meshutil.hpp"
 
-namespace XR
+namespace xr
 {
 namespace meshutil
 {

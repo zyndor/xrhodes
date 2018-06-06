@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Ray.hpp"
-#include "XR/maths.hpp"
+#include "xr/Ray.hpp"
+#include "xr/maths.hpp"
 #include <limits>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -78,4 +78,4 @@ bool  Ray::IntersectPlane(const Vector3& pos, const Vector3& normal, float& t)
   return result;
 }
 
-} // XR
+} // xr

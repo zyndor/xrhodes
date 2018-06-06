@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/File.hpp"
-#include "XR/stringutils.hpp"
-#include "XR/utils.hpp"
-#include "XR/debug.hpp"
+#include "xr/File.hpp"
+#include "xr/stringutils.hpp"
+#include "xr/utils.hpp"
+#include "xr/debug.hpp"
 #include <sys/stat.h>
 #include <algorithm>
 #include <fstream>
@@ -20,7 +20,7 @@
 
 #define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
 
-namespace XR
+namespace xr
 {
 
 namespace
@@ -395,4 +395,4 @@ bool File::MakeDirs(FilePath const& path)
   return success;
 }
 
-} // XR
+} // xr

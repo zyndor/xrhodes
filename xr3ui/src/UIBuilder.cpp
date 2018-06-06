@@ -4,29 +4,29 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIBuilder.hpp"
-#include "XR/UISpacer.hpp"
-#include "XR/UIRadioButton.hpp"
-#include "XR/UILabel.hpp"
-#include "XR/UIImagePanel.hpp"
-#include "XR/UIHorizontalProgressBar.hpp"
-#include "XR/UIVerticalProgressBar.hpp"
-#include "XR/UIHorizontalSlider.hpp"
-#include "XR/UIVerticalSlider.hpp"
-#include "XR/UIAligner.hpp"
-#include "XR/UICascader.hpp"
-#include "XR/UIHorizontalScrollingLayout.hpp"
-#include "XR/UIVerticalScrollingLayout.hpp"
-#include "XR/UIGridLayout.hpp"
-#include "XR/debug.hpp"
-#include "XR/Hash.hpp"
-#include "XR/Parse.hpp"
-#include "XR/Pool.hpp"
-#include "XR/utils.hpp"
+#include "xr/UIBuilder.hpp"
+#include "xr/UISpacer.hpp"
+#include "xr/UIRadioButton.hpp"
+#include "xr/UILabel.hpp"
+#include "xr/UIImagePanel.hpp"
+#include "xr/UIHorizontalProgressBar.hpp"
+#include "xr/UIVerticalProgressBar.hpp"
+#include "xr/UIHorizontalSlider.hpp"
+#include "xr/UIVerticalSlider.hpp"
+#include "xr/UIAligner.hpp"
+#include "xr/UICascader.hpp"
+#include "xr/UIHorizontalScrollingLayout.hpp"
+#include "xr/UIVerticalScrollingLayout.hpp"
+#include "xr/UIGridLayout.hpp"
+#include "xr/debug.hpp"
+#include "xr/Hash.hpp"
+#include "xr/Parse.hpp"
+#include "xr/Pool.hpp"
+#include "xr/utils.hpp"
 
 #define ARRAY_SIZE(x) std::extent<decltype(x)>::value
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -1727,4 +1727,4 @@ void  NewDeallocate(void* buffer, void* userData)
   delete [] static_cast<Byte*>(buffer);
 }
 
-} // XR
+} // xr

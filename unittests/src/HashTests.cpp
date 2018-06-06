@@ -1,11 +1,11 @@
 #include "gtest/gtest.h"
-#include "XR/StringFormatter.hpp"
-#include "XR/Hash.hpp"
-#include "XR/utils.hpp"
+#include "xr/StringFormatter.hpp"
+#include "xr/Hash.hpp"
+#include "xr/utils.hpp"
 #include <map>
 #include <set>
 
-namespace XR
+namespace xr
 {
   class HashTests : public ::testing::Test
   {

@@ -5,10 +5,10 @@
 //
 //==============================================================================
 #include <algorithm>
-#include "XR/Tweener.hpp"
-#include "XR/debug.hpp"
+#include "xr/Tweener.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -139,4 +139,4 @@ void  Tweener::Clear()
   m_params.clear();
 }
 
-}  // XR
+}  // xr

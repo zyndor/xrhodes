@@ -4,12 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/MouseButton.hpp"
-#include "XR/debug.hpp"
+#include "xr/MouseButton.hpp"
+#include "xr/debug.hpp"
 #include "SDL_mouse.h"
 #include <algorithm>
 
-namespace XR
+namespace xr
 {
 namespace MouseButton
 {

@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIBuilderScreen.hpp"
-#include "XR/ScreenManager.hpp"
-#include "XR/UIGrowingLayoutBase.hpp"
+#include "xr/UIBuilderScreen.hpp"
+#include "xr/ScreenManager.hpp"
+#include "xr/UIGrowingLayoutBase.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -263,4 +263,4 @@ void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* xml)
   m_tweening.assign(l.begin(), l.end());
 }
 
-} // XR
+} // xr

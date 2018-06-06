@@ -8,11 +8,11 @@
 //
 //==============================================================================
 
-#include "XR/debug.hpp"
+#include "xr/debug.hpp"
 #include "gl_core_4_5.h"
 #include "SDL_opengl.h"
 
-namespace XR
+namespace xr
 {
 namespace GL
 {
@@ -25,12 +25,12 @@ void SwitchEnabledState(GLenum name, bool state);
 } // XR
 
 //==============================================================================
-#define XR_GL_CALL(theCall)  theCall; XR::GL::CheckError( #theCall )
+#define XR_GL_CALL(theCall)  theCall; xr::GL::CheckError( #theCall )
 
 //==============================================================================
 #define XR_GL_CALL_RESULT(theCall, result)\
   theCall;\
-  result = XR::GL::CheckError( #theCall )
+  result = xr::GL::CheckError( #theCall )
 
 //==============================================================================
 #define XR_GL_IGNORE_ERROR (void)glGetError();
@@ -38,7 +38,7 @@ void SwitchEnabledState(GLenum name, bool state);
 //==============================================================================
 // inline
 //==============================================================================
-namespace XR
+namespace xr
 {
 namespace GL
 {

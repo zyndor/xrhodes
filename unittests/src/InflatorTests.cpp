@@ -1,13 +1,13 @@
 #include "gtest/gtest.h"
-#include "XR/Deflator.hpp"
-#include "XR/Inflator.hpp"
-#include "XR/streamutils.hpp"
+#include "xr/Deflator.hpp"
+#include "xr/Inflator.hpp"
+#include "xr/streamutils.hpp"
 #include <memory>
 #include <vector>
 #include <algorithm>
 #include <iterator>
 
-namespace XR
+namespace xr
 {
   namespace
   {

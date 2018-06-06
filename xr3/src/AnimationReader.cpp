@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/AnimationReader.hpp"
+#include "xr/AnimationReader.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -18,4 +18,4 @@ const char* kAnimationTags[] =
   "loopFrame"
 };
 
-} // XR
+} // xr

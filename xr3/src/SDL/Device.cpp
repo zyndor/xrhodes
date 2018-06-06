@@ -5,18 +5,18 @@
 //
 //==============================================================================
 #include "InputImpl.hpp"
-#include "XR/Device.hpp"
-#include "XR/FileWriter.hpp"
-#include "XR/JsonReader.hpp"
-#include "XR/JsonWriter.hpp"
-#include "XR/jsonutils.hpp"
-#include "XR/utils.hpp"
-#include "XR/stringutils.hpp"
+#include "xr/Device.hpp"
+#include "xr/FileWriter.hpp"
+#include "xr/JsonReader.hpp"
+#include "xr/JsonWriter.hpp"
+#include "xr/jsonutils.hpp"
+#include "xr/utils.hpp"
+#include "xr/stringutils.hpp"
 #include "SDL_events.h"
 #include "SDL.h"
 #include <cstdlib>
 
-namespace XR
+namespace xr
 {
 
 namespace

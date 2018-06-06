@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/json.hpp"
+#include "xr/json.hpp"
 
-namespace XR
+namespace xr
 {
 namespace JSON
 {
@@ -16,4 +16,4 @@ const char* const kTrue = "true";
 const char* const kFalse = "false";
 
 } // JSON
-} // XR
+} // xr

@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/ActorInstance.hpp"
-#include "XR/Hash.hpp"
+#include "xr/ActorInstance.hpp"
+#include "xr/Hash.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -35,4 +35,4 @@ void ActorInstanceCore::Enqueue(uint32_t nameHashAction, float timeScale)
   m_timeScaleNextAction = timeScale;
 }
 
-} // XR
+} // xr

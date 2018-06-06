@@ -5,9 +5,9 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include "XR/Screen.hpp"
+#include "xr/Screen.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -142,4 +142,4 @@ void  Screen::_MakeHidden()
   m_manager = 0;
 }
 
-} // XR
+} // xr

@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Pool.hpp"
-#include "XR/debug.hpp"
+#include "xr/Pool.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -137,4 +137,4 @@ void  Pool::Pop()
   m_frames.pop_back();
 }
 
-} // XR
+} // xr

@@ -9,15 +9,15 @@
 #include "SdfBuilder.hpp"
 #endif
 
-#include "XR/TextureCache.hpp"
-#include "XR/XonBuildTree.hpp"
-#include "XR/FileBuffer.hpp"
-#include "XR/Font.hpp"
-#include "XR/BufferReader.hpp"
-#include "XR/streamutils.hpp"
-#include "XR/stringutils.hpp"
-#include "XR/utils.hpp"
-#include "XR/debug.hpp"
+#include "xr/TextureCache.hpp"
+#include "xr/XonBuildTree.hpp"
+#include "xr/FileBuffer.hpp"
+#include "xr/Font.hpp"
+#include "xr/BufferReader.hpp"
+#include "xr/streamutils.hpp"
+#include "xr/stringutils.hpp"
+#include "xr/utils.hpp"
+#include "xr/debug.hpp"
 #include "stb_truetype.h"
 #include <limits>
 #include <iostream>
@@ -27,13 +27,13 @@
 //#define ENABLE_GLYPH_DEBUG
 
 #ifdef ENABLE_GLYPH_DEBUG
-#include "XR/Image.hpp"
+#include "xr/Image.hpp"
 #endif
 
 #define LTRACE(format) XR_TRACE(Font, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Font, condition, format)
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -473,7 +473,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           Image img;
           img.SetPixelData(p, w, h, 1);
 
-          XR::FilePath path;
+          xr::FilePath path;
           sprintf(path.data(), "glyph-%04x.tga", i0);
           path.UpdateSize();
           img.Save(path, true);
@@ -744,4 +744,4 @@ Font::CachedGlyphInternal* Font::CacheGlyphInternal(uint32_t codePoint)
   return result;
 }
 
-} // XR
+} // xr

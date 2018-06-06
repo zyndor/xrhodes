@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Indexer2d.hpp"
-#include "XR/debug.hpp"
+#include "xr/Indexer2d.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

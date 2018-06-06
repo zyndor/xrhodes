@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIElement.hpp"
-#include "XR/UIEventNotifier.hpp"
-#include "XR/Gfx.hpp"
+#include "xr/UIElement.hpp"
+#include "xr/UIEventNotifier.hpp"
+#include "xr/Gfx.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -201,4 +201,4 @@ void UIElement::SetParent( UIContainer* container )
   m_parent = container;
 }
 
-} // XR
+} // xr

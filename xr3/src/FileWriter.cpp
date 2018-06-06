@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/FileWriter.hpp"
+#include "xr/FileWriter.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

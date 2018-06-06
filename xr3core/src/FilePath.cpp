@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/FilePath.hpp"
+#include "xr/FilePath.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -108,4 +108,4 @@ void FilePath::Up()
   }
 }
 
-} // XR
+} // xr

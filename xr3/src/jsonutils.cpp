@@ -4,19 +4,19 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/jsonutils.hpp"
-#include "XR/FileBuffer.hpp"
-#include "XR/JsonReader.hpp"
-#include "XR/debug.hpp"
+#include "xr/jsonutils.hpp"
+#include "xr/FileBuffer.hpp"
+#include "xr/JsonReader.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
 JSON::Entity* LoadJSON(const char* filename, int maxDepth, bool quietErrors)
 {
   XR_ASSERT(LoadJSON, filename != nullptr);
-  XR::FileBuffer  file;
+  xr::FileBuffer  file;
   if (!file.Open(filename, false))
   {
     if (!quietErrors)
@@ -43,4 +43,4 @@ JSON::Entity* LoadJSON(const char* filename, int maxDepth, bool quietErrors)
   return pJson;
 }
 
-} // XR
+} // xr

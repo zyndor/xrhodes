@@ -4,14 +4,14 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UILabel.hpp"
-#include "XR/UIRenderer.hpp"
-#include "XR/Transforms.hpp"
-#include "XR/Matrix.hpp"
+#include "xr/UILabel.hpp"
+#include "xr/UIRenderer.hpp"
+#include "xr/Transforms.hpp"
+#include "xr/Matrix.hpp"
 #include <cstring>
 #include <cstdlib>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -147,4 +147,4 @@ void UILabel::Render() const
   m_textMesh.Render(Primitive::TriList);
 }
 
-} // XR
+} // xr

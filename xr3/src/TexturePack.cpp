@@ -4,18 +4,18 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/TexturePack.hpp"
-#include "XR/utils.hpp"
-#include "XR/FilePath.hpp"
-#include "XR/BufferReader.hpp"
-#include "XR/streamutils.hpp"
-#include "XR/debug.hpp"
+#include "xr/TexturePack.hpp"
+#include "xr/utils.hpp"
+#include "xr/FilePath.hpp"
+#include "xr/BufferReader.hpp"
+#include "xr/streamutils.hpp"
+#include "xr/debug.hpp"
 #include "tinyxml2.h"
 
 #define LTRACE(format) XR_TRACE(TexturePack, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(TexturePack, condition, format)
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

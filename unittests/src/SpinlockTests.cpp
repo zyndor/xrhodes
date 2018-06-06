@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
-#include "XR/Spinlock.hpp"
-#include "XR/debug.hpp"
+#include "xr/Spinlock.hpp"
+#include "xr/debug.hpp"
 #include <vector>
 #include <mutex>
 #include <chrono>
 #include <thread>
 
-namespace XR
+namespace xr
 {
   struct Data
   {

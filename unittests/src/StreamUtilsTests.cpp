@@ -1,11 +1,11 @@
 #include "gtest/gtest.h"
-#include "XR/streamutils.hpp"
-#include "XR/memdebug.hpp"
-#include "XR/utils.hpp"
-#include "XR/debug.hpp"
+#include "xr/streamutils.hpp"
+#include "xr/memdebug.hpp"
+#include "xr/utils.hpp"
+#include "xr/debug.hpp"
 #include <algorithm>
 
-namespace XR
+namespace xr
 {
   namespace
   {

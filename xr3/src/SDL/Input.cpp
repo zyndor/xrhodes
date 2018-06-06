@@ -8,7 +8,7 @@
 #include "SDL_touch.h"
 #include "SDL.h"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

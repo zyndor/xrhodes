@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Quadtree.hpp"
-#include "XR/functors.hpp"
+#include "xr/Quadtree.hpp"
+#include "xr/functors.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -41,4 +41,4 @@ QuadtreeCore::QuadtreeCore(const Vector2 &pos, float hw, float hh)
 QuadtreeCore::~QuadtreeCore()
 {}
 
-} // XR
+} // xr

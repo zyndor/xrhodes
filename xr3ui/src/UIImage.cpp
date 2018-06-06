@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIImage.hpp"
-#include "XR/UIRenderer.hpp"
+#include "xr/UIImage.hpp"
+#include "xr/UIRenderer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -49,4 +49,4 @@ void UIImage::Render(IUIRenderer& renderer) const
   _ApplyColor(verts);
 }
 
-} // XR
+} // xr

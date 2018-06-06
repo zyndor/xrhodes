@@ -5,9 +5,9 @@
 // copyright (c) 2011 - 2016. All rights reserved.
 //
 //==============================================================================
-#include "XR/Cursor.hpp"
+#include "xr/Cursor.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -135,4 +135,4 @@ void  Cursor::Render(IUIRenderer& r)
   }
 }
 
-} // XR
+} // xr

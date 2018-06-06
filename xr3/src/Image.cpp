@@ -4,14 +4,14 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Image.hpp"
-#include "XR/FileBuffer.hpp"
-#include "XR/FileWriter.hpp"
-#include "XR/ScopeGuard.hpp"
-#include "XR/debug.hpp"
+#include "xr/Image.hpp"
+#include "xr/FileBuffer.hpp"
+#include "xr/FileWriter.hpp"
+#include "xr/ScopeGuard.hpp"
+#include "xr/debug.hpp"
 #include "png.h"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

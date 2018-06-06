@@ -4,8 +4,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/JsonParser.hpp"
-#include "XR/debug.hpp"
+#include "xr/JsonParser.hpp"
+#include "xr/debug.hpp"
 #include <algorithm>
 #include <limits>
 #include <ctype.h>
@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-namespace XR
+namespace xr
 {
 namespace JSON
 {
@@ -373,4 +373,4 @@ void Parser::_DoDepthCallback(bool entered)
 }
 
 } // JSON
-} // XR
+} // xr

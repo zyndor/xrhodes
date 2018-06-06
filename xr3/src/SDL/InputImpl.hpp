@@ -8,10 +8,10 @@
 //
 //==============================================================================
 #include "GameController.hpp"
-#include "XR/Input.hpp"
+#include "xr/Input.hpp"
 #include "SDL_events.h"
 
-namespace XR {
+namespace xr {
 
 struct  InputImpl
 {

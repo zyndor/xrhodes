@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/IdGenerator.hpp"
+#include "xr/IdGenerator.hpp"
 
-namespace XR
+namespace xr
 {
 
 const IdGenerator::IdType IdGenerator::kInvalidId = -1;

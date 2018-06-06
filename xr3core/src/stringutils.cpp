@@ -4,13 +4,13 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/stringutils.hpp"
-#include "XR/debug.hpp"
+#include "xr/stringutils.hpp"
+#include "xr/debug.hpp"
 #include <algorithm>
 #include <cctype>
 #include <cstring>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -119,4 +119,4 @@ char const* UrlEncode(char const* original, size_t bufferSize, char* buffer,
   return UrlEncode(original, strlen(original), bufferSize, buffer, processedSize);
 }
 
-} // XR
+} // xr

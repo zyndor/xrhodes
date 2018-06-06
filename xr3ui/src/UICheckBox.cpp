@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UICheckBox.hpp"
-#include "XR/UIRenderer.hpp"
+#include "xr/UICheckBox.hpp"
+#include "xr/UIRenderer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -104,4 +104,4 @@ void  UICheckBox::OnSelectedStateChanged()
   }
 }
 
-} // XR
+} // xr

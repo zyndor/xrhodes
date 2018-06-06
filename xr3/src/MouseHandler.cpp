@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/MouseHandler.hpp"
+#include "xr/MouseHandler.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -37,4 +37,4 @@ void  MouseHandler::UnregisterMouseCallbacks()
     CallbackAdaptor<const Input::MouseActionEvent&>::Function<MouseHandler, &MouseHandler::OnMouseAction>);
 }
 
-} // XR
+} // xr

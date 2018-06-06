@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "XR/HardString.hpp"
+#include "xr/HardString.hpp"
 
-namespace XR
+namespace xr
 {
   using TestString = HardString<65536>;
 
