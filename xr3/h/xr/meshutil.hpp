@@ -99,7 +99,7 @@ void CalculateExtents(uint32_t numVertices, PosType const* positions, uint32_t s
     for (int i = 0; i < PosType::kNumComponents; ++i)
     {
       outMin.data[i] = std::numeric_limits<float>::max();
-      outMax.data[i] = std::numeric_limits<float>::min();
+      outMax.data[i] = -std::numeric_limits<float>::max();
     }
 
     for (uint32_t i = 0; i < numVertices; ++i)
@@ -113,7 +113,7 @@ void CalculateExtents(uint32_t numVertices, PosType const* positions, uint32_t s
 
         if (positions->data[j] > outMax.data[j])
         {
-          outMin.data[j] = positions->data[j];
+          outMax.data[j] = positions->data[j];
         }
       }
 
