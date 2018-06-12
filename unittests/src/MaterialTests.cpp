@@ -220,6 +220,8 @@ namespace xr
 
     material.Reset(nullptr);
     Asset::Manager::UnloadUnused();
+
+    Gfx::Release(vbo);
   }
 #endif
 }
