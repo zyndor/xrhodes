@@ -12,16 +12,46 @@
 
 namespace xr
 {
-namespace Debug
-{
 
 #if defined(XR_DEBUG)
+namespace
+{
+
+void DefaultTraceHandler(char const* channel, char const* message)
+{
+#if defined(XR_DEBUG)
+  XR_RAWTRACE(("[%s] %s\n", channel, message));
+#endif
+}
+
+AssertAction DefaultAssertHandler(char const* channel, char const* message)
+{
+#if defined(XR_DEBUG)
+  // TODO: platform-specific implementation allowing to continue, ignore or break.
+  DefaultTraceHandler(channel, message);
+  return AssertAction::Break;
+#else
+  return AssertAction::Continue;
+#endif
+}
+
+const size_t kMessageLength = 1024;
+
 std::set<StringProxy> s_disabledChannels;
 
-AssertAction DefaultAssertHandler(char const* name, char const* message);
-
+TraceHandler s_traceHandler = DefaultTraceHandler;
 AssertHandler s_assertHandler = DefaultAssertHandler;
+
+} // nonamespace
 #endif
+
+//==============================================================================
+void SetTraceHandler(TraceHandler handler)
+{
+#if defined(XR_DEBUG)
+  s_traceHandler = handler ? handler : DefaultTraceHandler;
+#endif
+}
 
 //==============================================================================
 void SetAssertHandler(AssertHandler handler)
@@ -31,20 +61,11 @@ void SetAssertHandler(AssertHandler handler)
 #endif
 }
 
-//==============================================================================
-AssertAction DefaultAssertHandler(char const* channel, char const* message)
+namespace detail
 {
-#if defined(XR_DEBUG)
-  // TODO: platform-specific implementation allowing to continue, ignore or break.
-  XR_RAWTRACE(("[%s] %s\n", channel, message));
-  return AssertAction::Break;
-#else
-  return AssertAction::Continue;
-#endif
-}
 
 //==============================================================================
-void Channel::SetEnabled(char const* name, bool state)
+void DebugChannel::SetEnabled(char const* name, bool state)
 {
 #if defined(XR_DEBUG)
   if (state)
@@ -59,7 +80,7 @@ void Channel::SetEnabled(char const* name, bool state)
 }
 
 //==============================================================================
-bool Channel::IsEnabled(char const* name)
+bool DebugChannel::IsEnabled(char const* name)
 {
 #if defined(XR_DEBUG)
   return s_disabledChannels.find(name) == s_disabledChannels.end();
@@ -69,19 +90,19 @@ bool Channel::IsEnabled(char const* name)
 }
 
 //==============================================================================
-Channel::Channel(char const* name)
+DebugChannel::DebugChannel(char const* name)
 #if defined(XR_DEBUG)
 : m_name(name)
 #endif
 {}
 
-void Channel::Trace(char const* format, ...)
+void DebugChannel::Trace(char const* format, ...)
 {
 #if defined(XR_DEBUG)
   va_list vl;
   va_start(vl, format);
 
-  char message[XR__DEBUG_MESSAGE_LENGTH];
+  char message[kMessageLength];
   vsnprintf(message, sizeof(message), format, vl);
   va_end(vl);
 
@@ -90,13 +111,13 @@ void Channel::Trace(char const* format, ...)
 }
 
 //==============================================================================
-AssertAction Channel::Assert(char const* format, ...)
+AssertAction DebugChannel::Assert(char const* format, ...)
 {
 #if defined(XR_DEBUG)
   va_list vl;
   va_start(vl, format);
 
-  char message[XR__DEBUG_MESSAGE_LENGTH];
+  char message[kMessageLength];
   vsnprintf(message, sizeof(message), format, vl);
   va_end(vl);
 
@@ -106,5 +127,5 @@ AssertAction Channel::Assert(char const* format, ...)
 #endif
 }
 
-} // Debug
+} // detail
 } // xr
