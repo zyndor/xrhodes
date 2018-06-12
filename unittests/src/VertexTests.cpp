@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "XR/Vertex.hpp"
-#include "XR/Device.hpp"
+#include "xr/Vertex.hpp"
+#include "xr/Device.hpp"
 
-namespace XR
+namespace xr
 {
   class VertexTests: public ::testing::Test
   {

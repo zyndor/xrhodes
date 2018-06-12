@@ -5,9 +5,9 @@
 //
 //==============================================================================
 #include <algorithm>
-#include "XR/UIRadioButton.hpp"
+#include "xr/UIRadioButton.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -142,4 +142,4 @@ void  UIRadioButton::OnSelectedStateChanged()
   UICheckBox::OnSelectedStateChanged();
 }
 
-} // XR
+} // xr

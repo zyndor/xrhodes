@@ -6,10 +6,10 @@
 //==============================================================================
 #include <algorithm>
 #include <numeric>
-#include "XR/UIID.hpp"
-#include "XR/Timer.hpp"
+#include "xr/UIID.hpp"
+#include "xr/Timer.hpp"
 
-namespace XR
+namespace xr
 {
 
 const size_t kUIIDSize = 16;
@@ -64,4 +64,4 @@ UIID  GenerateUIID()
   return uiid;
 }
 
-} // XR
+} // xr

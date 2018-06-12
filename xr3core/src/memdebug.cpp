@@ -1,9 +1,9 @@
-#include "XR/memdebug.hpp"
+#include "xr/memdebug.hpp"
 #include <sstream>
 #include <iomanip>
 #include <stdint.h>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -81,4 +81,4 @@ void DiffMemory(void const* buffer0, void const* buffer1, size_t numBytes, std::
 
 }
 
-} // XR
+} // xr

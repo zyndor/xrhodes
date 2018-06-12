@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/JsonReader.hpp"
-#include "XR/debug.hpp"
+#include "xr/JsonReader.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 namespace JSON
 {
@@ -167,4 +167,4 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* string)
 
 } // JSON
 
-} // XR
+} // xr

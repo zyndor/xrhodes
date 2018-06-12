@@ -1,8 +1,8 @@
 #pragma once
 
-#include "XR/File.hpp"
+#include "xr/File.hpp"
 
-namespace XR
+namespace xr
 {
 
 // Test fixtures may have an instance of this guy to ensure that

@@ -5,10 +5,10 @@
 //
 //==============================================================================
 #include <string>
-#include "XR/FileBuffer.hpp"
-#include "XR/debug.hpp"
+#include "xr/FileBuffer.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

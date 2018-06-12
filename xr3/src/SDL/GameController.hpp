@@ -7,14 +7,14 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Vector2.hpp"
-#include "XR/ButtonState.hpp"
-#include "XR/HatState.hpp"
+#include "xr/Vector2.hpp"
+#include "xr/ButtonState.hpp"
+#include "xr/HatState.hpp"
 #include "SDL_joystick.h"
 #include <vector>
 #include <cstdint>
 
-namespace XR
+namespace xr
 {
 
 struct GameController

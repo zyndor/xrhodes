@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
 #include "FileLifeCycleManager.hpp"
-#include "XR/XonParser.hpp"
-#include "XR/XonBuildTree.hpp"
-#include "XR/FileBuffer.hpp"
+#include "xr/XonParser.hpp"
+#include "xr/XonBuildTree.hpp"
+#include "xr/FileBuffer.hpp"
 #include <list>
 #include <functional>
 
-namespace XR
+namespace xr
 {
   class XonTests: public ::testing::Test
   {
@@ -41,10 +41,10 @@ namespace XR
 
   TEST_F(XonTests, ParseValid) // Parse a XON file that tries to capture all sorts of scenarios.
   {
-    XR::FileBuffer  buffer;
+    xr::FileBuffer  buffer;
     buffer.Open("xontest1.xon", false);
 
-    XR::XonParser parser;
+    xr::XonParser parser;
     EventSequencer seq;
     bool success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), SimpleEventHandler, &seq);
     ASSERT_TRUE(success);
@@ -134,11 +134,11 @@ namespace XR
   TEST_F(XonTests, ParseInvalid)  // Parsing a number of invalid XON files. Should all fail.
   {
     char arBuffer[256];
-    XR::XonParser parser;
+    xr::XonParser parser;
 
     for (int i = 0; i < 5; ++i)
     {
-      XR::FileBuffer  buffer;
+      xr::FileBuffer  buffer;
 
       sprintf(arBuffer, "invalid%d.xon", i + 1);
       buffer.Open(arBuffer, false);
@@ -150,12 +150,12 @@ namespace XR
 
   TEST_F(XonTests, ParserReuse)  // The same parser instance can be reused; the state from one parse shall not affect the result of a subsequent parse.
   {
-    XR::XonParser parser;
+    xr::XonParser parser;
     bool success;
 
     for (int i = 0; i < 2; ++i)
     {
-      XR::FileBuffer  buffer;
+      xr::FileBuffer  buffer;
       buffer.Open("xontest1.xon", false);
       success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
       ASSERT_TRUE(success);
@@ -171,7 +171,7 @@ namespace XR
 
   TEST_F(XonTests, ReadValid) // Read xon and construct tree.
   {
-    XR::FileBuffer  buffer;
+    xr::FileBuffer  buffer;
     buffer.Open("xontest1.xon", false);
 
     XonParser::State  readState;
@@ -277,7 +277,7 @@ namespace XR
     char arBuffer[256];
     for (int i = 0; i < 5; ++i)
     {
-      XR::FileBuffer  buffer;
+      xr::FileBuffer  buffer;
 
       sprintf(arBuffer, "invalid%d.xon", i + 1);
       buffer.Open(arBuffer, false);
@@ -308,7 +308,7 @@ namespace XR
 
   TEST_F(XonTests, Errors) // Test for entity errors.
   {
-    XR::FileBuffer  buffer;
+    xr::FileBuffer  buffer;
     buffer.Open("xontest1.xon", false);
 
     XonParser::State  readState;

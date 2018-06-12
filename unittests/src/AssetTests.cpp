@@ -1,14 +1,14 @@
 #include "FileLifeCycleManager.hpp"
 
 #include "gtest/gtest.h"
-#include "XR/Asset.hpp"
-#include "XR/Hash.hpp"
-#include "XR/BufferReader.hpp"
-#include "XR/FileWriter.hpp"
+#include "xr/Asset.hpp"
+#include "xr/Hash.hpp"
+#include "xr/BufferReader.hpp"
+#include "xr/FileWriter.hpp"
 
 #include <random>
 
-namespace XR
+namespace xr
 {
   template <typename T>
   static void AssertEq(T const& a, T const& b)
@@ -101,7 +101,7 @@ namespace XR
 
       FileWriter fw;
       FilePath rawPath(File::kRawProto + File::GetRomPath() / path);
-      ASSERT_TRUE(fw.Open(rawPath, XR::FileWriter::Mode::Truncate, false));
+      ASSERT_TRUE(fw.Open(rawPath, xr::FileWriter::Mode::Truncate, false));
       for (int i = 0; i < 2560000; ++i)
       {
         auto val = distro(gen);
@@ -158,7 +158,7 @@ namespace XR
     ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), Asset::ErrorFlag));  // loaded successfully
   }
 
-  struct DependantTestAsset : public XR::Asset
+  struct DependantTestAsset : public xr::Asset
   {
     XR_ASSET_DECL(DependantTestAsset)
 

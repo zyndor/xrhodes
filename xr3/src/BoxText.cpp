@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/BoxText.hpp"
-#include "XR/Sprite.hpp"
+#include "xr/BoxText.hpp"
+#include "xr/Sprite.hpp"
 #include "utf8/unchecked.h"
 
-namespace XR {
+namespace xr {
 
 //==============================================================================
 BoxText::BoxText()

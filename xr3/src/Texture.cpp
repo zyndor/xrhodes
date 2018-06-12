@@ -4,17 +4,17 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Texture.hpp"
-#include "XR/Image.hpp"
-#include "XR/ParserCore.hpp"
-#include "XR/BufferReader.hpp"
-#include "XR/FileWriter.hpp"
-#include "XR/streamutils.hpp"
+#include "xr/Texture.hpp"
+#include "xr/Image.hpp"
+#include "xr/ParserCore.hpp"
+#include "xr/BufferReader.hpp"
+#include "xr/FileWriter.hpp"
+#include "xr/streamutils.hpp"
 
 #define LTRACE(format) XR_TRACE(Texture, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Texture, condition, format)
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

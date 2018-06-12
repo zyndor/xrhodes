@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/debugdraw.hpp"
-#include "XR/ScratchBuffer.hpp"
+#include "xr/debugdraw.hpp"
+#include "xr/ScratchBuffer.hpp"
 
-namespace XR
+namespace xr
 {
 
 namespace DebugDraw
@@ -235,4 +235,4 @@ void  FillCircle(float radius, Material::Ptr const& material)
 
 } // DebugDraw
 
-} // XR
+} // xr

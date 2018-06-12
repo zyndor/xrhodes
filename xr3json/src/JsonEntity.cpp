@@ -4,16 +4,16 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/JsonEntity.hpp"
-#include "XR/Hash.hpp"
-#include "XR/functors.hpp"
-#include "XR/debug.hpp"
+#include "xr/JsonEntity.hpp"
+#include "xr/Hash.hpp"
+#include "xr/functors.hpp"
+#include "xr/debug.hpp"
 #include <cstring>
 #include <algorithm>
 #include <iterator>
 #include <sstream>
 
-namespace XR
+namespace xr
 {
 namespace JSON
 {
@@ -465,4 +465,4 @@ Entity* Array::GetElement(int id, Type acceptType) const
 }
 
 } // JSON
-} // XR
+} // xr

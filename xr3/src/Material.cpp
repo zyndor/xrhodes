@@ -4,19 +4,19 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Material.hpp"
-#include "XR/FileWriter.hpp"
-#include "XR/XonBuildTree.hpp"
-#include "XR/BufferReader.hpp"
-#include "XR/streamutils.hpp"
-#include "XR/stringutils.hpp"
+#include "xr/Material.hpp"
+#include "xr/FileWriter.hpp"
+#include "xr/XonBuildTree.hpp"
+#include "xr/BufferReader.hpp"
+#include "xr/streamutils.hpp"
+#include "xr/stringutils.hpp"
 #include <algorithm>
 #include <unordered_map>
 
 #define LTRACE(format) XR_TRACE(Material, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Material, condition, format)
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

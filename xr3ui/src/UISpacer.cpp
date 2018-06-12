@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UISpacer.hpp"
+#include "xr/UISpacer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -22,4 +22,4 @@ UISpacer::~UISpacer()
 void UISpacer::Render(IUIRenderer& renderer) const
 {}
 
-} // XR
+} // xr

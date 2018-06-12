@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/ScratchBuffer.hpp"
-#include "XR/VertexFormats.hpp"
-#include "XR/Pool.hpp"
+#include "xr/ScratchBuffer.hpp"
+#include "xr/VertexFormats.hpp"
+#include "xr/Pool.hpp"
 
-namespace XR
+namespace xr
 {
 namespace
 {

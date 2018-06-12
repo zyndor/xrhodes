@@ -4,12 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/ProjectionHelper.hpp"
-#include "XR/debug.hpp"
+#include "xr/ProjectionHelper.hpp"
+#include "xr/debug.hpp"
 #include <cmath>
 #include <cstring>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

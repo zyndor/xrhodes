@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Animation.hpp"
+#include "xr/Animation.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -24,6 +24,6 @@ void  AnimationCore::SetLoopFrame(int lf)
 {
   m_loopFromFrame = lf;
 }
-  
 
-} // XR
+
+} // xr

@@ -4,15 +4,15 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Hash.hpp"
-#include "XR/debug.hpp"
+#include "xr/Hash.hpp"
+#include "xr/debug.hpp"
 #include <algorithm>
 #include <map>
 #include <string>
 #include <ctype.h>
 #include <string.h>
 
-namespace XR
+namespace xr
 {
 namespace
 {
@@ -158,4 +158,4 @@ uint64_t  Hash::Data(const void* data, size_t size)
   return MurmurHash64B<ByteNoOp>(data, size, s_seed);
 }
 
-} // XR
+} // xr

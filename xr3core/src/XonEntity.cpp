@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/XonEntity.hpp"
+#include "xr/XonEntity.hpp"
 #include <algorithm>
 #include <string>
 
-namespace XR
+namespace xr
 {
 namespace
 {
@@ -210,4 +210,4 @@ XonValue::~XonValue()
   delete[] m_value;
 }
 
-} // XR
+} // xr

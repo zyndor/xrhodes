@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/detail/EventDispatcher.hpp"
+#include "xr/detail/EventDispatcher.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -117,4 +117,4 @@ void  EventDispatcherCore::Clear()
   }
 }
 
-} // XR
+} // xr

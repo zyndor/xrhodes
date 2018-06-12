@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/ActorReader.hpp"
+#include "xr/ActorReader.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -18,4 +18,4 @@ const char* kActorTags[] =
   "action"
 };
 
-} // XR
+} // xr

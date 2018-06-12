@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/TweakBench.hpp"
+#include "xr/TweakBench.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -142,4 +142,4 @@ TweakBench::Variable::Type TweakBench::GetType(uint32_t name) const
   return iFind != m_variables.end() ? iFind->second.type : Variable::T_INVALID;
 }
 
-} // XR
+} // xr

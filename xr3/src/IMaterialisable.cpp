@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/IMaterialisable.hpp"
+#include "xr/IMaterialisable.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

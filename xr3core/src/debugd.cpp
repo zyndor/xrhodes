@@ -4,13 +4,13 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/debug.hpp"
-#include "XR/platform.hpp"
-#include "XR/StringProxy.hpp"
+#include "xr/debug.hpp"
+#include "xr/platform.hpp"
+#include "xr/StringProxy.hpp"
 #include <set>
 #include <cstdarg>
 
-namespace XR
+namespace xr
 {
 namespace Debug
 {
@@ -107,4 +107,4 @@ AssertAction Channel::Assert(char const* format, ...)
 }
 
 } // Debug
-} // XR
+} // xr

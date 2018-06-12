@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Inflator.hpp"
+#include "xr/Inflator.hpp"
 #include <sstream>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -15,7 +15,7 @@ Inflator::Inflator()
 {}
 
 //==============================================================================
-void XR::Inflator::SetNext(IdType id)
+void xr::Inflator::SetNext(IdType id)
 {
   m_generator.SetNextId(id);
 }

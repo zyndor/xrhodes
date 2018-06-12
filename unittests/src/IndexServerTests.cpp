@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "XR/IndexServer.hpp"
+#include "xr/IndexServer.hpp"
 #include <memory>
 
-namespace XR
+namespace xr
 {
   TEST(IndexServer, Basics)
   {

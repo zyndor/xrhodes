@@ -5,9 +5,9 @@
 // copyright (c) 2011 - 2014. All rights reserved.
 //
 //==============================================================================
-#include "XR/ScreenManager.hpp"
+#include "xr/ScreenManager.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -130,4 +130,4 @@ void  ScreenManager::_ClearExiting()
   }
 }
 
-} // XR
+} // xr

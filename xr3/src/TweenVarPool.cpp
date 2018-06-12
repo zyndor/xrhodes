@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/TweenVarPool.hpp"
-#include "XR/debug.hpp"
+#include "xr/TweenVarPool.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 TweenVarPoolCore::TweenVarPoolCore( int numVars )
@@ -36,4 +36,4 @@ TweenVarPoolCore::~TweenVarPoolCore()
   delete[] m_varPool;
 }
 
-} // XR
+} // xr

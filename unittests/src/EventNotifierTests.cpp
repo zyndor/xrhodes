@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "XR/EventNotifier.hpp"
-#include "XR/fundamentals.hpp"
+#include "xr/EventNotifier.hpp"
+#include "xr/fundamentals.hpp"
 
-namespace XR
+namespace xr
 {
   struct Tester : InstCounted<Tester>
   {

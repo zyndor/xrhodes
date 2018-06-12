@@ -4,12 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/XonParser.hpp"
-#include "XR/ParserCore.hpp"
-#include "XR/debug.hpp"
+#include "xr/XonParser.hpp"
+#include "xr/ParserCore.hpp"
+#include "xr/debug.hpp"
 #include <string>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -267,4 +267,4 @@ bool  XonParser::DoCallback(Event e, const String* data)
   return (*m_callback)(e, data, m_callbackUser);
 }
 
-} // XR
+} // xr

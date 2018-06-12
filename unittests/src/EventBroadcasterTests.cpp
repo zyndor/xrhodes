@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "XR/EventBroadcaster.hpp"
+#include "xr/EventBroadcaster.hpp"
 #include <memory>
 
-namespace XR
+namespace xr
 {
   struct Int
   {

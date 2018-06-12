@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/IndexServer.hpp"
+#include "xr/IndexServer.hpp"
 #include <sstream>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -79,4 +79,4 @@ size_t IndexServer::GetNumAcquired() const
   return m_iReleased;
 }
 
-} // XR
+} // xr

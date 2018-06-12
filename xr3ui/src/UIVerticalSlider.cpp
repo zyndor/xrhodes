@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIVerticalSlider.hpp"
-#include "XR/UIRenderer.hpp"
-#include "XR/utils.hpp"
+#include "xr/UIVerticalSlider.hpp"
+#include "xr/UIRenderer.hpp"
+#include "xr/utils.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -115,4 +115,4 @@ void UIVerticalSlider::Render(IUIRenderer& renderer) const
   _ApplyColor(verts);
 }
 
-} // XR
+} // xr

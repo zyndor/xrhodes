@@ -4,12 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/XonBuildTree.hpp"
-#include "XR/Queue.hpp"
-#include "XR/stringutils.hpp"
+#include "xr/XonBuildTree.hpp"
+#include "xr/Queue.hpp"
+#include "xr/stringutils.hpp"
 #include <list>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -121,4 +121,4 @@ XonObject* XonBuildTree(char const* string, size_t length, XonParser::State* out
   return success ? rs.root.release() : nullptr;
 }
 
-} // XR
+} // xr

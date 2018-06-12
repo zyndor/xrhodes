@@ -5,10 +5,10 @@
 //
 //==============================================================================
 #include <stdio.h>
-#include "XR/Parse.hpp"
-#include "XR/maths.hpp"
+#include "xr/Parse.hpp"
+#include "xr/maths.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -424,11 +424,11 @@ bool Parse::Range( const char* value, float& r0, float& r1 )
 }
 
 //==============================================================================
-XR::Color Parse::Color( const char* value )
+xr::Color Parse::Color( const char* value )
 {
   s_errorCode = ERR_NONE;
 
-  XR::Color col(0xffffffff);
+  xr::Color col(0xffffffff);
   if (value != 0)
   {
     uint32_t  rgba;
@@ -452,4 +452,4 @@ XR::Color Parse::Color( const char* value )
   return col;
 }
 
-} // XR
+} // xr

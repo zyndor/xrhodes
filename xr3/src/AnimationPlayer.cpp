@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/AnimationPlayer.hpp"
+#include "xr/AnimationPlayer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -29,4 +29,4 @@ AnimationPlayerCore::AnimationPlayerCore()
 {}
 
 
-} // XR
+} // xr

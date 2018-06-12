@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIAligner.hpp"
+#include "xr/UIAligner.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -92,4 +92,4 @@ void UIAligner::SetVerticalAlignment( Alignment vAlign )
   }
 }
 
-} // XR
+} // xr

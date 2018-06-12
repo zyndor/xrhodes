@@ -4,16 +4,16 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Transforms.hpp"
-#include "XR/ViewRayCaster.hpp"
-#include "XR/Gfx.hpp"
-#include "XR/ProjectionHelper.hpp"
-#include "XR/Matrix4.hpp"
-#include "XR/debug.hpp"
+#include "xr/Transforms.hpp"
+#include "xr/ViewRayCaster.hpp"
+#include "xr/Gfx.hpp"
+#include "xr/ProjectionHelper.hpp"
+#include "xr/Matrix4.hpp"
+#include "xr/debug.hpp"
 #include <vector>
 #include <memory>
 
-namespace XR
+namespace xr
 {
 namespace
 {
@@ -207,7 +207,7 @@ public:
 
   ViewRayCaster GetViewRayCaster() const
   {
-    XR::Matrix viewer;
+    xr::Matrix viewer;
     GetViewerTransform(viewer);
 
     return ViewRayCaster{ viewer, m_zNear, m_tanHalfVerticalFov };

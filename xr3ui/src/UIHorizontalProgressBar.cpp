@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIHorizontalProgressBar.hpp"
-#include "XR/UIRenderer.hpp"
+#include "xr/UIHorizontalProgressBar.hpp"
+#include "xr/UIRenderer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -105,4 +105,4 @@ void UIHorizontalProgressBar::Render(IUIRenderer& renderer) const
   }
 }
 
-} // XR
+} // xr

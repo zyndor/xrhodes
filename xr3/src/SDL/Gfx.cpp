@@ -6,11 +6,11 @@
 //==============================================================================
 #include "Gfxp.hpp"
 #include "xrgl.hpp"
-#include "XR/Matrix.hpp"
-#include "XR/Device.hpp"
-#include "XR/SVector2.hpp"
-#include "XR/Pool.hpp"
-#include "XR/Hash.hpp"
+#include "xr/Matrix.hpp"
+#include "xr/Device.hpp"
+#include "xr/SVector2.hpp"
+#include "xr/Pool.hpp"
+#include "xr/Hash.hpp"
 #include "gl_core_4_5.h"
 #include "SDL.h"
 
@@ -18,7 +18,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace XR
+namespace xr
 {
 namespace Gfx
 {

@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIGridLayout.hpp"
+#include "xr/UIGridLayout.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -278,4 +278,4 @@ void UIGridLayout::_SetHeightToContent()
   h = m_cellHeight * m_numRows + m_rowPadding * (m_numRows - 1);
 }
 
-} // XR
+} // xr

@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/TweenVar.hpp"
+#include "xr/TweenVar.hpp"
 
-namespace XR
+namespace xr
 {
 
 void TweenVarCore::OnFrameCallback( void* data )
@@ -45,4 +45,4 @@ void  TweenVarCore::Tween(void* value_, Tweener::Callback onFrameCb_,
   tweener = &t;
 }
 
-} // XR
+} // xr

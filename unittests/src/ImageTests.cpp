@@ -1,15 +1,15 @@
 #include "FileLifeCycleManager.hpp"
 
 #include "gtest/gtest.h"
-#include "XR/Image.hpp"
+#include "xr/Image.hpp"
 
 class ImageTests : public ::testing::Test
 {
 private:
-  XR::FileLifeCycleManager  flcm;
+  xr::FileLifeCycleManager  flcm;
 };
 
-static void Compare(XR::Image const& img, XR::Image const& check)
+static void Compare(xr::Image const& img, xr::Image const& check)
 {
   ASSERT_EQ(check.GetWidth(), img.GetWidth());
   ASSERT_EQ(check.GetHeight(), img.GetHeight());
@@ -20,7 +20,7 @@ static void Compare(XR::Image const& img, XR::Image const& check)
 
 TEST_F(ImageTests, Basic)
 {
-  XR::Image img;
+  xr::Image img;
   ASSERT_EQ(img.GetWidth(), 0);
   ASSERT_EQ(img.GetHeight(), 0);
   ASSERT_EQ(img.GetBytesPerPixel(), 0);
@@ -55,7 +55,7 @@ TEST_F(ImageTests, Basic)
   // Png round trip
   ASSERT_TRUE(img.Save("imgTest.png", true));
 
-  XR::Image check;
+  xr::Image check;
   ASSERT_TRUE(check.Load("imgTest.png"));
   Compare(img, check);
 

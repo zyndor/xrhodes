@@ -4,12 +4,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/Asset.hpp"
-#include "XR/FileBuffer.hpp"
-#include "XR/FileWriter.hpp"
-#include "XR/Worker.hpp"
-#include "XR/Hash.hpp"
-#include "XR/ScopeGuard.hpp"
+#include "xr/Asset.hpp"
+#include "xr/FileBuffer.hpp"
+#include "xr/FileWriter.hpp"
+#include "xr/Worker.hpp"
+#include "xr/Hash.hpp"
+#include "xr/ScopeGuard.hpp"
 #include <map>
 
 #ifdef ENABLE_ASSET_BUILDING
@@ -19,7 +19,7 @@
 #define LTRACE(format) XR_TRACE(Asset::Manager, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Asset::Manager, condition, format)
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================

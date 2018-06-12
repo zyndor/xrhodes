@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UIColoredElement.hpp"
+#include "xr/UIColoredElement.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -47,4 +47,4 @@ void UIColoredElement::_ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCoun
   }
 }
 
-} // XR
+} // xr

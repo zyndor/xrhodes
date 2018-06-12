@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
 #include "FileLifeCycleManager.hpp"
-#include "XR/File.hpp"
-#include "XR/jsonutils.hpp"
-#include "XR/JsonReader.hpp"
-#include "XR/ScopeGuard.hpp"
-#include "XR/debug.hpp"
+#include "xr/File.hpp"
+#include "xr/jsonutils.hpp"
+#include "xr/JsonReader.hpp"
+#include "xr/ScopeGuard.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
   class JsonUtils: public ::testing::Test
   {

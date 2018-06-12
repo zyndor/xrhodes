@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/FloatBuffer.hpp"
+#include "xr/FloatBuffer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //=============================================================================

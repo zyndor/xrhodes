@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/maths.hpp"
+#include "xr/maths.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -75,4 +75,4 @@ bool  SolveQuadratic(float a, float b, float c, float& x0, float& x1)
   return valid;
 }
 
-}  // XR
+}  // xr

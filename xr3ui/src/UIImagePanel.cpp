@@ -4,11 +4,11 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/maths.hpp"
-#include "XR/UIImagePanel.hpp"
-#include "XR/UIRenderer.hpp"
+#include "xr/maths.hpp"
+#include "xr/UIImagePanel.hpp"
+#include "xr/UIRenderer.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -177,4 +177,4 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   }
 }
 
-} // XR
+} // xr

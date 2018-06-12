@@ -7,12 +7,12 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/debug.hpp"
-#include "XR/maths.hpp"
+#include "xr/debug.hpp"
+#include "xr/maths.hpp"
 #include <vector>
 #include <cstdint>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -184,7 +184,7 @@ public:
 
         --p;
         --d;
-        
+
         if (x == 0)
         {
           break;

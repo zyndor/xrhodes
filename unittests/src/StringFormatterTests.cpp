@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "XR/StringFormatter.hpp"
+#include "xr/StringFormatter.hpp"
 
-namespace XR
+namespace xr
 {
   namespace Test
   {
@@ -19,7 +19,7 @@ namespace XR
     TEST(StringFormatter, Basics)
     {
       StringFormatter sfm("Hello %1, would you like your Rect to be %2? %5, %4, %3...");
-      sfm % "Bob" % XR::Test::Rect{ 10, 30 } % 1 % 2.0f % '3';
+      sfm % "Bob" % xr::Test::Rect{ 10, 30 } % 1 % 2.0f % '3';
 
       ASSERT_EQ(sfm.GetString(), "Hello Bob, would you like your Rect to be {10 x 30}? 3, 2, 1...");
       ASSERT_EQ(sfm.GetString(), "Hello Bob, would you like your Rect to be {10 x 30}? 3, 2, 1..."); // GetString() doesn't consume the string.

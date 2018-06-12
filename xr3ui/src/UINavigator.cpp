@@ -4,9 +4,9 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UINavigator.hpp"
+#include "xr/UINavigator.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -136,4 +136,4 @@ UIElement*  UINavigator::Get(UIElement* relativeTo, Direction dir)
   return elem;
 }
 
-} // XR
+} // xr

@@ -4,10 +4,10 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "XR/UISliderBase.hpp"
+#include "xr/UISliderBase.hpp"
 #include <limits>
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
@@ -60,4 +60,4 @@ void UISliderBase::SetPercentage( float percentage )
   }
 }
 
-} // XR
+} // xr
