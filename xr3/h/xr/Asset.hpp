@@ -116,30 +116,6 @@ public:
     {}
   };
 
-  ///@brief Internal only use class, responsible for enabling reflection (based
-  /// on a compile time type ID and a semicolon-separated list of extensions)
-  /// for an asset type.
-  struct Reflector: Linked<Reflector const>
-  {
-    // types
-    using Base = Linked<Reflector const>;
-    using CreateFn = Asset*(*)(HashType, FlagType);
-
-    // structors
-    Reflector(TypeId type_, VersionType version_, CreateFn create_, char const* extensions_)
-    : Linked<Reflector const>(*this),
-      type(type_),
-      version(version_),
-      create(create_),
-      extensions(extensions_)
-    {}
-
-    TypeId type;
-    VersionType version;
-    CreateFn create;
-    char const* extensions;
-  };
-
   ///@brief Builders are responsible for converting raw assets into engine
   /// format. When asset building is enabled, assets that are loaded by their
   /// raw path are eligible for checking against their built counterpart, and
@@ -197,12 +173,10 @@ public:
     /// stripping of ram / rom and asset paths (but not the rest of the path).
     static HashType HashPath(FilePath path);
 
-    ///@brief Attempts to load a built asset from the asset path that the
-    /// given @a path hashes to, either asynchronously (Manager::Update() will
-    /// need to be called regularly), or synchronously (if the LoadSyncFlag was
-    /// set). If asset building is enabled then the actual @a path will be
-    /// checked for a raw asset either more recently modified than the built
-    /// asset or having a different version, and the asset will be rebuilt.
+    ///@brief Attempts to load a built asset from the asset path that the given
+    /// @a path hashes to. If asset building is enabled, the actual @a path will
+    /// be checked for a raw asset either more recently modified than its built
+    /// counterpart, or having a different version, and the asset will be rebuilt.
     /// This must succeed for the successful loading of the asset.
     template <class T>
     static Counted<T> Load(FilePath const& path, FlagType flags = 0)
@@ -236,7 +210,11 @@ public:
       return asset;
     }
 
-    ///@brief Attempts to load an asset of unknown type.
+    ///@brief Attempts to load a built asset of unknown type from the asset path
+    /// that the given @a path hashes to. If asset building is enabled, the actual
+    /// @a path will be checked for a raw asset either more recently modified than
+    /// its built counterpart, or having a different version, and the asset will
+    /// be rebuilt. This must succeed for the successful loading of the asset.
     static Ptr LoadReflected(FilePath const& path, FlagType flags = 0);
 
     ///@brief Attempts to load an asset of unknown type from given descriptor.
@@ -246,7 +224,7 @@ public:
     /// map of managed assets.
     static Ptr Find(DescriptorCore const& desc);
 
-    ///@brief Attempts to retrieve a asset of the given descriptor, from the
+    ///@brief Attempts to retrieve an asset of the given descriptor, from the
     /// map of managed assets.
     template <class T>
     static Counted<T> Find(Descriptor<T> const& desc);
@@ -261,6 +239,8 @@ public:
     template <class T>
     static Counted<T> FindOrCreate(DescriptorCore desc, FlagType flags = 0);
 
+    ///@brief Attempts to retrieve a managed asset (unless opted out) or
+    /// create one (and manage it - unless opted out).
     template <class T>
     static Counted<T> FindOrCreate(Descriptor<T> const& desc, FlagType flags = 0);
 
@@ -291,11 +271,14 @@ public:
     ///@note This doesn't remove them from the manager.
     static void UnloadUnused();
 
-    ///@brief Processes loaded assets and completes their loading, caling
-    /// OnLoaded().
+    ///@brief Pumps the asynchronous asset loading queue, processing the loaded
+    /// assets and calling OnLoaded() on the ones that were successful.
     static void Update();
 
+    ///@brief Suspends the [asynchronous] loading of assets.
     static void Suspend();
+
+    ///@brief Resumes the [asynchronous] loading of assets.
     static void Resume();
 
     static void Exit();
@@ -351,6 +334,7 @@ public:
     m_flags = (m_flags & ~clear) | set;
   }
 
+  ///@brief Convenience method to set an error state.
   void FlagError()
   {
     OverrideFlags(0, ErrorFlag);
@@ -391,7 +375,9 @@ public:
     return m_refs.GetCount();
   }
 
-  ///@brief Marks end of usage / dependency.
+  ///@brief Marks end of usage / dependency. If this was the last reference
+  /// to the asset and it was successfully loaded (ReadyFlag set), then Unload()
+  /// will be called on it.
   bool Release()
   {
     bool expired;
@@ -399,12 +385,18 @@ public:
     return expired;
   }
 
-  ///@brief Loads the asset with the given source data.
+  ///@brief Unloads the asset, then attempts to process the source data in
+  /// @a buffer. Will set ReadyFlag it it was successful, and ErrorFlag otherwise.
+  ///@note Loading must not be in progress when this is called.
+  ///@return The success of the operation.
   bool ProcessData(Buffer const& buffer);
 
   ///@brief Unloads the Asset (calling OnUnload()) only if it has been loaded.
   /// If it has, or if the ErrorFlag was set, the private flags are cleared.
   ///@return Whether unload has been performed.
+  ///@note Loading must not be in progress when this is called.
+  ///@note Should be called on the same thread which processing is done on;
+  /// this is just a recommendation which the implementation doesn't assert.
   ///@note This doesn't invalidate the Asset object; it may be reloaded based
   /// on its descriptor.
   bool Unload();
@@ -433,15 +425,40 @@ protected:
 #endif
 
   // virtual
-  ///@brief Called when asset data is loaded -- by Load().
+  ///@brief Performs the actual processing of the data. Called when asset data is
+  /// ready to process -- by ProcessData().
+  ///@return The success of the operation.
   virtual bool OnLoaded(Buffer buffer) = 0;
 
-  ///@brief Called when unloading of Asset data is requested.
-  ///@note For the concrete resource type, this should happen on the same thread
-  /// as you do the loading on.
+  ///@brief Called when unloading of Asset data is requested -- by Unload().
   virtual void OnUnload() = 0;
 };
 
+namespace detail
+{
+
+struct AssetReflector: Linked<AssetReflector const>
+{
+  // types
+  using Base = Linked<AssetReflector const>;
+  using CreateFn = Asset*(*)(Asset::HashType, Asset::FlagType);
+
+  // structors
+  AssetReflector(Asset::TypeId type_, Asset::VersionType version_, CreateFn create_, char const* extensions_)
+  : Linked<AssetReflector const>(*this),
+    type(type_),
+    version(version_),
+    create(create_),
+    extensions(extensions_)
+  {}
+
+  Asset::TypeId type;
+  Asset::VersionType version;
+  CreateFn create;
+  char const* extensions;
+};
+
+} // detail
 
 //==============================================================================
 // inline
@@ -559,7 +576,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   xr::Asset::VersionType const className::kVersion = (version);\
 \
   namespace {\
-  xr::Asset::Reflector xr ## className ## Reflector(className::kTypeId,\
+  xr::detail::AssetReflector xr ## className ## Reflector(className::kTypeId,\
     className::kVersion, className::Create, extensions);\
   }
 

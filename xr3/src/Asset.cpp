@@ -300,7 +300,7 @@ private:
 namespace
 {
 
-using ReflectorMap = std::map<Asset::TypeId, Asset::Reflector const*>;
+using ReflectorMap = std::map<Asset::TypeId, detail::AssetReflector const*>;
 ReflectorMap s_reflectors;
 
 std::map<uint32_t, ReflectorMap::iterator> s_extensions;
@@ -312,7 +312,7 @@ std::unordered_map<Asset::TypeId, Asset::Builder const*> s_assetBuilders;
 std::unique_ptr<AssetManagerImpl> s_assetMan;
 
 //==============================================================================
-void RegisterReflector(Asset::Reflector const& r)
+void RegisterReflector(detail::AssetReflector const& r)
 {
   // Register reflector.
   auto iReflector = s_reflectors.find(r.type);
@@ -472,7 +472,7 @@ void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
 {
   s_assetMan.reset(new AssetManagerImpl(path, alloc));
 
-  Reflector::Base::ForEach(RegisterReflector);
+  detail::AssetReflector::Base::ForEach(RegisterReflector);
 #ifdef ENABLE_ASSET_BUILDING
   Builder::Base::ForEach(RegisterBuilder);
 #endif
@@ -874,7 +874,7 @@ bool Asset::ProcessData(Buffer const& buffer)
   OnUnload();
 
   XR_ASSERTMSG(Asset, !CheckAllMaskBits(m_flags, LoadingFlag),
-    ("Loading is already in progress; it's bound to clobber what's being set."));
+    ("Loading is in progress; it's bound to clobber the flags being set."));
   bool success = OnLoaded(buffer);
   if (success)
   {
@@ -893,6 +893,8 @@ bool Asset::Unload()
   bool  doUnload = false;
   {
     std::unique_lock<Spinlock> lock(m_flaglock);
+    XR_ASSERTMSG(Asset, !CheckAllMaskBits(m_flags, LoadingFlag),
+      ("Unload when loading is in progress will lead to unexpected results."));
     doUnload = CheckAllMaskBits(m_flags, ReadyFlag);
     if(doUnload || CheckAllMaskBits(m_flags, ErrorFlag))
     {
