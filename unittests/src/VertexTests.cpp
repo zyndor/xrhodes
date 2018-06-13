@@ -16,7 +16,7 @@ namespace xr
     VertexTests()
     {
       Device::Init("VertexTests");
-      Gfx::Init(Device::GetMainWindow());
+      Gfx::Init(Device::GetGfxContext());
     }
 
     ~VertexTests()

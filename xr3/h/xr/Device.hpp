@@ -14,6 +14,13 @@
 
 namespace xr
 {
+namespace Gfx
+{
+//==============================================================================
+///@brief Opaque implementation detail class, which Gfx depends on for
+/// information about the rendering context and access to a swap chain.
+class Context;
+}
 
 //==============================================================================
 ///@brief Device is the abstraction of the platform and environment that an XR
@@ -48,7 +55,7 @@ public:
   ///@brief Gets native window representation of the main window; primarily for
   /// context creation in Gfx. This window only exists between calls to Init()
   /// and Shutdown().
-  static void* GetMainWindow();
+  static Gfx::Context* GetGfxContext();
 
   static void  SetMainWindowTitle(char const* title);
 

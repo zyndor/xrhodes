@@ -85,7 +85,7 @@ bool  UIBuilderScreen::Build(tinyxml2::XMLElement* xml)
     _ProcessListeners(xml);
     _ProcessTweening(xml);
 
-    Reposition(Gfx::GetWidth(), Gfx::GetHeight());
+    Reposition(Gfx::GetLogicalWidth(), Gfx::GetLogicalHeight());
   }
   return result;
 }
@@ -104,7 +104,7 @@ void  UIBuilderScreen::SetPadding(int padding)
 {
   XR_ASSERT(UIBuilderScreen, padding >= 0);
   m_padding = padding;
-  Reposition(Gfx::GetWidth(), Gfx::GetHeight());
+  Reposition(Gfx::GetLogicalWidth(), Gfx::GetLogicalHeight());
 }
 
 //==============================================================================

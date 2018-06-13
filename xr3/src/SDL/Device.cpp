@@ -12,6 +12,7 @@
 #include "xr/jsonutils.hpp"
 #include "xr/utils.hpp"
 #include "xr/stringutils.hpp"
+#include "GfxContext.hpp"
 #include "SDL_events.h"
 #include "SDL.h"
 #include <cstdlib>
@@ -52,6 +53,7 @@ static struct
   SDL_Window*           mainWindow;
   uint32_t              windowWidth;
   uint32_t              windowHeight;
+  Gfx::Context*         gfxContext;
 
   inline
   CallbackObject::List& GetCallbacks(Device::Event e)
@@ -165,14 +167,16 @@ void Device::Init(char const* title)
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     s_deviceImpl.windowWidth, s_deviceImpl.windowHeight, flags);
 
+  s_deviceImpl.gfxContext = new Gfx::Context(*s_deviceImpl.mainWindow);
+
   // start listening to events
   SDL_AddEventWatch(FilterEvents, nullptr);
 }
 
 //==============================================================================
-void * Device::GetMainWindow()
+Gfx::Context* Device::GetGfxContext()
 {
-  return s_deviceImpl.mainWindow;
+  return s_deviceImpl.gfxContext;
 }
 
 //==============================================================================
@@ -521,6 +525,9 @@ bool Device::IsYielding()
 void Device::Shutdown()
 {
   XR_ASSERT(Device, !s_deviceImpl.isYielding);
+
+  delete s_deviceImpl.gfxContext;
+  s_deviceImpl.gfxContext = nullptr;
 
   SDL_DestroyWindow(s_deviceImpl.mainWindow);
   s_deviceImpl.mainWindow = nullptr;

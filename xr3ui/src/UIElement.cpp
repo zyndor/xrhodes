@@ -122,13 +122,13 @@ void UIElement::Center()
 //==============================================================================
 void UIElement::_CenterHorizontally()
 {
-  x = (Gfx::GetWidth() - w) / 2;
+  x = (Gfx::GetLogicalWidth() - w) / 2;
 }
 
 //==============================================================================
 void UIElement::_CenterVertically()
 {
-  y = (Gfx::GetHeight() - h) / 2;
+  y = (Gfx::GetLogicalHeight() - h) / 2;
 }
 
 //==============================================================================
