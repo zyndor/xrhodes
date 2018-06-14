@@ -21,7 +21,7 @@ namespace xr
 
     ~VertexTests()
     {
-      Gfx::Exit();
+      Gfx::Shutdown();
       Device::Shutdown();
     }
   };

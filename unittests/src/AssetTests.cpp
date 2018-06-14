@@ -37,7 +37,7 @@ namespace xr
 
     ~AssetTests()
     {
-      Asset::Manager::Exit();
+      Asset::Manager::Shutdown();
     }
 
   private:

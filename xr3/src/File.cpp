@@ -143,7 +143,7 @@ void File::Init(System const& filesys)
 }
 
 //==============================================================================
-void File::Exit()
+void File::Shutdown()
 {
   XR_ASSERTMSG(File, s_file.init, ("Not initialised!"));
   s_file.init = false;

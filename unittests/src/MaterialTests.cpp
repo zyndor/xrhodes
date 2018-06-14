@@ -113,9 +113,9 @@ namespace xr
 
     ~MaterialTests()
     {
-      Asset::Manager::Exit();
+      Asset::Manager::Shutdown();
 
-      Gfx::Exit();
+      Gfx::Shutdown();
       Device::Shutdown();
     }
 

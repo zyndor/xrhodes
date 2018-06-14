@@ -430,11 +430,11 @@ void Present(bool resetState = true);
 ///@brief Registers a function to be called upon Flush().
 void RegisterFlushCallback(Callback fn, void* userData);
 
-///@brief Registers a function to be called upon Exit().
-void RegisterExitCallback(Callback fn, void* userData);
+///@brief Registers a function to be called upon Shutdown().
+void RegisterShutdownCallback(Callback fn, void* userData);
 
 ///@brief shuts down the renderer.
-void Exit();
+void Shutdown();
 
 } // GFX
 } // XR

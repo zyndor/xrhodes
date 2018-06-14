@@ -12,23 +12,23 @@ namespace Vertex
 {
 namespace
 {
-static bool s_registeredOnExit = false;
+static bool s_registeredOnShutdown = false;
 }
 
 //==============================================================================
 void Formats::HandleHolder::EnsureOnExitRegistration()
 {
-  if (!s_registeredOnExit)
+  if (!s_registeredOnShutdown)
   {
     auto onExit = [](void*, void*) {
       ForEach([](HandleHolder& hh) {
         Gfx::Release(hh.value);
         hh.value.Invalidate();
       });
-      s_registeredOnExit = false; // Gfx is torn down.
+      s_registeredOnShutdown = false; // Gfx is torn down.
     };
-    Gfx::RegisterExitCallback(onExit, nullptr);
-    s_registeredOnExit = true;
+    Gfx::RegisterShutdownCallback(onExit, nullptr);
+    s_registeredOnShutdown = true;
   }
 }
 

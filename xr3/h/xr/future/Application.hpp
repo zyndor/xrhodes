@@ -43,7 +43,7 @@ public:
 
   // static
   static void   Init(char const* title = nullptr);
-  static void   Exit();
+  static void   Shutdown();
   static void     Init(File::System const& filesys, char const* title = nullptr);
 
   static int32_t  GetFrameDelayMs();

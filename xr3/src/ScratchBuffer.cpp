@@ -105,7 +105,7 @@ void ScratchBuffer::Init(size_t poolSize)
     Flush();
   }, nullptr);
 
-  Gfx::RegisterExitCallback([](void*, void*) {
+  Gfx::RegisterShutdownCallback([](void*, void*) {
     delete s_impl;
     s_impl = nullptr;
   }, nullptr);

@@ -161,7 +161,7 @@ bool Input::UnregisterCallback(Event ev, Callback callback)
 }
 
 //==============================================================================
-void Input::Exit()
+void Input::Shutdown()
 {
   XR_ASSERTMSG(Input, InputImpl::s_instance != nullptr, ("Not initialized."));
   delete InputImpl::s_instance;

@@ -344,7 +344,7 @@ void Transforms::Init()
   XR_ASSERTMSG(Transforms, !s_impl, ("Already initialised!"));
   s_impl = new TransformsImpl();
 
-  Gfx::RegisterExitCallback([](void*, void*) {
+  Gfx::RegisterShutdownCallback([](void*, void*) {
     delete s_impl;
     s_impl = nullptr;
   }, nullptr);

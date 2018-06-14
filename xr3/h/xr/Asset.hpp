@@ -281,7 +281,7 @@ public:
     ///@brief Resumes the [asynchronous] loading of assets.
     static void Resume();
 
-    static void Exit();
+    static void Shutdown();
 
   private:
     // internal

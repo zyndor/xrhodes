@@ -18,7 +18,7 @@ public:
 
   ~FileLifeCycleManager()
   {
-    File::Exit();
+    File::Shutdown();
   }
 };
 
