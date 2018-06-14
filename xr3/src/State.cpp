@@ -24,12 +24,12 @@ void  State::Manager::Push(State& s)
 {
   if(!m_states.empty())
   {
-    m_states.back()->Exit();
+    m_states.back()->Shutdown();
   }
-      
+
   _Push(s);
 }
-    
+
 //==============================================================================
 void  State::Manager::Change(State& s)
 {
@@ -37,19 +37,19 @@ void  State::Manager::Change(State& s)
   _Pop();
   _Push(s);
 }
-    
+
 //==============================================================================
 void  State::Manager::Pop()
 {
   XR_ASSERT(State::Manager, !m_states.empty());
   _Pop();
-      
+
   if(!m_states.empty())
   {
     m_states.back()->Enter();
   }
 }
-    
+
 //==============================================================================
 void  State::Manager::Update(int32_t ms)
 {
@@ -73,13 +73,13 @@ void  State::Manager::Update(int32_t ms)
     case  Result::POP:
       Pop();
       break;
-    
+
     case  Result::NONE:
       break;
     }
   }
 }
-    
+
 //==============================================================================
 void  State::Manager::Render()
 {
@@ -117,7 +117,7 @@ void  State::Manager::_Push(State& s)
 //==============================================================================
 void  State::Manager::_Pop()
 {
-  m_states.back()->Exit();
+  m_states.back()->Shutdown();
   m_states.back()->Shutdown();
   m_states.pop_back();
 }

@@ -34,7 +34,7 @@ public:
   ///@brief Convenience function to register a sampler uniform with the given
   /// @a name, for the given @a textureStage. This is assumed to not change
   /// value, and the handle is therefore not returned; it's cleaned up when
-  /// Gfx::Exit()s.
+  /// Gfx is Shutdown().
   static void RegisterSamplerUniform(char const* name, uint32_t textureStage);
 
   ///@brief Creates a Texture, transferring the ownership of @a handle to it,

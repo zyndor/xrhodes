@@ -850,7 +850,7 @@ void Asset::Manager::Resume()
 }
 
 //==============================================================================
-void Asset::Manager::Exit()
+void Asset::Manager::Shutdown()
 {
 #ifdef ENABLE_ASSET_BUILDING
   s_assetBuilders.clear();

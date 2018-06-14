@@ -1514,7 +1514,7 @@ struct Impl
     m_onFlush.push_back({ fn, userData });
   }
 
-  void RegisterExitCallback(Callback fn, void* userData)
+  void RegisterShutdownCallback(Callback fn, void* userData)
   {
     m_onExit.push_back({ fn, userData });
   }
@@ -1649,7 +1649,7 @@ float GetPhysicalAspectRatio()
 }
 
 //=============================================================================
-void Exit()
+void Shutdown()
 {
   XR_ASSERTMSG(Gfx, s_impl, ("Not initialized."));
   delete s_impl;
@@ -1952,9 +1952,9 @@ void RegisterFlushCallback(Callback fn, void* userData)
 }
 
 //==============================================================================
-void RegisterExitCallback(Callback fn, void* userData)
+void RegisterShutdownCallback(Callback fn, void* userData)
 {
-  s_impl->RegisterExitCallback(fn, userData);
+  s_impl->RegisterShutdownCallback(fn, userData);
 }
 
 }

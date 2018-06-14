@@ -47,7 +47,7 @@ public:
     FilePath ramPath;
     FilePath romPath;
   };
-  
+
   // static
   static FilePath const kRawProto;
 
@@ -55,7 +55,7 @@ public:
   /// be converted to slashes and for the paths that don't end in a slash, one
   /// will be appended.
   static void   Init(System const& filesys);
-  static void   Exit();
+  static void   Shutdown();
 
   static FilePath const& GetRamPath();
   static FilePath const& GetRomPath();

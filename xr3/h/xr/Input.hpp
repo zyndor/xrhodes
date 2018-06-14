@@ -193,7 +193,7 @@ public:
   /// not been registered.
   static bool UnregisterCallback(Event ev, Callback callback);
 
-  static void Exit();
+  static void Shutdown();
 };
 
 } // xr

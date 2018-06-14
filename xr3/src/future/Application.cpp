@@ -35,12 +35,12 @@ void  Application::Init(File::System const& filesys, char const* title)
 }
 
 //==============================================================================
-void  Application::Exit()
+void  Application::Shutdown()
 {
-  Input::Exit();
-  Renderer::Exit();
-  File::Exit();
-  Device::Exit();
+  Input::Shutdown();
+  Renderer::Shutdown();
+  File::Shutdown();
+  Device::Shutdown();
 }
 
 //==============================================================================

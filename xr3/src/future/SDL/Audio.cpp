@@ -13,7 +13,7 @@
 namespace XR
 {
 
-static struct  
+static struct
 {
   int     numChannels;
   int     sampleRate;
@@ -40,27 +40,27 @@ void Audio::Init()
   int freq(MIX_DEFAULT_FREQUENCY);
   int chunkSize(4096);
   int channels(16);
-  
+
   // todo - attempt to read from config
-  
+
   int result(Mix_OpenAudio(freq, MIX_DEFAULT_FORMAT, 2, chunkSize));
   if (result == -1)
   {
     XR_ERROR(("Error initialising Audio."));
   }
-  
+
   s_audioImpl.numChannels = Mix_AllocateChannels(channels);
   s_audioImpl.parPanning = new uint8_t[channels];
 }
 
 //==============================================================================
-void Audio::Exit()
+void Audio::Shutdown()
 {
   StopAll();
-  
+
   delete[] s_audioImpl.parPanning;
   memset(&s_audioImpl, 0x00, sizeof(s_audioImpl));
-  
+
   Mix_CloseAudio();
 }
 
@@ -78,7 +78,7 @@ int Audio::Play( Sample& s, int times /*= 1*/, int channelHint /*= CHANNEL_ANY*/
   XR_ASSERT(Audio, channelHint < s_audioImpl.numChannels);
   channelHint = Mix_PlayChannelTimed(channelHint,
     static_cast<Mix_Chunk*>(s.GetImpl()), times - 1, -1);
-  
+
   return channelHint;
 }
 
