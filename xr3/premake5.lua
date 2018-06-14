@@ -26,11 +26,14 @@ project "xr3"
 	
 	if target_desktop then
 		files {
+			"src/GL/*.hpp",
+			"src/GL/*.cpp",
 			"src/SDL/*.hpp",
 			"src/SDL/*.cpp",
 		}
 		
 		includedirs {
 			"../external/SDL2/include/",
+			"src/SDL/",	-- NOTE: for access to GfxContext.hpp; for some reason filter{ "files:src/GL/Gfx.cpp" } didn't work.
 		}
 	end

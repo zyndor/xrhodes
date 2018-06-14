@@ -40,8 +40,8 @@ struct ViewRayCaster
   ///@note The position and direction of the Ray is in world space.
   Ray GetViewRay(int x, int y) const
   {
-    float nx = (static_cast<float>(x) / Gfx::GetWidth() - .5f) * 2.0f;
-    float ny = (.5f - static_cast<float>(y) / Gfx::GetHeight()) * 2.0f;
+    float nx = (static_cast<float>(x) / Gfx::GetLogicalWidth() - .5f) * 2.0f;
+    float ny = (.5f - static_cast<float>(y) / Gfx::GetLogicalHeight()) * 2.0f;
     return GetViewRay(nx, ny);
   }
 
@@ -52,7 +52,7 @@ struct ViewRayCaster
   Ray GetViewRay(float nx, float ny) const
   {
     float hProj = zNear * tanHalfVerticalFov;
-    float wProj = (hProj * Gfx::GetWidth()) / Gfx::GetHeight();
+    float wProj = hProj * Gfx::GetLogicalAspectRatio();
 
     Vector3 zNearHit = viewer.GetColumn(Vector3::Z) * -zNear +
       viewer.GetColumn(Vector3::X).Normalise(wProj * nx) +

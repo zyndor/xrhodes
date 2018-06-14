@@ -12,14 +12,16 @@
 #include "xr/Hash.hpp"
 #include "xr/Rect.hpp"
 #include "xr/Callback.hpp"
-#include "xr/Primitive.hpp"
 #include "xr/Buffer.hpp"
+#include "xr/Primitive.hpp"
 #include "xr/debug.hpp"
 
 namespace xr
 {
 namespace Gfx
 {
+
+class Context;
 
 //=============================================================================
 enum Flags: uint32_t
@@ -232,15 +234,31 @@ struct FrameBufferAttachment
 };
 
 //=============================================================================
-///@brief Initialises Gfx with the given window handle, which must match the
-/// implementation of Device.
-void Init(void* window);
+///@brief Initialises Gfx with the given Gfx::Context, which the client should
+/// get from Device. Depending on implementation, this may be called from a
+/// thread that you intend to use as your rendering thread, and in one such
+/// scenario - still depending on implementation -, 1, the main thread should
+/// wait for the initialization to complete, and 2, you are expected to make
+/// all subsequent Gfx calls from the same thread Init() was called from.
+void Init(Context* context);
 
-///@return Logical width of screen in pixels.
-uint16_t GetWidth();
+///@return Logical width of rendering area in pixels.
+int  GetLogicalWidth();
 
-///@return Logical height of screen in pixels.
-uint16_t GetHeight();
+///@return Logical height of rendering area in pixels.
+int  GetLogicalHeight();
+
+///@return The ratio of the width to the height of the logical size.
+float GetLogicalAspectRatio();
+
+///@return Physical size of rendering area in pixels.
+int GetPhysicalWidth();
+
+///@return Physical size of rendering area in pixels.
+int GetPhysicalHeight();
+
+///@return The ratio of the width to the height of the physical size.
+float GetPhysicalAspectRatio();
 
 ///@brief Registers a vertex format definition.
 VertexFormatHandle RegisterVertexFormat(VertexFormat const& format);

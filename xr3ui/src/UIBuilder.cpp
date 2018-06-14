@@ -166,7 +166,7 @@ bool  UIBInitUIElement(tinyxml2::XMLElement* xml, UIElement* uiElem,
 
   int temp;
   // x
-  GetXmlIntAttribute(xml, "x", Gfx::GetWidth(), temp);
+  GetXmlIntAttribute(xml, "x", Gfx::GetLogicalWidth(), temp);
 
   success = CheckInt16(temp);
   if (!success)
@@ -182,7 +182,7 @@ bool  UIBInitUIElement(tinyxml2::XMLElement* xml, UIElement* uiElem,
   // y
   if (success)
   {
-    GetXmlIntAttribute(xml, "y", Gfx::GetHeight(), temp);
+    GetXmlIntAttribute(xml, "y", Gfx::GetLogicalHeight(), temp);
 
     success = CheckInt16(temp);
     if (!success)
@@ -1443,8 +1443,8 @@ bool  UIBuilder::Build(tinyxml2::XMLElement* xml, UIContainer& container)
   m_root = &container;
 
   UIContainer base(container);
-  base.w = Gfx::GetWidth();
-  base.h = Gfx::GetHeight();
+  base.w = Gfx::GetLogicalWidth();
+  base.h = Gfx::GetLogicalHeight();
 
   RegisterNamedElement("root", m_root);
   UIBInitUIElement(xml, m_root, &base, *this);

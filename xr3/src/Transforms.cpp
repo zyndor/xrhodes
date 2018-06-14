@@ -192,7 +192,7 @@ public:
 
   float GetPerspectiveMultiple() const
   {
-    return m_tanHalfVerticalFov * (Gfx::GetHeight() / 2);
+    return m_tanHalfVerticalFov * (Gfx::GetLogicalHeight() / 2);
   }
 
   float GetZNearClippingPlane() const
@@ -334,7 +334,7 @@ Transforms::Updater&
   Transforms::Updater::SetPerspectiveProjection(float verticalFov,
     float zNear, float zFar)
 {
-  float aspectRatio = float(Gfx::GetWidth()) / float(Gfx::GetHeight());
+  float aspectRatio = Gfx::GetLogicalAspectRatio();
   return SetPerspectiveProjection(verticalFov, aspectRatio, zNear, zFar);
 }
 

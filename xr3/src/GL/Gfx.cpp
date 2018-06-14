@@ -12,7 +12,7 @@
 #include "xr/Pool.hpp"
 #include "xr/Hash.hpp"
 #include "gl_core_4_5.h"
-#include "SDL.h"
+#include "GfxContext.hpp"
 
 #include <set>
 #include <unordered_map>
@@ -458,7 +458,7 @@ char const* GetGLSLTypeName(GLenum type)
 #endif
 
 //=============================================================================
-struct Context
+struct Impl
 {
   static void InitExtensions(int minorMajorVersion)
   {
@@ -517,52 +517,11 @@ struct Context
     }
   }
 
-  Context(SDL_Window* window)
+  Impl(Context* context)
+  : m_context(context)
   {
     XR_TRACE(Gfx, ("Gfx init start..."));
-    XR_ASSERTMSG(Gfx, window, ("Window must not be null!"));
-    m_window = window;
-
-    // Window must be created at this point. In SDL, we do it in Device.
-    // Create SDL renderer.
-    uint32_t flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
-    if (Device::GetConfigInt("Display", "vsync", false))
-    {
-      flags |= SDL_RENDERER_PRESENTVSYNC;
-    }
-
-    m_ownRenderer = SDL_CreateRenderer(window, -1, flags);
-
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-
-    // Create GL context.
-    int openGlVersionMajor = 3;
-    int openGlVersionMinor = 3;
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openGlVersionMajor);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openGlVersionMinor);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    int width, height;
-    SDL_GL_GetDrawableSize(window, &width, &height);
-
-    SDL_RenderSetLogicalSize(m_ownRenderer, width, height);
-
-    m_ownContext = SDL_GL_CreateContext(window);
-    SDL_GL_MakeCurrent(window, m_ownContext);
-
-    // Get display and screen sizes.
-    SDL_RendererInfo  info;
-    SDL_GetRendererInfo(m_ownRenderer, &info);
-
-    XR_ASSERT(Gfx, info.flags & SDL_RENDERER_ACCELERATED);
-    XR_ASSERT(Gfx, info.flags & SDL_RENDERER_TARGETTEXTURE);
-
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
-
-    m_physicalSize = SVector2(dm.w, dm.h);
-    m_logicalSize = SVector2(width, height);
+    m_context->Init();
 
     // Load GL functions. We're aiming quite high with the version number, simply
     // because functionality has only been added to OpenGL (at least since 3.3)
@@ -581,13 +540,13 @@ struct Context
     XR_TRACE(Gfx, ("Version: %s", glGetString(GL_VERSION)));
 
     // initialise extensions
-    InitExtensions(openGlVersionMajor * 10 + openGlVersionMinor);
+    InitExtensions(context->GetGlVersionMajor() * 10 + context->GetGlVersionMinor());
 
-    SetViewport({ 0, 0, uint16_t(m_logicalSize.x), uint16_t(m_logicalSize.y) });
+    SetViewport({ 0, 0, GetLogicalWidth(), GetLogicalHeight() });
 
     XR_GL_CALL(glDepthFunc(GL_LEQUAL)); // TODO: give it to state
 
-    if (openGlVersionMajor >= 3 ||
+    if (context->GetGlVersionMajor() >= 3 ||
       s_extensions[ExtensionGL::OES_vertex_array_object].supported ||
       s_extensions[ExtensionGL::ARB_vertex_array_object].supported)
     {
@@ -613,7 +572,7 @@ struct Context
     XR_TRACE(Gfx, ("Gfx init complete."));
   }
 
-  ~Context()
+  ~Impl()
   {
     XR_TRACE(Gfx, ("Gfx shutting down."));
     for (auto& cb: m_onExit)
@@ -638,19 +597,27 @@ struct Context
     REPORT_LEAKS(program);
 #undef REPORT_LEAKS
 
-    SDL_GL_DeleteContext(m_ownContext);
-    SDL_DestroyRenderer(m_ownRenderer);
     XR_TRACE(Gfx, ("Gfx shutdown complete."));
   }
 
-  uint16_t GetWidth() const
+  int GetLogicalWidth() const
   {
-    return m_logicalSize.x;
+    return m_context->GetLogicalWidth();
   }
 
-  uint16_t GetHeight() const
+  int GetLogicalHeight() const
   {
-    return m_logicalSize.y;
+    return m_context->GetLogicalHeight();
+  }
+
+  int GetPhysicalWidth() const
+  {
+    return m_context->GetPhysicalWidth();
+  }
+
+  int GetPhysicalHeight() const
+  {
+    return m_context->GetPhysicalHeight();
   }
 
   VertexFormatHandle RegisterVertexFormat(VertexFormat const& format)
@@ -1539,7 +1506,7 @@ struct Context
   void Present(bool resetState)
   {
     Flush();
-    SDL_GL_SwapWindow(m_window);
+    m_context->Swap();
   }
 
   void RegisterFlushCallback(Callback fn, void* userData)
@@ -1554,12 +1521,7 @@ struct Context
 
 private:
   // data
-  SDL_Window* m_window;
-  SDL_Renderer* m_ownRenderer;
-  SDL_GLContext m_ownContext;
-
-  SVector2 m_physicalSize;
-  SVector2 m_logicalSize;
+  Context* const m_context; // no ownership
 
   ServicedArray<VertexFormatRef, 64> m_vertexFormats;
   std::unordered_map<uint32_t, VertexFormatHandle> m_vertexFormatHandles;
@@ -1639,29 +1601,51 @@ private:
   }
 };
 
-Context* s_impl = nullptr;
+Impl* s_impl = nullptr;
 
 } //
 
 //=============================================================================
-void Init(void * window)
+void Init(Context* context)
 {
   XR_ASSERTMSG(Gfx, !s_impl, ("Already initialized."));
-  auto sdlWindow = static_cast<SDL_Window*>(window);
-
-  s_impl = new Context(sdlWindow);
+  s_impl = new Impl(context);
 }
 
 //=============================================================================
-uint16_t GetWidth()
+int GetLogicalWidth()
 {
-  return s_impl->GetWidth();
+  return s_impl->GetLogicalWidth();
 }
 
 //=============================================================================
-uint16_t GetHeight()
+int GetLogicalHeight()
 {
-  return s_impl->GetHeight();
+  return s_impl->GetLogicalHeight();
+}
+
+//=============================================================================
+float GetLogicalAspectRatio()
+{
+  return GetLogicalWidth() / float(GetLogicalHeight());
+}
+
+//=============================================================================
+int GetPhysicalWidth()
+{
+  return s_impl->GetPhysicalWidth();
+}
+
+//=============================================================================
+int GetPhysicalHeight()
+{
+  return s_impl->GetPhysicalHeight();
+}
+
+//=============================================================================
+float GetPhysicalAspectRatio()
+{
+  return GetPhysicalWidth() / float(GetPhysicalHeight());
 }
 
 //=============================================================================
