@@ -99,6 +99,7 @@ ScratchBufferImpl*  s_impl = nullptr;
 //==============================================================================
 void ScratchBuffer::Init(size_t poolSize)
 {
+  XR_ASSERTMSG(ScratchBuffer, !s_impl, ("Already initialized!"));
   s_impl = new ScratchBufferImpl(poolSize);
 
   Gfx::RegisterFlushCallback([](void*, void*) {
