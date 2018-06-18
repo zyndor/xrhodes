@@ -14,23 +14,23 @@
 
 namespace xr
 {
-namespace GL
+namespace gl
 {
 
 GLint CheckError(char const* text);
 
 void SwitchEnabledState(GLenum name, bool state);
 
-} // GL
-} // XR
+} // gl
+} // xr
 
 //==============================================================================
-#define XR_GL_CALL(theCall)  theCall; xr::GL::CheckError( #theCall )
+#define XR_GL_CALL(theCall)  theCall; xr::gl::CheckError( #theCall )
 
 //==============================================================================
 #define XR_GL_CALL_RESULT(theCall, result)\
   theCall;\
-  result = xr::GL::CheckError( #theCall )
+  result = xr::gl::CheckError( #theCall )
 
 //==============================================================================
 #define XR_GL_IGNORE_ERROR (void)glGetError();
@@ -40,7 +40,7 @@ void SwitchEnabledState(GLenum name, bool state);
 //==============================================================================
 namespace xr
 {
-namespace GL
+namespace gl
 {
 
 //==============================================================================
@@ -63,8 +63,7 @@ void SwitchEnabledState(GLenum name, bool state)
   XR_GL_CALL(fn(name));
 }
 
-} // GL
-} // XR
-
+} // gl
+} // xr
 
 #endif // XR_XRGL_HPP

@@ -1311,7 +1311,7 @@ struct Impl
   void SetScissor(Rect const* rect)
   {
     bool state = rect != nullptr;
-    GL::SwitchEnabledState(GL_SCISSOR_TEST, state);
+    gl::SwitchEnabledState(GL_SCISSOR_TEST, state);
     if (state)
     {
       XR_GL_CALL(glScissor(rect->x, rect->y, rect->w, rect->h));
@@ -1345,7 +1345,7 @@ struct Impl
     // depth test
     if (CheckAllMaskBits(deltaFlags, F_STATE_DEPTH_TEST))
     {
-      GL::SwitchEnabledState(GL_DEPTH_TEST, CheckAllMaskBits(flags, F_STATE_DEPTH_TEST));
+      gl::SwitchEnabledState(GL_DEPTH_TEST, CheckAllMaskBits(flags, F_STATE_DEPTH_TEST));
     }
 
     // depth write
@@ -1358,7 +1358,7 @@ struct Impl
     if (CheckAllMaskBits(deltaFlags, F_STATE_ALPHA_BLEND))
     {
       bool alphaBlend = CheckAllMaskBits(flags, F_STATE_ALPHA_BLEND);
-      GL::SwitchEnabledState(GL_BLEND, alphaBlend);
+      gl::SwitchEnabledState(GL_BLEND, alphaBlend);
       if (alphaBlend)
       {
         // TODO: improved blend func support
@@ -1371,7 +1371,7 @@ struct Impl
     {
       uint32_t culling = flags & (F_STATE_CULL_BACK | F_STATE_CULL_FRONT);
       bool hasCulling = culling != 0;
-      GL::SwitchEnabledState(GL_CULL_FACE, hasCulling);
+      gl::SwitchEnabledState(GL_CULL_FACE, hasCulling);
       if (hasCulling)
       {
         GLenum cullMode;
@@ -1397,7 +1397,7 @@ struct Impl
     // scissor test
     if (CheckAllMaskBits(deltaFlags, F_STATE_SCISSOR_TEST))
     {
-      XR_GL_CALL(GL::SwitchEnabledState(GL_SCISSOR_TEST,
+      XR_GL_CALL(gl::SwitchEnabledState(GL_SCISSOR_TEST,
         CheckAllMaskBits(flags, F_STATE_SCISSOR_TEST)));
     }
 
