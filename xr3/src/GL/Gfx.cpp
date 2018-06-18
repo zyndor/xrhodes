@@ -1606,6 +1606,12 @@ Impl* s_impl = nullptr;
 } //
 
 //=============================================================================
+uint32_t VertexFormat::CalculateHash() const
+{
+  return Hash::Data32(m_attributes, sizeof(m_attributes) + sizeof(m_offset));
+}
+
+//=============================================================================
 void Init(Context* context)
 {
   XR_ASSERTMSG(Gfx, !s_impl, ("Already initialized."));

@@ -8,6 +8,7 @@
 //
 //==============================================================================
 #include "xr/Vertex.hpp"
+#include "xr/fundamentals.hpp"
 
 namespace xr
 {

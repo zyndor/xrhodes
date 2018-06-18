@@ -15,7 +15,7 @@ Inflator::Inflator()
 {}
 
 //==============================================================================
-void xr::Inflator::SetNext(IdType id)
+void Inflator::SetNext(IdType id)
 {
   m_generator.SetNextId(id);
 }

@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Queue.hpp"
 #include "Semaphore.hpp"
 #include <thread>
@@ -81,7 +80,7 @@ public:
 
 private:
   // types
-  typedef xr::Queue<Job*>  JobQueue;
+  using JobQueue = Queue<Job*>;
 
   // data
   std::mutex              m_jobsMutex;

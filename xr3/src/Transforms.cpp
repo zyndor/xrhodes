@@ -207,7 +207,7 @@ public:
 
   ViewRayCaster GetViewRayCaster() const
   {
-    xr::Matrix viewer;
+    Matrix viewer;
     GetViewerTransform(viewer);
 
     return ViewRayCaster{ viewer, m_zNear, m_tanHalfVerticalFov };

@@ -9,7 +9,6 @@
 //==============================================================================
 #include "xr/Color.hpp"
 #include "xr/utils.hpp"
-#include "xr/Hash.hpp"
 #include "xr/Rect.hpp"
 #include "xr/Callback.hpp"
 #include "xr/Buffer.hpp"
@@ -123,10 +122,7 @@ public:
     return m_stride;
   }
 
-  uint32_t CalculateHash() const
-  {
-    return xr::Hash::Data32(m_attributes, sizeof(m_attributes) + sizeof(m_offset));
-  }
+  uint32_t CalculateHash() const;
 
 private:
   // data

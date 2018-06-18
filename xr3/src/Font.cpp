@@ -473,7 +473,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           Image img;
           img.SetPixelData(p, w, h, 1);
 
-          xr::FilePath path;
+          FilePath path;
           sprintf(path.data(), "glyph-%04x.tga", i0);
           path.UpdateSize();
           img.Save(path, true);

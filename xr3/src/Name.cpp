@@ -38,7 +38,7 @@ Name::Name(uint32_t name)
 
 //==============================================================================
 Name::Name(const char* name, size_t length)
-: m_value(xr::Hash::String32(name, length))
+: m_value(Hash::String32(name, length))
 #if defined(XR_DEBUG)
   ,
   m_debugValue(name, length)
@@ -47,7 +47,7 @@ Name::Name(const char* name, size_t length)
 
 //==============================================================================
 Name::Name(const std::string& name)
-: m_value(xr::Hash::String32(name.c_str()))
+: m_value(Hash::String32(name.c_str()))
 #if defined(XR_DEBUG)
   ,
   m_debugValue(name)
@@ -71,7 +71,7 @@ Name& Name::operator=(uint32_t value)
 //==============================================================================
 Name& Name::operator=(const std::string& name)
 {
-  m_value = xr::Hash::String32(name.c_str());
+  m_value = Hash::String32(name.c_str());
 #if defined(XR_DEBUG)
   m_debugValue = name;
 #endif  //XR_DEBUG

@@ -501,7 +501,7 @@ void  Quadtree<Alloc>::_ProcessRecursionBinary()
   // All objects touching more than one leaf are candidates to collision -
   // these happen to reside in the node.
   std::for_each(m_objects.begin(), m_objects.end(),
-    xr::Bind2nd<BinaryCallback, void*>(s_binaryCallback, s_callbackData));
+    Bind2nd<BinaryCallback, void*>(s_binaryCallback, s_callbackData));
 
   // ...and process all objects in the child nodes that the box is touching
   if (m_canSplit)
