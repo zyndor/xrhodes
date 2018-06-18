@@ -22,13 +22,16 @@ class  StringFormatter
 {
 public:
   // structors
-  explicit StringFormatter(char const* string)
-  : m_string(string),
-    m_subs(0)
+  explicit StringFormatter(char const* cStr)
+  : m_string(std::string(cStr))
   {}
 
   explicit StringFormatter(std::string const& str)
-  : StringFormatter(str.c_str())
+  : m_string(str)
+  {}
+
+  explicit StringFormatter(std::string&& str)
+  : m_string(str)
   {}
 
   // general
@@ -81,7 +84,7 @@ private:
 
   // data
   std::string  m_string;
-  int          m_subs;
+  int          m_subs = 0;
 
   // internal
   Substitutor GetNextSubstitutor()
