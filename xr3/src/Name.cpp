@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "xr/Name.hpp"
+#include "xr/Hash.hpp"
 #include "xr/debug.hpp"
 #include <string.h>
 
