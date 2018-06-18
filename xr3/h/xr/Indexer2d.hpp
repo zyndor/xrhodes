@@ -13,13 +13,13 @@ namespace xr
 //==============================================================================
 ///@brief Facilitates conversion between 2d grid coordinates and
 /// 1d array indices.
-class  Indexer2D
+class  Indexer2d
 {
 public:
   // structors
-  Indexer2D();
-  Indexer2D(int w, int h);
-  ~Indexer2D();
+  Indexer2d();
+  Indexer2d(int w, int h);
+  ~Indexer2d();
 
   // general use
   ///@return  The width of the array.
@@ -63,21 +63,21 @@ private:
 // implementation
 //==============================================================================
 inline
-int  Indexer2D::GetWidth() const
+int  Indexer2d::GetWidth() const
 {
   return m_width;
 }
 
 //==============================================================================
 inline
-int  Indexer2D::GetHeight() const
+int  Indexer2d::GetHeight() const
 {
   return m_height;
 }
 
 //==============================================================================
 inline
-int  Indexer2D::GetSize() const
+int  Indexer2d::GetSize() const
 {
   return m_size;
 }
