@@ -22,27 +22,20 @@ namespace xr
 /// textures: the name of the files to load the various texture stages from;
 ///   optional. Currently up to 8 textures are supported which may be specified
 ///   either as a XON value (for a single texture), key-value pairs for texture
-///   stage and path, i.e. 0: my/texture.png, 1: my/other_texture.png.
+///   stage and path, i.e. 0: my/texture.png, 1: my/other_texture.png. Optional.
 /// state: the rendering states to set; a combination of the following are
 ///   supported: depthTest, depthWrite, alphaBlend, cullBack, cullFront,
-///     wireframe.
+///     wireframe. Optional.
+/// blendFactors: if alphaBlend was enabled, a blendFactors object may define
+///   the blending function used with the material (otherwise ignored). It must
+///   at least specify srcColor and dstColor values. Optionally, srcAlpha and
+///   dstAlpha may also be defined for separate factors of alpha components.
 class Material: public Asset
 {
 public:
   XR_ASSET_DECL(Material)
 
-  // typedefs
-  // TODO: remove or implement options properly.
-  enum  AlphaMode
-  {
-    ALPHA_NONE,
-    ALPHA_HALF,
-    ALPHA_ADD,
-    ALPHA_SUB,
-    ALPHA_BLEND,
-    ALPHA_DEFAULT
-  };
-
+  // types
   enum { kMaxTextureStages = 8 };  // TODO: expose in Gfx, remove from here.
 
   // general
@@ -50,7 +43,7 @@ public:
   uint32_t  GetStateFlags() const;
 
   ///@brief Unsets @a clear, sets @a set of the state flags.
-  void      OverrideStateFlags(uint32_t clear, uint32_t set);
+  void  OverrideStateFlags(Gfx::FlagType clear, Gfx::FlagType set);
 
   ///@brief Sets @a texture for the given @a stage.
   ///@note A maximum of 8 textures per Material is supported.
@@ -71,7 +64,7 @@ public:
 
 private:
   // data
-  uint32_t      m_stateFlags = 0;
+  Gfx::FlagType m_stateFlags = 0;
   Texture::Ptr  m_textureStages[kMaxTextureStages];
   Shader::Ptr   m_shader;
 
