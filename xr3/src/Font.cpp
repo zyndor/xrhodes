@@ -178,9 +178,9 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   {
     try
     {
-      auto& fontPath = root->Find("font");
-      success = ttfData.Open(fontPath.GetValue(), false);
-      LTRACEIF(!success, ("%s: failed to load '%s'.", rawNameExt, fontPath.GetValue()));
+      auto& fontPath = root->Get("font").ToValue();
+      success = ttfData.Open(fontPath.GetString(), false);
+      LTRACEIF(!success, ("%s: failed to load '%s'.", rawNameExt, fontPath.GetString()));
     }
     catch(XonEntity::Exception&)
     {
@@ -195,23 +195,25 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   {
     try
     {
-      auto& codePoints = root->Find("codePoints");
+      auto& codePoints = root->Get("codePoints").ToObject();
       for(size_t i0 = 0, i1 = codePoints.GetNumElements(); i0 < i1; ++i0)
       {
         try
         {
-          char const* rangeDef = codePoints[i0].GetValue();
+          char const* rangeDef = codePoints[i0].ToValue().GetString();
           if(!ParseRange(rangeDef, codePointsRoot))
           {
             LTRACE(("%s: '%s' is not a valid code point range.", rawNameExt,
               rangeDef));
           }
         }
-        catch(XonEntity::Exception&)
-        {} // ignore
+        catch(XonEntity::Exception const&)
+        {
+          LTRACE(("%s: ignoring code point entry %d: should be a value.", rawNameExt, i0));
+        }
       }
     }
-    catch(XonEntity::Exception&)
+    catch(XonEntity::Exception const&)
     {
       success = false;
       LTRACE(("%s: missing definition for '%s'", rawNameExt, "codePoints"));
@@ -237,25 +239,34 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   {
     try
     {
-      auto& index = root->Find("fontIndex");
-      if (!StringTo(index.GetValue(), fontIndex) || fontIndex < 0 ||
+      auto& index = root->Get("fontIndex").ToValue();
+      if (!StringTo(index.GetString(), fontIndex) || fontIndex < 0 ||
         fontIndex >= numFonts)
       {
         fontIndex = 0;
         LTRACE(("%s: '%s' is invalid for %s; defaulting to %d.", rawNameExt,
-          index.GetValue(), "fontIndex", fontIndex));
+          index.GetString(), "fontIndex", fontIndex));
       }
     }
-    catch (XonEntity::Exception&)
-    {} // ignore.
+    catch (XonEntity::Exception const& e)
+    {
+      if (e.type == XonEntity::Exception::Type::InvalidType)
+      {
+        success = false;
+        LTRACE(("%s: %s has invalid type.", rawNameExt, "fontIndex"));
+      }
+    } // ignore.
+  }
 
+  if (success)
+  {
     try
     {
-      auto& size = root->Find("fontSize");
-      if (!StringTo(size.GetValue(), fontSize))
+      auto& size = root->Get("fontSize").ToValue();
+      if (!StringTo(size.GetString(), fontSize))
       {
         LTRACE(("%s: failed to parse %s for %s, defaulting to %d.", rawNameExt,
-          size.GetValue(), "fontSize", fontSize));
+          size.GetString(), "fontSize", fontSize));
       }
       else if (fontSize < kMinFontSize)
       {
@@ -264,16 +275,25 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         fontSize = kMinFontSize;
       }
     }
-    catch (XonEntity::Exception&)
-    {} // ignore.
+    catch (XonEntity::Exception const& e)
+    {
+      if (e.type == XonEntity::Exception::Type::InvalidType)
+      {
+        success = false;
+        LTRACE(("%s: %s has invalid type.", rawNameExt, "fontSize"));
+      }
+    } // ignore missing key.
+  }
 
+  if (success)
+  {
     try
     {
-      auto& size = root->Find("sdfSize");
-      if (!StringTo(size.GetValue(), sdfSize))
+      auto& size = root->Get("sdfSize").ToValue();
+      if (!StringTo(size.GetString(), sdfSize))
       {
         LTRACE(("%s: failed to parse %s for %s, defaulting to %d.", rawNameExt,
-          size.GetValue(), "sdfSize", sdfSize));
+          size.GetString(), "sdfSize", sdfSize));
       }
       else if (sdfSize < kMinSdfSize)
       {
@@ -292,16 +312,25 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         }
       }
     }
-    catch (XonEntity::Exception&)
-    {} // ignore.
+    catch (XonEntity::Exception const& e)
+    {
+      if (e.type == XonEntity::Exception::Type::InvalidType)
+      {
+        success = false;
+        LTRACE(("%s: %s has invalid type.", rawNameExt, "sdfSize"));
+      }
+    } // ignore missing key.
+  }
 
+  if (success)
+  {
     try
     {
-      auto& size = root->Find("cacheSize");
-      if (!StringTo(size.GetValue(), cacheSize))
+      auto& size = root->Get("cacheSize").ToValue();
+      if (!StringTo(size.GetString(), cacheSize))
       {
         LTRACE(("%s: failed to parse %s for %s, defaulting to %d.", rawNameExt,
-          size.GetValue(), "cacheSize", cacheSize));
+          size.GetString(), "cacheSize", cacheSize));
       }
       else if (cacheSize < kMinCacheSize)
       {
@@ -310,25 +339,40 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         cacheSize = std::min(cacheSize, kMinCacheSize);
       }
     }
-    catch (XonEntity::Exception&)
-    {} // ignore.
+    catch (XonEntity::Exception const& e)
+    {
+      if (e.type == XonEntity::Exception::Type::InvalidType)
+      {
+        success = false;
+        LTRACE(("%s: %s has invalid type.", rawNameExt, "cacheSize"));
+      }
+    } // ignore missing key.
+  }
 
+  if (success)
+  {
     try
     {
-      auto& shader = root->Find("shader");
-      if (auto shaderPath = shader.GetValue())
+      auto& shader = root->Get("shader").ToValue();
+      if (auto shaderPath = shader.GetString())
       {
         dependencies.push_back(shaderPath);
         shaderHash = Asset::Manager::HashPath(dependencies.back());
       }
     }
-    catch (XonEntity::Exception&)
-    {} // ignore.
+    catch (XonEntity::Exception const& e)
+    {
+      if (e.type == XonEntity::Exception::Type::InvalidType)
+      {
+        success = false;
+        LTRACE(("%s: %s has invalid type.", rawNameExt, "shader"));
+      }
+    } // ignore missing key.
   }
 
   // Init font data.
   stbtt_fontinfo stbFont;
-  if(success)
+  if (success)
   {
     int offset = stbtt_GetFontOffsetForIndex(ttfData.GetData(), fontIndex);
     success = stbtt_InitFont(&stbFont, ttfData.GetData(), offset) != 0;

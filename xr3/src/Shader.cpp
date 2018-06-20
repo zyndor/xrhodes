@@ -43,7 +43,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
     try
     {
       // Read path to vertex shader; add to dependencies and write hash.
-      FilePath vertexEntry = root->Find("vsh").GetValue();
+      FilePath vertexEntry = root->Get("vsh").ToValue().GetString();
       if (vertexEntry.GetExt() == nullptr)
       {
         vertexEntry += ".vsh";
@@ -67,7 +67,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
     try
     {
       // Read path to fragment shader; add to dependencies and write hash.
-      FilePath fragmentEntry = root->Find("fsh").GetValue();
+      FilePath fragmentEntry = root->Get("fsh").ToValue().GetString();
       if (fragmentEntry.GetExt() == nullptr)
       {
         fragmentEntry += ".fsh";

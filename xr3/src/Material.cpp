@@ -75,24 +75,30 @@ public:
     {
       uint32_t flags = 0;
       try {
-        auto& state = root->Find("state");
+        auto& state = root->Get("state");
         switch (state.GetType())
         {
         case XonEntity::Type::Value:
-          if(!InterpretState(state.GetValue(), flags))
           {
-            LTRACE(("%s: Unsupported state: %s", rawNameExt, state.GetValue()));
+            auto& xonValue = state.ToValue();
+            if(!InterpretState(xonValue.GetString(), flags))
+            {
+              LTRACE(("%s: Unsupported state: %s", rawNameExt, xonValue.GetString()));
+            }
           }
           break;
 
         case XonEntity::Type::Object:
-          for (size_t i = 0; i < state.GetNumElements(); ++i)
           {
-            auto& elem = state[i];
-            if (elem.GetType() == XonEntity::Type::Value &&
-              !InterpretState(elem.GetValue(), flags))
+            auto& xonObject = state.ToObject();
+            for (size_t i = 0; i < xonObject.GetNumElements(); ++i)
             {
-              LTRACE(("%s: Unsupported state: %s", rawNameExt, elem.GetValue()));
+              auto& elem = xonObject[i];
+              if (elem.GetType() == XonEntity::Type::Value &&
+                !InterpretState(elem.ToValue().GetString(), flags))
+              {
+                LTRACE(("%s: Unsupported state: %s", rawNameExt, elem.ToValue().GetString()));
+              }
             }
           }
           break;
@@ -110,13 +116,13 @@ public:
       std::vector<SerializedTextureStage>  stages;
 
       try {
-        auto& textures = root->Find("textures");
+        auto& textures = root->Get("textures");
 
         FilePath path;
         if (textures.GetType() == XonEntity::Type::Value)
         {
           // single texture for stage 0
-          path = textures.GetValue();
+          path = textures.ToValue().GetString();
           dependencies.push_back(path);
 
           Asset::HashType hash = Asset::Manager::HashPath(path);
@@ -124,7 +130,8 @@ public:
         }
         else // object
         {
-          stages.reserve(std::min(textures.GetNumElements(),
+          auto& texturesObject = textures.ToObject();
+          stages.reserve(std::min(texturesObject.GetNumElements(),
             static_cast<size_t>(Material::kMaxTextureStages)));
 
           std::vector<std::string> keys;
@@ -136,10 +143,10 @@ public:
               stage < Material::kMaxTextureStages)
             {
               try {
-                auto& texture = textures.Find(key);
+                auto& texture = texturesObject.Get(key);
                 if(texture.GetType() == XonEntity::Type::Value)
                 {
-                  path = texture.GetValue();
+                  path = texture.ToValue().GetString();
                   dependencies.push_back(path);
 
                   Asset::HashType hash = Asset::Manager::HashPath(path);
@@ -183,9 +190,9 @@ public:
     {
       // shader
       try {
-        auto& shader = root->Find("shader");
+        auto& shader = root->Get("shader").ToValue();
 
-        FilePath path = shader.GetValue();
+        FilePath path = shader.GetString();
         dependencies.push_back(path);
 
         auto hash = Asset::Manager::HashPath(path);
@@ -195,7 +202,7 @@ public:
       catch (XonEntity::Exception const&)
       {
         success = false;
-        LTRACE(("%s: missing %s definition.", rawNameExt, "shader"));
+        LTRACE(("%s: missing or invalid %s definition.", rawNameExt, "shader"));
       }
     }
     return success;
