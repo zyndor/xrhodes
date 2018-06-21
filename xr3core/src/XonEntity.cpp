@@ -61,44 +61,49 @@ XonEntity::~XonEntity()
 {}
 
 //==============================================================================
-XonEntity& XonEntity::operator[](size_t index)
+bool XonEntity::Is(Type type) const
 {
-  ThrowInvalidTypeError("operator[]");
-  return *this; // won't.
+  return m_type == type;
 }
 
 //==============================================================================
-XonEntity const& XonEntity::operator[](size_t index) const
+XonObject& XonEntity::ToObject()
 {
-  ThrowInvalidTypeError("operator[]");
-  return *this; // won't.
+  if (m_type != Type::Object)
+  {
+    ThrowInvalidTypeError("ToObject");
+  }
+  return static_cast<XonObject&>(*this);
 }
 
 //==============================================================================
-XonEntity& XonEntity::Find(std::string const& name)
+XonObject const& XonEntity::ToObject() const
 {
-  ThrowInvalidTypeError("Find()");
-  return *this; // won't.
+  if (m_type != Type::Object)
+  {
+    ThrowInvalidTypeError("ToObject");
+  }
+  return static_cast<XonObject const&>(*this);
 }
 
 //==============================================================================
-XonEntity const& XonEntity::Find(std::string const& name) const
+XonValue& XonEntity::ToValue()
 {
-  ThrowInvalidTypeError("Find()");
-  return *this; // won't.
-}
-//==============================================================================
-const char * XonEntity::GetValue() const
-{
-  ThrowInvalidTypeError("GetValue()");
-  return nullptr; // won't.
+  if (m_type != Type::Value)
+  {
+    ThrowInvalidTypeError("ToValue");
+  }
+  return static_cast<XonValue&>(*this);
 }
 
 //==============================================================================
-size_t XonEntity::GetNumElements() const
+XonValue const& XonEntity::ToValue() const
 {
-  ThrowInvalidTypeError("GetNumElements()");
-  return -1; // won't.
+  if (m_type != Type::Value)
+  {
+    ThrowInvalidTypeError("ToValue");
+  }
+  return static_cast<XonValue const&>(*this);
 }
 
 //==============================================================================
@@ -109,82 +114,107 @@ XonObject::XonObject()
 //==============================================================================
 XonObject::~XonObject()
 {
-  std::for_each(m_values.begin(), m_values.end(), [](XonEntity* p) { delete p; });
-}
-
-XonEntity& XonObject::operator[](size_t index)
-{
-  if (index >= m_values.size())
-  {
-    ThrowIndexOutOfBoundsError(index, m_values.size());
-  }
-  return *m_values[index];
+  std::for_each(m_elements.begin(), m_elements.end(), [](XonEntity* p) { delete p; });
 }
 
 //==============================================================================
-XonEntity const& XonObject::operator[](size_t index) const
+XonEntity* XonObject::TryGet(std::string const& name)
 {
-  if (index >= m_values.size())
+  XonEntity* result = nullptr;
+  auto iFind = m_keyedElements.find(name);
+  if (iFind != m_keyedElements.end())
   {
-    ThrowIndexOutOfBoundsError(index, m_values.size());
+    result = iFind->second;
   }
-  return *m_values[index];
+  return result;
 }
 
 //==============================================================================
-XonEntity& XonObject::Find(std::string const& name)
+XonEntity const* XonObject::TryGet(std::string const& name) const
 {
-  auto iFind = m_keyValues.find(name);
-  if (iFind == m_keyValues.end())
+  XonEntity* result = nullptr;
+  auto iFind = m_keyedElements.find(name);
+  if (iFind != m_keyedElements.end())
   {
-    ThrowInvalidKeyError(name.c_str());
+    result = iFind->second;
   }
-  return *iFind->second;
+  return result;
 }
 
 //==============================================================================
-XonEntity const& XonObject::Find(std::string const& name) const
+XonEntity& XonObject::Get(std::string const& name)
 {
-  auto iFind = m_keyValues.find(name);
-  if (iFind == m_keyValues.end())
+  auto result = TryGet(name);
+  if (!result)
   {
     ThrowInvalidKeyError(name.c_str());
   }
-  return *iFind->second;
+  return *result;
 }
 
 //==============================================================================
-void XonObject::AddValue(XonEntity& value)
+XonEntity const& XonObject::Get(std::string const& name) const
 {
-  m_values.push_back(&value);
+  auto result = TryGet(name);
+  if (!result)
+  {
+    ThrowInvalidKeyError(name.c_str());
+  }
+  return *result;
 }
 
 //==============================================================================
-void XonObject::AddValue(std::string key, XonEntity& value)
+void XonObject::AddElement(XonEntity& value)
 {
-  AddValue(value);
-  m_keyValues[key] = &value;
+  m_elements.push_back(&value);
+}
+
+//==============================================================================
+void XonObject::AddElement(std::string key, XonEntity& value)
+{
+  AddElement(value);
+  m_keyedElements[key] = &value;
 }
 
 //==============================================================================
 void XonObject::GetKeys(std::vector<std::string>& keys)
 {
-  if(keys.size() < m_keyValues.size())
+  if(keys.size() < m_keyedElements.size())
   {
-    keys.reserve(m_keyValues.size());
+    keys.reserve(m_keyedElements.size());
   }
 
   keys.clear();
-  std::for_each(m_keyValues.begin(), m_keyValues.end(),
-    [&keys](decltype(m_keyValues)::value_type const& v) {
+  std::for_each(m_keyedElements.begin(), m_keyedElements.end(),
+    [&keys](decltype(m_keyedElements)::value_type const& v) {
       keys.push_back(v.first);
     });
 }
 
 //==============================================================================
-bool XonObject::HasValue(XonEntity const& value) const
+bool XonObject::HasElement(XonEntity const& value) const
 {
-  return std::find(m_values.begin(), m_values.end(), &value) != m_values.end();
+  return std::find(m_elements.begin(), m_elements.end(), &value) != m_elements.end();
+}
+
+//==============================================================================
+XonEntity& XonObject::operator[](size_t index)
+{
+  if (index >= m_elements.size())
+  {
+    ThrowIndexOutOfBoundsError(index, m_elements.size());
+  }
+  return *m_elements[index];
+}
+
+//==============================================================================
+XonEntity const& XonObject::operator[](size_t index) const
+{
+  if (index >= m_elements.size())
+  {
+    ThrowIndexOutOfBoundsError(index, m_elements.size());
+  }
+  return *m_elements[index];
 }
 
 //==============================================================================

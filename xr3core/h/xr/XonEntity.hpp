@@ -14,6 +14,9 @@
 namespace xr
 {
 
+class XonObject;
+class XonValue;
+
 //==============================================================================
 ///@brief Base class for XON entities.
 class XonEntity
@@ -57,15 +60,24 @@ public:
     return m_type;
   }
 
-  virtual XonEntity&        operator[](size_t index);
-  virtual XonEntity const&  operator[](size_t index) const;
+  ///@return Whether this is the given @a type.
+  bool Is(Type type) const;
 
-  virtual XonEntity&        Find(std::string const& name);
-  virtual XonEntity const&  Find(std::string const& name) const;
+  ///@brief Attempts to cast this to a XonObject. A XonException of type InvalidType
+  /// is thrown if this is not an object.
+  XonObject& ToObject();
 
-  virtual const char* GetValue() const;
+  ///@brief Attempts to cast this to a XonObject. A XonException of InvalidType
+  /// is thrown if this is not an object.
+  XonObject const& ToObject() const;
 
-  virtual size_t GetNumElements() const;
+  ///@brief Attempts to cast this to a XonValue. A XonException of InvalidType
+  /// is thrown if this is not a value.
+  XonValue& ToValue();
+
+  ///@brief Attempts to cast this to a XonValue. A XonException of InvalidType
+  /// is thrown if this is not a value.
+  XonValue const& ToValue() const;
 
 protected:
   // structors
@@ -88,28 +100,58 @@ public:
   ~XonObject();
 
   // general
-  virtual XonEntity&        operator[](size_t index) override;
-  virtual XonEntity const&  operator[](size_t index) const override;
+  ///@return A pointer to the element mapped to the given @a key; nullptr if
+  /// there is no such element.
+  ///@note Does not transfer ownership.
+  XonEntity*  TryGet(std::string const& key);
 
-  virtual XonEntity&        Find(std::string const& name) override;
-  virtual XonEntity const&  Find(std::string const& name) const override;
+  ///@return A pointer to the element mapped to the given @a key; nullptr if
+  /// there is no such element.
+  XonEntity const*  TryGet(std::string const& key) const;
 
-  virtual size_t GetNumElements() const override
+  ///@return A reference to the element mapped to the given @a key. A XonException
+  /// of type InvalidKey is thrown if there is no such element.
+  XonEntity&  Get(std::string const& key);
+
+  ///@return A const reference to the element mapped to the given @a key. A
+  /// XonException of type InvalidKey is thrown if there is no such element.
+  XonEntity const&  Get(std::string const& key) const;
+
+  ///@return The number of elements this object contains.
+  size_t GetNumElements() const
   {
-    return m_values.size();
+    return m_elements.size();
   }
 
-  ///@brief Writes the keys that it knows of into @a keys, in lexicographic order.
+  ///@brief Writes the keys of its elements into @a keys, in lexicographic order.
   void GetKeys(std::vector<std::string>& keys);
 
-  void AddValue(XonEntity& value);  // ownership transfer
-  void AddValue(std::string key, XonEntity& value);  // ownership transfer
-  bool HasValue(XonEntity const& value) const;
+  ///@brief Adds the given element @a elem as a child at the next index.
+  void AddElement(XonEntity& elem);  // ownership transfer
+
+  ///@brief Adds the given element @a elem as a child at the next index, also
+  /// keyed to @a key.
+  ///@note Overrides a previous mapping of the same key (if any).
+  void AddElement(std::string key, XonEntity& elem);  // ownership transfer
+
+  ///@return Whether this has the given element @a elem.
+  bool HasElement(XonEntity const& elem) const;
+
+  // operators
+  ///@return a referenec to the @a index th element this object has. A XonException
+  /// of type IndexOutOfBounds will be thrown if index is outside of the range
+  /// of valid indices.
+  XonEntity&  operator[](size_t index);
+
+  ///@return a const referenec to the @a index th element this object has. A
+  /// XonException of type IndexOutOfBounds will be thrown if index is outside
+  /// of the range of valid indices.
+  XonEntity const&  operator[](size_t index) const;
 
 private:
   // data
-  std::vector<XonEntity*>           m_values; // ownership
-  std::map<std::string, XonEntity*> m_keyValues;  // no ownership
+  std::vector<XonEntity*> m_elements; // ownership
+  std::map<std::string, XonEntity*> m_keyedElements;  // no ownership
 };
 
 //==============================================================================
@@ -123,7 +165,8 @@ public:
   ~XonValue();
 
   // general
-  virtual const char* GetValue() const override
+  ///@brief returns the value of this element.
+  const char* GetString() const
   {
     return m_value;
   }

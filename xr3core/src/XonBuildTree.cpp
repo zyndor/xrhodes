@@ -20,17 +20,17 @@ struct XonTreeBuildState
     XonObject*            object;
     XonParser::String     keyCache;
 
-    void AddValue(XonEntity& v)
+    void AddElement(XonEntity& v)
     {
       if (keyCache.start)
       {
         XR_ASSERT(XonTreeBuildState, keyCache.length != -1);
-        object->AddValue(std::string(keyCache.start, keyCache.length), v);
+        object->AddElement(std::string(keyCache.start, keyCache.length), v);
         keyCache.start = nullptr;  // consume key
       }
       else
       {
-        object->AddValue(v);
+        object->AddElement(v);
       }
     }
   };
@@ -46,7 +46,7 @@ struct XonTreeBuildState
 
   std::list<Frame> stack;
 
-  void AddValue(XonParser::String s)
+  void AddElement(XonParser::String s)
   {
     std::vector<char> buffer;
     if (!s.isQuoted && strncmp(s.start, "null", s.length) == 0)
@@ -62,7 +62,7 @@ struct XonTreeBuildState
       s.start = buffer.data();
       s.length = replacedLen;
     }
-    stack.back().AddValue(*new XonValue(s.start, s.length));
+    stack.back().AddElement(*new XonValue(s.start, s.length));
   }
 
   bool HandleEvent(XonParser::Event e, XonParser::String const* string)
@@ -80,7 +80,7 @@ struct XonTreeBuildState
         }
         else
         {
-          stack.back().AddValue(*object);
+          stack.back().AddElement(*object);
         }
         stack.push_back({ object });
       }
@@ -100,7 +100,7 @@ struct XonTreeBuildState
 
     case XonParser::Event::Value:
       XR_ASSERT(XonTreeBuildState, string);
-      AddValue(*string);
+      AddElement(*string);
       break;
     }
 
