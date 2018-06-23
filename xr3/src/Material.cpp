@@ -47,6 +47,7 @@ public:
     {
       state: { depthWrite, depthTest, alphaBlend },
       blendFactors: { srcAlpha, invSrcAlpha },
+      depthFunc: lequal,
       textures: {
         0: "textures/shark/albedo.png",
         3: "textures/shark/roughness.png"
@@ -58,30 +59,37 @@ public:
   */
   MaterialBuilder()
   : Builder(Material::kTypeId),
-    m_states()
-  {
-    m_states.reserve(6);
-    m_states[Hash::String32("depthTest")] = Gfx::F_STATE_DEPTH_TEST;
-    m_states[Hash::String32("depthWrite")] = Gfx::F_STATE_DEPTH_WRITE;
-    m_states[Hash::String32("alphaBlend")] = Gfx::F_STATE_ALPHA_BLEND;
-    m_states[Hash::String32("cullBack")] = Gfx::F_STATE_CULL_BACK;
-    m_states[Hash::String32("cullFront")] = Gfx::F_STATE_CULL_FRONT;
-
-    // experimental
-    m_states[Hash::String32("wireframe")] = Gfx::F_STATE_WIREFRAME;
-
-    m_blendFactors.reserve(10);
-    m_blendFactors[Hash::String32("zero")] = Gfx::BlendFactor::ZERO;
-    m_blendFactors[Hash::String32("one")] = Gfx::BlendFactor::ONE;
-    m_blendFactors[Hash::String32("srcColor")] = Gfx::BlendFactor::SRC_COLOR;
-    m_blendFactors[Hash::String32("invSrcColor")] = Gfx::BlendFactor::INV_SRC_COLOR;
-    m_blendFactors[Hash::String32("srcAlpha")] = Gfx::BlendFactor::SRC_ALPHA;
-    m_blendFactors[Hash::String32("invSrcAlpha")] = Gfx::BlendFactor::INV_SRC_ALPHA;
-    m_blendFactors[Hash::String32("dstColor")] = Gfx::BlendFactor::DST_COLOR;
-    m_blendFactors[Hash::String32("invDstColor")] = Gfx::BlendFactor::INV_DST_COLOR;
-    m_blendFactors[Hash::String32("dstAlpha")] = Gfx::BlendFactor::DST_ALPHA;
-    m_blendFactors[Hash::String32("invDstAlpha")] = Gfx::BlendFactor::INV_DST_ALPHA;
-  }
+    m_states{
+      { Hash::String32("depthTest"), Gfx::F_STATE_DEPTH_TEST },
+      { Hash::String32("depthWrite"), Gfx::F_STATE_DEPTH_WRITE },
+      { Hash::String32("alphaBlend"), Gfx::F_STATE_ALPHA_BLEND },
+      { Hash::String32("cullBack"), Gfx::F_STATE_CULL_BACK },
+      { Hash::String32("cullFront"), Gfx::F_STATE_CULL_FRONT },
+      { Hash::String32("wireframe"), Gfx::F_STATE_WIREFRAME }, // experimental
+    },
+    m_comparisonFunctions{
+      { Hash::String32("fail"), Gfx::Comparison::FAIL },
+      { Hash::String32("less"), Gfx::Comparison::LESS },
+      { Hash::String32("lequal"), Gfx::Comparison::LEQUAL },
+      { Hash::String32("equal"), Gfx::Comparison::EQUAL },
+      { Hash::String32("gequal"), Gfx::Comparison::GEQUAL },
+      { Hash::String32("greater"), Gfx::Comparison::GREATER },
+      { Hash::String32("nequal"), Gfx::Comparison::NEQUAL },
+      { Hash::String32("pass"), Gfx::Comparison::PASS },
+    },
+    m_blendFactors{
+      { Hash::String32("zero"), Gfx::BlendFactor::ZERO },
+      { Hash::String32("one"), Gfx::BlendFactor::ONE },
+      { Hash::String32("srcColor"), Gfx::BlendFactor::SRC_COLOR },
+      { Hash::String32("invSrcColor"), Gfx::BlendFactor::INV_SRC_COLOR },
+      { Hash::String32("srcAlpha"), Gfx::BlendFactor::SRC_ALPHA },
+      { Hash::String32("invSrcAlpha"), Gfx::BlendFactor::INV_SRC_ALPHA },
+      { Hash::String32("dstColor"), Gfx::BlendFactor::DST_COLOR },
+      { Hash::String32("invDstColor"), Gfx::BlendFactor::INV_DST_COLOR },
+      { Hash::String32("dstAlpha"), Gfx::BlendFactor::DST_ALPHA },
+      { Hash::String32("invDstAlpha"), Gfx::BlendFactor::INV_DST_ALPHA },
+    }
+  {}
 
   bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
@@ -118,7 +126,7 @@ public:
               if (elem.GetType() == XonEntity::Type::Value &&
                 !InterpretState(elem.ToValue().GetString(), stateFlags))
               {
-                LTRACE(("%s: Unsupported state: %s", rawNameExt, elem.ToValue().GetString()));
+                LTRACE(("%s: Unsupported state: %s.", rawNameExt, elem.ToValue().GetString()));
               }
             }
           }
@@ -126,9 +134,42 @@ public:
         }
       }
 
-      if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_ALPHA_BLEND))
+      if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_DEPTH_COMPF_MASK))
       {
-        // blendFactors -- doesn't have to exist, but it has to be an
+        // depth compare function -- doesn't have to exist, but if it does, it
+        // needs to be the correct format
+        try {
+          auto& xon = root->Get("depthFunc").ToValue();
+          Gfx::Comparison::Value depthFunc;
+          success = InterpretComparison(xon.GetString(), depthFunc);
+          if (success)
+          {
+            stateFlags |= Gfx::DepthFuncToState(depthFunc);
+          }
+          else
+          {
+            LTRACE(("%s: Unsupported depth function: %s.", rawNameExt,
+             xon.GetString()));
+          }
+        }
+        catch (XonEntity::Exception const& e)
+        {
+          if (e.type == XonEntity::Exception::Type::InvalidType)
+          {
+            success = false;
+            LTRACE(("%s: invalid depth function definition, error: %s", rawNameExt, e.what()));
+          }
+        }
+      }
+      else if (!root->TryGet("depthFunc"))
+      {
+        LTRACE(("%s: ignoring depth function defined when depth testing is off.",
+          rawNameExt));
+      }
+
+      if (success && CheckAllMaskBits(stateFlags, Gfx::F_STATE_ALPHA_BLEND))
+      {
+        // blendFactors -- doesn't have to exist, but if it does, it has to be an
         // object with specific value elements.
         try {
           auto& blendFactors = root->Get("blendFactors").ToObject();
@@ -293,6 +334,7 @@ public:
 
 protected:
   std::unordered_map<uint32_t, uint32_t> m_states;
+  std::unordered_map<uint32_t, Gfx::Comparison::Value> m_comparisonFunctions;
   std::unordered_map<uint32_t, Gfx::BlendFactor::Value> m_blendFactors;
 
   bool InterpretState(char const* value, Gfx::FlagType& flags) const
@@ -302,6 +344,17 @@ protected:
     if (success)
     {
       flags |= iFind->second;
+    }
+    return success;
+  }
+
+  bool InterpretComparison(char const* value, Gfx::Comparison::Value& comparison) const
+  {
+    auto iFind = m_comparisonFunctions.find(Hash::String32(value));
+    const bool success = iFind != m_comparisonFunctions.end();
+    if (success)
+    {
+      comparison = iFind->second;
     }
     return success;
   }

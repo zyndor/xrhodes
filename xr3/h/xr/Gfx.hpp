@@ -23,6 +23,28 @@ namespace Gfx
 class Context;
 
 //=============================================================================
+namespace Comparison
+{
+using Type = uint8_t;
+
+///@brief These values specify the comparison function used when testing
+/// aspects of incoming fragments with that already in the frame buffer.
+/// For depth test enabled states, you may use DepthFuncToState() to obtain a
+/// bit pattern that can be masked into the value passed into SetState().
+enum Value: Type
+{
+  FAIL = 0x01,
+  LESS = 0x02,
+  LEQUAL = 0x03,
+  EQUAL = 0x04,
+  GEQUAL = 0x05,
+  GREATER = 0x06,
+  NEQUAL = 0x07,
+  PASS = 0x08,
+};
+} // Comparison
+
+//=============================================================================
 namespace BlendFactor
 {
 using Type = uint8_t;
@@ -77,6 +99,9 @@ enum : FlagType
   F_STATE_BLENDF_DST_SHIFT = 8,
   F_STATE_BLENDF_ALPHA_SHIFT = 4,
   F_STATE_BLENDF_MASK = 0xffffu << F_STATE_BLENDF_BASE_SHIFT,
+
+  F_STATE_DEPTH_COMPF_SHIFT = 12,
+  F_STATE_DEPTH_COMPF_MASK = 0x0fu << F_STATE_DEPTH_COMPF_SHIFT,
 
   F_CLEAR_NONE = 0,
   F_CLEAR_COLOR = XR_MASK_ID(FlagType, 0),
@@ -267,10 +292,10 @@ struct FrameBufferAttachment
 constexpr FlagType BlendFactorToState(BlendFactor::Value srcRgb,
   BlendFactor::Value srcA, BlendFactor::Value dstRgb, BlendFactor::Value dstA)
 {
-  return (uint32_t(srcRgb) << F_STATE_BLENDF_BASE_SHIFT) |
-    (uint32_t(srcA) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_ALPHA_SHIFT)) |
-    (uint32_t(dstRgb) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT)) |
-    (uint32_t(dstA) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT +
+  return (FlagType(srcRgb) << F_STATE_BLENDF_BASE_SHIFT) |
+    (FlagType(srcA) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_ALPHA_SHIFT)) |
+    (FlagType(dstRgb) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT)) |
+    (FlagType(dstA) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT +
       F_STATE_BLENDF_ALPHA_SHIFT));
 }
 
@@ -280,6 +305,13 @@ constexpr FlagType BlendFactorToState(BlendFactor::Value srcRgba,
   BlendFactor::Value dstRgba)
 {
   return BlendFactorToState(srcRgba, srcRgba, dstRgba, dstRgba);
+}
+
+///@brief Calculates a state flag for a given depth comparitor @a depthFunc,
+/// which is one of the F_COMPF_* values.
+constexpr FlagType DepthFuncToState(Comparison::Value depthFunc)
+{
+  return FlagType(depthFunc) << F_STATE_DEPTH_COMPF_SHIFT;
 }
 
 //=============================================================================

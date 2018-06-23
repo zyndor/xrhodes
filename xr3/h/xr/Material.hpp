@@ -15,14 +15,15 @@ namespace xr
 {
 
 //==============================================================================
-///@brief A material asset that can be applied to geometries for rendering,
-/// creatable from a .mtl file, which is a XON document with support for the
-/// following properties:
+///@brief A material asset that can be applied to geometries for rendering. It
+/// can be created from a .mtl file, which is a XON document. The following
+/// properties are supported:
 /// shader: the name of the file to load the shader from; required.
 /// textures: the name of the files to load the various texture stages from;
 ///   optional. Currently up to 8 textures are supported which may be specified
-///   either as a XON value (for a single texture), key-value pairs for texture
-///   stage and path, i.e. 0: my/texture.png, 1: my/other_texture.png. Optional.
+///   either as a XON value (for a single texture), or key-value pairs for
+///   texture stage and path, i.e. 0: my/texture.png, 1: my/other_texture.png.
+///   Optional.
 /// state: the rendering states to set; a combination of the following are
 ///   supported: depthTest, depthWrite, alphaBlend, cullBack, cullFront,
 ///     wireframe. Optional.
@@ -30,6 +31,9 @@ namespace xr
 ///   the blending function used with the material (otherwise ignored). It must
 ///   at least specify srcColor and dstColor values. Optionally, srcAlpha and
 ///   dstAlpha may also be defined for separate factors of alpha components.
+/// depthFunc: if depthTest was enabled, a depthFunc value may define the
+///   depth comparison function used with the material (otherwise ignored).
+///   Optional.
 class Material: public Asset
 {
 public:

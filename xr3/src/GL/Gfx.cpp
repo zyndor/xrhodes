@@ -126,6 +126,27 @@ void GetBlendFactors(FlagType flags, GLenum blendFactors[4])
 }
 
 //=============================================================================
+const GLenum kComparisons[] =
+{
+  GLenum(-1),
+  GL_NEVER,
+  GL_LESS,
+  GL_LEQUAL,
+  GL_EQUAL,
+  GL_GEQUAL,
+  GL_GREATER,
+  GL_NOTEQUAL,
+  GL_ALWAYS
+};
+
+GLenum GetDepthFunc(FlagType flags)
+{
+  auto c = (flags >> F_STATE_DEPTH_COMPF_SHIFT) & 0xf;
+  XR_ASSERT(Gfx, c < XR_ARRAY_SIZE(kComparisons));
+  return kComparisons[c];
+}
+
+//=============================================================================
 struct ExtensionGL
 {
   enum Name
@@ -580,7 +601,9 @@ struct Impl
 
     SetViewport({ 0, 0, GetLogicalWidth(), GetLogicalHeight() });
 
-    XR_GL_CALL(glDepthFunc(GL_LEQUAL)); // TODO: give it to state
+    m_activeState = (m_activeState & ~F_STATE_DEPTH_COMPF_MASK) |
+      DepthFuncToState(Comparison::LEQUAL);
+    XR_GL_CALL(glDepthFunc(GL_LEQUAL));
 
     m_activeState = (m_activeState & ~F_STATE_BLENDF_MASK) |
       BlendFactorToState(BlendFactor::SRC_ALPHA, BlendFactor::INV_SRC_ALPHA);
@@ -1386,6 +1409,13 @@ struct Impl
     if (CheckAllMaskBits(deltaFlags, F_STATE_DEPTH_TEST))
     {
       gl::SwitchEnabledState(GL_DEPTH_TEST, CheckAllMaskBits(flags, F_STATE_DEPTH_TEST));
+    }
+
+    if (CheckAnyMaskBits(flags, F_STATE_DEPTH_COMPF_MASK) &&
+      (flags & F_STATE_DEPTH_COMPF_MASK) != (m_activeState & F_STATE_DEPTH_COMPF_MASK))
+    {
+      GLenum depthFunc = GetDepthFunc(flags);
+      XR_GL_CALL(glDepthFunc(depthFunc));
     }
 
     // depth write
