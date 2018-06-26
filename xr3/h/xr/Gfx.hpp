@@ -23,33 +23,65 @@ namespace Gfx
 class Context;
 
 //=============================================================================
-enum Flags: uint32_t
+namespace BlendFactor
+{
+using Type = uint8_t;
+
+///@brief These values control how rgb / alpha from incoming fragments will be
+/// blended with that already in the framebuffer. Use these with
+/// BlendFactorToState() to obtain a bit pattern that can be masked into the
+/// value passed into SetState().
+enum Value
+{
+  ZERO = 0x01,
+  ONE = 0x02,
+  SRC_COLOR = 0x03,
+  INV_SRC_COLOR = 0x04,
+  SRC_ALPHA = 0x05,
+  INV_SRC_ALPHA = 0x06,
+  DST_COLOR = 0x07,
+  INV_DST_COLOR = 0x08,
+  DST_ALPHA = 0x09,
+  INV_DST_ALPHA = 0x0a,
+};
+} // BlendFactor
+
+//=============================================================================
+using FlagType = uint32_t;
+
+enum : FlagType
 {
   F_BUFFER_NONE = 0,
-  F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(uint32_t, 0), // TODO: implement support
-  F_BUFFER_INDEX_32BITS = XR_MASK_ID(uint32_t, 1),
-  F_BUFFER_INSTANCE_DATA = XR_MASK_ID(uint32_t, XR_BITSIZEOF(Flags) - 1),
+  F_BUFFER_INDIRECT_DRAW = XR_MASK_ID(FlagType, 0), // TODO: implement support
+  F_BUFFER_INDEX_32BITS = XR_MASK_ID(FlagType, 1),
+  F_BUFFER_INSTANCE_DATA = XR_MASK_ID(FlagType, XR_BITSIZEOF(FlagType) - 1),
 
   F_TEXTURE_NONE = 0,
-  F_TEXTURE_WRAP = XR_MASK_ID(uint32_t, 0), // clamp is default
-  F_TEXTURE_FILTER_POINT = XR_MASK_ID(uint32_t, 1), // linear filtering is default
-  F_TEXTURE_SRGB = XR_MASK_ID(uint32_t, 2),
-  F_TEXTURE_MIPMAPS = XR_MASK_ID(uint32_t, 6),  // no mipmaps by default
-  F_TEXTURE_CUBE = XR_MASK_ID(uint32_t, 7),
+  F_TEXTURE_WRAP = XR_MASK_ID(FlagType, 0), // clamp is default
+  F_TEXTURE_FILTER_POINT = XR_MASK_ID(FlagType, 1), // linear filtering is default
+  F_TEXTURE_SRGB = XR_MASK_ID(FlagType, 2),
+  F_TEXTURE_MIPMAPS = XR_MASK_ID(FlagType, 6),  // no mipmaps by default
+  F_TEXTURE_CUBE = XR_MASK_ID(FlagType, 7),
 
   F_STATE_NONE = 0,
-  F_STATE_DEPTH_TEST = XR_MASK_ID(uint32_t, 0), // off by default
-  F_STATE_DEPTH_WRITE = XR_MASK_ID(uint32_t, 1), // off by default
-  F_STATE_ALPHA_BLEND = XR_MASK_ID(uint32_t, 2), // off by default
-  F_STATE_CULL_BACK = XR_MASK_ID(uint32_t, 3),  // no culling by default
-  F_STATE_CULL_FRONT = XR_MASK_ID(uint32_t, 4), // only points and lines drawn when F_STATE_CULL_BACK | F_STATE_CULL_FRONT set
-  F_STATE_SCISSOR_TEST = XR_MASK_ID(uint32_t, 5),
-  F_STATE_WIREFRAME = XR_MASK_ID(uint32_t, 6),
+  F_STATE_DEPTH_TEST = XR_MASK_ID(FlagType, 0), // off by default
+  F_STATE_DEPTH_WRITE = XR_MASK_ID(FlagType, 1), // off by default
+  F_STATE_ALPHA_BLEND = XR_MASK_ID(FlagType, 2), // off by default
+  F_STATE_CULL_BACK = XR_MASK_ID(FlagType, 3),  // no culling by default
+  F_STATE_CULL_FRONT = XR_MASK_ID(FlagType, 4), // only points and lines drawn when F_STATE_CULL_BACK | F_STATE_CULL_FRONT set
+  F_STATE_SCISSOR_TEST = XR_MASK_ID(FlagType, 5),
+  F_STATE_WIREFRAME = XR_MASK_ID(FlagType, 6),
+
+  // Blend factor flags - Use BlendFactorToState() to calculate state flags.
+  F_STATE_BLENDF_BASE_SHIFT = 16,
+  F_STATE_BLENDF_DST_SHIFT = 8,
+  F_STATE_BLENDF_ALPHA_SHIFT = 4,
+  F_STATE_BLENDF_MASK = 0xffffu << F_STATE_BLENDF_BASE_SHIFT,
 
   F_CLEAR_NONE = 0,
-  F_CLEAR_COLOR = XR_MASK_ID(uint32_t, 0),
-  F_CLEAR_DEPTH = XR_MASK_ID(uint32_t, 1),
-  F_CLEAR_STENCIL = XR_MASK_ID(uint32_t, 2),
+  F_CLEAR_COLOR = XR_MASK_ID(FlagType, 0),
+  F_CLEAR_DEPTH = XR_MASK_ID(FlagType, 1),
+  F_CLEAR_STENCIL = XR_MASK_ID(FlagType, 2),
 };
 
 //=============================================================================
@@ -159,7 +191,7 @@ struct TextureInfo
   uint16_t height = 0;
   uint16_t depth = 0;
   uint8_t mipCount = 0;
-  uint32_t flags = F_TEXTURE_NONE;
+  FlagType flags = F_TEXTURE_NONE;
 };
 
 //=============================================================================
@@ -230,6 +262,27 @@ struct FrameBufferAttachment
 };
 
 //=============================================================================
+///@brief Calculates the blend factor from the given BlendFactor values for
+/// separate source RGB and alpha, and destination RGB and alpha.
+constexpr FlagType BlendFactorToState(BlendFactor::Value srcRgb,
+  BlendFactor::Value srcA, BlendFactor::Value dstRgb, BlendFactor::Value dstA)
+{
+  return (uint32_t(srcRgb) << F_STATE_BLENDF_BASE_SHIFT) |
+    (uint32_t(srcA) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_ALPHA_SHIFT)) |
+    (uint32_t(dstRgb) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT)) |
+    (uint32_t(dstA) << (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT +
+      F_STATE_BLENDF_ALPHA_SHIFT));
+}
+
+///@brief Calculates the blend factor from the given BlendFactor values for
+/// source RGBA and destination RGBA.
+constexpr FlagType BlendFactorToState(BlendFactor::Value srcRgba,
+  BlendFactor::Value dstRgba)
+{
+  return BlendFactorToState(srcRgba, srcRgba, dstRgba, dstRgba);
+}
+
+//=============================================================================
 ///@brief Initialises Gfx with the given Gfx::Context, which the client should
 /// get from Device. Depending on implementation, this may be called from a
 /// thread that you intend to use as your rendering thread, and in one such
@@ -263,7 +316,7 @@ void Release(VertexFormatHandle h);
 ///@brief Creates a vertex buffer with the given format, data and
 /// options.
 VertexBufferHandle  CreateVertexBuffer(VertexFormatHandle hFormat,
-  Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
+  Buffer const& buffer, FlagType flags = F_BUFFER_NONE);
 
 void Release(VertexBufferHandle h);
 
@@ -275,21 +328,21 @@ void Release(InstanceDataBufferHandle h);
 
 ///@brief Creates an index buffer with the given format, data and
 /// options.
-IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, uint32_t flags = F_BUFFER_NONE);
+IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, FlagType flags = F_BUFFER_NONE);
 
 void Release(IndexBufferHandle h);
 
 ///@brief Creates a texture with the given parameters and texel data in @a buffer.
 ///@note The texel data isn't kept around by Gfx.
 TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-  uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
+  uint32_t height, uint32_t depth, FlagType flags, Buffer const* buffer,
   size_t numBuffers = 1);
 
 ///@brief Creates a texture width the given parameters and no texel data. Such
 /// a texture may be suitable for a render target (framebuffer attachment).
 ///@note @a format may only be one of the non-compressed ones.
 TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-  uint32_t height, uint32_t depth, uint32_t flags);
+  uint32_t height, uint32_t depth, FlagType flags);
 
 // default textures.
 TextureHandle GetDefaultTexture2D();
@@ -310,7 +363,7 @@ FrameBufferHandle GetDefaultFrameBuffer();
 /// Such a frame buffer may be suitable for use with ReadFrameBuffer() only,
 /// since there is no way to access its attachments' texture handle.
 FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width,
-  uint32_t height, uint32_t flags);
+  uint32_t height, FlagType flags);
 
 ///@brief Creates a render target, attaching the given @a hTextures. If
 /// @a ownTextures is set, the render target assumes ownership, i.e.
@@ -390,8 +443,12 @@ void SetUniform(UniformHandle h, uint8_t numElems, void const* data);
 ///@brief Binds the given texture for a texture stage.
 void SetTexture(TextureHandle h, uint32_t stage = 0);
 
-///@brief Sets render state. See the F_STATE_... flags.
-void SetState(uint32_t flags = F_STATE_NONE);
+///@brief Sets render state. See the F_STATE_* flags and also F_BLENDF_* values
+/// and BlendFactorToState().
+///@note If blend factor state flags were not set, the blend function is not
+/// updated. Default is source RGBA * source alpha, destination RGBA * (1 -
+/// source alpha).
+void SetState(FlagType flags = F_STATE_NONE);
 
 ///@brief Sets instance data to be used for the subsequent Draw calls.
 void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count);
@@ -412,7 +469,7 @@ void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive primitive, ui
 
 ///@brief Clears the given buffers of the currently bound frame buffer to the
 /// specified values.
-void Clear(uint32_t flags, Color color = Color(0xff000000), float depth = 1.0f,
+void Clear(FlagType flags, Color color = Color(0xff000000), float depth = 1.0f,
   uint8_t stencil = 0x00);
 
 ///@brief Flushes the pipeline and calls all callbacks registered with

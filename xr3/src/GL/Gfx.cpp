@@ -90,6 +90,42 @@ const GLenum kPrimitiveTypes[] =
 };
 
 //=============================================================================
+const GLenum kBlendFactors[] =
+{
+  GLenum(-1),
+  GL_ZERO,
+  GL_ONE,
+  GL_SRC_COLOR,
+  GL_ONE_MINUS_SRC_COLOR,
+  GL_SRC_ALPHA,
+  GL_ONE_MINUS_SRC_ALPHA,
+  GL_DST_COLOR,
+  GL_ONE_MINUS_DST_COLOR,
+  GL_DST_ALPHA,
+  GL_ONE_MINUS_DST_ALPHA,
+};
+
+void GetBlendFactors(FlagType flags, GLenum blendFactors[4])
+{
+  BlendFactor::Type f = (flags >> F_STATE_BLENDF_BASE_SHIFT) & 0xf;
+  XR_ASSERT(Gfx, f < XR_ARRAY_SIZE(kBlendFactors));
+  blendFactors[0] = kBlendFactors[f];
+
+  f = (flags >> (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_ALPHA_SHIFT)) & 0xf;
+  XR_ASSERT(Gfx, f < XR_ARRAY_SIZE(kBlendFactors));
+  blendFactors[1] = kBlendFactors[f];
+
+  f = (flags >> (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT)) & 0xf;
+  XR_ASSERT(Gfx, f < XR_ARRAY_SIZE(kBlendFactors));
+  blendFactors[2] = kBlendFactors[f];
+
+  f = (flags >> (F_STATE_BLENDF_BASE_SHIFT + F_STATE_BLENDF_DST_SHIFT +
+    F_STATE_BLENDF_ALPHA_SHIFT)) & 0xf;
+  XR_ASSERT(Gfx, f < XR_ARRAY_SIZE(kBlendFactors));
+  blendFactors[3] = kBlendFactors[f];
+}
+
+//=============================================================================
 struct ExtensionGL
 {
   enum Name
@@ -132,11 +168,11 @@ struct VertexBufferObject : ResourceGL
   static uint32_t EncodeInstanceDataStride(uint16_t stride)
   {
     return F_BUFFER_INSTANCE_DATA |
-      (stride << (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(stride))));
+      (stride << (XR_BITSIZEOF(FlagType) - (1 + XR_BITSIZEOF(stride))));
   }
 
   VertexFormatHandle hFormat;
-  uint32_t flags = F_BUFFER_NONE;
+  FlagType flags = F_BUFFER_NONE;
   GLenum  target;
 
   void Bind() const
@@ -148,7 +184,7 @@ struct VertexBufferObject : ResourceGL
   {
     XR_ASSERT(Gfx, CheckAllMaskBits(flags, F_BUFFER_INSTANCE_DATA));
     return (flags & ~F_BUFFER_INSTANCE_DATA) >>
-      (XR_BITSIZEOF(Flags) - (1 + XR_BITSIZEOF(uint16_t)));
+      (XR_BITSIZEOF(FlagType) - (1 + XR_BITSIZEOF(uint16_t)));
   }
 };
 
@@ -156,7 +192,7 @@ struct VertexBufferObject : ResourceGL
 struct IndexBufferObject : ResourceGL
 {
   uint8_t indexSize = 0;
-  uint32_t flags = F_BUFFER_NONE;
+  FlagType flags = F_BUFFER_NONE;
   GLenum type;
 
   void Bind() const
@@ -546,6 +582,10 @@ struct Impl
 
     XR_GL_CALL(glDepthFunc(GL_LEQUAL)); // TODO: give it to state
 
+    m_activeState = (m_activeState & ~F_STATE_BLENDF_MASK) |
+      BlendFactorToState(BlendFactor::SRC_ALPHA, BlendFactor::INV_SRC_ALPHA);
+    XR_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
     if (context->GetGlVersionMajor() >= 3 ||
       s_extensions[ExtensionGL::OES_vertex_array_object].supported ||
       s_extensions[ExtensionGL::ARB_vertex_array_object].supported)
@@ -654,7 +694,7 @@ struct Impl
     }
   }
 
-  VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
+  VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, FlagType flags)
   {
     XR_ASSERT(Gfx, hFormat.IsValid());
     ++m_vertexFormats[hFormat.id].refCount;
@@ -679,7 +719,7 @@ struct Impl
     m_vbos.server.Release(h.id);
   }
 
-  IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
+  IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, FlagType flags)
   {
     IndexBufferHandle h;
     h.id = uint16_t(m_ibos.server.Acquire());
@@ -716,7 +756,7 @@ struct Impl
     // for instance data.
 
     // Encode stride in flags.
-    uint32_t flags = VertexBufferObject::EncodeInstanceDataStride(stride);
+    FlagType flags = VertexBufferObject::EncodeInstanceDataStride(stride);
 
     InstanceDataBufferHandle h;
     h.id = CreateVertexBufferInternal(VertexFormatHandle(), buffer, flags).id;
@@ -732,7 +772,7 @@ struct Impl
   }
 
   TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-    uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
+    uint32_t height, uint32_t depth, FlagType flags, Buffer const* buffer,
     size_t numBuffers)
   {
     XR_ASSERT(Gfx, width > 0);
@@ -849,7 +889,7 @@ struct Impl
   }
 
   FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
-    uint32_t flags)
+    FlagType flags)
   {
     TextureHandle h = Gfx::CreateTexture(format, width, height, 0, flags);
     return CreateFrameBuffer(1, &h, true);
@@ -1266,7 +1306,7 @@ struct Impl
     m_programs.server.Release(h.id);
   }
 
-  void ClearBuffer(uint32_t flags, Color const& color, float depth, uint8_t stencil)
+  void ClearBuffer(FlagType flags, Color const& color, float depth, uint8_t stencil)
   {
     GLbitfield flagls = 0;
     if (CheckAllMaskBits(flags, F_CLEAR_COLOR))
@@ -1338,7 +1378,7 @@ struct Impl
     }
   }
 
-  void SetState(uint32_t flags)
+  void SetState(FlagType flags)
   {
     const uint32_t deltaFlags = flags ^ m_activeState;
 
@@ -1359,11 +1399,31 @@ struct Impl
     {
       bool alphaBlend = CheckAllMaskBits(flags, F_STATE_ALPHA_BLEND);
       gl::SwitchEnabledState(GL_BLEND, alphaBlend);
-      if (alphaBlend)
+    }
+
+    // blending function -- only change if it was set in the given state and is
+    // different from the current one.
+    if (CheckAnyMaskBits(flags, F_STATE_BLENDF_MASK) &&
+      (flags & F_STATE_BLENDF_MASK) != (m_activeState & F_STATE_BLENDF_MASK))
+    {
+      GLenum  bfs[4];
+      GetBlendFactors(flags, bfs);
+
+      if (bfs[1] == kBlendFactors[0])  // default src alpha to src rgb.
       {
-        // TODO: improved blend func support
-        XR_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        bfs[1] = bfs[0];
       }
+
+      if (bfs[3] == kBlendFactors[0])  // default dst alpha to dst rgb.
+      {
+        bfs[3] = bfs[2];
+      }
+
+      XR_GL_CALL(glBlendFuncSeparate(bfs[0], bfs[1], bfs[2], bfs[3]));
+    }
+    else
+    {
+      flags = (flags & ~F_STATE_BLENDF_MASK) | (m_activeState & F_STATE_BLENDF_MASK);
     }
 
     // culling
@@ -1539,7 +1599,7 @@ private:
   ServicedArray<Program, 512> m_programs;
 
   GLuint m_vao = 0;
-  uint32_t m_activeState = F_STATE_NONE;
+  FlagType m_activeState = F_STATE_NONE;
 
   InstanceDataBufferHandle m_hActiveInstDataBuffer;
   uint16_t m_activeInstDataBufferStride = 0;
@@ -1554,7 +1614,7 @@ private:
   std::vector<CallbackObject> m_onExit;
 
   // internal
-  VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
+  VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, FlagType flags)
   {
     VertexBufferHandle h;
     h.id = uint16_t(m_vbos.server.Acquire());
@@ -1678,7 +1738,7 @@ void Release(VertexFormatHandle h)
 }
 
 //=============================================================================
-VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, uint32_t flags)
+VertexBufferHandle CreateVertexBuffer(VertexFormatHandle hFormat, Buffer const& buffer, FlagType flags)
 {
   return s_impl->CreateVertexBuffer(hFormat, buffer, flags);
 }
@@ -1693,7 +1753,7 @@ void Release(VertexBufferHandle h)
 }
 
 //=============================================================================
-IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, uint32_t flags)
+IndexBufferHandle CreateIndexBuffer(Buffer const& buffer, FlagType flags)
 {
   return s_impl->CreateIndexBuffer(buffer, flags);
 }
@@ -1724,14 +1784,14 @@ void Release(InstanceDataBufferHandle h)
 
 //=============================================================================
 TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-  uint32_t height, uint32_t depth, uint32_t flags, Buffer const* buffer,
+  uint32_t height, uint32_t depth, FlagType flags, Buffer const* buffer,
   size_t numBuffers)
 {
   return s_impl->CreateTexture(format, width, height, depth, flags, buffer, numBuffers);
 }
 
 //=============================================================================
-TextureHandle CreateTexture(TextureFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t flags)
+TextureHandle CreateTexture(TextureFormat format, uint32_t width, uint32_t height, uint32_t depth, FlagType flags)
 {
   XR_ASSERTMSG(Gfx, !kTextureFormats[static_cast<int>(format)].compressed,
     ("Cannot create compressed texture without buffer."));
@@ -1780,7 +1840,7 @@ FrameBufferHandle GetDefaultFrameBuffer()
 
 //=============================================================================
 FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
-  uint32_t flags)
+  FlagType flags)
 {
   return s_impl->CreateFrameBuffer(format, width, height, flags);
 }
@@ -1866,7 +1926,7 @@ void Release(ProgramHandle h)
 }
 
 //=============================================================================
-void Clear(uint32_t flags, Color color, float depth, uint8_t stencil)
+void Clear(FlagType flags, Color color, float depth, uint8_t stencil)
 {
   s_impl->ClearBuffer(flags, color, depth, stencil);
 }
@@ -1903,7 +1963,7 @@ void SetTexture(TextureHandle h, uint32_t stage)
 }
 
 //==============================================================================
-void SetState(uint32_t flags)
+void SetState(FlagType flags)
 {
   s_impl->SetState(flags);
 }

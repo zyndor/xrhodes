@@ -33,12 +33,20 @@ struct SerializedTextureStage
 };
 
 #ifdef ENABLE_ASSET_BUILDING
+const std::string kBlendFactorKeys[4] = {
+  "srcColor",
+  "dstColor",
+  "srcAlpha",
+  "dstAlpha",
+};
+
 static class MaterialBuilder : public Asset::Builder
 {
 public:
   /*
     {
       state: { depthWrite, depthTest, alphaBlend },
+      blendFactors: { srcAlpha, invSrcAlpha },
       textures: {
         0: "textures/shark/albedo.png",
         3: "textures/shark/roughness.png"
@@ -52,6 +60,7 @@ public:
   : Builder(Material::kTypeId),
     m_states()
   {
+    m_states.reserve(6);
     m_states[Hash::String32("depthTest")] = Gfx::F_STATE_DEPTH_TEST;
     m_states[Hash::String32("depthWrite")] = Gfx::F_STATE_DEPTH_WRITE;
     m_states[Hash::String32("alphaBlend")] = Gfx::F_STATE_ALPHA_BLEND;
@@ -60,6 +69,18 @@ public:
 
     // experimental
     m_states[Hash::String32("wireframe")] = Gfx::F_STATE_WIREFRAME;
+
+    m_blendFactors.reserve(10);
+    m_blendFactors[Hash::String32("zero")] = Gfx::BlendFactor::ZERO;
+    m_blendFactors[Hash::String32("one")] = Gfx::BlendFactor::ONE;
+    m_blendFactors[Hash::String32("srcColor")] = Gfx::BlendFactor::SRC_COLOR;
+    m_blendFactors[Hash::String32("invSrcColor")] = Gfx::BlendFactor::INV_SRC_COLOR;
+    m_blendFactors[Hash::String32("srcAlpha")] = Gfx::BlendFactor::SRC_ALPHA;
+    m_blendFactors[Hash::String32("invSrcAlpha")] = Gfx::BlendFactor::INV_SRC_ALPHA;
+    m_blendFactors[Hash::String32("dstColor")] = Gfx::BlendFactor::DST_COLOR;
+    m_blendFactors[Hash::String32("invDstColor")] = Gfx::BlendFactor::INV_DST_COLOR;
+    m_blendFactors[Hash::String32("dstAlpha")] = Gfx::BlendFactor::DST_ALPHA;
+    m_blendFactors[Hash::String32("invDstAlpha")] = Gfx::BlendFactor::INV_DST_ALPHA;
   }
 
   bool Build(char const* rawNameExt, Buffer buffer,
@@ -71,31 +92,31 @@ public:
     LTRACEIF(!success,
       ("%s: failed to parse XON somewhere around row %d, column %d.", rawNameExt,
         state.row, state.column));
-    if (success)  // process stage flags
+    if (success)  // process state flags
     {
-      uint32_t flags = 0;
-      try {
-        auto& state = root->Get("state");
-        switch (state.GetType())
+      Gfx::FlagType stateFlags = Gfx::F_STATE_NONE;
+      if(auto state = root->TryGet("state"))
+      {
+        switch (state->GetType())
         {
         case XonEntity::Type::Value:
           {
-            auto& xonValue = state.ToValue();
-            if(!InterpretState(xonValue.GetString(), flags))
+            auto stateValue = state->ToValue().GetString();
+            if (!InterpretState(stateValue, stateFlags))
             {
-              LTRACE(("%s: Unsupported state: %s", rawNameExt, xonValue.GetString()));
+              LTRACE(("%s: Unsupported state: %s", rawNameExt, stateValue));
             }
           }
           break;
 
         case XonEntity::Type::Object:
           {
-            auto& xonObject = state.ToObject();
-            for (size_t i = 0; i < xonObject.GetNumElements(); ++i)
+            auto& stateObject = state->ToObject();
+            for (size_t i = 0; i < stateObject.GetNumElements(); ++i)
             {
-              auto& elem = xonObject[i];
+              auto& elem = stateObject[i];
               if (elem.GetType() == XonEntity::Type::Value &&
-                !InterpretState(elem.ToValue().GetString(), flags))
+                !InterpretState(elem.ToValue().GetString(), stateFlags))
               {
                 LTRACE(("%s: Unsupported state: %s", rawNameExt, elem.ToValue().GetString()));
               }
@@ -104,11 +125,73 @@ public:
           break;
         }
       }
-      catch (XonEntity::Exception const&)
-      {}  // ignore missing state.
 
-      success = WriteBinaryStream(flags, data);
-      LTRACEIF(!success, ("%s: failed to write state.", rawNameExt));
+      if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_ALPHA_BLEND))
+      {
+        // blendFactors -- doesn't have to exist, but it has to be an
+        // object with specific value elements.
+        try {
+          auto& blendFactors = root->Get("blendFactors").ToObject();
+          XonEntity* xon[4] = {
+            blendFactors.TryGet(kBlendFactorKeys[0]),
+            blendFactors.TryGet(kBlendFactorKeys[1]),
+            blendFactors.TryGet(kBlendFactorKeys[2]),
+            blendFactors.TryGet(kBlendFactorKeys[3]),
+          };
+
+          Gfx::BlendFactor::Value values[4];
+          // Interpret color blend factors. These must exist.
+          for (int i = 0; success && i < 2; ++i)
+          {
+            success = xon[i] && InterpretBlendFactor(xon[i]->ToValue().GetString(), values[i]);
+            if (success)
+            {
+              values[i + 2] = values[i];  // default alpha blend factors to corresponding rgb blend factors.
+            }
+            else
+            {
+              LTRACE(("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i]));
+            }
+          }
+
+          // Interpret alpha blend factors. These are optional, but must be valid if specified.
+          for (int i = 2; success && i < 4; ++i)
+          {
+            if (xon[i])
+            {
+              if (auto stringValue = xon[i]->ToValue().GetString())
+              {
+                success = InterpretBlendFactor(stringValue, values[i]);
+                LTRACEIF(!success, ("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i]));
+              }
+            }
+          }
+
+          if (success)
+          {
+            stateFlags |= Gfx::BlendFactorToState(values[0], values[2], values[1], values[3]);
+          }
+        }
+        catch (XonEntity::Exception const& e)
+        {
+          if (e.type == XonEntity::Exception::Type::InvalidType)
+          {
+            success = false;
+            LTRACE(("%s: invalid blend factors definition, error: %s", rawNameExt, e.what()));
+          }
+        }
+      }
+      else if(!root->TryGet("blendFactors"))
+      {
+        LTRACE(("%s: ignoring blend factors defined for opaque material.",
+          rawNameExt));
+      }
+
+      if (success)
+      {
+        success = WriteBinaryStream(stateFlags, data);
+        LTRACEIF(!success, ("%s: failed to write state.", rawNameExt));
+      }
     }
 
     if (success)  // process texture stages
@@ -134,9 +217,9 @@ public:
           stages.reserve(std::min(texturesObject.GetNumElements(),
             static_cast<size_t>(Material::kMaxTextureStages)));
 
-          std::vector<std::string> keys;
-          static_cast<XonObject&>(textures).GetKeys(keys);
-          for (auto &key: keys)
+          std::vector<std::string> kBlendFactorKeys;
+          static_cast<XonObject&>(textures).GetKeys(kBlendFactorKeys);
+          for (auto &key: kBlendFactorKeys)
           {
             uint32_t stage; // avoid interpretation as character.
             if (StringTo(key.c_str(), stage) &&
@@ -208,15 +291,28 @@ public:
     return success;
   }
 
+protected:
   std::unordered_map<uint32_t, uint32_t> m_states;
+  std::unordered_map<uint32_t, Gfx::BlendFactor::Value> m_blendFactors;
 
-  bool InterpretState(char const* value, uint32_t& flags) const
+  bool InterpretState(char const* value, Gfx::FlagType& flags) const
   {
     auto iFind = m_states.find(Hash::String32(value));
-    bool success = iFind != m_states.end();
+    const bool success = iFind != m_states.end();
     if (success)
     {
       flags |= iFind->second;
+    }
+    return success;
+  }
+
+  bool InterpretBlendFactor(char const* value, Gfx::BlendFactor::Value& blendFactor) const
+  {
+    auto iFind = m_blendFactors.find(Hash::String32(value));
+    const bool success = iFind != m_blendFactors.end();
+    if (success)
+    {
+      blendFactor = iFind->second;
     }
     return success;
   }
@@ -232,7 +328,7 @@ uint32_t Material::GetStateFlags() const
 }
 
 //==============================================================================
-void Material::OverrideStateFlags(uint32_t clear, uint32_t set)
+void Material::OverrideStateFlags(Gfx::FlagType clear, Gfx::FlagType set)
 {
   m_stateFlags = (m_stateFlags & ~clear) | set;
 }
@@ -327,7 +423,7 @@ bool Material::OnLoaded(Buffer buffer)
 //==============================================================================
 void Material::OnUnload()
 {
-  m_stateFlags = 0;
+  m_stateFlags = Gfx::F_STATE_NONE;
   for (auto i = 0; i < kMaxTextureStages; ++i)
   {
     m_textureStages[i].Reset(nullptr);
