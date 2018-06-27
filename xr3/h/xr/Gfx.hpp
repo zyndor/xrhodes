@@ -31,6 +31,7 @@ using Type = uint8_t;
 /// aspects of incoming fragments with that already in the frame buffer.
 /// For depth test enabled states, you may use DepthFuncToState() to obtain a
 /// bit pattern that can be masked into the value passed into SetState().
+/// For stencil test, refer to StencilOp.
 enum Value: Type
 {
   FAIL = 0x01,
@@ -69,6 +70,29 @@ enum Value
 } // BlendFactor
 
 //=============================================================================
+namespace StencilOp
+{
+using Type = uint8_t;
+
+///@brief These values control what's written to the stencil buffer in stencil
+/// test enabled states' three scenarios of a fragment 1, failing the test, 2,
+/// passing stencil test but failing depth test, and 3, passing both. Use
+/// StencilToState() with these to obtain a bit pattern that can be passed to
+/// SetStencilState().
+enum Value: Type
+{
+  KEEP = 0x1,
+  ZERO = 0x2,
+  INCR = 0x3,
+  INCR_WRAP = 0x4,
+  DECR = 0x5,
+  DECR_WRAP = 0x6,
+  INVERT = 0x7,
+  REPLACE = 0x8,
+};
+} // StencilOp
+
+//=============================================================================
 using FlagType = uint32_t;
 
 enum : FlagType
@@ -93,6 +117,7 @@ enum : FlagType
   F_STATE_CULL_FRONT = XR_MASK_ID(FlagType, 4), // only points and lines drawn when F_STATE_CULL_BACK | F_STATE_CULL_FRONT set
   F_STATE_SCISSOR_TEST = XR_MASK_ID(FlagType, 5),
   F_STATE_WIREFRAME = XR_MASK_ID(FlagType, 6),
+  F_STATE_STENCIL_TEST = XR_MASK_ID(FlagType, 8),
 
   // Blend factor flags - Use BlendFactorToState() to calculate state flags.
   F_STATE_BLENDF_BASE_SHIFT = 16,
@@ -102,6 +127,21 @@ enum : FlagType
 
   F_STATE_DEPTH_COMPF_SHIFT = 12,
   F_STATE_DEPTH_COMPF_MASK = 0x0fu << F_STATE_DEPTH_COMPF_SHIFT,
+
+  F_STENCIL_SAME = FlagType(0xffffffff),
+  F_STENCIL_REF_MASK            = 0x000000ffu,
+  F_STENCIL_MASK_SHIFT          = 8,
+  F_STENCIL_MASK_MASK           = 0x0000ff00u,
+  F_STENCIL_COMPF_SHIFT         = 16,
+  F_STENCIL_COMPF_MASK          = 0x000f0000u,
+  F_STENCIL_FAIL_OP_SHIFT       = 20,
+  F_STENCIL_FAIL_OP_MASK        = 0x00f00000u,
+  F_STENCIL_DEPTH_FAIL_OP_SHIFT = 24,
+  F_STENCIL_DEPTH_FAIL_OP_MASK  = 0x0f000000u,
+  F_STENCIL_ALL_PASS_OP_SHIFT   = 28,
+  F_STENCIL_ALL_PASS_OP_MASK    = 0xf0000000u,
+  F_STENCIL_OP_MASK = F_STENCIL_FAIL_OP_MASK | F_STENCIL_DEPTH_FAIL_OP_MASK |
+    F_STENCIL_ALL_PASS_OP_MASK,
 
   F_CLEAR_NONE = 0,
   F_CLEAR_COLOR = XR_MASK_ID(FlagType, 0),
@@ -314,13 +354,34 @@ constexpr FlagType DepthFuncToState(Comparison::Value depthFunc)
   return FlagType(depthFunc) << F_STATE_DEPTH_COMPF_SHIFT;
 }
 
+///@brief Calculates a stencil state flag for the given reference value @a ref,
+/// @a mask, and operations which are one of the F_STENCILOP_* values.
+///@param ref Stencil reference value.
+///@param mask Stencil mask value.
+///@param comp Comparison function for source and destination stencil value.
+///@param sFail Operation for when the stencil test fails.
+///@param dFail Operation for when the stencil test passes, but depth test fails.
+/// (Ignored when the depth test is disabled).
+///@param sdPass Operation for when both stencil and depth tests pass. (Disabled
+/// depth test is assumed to always pass.)
+constexpr FlagType StencilToState(uint8_t ref, uint8_t mask,
+  Comparison::Value comp, StencilOp::Value sFail, StencilOp::Value dFail,
+  StencilOp::Value sdPass)
+{
+  return FlagType(ref) | (FlagType(mask) << F_STENCIL_MASK_SHIFT) |
+    (FlagType(comp) << F_STENCIL_COMPF_SHIFT) |
+    (FlagType(sFail) << F_STENCIL_FAIL_OP_SHIFT) |
+    (FlagType(dFail) << F_STENCIL_DEPTH_FAIL_OP_SHIFT) |
+    (FlagType(sdPass) << F_STENCIL_ALL_PASS_OP_SHIFT);
+}
+
 //=============================================================================
 ///@brief Initialises Gfx with the given Gfx::Context, which the client should
 /// get from Device. Depending on implementation, this may be called from a
 /// thread that you intend to use as your rendering thread, and in one such
 /// scenario - still depending on implementation -, 1, the main thread should
 /// wait for the initialization to complete, and 2, you are expected to make
-/// all subsequent Gfx calls from the same thread Init() was called from.
+/// all subsequent Gfx calls from the same thread which Init() was called from.
 void Init(Context* context);
 
 ///@return Logical width of rendering area in pixels.
@@ -481,6 +542,11 @@ void SetTexture(TextureHandle h, uint32_t stage = 0);
 /// updated. Default is source RGBA * source alpha, destination RGBA * (1 -
 /// source alpha).
 void SetState(FlagType flags = F_STATE_NONE);
+
+///@brief Sets the stenciling state for @a front and @a back facing primitives.
+/// Passing F_STENCIL_SAME as the value for @a back will copy the settings of
+/// @a front.
+void SetStencilState(FlagType front, FlagType back = F_STENCIL_SAME);
 
 ///@brief Sets instance data to be used for the subsequent Draw calls.
 void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count);

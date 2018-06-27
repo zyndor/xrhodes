@@ -146,6 +146,32 @@ GLenum GetDepthFunc(FlagType flags)
   return kComparisons[c];
 }
 
+constexpr GLenum GetStencilFunc(FlagType flags)
+{
+  return kComparisons[(flags & F_STENCIL_COMPF_MASK) >> F_STENCIL_COMPF_SHIFT];
+}
+
+//=============================================================================
+const GLenum kStencilOps[] =
+{
+  GLenum(-1),
+  GL_KEEP,
+  GL_ZERO,
+  GL_INCR,
+  GL_INCR_WRAP,
+  GL_DECR,
+  GL_DECR_WRAP,
+  GL_INVERT,
+  GL_REPLACE
+};
+
+void GetStencilOps(FlagType flags, GLenum ops[3])
+{
+  ops[0] = (flags & F_STENCIL_FAIL_OP_MASK) >> F_STENCIL_FAIL_OP_SHIFT;
+  ops[1] = (flags & F_STENCIL_DEPTH_FAIL_OP_MASK) >> F_STENCIL_DEPTH_FAIL_OP_SHIFT;
+  ops[2] = (flags & F_STENCIL_ALL_PASS_OP_MASK) >> F_STENCIL_ALL_PASS_OP_SHIFT;
+}
+
 //=============================================================================
 struct ExtensionGL
 {
@@ -608,6 +634,13 @@ struct Impl
     m_activeState = (m_activeState & ~F_STATE_BLENDF_MASK) |
       BlendFactorToState(BlendFactor::SRC_ALPHA, BlendFactor::INV_SRC_ALPHA);
     XR_GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    const FlagType activeStencil = StencilToState(0x00, 0xff, Comparison::FAIL,
+      StencilOp::KEEP, StencilOp::KEEP, StencilOp::KEEP);
+    m_activeStencil[0] = activeStencil;
+    m_activeStencil[1] = activeStencil;
+    XR_GL_CALL(glStencilFuncSeparate(GL_FRONT_AND_BACK, GL_NEVER, 0x00, 0xff));
+    XR_GL_CALL(glStencilOpSeparate(GL_FRONT_AND_BACK, GL_KEEP, GL_KEEP, GL_KEEP));
 
     if (context->GetGlVersionMajor() >= 3 ||
       s_extensions[ExtensionGL::OES_vertex_array_object].supported ||
@@ -1484,13 +1517,6 @@ struct Impl
       }
     }
 
-    // scissor test
-    if (CheckAllMaskBits(deltaFlags, F_STATE_SCISSOR_TEST))
-    {
-      XR_GL_CALL(gl::SwitchEnabledState(GL_SCISSOR_TEST,
-        CheckAllMaskBits(flags, F_STATE_SCISSOR_TEST)));
-    }
-
     // wireframe
     if (CheckAllMaskBits(deltaFlags, F_STATE_WIREFRAME))
     {
@@ -1498,7 +1524,74 @@ struct Impl
         CheckAllMaskBits(flags, F_STATE_WIREFRAME) ? GL_LINE : GL_FILL));
     }
 
+    // stencil test
+    if (CheckAllMaskBits(deltaFlags, F_STATE_STENCIL_TEST))
+    {
+      XR_GL_CALL(gl::SwitchEnabledState(GL_STENCIL_TEST,
+        CheckAllMaskBits(flags, F_STATE_STENCIL_TEST)));
+    }
+
+    // scissor test
+    if (CheckAllMaskBits(deltaFlags, F_STATE_SCISSOR_TEST))
+    {
+      XR_GL_CALL(gl::SwitchEnabledState(GL_SCISSOR_TEST,
+        CheckAllMaskBits(flags, F_STATE_SCISSOR_TEST)));
+    }
+
     m_activeState = flags;
+  }
+
+  void SetStencilState(FlagType front, FlagType back)
+  {
+    if (back == F_STENCIL_SAME)
+    {
+      back = front;
+    }
+
+    const GLenum faces[] = { GL_FRONT, GL_BACK };
+    int i = 0;
+    for (auto state: { front, back })
+    {
+      const FlagType activeStencil = m_activeStencil[i];
+      FlagType delta = state ^ activeStencil;
+      if (CheckAnyMaskBits(delta, F_STENCIL_REF_MASK | F_STENCIL_MASK_MASK |
+        F_STENCIL_COMPF_MASK))
+      {
+        // Try to fall back on previously set stencil function if no value given.
+        if (!CheckAnyMaskBits(state, F_STENCIL_COMPF_MASK))
+        {
+          state |= activeStencil & F_STENCIL_COMPF_MASK;
+        }
+
+        GLenum stencilFunc = GetStencilFunc(state);
+        XR_GL_CALL(glStencilFuncSeparate(faces[i], stencilFunc,
+          state & F_STENCIL_REF_MASK,
+          (state & F_STENCIL_MASK_MASK) >> F_STENCIL_MASK_SHIFT));
+      }
+
+      if (CheckAnyMaskBits(delta, F_STENCIL_OP_MASK))
+      {
+        // For those operations that weren't given, try to fall back on previously
+        // set value.
+        for (auto opMask: { F_STENCIL_FAIL_OP_MASK, F_STENCIL_DEPTH_FAIL_OP_MASK,
+          F_STENCIL_ALL_PASS_OP_MASK })
+        {
+          if (!CheckAnyMaskBits(state, opMask))
+          {
+            state |= activeStencil & opMask;
+          }
+        }
+
+        GLenum stencilOps[3];
+        GetStencilOps(state, stencilOps);
+
+        XR_GL_CALL(glStencilOpSeparate(faces[i], stencilOps[0], stencilOps[1],
+          stencilOps[2]));
+      }
+
+      m_activeStencil[i] = state;
+      ++i;
+    }
   }
 
   void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count)
@@ -1630,6 +1723,7 @@ private:
 
   GLuint m_vao = 0;
   FlagType m_activeState = F_STATE_NONE;
+  FlagType m_activeStencil[2] = { };
 
   InstanceDataBufferHandle m_hActiveInstDataBuffer;
   uint16_t m_activeInstDataBufferStride = 0;
@@ -1996,6 +2090,12 @@ void SetTexture(TextureHandle h, uint32_t stage)
 void SetState(FlagType flags)
 {
   s_impl->SetState(flags);
+}
+
+//==============================================================================
+void SetStencilState(FlagType front, FlagType back)
+{
+  s_impl->SetStencilState(front, back);
 }
 
 //==============================================================================
