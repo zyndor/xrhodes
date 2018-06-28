@@ -54,7 +54,7 @@ void  Screen::Show(ScreenManager& sm, int32_t ms)
 void  Screen::Register()
 {
   XR_ASSERT(Screen, !m_isRegistered);
-  XR_ASSERT(Screen, m_manager != 0);
+  XR_ASSERT(Screen, m_manager != nullptr);
   m_isRegistered = true;
   _Register();
 }
@@ -63,7 +63,7 @@ void  Screen::Register()
 void  Screen::Unregister()
 {
   XR_ASSERT(Screen, m_isRegistered);
-  XR_ASSERT(Screen, m_manager != 0);
+  XR_ASSERT(Screen, m_manager != nullptr);
   m_isRegistered = false;
   _Unregister();
 }
@@ -128,7 +128,7 @@ void  Screen::_MakeActive()
   m_state = S_ACTIVE;
   Register();
 
-  if(m_onBecomeActive != 0)
+  if(m_onBecomeActive)
   {
     (*m_onBecomeActive)(this, m_onBecomeActiveData);
   }
@@ -139,7 +139,7 @@ void  Screen::_MakeHidden()
 {
   m_state = S_HIDDEN;
   _RemoveElements();
-  m_manager = 0;
+  m_manager = nullptr;
 }
 
 } // xr

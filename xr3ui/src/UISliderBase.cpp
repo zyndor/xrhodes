@@ -49,7 +49,7 @@ void UISliderBase::SetPercentage( float percentage )
     percentage = 1.0f;
   }
 
-  float diff(m_percentage - percentage);
+  float diff = m_percentage - percentage;
   if (diff * diff > std::numeric_limits<float>::epsilon())
   {
     m_percentage = percentage;

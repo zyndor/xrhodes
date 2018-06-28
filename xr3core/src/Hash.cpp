@@ -114,7 +114,7 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
 }
 
 //==============================================================================
-uint64_t  s_seed(Hash::kSeed);
+uint64_t s_seed = Hash::kSeed;
 
 //==============================================================================
 void  Hash::SetSeed(uint64_t seed)

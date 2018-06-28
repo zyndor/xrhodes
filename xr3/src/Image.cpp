@@ -421,7 +421,7 @@ bool Image::WritePng(FileWriter& w) const
   png_write_info(pngPtr, infoPtr);
 
   rowPtrs.resize(m_height);
-  const uint32_t stride(m_width * m_bytesPerPixel);
+  const uint32_t stride = m_width * m_bytesPerPixel;
   auto pixelData = const_cast<uint8_t*>(m_bytes.data());  // Sorry, old chap.
   for (uint32_t i = 0; i < m_height; ++i)
   {

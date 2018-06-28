@@ -16,8 +16,7 @@ void  UIEventNotifier::UIPointerActionCallback(void* systemData, void* userData)
   Input::MouseActionEvent *event(static_cast<Input::MouseActionEvent*>(systemData));
 
   bool  zeroHit(!dispatcher->m_actionNotifier.Notify(*event) &&
-    dispatcher->m_onZeroHit != 0);
-
+    dispatcher->m_onZeroHit);
   if (zeroHit)
   {
     (*dispatcher->m_onZeroHit)(*event, dispatcher->m_onZeroHitData);

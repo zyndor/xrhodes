@@ -97,7 +97,7 @@ bool ActorReader<Type>::Read(tinyxml2::XMLElement* xml,
 
     while (xml)
     {
-      const char* actionName(xml->Attribute(kAnimationTags[AnimationTag::NAME]));
+      const char* actionName = xml->Attribute(kAnimationTags[AnimationTag::NAME]);
       success = actionName != nullptr;
       if (!success)
       {
@@ -109,7 +109,7 @@ bool ActorReader<Type>::Read(tinyxml2::XMLElement* xml,
 
       if (success)
       {
-        const uint32_t  hash(xr::Hash::String(actionName));
+        const uint32_t hash = xr::Hash::String(actionName);
         if (actor.actions.find(hash) != actor.actions.end())
         {
           XR_TRACE(ActorReader,

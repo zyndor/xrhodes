@@ -76,7 +76,7 @@ bool  AnimationReader<T>::Read(tinyxml2::XMLElement* xml,
   }
 
   // resource name
-  const char* resourceName(0);
+  const char* resourceName = nullptr;
   if (success)
   {
     resourceName = xml->Attribute(kAnimationTags[AnimationTag::RESOURCE_NAME]);

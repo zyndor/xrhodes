@@ -26,9 +26,9 @@ void Sprite::Slice(AABB base, uint32_t textureWidth, uint32_t textureHeight,
     maxSlices = down * across;
   }
 
-  const float leftStart(base.left);
-  const float width(base.right - base.left);
-  const float height(base.bottom - base.top);
+  const float leftStart = base.left;
+  const float width = base.right - base.left;
+  const float height = base.bottom - base.top;
   decltype(maxSlices) slices = 0;
   for (decltype(down) i = 0; i < down && slices < maxSlices; ++i)
   {

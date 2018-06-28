@@ -14,10 +14,10 @@ namespace xr
 UIButton::UIButton()
 : UIColoredElement(),
   sprites(),
-  onPressed(0),
-  onReleased(0),
-  callbackData(0),
-  m_activeArea(0),
+  onPressed(nullptr),
+  onReleased(nullptr),
+  callbackData(nullptr),
+  m_activeArea(nullptr),
   m_state(MASK_ENABLED),
   m_lastTouch(-1, -1)
 {}
@@ -41,11 +41,11 @@ void UIButton::SetPressed( bool isIt )
 //==============================================================================
 bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
 {
-  const int kRight(CalculateRight());
-  const int kBottom(CalculateBottom());
+  const int kRight = CalculateRight();
+  const int kBottom = CalculateBottom();
 
   bool  isHandled(false);
-  if ((m_activeArea == 0 ||
+  if ((m_activeArea == nullptr ||
       (e.x >= m_activeArea->x &&
         e.y >= m_activeArea->y &&
         e.x < m_activeArea->x + m_activeArea->w &&
@@ -103,7 +103,7 @@ bool  UIButton::OnMouseMotion(const Input::MouseMotionEvent& e )
 void UIButton::Render(IUIRenderer& renderer) const
 {
   auto const spriteId = GetSpriteId();
-  const Sprite* sprite(sprites + spriteId);
+  const Sprite* sprite = sprites + spriteId;
   auto const& material = materials[spriteId];
   XR_ASSERTMSG(UIButton, material != nullptr,
     ("Material[%d] needs to be set before Render().", GetSpriteId()));
@@ -117,7 +117,7 @@ void UIButton::Render(IUIRenderer& renderer) const
 //==============================================================================
 void  UIButton::SetSprites(const Sprite* sprite, float scale)
 {
-  XR_ASSERT(UIButton, sprite != 0);
+  XR_ASSERT(UIButton, sprite != nullptr);
   sprites[S_UP] = sprites[S_DOWN] = sprites[S_OFF] = *sprite;
 
   SetSizeToSprite(scale);
@@ -126,7 +126,7 @@ void  UIButton::SetSprites(const Sprite* sprite, float scale)
 //==============================================================================
 void  UIButton::SetSprites(const Sprite* sprites_[kNumStates], float scale)
 {
-  XR_ASSERT(UIButton, sprites_ != 0);
+  XR_ASSERT(UIButton, sprites_ != nullptr);
   for (int i = 0; i < kNumStates; ++i)
   {
     sprites[i] = *sprites_[i];
@@ -157,7 +157,7 @@ void UIButton::SetActiveArea( const Rect* pActiveArea )
 //==============================================================================
 void UIButton::OnPressed()
 {
-  if (onPressed != 0)
+  if (onPressed)
   {
     (*onPressed)(this, callbackData);
   }
@@ -166,7 +166,7 @@ void UIButton::OnPressed()
 //==============================================================================
 void UIButton::OnReleased()
 {
-  if (onReleased != 0)
+  if (onReleased)
   {
     (*onReleased)(this, callbackData);
   }

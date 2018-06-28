@@ -41,7 +41,7 @@ bool  UIContainer::AddElement(UIElement* elem)
   if (success)
   {
     UIContainer*  parent = elem->GetParent();
-    if (parent != 0)
+    if (parent)
     {
       parent->RemoveElement(elem);
     }
@@ -64,7 +64,7 @@ bool  UIContainer::RemoveElement(UIElement* elem)
   bool  success(i0 != m_elements.end());
   if (success)
   {
-    (*i0)->SetParent(0);
+    (*i0)->SetParent(nullptr);
     _RealignElements(m_elements.erase(i0));
   }
   return success;
@@ -93,7 +93,7 @@ void UIContainer::RemoveAllElements()
 {
   for (UIElement::List::iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
   {
-    (*i0)->SetParent(0);
+    (*i0)->SetParent(nullptr);
   }
   m_elements.clear();
 }

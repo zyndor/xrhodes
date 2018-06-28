@@ -65,7 +65,7 @@ public:
   virtual size_t      GetNumElements() const =0;  // arrays. objects and values return 0
   virtual size_t      GetValueSize() const =0;    // values. objects and arrays return 0
 
-  virtual const char* GetValue() const =0;  // values. objects and arrays return 0
+  virtual const char* GetValue() const =0;  // values. objects and arrays return nullptrs
 
   virtual Entity*     GetChild(const char* key, Type acceptType) const =0;  // retrieve child from object
   virtual Entity*     GetElement(int id, Type acceptType) const =0;  // retrieve child from array
@@ -97,22 +97,22 @@ public:
   ~Value();
 
   // general
-  void                SetValue(const char* value);
-  void                SetValue(const char* value, size_t len);
-  void                SetValue(int i);
-  void                SetValue(double d);
-  void                SetValue(std::string str);
+  void        SetValue(const char* value);
+  void        SetValue(const char* value, size_t len);
+  void        SetValue(int i);
+  void        SetValue(double d);
+  void        SetValue(std::string str);
 
-  virtual Value*      Clone() const;
+  Value*      Clone() const override;
 
-  virtual size_t      GetNumChildren() const;  // objects. arrays and values return 0
-  virtual size_t      GetNumElements() const;  // arrays. objects and values return 0
-  virtual size_t      GetValueSize() const;    // values. objects and arrays return 0
+  size_t      GetNumChildren() const override;  // objects. arrays and values return 0
+  size_t      GetNumElements() const override;  // arrays. objects and values return 0
+  size_t      GetValueSize() const override;    // values. objects and arrays return 0
 
-  virtual const char* GetValue() const;  // values. objects and arrays return 0
+  const char* GetValue() const;  // values. objects and arrays return nullptr
 
-  virtual Entity*     GetChild(const char* key, Type acceptType) const;  // retrieve child from object
-  virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
+  Entity*     GetChild(const char* key, Type acceptType) const override;  // retrieve child from object
+  Entity*     GetElement(int id, Type acceptType) const override;  // retrieve child from array
 
 protected:
   // data
@@ -143,13 +143,13 @@ public:
   ~Object();
 
   // general
-  virtual Object*     Clone() const;
+  Object*     Clone() const override;
 
-  virtual size_t      GetNumChildren() const;  // objects. arrays and values return 0
-  virtual size_t      GetNumElements() const;  // arrays. objects and values return 0
-  virtual size_t      GetValueSize() const;    // values. objects and arrays return 0
+  size_t      GetNumChildren() const override;  // objects. arrays and values return 0
+  size_t      GetNumElements() const override;  // arrays. objects and values return 0
+  size_t      GetValueSize() const override;    // values. objects and arrays return 0
 
-  virtual const char* GetValue() const;  // values. objects and arrays return 0
+  const char* GetValue() const override;  // values. objects and arrays return nullptr
 
   void                AddChild(const char* key, Entity* entity);
   void                AddChild(const char* key, size_t keySize, Entity* entity);
@@ -163,8 +163,8 @@ public:
   Entity*             GetFirstChild();
   Entity*             GetLastChild();
 
-  virtual Entity*     GetChild(const char* key, Type acceptType) const;  // retrieve child from object
-  virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
+  Entity*     GetChild(const char* key, Type acceptType) const override;  // retrieve child from object
+  Entity*     GetElement(int id, Type acceptType) const override;  // retrieve child from array
 
 protected:
   // types
@@ -187,7 +187,7 @@ protected:
   };
 
   // data
-  Child::Map          m_children;
+  Child::Map     m_children;
 
 private:
   // disabled
@@ -212,18 +212,18 @@ public:
   ~Array();
 
   // general
-  virtual Array*      Clone() const;
+  Array*      Clone() const override;
 
-  virtual size_t      GetNumChildren() const;  // objects. arrays and values return 0
-  virtual size_t      GetNumElements() const;  // arrays. objects and values return 0
-  virtual size_t      GetValueSize() const;    // values. objects and arrays return 0
+  size_t      GetNumChildren() const override;  // objects. arrays and values return 0
+  size_t      GetNumElements() const override;  // arrays. objects and values return 0
+  size_t      GetValueSize() const override;    // values. objects and arrays return 0
 
-  virtual const char* GetValue() const;  // values. objects and arrays return 0
+  const char* GetValue() const override;  // values. objects and arrays return nullptr
 
-  void                AddElement(Entity* entity);
+  void        AddElement(Entity* entity);
 
-  virtual Entity*     GetChild(const char* key, Type acceptType) const;  // retrieve child from object
-  virtual Entity*     GetElement(int id, Type acceptType) const;  // retrieve child from array
+  Entity*     GetChild(const char* key, Type acceptType) const override;  // retrieve child from object
+  Entity*     GetElement(int id, Type acceptType) const override;  // retrieve child from array
 
 protected:
   // types

@@ -96,7 +96,7 @@ struct Vector2
   ///@brief Normalises this vector.
   Vector2&  Normalise(float s = 1.0f)
   {
-    float d(Dot(*this));
+    float d = Dot(*this);
     XR_ASSERT(Vector2, d > .0f);
     return this->operator*=(s / sqrtf(d));
   }

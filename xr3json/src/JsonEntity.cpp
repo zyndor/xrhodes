@@ -83,6 +83,11 @@ Value::Value(const Value& rhs)
 }
 
 //==============================================================================
+Value::Value(std::string value)
+: Value(value.c_str(), value.size())
+{}
+
+//==============================================================================
 Value::Value(const char* value, size_t len)
 : Entity(VALUE),
   m_parValue()
@@ -323,7 +328,7 @@ void  Object::AddChild(std::string name, Entity* entity)
   }
   else
   {
-    Child&  c(m_children[hash]);
+    Child& c = m_children[hash];
     c.entity = entity;
     c.name = name;
     iFind = m_children.find(hash);

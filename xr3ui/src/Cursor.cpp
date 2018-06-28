@@ -13,9 +13,9 @@ namespace xr
 //==============================================================================
 void  Cursor::OnMotion(void* systemData, void* userData)
 {
-  Input::MouseMotionEvent*  pEvent(static_cast<Input::MouseMotionEvent*>(systemData));
+  auto  pEvent = static_cast<Input::MouseMotionEvent*>(systemData);
 
-  Cursor*  pCursor(static_cast<Cursor*>(userData));
+  Cursor* pCursor = static_cast<Cursor*>(userData);
   int xDelta(abs(pEvent->x - pCursor->m_image.x));
   int yDelta(abs(pEvent->y - pCursor->m_image.y));
   xDelta *= xDelta;
@@ -34,9 +34,9 @@ void  Cursor::OnMotion(void* systemData, void* userData)
 //==============================================================================
 void  Cursor::OnAction(void* systemData, void* userData)
 {
-  Input::MouseActionEvent*  pEvent(static_cast<Input::MouseActionEvent*>(systemData));
+  auto pEvent = static_cast<Input::MouseActionEvent*>(systemData);
 
-  Cursor*  pCursor(static_cast<Cursor*>(userData));
+  Cursor* pCursor = static_cast<Cursor*>(userData);
   pCursor->m_isPressed = pEvent->isPressed;
   if(pEvent->isPressed)
   {

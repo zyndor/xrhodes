@@ -56,7 +56,7 @@ template  <typename T>
 inline
 bool Observer<T>::Record::IsChanged() const
 {
-  XR_ASSERT(Observer, value != 0);
+  XR_ASSERT(Observer, value != nullptr);
   return *value != lastValue;
 }
 
@@ -96,7 +96,7 @@ void  Observer<T>::Register(const Type& value, Callback callback, void* data)
 template <typename T>
 void  Observer<T>::Unregister(const Type& value, Callback callback)
 {
-  Record  r = { &value, callback, 0, value };
+  Record  r = { &value, callback, nullptr, value };
   m_records.remove(r);
 }
 

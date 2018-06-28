@@ -13,7 +13,7 @@ namespace xr
 //==============================================================================
 ScreenManager::ScreenManager()
 : m_stack(),
-  m_previous(0),
+  m_previous(nullptr),
   m_container(),
   m_notifier()
 {}
@@ -27,7 +27,7 @@ void  ScreenManager::Change(Screen& screen, int32_t delayMs)
 {
   _ClearExiting();
 
-  Screen* pPrevious(0);
+  Screen* pPrevious = nullptr;
   if (!m_stack.empty())
   {
     pPrevious = m_stack.back();
@@ -43,7 +43,7 @@ void  ScreenManager::Change(Screen& screen, int32_t delayMs)
 //==============================================================================
 void  ScreenManager::Push(Screen& screen, int32_t delayMs)
 {
-  Screen* pPrevious(0);
+  Screen* pPrevious = nullptr;
   if (!m_stack.empty())
   {
     pPrevious = m_stack.back();
@@ -61,7 +61,7 @@ void  ScreenManager::Pop(int32_t delayMs)
   XR_ASSERT(ScreenManager, !m_stack.empty());
   _ClearExiting();
 
-  Screen* pCurrent(m_stack.back());
+  Screen* pCurrent = m_stack.back();
   m_previous = pCurrent;
 
   pCurrent->Hide(delayMs);
@@ -69,10 +69,10 @@ void  ScreenManager::Pop(int32_t delayMs)
 
   if (!m_stack.empty())
   {
-    Screen* pScreen(m_stack.back());
-    if (pScreen != 0)
+    Screen* screen = m_stack.back();
+    if (screen)
     {
-      pScreen->Register();
+      screen->Register();
     }
   }
 }
@@ -85,12 +85,12 @@ void  ScreenManager::Update(int32_t ms)
     m_stack.back()->Update(ms);
   }
 
-  if (m_previous != 0)
+  if (m_previous)
   {
     m_previous->Update(ms);
     if (m_previous->GetState() == Screen::S_HIDDEN)
     {
-      m_previous = 0;
+      m_previous = nullptr;
     }
   }
 }
@@ -108,7 +108,7 @@ void  ScreenManager::Shutdown()
 
   while (!m_stack.empty())
   {
-    Screen* pPrevious(m_stack.back());
+    Screen* pPrevious = m_stack.back();
     if (pPrevious->GetState() <= Screen::S_HIDING)
     {
       pPrevious->Hide(0);
@@ -120,13 +120,13 @@ void  ScreenManager::Shutdown()
 //==============================================================================
 void  ScreenManager::_ClearExiting()
 {
-  if (m_previous != 0)
+  if (m_previous)
   {
     if (m_previous->GetState() <= Screen::S_HIDING)
     {
       m_previous->Hide(0);
     }
-    m_previous = 0;
+    m_previous = nullptr;
   }
 }
 

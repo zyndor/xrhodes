@@ -29,7 +29,7 @@ namespace xr
 
   static bool  SimpleEventHandler(XonParser::Event e, XonParser::String const* pString, void* pUser)
   {
-    EventSequencer& seq(*static_cast<EventSequencer*>(pUser));
+    EventSequencer& seq = *static_cast<EventSequencer*>(pUser);
     seq.events.push_back(e);
     if (pString)
     {
@@ -188,26 +188,26 @@ namespace xr
     ASSERT_STREQ(keys[0].c_str(), "key");
     ASSERT_STREQ(keys[1].c_str(), "more_keys");
 
-    XonEntity& v0((*root)[0]);
+    XonEntity& v0 = (*root)[0];
     ASSERT_EQ(v0.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v0.ToValue().GetString(), std::string("value"));
 
-    XonEntity& v1((*root)[1]);
+    XonEntity& v1 = (*root)[1];
     ASSERT_EQ(v1.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v1.ToValue().GetString(), std::string("value"));
     ASSERT_NE(&v1, &root->Get("key"));
 
-    XonEntity& v2((*root)[2]);
+    XonEntity& v2 = (*root)[2];
     ASSERT_EQ(v2.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v2.ToValue().GetString(), std::string("value2"));
     ASSERT_EQ(&v2, &root->Get("key"));
 
-    XonEntity& v3((*root)[3]);
+    XonEntity& v3 = (*root)[3];
     ASSERT_EQ(v3.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v3.ToValue().GetString(), std::string("more values"));
     ASSERT_EQ(&v3, &root->Get("more_keys"));
 
-    XonEntity& v4((*root)[4]);
+    XonEntity& v4 = (*root)[4];
     ASSERT_EQ(v4.GetType(), XonEntity::Type::Object);
     ASSERT_EQ(v4.ToObject().GetNumElements(), 7);
 
@@ -219,57 +219,57 @@ namespace xr
     ASSERT_STREQ(keys[2].c_str(), "{}ther key");
 
     XonObject& v4Object = v4.ToObject();
-    XonEntity& v4_0(v4Object[0]);
+    XonEntity& v4_0 = v4Object[0];
     ASSERT_EQ(v4_0.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_0.ToValue().GetString(), std::string("object_value"));
 
-    XonEntity& v4_1(v4Object[1]);
+    XonEntity& v4_1 = v4Object[1];
     ASSERT_EQ(v4_1.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_1.ToValue().GetString(), std::string("value"));
     ASSERT_EQ(&v4_1, &v4Object.Get("key"));
 
-    XonEntity& v4_2(v4Object[2]);
+    XonEntity& v4_2 = v4Object[2];
     ASSERT_EQ(v4_2.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_2.ToValue().GetString(), std::string("{}ther_va:ue"));
     ASSERT_EQ(&v4_2, &v4Object.Get("{}ther key"));
 
-    XonEntity& v4_3(v4Object[3]);
+    XonEntity& v4_3 = v4Object[3];
     ASSERT_EQ(v4_3.GetType(), XonEntity::Type::Object);
     ASSERT_EQ(v4_3.ToObject().GetNumElements(), 3);
     ASSERT_EQ(&v4_3, &v4Object.Get("a_nested_object"));
 
     XonObject& v4_3Object = v4_3.ToObject();
-    XonEntity& v4_3_0(v4_3Object[0]);
+    XonEntity& v4_3_0 = v4_3Object[0];
     ASSERT_EQ(v4_3_0.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_3_0.ToValue().GetString(), std::string("true"));
     ASSERT_EQ(&v4_3_0, &v4_3.ToObject().Get("nested"));
 
-    XonEntity& v4_3_1(v4_3Object[1]);
+    XonEntity& v4_3_1 = v4_3Object[1];
     ASSERT_EQ(v4_3_1.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_3_1.ToValue().GetString(), std::string("escaped \"quot\""));
     //ASSERT_EQ(v4_3_1.GetString(), std::string("escaped \\\"quot\\\""));
 
-    XonEntity& v4_3_2(v4_3Object[2]);
+    XonEntity& v4_3_2 = v4_3Object[2];
     ASSERT_EQ(v4_3_2.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_3_2.ToValue().GetString(), std::string(""));
 
-    XonEntity& v4_4(v4Object[4]);
+    XonEntity& v4_4 = v4Object[4];
     ASSERT_EQ(v4_4.GetType(), XonEntity::Type::Object);
     ASSERT_EQ(v4_4.ToObject().GetNumElements(), 0);
 
-    XonEntity& v4_5(v4Object[5]);
+    XonEntity& v4_5 = v4Object[5];
     ASSERT_EQ(v4_5.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_5.ToValue().GetString(), std::string("another_value"));
 
-    XonEntity& v4_6(v4Object[6]);
+    XonEntity& v4_6 = v4Object[6];
     ASSERT_EQ(v4_6.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v4_6.ToValue().GetString(), std::string("a_value_that's_\"quoted\""));
 
-    XonEntity& v5((*root)[5]);
+    XonEntity& v5 = (*root)[5];
     ASSERT_EQ(v5.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v5.ToValue().GetString(), nullptr);
 
-    XonEntity& v6((*root)[6]);
+    XonEntity& v6 = (*root)[6];
     ASSERT_EQ(v6.GetType(), XonEntity::Type::Value);
     ASSERT_EQ(v6.ToValue().GetString(), std::string("null"));
   }
@@ -324,7 +324,7 @@ namespace xr
     TestXonError([&root]() { root->Get("thisKeyD3finitel4Doesn't_exist"); }, XonEntity::Exception::Type::InvalidKey);
 
     // invalid type
-    XonEntity& v0((*root)[0]);
+    XonEntity& v0 = (*root)[0];
     ASSERT_EQ(v0.GetType(), XonEntity::Type::Value);
 
     TestXonError([&v0]() { v0.ToObject(); }, XonEntity::Exception::Type::InvalidType);

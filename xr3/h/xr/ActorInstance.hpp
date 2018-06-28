@@ -91,7 +91,7 @@ void ActorInstance<T>::AnimationFinishedCallback( AnimationInstanceType& inst,
   ActorInstance<T>* instance = static_cast<ActorInstance<T>*>(data);
   if (instance->m_nameHashNextAction != 0)
   {
-    if (instance->onActionFinished != 0)
+    if (instance->onActionFinished)
     {
       (*instance->onActionFinished)(*instance, instance->onActionFinishedData);
     }
@@ -162,7 +162,7 @@ template  <class T>
 void ActorInstance<T>::RequestChange( uint32_t nameHashAction, float timeScale )
 {
   XR_ASSERT(ActorInstance, m_actor != nullptr);
-  const Animation<T>*  action(m_actor->GetAction(nameHashAction));
+  const Animation<T>* action = m_actor->GetAction(nameHashAction);
   if (action != m_anim.GetAnimation())
   {
     m_anim.SetAnimation(action, timeScale);
