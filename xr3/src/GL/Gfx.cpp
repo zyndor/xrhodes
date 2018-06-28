@@ -1531,13 +1531,6 @@ struct Impl
         CheckAllMaskBits(flags, F_STATE_STENCIL_TEST)));
     }
 
-    // scissor test
-    if (CheckAllMaskBits(deltaFlags, F_STATE_SCISSOR_TEST))
-    {
-      XR_GL_CALL(gl::SwitchEnabledState(GL_SCISSOR_TEST,
-        CheckAllMaskBits(flags, F_STATE_SCISSOR_TEST)));
-    }
-
     m_activeState = flags;
   }
 

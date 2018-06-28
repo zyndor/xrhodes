@@ -115,7 +115,6 @@ enum : FlagType
   F_STATE_ALPHA_BLEND = XR_MASK_ID(FlagType, 2), // off by default
   F_STATE_CULL_BACK = XR_MASK_ID(FlagType, 3),  // no culling by default
   F_STATE_CULL_FRONT = XR_MASK_ID(FlagType, 4), // only points and lines drawn when F_STATE_CULL_BACK | F_STATE_CULL_FRONT set
-  F_STATE_SCISSOR_TEST = XR_MASK_ID(FlagType, 5),
   F_STATE_WIREFRAME = XR_MASK_ID(FlagType, 6),
   F_STATE_STENCIL_TEST = XR_MASK_ID(FlagType, 8),
 
