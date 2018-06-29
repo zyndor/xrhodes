@@ -7,6 +7,7 @@
 #include "xr/UIVerticalScrollingLayout.hpp"
 #include "xr/UIRenderer.hpp"
 #include "xr/Gfx.hpp"
+#include "xr/ScissorStack.hpp"
 
 namespace xr
 {
@@ -18,7 +19,9 @@ UIVerticalScrollingLayout::UIVerticalScrollingLayout()
   m_sensitivity(1.0f),
   m_isTouched(false),
   m_lastTouchY(0)
-{}
+{
+  ScissorStack::RequireInit();
+}
 
 //==============================================================================
 UIVerticalScrollingLayout::~UIVerticalScrollingLayout()
@@ -123,12 +126,12 @@ void UIVerticalScrollingLayout::Render(IUIRenderer& renderer) const
 {
   renderer.Render();
 
-  Gfx::SetScissor(this);
+  {
+    ScissorStack::Scope s3(this, true);
 
-  UIVerticalLayout::Render(renderer);
-  renderer.Render();
-
-  Gfx::SetScissor(nullptr);
+    UIVerticalLayout::Render(renderer);
+    renderer.Render();
+  }
 }
 
 //==============================================================================

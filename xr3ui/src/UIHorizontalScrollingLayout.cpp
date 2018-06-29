@@ -7,6 +7,7 @@
 #include "xr/UIHorizontalScrollingLayout.hpp"
 #include "xr/UIRenderer.hpp"
 #include "xr/Gfx.hpp"
+#include "xr/ScissorStack.hpp"
 
 namespace xr
 {
@@ -18,7 +19,9 @@ UIHorizontalScrollingLayout::UIHorizontalScrollingLayout()
   m_sensitivity(1.0f),
   m_isTouched(false),
   m_lastTouchX(0)
-{}
+{
+  ScissorStack::RequireInit();
+}
 
 //==============================================================================
 UIHorizontalScrollingLayout::~UIHorizontalScrollingLayout()
@@ -123,12 +126,12 @@ void UIHorizontalScrollingLayout::Render(IUIRenderer& renderer) const
 {
   renderer.Render();
 
-  Gfx::SetScissor(this);
+  {
+    ScissorStack::Scope s3(this, true);
 
-  UIHorizontalLayout::Render(renderer);
-  renderer.Render();
-
-  Gfx::SetScissor(nullptr);
+    UIHorizontalLayout::Render(renderer);
+    renderer.Render();
+  }
 }
 
 //==============================================================================
