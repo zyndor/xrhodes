@@ -22,30 +22,30 @@ UIVerticalProgressBar::~UIVerticalProgressBar()
 //==============================================================================
 void UIVerticalProgressBar::Render(IUIRenderer& renderer) const
 {
-  bool  isFdPositive(m_fillDir == FD_POSITIVE);
+  bool  isFdPositive = m_fillDir == FD_POSITIVE;
 
-  float hSprite(sprite.GetHalfHeight() * 2.0f);
-  float hs(h / hSprite);
+  float hSprite = sprite.GetHalfHeight() * 2.0f;
+  float hs = h / hSprite;
 
-  float yMin(sprite.GetTopPadding() * hs);
-  float yMax(h - sprite.GetBottomPadding() * hs);
+  float yMin = sprite.GetTopPadding() * hs;
+  float yMax = h - sprite.GetBottomPadding() * hs;
 
-  float percMin(yMin / h);
-  float percMax(yMax / h);
+  float percMin = yMin / h;
+  float percMax = yMax / h;
 
   if ((isFdPositive && m_percentage >= percMin) ||
     (!isFdPositive && m_percentage <= percMax))
   {
-    float perc(Clamp(m_percentage, percMin, percMax));
-    float y1(h * (isFdPositive ? perc : 1.0f - perc));
+    float perc = Clamp(m_percentage, percMin, percMax);
+    float y1 = h * (isFdPositive ? perc : 1.0f - perc);
 
-    float ws(w / (sprite.GetHalfWidth() * 2.0f));
-    float left(x + sprite.GetLeftPadding() * ws);
-    float right(x + w - sprite.GetRightPadding() * ws);
+    float ws = w / (sprite.GetHalfWidth() * 2.0f);
+    float left = x + sprite.GetLeftPadding() * ws;
+    float right = x + w - sprite.GetRightPadding() * ws;
 
     auto spriteVerts = sprite.GetVertices();
-    const float hRatio(hSprite / sprite.GetQuadHeight());
-    float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio);
+    const float hRatio = hSprite / sprite.GetQuadHeight();
+    float uv1 = (isFdPositive ? (perc - percMin) : (percMax - perc)) * hRatio;
     if (sprite.IsUVRotated())
     {
       uv1 = Lerp(spriteVerts[Quad::Vertex::SW].uv0.x, spriteVerts[Quad::Vertex::NW].uv0.x, uv1);
@@ -62,7 +62,7 @@ void UIVerticalProgressBar::Render(IUIRenderer& renderer) const
 
     if (isFdPositive)
     {
-      float top(y + yMin);
+      float top = y + yMin;
 
       if (sprite.IsUVRotated())
       {
@@ -82,7 +82,7 @@ void UIVerticalProgressBar::Render(IUIRenderer& renderer) const
     }
     else
     {
-      float bottom(y + yMax);
+      float bottom = y + yMax;
 
       if (sprite.IsUVRotated())
       {

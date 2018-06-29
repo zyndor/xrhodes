@@ -64,7 +64,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* string)
       XR_ASSERT(Json::Reader, parent != nullptr);
       XR_ASSERT(Json::Reader, parent->GetType() != VALUE);
       XR_ASSERT(Json::Reader, m_key.length > 0);
-      XR_ASSERT(Json::Reader, m_key.string != 0);
+      XR_ASSERT(Json::Reader, m_key.string != nullptr);
       Entity* value(new Value(string->string, string->length));
       switch(parent->GetType())
       {
@@ -128,7 +128,7 @@ void  Reader::_HandleEvent(Parser::Event e, const Parser::String* string)
       Array* array = new Array();
       m_entities.push_back(array);
 
-      if(parent == 0)
+      if(parent == nullptr)
       {
         XR_ASSERT(Json::Reader, m_root == nullptr);
         m_root = array;

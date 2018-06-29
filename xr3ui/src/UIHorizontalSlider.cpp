@@ -34,8 +34,8 @@ int32_t UIHorizontalSlider::CalculateRange() const
 //==============================================================================
 bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 {
-  const int32_t kRight(CalculateRight());
-  const int32_t kBottom(CalculateBottom());
+  const int32_t kRight = CalculateRight();
+  const int32_t kBottom = CalculateBottom();
 
   int32_t xTouch = e.x;
   if (e.isPressed && e.y >= y && e.y < kBottom &&

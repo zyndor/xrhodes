@@ -92,7 +92,7 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   if (xCoords[1] > xCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
-    float scale(w / wSprite);
+    float scale = w / wSprite;
     xCoords[0] = x + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.x + hwSprite));
     xCoords[1] = x + std::round(scale * (spriteVerts[Quad::Vertex::NE].pos.x + hwSprite));
 
@@ -121,7 +121,7 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   if (yCoords[1] > yCoords[2]) // ui width is smaller than sprite width
   {
     // scale sprite to ui
-    float scale(h / hSprite);
+    float scale = h / hSprite;
     yCoords[0] = y + std::round(scale * (spriteVerts[Quad::Vertex::NW].pos.y + hhSprite));
     yCoords[1] = y + std::round(scale * (spriteVerts[Quad::Vertex::SW].pos.y + hhSprite));
 
@@ -145,8 +145,8 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
     }
   }
 
-  int32_t hQuads(ix1 - ix0);
-  int32_t vQuads(iy1 - iy0);
+  int32_t hQuads = ix1 - ix0;
+  int32_t vQuads = iy1 - iy0;
 
   const int numVertices = hQuads * vQuads * Quad::Vertex::kCount;
   if (numVertices > 0)

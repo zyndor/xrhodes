@@ -24,28 +24,28 @@ void UIHorizontalProgressBar::Render(IUIRenderer& renderer) const
 {
   bool  isFdPositive(m_fillDir == FD_POSITIVE);
 
-  float wSprite(sprite.GetHalfWidth() * 2.0f);
-  float ws(w / wSprite);
+  float wSprite = sprite.GetHalfWidth() * 2.0f;
+  float ws = w / wSprite;
 
-  float xMin(sprite.GetLeftPadding() * ws);
-  float xMax(w - sprite.GetRightPadding() * ws);
+  float xMin = sprite.GetLeftPadding() * ws;
+  float xMax = w - sprite.GetRightPadding() * ws;
 
-  float percMin(xMin / w);
-  float percMax(xMax / w);
+  float percMin = xMin / w;
+  float percMax = xMax / w;
 
   if ((isFdPositive && m_percentage >= percMin) ||
     (!isFdPositive && m_percentage <= percMax))
   {
-    float perc(Clamp(m_percentage, percMin, percMax));
-    float x1(w * (isFdPositive ? perc : 1.0f - perc));
+    float perc = Clamp(m_percentage, percMin, percMax);
+    float x1 = w * (isFdPositive ? perc : 1.0f - perc);
 
-    float hs(h / (sprite.GetHalfHeight() * 2.0f));
-    float top(y + sprite.GetTopPadding() * hs);
-    float bottom(y + h - sprite.GetBottomPadding() * hs);
+    float hs = h / (sprite.GetHalfHeight() * 2.0f);
+    float top = y + sprite.GetTopPadding() * hs;
+    float bottom = y + h - sprite.GetBottomPadding() * hs;
 
     auto spriteVerts = sprite.GetVertices();
-    const float wRatio(wSprite / sprite.GetQuadWidth());
-    float uv1((isFdPositive ? (perc - percMin) : (percMax - perc)) * wRatio);
+    const float wRatio = wSprite / sprite.GetQuadWidth();
+    float uv1 = (isFdPositive ? (perc - percMin) : (percMax - perc)) * wRatio;
     if (sprite.IsUVRotated())
     {
       uv1 = Lerp(spriteVerts[Quad::Vertex::SW].uv0.y, spriteVerts[Quad::Vertex::SE].uv0.y, uv1);
@@ -62,7 +62,7 @@ void UIHorizontalProgressBar::Render(IUIRenderer& renderer) const
 
     if (isFdPositive)
     {
-      float left(x + xMin);
+      float left = x + xMin;
 
       if (sprite.IsUVRotated())
       {
@@ -82,7 +82,7 @@ void UIHorizontalProgressBar::Render(IUIRenderer& renderer) const
     }
     else
     {
-      float right(x + xMax);
+      float right = x + xMax;
 
       if (sprite.IsUVRotated())
       {

@@ -346,7 +346,7 @@ struct Matrix
   void  LookAt(Vector3 const& from, Vector3 const& to, Vector3 const& up)
   {
     Vector3  vz(to - from);
-    float dz(vz.Dot(vz));
+    float dz = vz.Dot(vz);
     if (dz > .0f)
     {
       dz = 1.0f / sqrtf(dz);

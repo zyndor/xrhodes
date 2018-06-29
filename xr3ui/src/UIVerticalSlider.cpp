@@ -23,8 +23,8 @@ UIVerticalSlider::~UIVerticalSlider()
 //==============================================================================
 int32_t UIVerticalSlider::CalculateRange() const
 {
-  int32_t ssh(GetSliderSpriteHeight());
-  int32_t range(h - ssh);
+  int32_t ssh = GetSliderSpriteHeight();
+  int32_t range = h - ssh;
   XR_ASSERTMSG(UIVerticalSlider, range > 0,
     ("Slider height (%d) - slider's sprite's height (%d) needs to be > 0.",
     h, ssh));
@@ -34,8 +34,8 @@ int32_t UIVerticalSlider::CalculateRange() const
 //==============================================================================
 bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 {
-  const int32_t kRight(CalculateRight());
-  const int32_t kBottom(CalculateBottom());
+  const int32_t kRight = CalculateRight();
+  const int32_t kBottom = CalculateBottom();
 
   int yTouch(e.y);
   if (e.isPressed && e.x >= x && e.x < kRight &&
@@ -44,7 +44,7 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
     // calculate which side we're on
     yTouch -= y;
 
-    int32_t value(CalculateValue());
+    int32_t value = CalculateValue();
     if (yTouch < value)
     {
       yTouch -= static_cast<int32_t>(sliderSprite.GetHalfHeight());

@@ -72,7 +72,7 @@ bool  GetXmlIntAttribute(tinyxml2::XMLElement* xml, const char* attribName, int 
   XR_ASSERT(UIBuilder, xml != nullptr);
   XR_ASSERT(UIBuilder, attribName != nullptr);
 
-  const char* value(xml->Attribute(attribName));
+  const char* value = xml->Attribute(attribName);
   return Parse::Int(base, value, v);
 }
 
@@ -82,7 +82,7 @@ bool  GetXmlFloatAttribute(tinyxml2::XMLElement* xml, const char* attribName, fl
   XR_ASSERT(UIBuilder, xml != nullptr);
   XR_ASSERT(UIBuilder, attribName != nullptr);
 
-  const char* value(xml->Attribute(attribName));
+  const char* value = xml->Attribute(attribName);
   return Parse::Float(value, v);
 }
 
@@ -127,7 +127,7 @@ void UIBSetUISprite(const Sprite* sprite, Sprite& outSprite, UIElement* uiElem)
   XR_ASSERT(UIBuilder, sprite != nullptr);
   outSprite = *sprite;
 
-  float hw(sprite->GetHalfWidth());
+  float hw = sprite->GetHalfWidth();
   if (uiElem->w == 0)
   {
     uiElem->w = static_cast<int32_t>(hw * 2.0f);
@@ -137,7 +137,7 @@ void UIBSetUISprite(const Sprite* sprite, Sprite& outSprite, UIElement* uiElem)
     outSprite.ScaleX((uiElem->w / 2) / hw);
   }
 
-  float hh(sprite->GetHalfHeight());
+  float hh = sprite->GetHalfHeight();
   if (uiElem->h == 0)
   {
     uiElem->h = static_cast<int32_t>(hh * 2.0f);
@@ -240,12 +240,12 @@ bool  UIBInitUIColoredElement(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIElement(xml, uiElem, parent, builder);
   if (success)
   {
-    UIColoredElement* coloredElem = static_cast<UIColoredElement*>(uiElem);
+    auto coloredElem = static_cast<UIColoredElement*>(uiElem);
 
-    const char* value(xml->Attribute("color"));
+    const char* value = xml->Attribute("color");
     if (value != nullptr)
     {
-      uint32_t  color(strtoul(value, 0, 16));
+      uint32_t color = strtoul(value, 0, 16);
       if (strlen(value) <= 6)
       {
         color |= 0xff000000;
@@ -272,7 +272,7 @@ bool  UIBInitUILabel(tinyxml2::XMLElement* xml, UIElement* uiElem, UIContainer* 
   bool  success = UIBInitUIColoredElement(xml, uiElem, parent, builder);
   if (success)
   {
-    UILabel*  label = static_cast<UILabel*>(uiElem);
+    auto label = static_cast<UILabel*>(uiElem);
 
     const char* value = nullptr;
 
@@ -387,7 +387,7 @@ bool  UIBInitUIImage(tinyxml2::XMLElement* xml, UIElement* uiElem, UIContainer* 
   bool  success = UIBInitUIColoredElement(xml, uiElem, parent, builder);
   if (success)
   {
-    UIImage*  image = static_cast<UIImage*>(uiElem);
+    auto image = static_cast<UIImage*>(uiElem);
 
     // scale
     float scale = GetXmlScaleAttribute(xml);
@@ -436,7 +436,7 @@ bool  UIBInitUIImagePanel(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIColoredElement(xml, uiElem, parent, builder);
   if (success)
   {
-    UIImagePanel*  imagePanel = static_cast<UIImagePanel*>(uiElem);
+    auto imagePanel = static_cast<UIImagePanel*>(uiElem);
 
     // scale
     float scale = GetXmlScaleAttribute(xml);
@@ -509,7 +509,7 @@ bool  UIBInitUIProgressBarBase(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIImage(xml, uiElem, parent, builder);
   if (success)
   {
-    UIProgressBarBase*  progressBar = static_cast<UIProgressBarBase*>(uiElem);
+    auto progressBar = static_cast<UIProgressBarBase*>(uiElem);
 
     // fill direction
     if (success)
@@ -551,7 +551,7 @@ bool  UIBInitUISliderBase(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIImage(xml, uiElem, parent, builder);
   if (success)
   {
-    UISliderBase* slider = static_cast<UISliderBase*>(uiElem);
+    auto slider = static_cast<UISliderBase*>(uiElem);
 
     // scale
     float scale = GetXmlScaleAttribute(xml);
@@ -620,7 +620,7 @@ bool  UIBInitUIButton(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIColoredElement(xml, uiElem, parent, builder);
   if (success)
   {
-    UIButton* button = static_cast<UIButton*>(uiElem);
+    auto button = static_cast<UIButton*>(uiElem);
 
     // enabled -- optional
     const char* value = nullptr;
@@ -748,7 +748,7 @@ bool  UIBInitUICheckBox(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIButton(xml, uiElem, parent, builder);
   if (success)
   {
-    UICheckBox* checkBox = static_cast<UICheckBox*>(uiElem);
+    auto checkBox = static_cast<UICheckBox*>(uiElem);
 
     // selected -- optional
     const char* value = nullptr;
@@ -798,9 +798,9 @@ bool  UIBInitUIRadioButton(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUICheckBox(xml, uiElem, parent, builder);
   if (success)
   {
-    UIRadioButton*  pRadioButton(static_cast<UIRadioButton*>(uiElem));
+    auto pRadioButton = static_cast<UIRadioButton*>(uiElem);
 
-    const char* value(xml->Attribute("group"));
+    const char* value = xml->Attribute("group");
     if (value != nullptr && strlen(value) > 0)
     {
       pRadioButton->SetGroup(value);
@@ -824,7 +824,7 @@ bool  UIBInitUIAligner(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIElement(xml, uiElem, parent, builder);
   if (success)
   {
-    UIAligner*  pAligner(static_cast<UIAligner*>(uiElem));
+    auto pAligner = static_cast<UIAligner*>(uiElem);
 
     // horizontal alignment
     int value;
@@ -859,7 +859,7 @@ bool  UIBInitUICascader(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIAligner(xml, uiElem, parent, builder);
   if (success)
   {
-    UICascader* pCascader(static_cast<UICascader*>(uiElem));
+    auto pCascader = static_cast<UICascader*>(uiElem);
 
     int temp;
     GetXmlIntAttribute(xml, "hOffset", pCascader->w, temp);
@@ -901,7 +901,7 @@ bool  UIBInitUIGrowingLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIElement(xml, uiElem, parent, builder);
   if (success)
   {
-    UIGrowingLayoutBase*  pLayout(static_cast<UIGrowingLayoutBase*>(uiElem));
+    auto pLayout = static_cast<UIGrowingLayoutBase*>(uiElem);
 
     const char* value = nullptr;
 
@@ -988,18 +988,18 @@ bool  UIBInitUIHorizontalScrollingLayout(tinyxml2::XMLElement* xml, UIElement* u
   bool  success = UIBInitUIGrowingLayout(xml, uiElem, parent, builder);
   if(success)
   {
-    UIHorizontalScrollingLayout*  pLayout(static_cast<UIHorizontalScrollingLayout*>(uiElem));
+    auto layout = static_cast<UIHorizontalScrollingLayout*>(uiElem);
 
     int xOffset;
-    if (GetXmlIntAttribute(xml, "xOffset", pLayout->w, xOffset))
+    if (GetXmlIntAttribute(xml, "xOffset", layout->w, xOffset))
     {
-      pLayout->SetXOffset(xOffset);
+      layout->SetXOffset(xOffset);
     }
 
     float sensitivity;
     if (GetXmlFloatAttribute(xml, "sensitivity", sensitivity))
     {
-      pLayout->SetSensitivity(sensitivity);
+      layout->SetSensitivity(sensitivity);
     }
   }
 
@@ -1021,18 +1021,18 @@ bool  UIBInitUIVerticalScrollingLayout(tinyxml2::XMLElement* xml, UIElement* uiE
   bool  success = UIBInitUIGrowingLayout(xml, uiElem, parent, builder);
   if(success)
   {
-    UIVerticalScrollingLayout*  pLayout(static_cast<UIVerticalScrollingLayout*>(uiElem));
+    auto layout = static_cast<UIVerticalScrollingLayout*>(uiElem);
 
     int yOffset;
-    if (GetXmlIntAttribute(xml, "yOffset", pLayout->h, yOffset))
+    if (GetXmlIntAttribute(xml, "yOffset", layout->h, yOffset))
     {
-      pLayout->SetYOffset(yOffset);
+      layout->SetYOffset(yOffset);
     }
 
     float sensitivity;
     if (GetXmlFloatAttribute(xml, "sensitivity", sensitivity))
     {
-      pLayout->SetSensitivity(sensitivity);
+      layout->SetSensitivity(sensitivity);
     }
   }
 
@@ -1055,7 +1055,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
   bool  success = UIBInitUIElement(xml, uiElem, parent, builder);
   if(success)
   {
-    UIGridLayout*  pLayout(static_cast<UIGridLayout*>(uiElem));
+    auto layout = static_cast<UIGridLayout*>(uiElem);
 
     int value = 1;
 
@@ -1074,7 +1074,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
 
     if (success)
     {
-      pLayout->SetNumRows(value);
+      layout->SetNumRows(value);
     }
 
     // columns
@@ -1092,7 +1092,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
 
     if (success)
     {
-      pLayout->SetNumColumns(value);
+      layout->SetNumColumns(value);
     }
 
     // cell width
@@ -1108,7 +1108,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
 
       if (success)
       {
-        pLayout->SetCellWidth(value);
+        layout->SetCellWidth(value);
       }
     }
 
@@ -1125,7 +1125,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
 
       if (success)
       {
-        pLayout->SetCellWidth(value);
+        layout->SetCellWidth(value);
       }
     }
 
@@ -1143,7 +1143,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
 
       if (success)
       {
-        pLayout->SetColumnPadding(value);
+        layout->SetColumnPadding(value);
       }
     }
 
@@ -1161,7 +1161,7 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
 
       if (success)
       {
-        pLayout->SetRowPadding(value);
+        layout->SetRowPadding(value);
       }
     }
 
@@ -1171,14 +1171,14 @@ bool  UIBInitUIGridLayout(tinyxml2::XMLElement* xml, UIElement* uiElem,
       value = UIBuilder::GetXmlAlignment(xml, "hAlign");
       if (value < UIBuilder::XA_NONE)
       {
-        pLayout->SetHorizontalAlignment(static_cast<UIElement::Alignment>(value - 1));
+        layout->SetHorizontalAlignment(static_cast<UIElement::Alignment>(value - 1));
       }
 
       // vertical alignment
       value = UIBuilder::GetXmlAlignment(xml, "vAlign");
       if (value < UIBuilder::XA_NONE)
       {
-        pLayout->SetVerticalAlignment(static_cast<UIElement::Alignment>(value - 1));
+        layout->SetVerticalAlignment(static_cast<UIElement::Alignment>(value - 1));
       }
     }
   }
@@ -1417,7 +1417,7 @@ bool UIBuilder::RegisterNamedElement(const char* name, UIElement* uiElem)
   XR_ASSERT(UIBuilder, name != nullptr);
   XR_ASSERT(UIBuilder, uiElem != nullptr);
 
-  uint32_t              hash(Hash::String32(name));
+  uint32_t hash = Hash::String32(name);
   ElementMap::iterator  iFind(m_handles.find(hash));
   bool                  success(iFind == m_handles.end());
   if (success)
@@ -1462,15 +1462,15 @@ bool  UIBuilder::_Build(tinyxml2::XMLElement* xml, UIContainer* container, int& 
   bool  success(true);
   while (xml)
   {
-    UIElement*  uiElem(0);
+    UIElement*  uiElem = nullptr;
 
-    uint32_t  hash(Hash::String32(xml->Value()));
+    uint32_t hash = Hash::String32(xml->Value());
     CreatorMap::iterator  iFind(m_creators.find(hash));
     if (iFind != m_creators.end())
     {
       XR_TRACE(UIBuilder, ("Building a %s...", iFind->second.name));
 
-      const UICreatorRecord&  uicr(iFind->second);
+      const UICreatorRecord& uicr = iFind->second;
 
       // create element (name)
       uiElem = (*uicr.createCb)(m_cfg.allocate, m_cfg.allocateUserData);
@@ -1510,7 +1510,7 @@ bool  UIBuilder::_Build(tinyxml2::XMLElement* xml, UIContainer* container, int& 
         // process container
         if (uicr.isContainer)
         {
-          UIContainer*  pMyContainer(static_cast<UIContainer*>(uiElem));
+          UIContainer* pMyContainer = static_cast<UIContainer*>(uiElem);
 
           ++depth;
           if(m_depth < depth)
@@ -1528,7 +1528,7 @@ bool  UIBuilder::_Build(tinyxml2::XMLElement* xml, UIContainer* container, int& 
     }
     else if (kIncludeHash == hash)
     {
-      const char* value(xml->Attribute("src"));
+      const char* value = xml->Attribute("src");
       success = value != nullptr;
       if(success)
       {
@@ -1563,7 +1563,7 @@ void UIBuilder::Destroy()
 
     if (m_root != nullptr)
     {
-      UIElementList&  lElems(m_levels[0]);
+      UIElementList& lElems = m_levels[0];
       for (UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
         i0 != i1; ++i0)
       {
@@ -1573,11 +1573,11 @@ void UIBuilder::Destroy()
 
     for (int i = 0; i <= m_depth; ++i)
     {
-      UIElementList&  lElems(m_levels[i]);
+      UIElementList& lElems = m_levels[i];
       for (UIElementList::iterator i0(lElems.begin()), i1(lElems.end());
         i0 != i1; ++i0)
       {
-        UIElement*  p(*i0);
+        UIElement* p = *i0;
         p->~UIElement();
 
         (*m_cfg.deallocate)(p, m_cfg.deallocateUserData);
@@ -1609,16 +1609,16 @@ UIElement* UIBuilder::GetElement(const char* pHandle) const
 //==============================================================================
 void UIBuilder::_PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem)
 {
-  const char* value(xml->Attribute("handle"));
+  const char* value = xml->Attribute("handle");
   if (value != nullptr)
   {
     RegisterNamedElement(value, uiElem);
   }
 
-  const UIElement*  parent(uiElem->GetParent());
+  const UIElement*  parent = uiElem->GetParent();
   if(parent != nullptr)
   {
-    uint32_t  flags(GetXmlDimensionMask(xml, "fillParent"));
+    uint32_t flags = GetXmlDimensionMask(xml, "fillParent");
     int   w = CheckIdthBit(flags, XD_WIDTH) ? parent->w : uiElem->w;
     int   h = CheckIdthBit(flags, XD_HEIGHT) ? parent->h : uiElem->h;
     uiElem->SetSize(w, h);
@@ -1627,7 +1627,7 @@ void UIBuilder::_PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem)
   value = xml->Attribute("alignTo");
   if (value != nullptr)
   {
-    UIElement*  pAlignTo(GetElement(value));
+    UIElement* pAlignTo = GetElement(value);
     XR_ASSERT(UIBuilder, pAlignTo != nullptr);
 
     int alignTo(XA_NONE);
@@ -1698,7 +1698,7 @@ void UIBuilder::_PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem)
 //==============================================================================
 void UIBuilder::_PostProcessContainer(tinyxml2::XMLElement* xml, UIContainer* pContainer)
 {
-  uint32_t sizeToContentValue(GetXmlDimensionMask(xml, "sizeToContent"));
+  uint32_t sizeToContentValue = GetXmlDimensionMask(xml, "sizeToContent");
   switch (sizeToContentValue)
   {
   case XR_MASK_ID(uint32_t, XD_WIDTH) | XR_MASK_ID(uint32_t, XD_HEIGHT):

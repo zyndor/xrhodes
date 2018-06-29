@@ -83,7 +83,7 @@ inline
 Sprite* TexturePack::Get( uint32_t hash )
 {
   SpriteMap::iterator  iFind(m_sprites.find(hash));
-  return iFind != m_sprites.end() ? &iFind->second : 0;
+  return iFind != m_sprites.end() ? &iFind->second : nullptr;
 }
 
 //==============================================================================
@@ -91,7 +91,7 @@ inline
 const Sprite* TexturePack::Get( uint32_t hash ) const
 {
   SpriteMap::const_iterator  iFind(m_sprites.find(hash));
-  return iFind != m_sprites.end() ? &iFind->second : 0;
+  return iFind != m_sprites.end() ? &iFind->second : nullptr;
 }
 
 } // xr

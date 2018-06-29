@@ -77,7 +77,7 @@ protected:
     void* const data;  // this is a ListenerBaseBase* for ADD types and the owner of the Postponed object has ownership of it.
 
     // structors
-    explicit Postponed(Type t, void* p = 0)
+    explicit Postponed(Type t, void* p = nullptr)
     : type(t),
       data(p)
     {}

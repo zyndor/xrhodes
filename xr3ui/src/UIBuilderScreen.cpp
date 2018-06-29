@@ -77,7 +77,7 @@ bool  UIBuilderScreen::Build(tinyxml2::XMLElement* xml)
 
   Destroy();
 
-  XR_ASSERT(UIBuilderScreen, xml != 0);
+  XR_ASSERT(UIBuilderScreen, xml != nullptr);
 
   bool  result(m_builder.Build(xml, m_root));
   if(result)
@@ -139,10 +139,10 @@ void  UIBuilderScreen::_AddElements()
 //==============================================================================
 void  UIBuilderScreen::_Show(uint32_t ms)
 {
-  if (m_tweenIn != 0 && !m_tweening.empty())
+  if (m_tweenIn && !m_tweening.empty())
   {
     float     percent = 1.0f / GetNumTweening();
-    Tweenable t = { 0, 0, percent, ms };
+    Tweenable t = { nullptr, 0, percent, ms };
     while (t.id < GetNumTweening())
     {
       t.elem = m_tweening[t.id];
@@ -156,10 +156,10 @@ void  UIBuilderScreen::_Show(uint32_t ms)
 //==============================================================================
 void  UIBuilderScreen::_Hide(uint32_t ms)
 {
-  if (m_tweenOut != 0 && !m_tweening.empty())
+  if (m_tweenOut && !m_tweening.empty())
   {
     float     percent = 1.0f / GetNumTweening();
-    Tweenable t = { 0, 0, percent, ms };
+    Tweenable t = { nullptr, 0, percent, ms };
     while (t.id < GetNumTweening())
     {
       t.elem = m_tweening[t.id];
@@ -185,8 +185,7 @@ void  UIBuilderScreen::Reposition(int width, int height)
   const int arY[3] = { m_padding, height / 2, height - m_padding };
   for(int i = 0; i < kNumAnchors; ++i)
   {
-    UIElement*  elem = m_builder.GetElement(kAnchorName[i]);
-    if(elem != 0)
+    if(auto elem = m_builder.GetElement(kAnchorName[i]))
     {
       int y(i / 3);
       int x(i - (y * 3));
@@ -225,11 +224,11 @@ void  UIBuilderScreen::_ProcessListeners(tinyxml2::XMLElement* xml)
   while (listenerXml)
   {
     const char* handle = listenerXml->Attribute(kTags[TAG_ID]);
-    XR_ASSERTMSG(UIBuilderScreen, handle != 0, ("'%s' is required in '%s'",
+    XR_ASSERTMSG(UIBuilderScreen, handle != nullptr, ("'%s' is required in '%s'",
       kTags[TAG_ID], kTags[TAG_LISTENER]));
 
     UIElement*  elem = m_builder.GetElement(handle);
-    XR_ASSERTMSG(UIBuilderScreen, elem != 0, ("the %s '%s' is undefined.",
+    XR_ASSERTMSG(UIBuilderScreen, elem != nullptr, ("the %s '%s' is undefined.",
       kTags[TAG_ID], handle));
 
     l.push_back(elem);
@@ -248,11 +247,11 @@ void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* xml)
   while (tweeningXml)
   {
     const char* handle = tweeningXml->Attribute(kTags[TAG_ID]);
-    XR_ASSERTMSG(UIBuilderScreen, handle != 0, ("'%s' is required in '%s'",
+    XR_ASSERTMSG(UIBuilderScreen, handle != nullptr, ("'%s' is required in '%s'",
       kTags[TAG_ID], kTags[TAG_TWEENING]));
 
     UIElement*  elem = m_builder.GetElement(handle);
-    XR_ASSERTMSG(UIBuilderScreen, elem != 0, ("the %s '%s' is undefined.",
+    XR_ASSERTMSG(UIBuilderScreen, elem != nullptr, ("the %s '%s' is undefined.",
       kTags[TAG_ID], handle));
 
     l.push_back(elem);

@@ -14,8 +14,8 @@ namespace xr
 
 //==============================================================================
 ParserCore::ParserCore()
-: m_p0(0),
-  m_p1(0),
+: m_p0(nullptr),
+  m_p1(nullptr),
   m_row(0),
   m_column(0)
 {}
@@ -25,17 +25,17 @@ ParserCore::~ParserCore()
 {}
 
 //==============================================================================
-void  ParserCore::SetBuffer(const char* parBuffer, size_t size)
+void  ParserCore::SetBuffer(const char* buffer, size_t size)
 {
-  XR_ASSERT(ParserCore, parBuffer != 0);
+  XR_ASSERT(ParserCore, buffer != nullptr);
   XR_ASSERT(ParserCore, size >= 0);
   if (size == 0)
   {
-    size = strlen(parBuffer);
+    size = strlen(buffer);
   }
 
-  m_p0 = parBuffer;
-  m_p1 = parBuffer + size;
+  m_p0 = buffer;
+  m_p1 = buffer + size;
   m_row = 1;
   m_column = 1;
 }
@@ -43,7 +43,7 @@ void  ParserCore::SetBuffer(const char* parBuffer, size_t size)
 //==============================================================================
 const char* ParserCore::ExpectChar()
 {
-  XR_ASSERT(ParserCore, m_p0 != 0);
+  XR_ASSERT(ParserCore, m_p0 != nullptr);
   while (m_p0 != m_p1 && isspace(*m_p0))
   {
     SkipChar();
@@ -54,7 +54,7 @@ const char* ParserCore::ExpectChar()
 //==============================================================================
 const char* ParserCore::RequireChar(int c)
 {
-  XR_ASSERT(ParserCore, m_p0 != 0);
+  XR_ASSERT(ParserCore, m_p0 != nullptr);
   while (m_p0 != m_p1 && *m_p0 != c)
   {
     SkipChar();

@@ -28,7 +28,7 @@ Ray::Ray(const Vector3& pos, const Vector3& dir, float l)
 //==============================================================================
 void  Ray::SetDirection(const Vector3& dir)
 {
-  float d(dir.Dot());
+  float d = dir.Dot();
   XR_ASSERT(Ray, d > .0f);
   SetDirectionNormalised(dir / sqrtf(d));
 }

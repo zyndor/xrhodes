@@ -34,7 +34,7 @@ struct CallbackAdaptor
   inline
   static void  Function(void* systemData, void* userData)
   {
-    XR_ASSERT(CallbackAdaptor, userData != 0);
+    XR_ASSERT(CallbackAdaptor, userData != nullptr);
     (static_cast<C*>(userData)->*Method)(static_cast<T*>(systemData));
   }
 
@@ -53,7 +53,7 @@ struct CallbackAdaptor<T&>
   inline
   static void  Function(void* systemData, void* userData)
   {
-    XR_ASSERT(CallbackAdaptor, userData != 0);
+    XR_ASSERT(CallbackAdaptor, userData != nullptr);
     (static_cast<C*>(userData)->*Method)(*static_cast<T*>(systemData));
   }
 
@@ -72,7 +72,7 @@ struct CallbackAdaptor<void>
   inline
   static void  Function(void* systemData, void* userData)
   {
-    XR_ASSERT(CallbackAdaptor, userData != 0);
+    XR_ASSERT(CallbackAdaptor, userData != nullptr);
     (static_cast<C*>(userData)->*Method)();
   }
 

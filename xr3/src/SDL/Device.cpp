@@ -28,7 +28,7 @@ static const char* const  kConfigName = "xr.json";
 //==============================================================================
 static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* systemData)
 {
-  const SDL_Event*  pEvent(static_cast<SDL_Event*>(systemData));
+  const SDL_Event* pEvent = static_cast<SDL_Event*>(systemData);
   Device::ScreenChangeEvent e =
   {
     false,
@@ -157,7 +157,7 @@ void Device::Init(char const* title)
   s_deviceImpl.windowWidth = Device::GetConfigInt("Display", "width", 800);
   s_deviceImpl.windowHeight = Device::GetConfigInt("Display", "height", 600);
 
-  uint32_t flags(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+  uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
   if (Device::GetConfigInt("Display", "windowed", false) == 0)
   {
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -206,7 +206,7 @@ std::string Device::GetConfig(const char* groupName, const char* varName)
   std::string result;
   if (s_deviceImpl.config)
   {
-    if (groupName != 0)
+    if (groupName != nullptr)
     {
       JSON::Entity* groupEntity = s_deviceImpl.config->GetChild(groupName, JSON::OBJECT);
       XR_ASSERTMSG(Device, groupEntity != nullptr, ("'%s' is not a groupName in root.",
@@ -225,7 +225,7 @@ std::string Device::GetConfig(const char* groupName, const char* varName)
     }
     else
     {
-      JSON::Entity* groupEntity(s_deviceImpl.config->GetChild(varName, JSON::VALUE));
+      JSON::Entity* groupEntity = s_deviceImpl.config->GetChild(varName, JSON::VALUE);
       XR_ASSERTMSG(Device, groupEntity != nullptr, ("'%s' is not a value in root.",
         varName));
       if (groupEntity != nullptr)
@@ -496,7 +496,7 @@ void  Device::YieldOS(int32_t ms)
   for(int i = 0; i < static_cast<int>(Event::kCount); ++i)
   {
     Event e(static_cast<Event>(i));
-    CallbackObject::List& lRemove(s_deviceImpl.postponedRemove[i]);
+    CallbackObject::List& lRemove = s_deviceImpl.postponedRemove[i];
     while(!lRemove.empty())
     {
       XR_DEBUG_ONLY(bool result =) UnregisterCallback(e, lRemove.front().callback);
@@ -504,10 +504,10 @@ void  Device::YieldOS(int32_t ms)
       lRemove.pop_front();
     }
 
-    CallbackObject::List& lAdd(s_deviceImpl.postponedAdd[i]);
+    CallbackObject::List& lAdd = s_deviceImpl.postponedAdd[i];
     while(!lAdd.empty())
     {
-      CallbackObject& cbo(lAdd.front());
+      CallbackObject& cbo = lAdd.front();
       XR_DEBUG_ONLY(bool result =) RegisterCallback(e, cbo.callback, cbo.userData);
       XR_ASSERT(Device, result);
       lAdd.pop_front();

@@ -112,7 +112,7 @@ struct Vector3
   ///@brief Normalises this vector.
   Vector3&  Normalise(float s = 1.0f)
   {
-    float d(Dot());
+    float d = Dot();
     XR_ASSERT(Vector3, d > .0f);
     return this->operator*=(s / sqrtf(d));
   }

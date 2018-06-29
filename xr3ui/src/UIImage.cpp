@@ -23,7 +23,7 @@ UIImage::~UIImage()
 //==============================================================================
 void  UIImage::SetSprite(const Sprite *pSprite, float scale)
 {
-  XR_ASSERT(UIImage, pSprite != 0);
+  XR_ASSERT(UIImage, pSprite != nullptr);
   sprite = *pSprite;
 
   SetSizeToSprite(scale);

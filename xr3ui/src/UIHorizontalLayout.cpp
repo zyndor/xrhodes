@@ -23,7 +23,7 @@ void UIHorizontalLayout::_AlignElement( UIElement* elem )
 {
   if (m_align != AL_NOALIGN)
   {
-    int16_t yElem(y);
+    int16_t yElem = y;
     switch (m_align)
     {
     case  AL_LOW:
@@ -44,10 +44,10 @@ void UIHorizontalLayout::_AlignElement( UIElement* elem )
     elem->y = yElem;
   }
 
-  int16_t xElem(0);
+  int16_t xElem = 0;
   if (m_elements.size() > 0)
   {
-    UIElement*  pLast(m_elements.back());
+    UIElement* pLast = m_elements.back();
     xElem = pLast->x;
     if (m_growDir == GD_POSITIVE)
     {

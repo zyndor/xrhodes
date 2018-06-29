@@ -87,7 +87,7 @@ bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
   const int kBottom(CalculateBottom());
 
   bool  isHandled(false);
-  if ((m_activeArea == 0 ||
+  if ((!m_activeArea ||
     (e.x >= m_activeArea->x &&
     e.y >= m_activeArea->y &&
     e.x < m_activeArea->x + m_activeArea->w &&

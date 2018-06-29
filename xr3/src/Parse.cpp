@@ -33,7 +33,7 @@ bool Parse::BooleanPositive( const char* value )
   s_errorCode = ERR_NONE;
 
   bool  result = true;
-  if (value != 0 && value[0] != '\0')
+  if (value != nullptr && value[0] != '\0')
   {
     int dummy;
     if ((sscanf(value, "%d", &dummy) > 0 && dummy == 0) ||
@@ -360,12 +360,12 @@ bool Parse::Range( const char* value, int& r0, int& r1 )
     {
       const char* valueEnd = value + len;
       value = strchr(value, '-');
-      if (value != 0 && r0 < 0)
+      if (value != nullptr && r0 < 0)
       {
         value = strchr(value + 1, '-');
       }
 
-      if (value == 0)
+      if (value == nullptr)
       {
         r1 = r0;
       }
@@ -404,12 +404,12 @@ bool Parse::Range( const char* value, float& r0, float& r1 )
     {
       const char* valueEnd = value + len;
       value = strchr(value, '-');
-      if (value != 0 && r0 < .0f)
+      if (value != nullptr && r0 < .0f)
       {
         value = strchr(value + 1, '-');
       }
 
-      if (value == 0)
+      if (value == nullptr)
       {
         r1 = r0;
       }
@@ -429,7 +429,7 @@ xr::Color Parse::Color( const char* value )
   s_errorCode = ERR_NONE;
 
   xr::Color col(0xffffffff);
-  if (value != 0)
+  if (value != nullptr)
   {
     uint32_t  rgba;
     if (sscanf(value, "%x", &rgba) > 0)

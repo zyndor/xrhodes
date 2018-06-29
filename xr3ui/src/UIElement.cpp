@@ -14,13 +14,13 @@ namespace xr
 //==============================================================================
 UIElement::UIElement()
 : Rect(0, 0, 0, 0),
-  m_parent(0)
+  m_parent(nullptr)
 {}
 
 //==============================================================================
 UIElement::UIElement(int w, int h)
 : Rect(0, 0, w, h),
-  m_parent(0)
+  m_parent(nullptr)
 {}
 
 //==============================================================================
@@ -178,7 +178,7 @@ void UIElement::_AlignVertically( int y1, Alignment vAlign )
 //==============================================================================
 void UIElement::OnChangeCaller( void* data )
 {
-  XR_ASSERTMSG(UIElement, data != 0,
+  XR_ASSERTMSG(UIElement, data != nullptr,
     ("Trying to call OnChange() on NULL element."));
   static_cast<UIElement*>(data)->OnChange();
 }

@@ -58,8 +58,8 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy) const
     bottom - y0,
   };
 
-  float t0(-std::numeric_limits<float>::max());	// lowest() [C++11]
-  float t1(std::numeric_limits<float>::max());
+  float t0 = -std::numeric_limits<float>::max();	// lowest() [C++11]
+  float t1 = std::numeric_limits<float>::max();
   for (int i = 0; i < 4; ++i)
   {
     if (p[i] * p[i] > .0f)
@@ -105,8 +105,8 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy, float& t) const
     bottom - y0,
   };
 
-  float t0(-std::numeric_limits<float>::max());	// lowest() [C++11]
-  float t1(std::numeric_limits<float>::max());
+  float t0 = -std::numeric_limits<float>::max();	// lowest() [C++11]
+  float t1 = std::numeric_limits<float>::max();
   for (int i = 0; i < 4; ++i)
   {
     if (p[i] * p[i] > .0f)

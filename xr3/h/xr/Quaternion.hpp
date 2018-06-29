@@ -43,17 +43,17 @@ public:
   {
     pitchYawRoll *= .5f;
 
-    const float c1(cosf(pitchYawRoll.y));
-    const float c2(cosf(pitchYawRoll.x));
-    const float c3(cosf(pitchYawRoll.z));
-    const float s1(sinf(pitchYawRoll.y));
-    const float s2(sinf(pitchYawRoll.x));
-    const float s3(sinf(pitchYawRoll.z));
+    const float c1 = cosf(pitchYawRoll.y);
+    const float c2 = cosf(pitchYawRoll.x);
+    const float c3 = cosf(pitchYawRoll.z);
+    const float s1 = sinf(pitchYawRoll.y);
+    const float s2 = sinf(pitchYawRoll.x);
+    const float s3 = sinf(pitchYawRoll.z);
 
-    const float c2c3(c2 * c3);
-    const float s2s3(s2 * s3);
-    const float s2c3(s2 * c3);
-    const float c2s3(c2 * s3);
+    const float c2c3 = c2 * c3;
+    const float s2s3 = s2 * s3;
+    const float s2c3 = s2 * c3;
+    const float c2s3 = c2 * s3;
 
     q.i = s1 * c2c3 - c1 * s2s3;
     q.j = c1 * s2c3 - s1 * c2s3;
@@ -224,21 +224,21 @@ public:
   ///@brief Rotates the vector @a v around the origin by this quaternion.
   void  RotateVec(Vector3& v) const
   {
-    const float px((w * v.x) - (j * v.z) + (k * v.y));
-    const float py((w * v.y) - (k * v.x) + (i * v.z));
-    const float pz((w * v.z) - (i * v.y) + (j * v.x));
+    const float px = (w * v.x) - (j * v.z) + (k * v.y);
+    const float py = (w * v.y) - (k * v.x) + (i * v.z);
+    const float pz = (w * v.z) - (i * v.y) + (j * v.x);
 
-    const float wpx(w * px);
-    const float wpy(w * py);
-    const float wpz(w * pz);
+    const float wpx = w * px;
+    const float wpy = w * py;
+    const float wpz = w * pz;
 
-    const float vxpx((j * pz) - (k * py));
-    const float vxpy((k * px) - (i * pz));
-    const float vxpz((i * py) - (j * px));
+    const float vxpx = (j * pz) - (k * py);
+    const float vxpy = (k * px) - (i * pz);
+    const float vxpz = (i * py) - (j * px);
 
-    const float vxi2(v.x * i * i);
-    const float vyj2(v.y * j * j);
-    const float vzk2(v.z * k * k);
+    const float vxi2 = v.x * i * i;
+    const float vyj2 = v.y * j * j;
+    const float vzk2 = v.z * k * k;
 
     v.x = vxi2 + wpx - vxpx;
     v.y = vyj2 + wpy - vxpy;
@@ -257,9 +257,9 @@ public:
   /// this quaternion represents.
   Vector3 ToEuler() const
   {
-    const float iSqr(i * i);
-    const float jSqr(j * j);
-    const float kSqr(k * k);
+    const float iSqr = i * i;
+    const float jSqr = j * j;
+    const float kSqr = k * k;
 
     Vector3 v(asinf(-2.0f * (i * k - j * w)),
       atan2f(2.0f * (k * j + i * w), 1.0f - 2.0f * (iSqr + jSqr)),
@@ -277,15 +277,15 @@ public:
 
   Quaternion& operator*=(Quaternion const& rhs)
   {
-    const float w0(w);
-    const float i0(i);
-    const float j0(j);
-    const float k0(k);
+    const float w0 = w;
+    const float i0 = i;
+    const float j0 = j;
+    const float k0 = k;
 
-    const float w1(rhs.w);
-    const float i1(rhs.i);
-    const float j1(rhs.j);
-    const float k1(rhs.k);
+    const float w1 = rhs.w;
+    const float i1 = rhs.i;
+    const float j1 = rhs.j;
+    const float k1 = rhs.k;
 
     w = w0 * w1 - i0 * i1 - j0 * j1 - k0 * k1;
     i = w0 * i1 + i0 * w1 + j0 * k1 - k0 * j1;
@@ -317,17 +317,17 @@ public:
 
   operator Matrix() const
   {
-    const float ij(2.0f * i * j);
-    const float wk(2.0f * w * k);
-    const float ik(2.0f * i * k);
-    const float wj(2.0f * w * j);
-    const float jk(2.0f * j * k);
-    const float wi(2.0f * w * i);
+    const float ij = 2.0f * i * j;
+    const float wk = 2.0f * w * k;
+    const float ik = 2.0f * i * k;
+    const float wj = 2.0f * w * j;
+    const float jk = 2.0f * j * k;
+    const float wi = 2.0f * w * i;
 
-    const float wSqr(w * w);
-    const float iSqr(i * i);
-    const float jSqr(j * j);
-    const float kSqr(k * k);
+    const float wSqr = w * w;
+    const float iSqr = i * i;
+    const float jSqr = j * j;
+    const float kSqr = k * k;
 
     const float matrixData[Matrix::kNumLinearComponents] =
     {

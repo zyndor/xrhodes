@@ -263,7 +263,7 @@ template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Add(const AABB& box, void* object)
 {
-  XR_ASSERT(Quadtree, object != 0);
+  XR_ASSERT(Quadtree, object != nullptr);
   XR_ASSERT(Quadtree, box.left <= box.right);
   XR_ASSERT(Quadtree, box.top <= box.bottom);
   s_hitBox = box;
@@ -277,7 +277,7 @@ template  <template <typename> class Alloc>
 inline
 void  Quadtree<Alloc>::Add(const Vector2& pos, void* object)
 {
-  XR_ASSERT(Quadtree, object != 0);
+  XR_ASSERT(Quadtree, object != nullptr);
   s_hitBox.Import(pos.x, pos.y, .0f, .0f);
   s_callbackData = object;
 
@@ -621,8 +621,8 @@ void  Quadtree<Alloc>::_Create(float min)
 
   if(min > .0f)
   {
-    float hw(m_halfWidth * .5f);
-    float hh(m_halfHeight * .5f);
+    float hw = m_halfWidth * .5f;
+    float hh = m_halfHeight * .5f;
     m_canSplit = CalculateCanSplit(hw, hh, min);
 
     if (m_canSplit)
