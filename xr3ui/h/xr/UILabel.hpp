@@ -14,6 +14,7 @@ namespace xr
 {
 
 //==============================================================================
+///@brief UIElement representing a piece of text.
 class UILabel: public UIColoredElement
 {
 public:
@@ -26,7 +27,6 @@ public:
 
   // structors
   UILabel();
-  virtual ~UILabel();
 
   // general
   Font::Ptr GetFont() const;
@@ -47,9 +47,9 @@ public:
 
   void UpdateText();
 
-  virtual void OnChange();
+  void OnChange() override;
 
-  virtual void Render(IUIRenderer& renderer) const;
+  void Render(IUIRenderer& renderer) const override;
 
 protected:
   // data

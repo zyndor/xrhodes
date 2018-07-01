@@ -13,12 +13,13 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Container that is capable of scrolling its elements horizontally when
+/// they don't fit its boundaries, clipping the ones that don't fit.
 class UIHorizontalScrollingLayout:  public UIHorizontalLayout
 {
 public:
   // structors
   UIHorizontalScrollingLayout();
-  virtual ~UIHorizontalScrollingLayout();
 
   // general use
   int16_t       GetXOffset() const;
@@ -43,7 +44,7 @@ protected:
   int16_t m_lastTouchX;
 
   // internal
-  void _AlignElement( UIElement* elem ) override;
+  void AlignChildImpl( UIElement* elem ) override;
 };
 
 //==============================================================================

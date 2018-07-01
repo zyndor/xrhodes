@@ -16,10 +16,6 @@ UIVerticalProgressBar::UIVerticalProgressBar()
 {}
 
 //==============================================================================
-UIVerticalProgressBar::~UIVerticalProgressBar()
-{}
-
-//==============================================================================
 void UIVerticalProgressBar::Render(IUIRenderer& renderer) const
 {
   bool  isFdPositive = m_fillDir == FD_POSITIVE;
@@ -101,7 +97,7 @@ void UIVerticalProgressBar::Render(IUIRenderer& renderer) const
       verts[Quad::Vertex::NE].pos = Vector3(right, y1, .0f);
     }
 
-    _ApplyColor(verts);
+    ApplyColor(verts);
   }
 }
 

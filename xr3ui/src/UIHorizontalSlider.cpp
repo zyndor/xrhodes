@@ -17,10 +17,6 @@ UIHorizontalSlider::UIHorizontalSlider()
 {}
 
 //==============================================================================
-UIHorizontalSlider::~UIHorizontalSlider()
-{}
-
-//==============================================================================
 int32_t UIHorizontalSlider::CalculateRange() const
 {
   int32_t ssw = GetSliderSpriteWidth();
@@ -113,7 +109,7 @@ void UIHorizontalSlider::Render(IUIRenderer& renderer) const
 
   sliderSprite.CopyUVsTo(verts);
 
-  _ApplyColor(verts);
+  ApplyColor(verts);
 }
 
 } // xr

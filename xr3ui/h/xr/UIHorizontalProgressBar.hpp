@@ -18,7 +18,6 @@ class UIHorizontalProgressBar:  public UIProgressBarBase
 public:
   // structors
   UIHorizontalProgressBar();
-  ~UIHorizontalProgressBar();
 
   // general
   void  Render(IUIRenderer& renderer) const override;

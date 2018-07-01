@@ -18,15 +18,11 @@ UICascader::UICascader()
 {}
 
 //==============================================================================
-UICascader::~UICascader()
-{}
-
-//==============================================================================
-void UICascader::_AlignElement( UIElement* elem )
+void UICascader::AlignChildImpl( UIElement* elem )
 {
   if (m_hAlign != AL_NOALIGN)
   {
-    int x1 = static_cast<int32_t>(x + m_horizontalOffset * m_elements.size());
+    int x1 = static_cast<int32_t>(x + m_horizontalOffset * m_children.size());
 
     switch (m_hAlign)
     {
@@ -50,7 +46,7 @@ void UICascader::_AlignElement( UIElement* elem )
 
   if (m_vAlign)
   {
-    int y1 = static_cast<int32_t>(y + m_verticalOffset * m_elements.size());
+    int y1 = static_cast<int32_t>(y + m_verticalOffset * m_children.size());
 
     switch (m_vAlign)
     {
@@ -96,11 +92,11 @@ void UICascader::SetVerticalOffset( int val )
 }
 
 //==============================================================================
-void UICascader::_SetWidthToContent()
+void UICascader::SetWidthToContentImpl()
 {
   int xMin = std::numeric_limits<int>::max();
   int xMax = std::numeric_limits<int>::min();
-  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_children.begin()), i1(m_children.end()); i0 != i1; ++i0)
   {
     const UIElement*  elem(*i0);
     if (elem->x < xMin)
@@ -119,11 +115,11 @@ void UICascader::_SetWidthToContent()
 }
 
 //==============================================================================
-void UICascader::_SetHeightToContent()
+void UICascader::SetHeightToContentImpl()
 {
   int yMin(std::numeric_limits<int>::max());
   int yMax(std::numeric_limits<int>::min());
-  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_children.begin()), i1(m_children.end()); i0 != i1; ++i0)
   {
     const UIElement*  elem(*i0);
     if (elem->y < yMin)

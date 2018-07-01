@@ -10,10 +10,8 @@
 
 namespace xr
 {
-
-//==============================================================================
-typedef std::list<UIElement*> UIElementList;
-
+namespace
+{
 enum
 {
   TAG_LISTENER,
@@ -28,6 +26,20 @@ static const char* const kTags[kNumTags] =
   "tweening",
   "id"
 };
+
+size_t CountElements(tinyxml2::XMLElement* first)
+{
+  const char* name = first->Value();
+  size_t count = 0;
+  while (first)
+  {
+    ++count;
+    first = first->NextSiblingElement(name);
+  }
+  return count;
+}
+
+}
 
 //==============================================================================
 const char* const UIBuilderScreen::kAnchorName[] =
@@ -82,8 +94,8 @@ bool  UIBuilderScreen::Build(tinyxml2::XMLElement* xml)
   bool  result(m_builder.Build(xml, m_root));
   if(result)
   {
-    _ProcessListeners(xml);
-    _ProcessTweening(xml);
+    ProcessListeners(xml);
+    ProcessTweening(xml);
 
     Reposition(Gfx::GetLogicalWidth(), Gfx::GetLogicalHeight());
   }
@@ -131,17 +143,17 @@ void  UIBuilderScreen::MoveTweening(int x, int y)
 }
 
 //==============================================================================
-void  UIBuilderScreen::_AddElements()
+void  UIBuilderScreen::AddElements()
 {
   m_manager->GetContainer().AddElement(&m_root);
 }
 
 //==============================================================================
-void  UIBuilderScreen::_Show(uint32_t ms)
+void  UIBuilderScreen::ShowImpl(uint32_t ms)
 {
   if (m_tweenIn && !m_tweening.empty())
   {
-    float     percent = 1.0f / GetNumTweening();
+    float percent = 1.0f / GetNumTweening();
     Tweenable t = { nullptr, 0, percent, ms };
     while (t.id < GetNumTweening())
     {
@@ -154,11 +166,11 @@ void  UIBuilderScreen::_Show(uint32_t ms)
 }
 
 //==============================================================================
-void  UIBuilderScreen::_Hide(uint32_t ms)
+void  UIBuilderScreen::HideImpl(uint32_t ms)
 {
   if (m_tweenOut && !m_tweening.empty())
   {
-    float     percent = 1.0f / GetNumTweening();
+    float percent = 1.0f / GetNumTweening();
     Tweenable t = { nullptr, 0, percent, ms };
     while (t.id < GetNumTweening())
     {
@@ -171,7 +183,7 @@ void  UIBuilderScreen::_Hide(uint32_t ms)
 }
 
 //==============================================================================
-void  UIBuilderScreen::_RemoveElements()
+void  UIBuilderScreen::RemoveElements()
 {
   m_manager->GetContainer().RemoveElement(&m_root);
 }
@@ -183,7 +195,7 @@ void  UIBuilderScreen::Reposition(int width, int height)
   XR_ASSERT(UIBuilderScreen, height > 0);
   const int arX[3] = { m_padding, width / 2, width - m_padding };
   const int arY[3] = { m_padding, height / 2, height - m_padding };
-  for(int i = 0; i < kNumAnchors; ++i)
+  for(int i = 0; i < kCount; ++i)
   {
     if(auto elem = m_builder.GetElement(kAnchorName[i]))
     {
@@ -197,7 +209,7 @@ void  UIBuilderScreen::Reposition(int width, int height)
 }
 
 //==============================================================================
-void  UIBuilderScreen::_Register()
+void  UIBuilderScreen::RegisterImpl()
 {
   UIEventNotifier&  dispatcher = m_manager->GetNotifier();
   for(auto l: m_listeners)
@@ -207,7 +219,7 @@ void  UIBuilderScreen::_Register()
 }
 
 //==============================================================================
-void  UIBuilderScreen::_Unregister()
+void  UIBuilderScreen::UnregisterImpl()
 {
   UIEventNotifier&  dispatcher = m_manager->GetNotifier();
   for (auto l : m_listeners)
@@ -217,10 +229,11 @@ void  UIBuilderScreen::_Unregister()
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessListeners(tinyxml2::XMLElement* xml)
+void  UIBuilderScreen::ProcessListeners(tinyxml2::XMLElement* xml)
 {
   tinyxml2::XMLElement* listenerXml = xml->FirstChildElement(kTags[TAG_LISTENER]);
-  UIElementList l;  // TODO: replace with vector, reserve, then std::move.
+  decltype(m_listeners) l;
+  l.reserve(CountElements(listenerXml));
   while (listenerXml)
   {
     const char* handle = listenerXml->Attribute(kTags[TAG_ID]);
@@ -236,14 +249,15 @@ void  UIBuilderScreen::_ProcessListeners(tinyxml2::XMLElement* xml)
     listenerXml = listenerXml->NextSiblingElement(kTags[TAG_LISTENER]);
   }
 
-  m_listeners.assign(l.begin(), l.end());
+  m_listeners = std::move(l);
 }
 
 //==============================================================================
-void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* xml)
+void  UIBuilderScreen::ProcessTweening(tinyxml2::XMLElement* xml)
 {
   tinyxml2::XMLElement* tweeningXml = xml->FirstChildElement(kTags[TAG_TWEENING]);
-  UIElementList l;  // TODO: replace with vector, reserve, then std::move.
+  decltype(m_tweening) l;  // TODO: replace with vector, reserve, then std::move.
+  l.reserve(CountElements(tweeningXml));
   while (tweeningXml)
   {
     const char* handle = tweeningXml->Attribute(kTags[TAG_ID]);
@@ -259,7 +273,7 @@ void  UIBuilderScreen::_ProcessTweening(tinyxml2::XMLElement* xml)
     tweeningXml = tweeningXml->NextSiblingElement(kTags[TAG_TWEENING]);
   }
 
-  m_tweening.assign(l.begin(), l.end());
+  m_tweening = std::move(l);
 }
 
 } // xr

@@ -14,12 +14,13 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Aligns its children with the given horizontal / vertical alignments,
+/// on top of each other.
 class UIAligner:  public  UIContainer
 {
 public:
   // structors
   UIAligner();
-  virtual ~UIAligner();
 
   // general
   Alignment GetHorizontalAlignment() const;
@@ -30,7 +31,7 @@ public:
 
 protected:
   // internal use
-  virtual void _AlignElement( UIElement* elem );
+  void AlignChildImpl( UIElement* elem ) override;
 
   // data
   Alignment m_hAlign;

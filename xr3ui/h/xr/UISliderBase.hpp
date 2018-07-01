@@ -14,11 +14,13 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Base class for UIElements whose purpose is to control a normalised,
+/// numeric value in the range of [0.0; 1.0] with a sliding handle control.
 class UISliderBase:  public UIImage
 {
 public:
   // types
-  typedef void(*ValueChangedCallback)(UISliderBase* slider, void* userData);
+  using ValueChangedCallback = void(*)(UISliderBase* slider, void* userData);
 
   // data
   Sprite                sliderSprite;
@@ -29,7 +31,6 @@ public:
 
   // structors
   UISliderBase();
-  ~UISliderBase();
 
   // general
   int32_t       GetSliderSpriteWidth() const;

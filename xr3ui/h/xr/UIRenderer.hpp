@@ -13,6 +13,9 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Implementation of IUIRenderer which arranges the UIElements submitted
+/// for rendering in batches according to their material, in order to try to
+/// minimize state changes.
 class UIRenderer: public IUIRenderer
 {
   XR_NONCOPY_DECL(UIRenderer)

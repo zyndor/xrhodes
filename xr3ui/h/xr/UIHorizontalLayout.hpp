@@ -13,22 +13,21 @@ namespace xr
 {
 
 //==============================================================================
-///@brief container that places the elements within side-by-side
+///@brief Container that places its children side by side in one horizontal line.
 class UIHorizontalLayout: public UIGrowingLayoutBase
 {
 public:
   // structors
   UIHorizontalLayout();
-  virtual ~UIHorizontalLayout();
 
   // general
-  virtual int CalculateElementsExtent() const;
+  int CalculateElementsExtent() const override;
 
 protected:
   // internal
-  virtual void _AlignElement( UIElement* elem );
+  void AlignChildImpl( UIElement* elem ) override;
 
-  virtual void _SetWidthToContent();
+  void SetWidthToContentImpl() override;
 };
 
 //==============================================================================
@@ -37,9 +36,9 @@ protected:
 inline
 int UIHorizontalLayout::CalculateElementsExtent() const
 {
-  return m_elements.empty() ? 0 : (m_growDir == GD_POSITIVE ?
-    (m_elements.back()->CalculateRight() - m_elements.front()->x) :
-    (m_elements.front()->CalculateRight() - m_elements.back()->x));
+  return m_children.empty() ? 0 : (m_growDir == GD_POSITIVE ?
+    (m_children.back()->CalculateRight() - m_children.front()->x) :
+    (m_children.front()->CalculateRight() - m_children.back()->x));
 }
 
 } // xr

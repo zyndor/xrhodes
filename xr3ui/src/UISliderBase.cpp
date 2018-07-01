@@ -21,10 +21,6 @@ UISliderBase::UISliderBase()
 {}
 
 //==============================================================================
-UISliderBase::~UISliderBase()
-{}
-
-//==============================================================================
 int32_t UISliderBase::CalculateValue() const
 {
   int32_t range = CalculateRange();

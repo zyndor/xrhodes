@@ -24,10 +24,6 @@ UIHorizontalScrollingLayout::UIHorizontalScrollingLayout()
 }
 
 //==============================================================================
-UIHorizontalScrollingLayout::~UIHorizontalScrollingLayout()
-{}
-
-//==============================================================================
 bool UIHorizontalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e )
 {
   if (e.x >= x && e.x < (x + w) &&
@@ -73,7 +69,7 @@ bool UIHorizontalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e
 }
 
 //==============================================================================
-void UIHorizontalScrollingLayout::_AlignElement( UIElement* elem )
+void UIHorizontalScrollingLayout::AlignChildImpl( UIElement* elem )
 {
   switch (m_align)
   {
@@ -93,15 +89,15 @@ void UIHorizontalScrollingLayout::_AlignElement( UIElement* elem )
     break;
   }
 
-  if (m_elements.size() > 0)
+  if (m_children.size() > 0)
   {
     if (m_growDir == GD_POSITIVE)
     {
-      elem->x = m_elements.back()->x + m_elements.back()->w + m_spacing;
+      elem->x = m_children.back()->x + m_children.back()->w + m_spacing;
     }
     else
     {
-      elem->x = m_elements.back()->x - (elem->w + m_spacing);
+      elem->x = m_children.back()->x - (elem->w + m_spacing);
     }
   }
   else

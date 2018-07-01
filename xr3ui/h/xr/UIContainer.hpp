@@ -13,27 +13,50 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Base class for UIElements that may have other elements as children.
+/// External logic is required to take care of the ownership of these child
+/// elements. The Container does not perform spatial organization of its
+/// children - its specialisations do.
 class UIContainer:  public UIElement
 {
 public:
   // structors
   UIContainer();
-  ~UIContainer();
 
   // general
-  bool                    AddElement(UIElement* elem);
-  bool                    RemoveElement(UIElement* elem);
-  bool                    MoveUpElement(UIElement* elem);
+  ///@brief Adds an element as a child to the container, if not already a child.
+  ///@return Whether the element was successfully added.
+  ///@note No ownership transfer.
+  ///@note @a elem is removed from any previous parent it may have.
+  bool  AddElement(UIElement* elem);
 
+  ///@brief Removes an element from the container, if it is a child.
+  ///@return Whether the element was succesfully removed.
+  ///@note No ownership transfer.
+  bool  RemoveElement(UIElement* elem);
+
+  ///@brief Removes, then adds the element.
+  ///@note No ownership transfer.
+  bool  MoveUpElement(UIElement* elem);
+
+  ///@return The list of elements.
+  ///@note No ownership transfer.
   const UIElement::List&  GetElements() const;
-  size_t                  GetNumElements() const;
 
-  void                    RemoveAllElements();
+  ///@return The number of elements.
+  size_t  GetNumElements() const;
 
-  void                    SetWidthToContent();
-  void                    SetHeightToContent();
+  ///@brief Removes all child elements from the container.
+  void  RemoveAllElements();
 
-  void                    SetSizeToContent();
+  ///@brief Updates the width of the container base on its content.
+  void  SetWidthToContent();
+
+  ///@brief Updates the height of the container base on its content.
+  void  SetHeightToContent();
+
+  ///@brief Updates both width and height of the container base on its content.
+  void  SetSizeToContent();
 
   void  Render(IUIRenderer& renderer) const override;
 
@@ -44,16 +67,24 @@ public:
 
 protected:
   // data
-  UIElement::List m_elements; // no ownership
+  UIElement::List m_children; // no ownership
 
   // internal use
-  virtual void  _AlignElement(UIElement* elem);
+  ///@brief Performs the positioning of a child element, typically at the point
+  /// of adding to the container, within the containers.
+  virtual void  AlignChildImpl(UIElement* elem);
 
-  virtual void  _SetWidthToContent();
-  virtual void  _SetHeightToContent();
+  ///@brief Performs the calculation for the width of the container.
+  virtual void  SetWidthToContentImpl();
 
-  void          _RealignElements(UIElement::List::iterator i);
-  void          _AddChild( UIElement* elem );
+  ///@brief Performs the calculation for the height of the container.
+  virtual void  SetHeightToContentImpl();
+
+  ///@brief Recalculates the position of all elements starting at @a i into m_elements.
+  void  RealignChildren(UIElement::List::iterator i);
+
+  ///@brief Appends a child element to m_elements and calls AlignElementImpl() on it.
+  void  AddChild( UIElement* elem );
 };
 
 //==============================================================================
@@ -62,14 +93,14 @@ protected:
 inline
 size_t UIContainer::GetNumElements() const
 {
-  return m_elements.size();
+  return m_children.size();
 }
 
 //==============================================================================
 inline
 const UIElement::List&  UIContainer::GetElements() const
 {
-  return m_elements;
+  return m_children;
 }
 
 } // xr

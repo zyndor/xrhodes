@@ -59,13 +59,9 @@ UIGridLayout::UIGridLayout()
 {}
 
 //==============================================================================
-UIGridLayout::~UIGridLayout()
-{}
-
-//==============================================================================
-void UIGridLayout::_AlignElement( UIElement* elem )
+void UIGridLayout::AlignChildImpl( UIElement* elem )
 {
-  const int numElements = static_cast<int>(m_elements.size());
+  const int numElements = static_cast<int>(m_children.size());
   const int row = numElements / m_numColumns;
   const int column = numElements - (row * m_numColumns);
 
@@ -245,10 +241,10 @@ void UIGridLayout::SetAlignment( Alignment hAlign, Alignment vAlign )
 }
 
 //==============================================================================
-void UIGridLayout::_SetWidthToContent()
+void UIGridLayout::SetWidthToContentImpl()
 {
   int wNew(0);
-  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_children.begin()), i1(m_children.end()); i0 != i1; ++i0)
   {
     int wElem((*i0)->w);
     if (wElem > wNew)
@@ -262,10 +258,10 @@ void UIGridLayout::_SetWidthToContent()
 }
 
 //==============================================================================
-void UIGridLayout::_SetHeightToContent()
+void UIGridLayout::SetHeightToContentImpl()
 {
   int hNew(0);
-  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_children.begin()), i1(m_children.end()); i0 != i1; ++i0)
   {
     int hElem((*i0)->h);
     if (hElem > hNew)

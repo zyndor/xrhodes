@@ -17,10 +17,6 @@ UIVerticalSlider::UIVerticalSlider()
 {}
 
 //==============================================================================
-UIVerticalSlider::~UIVerticalSlider()
-{}
-
-//==============================================================================
 int32_t UIVerticalSlider::CalculateRange() const
 {
   int32_t ssh = GetSliderSpriteHeight();
@@ -112,7 +108,7 @@ void UIVerticalSlider::Render(IUIRenderer& renderer) const
 
   sliderSprite.CopyUVsTo(verts);
 
-  _ApplyColor(verts);
+  ApplyColor(verts);
 }
 
 } // xr

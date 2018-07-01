@@ -15,11 +15,7 @@ UIVerticalLayout::UIVerticalLayout()
 {}
 
 //==============================================================================
-UIVerticalLayout::~UIVerticalLayout()
-{}
-
-//==============================================================================
-void UIVerticalLayout::_AlignElement( UIElement* elem )
+void UIVerticalLayout::AlignChildImpl( UIElement* elem )
 {
   if (m_align != AL_NOALIGN)
   {
@@ -44,9 +40,9 @@ void UIVerticalLayout::_AlignElement( UIElement* elem )
   }
 
   int yElem(0);
-  if (m_elements.size() > 0)
+  if (m_children.size() > 0)
   {
-    UIElement*  pLast(m_elements.back());
+    UIElement*  pLast(m_children.back());
     yElem = pLast->y;
     if (m_growDir == GD_POSITIVE)
     {
@@ -71,17 +67,17 @@ void UIVerticalLayout::_AlignElement( UIElement* elem )
 }
 
 //==============================================================================
-void UIVerticalLayout::_SetHeightToContent()
+void UIVerticalLayout::SetHeightToContentImpl()
 {
   int32_t hNew = 0;
-  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_children.begin()), i1(m_children.end()); i0 != i1; ++i0)
   {
     hNew += (*i0)->h;
   }
 
-  if (m_elements.size() > 0)
+  if (m_children.size() > 0)
   {
-    hNew += static_cast<int32_t>(m_elements.size() - 1) * m_spacing;
+    hNew += static_cast<int32_t>(m_children.size() - 1) * m_spacing;
   }
 
   h = hNew;

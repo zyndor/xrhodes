@@ -12,11 +12,10 @@ namespace xr
 //==============================================================================
 void  UIEventNotifier::UIPointerActionCallback(void* systemData, void* userData)
 {
-  UIEventNotifier   *dispatcher(static_cast<UIEventNotifier*>(userData));
-  Input::MouseActionEvent *event(static_cast<Input::MouseActionEvent*>(systemData));
-
-  bool  zeroHit(!dispatcher->m_actionNotifier.Notify(*event) &&
-    dispatcher->m_onZeroHit);
+  auto dispatcher = static_cast<UIEventNotifier*>(userData);
+  auto event = static_cast<Input::MouseActionEvent*>(systemData);
+  bool zeroHit = !dispatcher->m_actionNotifier.Notify(*event) &&
+    dispatcher->m_onZeroHit;
   if (zeroHit)
   {
     (*dispatcher->m_onZeroHit)(*event, dispatcher->m_onZeroHitData);
@@ -26,8 +25,8 @@ void  UIEventNotifier::UIPointerActionCallback(void* systemData, void* userData)
 //==============================================================================
 void  UIEventNotifier::UIPointerMotionCallback(void* systemData, void* userData)
 {
-  UIEventNotifier    *dispatcher(static_cast<UIEventNotifier*>(userData));
-  Input::MouseMotionEvent *event(static_cast<Input::MouseMotionEvent*>(systemData));
+  auto dispatcher = static_cast<UIEventNotifier*>(userData);
+  auto event = static_cast<Input::MouseMotionEvent*>(systemData);
 
   dispatcher->m_motionNotifier.Notify(*event);
 }
@@ -38,10 +37,6 @@ UIEventNotifier::UIEventNotifier()
   m_motionNotifier(),
   m_onZeroHit(nullptr),
   m_onZeroHitData(nullptr)
-{}
-
-//==============================================================================
-UIEventNotifier::~UIEventNotifier()
 {}
 
 //==============================================================================
@@ -65,17 +60,15 @@ bool  UIEventNotifier::Unregister()
 //==============================================================================
 bool  UIEventNotifier::AddListener(UIElement* listener)
 {
-  m_actionNotifier.AddListener(*listener, &UIElement::OnMouseAction);
-  m_motionNotifier.AddListener(*listener, &UIElement::OnMouseMotion);
-  return true;
+  return m_actionNotifier.AddListener(*listener, &UIElement::OnMouseAction) ||
+    m_motionNotifier.AddListener(*listener, &UIElement::OnMouseMotion);
 }
 
 //==============================================================================
 bool  UIEventNotifier::RemoveListener(UIElement* listener)
 {
-  m_actionNotifier.RemoveListener(listener);
-  m_motionNotifier.RemoveListener(listener);
-  return true;
+  return m_actionNotifier.RemoveListener(listener) ||
+    m_motionNotifier.RemoveListener(listener);
 }
 
 //==============================================================================

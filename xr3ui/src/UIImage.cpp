@@ -17,10 +17,6 @@ UIImage::UIImage()
 {}
 
 //==============================================================================
-UIImage::~UIImage()
-{}
-
-//==============================================================================
 void  UIImage::SetSprite(const Sprite *pSprite, float scale)
 {
   XR_ASSERT(UIImage, pSprite != nullptr);
@@ -45,8 +41,8 @@ void UIImage::Render(IUIRenderer& renderer) const
 
   auto verts = renderer.NewSprite(material);
   sprite.CopyUVsTo(verts);
-  _CalculateSpriteVerts(&sprite, verts);
-  _ApplyColor(verts);
+  CalculateSpriteVertices(&sprite, verts);
+  ApplyColor(verts);
 }
 
 } // xr

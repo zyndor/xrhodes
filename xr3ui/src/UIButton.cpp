@@ -23,10 +23,6 @@ UIButton::UIButton()
 {}
 
 //==============================================================================
-UIButton::~UIButton()
-{}
-
-//==============================================================================
 void UIButton::SetEnabled( bool isIt )
 {
   m_state = (m_state & ~MASK_ENABLED) | (MASK_ENABLED * isIt);
@@ -110,8 +106,8 @@ void UIButton::Render(IUIRenderer& renderer) const
 
   auto verts = renderer.NewSprite(material);
   sprite->CopyUVsTo(verts);
-  _CalculateSpriteVerts(sprite, verts);
-  _ApplyColor(verts);
+  CalculateSpriteVertices(sprite, verts);
+  ApplyColor(verts);
 }
 
 //==============================================================================
@@ -149,6 +145,7 @@ int UIButton::GetSpriteId() const
   return IsEnabled() ? (IsPressed() ? S_DOWN : S_UP) : S_OFF;
 }
 
+//==============================================================================
 void UIButton::SetActiveArea( const Rect* pActiveArea )
 {
   m_activeArea = pActiveArea;

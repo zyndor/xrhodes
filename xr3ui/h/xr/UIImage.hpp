@@ -14,6 +14,7 @@ namespace xr
 {
 
 //==============================================================================
+///@brief UIElement representing a single, static image.
 class UIImage:  public UIColoredElement
 {
 public:
@@ -23,13 +24,12 @@ public:
 
   // structors
   UIImage();
-  virtual ~UIImage();
 
   // general use
   void  SetSprite(const Sprite* sprite, float scale = 1.0f);
   void  SetSizeToSprite(float scale = 1.0f);
 
-  virtual void Render(IUIRenderer& renderer) const;
+  void Render(IUIRenderer& renderer) const override;
 };
 
 } // xr

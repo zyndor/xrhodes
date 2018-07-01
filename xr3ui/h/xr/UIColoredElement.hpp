@@ -25,13 +25,12 @@ public:
 
   // structors
   UIColoredElement();
-  virtual ~UIColoredElement();
 
 protected:
   // internal
-  void _CalculateSpriteVerts(const Sprite* sprite,
+  void CalculateSpriteVertices(const Sprite* sprite,
     IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const;
-  void _ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const;
+  void ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const;
 };
 
 } // xr

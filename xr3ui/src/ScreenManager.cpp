@@ -6,6 +6,7 @@
 //
 //==============================================================================
 #include "xr/ScreenManager.hpp"
+#include "xr/debug.hpp"
 
 namespace xr
 {
@@ -20,7 +21,9 @@ ScreenManager::ScreenManager()
 
 //==============================================================================
 ScreenManager::~ScreenManager()
-{}
+{
+  XR_ASSERT(ScreenManager, m_stack.empty());
+}
 
 //==============================================================================
 void  ScreenManager::Change(Screen& screen, int32_t delayMs)
@@ -88,7 +91,7 @@ void  ScreenManager::Update(int32_t ms)
   if (m_previous)
   {
     m_previous->Update(ms);
-    if (m_previous->GetState() == Screen::S_HIDDEN)
+    if (m_previous->GetState() == Screen::State::Hidden)
     {
       m_previous = nullptr;
     }
@@ -109,9 +112,16 @@ void  ScreenManager::Shutdown()
   while (!m_stack.empty())
   {
     Screen* pPrevious = m_stack.back();
-    if (pPrevious->GetState() <= Screen::S_HIDING)
+    switch (pPrevious->GetState())
     {
+    case Screen::State::Showing:
+    case Screen::State::Active:
+    case Screen::State::Hiding:
       pPrevious->Hide(0);
+      break;
+
+    default:
+      break;
     }
     m_stack.pop_back();
   }
@@ -122,9 +132,16 @@ void  ScreenManager::_ClearExiting()
 {
   if (m_previous)
   {
-    if (m_previous->GetState() <= Screen::S_HIDING)
+    switch (m_previous->GetState())
     {
+    case Screen::State::Showing:
+    case Screen::State::Active:
+    case Screen::State::Hiding:
       m_previous->Hide(0);
+      break;
+
+    default:
+      break;
     }
     m_previous = nullptr;
   }

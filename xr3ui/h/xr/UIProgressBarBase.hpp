@@ -13,6 +13,8 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Base class for UIElements representing a normalized numeric value in
+/// the range of [0.0; 1.0].
 class UIProgressBarBase:  public UIImage
 {
 public:
@@ -25,7 +27,6 @@ public:
 
   // structors
   explicit UIProgressBarBase(FillDir fd);
-  ~UIProgressBarBase();
 
   // general
   FillDir GetFillDirection() const;

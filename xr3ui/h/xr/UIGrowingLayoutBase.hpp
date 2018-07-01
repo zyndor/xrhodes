@@ -14,6 +14,8 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Base class for containers that organize their child elements in one
+/// line that grows with every new child.
 class UIGrowingLayoutBase:  public UIContainer
 {
 public:
@@ -25,12 +27,11 @@ public:
   };
 
   // static
-  static void   SetDefaultSpacing(int spacing);
+  static void SetDefaultSpacing(int spacing);
   static int  GetDefaultSpacing();
 
   // structors
   UIGrowingLayoutBase();
-  virtual ~UIGrowingLayoutBase();
 
   // virtual
   virtual int CalculateElementsExtent() const =0;

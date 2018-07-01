@@ -17,10 +17,6 @@ UIProgressBarBase::UIProgressBarBase( FillDir fd )
 {}
 
 //==============================================================================
-UIProgressBarBase::~UIProgressBarBase()
-{}
-
-//==============================================================================
 float UIProgressBarBase::GetPercentage() const
 {
   return m_percentage;

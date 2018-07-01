@@ -6,6 +6,7 @@
 //
 //==============================================================================
 #include "xr/Screen.hpp"
+#include "xr/debug.hpp"
 
 namespace xr
 {
@@ -13,7 +14,7 @@ namespace xr
 //==============================================================================
 Screen::Screen()
 : m_manager(nullptr),
-  m_state(S_HIDDEN),
+  m_state(State::Hidden),
   m_timer(0),
   m_isRegistered(false),
   m_onBecomeActive(nullptr),
@@ -34,19 +35,19 @@ void  Screen::SetOnBecomeActive(BecomeActiveCallback becomeActive, void* userDat
 //==============================================================================
 void  Screen::Show(ScreenManager& sm, int32_t ms)
 {
-  XR_ASSERTMSG(Screen, m_state > S_ACTIVE,
+  XR_ASSERTMSG(Screen, m_state == State::Hiding || m_state == State::Hidden,
     ("Invalid state to Show() screen: %d", m_state));
   m_manager = &sm;
-  _AddElements();
-  _Show(ms);
+  AddElements();
+  ShowImpl(ms);
   if (ms > 0)
   {
-    m_state = S_SHOWING;
+    m_state = State::Showing;
     m_timer = ms;
   }
   else
   {
-    _MakeActive();
+    MakeActive();
   }
 }
 
@@ -56,7 +57,7 @@ void  Screen::Register()
   XR_ASSERT(Screen, !m_isRegistered);
   XR_ASSERT(Screen, m_manager != nullptr);
   m_isRegistered = true;
-  _Register();
+  RegisterImpl();
 }
 
 //==============================================================================
@@ -65,28 +66,29 @@ void  Screen::Unregister()
   XR_ASSERT(Screen, m_isRegistered);
   XR_ASSERT(Screen, m_manager != nullptr);
   m_isRegistered = false;
-  _Unregister();
+  UnregisterImpl();
 }
 
 //==============================================================================
 void  Screen::Hide(uint32_t ms)
 {
-  XR_ASSERTMSG(Screen, m_state < S_HIDING || (m_state == S_HIDING &&
-    ms <= m_timer), ("Invalid state to Hide() screen: %d", m_state));
+  XR_ASSERTMSG(Screen, m_state == State::Showing || m_state == State::Active ||
+    (m_state == State::Hiding && ms <= m_timer),
+    ("Invalid state to Hide() screen: %d", m_state));
   if (m_isRegistered)
   {
     Unregister();
   }
 
-  _Hide(ms);
+  HideImpl(ms);
   if (ms > 0)
   {
-    m_state = S_HIDING;
+    m_state = State::Hiding;
     m_timer = ms;
   }
   else
   {
-    _MakeHidden();
+    MakeHidden();
   }
 }
 
@@ -99,18 +101,18 @@ void  Screen::Update(uint32_t ms)
     {
       switch (m_state)
       {
-      case  S_SHOWING:
+      case  State::Showing:
         // completed showing - register
-        _MakeActive();
+        MakeActive();
         break;
 
-      case  S_HIDING:
+      case  State::Hiding:
         // completed hiding - remove elements
-        _MakeHidden();
+        MakeHidden();
         break;
 
-      case  S_HIDDEN:
-      case  S_ACTIVE:
+      case  State::Hidden:
+      case  State::Active:
         break;
       }
       m_timer = 0;
@@ -123,9 +125,9 @@ void  Screen::Update(uint32_t ms)
 }
 
 //==============================================================================
-void  Screen::_MakeActive()
+void  Screen::MakeActive()
 {
-  m_state = S_ACTIVE;
+  m_state = State::Active;
   Register();
 
   if(m_onBecomeActive)
@@ -135,10 +137,10 @@ void  Screen::_MakeActive()
 }
 
 //==============================================================================
-void  Screen::_MakeHidden()
+void  Screen::MakeHidden()
 {
-  m_state = S_HIDDEN;
-  _RemoveElements();
+  m_state = State::Hidden;
+  RemoveElements();
   m_manager = nullptr;
 }
 

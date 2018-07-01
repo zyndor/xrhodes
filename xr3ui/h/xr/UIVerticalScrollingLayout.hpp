@@ -13,21 +13,22 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Container that is capable of scrolling its elements horizontally when
+/// they don't fit its boundaries, clipping the ones that don't fit.
 class UIVerticalScrollingLayout:  public UIVerticalLayout
 {
 public:
   // structors
   UIVerticalScrollingLayout();
-  virtual ~UIVerticalScrollingLayout();
 
   // general use
-  int         GetYOffset() const;
-  int&        GetYOffsetRef();
-  float         GetSensitivity() const;
-  bool          IsTouched() const;
+  int   GetYOffset() const;
+  int&  GetYOffsetRef();
+  float GetSensitivity() const;
+  bool  IsTouched() const;
 
-  void          SetYOffset(int yOffs);
-  void          SetSensitivity(float s);
+  void  SetYOffset(int yOffs);
+  void  SetSensitivity(float s);
 
   bool  OnMouseAction(const Input::MouseActionEvent& e) override;
   bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
@@ -43,7 +44,7 @@ protected:
   int m_lastTouchY;
 
   // internal
-  void _AlignElement( UIElement* elem ) override;
+  void AlignChildImpl( UIElement* elem ) override;
 };
 
 //==============================================================================

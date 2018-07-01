@@ -18,7 +18,6 @@ class UIVerticalProgressBar:  public UIProgressBarBase
 public:
   // structors
   UIVerticalProgressBar();
-  ~UIVerticalProgressBar();
 
   // general
   void  Render(IUIRenderer& renderer) const override;

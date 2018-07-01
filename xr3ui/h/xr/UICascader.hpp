@@ -14,12 +14,12 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Adds a horizontal and vertical offset to each subsequent child.
 class UICascader: public UIAligner
 {
 public:
   // structors
   UICascader();
-  virtual ~UICascader();
 
   // general use
   int GetHorizontalOffset() const;
@@ -30,10 +30,10 @@ public:
 
 protected:
   // internal use
-  virtual void _AlignElement( UIElement* elem );
+  void AlignChildImpl( UIElement* elem ) override;
 
-  virtual void _SetWidthToContent();
-  virtual void _SetHeightToContent();
+  void SetWidthToContentImpl() override;
+  void SetHeightToContentImpl() override;
 
   // data
   int m_horizontalOffset;

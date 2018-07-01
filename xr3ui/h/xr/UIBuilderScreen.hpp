@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Screen.hpp"
 #include "UIBuilder.hpp"
 
@@ -15,6 +14,8 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Offers capabilities to build a screen from a UIBuilder xml document,
+/// and adds bridging functionality for integrating with ScreenManager.
 class UIBuilderScreen:  public Screen
 {
 public:
@@ -30,7 +31,7 @@ public:
     A_BOTTOM_LEFT,
     A_BOTTOM,
     A_BOTTOM_RIGHT,
-    kNumAnchors
+    kCount
   };
 
   struct  Tweenable
@@ -41,40 +42,63 @@ public:
     uint32_t    delayMs;
   };
 
-  typedef void(*TweenCallback)(Tweenable& t, void* userData);
+  using TweenCallback = void(*)(Tweenable& t, void* userData);
 
-  typedef std::vector<UIElement*> UIElementVector;
+  using UIElementVector = std::vector<UIElement*>;
 
   // static
-  static const char* const    kAnchorName[kNumAnchors];
+  static const char* const  kAnchorName[kCount];
 
   // structors
   explicit UIBuilderScreen(const UIBuilder::Configuration& cfg = UIBuilder::kDefaultConfig);
   ~UIBuilderScreen();
 
   // general
-  virtual void        Reposition(int width, int height);
+  virtual void  Reposition(int width, int height);
 
-  void                SetConfiguration(const UIBuilder::Configuration& cfg);
+  ///@brief Updates its UIBuilder configuration with @a cfg.
+  void  SetConfiguration(const UIBuilder::Configuration& cfg);
 
-  bool                Build(tinyxml2::XMLElement* xml);
-  UIElement*          GetElement(const char* handle);
-  UIElement*          GetElement(uint32_t hash);
+  ///@brief Attempts to build the Screen from the given @a xml.
+  bool  Build(tinyxml2::XMLElement* xml);
+  
+  ///@return UIElement with the given handle; nullptr if wasn't found.
+  UIElement*  GetElement(const char* handle);
 
-  int                 GetPadding() const;
-  void                SetPadding(int padding);
+  ///@return UIElement with the given hash of a handle; nullptr if wasn't found.
+  UIElement*  GetElement(uint32_t hash);
 
-  void                SetTweenIn(TweenCallback onTweenIn, void* userData);
-  void                SetTweenOut(TweenCallback onTweenIn, void* userData);
+  ///@brief Sets the amount of padding around anchor elements.
+  void  SetPadding(int padding);
 
-  size_t              GetNumListeners() const;
+  ///@return The amount of padding applied around anchor elements.
+  int GetPadding() const;
+
+  ///@brief Sets the function to handle the showing animation.
+  void  SetTweenIn(TweenCallback onTweenIn, void* userData);
+
+  ///@brief Sets the function to handle the hiding animation.
+  void  SetTweenOut(TweenCallback onTweenIn, void* userData);
+
+  ///@return The number of elements intended for mouse event listeners.
+  size_t GetNumListeners() const;
+
+  ///@return The vector of elements intended moust event listeners.
   UIElementVector const&  GetListeners() const; // no ownership transfer
-  size_t              GetNumTweening() const;
+
+  ///@return The number of elements intended for showing / hiding animations.
+  size_t GetNumTweening() const;
+
+  ///@return The vector of elements intended for showing / hiding animations.
   UIElementVector const&  GetTweening() const; // no ownership transfer
 
-  void                MoveTweening(int x, int y);
+  ///@brief Helper function to offset the position of tweening registered
+  /// elements, i.e. prior to an animation.
+  void  MoveTweening(int x, int y);
 
-  void                Destroy();
+  ///@brief Destroys the elements and clears the list of tweening and listeners.
+  ///@note The screen must be hidden (and unregistered).
+  void  Destroy();
 
 protected:
   // data
@@ -96,16 +120,16 @@ protected:
   void*         m_tweenOutData;
 
   // internal
-  virtual void  _AddElements();
-  virtual void  _Show(uint32_t ms);
-  virtual void  _Hide(uint32_t ms);
-  virtual void  _RemoveElements();
+  virtual void  AddElements();
+  virtual void  ShowImpl(uint32_t ms);
+  virtual void  HideImpl(uint32_t ms);
+  virtual void  RemoveElements();
 
-  virtual void  _Register();
-  virtual void  _Unregister();
+  virtual void  RegisterImpl();
+  virtual void  UnregisterImpl();
 
-  void          _ProcessListeners(tinyxml2::XMLElement* xml);
-  void          _ProcessTweening(tinyxml2::XMLElement* xml);
+  void          ProcessListeners(tinyxml2::XMLElement* xml);
+  void          ProcessTweening(tinyxml2::XMLElement* xml);
 };
 
 //==============================================================================
