@@ -31,7 +31,7 @@ public:
   ///@return A new Material which uses the given remder @a state, @a shader.
   /// and the Texture which GetTexture() returns.
   ///@note This material is not managed by Asset::Manager.
-  Material::Ptr Materialise(uint32_t state, Shader::Ptr const& shader);
+  Material::Ptr Materialise(Gfx::FlagType state, Shader::Ptr const& shader);
 
 protected:
   ~IMaterialisable() {}
