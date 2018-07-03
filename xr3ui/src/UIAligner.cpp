@@ -17,11 +17,7 @@ UIAligner::UIAligner()
 {}
 
 //==============================================================================
-UIAligner::~UIAligner()
-{}
-
-//==============================================================================
-void UIAligner::_AlignElement( UIElement* elem )
+void UIAligner::AlignChildImpl( UIElement* elem )
 {
   if (m_hAlign != AL_NOALIGN)
   {

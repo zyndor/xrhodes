@@ -16,10 +16,6 @@ UIHorizontalProgressBar::UIHorizontalProgressBar()
 {}
 
 //==============================================================================
-UIHorizontalProgressBar::~UIHorizontalProgressBar()
-{}
-
-//==============================================================================
 void UIHorizontalProgressBar::Render(IUIRenderer& renderer) const
 {
   bool  isFdPositive(m_fillDir == FD_POSITIVE);
@@ -101,7 +97,7 @@ void UIHorizontalProgressBar::Render(IUIRenderer& renderer) const
       verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
     }
 
-    _ApplyColor(verts);
+    ApplyColor(verts);
   }
 }
 

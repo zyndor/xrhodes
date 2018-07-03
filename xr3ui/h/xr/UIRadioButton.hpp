@@ -15,6 +15,8 @@ namespace xr
 {
 
 //==============================================================================
+///@brief A specialised UICheckBox, which can be assigned a group. Selecting a
+/// UIRadioButton de-select all other radio buttons in the group.
 class UIRadioButton: public UICheckBox
 {
 public:
@@ -25,8 +27,8 @@ public:
   };
 
   // static
-  static void GroupRemoveAll(const char* groupName);
-  static void GroupRemoveAll(uint32_t groupHash);
+  static void GroupRemoveAll(const char* groupName);  // TODO: implement.
+  static void GroupRemoveAll(uint32_t groupHash); // TODO: implement.
 
   // structors
   UIRadioButton();
@@ -38,16 +40,16 @@ public:
   void          SetGroup(const char* groupName);
   void          SetGroup(uint32_t groupHash);
 
-  virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
+  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
 
-  virtual void  OnSelectedStateChanged();
+  void  OnSelectedStateChanged() override;
 
 protected:
   // types
   typedef std::list<UIRadioButton*> List;
 
   // static
-  static List s_lButtons; // no ownership
+  static List s_lButtons; // no ownership // TODO: Linked<>
 
   static void GroupClear(uint32_t groupHash);
   static void GroupClearExcept(uint32_t groupHash, const UIRadioButton* button);

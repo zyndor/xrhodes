@@ -15,7 +15,8 @@ namespace xr
 {
 
 //==============================================================================
-///@brief A button.
+///@brief A button which have three possible states, each represented by a
+/// Sprite. 
 class UIButton:  public UIColoredElement
 {
 public:
@@ -28,7 +29,7 @@ public:
     kNumStates
   };
 
-  typedef void(*Callback)(UIButton *, void *data);
+  using Callback = void(*)(UIButton*, void *data);
 
   // data
   Sprite    sprites[kNumStates];
@@ -39,7 +40,6 @@ public:
 
   // structors
   UIButton();
-  virtual ~UIButton();
 
   // general
   bool  IsEnabled() const;
@@ -48,12 +48,22 @@ public:
   void  SetEnabled(bool isIt);
   void  SetPressed(bool isIt);
 
+  ///@return The index into sprites, based on state.
   int   GetSpriteId() const;
 
+  ///@brief Sets all three state Sprites to @a sprite at @a scale.
   void  SetSprites(const Sprite* sprite, float scale);
+
+  ///@brief Sets the state Sprites to each corresponding entry in @a sprites,
+  /// at @a scale.
   void  SetSprites(const Sprite* sprites_[kNumStates], float scale);
+
+  ///@brief Sets the dimensions of the button to that of the first state Sprite,
+  /// at @a scale.
   void  SetSizeToSprite(float scale);
 
+  ///@brief Sets, or if nullptr, removes an @a activeArea, which, if present,
+  /// is first checked before determining whether the button was hit.
   void  SetActiveArea(const Rect* activeArea); // no ownership transfer
 
   bool  OnMouseAction(const Input::MouseActionEvent& e) override;

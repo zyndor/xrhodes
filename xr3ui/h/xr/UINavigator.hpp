@@ -15,6 +15,8 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Provides a facility to describe UIElements' relative cardinal directions,
+/// allowing the creation of a walkable graph of focus.
 class UINavigator
 {
 public:
@@ -33,26 +35,27 @@ public:
 
   // structors
   UINavigator();
-  ~UINavigator();
 
   // general
   bool  Add(UIElement* elem, UIElement* relativeTo, Direction dir);
   bool  Remove(UIElement* elem);
   void  Clear();
 
+  ///@return The element that's in @a dir direction from the UIElement
+  /// @a relativeTo. nullptr if there isn't such an element.
   UIElement*  Get(UIElement* relativeTo, Direction dir);
 
 protected:
   // types
   struct  Entry
   {
+    using Map = std::map<UIElement*, Entry>;
+
     UIElement*  neighbors[kNumDirections];
   };
 
-  typedef std::map<UIElement*, Entry> EntryMap;
-
   // data
-  EntryMap  m_entries;
+  Entry::Map  m_entries;
 };
 
 } // xr

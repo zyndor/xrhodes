@@ -13,12 +13,12 @@ namespace xr
 {
 
 //==============================================================================
+///@brief An UIElement whose sole purpose is taking up space.
 class UISpacer: public UIElement
 {
 public:
   // structors
   UISpacer();
-  ~UISpacer();
 
   // general
   void Render(IUIRenderer& renderer) const override;

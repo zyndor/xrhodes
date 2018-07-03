@@ -34,10 +34,6 @@ UIGrowingLayoutBase::UIGrowingLayoutBase()
 {}
 
 //==============================================================================
-UIGrowingLayoutBase::~UIGrowingLayoutBase()
-{}
-
-//==============================================================================
 void UIGrowingLayoutBase::SetGrowDir( GrowDir growDir )
 {
   m_growDir = growDir;

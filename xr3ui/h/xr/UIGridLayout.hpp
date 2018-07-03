@@ -14,7 +14,7 @@ namespace xr
 {
 
 //==============================================================================
-///@brief container that's placing the elements
+///@brief Container that places its children in cells of a grid.
 class UIGridLayout: public UIContainer
 {
 public:
@@ -28,7 +28,6 @@ public:
 
   // structors
   UIGridLayout();
-  virtual ~UIGridLayout();
 
   // general
   int GetNumRows() const;
@@ -73,10 +72,10 @@ protected:
   int32_t m_rowPadding;
 
   // internal
-  virtual void _AlignElement( UIElement* elem );
+  void AlignChildImpl( UIElement* elem ) override;
 
-  virtual void _SetWidthToContent();
-  virtual void _SetHeightToContent();
+  void SetWidthToContentImpl() override;
+  void SetHeightToContentImpl() override;
 };
 
 //==============================================================================

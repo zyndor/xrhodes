@@ -22,10 +22,6 @@ UINavigator::UINavigator()
 {}
 
 //==============================================================================
-UINavigator::~UINavigator()
-{}
-
-//==============================================================================
 bool  UINavigator::Add(UIElement* elem, UIElement* relativeTo,
         Direction dir)
 {
@@ -40,7 +36,7 @@ bool  UINavigator::Add(UIElement* elem, UIElement* relativeTo,
   else
   {
     XR_ASSERT(UINavigator, dir < kNumDirections);
-    EntryMap::iterator  iFind = m_entries.find(relativeTo);
+    Entry::Map::iterator  iFind = m_entries.find(relativeTo);
     success = iFind != m_entries.end();
     if(success)
     {
@@ -53,7 +49,7 @@ bool  UINavigator::Add(UIElement* elem, UIElement* relativeTo,
         // insert elem between relativeTo and its neighbor in the direction of insertion
         e.neighbors[dir] = sameDirNeighbor;
 
-        EntryMap::iterator  iFindSameDirNeighbor = m_entries.find(sameDirNeighbor);
+        Entry::Map::iterator  iFindSameDirNeighbor = m_entries.find(sameDirNeighbor);
         iFindSameDirNeighbor->second.neighbors[opp] = elem;
       }
 
@@ -67,11 +63,11 @@ bool  UINavigator::Add(UIElement* elem, UIElement* relativeTo,
 //==============================================================================
 bool  UINavigator::Remove(UIElement* elem)
 {
-  EntryMap::iterator  iFind = m_entries.find(elem);
+  Entry::Map::iterator  iFind = m_entries.find(elem);
   bool  success = iFind == m_entries.end();
   if(success)
   {
-    EntryMap::iterator  iFindRelative[kNumDirections] =
+    Entry::Map::iterator  iFindRelative[kNumDirections] =
     {
       m_entries.find(iFind->second.neighbors[LEFT]),
       m_entries.find(iFind->second.neighbors[UP]),
@@ -79,7 +75,7 @@ bool  UINavigator::Remove(UIElement* elem)
       m_entries.find(iFind->second.neighbors[DOWN]),
     };
 
-    EntryMap::iterator  iEnd = m_entries.end();
+    Entry::Map::iterator  iEnd = m_entries.end();
     if(iFindRelative[LEFT] != iEnd)
     {
       if(iFindRelative[RIGHT] != iEnd)
@@ -128,7 +124,7 @@ UIElement*  UINavigator::Get(UIElement* relativeTo, Direction dir)
 {
   XR_ASSERT(UINavigator, dir < kNumDirections);
   UIElement*  elem = nullptr;
-  EntryMap::iterator  iFind = m_entries.find(relativeTo);
+  Entry::Map::iterator  iFind = m_entries.find(relativeTo);
   if(iFind != m_entries.end())
   {
     elem = iFind->second.neighbors[dir];

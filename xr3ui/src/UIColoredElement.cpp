@@ -16,14 +16,10 @@ UIColoredElement::UIColoredElement()
 {}
 
 //==============================================================================
-UIColoredElement::~UIColoredElement()
-{}
-
-//==============================================================================
-void  UIColoredElement::_CalculateSpriteVerts(const Sprite* sprite,
+void  UIColoredElement::CalculateSpriteVertices(const Sprite* sprite,
   IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const
 {
-  XR_ASSERT(UIColoredElement, sprite != 0);
+  XR_ASSERT(UIColoredElement, sprite != nullptr);
 
   float ws = (w / 2) / sprite->GetHalfWidth();
   float hs = (h / 2) / sprite->GetHalfHeight();
@@ -39,7 +35,7 @@ void  UIColoredElement::_CalculateSpriteVerts(const Sprite* sprite,
 }
 
 //==============================================================================
-void UIColoredElement::_ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const
+void UIColoredElement::ApplyColor(IUIRenderer::Vertex verts[Quad::Vertex::kCount]) const
 {
   for(int i = 0; i < Quad::Vertex::kCount; ++i)
   {

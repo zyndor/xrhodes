@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include <map>
 #include <string>
 #include "xr/memory.hpp"
@@ -20,14 +19,26 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Provides UI creation from an xml definition, supporting extension by
+/// new UI element types and named elements. Offers support for custom allocators,
+/// and string processors for visible text and filenames.
 class UIBuilder
 {
 public:
   // types
-  typedef UIElement*(*CreateCallback)(AllocateCallback allocate, void* userData);
-  typedef bool(*InitCallback)(tinyxml2::XMLElement* xml, UIElement* uiElem,
+  ///@brief Allocates and constructs a UIElement.
+  using CreateCallback = UIElement*(*)(AllocateCallback allocate, void* userData);
+
+  ///@brief Initializes a UIElement with the given xml definition, container as
+  /// parent and builder. Returns true on success, false on failure.
+  using InitCallback = bool(*)(tinyxml2::XMLElement* xml, UIElement* uiElem,
     UIContainer* container, const UIBuilder& builder);
-  typedef std::string(*ProcessStringCallback)(const char* name, void* userData);
+
+  ///@brief Processes the given string. Returns processed string.
+  using ProcessStringCallback = std::string(*)(const char* name, void* userData);
+
+  ///@brief Gets a sprite. TODO: interpret image assets and support materials and
+  /// texture packs (texturePack:spriteName), then this could be removed.
   using GetSpriteCallback = Sprite const*(*)(char const* name, void* userData);
 
   struct  Configuration
@@ -83,42 +94,82 @@ public:
   static const char* const    kAlignValues[kNumAlignValues];
   static const uint32_t       kAlignValueHashes[kNumAlignValues];
 
-  static const char* const    kElementNames[kNumUIElementTypes];
+  static const char* const    kElementTypes[kNumUIElementTypes];
 
   static const Configuration  kDefaultConfig;
 
-  static int    GetXmlAlignment(tinyxml2::XMLElement* xml, const char* attribName);
+  static XmlAlignValue GetXmlAlignment(tinyxml2::XMLElement* xml, const char* attribName);
 
   // structors
   explicit UIBuilder(const Configuration& cfg = kDefaultConfig);
   ~UIBuilder();
 
   // general use
+  ///@brief The current configuration.
   const Configuration&  GetConfiguration() const;
-  void                  SetConfiguration(const Configuration& cfg);
 
-  void          SetMaxDepth(int maxDepth);
+  ///@brief Sets configuration for future Build()s.
+  ///@note Call it outside Build() calls only.
+  void  SetConfiguration(const Configuration& cfg);
 
-  void          SetAllocateCallback(AllocateCallback allocate, void* userData);
-  void          SetDeallocateCallback(DeallocateCallback allocate, void* userData);
-  void          SetGetSpriteCallback(GetSpriteCallback getSprite, void* userData);
+  ///@brief Sets the max depth beyond (inclusive) which elements are not created.
+  ///@note Call it outside Build() calls only.
+  void  SetMaxDepth(int maxDepth);
 
-  void*         Allocate(int size);
-  void          Deallocate(void* buffer);
+  ///@brief Sets allocate callback and its user data.
+  ///@note Call it outside Build() calls only.
+  void  SetAllocateCallback(AllocateCallback allocate, void* userData);
+
+  ///@brief Sets deallocate callback and its user data.
+  ///@note Call it outside Build() calls only.
+  void  SetDeallocateCallback(DeallocateCallback allocate, void* userData);
+
+  ///@brief Sets callback for getting sprites, and its user data.
+  ///@note Call it outside Build() calls only.
+  void  SetGetSpriteCallback(GetSpriteCallback getSprite, void* userData);
+
+  ///@brief Allocates @a size bytes using the current allocator.
+  void* Allocate(int size);
+
+  ///@brief Deallocates @a buffer using the current deallocator.
+  void  Deallocate(void* buffer);
+
+  ///@brief Attempts to get sprite using the current GetSprite callback.
+  ///@return Const pointer to Sprite if successful, nullptr if not.
   const Sprite* GetSprite(const char* name) const;
+
+  ///@brief Passes @a text to the ProcessText callback.
+  ///@return Processed text.
   std::string   ProcessText(const char* text) const;
 
-  void          RegisterCreator(const char* name, CreateCallback createCb,
-                  InitCallback initCb, bool isContainer);
+  ///@brief Registers Create and Initialize callbacks for a UIElement type to be
+  /// referred to as @ a name.
+  ///@note Will override any previously set creators.
+  void  RegisterCreator(const char* name, CreateCallback createCb,
+    InitCallback initCb, bool isContainer);
 
-  bool          RegisterNamedElement(const char* name, UIElement* uiElem);
+  ///@brief Registers a named element, if one with the value that @a name hashes
+  /// to has not yet been registered.
+  ///@return The success of the operation, i.e. whether it resulted in registration. 
+  bool  RegisterNamedElement(const char* name, UIElement* uiElem);
 
-  bool          Build(tinyxml2::XMLElement* xml, UIContainer& container);
+  ///@brief Attempts to build UI from the given @a xml definition. Children at the
+  /// first level will be added to @a container.
+  ///@return The success of the operation.
+  bool  Build(tinyxml2::XMLElement* xml, UIContainer& container);
 
-  UIElement*    GetElement(uint32_t hash) const;
-  UIElement*    GetElement(const char* handle) const;
+  ///@return The element registered with the given @a hash. Nullptr if there isn't
+  /// such element.
+  UIElement*  GetElement(uint32_t hash) const;
 
-  void          Destroy();
+  ///@return The element registered with the value that @a id hashes to. Nullptr
+  /// if there isn't such element.
+  UIElement*  GetElement(const char* id) const;
+
+  ///@brief Removes, deallocates and destroys all elements in the hierarchy that
+  /// it knows about (i.e. added to either of the UIContainer objects which were
+  /// created by UIBuilder::Build()).
+  void  Destroy();
 
 protected:
   // types
@@ -139,10 +190,10 @@ protected:
   typedef std::map<uint32_t, UIElement*>      ElementMap;
 
   // internal
-  bool  _Build(tinyxml2::XMLElement* xml, UIContainer* container, int& depth);
+  bool  BuildInternal(tinyxml2::XMLElement* xml, UIContainer* container, int& depth);
 
-  void  _PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem);
-  void  _PostProcessContainer(tinyxml2::XMLElement* xml, UIContainer* container);
+  void  PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem);
+  void  PostProcessContainer(tinyxml2::XMLElement* xml, UIContainer* container);
 
   // data
   CreatorMap          m_creators;
@@ -152,7 +203,7 @@ protected:
   int                 m_depth;
   UIElementList*      m_levels;
 
-  ElementMap          m_handles;
+  ElementMap          m_namedElements;
 };
 
 //==============================================================================

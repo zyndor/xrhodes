@@ -13,21 +13,21 @@ namespace xr
 {
 
 //==============================================================================
-class UIVerticalLayout: public UIGrowingLayoutBase
+///@brief Container that places its children top to bottom in one vertical line.
+  class UIVerticalLayout: public UIGrowingLayoutBase
 {
 public:
   // structors
   UIVerticalLayout();
-  ~UIVerticalLayout();
 
   // general
-  virtual int CalculateElementsExtent() const;
+  int CalculateElementsExtent() const override;
 
 protected:
   // internal
-  virtual void _AlignElement( UIElement* elem );
+  void AlignChildImpl( UIElement* elem ) override;
 
-  virtual void _SetHeightToContent();
+  void SetHeightToContentImpl() override;
 };
 
 //==============================================================================
@@ -36,9 +36,9 @@ protected:
 inline
 int UIVerticalLayout::CalculateElementsExtent() const
 {
-  return m_elements.empty() ? 0 : (m_growDir == GD_POSITIVE ?
-    (m_elements.back()->CalculateBottom() - m_elements.front()->y) :
-    (m_elements.front()->CalculateBottom() - m_elements.back()->y));
+  return m_children.empty() ? 0 : (m_growDir == GD_POSITIVE ?
+    (m_children.back()->CalculateBottom() - m_children.front()->y) :
+    (m_children.front()->CalculateBottom() - m_children.back()->y));
 }
 
 } // xr

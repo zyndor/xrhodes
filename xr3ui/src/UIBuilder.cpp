@@ -1207,7 +1207,7 @@ const uint32_t UIBuilder::kAlignValueHashes[] =
   Hash::String32(kAlignValues[XA_NONE])
 };
 
-const char* const  UIBuilder::kElementNames[] =
+const char* const  UIBuilder::kElementTypes[] =
 {
   "spacer",
   "button",
@@ -1241,16 +1241,16 @@ const UIBuilder::Configuration  UIBuilder::kDefaultConfig =
 };
 
 //==============================================================================
-int UIBuilder::GetXmlAlignment(tinyxml2::XMLElement* xml, const char* attribName)
+UIBuilder::XmlAlignValue UIBuilder::GetXmlAlignment(tinyxml2::XMLElement* xml, const char* attribName)
 {
   XR_ASSERT(UIBuilder, xml != nullptr);
   XR_ASSERT(UIBuilder, attribName != nullptr);
 
-  int value = XA_NONE;
+  XmlAlignValue value = XA_NONE;
   const char* strValue = xml->Attribute(attribName);
   if (strValue)
   {
-    value = static_cast<int32_t>(FindItemId(kAlignValueHashes, kNumAlignValues, Hash::String32(strValue)));
+    value = static_cast<XmlAlignValue>(FindItemId(kAlignValueHashes, kNumAlignValues, Hash::String32(strValue)));
     if (value >= kNumAlignValues) // if not found, default to none
     {
       XR_TRACE(UIBuilder, ("The value of '%s' is not a valid alignment.", attribName));
@@ -1267,47 +1267,47 @@ UIBuilder::UIBuilder(const Configuration& cfg)
   m_root(nullptr),
   m_depth(0),
   m_levels(nullptr),
-  m_handles()
+  m_namedElements()
 {
-  RegisterCreator(kElementNames[UI_SPACER], UIBCreateUISpacer,
+  RegisterCreator(kElementTypes[UI_SPACER], UIBCreateUISpacer,
     UIBInitUIElement, false);
-  RegisterCreator(kElementNames[UI_BUTTON], UIBCreateUIButton,
+  RegisterCreator(kElementTypes[UI_BUTTON], UIBCreateUIButton,
     UIBInitUIButton, false);
-  RegisterCreator(kElementNames[UI_CHECKBOX], UIBCreateUICheckBox,
+  RegisterCreator(kElementTypes[UI_CHECKBOX], UIBCreateUICheckBox,
     UIBInitUICheckBox, false);
-  RegisterCreator(kElementNames[UI_RADIOBUTTON], UIBCreateUIRadioButton,
+  RegisterCreator(kElementTypes[UI_RADIOBUTTON], UIBCreateUIRadioButton,
     UIBInitUIRadioButton, false);
-  RegisterCreator(kElementNames[UI_LABEL], UIBCreateUILabel, UIBInitUILabel,
+  RegisterCreator(kElementTypes[UI_LABEL], UIBCreateUILabel, UIBInitUILabel,
     false);
-  RegisterCreator(kElementNames[UI_IMAGE], UIBCreateUIImage, UIBInitUIImage,
+  RegisterCreator(kElementTypes[UI_IMAGE], UIBCreateUIImage, UIBInitUIImage,
     false);
-  RegisterCreator(kElementNames[UI_IMAGEPANEL], UIBCreateUIImagePanel,
+  RegisterCreator(kElementTypes[UI_IMAGEPANEL], UIBCreateUIImagePanel,
     UIBInitUIImagePanel, false);
-  RegisterCreator(kElementNames[UI_HPROGRESS], UIBCreateUIHorizontalProgressBar,
+  RegisterCreator(kElementTypes[UI_HPROGRESS], UIBCreateUIHorizontalProgressBar,
     UIBInitUIProgressBarBase, false);
-  RegisterCreator(kElementNames[UI_VPROGRESS], UIBCreateUIVerticalProgressBar,
+  RegisterCreator(kElementTypes[UI_VPROGRESS], UIBCreateUIVerticalProgressBar,
     UIBInitUIProgressBarBase, false);
-  RegisterCreator(kElementNames[UI_HSLIDER], UIBCreateUIHorizontalSlider,
+  RegisterCreator(kElementTypes[UI_HSLIDER], UIBCreateUIHorizontalSlider,
     UIBInitUISliderBase, false);
-  RegisterCreator(kElementNames[UI_VSLIDER], UIBCreateUIVerticalSlider,
+  RegisterCreator(kElementTypes[UI_VSLIDER], UIBCreateUIVerticalSlider,
     UIBInitUISliderBase, false);
 
   // containers
-  RegisterCreator(kElementNames[UI_ALIGNER], UIBCreateUIAligner,
+  RegisterCreator(kElementTypes[UI_ALIGNER], UIBCreateUIAligner,
     UIBInitUIAligner, true);
-  RegisterCreator(kElementNames[UI_CASCADER], UIBCreateUICascader,
+  RegisterCreator(kElementTypes[UI_CASCADER], UIBCreateUICascader,
     UIBInitUICascader, true);
-  RegisterCreator(kElementNames[UI_HLAYOUT], UIBCreateUIHorizontalLayout,
+  RegisterCreator(kElementTypes[UI_HLAYOUT], UIBCreateUIHorizontalLayout,
     UIBInitUIGrowingLayout, true);
-  RegisterCreator(kElementNames[UI_VLAYOUT], UIBCreateUIVerticalLayout,
+  RegisterCreator(kElementTypes[UI_VLAYOUT], UIBCreateUIVerticalLayout,
     UIBInitUIGrowingLayout, true);
-  RegisterCreator(kElementNames[UI_HSCROLLINGLAYOUT],
+  RegisterCreator(kElementTypes[UI_HSCROLLINGLAYOUT],
     UIBCreateUIHorizontalScrollingLayout,
     UIBInitUIHorizontalScrollingLayout, true);
-  RegisterCreator(kElementNames[UI_VSCROLLINGLAYOUT],
+  RegisterCreator(kElementTypes[UI_VSCROLLINGLAYOUT],
     UIBCreateUIVerticalScrollingLayout,
     UIBInitUIVerticalScrollingLayout, true);
-  RegisterCreator(kElementNames[UI_GRIDLAYOUT], UIBCreateUIGridLayout,
+  RegisterCreator(kElementTypes[UI_GRIDLAYOUT], UIBCreateUIGridLayout,
     UIBInitUIGridLayout, true);
 }
 
@@ -1418,12 +1418,12 @@ bool UIBuilder::RegisterNamedElement(const char* name, UIElement* uiElem)
   XR_ASSERT(UIBuilder, uiElem != nullptr);
 
   uint32_t hash = Hash::String32(name);
-  ElementMap::iterator  iFind(m_handles.find(hash));
-  bool                  success(iFind == m_handles.end());
+  ElementMap::iterator  iFind(m_namedElements.find(hash));
+  bool                  success(iFind == m_namedElements.end());
   if (success)
   {
     ElementMap::value_type  vInsert(hash, uiElem);
-    m_handles.insert(vInsert);
+    m_namedElements.insert(vInsert);
   }
   else
   {
@@ -1450,11 +1450,11 @@ bool  UIBuilder::Build(tinyxml2::XMLElement* xml, UIContainer& container)
   UIBInitUIElement(xml, m_root, &base, *this);
 
   int depth(0);
-  return _Build(xml, m_root, depth);
+  return BuildInternal(xml, m_root, depth);
 }
 
 //==============================================================================
-bool  UIBuilder::_Build(tinyxml2::XMLElement* xml, UIContainer* container, int& depth)
+bool  UIBuilder::BuildInternal(tinyxml2::XMLElement* xml, UIContainer* container, int& depth)
 {
   XR_ASSERT(UIBuilder, container != nullptr);
 
@@ -1500,7 +1500,7 @@ bool  UIBuilder::_Build(tinyxml2::XMLElement* xml, UIContainer* container, int& 
       if (success)
       {
         // postprocess
-        _PostProcess(xml, uiElem);
+        PostProcess(xml, uiElem);
 
         // add to parent
         container->AddElement(uiElem);
@@ -1520,8 +1520,8 @@ bool  UIBuilder::_Build(tinyxml2::XMLElement* xml, UIContainer* container, int& 
 
           XR_ASSERTMSG(UIBuilder, depth < m_cfg.maxDepth,
             ("maxDepth (%d) too small, try a greater value.", m_cfg.maxDepth));
-          success = _Build(xml, pMyContainer, depth);
-          _PostProcessContainer(xml, pMyContainer);
+          success = BuildInternal(xml, pMyContainer, depth);
+          PostProcessContainer(xml, pMyContainer);
           --depth;
         }
       }
@@ -1539,7 +1539,7 @@ bool  UIBuilder::_Build(tinyxml2::XMLElement* xml, UIContainer* container, int& 
 
         success = doc.LoadFile(fileName.c_str()) &&
           doc.RootElement() != nullptr &&
-          _Build(doc.RootElement(), container, depth);
+          BuildInternal(doc.RootElement(), container, depth);
       }
     }
 
@@ -1589,25 +1589,25 @@ void UIBuilder::Destroy()
     m_depth = 0;
   }
 
-  m_handles.clear();
+  m_namedElements.clear();
 }
 
 //==============================================================================
 UIElement* UIBuilder::GetElement(uint32_t hash) const
 {
-  ElementMap::const_iterator iFind(m_handles.find(hash));
-  return (iFind != m_handles.end()) ? iFind->second : 0;
+  ElementMap::const_iterator iFind(m_namedElements.find(hash));
+  return (iFind != m_namedElements.end()) ? iFind->second : 0;
 }
 
 //==============================================================================
-UIElement* UIBuilder::GetElement(const char* pHandle) const
+UIElement* UIBuilder::GetElement(const char* id) const
 {
-  XR_ASSERT(UIBuilder, pHandle != nullptr);
-  return GetElement(Hash::String32(pHandle));
+  XR_ASSERT(UIBuilder, id != nullptr);
+  return GetElement(Hash::String32(id));
 }
 
 //==============================================================================
-void UIBuilder::_PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem)
+void UIBuilder::PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem)
 {
   const char* value = xml->Attribute("handle");
   if (value != nullptr)
@@ -1696,7 +1696,7 @@ void UIBuilder::_PostProcess(tinyxml2::XMLElement* xml, UIElement* uiElem)
 }
 
 //==============================================================================
-void UIBuilder::_PostProcessContainer(tinyxml2::XMLElement* xml, UIContainer* pContainer)
+void UIBuilder::PostProcessContainer(tinyxml2::XMLElement* xml, UIContainer* pContainer)
 {
   uint32_t sizeToContentValue = GetXmlDimensionMask(xml, "sizeToContent");
   switch (sizeToContentValue)

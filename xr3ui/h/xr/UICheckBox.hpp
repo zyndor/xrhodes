@@ -14,11 +14,12 @@ namespace xr
 {
 
 //==============================================================================
+///@brief A button with an additional state of being selected.
 class UICheckBox: public UIButton
 {
 public:
   // types
-  typedef void(*Callback)(UICheckBox* checkBox, void* userData);
+  using Callback = void(*)(UICheckBox* checkBox, void* userData);
 
   // data
   Callback  onSelectedStateChanged;
@@ -27,12 +28,11 @@ public:
 
   // structors
   UICheckBox();
-  ~UICheckBox();
 
   // general
-  bool          IsSelected() const;
+  bool  IsSelected() const;
 
-  void          SetSelected(bool isIt);
+  void  SetSelected(bool isIt);
 
   bool  OnMouseAction(const Input::MouseActionEvent& e) override;
 

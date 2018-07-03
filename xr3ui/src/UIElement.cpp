@@ -78,61 +78,61 @@ void UIElement::Resize( const UIElement* elem )
 //==============================================================================
 void UIElement::AlignHorizontally( int x1, Alignment hAlign )
 {
-  _AlignHorizontally(x1, hAlign);
+  AlignHorizontallyInternal(x1, hAlign);
   OnChange();
 }
 
 //==============================================================================
 void UIElement::AlignVertically( int y1, Alignment vAlign )
 {
-  _AlignVertically(y1, vAlign);
+  AlignVerticallyInternal(y1, vAlign);
   OnChange();
 }
 
 //==============================================================================
 void UIElement::Align( int x1, int y1, Alignment hAlign, Alignment vAlign )
 {
-  _AlignHorizontally(x1, hAlign);
-  _AlignVertically(y1, vAlign);
+  AlignHorizontallyInternal(x1, hAlign);
+  AlignVerticallyInternal(y1, vAlign);
   OnChange();
 }
 
 //==============================================================================
 void UIElement::CenterHorizontally()
 {
-  _CenterHorizontally();
+  CenterHorizontallyInternal();
   OnChange();
 }
 
 //==============================================================================
 void UIElement::CenterVertically()
 {
-  _CenterVertically();
+  CenterVerticallyInternal();
   OnChange();
 }
 
 //==============================================================================
 void UIElement::Center()
 {
-  _CenterHorizontally();
-  _CenterVertically();
+  CenterHorizontallyInternal();
+  CenterVerticallyInternal();
   OnChange();
 }
 
 //==============================================================================
-void UIElement::_CenterHorizontally()
+void UIElement::CenterHorizontallyInternal()
 {
   x = (Gfx::GetLogicalWidth() - w) / 2;
 }
 
 //==============================================================================
-void UIElement::_CenterVertically()
+void UIElement::CenterVerticallyInternal()
 {
   y = (Gfx::GetLogicalHeight() - h) / 2;
 }
 
 //==============================================================================
-void UIElement::_AlignHorizontally( int x1, Alignment hAlign )
+void UIElement::AlignHorizontallyInternal( int x1, Alignment hAlign )
 {
   switch (hAlign)
   {
@@ -154,7 +154,7 @@ void UIElement::_AlignHorizontally( int x1, Alignment hAlign )
 }
 
 //==============================================================================
-void UIElement::_AlignVertically( int y1, Alignment vAlign )
+void UIElement::AlignVerticallyInternal( int y1, Alignment vAlign )
 {
   switch (vAlign)
   {

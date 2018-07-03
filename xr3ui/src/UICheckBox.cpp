@@ -18,10 +18,6 @@ UICheckBox::UICheckBox()
 {}
 
 //==============================================================================
-UICheckBox::~UICheckBox()
-{}
-
-//==============================================================================
 void UICheckBox::SetSelected( bool isIt )
 {
   m_state = (m_state & ~MASK_SELECTED) | (MASK_SELECTED * isIt);
@@ -90,15 +86,15 @@ void UICheckBox::Render(IUIRenderer& renderer) const
 
     auto verts = renderer.NewSprite(setMaterial);
     setSprite.CopyUVsTo(verts);
-    _CalculateSpriteVerts(&setSprite, verts);
-    _ApplyColor(verts);
+    CalculateSpriteVertices(&setSprite, verts);
+    ApplyColor(verts);
   }
 }
 
 //==============================================================================
 void  UICheckBox::OnSelectedStateChanged()
 {
-  if (onSelectedStateChanged != 0)
+  if (onSelectedStateChanged)
   {
     (*onSelectedStateChanged)(this, callbackData);
   }

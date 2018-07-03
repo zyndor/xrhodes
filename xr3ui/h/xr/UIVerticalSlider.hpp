@@ -13,12 +13,12 @@ namespace xr
 {
 
 //==============================================================================
+///@brief A slider where the movement of the handle is vertical.
 class UIVerticalSlider: public UISliderBase
 {
 public:
   // structors
   UIVerticalSlider();
-  ~UIVerticalSlider();
 
   // general use
   int32_t CalculateRange() const override;

@@ -24,10 +24,6 @@ UIVerticalScrollingLayout::UIVerticalScrollingLayout()
 }
 
 //==============================================================================
-UIVerticalScrollingLayout::~UIVerticalScrollingLayout()
-{}
-
-//==============================================================================
 bool UIVerticalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e )
 {
   if (e.x >= x && e.x < (x + w) &&
@@ -73,7 +69,7 @@ bool UIVerticalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e )
 }
 
 //==============================================================================
-void UIVerticalScrollingLayout::_AlignElement( UIElement* elem )
+void UIVerticalScrollingLayout::AlignChildImpl( UIElement* elem )
 {
   switch (m_align)
   {
@@ -93,15 +89,15 @@ void UIVerticalScrollingLayout::_AlignElement( UIElement* elem )
     break;
   }
 
-  if (m_elements.size() > 0)
+  if (m_children.size() > 0)
   {
     if (m_growDir == GD_POSITIVE)
     {
-      elem->y = m_elements.back()->y + m_elements.back()->h + m_spacing;
+      elem->y = m_children.back()->y + m_children.back()->h + m_spacing;
     }
     else
     {
-      elem->y = m_elements.back()->y - (elem->h + m_spacing);
+      elem->y = m_children.back()->y - (elem->h + m_spacing);
     }
   }
   else

@@ -19,10 +19,6 @@ UIImagePanel::UIImagePanel()
 {}
 
 //==============================================================================
-UIImagePanel::~UIImagePanel()
-{}
-
-//==============================================================================
 void UIImagePanel::Render(IUIRenderer& renderer) const
 {
   XR_ASSERTMSG(UIImagePanel, material != nullptr,

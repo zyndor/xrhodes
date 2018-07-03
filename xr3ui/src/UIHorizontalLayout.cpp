@@ -15,11 +15,7 @@ UIHorizontalLayout::UIHorizontalLayout()
 {}
 
 //==============================================================================
-UIHorizontalLayout::~UIHorizontalLayout()
-{}
-
-//==============================================================================
-void UIHorizontalLayout::_AlignElement( UIElement* elem )
+void UIHorizontalLayout::AlignChildImpl( UIElement* elem )
 {
   if (m_align != AL_NOALIGN)
   {
@@ -45,9 +41,9 @@ void UIHorizontalLayout::_AlignElement( UIElement* elem )
   }
 
   int16_t xElem = 0;
-  if (m_elements.size() > 0)
+  if (m_children.size() > 0)
   {
-    UIElement* pLast = m_elements.back();
+    UIElement* pLast = m_children.back();
     xElem = pLast->x;
     if (m_growDir == GD_POSITIVE)
     {
@@ -72,17 +68,17 @@ void UIHorizontalLayout::_AlignElement( UIElement* elem )
 }
 
 //==============================================================================
-void UIHorizontalLayout::_SetWidthToContent()
+void UIHorizontalLayout::SetWidthToContentImpl()
 {
   int32_t wNew = 0;
-  for (UIElement::List::const_iterator i0(m_elements.begin()), i1(m_elements.end()); i0 != i1; ++i0)
+  for (UIElement::List::const_iterator i0(m_children.begin()), i1(m_children.end()); i0 != i1; ++i0)
   {
     wNew += (*i0)->w;
   }
 
-  if (m_elements.size() > 0)
+  if (m_children.size() > 0)
   {
-    wNew += static_cast<int32_t>(m_elements.size() - 1) * m_spacing;
+    wNew += static_cast<int32_t>(m_children.size() - 1) * m_spacing;
   }
 
   w = wNew;

@@ -13,12 +13,12 @@ namespace xr
 {
 
 //==============================================================================
-class UIHorizontalSlider: public UISliderBase
+///@brief A slider where the movement of the handle is horizontal.
+  class UIHorizontalSlider: public UISliderBase
 {
 public:
   // structors
   UIHorizontalSlider();
-  ~UIHorizontalSlider();
 
   // general use
   int32_t CalculateRange() const override;

@@ -100,46 +100,46 @@ public:
   /// OnChage().
   void          Move(int vx, int vy);
 
-  ///@brief Convenience method to register the element on a UIEventDispatcher
+  ///@brief Convenience method to register the element on a UIEventNotifier
   /// for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
   bool          Register(UIEventNotifier& disp);
 
-  ///@brief Convenience method to unregister the element on a
-  /// UIEventDispatcher for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
+  ///@brief Convenience method to unregister the element on a UIEventNotifier
+  /// for MOUSE_ACTION_EVENT and MOUSE_MOTION_EVENT.
   bool          Unregister(UIEventNotifier& disp);
 
   ///@brief Processes changes of position and/or size carried out via
   /// direct access to members.
   virtual void  OnChange();
 
-  ///@brief Handles an MOUSE_ACTION_EVENT.
+  ///@brief Handles a MOUSE_ACTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
   virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
 
-  ///@brief Handles an MOUSE_MOTION_EVENT.
+  ///@brief Handles a MOUSE_MOTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
   virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
 
 protected:
   // data
-  UIContainer*  m_parent;
+  UIContainer*  m_parent; // no ownership
 
   // internal
   ///@brief Centers the UIElement horizontally on the screen without calling
   /// OnChange().
-  void  _CenterHorizontally();
+  void  CenterHorizontallyInternal();
 
   ///@brief Centers the UIElement vertically on the screen without calling
   /// OnChange().
-  void  _CenterVertically();
+  void  CenterVerticallyInternal();
 
   ///@brief Aligns the element horizontally to the given x coordinate and with
   /// the given alignment, without calling OnChange().
-  void  _AlignHorizontally(int x1, Alignment hAlign);
+  void  AlignHorizontallyInternal(int x1, Alignment hAlign);
 
   ///@brief Aligns the element vertically to the given x coordinate and with
   /// the given alignment, without calling OnChange().
-  void  _AlignVertically(int y1, Alignment vAlign);
+  void  AlignVerticallyInternal(int y1, Alignment vAlign);
 };
 
 //==============================================================================
