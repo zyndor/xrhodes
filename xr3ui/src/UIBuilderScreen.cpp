@@ -82,14 +82,16 @@ void  UIBuilderScreen::SetConfiguration(const UIBuilder::Configuration& cfg)
 //==============================================================================
 bool  UIBuilderScreen::Build(tinyxml2::XMLElement* xml)
 {
+  XR_ASSERT(UIBuilderScreen, xml != nullptr);
+
 #ifdef  XR_DEBUG
-  tinyxml2::XMLDocument*  doc = xml->GetDocument();
-  m_debugName = doc ? doc->Value() : "unknown";
+  {
+    tinyxml2::XMLDocument*  doc = xml->GetDocument();
+    m_debugName = (doc && doc->Value()) ? doc->Value() : "?";
+  }
 #endif  //XR_DEBUG
 
   Destroy();
-
-  XR_ASSERT(UIBuilderScreen, xml != nullptr);
 
   bool  result(m_builder.Build(xml, m_root));
   if(result)
