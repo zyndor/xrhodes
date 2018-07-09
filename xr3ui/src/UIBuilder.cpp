@@ -1269,6 +1269,8 @@ UIBuilder::UIBuilder(const Configuration& cfg)
   m_levels(nullptr),
   m_namedElements()
 {
+  SetMaxDepth(cfg.maxDepth);
+
   RegisterCreator(kElementTypes[UI_SPACER], UIBCreateUISpacer,
     UIBInitUIElement, false);
   RegisterCreator(kElementTypes[UI_BUTTON], UIBCreateUIButton,
@@ -1332,7 +1334,7 @@ void UIBuilder::SetMaxDepth(int maxDepth)
   Destroy();
 
   delete[]  m_levels;
-  m_levels = new UIElementList[maxDepth];
+  m_levels = maxDepth > 0 ? new UIElementList[maxDepth] : nullptr;
   m_cfg.maxDepth = maxDepth;
 }
 
