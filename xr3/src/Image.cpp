@@ -97,7 +97,7 @@ void Image::SetPixelData(uint8_t const* data, uint32_t width, uint32_t height,
 bool  Image::Load(FilePath const& path)
 {
   FileBuffer image;
-  bool success = image.Open(path, false);
+  bool success = image.Open(path);
   if (success)
   {
     Parse(image.GetData(), image.GetSize());

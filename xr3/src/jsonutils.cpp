@@ -17,7 +17,7 @@ JSON::Entity* LoadJSON(const char* filename, int maxDepth, bool quietErrors)
 {
   XR_ASSERT(LoadJSON, filename != nullptr);
   FileBuffer  file;
-  if (!file.Open(filename, false))
+  if (!file.Open(filename))
   {
     if (!quietErrors)
     {

@@ -42,7 +42,7 @@ namespace xr
   TEST_F(XonTests, ParseValid) // Parse a XON file that tries to capture all sorts of scenarios.
   {
     xr::FileBuffer  buffer;
-    buffer.Open("xontest1.xon", false);
+    buffer.Open("xontest1.xon");
 
     xr::XonParser parser;
     EventSequencer seq;
@@ -141,7 +141,7 @@ namespace xr
       xr::FileBuffer  buffer;
 
       sprintf(arBuffer, "invalid%d.xon", i + 1);
-      buffer.Open(arBuffer, false);
+      buffer.Open(arBuffer);
 
       bool success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
       ASSERT_FALSE(success);
@@ -156,12 +156,12 @@ namespace xr
     for (int i = 0; i < 2; ++i)
     {
       xr::FileBuffer  buffer;
-      buffer.Open("xontest1.xon", false);
+      buffer.Open("xontest1.xon");
       success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
       ASSERT_TRUE(success);
       ASSERT_EQ(parser.GetState().cursor, buffer.CastData<char>() + buffer.GetSize());
 
-      buffer.Open("invalid1.xon", false);
+      buffer.Open("invalid1.xon");
       success = parser.Parse(buffer.CastData<char>(), buffer.GetSize(), XonNoopHandler, nullptr);
       ASSERT_FALSE(success);
       ASSERT_EQ(parser.GetState().row, 4);
@@ -172,7 +172,7 @@ namespace xr
   TEST_F(XonTests, ReadValid) // Read xon and construct tree.
   {
     xr::FileBuffer  buffer;
-    buffer.Open("xontest1.xon", false);
+    buffer.Open("xontest1.xon");
 
     XonParser::State  readState;
     std::unique_ptr<XonObject> root(XonBuildTree(buffer.CastData<char>(), buffer.GetSize(), &readState));
@@ -282,7 +282,7 @@ namespace xr
       xr::FileBuffer  buffer;
 
       sprintf(arBuffer, "invalid%d.xon", i + 1);
-      buffer.Open(arBuffer, false);
+      buffer.Open(arBuffer);
 
       XonObject* pRoot = XonBuildTree(buffer.CastData<char>(), buffer.GetSize());
       ASSERT_EQ(pRoot, nullptr);
@@ -311,7 +311,7 @@ namespace xr
   TEST_F(XonTests, Errors) // Test for entity errors.
   {
     xr::FileBuffer  buffer;
-    buffer.Open("xontest1.xon", false);
+    buffer.Open("xontest1.xon");
 
     XonParser::State  readState;
     std::unique_ptr<XonObject> root(XonBuildTree(buffer.CastData<char>(), buffer.GetSize(), &readState));

@@ -24,23 +24,40 @@ class FileBuffer
 public:
   // structors
   FileBuffer() = default;
+  FileBuffer(FileBuffer&& rhs);
   ~FileBuffer();
 
   // general
-  bool            Open(FilePath const& path, bool text);
+  ///@brief Opens the file and reads all of its contents to an internal buffer.
+  /// Any previously opened handle is closed, any previously owned buffer is
+  /// deleted.
+  ///@return Whether the operation was successful.
+  bool  Open(FilePath const& path);
 
-  size_t          GetSize() const;
+  ///@return The size of the file in bytes.
+  size_t GetSize() const;
+
+  ///@return A pointer to the buffer.
+  ///@note Does not transfer ownership.
   uint8_t const*  GetData() const;
 
+  ///@return Convenience to reinterpret_cast<T const*>(GetData()).
+  ///@note Does not return ownership.
   template <typename T>
-  T const*        CastData() const;
+  T const*  CastData() const;
 
   ///@brief Transfers ownership of the buffer.
   ///@note GetSize() beforehand; the size will be 0 afterwards.
-  uint8_t*        DisownData();
+  uint8_t*  DisownData();
 
-  void            Close();
-  void            Destroy();
+  ///@brief Closes the File::Handle, if it was open.
+  void  Close();
+
+  ///@brief Deletes the internal buffer, if there was any.
+  void  Destroy();
+
+  // operators
+  FileBuffer& operator=(FileBuffer&& rhs);
 
 private:
   // data
