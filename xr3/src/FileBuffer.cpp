@@ -12,6 +12,17 @@ namespace xr
 {
 
 //==============================================================================
+FileBuffer::FileBuffer(FileBuffer&& rhs)
+: m_handle(rhs.m_handle),
+  m_size(rhs.m_size),
+  m_data(rhs.m_data)
+{
+  rhs.m_handle = nullptr;
+  rhs.m_data = nullptr;
+  rhs.m_size = 0;
+}
+
+//==============================================================================
 FileBuffer::~FileBuffer()
 {
   Destroy();
@@ -19,12 +30,12 @@ FileBuffer::~FileBuffer()
 }
 
 //==============================================================================
-bool  FileBuffer::Open(FilePath const& path, bool text)
+bool  FileBuffer::Open(FilePath const& path)
 {
   Destroy();
   Close();
 
-  m_handle = File::Open(path, text ? "r" : "rb");
+  m_handle = File::Open(path, "rb");
   bool success = m_handle != nullptr;
   if (success)
   {
@@ -63,6 +74,16 @@ void  FileBuffer::Destroy()
     m_data = nullptr;
     m_size = 0;
   }
+}
+
+//==============================================================================
+FileBuffer& FileBuffer::operator=(FileBuffer&& rhs)
+{
+  FileBuffer tmp(std::move(rhs));
+  std::swap(m_handle, tmp.m_handle);
+  std::swap(m_data, tmp.m_data);
+  m_size = tmp.m_size;
+  return *this;
 }
 
 } // XR

@@ -708,7 +708,7 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     FileBuffer fb;
     if (!done)  // read source file
     {
-      done = !fb.Open(path, false);
+      done = !fb.Open(path);
       LTRACEIF(done, ("%s: failed to read source.", path.c_str()));
     }
 
