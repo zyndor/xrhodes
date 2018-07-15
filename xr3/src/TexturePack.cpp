@@ -19,7 +19,7 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(TexturePack, "xtpk", 2, "xtp")
+XR_ASSET_DEF(TexturePack, "xtpk", 3, "xtp")
 
 struct SpriteData
 {
@@ -153,23 +153,6 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
     LTRACEIF(!success, ("%s: failed to write texture hash.", rawNameExt));
   }
 
-  // Shader name
-  const char* shaderName = nullptr;
-  if (success)
-  {
-    shaderName = elem->Attribute(kTags[TAG_SHADER_PATH]);
-
-    Asset::HashType hash = 0;
-    if (shaderName != nullptr)
-    {
-      dependencies.push_back(shaderName);
-      hash = Asset::Manager::HashPath(dependencies.back());
-    }
-
-    success = WriteBinaryStream(hash, data);
-    LTRACEIF(!success, ("%s: failed to write shader hash.", rawNameExt));
-  }
-
   // Base texture size.
   int texWidth = 0;
   if (success)
@@ -213,7 +196,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
     int x, y; // position of top left corner on sprite sheet
     int w, h; // actual size on sprite sheet. This will inform the halfSize. Needs swapping if the sprite is rotated.
     size_t numSprites = 0;
-    while (success && elem != 0)
+    while (success && elem)
     {
       // Amount of translation padding left of and above sprite, or bottom and left, if sprite is rotated.
       int xOffs = 0;
