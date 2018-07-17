@@ -1,5 +1,5 @@
-#ifndef XR_BASICMESH_HPP
-#define XR_BASICMESH_HPP
+#ifndef XR_MESH_HPP
+#define XR_MESH_HPP
 //==============================================================================
 //
 // XRhodes
@@ -7,256 +7,82 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-#include "meshutil.hpp"
-#include "FloatBuffer.hpp"
-#include "VertexFormats.hpp"
-#include "xr/debug.hpp"
-#include <stdint.h>
+#include "xr/VertexFormats.hpp"
+#include "xr/Gfx.hpp"
+#include "xr/Buffer.hpp"
 
-namespace xr {
+namespace xr
+{
 
 //==============================================================================
-class BasicMesh
+///@brief Smart handle to a vertex buffer and the number of vertices it was
+/// created with. Does not retain other data.
+struct Mesh
 {
-public:
-  // structors
-  BasicMesh(uint32_t vertexSize, uint32_t numVertices = 0);
-  virtual ~BasicMesh();
+  // static
+  ///@brief Creates a vertex buffer from an array of @a numVertices vertices in
+  /// @a vertexData, and using @a flags.
+  ///@return Handle to and ownership of, the resulting vertex buffer.
+  template <class VertexT>
+  static Gfx::VertexBufferHandle MakeVertexBuffer(uint32_t numVertices,
+    VertexT const* vertexData, Gfx::FlagType flags = Gfx::F_BUFFER_NONE);
 
-  // general
-  ///@return The vertex data as a Buffer.
-  Buffer GetVertexBuffer() const;
+  ///@return Mesh created with @a numVertices vertices of the given @a vertexData
+  /// and a combination of Gfx F_BUFFER_* @a flags.
+  template <class VertexT>
+  static Mesh Create(uint32_t numVertices, VertexT const* vertexData,
+    Gfx::FlagType flags = Gfx::F_BUFFER_NONE);
 
-  ///@brief Renders the mesh as the given primitive type.
-  virtual void Render(Primitive primitive) const;
-
-  ///@brief Renders @a count vertices from @a offset, of the mesh, as the given
-  /// primitive type.
-  virtual void Render(Primitive primitive, uint32_t offset, uint32_t count) const;
-
-protected:
   // data
-  Gfx::VertexBufferHandle m_vbo;
-  FloatBuffer m_vertices;
-};
-
-//==============================================================================
-class IndexMesh: public BasicMesh
-{
-public:
-  // types
-  using IndexArray = std::vector<uint16_t>;
+  uint32_t numVertices;
+  Gfx::VertexBufferHandle hVertexBuffer;
 
   // structors
-  IndexMesh(uint32_t vertexSize, uint32_t numVertices = 0);
-  ~IndexMesh();
+  Mesh();
+  Mesh(uint32_t numVertices, Gfx::VertexBufferHandle hVb);
+  Mesh(Mesh&& other);
+  virtual ~Mesh();
 
   // general
-  ///@return The vector of indices.
-  IndexArray& GetIndices();
+  ///@brief Renders all of the vertices as primitive type @a prim.
+  ///@note A Shader and states must be set prior to this.
+  virtual void  Render(Primitive prim) const;
 
-  ///@return The const vector of indices.
-  const IndexArray& GetIndices() const;
+  ///@brief Renders @a count vertices from offset @a offset into the vertex
+  /// buffer that this has, as primitive type @a prim.
+  ///@note A Shader and states must be set prior to this.
+  virtual void  Render(Primitive prim, uint32_t offset, uint32_t count) const;
 
-  ///@return The index data as a Buffer.
-  Buffer GetIndexBuffer() const;
+  ///@brief Swaps this and @a other efficiently.
+  void Swap(Mesh& other);
 
-  ///@return Sets the indices to be a repeating pattern of @a numInds indices,
-  /// copied @a numSets times, offset each time by the largest index + 1. i.e.
-  /// SetIndexPattern({ 0, 2, 1 }, 3, 2) will create { 0, 2, 1, 3, 5, 4 }.
-  void  SetIndexPattern(const uint16_t* indices, uint32_t numInds, uint32_t numSets);
-
-  ///@return Sets the indices to be a repeating pattern of @a numInds indices,
-  /// copied @a numSets times, offset each time by @a offset. i.e.
-  /// SetIndexPattern({ 0, 2, 1 }, 3, 10, 2) will create { 0, 2, 1, 10, 12, 11 }.
-  void  SetIndexPattern(const uint16_t* indices, uint32_t numInds, uint16_t offset,
-    uint32_t numSets);
-
-  ///@return Creates the Index Buffer Object based on the current index data,
-  /// deleting the previous one, if any.
-  void CreateIbo(uint32_t flags = Gfx::F_BUFFER_NONE);
-
-  ///@brief Renders the mesh using the index information, without setting the
-  /// material.
-  void Render(Primitive primitive) const;
-
-  ///@brief Renders the mesh using @a count indices starting from @a offset,
-  /// of the index information, without setting the material.
-  void Render(Primitive primitive, uint32_t offset, uint32_t count) const;
-
-protected:
-  // data
-  Gfx::IndexBufferHandle m_ibo;
-  IndexArray  m_indices;
+  // operators
+  Mesh& operator=(Mesh&& other);
 };
 
 //==============================================================================
-template <class VertexFormat, class Base = BasicMesh>
-class Mesh: public Base
-{
-  static_assert(std::is_base_of<BasicMesh, Base>::value, "Base must be, or derive  from, BasicMesh.");
-
-public:
-  // types
-  using PosType = decltype(VertexFormat::pos);
-
-  // structors
-  Mesh(uint32_t numVertices = 0);
-
-  // general
-  ///@brief Allocates buffer for @a numVertices vertices.
-  void AllocBuffer(uint32_t numVertices);
-
-  ///@return A pointer to the buffer data.
-  VertexFormat* GetVertices();
-
-  ///@return A pointer to the const buffer data.
-  const VertexFormat* GetVertices() const;
-
-  ///@brief Creates a VBO using its vertex data, and storing the resulting
-  /// handle internally (the previously held handle will be deleted).
-  void CreateVbo(uint32_t flags = Gfx::F_BUFFER_NONE);
-
-  ///@brief Calculates the centre of mass of the mesh.
-  PosType CalculateCentre() const;
-
-  ///@brief Finds the distance of the farthest vertex of the mesh, from the origin.
-  float CalculateRadius() const;
-
-  ///@brief Finds the axis aligned bounding box of the mesh and writes its
-  /// minimum and maximum to @a minOut and @a maxOut.
-  void CalculateExtents(PosType& minOut, PosType& maxOut) const;
-};
-
+// inline
 //==============================================================================
-// implementation
-//==============================================================================
+template<class VertexT>
 inline
-Buffer BasicMesh::GetVertexBuffer() const
+Gfx::VertexBufferHandle Mesh::MakeVertexBuffer(uint32_t numVertices,
+  VertexT const* vertexData, Gfx::FlagType flags)
 {
-  return Buffer{ m_vertices.GetElementSizeBytes() * m_vertices.GetNumElements(),
-    reinterpret_cast<uint8_t const*>(m_vertices.GetRaw()) };
+  Buffer vertexBuffer = { numVertices * VertexT::kSize,
+    reinterpret_cast<uint8_t const*>(vertexData) };
+  auto hFormat = Vertex::Formats::GetHandle<VertexT>();
+  auto hVertexBuffer = Gfx::CreateVertexBuffer(hFormat, vertexBuffer, flags);
+  return hVertexBuffer;
 }
 
 //==============================================================================
+template<class VertexT>
 inline
-void BasicMesh::Render(Primitive primitive) const
+Mesh  Mesh::Create(uint32_t numVertices, VertexT const* vertexData, Gfx::FlagType flags)
 {
-  Render(primitive, 0, m_vertices.GetNumElements());
-}
-
-//==============================================================================
-inline
-void BasicMesh::Render(Primitive primitive, uint32_t offset, uint32_t count) const
-{
-  XR_ASSERT(Mesh, m_vbo.IsValid());
-  Gfx::Draw(m_vbo, primitive, offset, count);
-}
-
-//==============================================================================
-inline
-IndexMesh::IndexArray& IndexMesh::GetIndices()
-{
-  return m_indices;
-}
-
-//==============================================================================
-inline
-const IndexMesh::IndexArray& IndexMesh::GetIndices() const
-{
-  return m_indices;
-}
-
-//==============================================================================
-inline
-Buffer IndexMesh::GetIndexBuffer() const
-{
-  return { m_indices.size() * sizeof(decltype(m_indices)::value_type),
-    reinterpret_cast<const uint8_t*>(m_indices.data()) };
-}
-
-//==============================================================================
-inline
-void IndexMesh::Render(Primitive primitive) const
-{
-  Render(primitive, 0, uint32_t(m_indices.size()));
-}
-
-//==============================================================================
-inline
-void IndexMesh::Render(Primitive primitive, uint32_t offset, uint32_t count) const
-{
-  XR_ASSERT(Mesh, m_vbo.IsValid());
-  XR_ASSERT(Mesh, m_ibo.IsValid());
-  Gfx::Draw(m_vbo, m_ibo, primitive, offset, count);
-}
-
-//==============================================================================
-template <class VertexFormat, class Base>
-Mesh<VertexFormat, Base>::Mesh(uint32_t numVertices)
-: Base(VertexFormat::kSize, numVertices)
-{}
-
-//==============================================================================
-template <class VertexFormat, class Base>
-void  Mesh<VertexFormat, Base>::AllocBuffer(uint32_t numVertices)
-{
-  XR_ASSERT(Mesh, numVertices >= 0);
-  Base::m_vertices.SetBuffer(VertexFormat::kSize, numVertices);
-}
-
-//==============================================================================
-template<class VertexFormat, class Base>
-inline
-VertexFormat* Mesh<VertexFormat, Base>::GetVertices()
-{
-  return Base::m_vertices.template Get<VertexFormat>();
-}
-
-//==============================================================================
-template<class VertexFormat, class Base>
-inline
-const VertexFormat* Mesh<VertexFormat, Base>::GetVertices() const
-{
-  return Base::m_vertices.template Get<VertexFormat>();
-}
-
-//==============================================================================
-template <class VertexFormat, class Base>
-inline
-void Mesh<VertexFormat, Base>::CreateVbo(uint32_t flags)
-{
-  Gfx::Release(Base::m_vbo);
-  XR_ASSERT(Mesh, Base::m_vertices.GetRaw() != nullptr);
-  Base::m_vbo = Gfx::CreateVertexBuffer(Vertex::Formats::GetHandle<VertexFormat>(),
-    Base::GetVertexBuffer(), flags);
-}
-
-//==============================================================================
-template <class VertexFormat, class Base>
-inline
-typename Mesh<VertexFormat, Base>::PosType
-  Mesh<VertexFormat, Base>::CalculateCentre() const
-{
-  return meshutil::CalculateCentre(Base::m_vertices.GetNumElements(), GetVertices());
-}
-
-//==============================================================================
-template <class VertexFormat, class Base>
-inline
-float Mesh<VertexFormat, Base>::CalculateRadius() const
-{
-  return meshutil::CalculateRadius(Base::m_vertices.GetNumElements(), GetVertices());
-}
-
-//==============================================================================
-template <class VertexFormat, class Base>
-inline
-void  Mesh<VertexFormat, Base>::CalculateExtents(PosType& outMin, PosType& outMax) const
-{
-  meshutil::CalculateExtents(Base::m_vertices.GetNumElements(), GetVertices(), outMin, outMax);
+  return Mesh(numVertices, MakeVertexBuffer(numVertices, vertexData, flags));
 }
 
 } // xr
 
-#endif // XR_BASICMESH_HPP
+#endif //XR_MESH_HPP

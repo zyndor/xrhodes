@@ -64,7 +64,7 @@ protected:
   // data
   uint32_t m_numSprites;
   std::vector<Material::Ptr> m_materials;
-  FloatBuffer m_vertices;
+  std::vector<Vertex> m_vertices;
   Gfx::IndexBufferHandle m_ibo;
 
   uint32_t m_numSpritesRenderable;

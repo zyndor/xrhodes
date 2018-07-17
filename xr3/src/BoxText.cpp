@@ -6,6 +6,8 @@
 //==============================================================================
 #include "xr/BoxText.hpp"
 #include "xr/Sprite.hpp"
+#include "xr/IndexMesh.hpp"
+#include "xr/meshutil.hpp"
 #include "utf8/unchecked.h"
 
 namespace xr {
@@ -345,5 +347,23 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
   }
 }
 
+//==============================================================================
+IndexMesh BoxText::CreateMesh(const char* text, bool updateGlyphCache, Stats* statsOut)
+{
+  // Prepare measurement
+  Measurement m;
+  Measure(text, m);
+
+  // Allocate buffer, set index pattern
+  std::vector<Vertex> vertices(m.numGlyphs * Quad::Vertex::kCount);
+  std::vector<uint16_t> indices(Quad::kIndexCount * m.numGlyphs);
+  meshutil::SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
+    m.numGlyphs, indices.data());
+
+  Generate(m, vertices.data(), updateGlyphCache, statsOut);
+
+  return IndexMesh::Create(static_cast<uint32_t>(vertices.size()), vertices.data(),
+    static_cast<uint32_t>(indices.size()), indices.data());
+}
 
 } // XR

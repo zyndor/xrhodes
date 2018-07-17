@@ -147,7 +147,6 @@ void UIImagePanel::Render(IUIRenderer& renderer) const
   const int numVertices = hQuads * vQuads * Quad::Vertex::kCount;
   if (numVertices > 0)
   {
-    FloatBuffer  fbUVs;
     for (int i = iy0; i < iy1; ++i)
     {
       for (int j = ix0; j < ix1; ++j)

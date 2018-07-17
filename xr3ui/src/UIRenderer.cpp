@@ -34,7 +34,7 @@ void UIRenderer::Init(uint32_t numSprites)
   m_materials.resize(numSprites);
 
   uint32_t numVertices = numSprites * Quad::Vertex::kCount;
-  m_vertices.SetBuffer<Vertex>(numVertices);
+  m_vertices.resize(numVertices);
 
   std::vector<uint16_t> indices(Quad::kIndexCount * numSprites);
   meshutil::SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
@@ -61,13 +61,13 @@ UIRenderer::Vertex*  UIRenderer::NewSprite(Material::Ptr const& pMaterial)
 
   iSprite *= Quad::Vertex::kCount;
 
-  return m_vertices.Get<Vertex>() + iSprite;
+  return m_vertices.data() + iSprite;
 }
 
 //==============================================================================
 void UIRenderer::Render()
 {
-  auto verts = m_vertices.Get<Vertex>() + m_numSpritesRendered * Quad::Vertex::kCount;
+  auto verts = m_vertices.data() + m_numSpritesRendered * Quad::Vertex::kCount;
 
   auto i = m_materials.data() + m_numSpritesRendered;
   auto iEnd = i + (m_numSpritesRenderable - m_numSpritesRendered);
@@ -122,7 +122,7 @@ void UIRenderer::Shutdown()
   Gfx::Release(m_ibo);
   m_ibo.Invalidate();
 
-  m_vertices.ReleaseData();
+  m_vertices.clear();
   m_numSprites = 0;
 }
 

@@ -5,57 +5,62 @@
 //
 //==============================================================================
 #include "xr/Mesh.hpp"
+#include <algorithm>
 
-namespace xr {
+namespace xr
+{
 
 //==============================================================================
-BasicMesh::BasicMesh(uint32_t vertexSize, uint32_t numVertices)
-: m_vertices(vertexSize, numVertices)
+Mesh::Mesh()
+: numVertices(0)
 {}
 
 //==============================================================================
-BasicMesh::~BasicMesh()
-{
-  Gfx::Release(m_vbo);
-}
-
-//==============================================================================
-IndexMesh::IndexMesh(uint32_t vertexSize, uint32_t numVertices)
-: BasicMesh(vertexSize, numVertices)
+Mesh::Mesh(uint32_t numVertices, Gfx::VertexBufferHandle hVb)
+: numVertices(numVertices),
+  hVertexBuffer(hVb)
 {}
 
 //==============================================================================
-IndexMesh::~IndexMesh()
+Mesh::Mesh(Mesh && other)
+: numVertices(other.numVertices),
+  hVertexBuffer(other.hVertexBuffer)
 {
-  Gfx::Release(m_ibo);
+  other.numVertices = 0;
+  other.hVertexBuffer.Invalidate();
 }
 
 //==============================================================================
-void  IndexMesh::SetIndexPattern(const uint16_t* indices, uint32_t indexCount,
-  uint32_t numSets)
+Mesh::~Mesh()
 {
-  XR_ASSERT(IndexMesh, indices != nullptr);
-
-  m_indices.resize(indexCount * numSets);
-  meshutil::SetIndexPattern(indices, indexCount, numSets, m_indices.data());
+  Gfx::Release(hVertexBuffer);
 }
 
 //==============================================================================
-void IndexMesh::SetIndexPattern(const uint16_t* indices, uint32_t indexCount,
-  uint16_t shift, uint32_t numSets)
+void Mesh::Render(Primitive prim) const
 {
-  XR_ASSERT(IndexMesh, indices != nullptr);
-
-  m_indices.resize(indexCount * numSets);
-  meshutil::SetIndexPattern(indices, indexCount, shift, numSets, m_indices.data());
+  Render(prim, 0, numVertices);
 }
 
 //==============================================================================
-void IndexMesh::CreateIbo(uint32_t flags)
+void Mesh::Render(Primitive prim, uint32_t offset, uint32_t count) const
 {
-  Gfx::Release(m_ibo);
-  m_ibo = Gfx::CreateIndexBuffer(GetIndexBuffer(), flags);
+  Gfx::Draw(hVertexBuffer, prim, offset, count);
 }
 
+//==============================================================================
+void Mesh::Swap(Mesh& other)
+{
+  std::swap(numVertices, other.numVertices);
+  std::swap(hVertexBuffer, other.hVertexBuffer);
+}
+
+//==============================================================================
+Mesh& Mesh::operator=(Mesh&& other)
+{
+  Mesh tmp(std::move(other));
+  Swap(tmp);
+  return *this;
+}
 
 } // xr

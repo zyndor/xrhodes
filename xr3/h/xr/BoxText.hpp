@@ -8,7 +8,6 @@
 //
 //==============================================================================
 #include "Font.hpp"
-#include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "Quad.hpp"
 #include <string>
@@ -16,10 +15,9 @@
 
 namespace xr {
 
-//==============================================================================
-using TextVertexFormat =
-  Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
+struct IndexMesh;
 
+//==============================================================================
 ///@brief Holds the parameters of a text block that is to be presented line by
 /// line, horizontally in a rectangular area of given size, and performs the
 /// creation of the text mesh using the given Font.
@@ -27,6 +25,8 @@ class BoxText
 {
 public:
   // types
+  using Vertex = Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
+
   ///@brief Describes the alignment of text in terms of the relation between its
   /// starting point (in its box) and the origin, along the given axis.
   enum class Alignment
@@ -64,8 +64,6 @@ public:
     float maxLineWidth;
     float height;
   };
-
-  template <class VertexFormat> using Mesh = Mesh<VertexFormat, IndexMesh>;
 
   // structors
   BoxText();
@@ -111,11 +109,9 @@ public:
       statsOut);
   }
 
-  ///@brief Convenience function to update an IndexMesh with the given text.
+  ///@brief Convenience function to create an IndexMesh with the given text.
   /// If @a updateGlyphCache is set, it will update the glyph cache of the font.
-  template <class VertexFormat>
-  void UpdateMesh(const char* text, Mesh<VertexFormat>& mesh, bool updateGlyphCache,
-    Stats* statsOut);
+  IndexMesh CreateMesh(const char* text, bool updateGlyphCache, Stats* statsOut);
 
 protected:
   // data
@@ -161,27 +157,6 @@ inline
 BoxText::Alignment  BoxText::GetVerticalAlignment() const
 {
   return m_verticalAlignment;
-}
-
-//==============================================================================
-template <class VertexFormat>
-void BoxText::UpdateMesh(const char* text, Mesh<VertexFormat>& mesh,
-  bool updateGlyphCache, Stats* statsOut)
-{
-  // Prepare measurement
-  Measurement m;
-  Measure(text, m);
-
-  // Allocate buffer, set index pattern
-  mesh.AllocBuffer(m.numGlyphs * Quad::Vertex::kCount);
-  mesh.SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
-    m.numGlyphs);
-
-  Generate(m, mesh.GetVertices(), updateGlyphCache, statsOut);
-
-  // Create GPU objects.
-  mesh.CreateVbo();
-  mesh.CreateIbo();
 }
 
 } // XR

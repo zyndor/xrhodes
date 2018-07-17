@@ -8,6 +8,7 @@
 //
 //==============================================================================
 #include "UIColoredElement.hpp"
+#include "xr/IndexMesh.hpp"
 #include "xr/BoxText.hpp"
 
 namespace xr
@@ -53,7 +54,7 @@ public:
 
 protected:
   // data
-  BoxText::Mesh<TextVertexFormat> m_textMesh;
+  IndexMesh m_textMesh;
   BoxText  m_textParams;
   bool m_textDirty;
   std::string m_text;
