@@ -26,20 +26,22 @@ UIRenderer::~UIRenderer()
 }
 
 //==============================================================================
-void UIRenderer::Init(int numSprites)
+void UIRenderer::Init(uint32_t numSprites)
 {
   XR_ASSERT(UIRenderer, numSprites > 0);
   XR_ASSERTMSG(UIRenderer, m_materials.empty(), ("Already initialised. This is an error."));
 
   m_materials.resize(numSprites);
 
-  int numVertices(numSprites * Quad::Vertex::kCount);
+  uint32_t numVertices = numSprites * Quad::Vertex::kCount;
   m_vertices.SetBuffer<Vertex>(numVertices);
 
   std::vector<uint16_t> indices(Quad::kIndexCount * numSprites);
+  meshutil::SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
+    numSprites, indices.data());
   Buffer indexBuffer{ indices.size() * sizeof(decltype(indices)::value_type),
     reinterpret_cast<const uint8_t*>(indices.data()) };
-  m_ibo = Gfx::CreateIndexBuffer(indexBuffer, 0);
+  m_ibo = Gfx::CreateIndexBuffer(indexBuffer, Gfx::F_BUFFER_NONE);
 
   m_numSprites = numSprites;
 }
@@ -52,7 +54,7 @@ UIRenderer::Vertex*  UIRenderer::NewSprite(Material::Ptr const& pMaterial)
   XR_ASSERT(UIRenderer, m_numSpritesRenderable < m_numSprites);
   XR_ASSERT(UIRenderer, pMaterial != nullptr);
 
-  int iSprite(m_numSpritesRenderable);
+  int iSprite = m_numSpritesRenderable;
   ++m_numSpritesRenderable;
 
   m_materials[iSprite] = pMaterial;
