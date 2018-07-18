@@ -54,16 +54,16 @@ void Sprite::CalculateUVs(AABB const& aabb, bool rotate, Vertex verts[Quad::Vert
   if(rotate)
   {
     verts[Quad::Vertex::NW].uv0 = Vector2(aabb.right, aabb.top);
+    verts[Quad::Vertex::NE].uv0 = Vector2(aabb.right, aabb.bottom);
     verts[Quad::Vertex::SW].uv0 = Vector2(aabb.left, aabb.top);
     verts[Quad::Vertex::SE].uv0 = Vector2(aabb.left, aabb.bottom);
-    verts[Quad::Vertex::NE].uv0 = Vector2(aabb.right, aabb.bottom);
   }
   else
   {
     verts[Quad::Vertex::NW].uv0 = Vector2(aabb.left, aabb.top);
+    verts[Quad::Vertex::NE].uv0 = Vector2(aabb.right, aabb.top);
     verts[Quad::Vertex::SW].uv0 = Vector2(aabb.left, aabb.bottom);
     verts[Quad::Vertex::SE].uv0 = Vector2(aabb.right, aabb.bottom);
-    verts[Quad::Vertex::NE].uv0 = Vector2(aabb.right, aabb.top);
   }
 }
 
@@ -105,9 +105,9 @@ void Sprite::SetHalfSize(float hw, float hh, bool calculateVertices)
   if (calculateVertices)
   {
     m_vertices[Quad::Vertex::NW].pos = Vector3(-hw, -hh, .0f);
+    m_vertices[Quad::Vertex::NE].pos = Vector3(hw, -hh, .0f);
     m_vertices[Quad::Vertex::SW].pos = Vector3(-hw, hh, .0f);
     m_vertices[Quad::Vertex::SE].pos = Vector3(hw, hh, .0f);
-    m_vertices[Quad::Vertex::NE].pos = Vector3(hw, -hh, .0f);
   }
 }
 

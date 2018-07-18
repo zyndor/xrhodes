@@ -308,6 +308,11 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
             positions = XR_ADVANCE_PTR(positions, attribStride);
             uvs = XR_ADVANCE_PTR(uvs, attribStride);
 
+            *positions = Vector3(gx + gw, gy + gh, .0f);
+            *uvs = Vector2(cg->uvs.right, cg->uvs.top);
+            positions = XR_ADVANCE_PTR(positions, attribStride);
+            uvs = XR_ADVANCE_PTR(uvs, attribStride);
+
             *positions = Vector3(gx, gy, .0f);
             *uvs = Vector2(cg->uvs.left, cg->uvs.bottom);
             positions = XR_ADVANCE_PTR(positions, attribStride);
@@ -315,11 +320,6 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
 
             *positions = Vector3(gx + gw, gy, .0f);
             *uvs = Vector2(cg->uvs.right, cg->uvs.bottom);
-            positions = XR_ADVANCE_PTR(positions, attribStride);
-            uvs = XR_ADVANCE_PTR(uvs, attribStride);
-
-            *positions = Vector3(gx + gw, gy + gh, .0f);
-            *uvs = Vector2(cg->uvs.right, cg->uvs.top);
             positions = XR_ADVANCE_PTR(positions, attribStride);
             uvs = XR_ADVANCE_PTR(uvs, attribStride);
           }

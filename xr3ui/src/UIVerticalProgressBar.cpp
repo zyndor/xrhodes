@@ -72,9 +72,9 @@ void UIVerticalProgressBar::Render(IUIRenderer& renderer) const
       }
 
       verts[Quad::Vertex::NW].pos = Vector3(left, top, .0f);
+      verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
       verts[Quad::Vertex::SW].pos = Vector3(left, y1, .0f);
       verts[Quad::Vertex::SE].pos = Vector3(right, y1, .0f);
-      verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
     }
     else
     {
@@ -92,9 +92,9 @@ void UIVerticalProgressBar::Render(IUIRenderer& renderer) const
       }
 
       verts[Quad::Vertex::NW].pos = Vector3(left, y1, .0f);
+      verts[Quad::Vertex::NE].pos = Vector3(right, y1, .0f);
       verts[Quad::Vertex::SW].pos = Vector3(left, bottom, .0f);
       verts[Quad::Vertex::SE].pos = Vector3(right, bottom, .0f);
-      verts[Quad::Vertex::NE].pos = Vector3(right, y1, .0f);
     }
 
     ApplyColor(verts);

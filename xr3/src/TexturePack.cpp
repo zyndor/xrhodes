@@ -54,9 +54,9 @@ struct SpriteData // TODO: pretty sure this is just Sprite now.
     }
 
     vertices[Quad::Vertex::NW].pos = Vector3(-width, height, .0f);
+    vertices[Quad::Vertex::NE].pos = Vector3(width, height, .0f);
     vertices[Quad::Vertex::SW].pos = Vector3(-width, -height, .0f);
     vertices[Quad::Vertex::SE].pos = Vector3(width, -height, .0f);
-    vertices[Quad::Vertex::NE].pos = Vector3(width, height, .0f);
   }
 
   void AddOffset(float x, float y)
@@ -66,9 +66,9 @@ struct SpriteData // TODO: pretty sure this is just Sprite now.
 
     Vector3 t(x, y, .0f);
     vertices[Quad::Vertex::NW].pos += t;
+    vertices[Quad::Vertex::NE].pos += t;
     vertices[Quad::Vertex::SW].pos += t;
     vertices[Quad::Vertex::SE].pos += t;
-    vertices[Quad::Vertex::NE].pos += t;
   }
 };
 
