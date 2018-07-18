@@ -27,16 +27,16 @@ public:
 
   // general use
   ///@brief Creates storage for @a numSprites sprites.
-  void  Init(int numSprites);
+  void  Init(uint32_t numSprites);
 
   ///@return  The capacity of the renderer; the number of sprites you can batch.
-  int GetNumSprites() const;
+  uint32_t GetNumSprites() const;
 
   ///@return  The number of sprites already consumed.
-  int GetNumSpritesConsumed() const;
+  uint32_t GetNumSpritesConsumed() const;
 
   ///@return  The number of sprites already rendered.
-  int GetNumSpritesRendered() const;
+  uint32_t GetNumSpritesRendered() const;
 
   ///@brief   Records the material for a new sprite and returns a buffer
   /// for the client to populate with Sprite vertex information.
@@ -62,34 +62,34 @@ public:
 
 protected:
   // data
-  int m_numSprites;
+  uint32_t m_numSprites;
   std::vector<Material::Ptr> m_materials;
   FloatBuffer m_vertices;
   Gfx::IndexBufferHandle m_ibo;
 
-  int m_numSpritesRenderable;
-  int m_numSpritesRendered;
+  uint32_t m_numSpritesRenderable;
+  uint32_t m_numSpritesRendered;
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-int UIRenderer::GetNumSprites() const
+uint32_t UIRenderer::GetNumSprites() const
 {
   return m_numSprites;
 }
 
 //==============================================================================
 inline
-int UIRenderer::GetNumSpritesConsumed() const
+uint32_t UIRenderer::GetNumSpritesConsumed() const
 {
   return m_numSpritesRenderable;
 }
 
 //==============================================================================
 inline
-int UIRenderer::GetNumSpritesRendered() const
+uint32_t UIRenderer::GetNumSpritesRendered() const
 {
   return m_numSpritesRendered;
 }
