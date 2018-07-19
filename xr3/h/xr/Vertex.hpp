@@ -155,7 +155,7 @@ struct Format<T, Rest...> : T, Format<Rest...>
   {}
 
   template <class... RestT>
-  Format(Value v = Value(), RestT... r)
+  Format(Value v, RestT... r)
   : T(v),
     Base(r...)
   {}
@@ -204,7 +204,7 @@ struct Format<T, Format<Rest...>> : Format<Rest...>, T
   {}
 
   template <class... RestT>
-  Format(Value v = Value(), RestT... r)
+  Format(Value v, RestT... r)
   : T(v),
     Base(r...)
   {}
