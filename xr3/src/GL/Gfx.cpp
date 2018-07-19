@@ -167,9 +167,9 @@ const GLenum kStencilOps[] =
 
 void GetStencilOps(FlagType flags, GLenum ops[3])
 {
-  ops[0] = (flags & F_STENCIL_FAIL_OP_MASK) >> F_STENCIL_FAIL_OP_SHIFT;
-  ops[1] = (flags & F_STENCIL_DEPTH_FAIL_OP_MASK) >> F_STENCIL_DEPTH_FAIL_OP_SHIFT;
-  ops[2] = (flags & F_STENCIL_ALL_PASS_OP_MASK) >> F_STENCIL_ALL_PASS_OP_SHIFT;
+  ops[0] = kStencilOps[(flags & F_STENCIL_FAIL_OP_MASK) >> F_STENCIL_FAIL_OP_SHIFT];
+  ops[1] = kStencilOps[(flags & F_STENCIL_DEPTH_FAIL_OP_MASK) >> F_STENCIL_DEPTH_FAIL_OP_SHIFT];
+  ops[2] = kStencilOps[(flags & F_STENCIL_ALL_PASS_OP_MASK) >> F_STENCIL_ALL_PASS_OP_SHIFT];
 }
 
 //=============================================================================
