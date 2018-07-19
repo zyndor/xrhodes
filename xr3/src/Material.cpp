@@ -191,7 +191,7 @@ public:
             }
             else
             {
-              LTRACE(("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i]));
+              LTRACE(("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i].c_str()));
             }
           }
 
@@ -203,7 +203,7 @@ public:
               if (auto stringValue = xon[i]->ToValue().GetString())
               {
                 success = InterpretBlendFactor(stringValue, values[i]);
-                LTRACEIF(!success, ("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i]));
+                LTRACEIF(!success, ("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i].c_str()));
               }
             }
           }
