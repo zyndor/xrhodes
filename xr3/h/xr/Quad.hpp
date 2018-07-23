@@ -13,15 +13,14 @@ namespace xr
 {
 namespace Quad
 {
-
 namespace Vertex
 {
 enum Value
 {
   NW,
+  NE,
   SW,
   SE,
-  NE,
   kCount
 };
 }

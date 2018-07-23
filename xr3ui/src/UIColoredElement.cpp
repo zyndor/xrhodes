@@ -29,9 +29,9 @@ void  UIColoredElement::CalculateSpriteVertices(const Sprite* sprite,
   float bottom = y + h - Round(sprite->GetBottomPadding() * hs);
 
   verts[Quad::Vertex::NW].pos = Vector3(left, top, .0f);
+  verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
   verts[Quad::Vertex::SW].pos = Vector3(left, bottom, .0f);
   verts[Quad::Vertex::SE].pos = Vector3(right, bottom, .0f);
-  verts[Quad::Vertex::NE].pos = Vector3(right, top, .0f);
 }
 
 //==============================================================================
