@@ -36,11 +36,11 @@ void Context::Init()
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
   // Create GL context.
-  int openGlVersionMajor = 3;
-  int openGlVersionMinor = 3;
+  m_glVersionMajor = 3;
+  m_glVersionMinor = 3;
 
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openGlVersionMajor);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openGlVersionMinor);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, m_glVersionMajor);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, m_glVersionMinor);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
   int width, height;
