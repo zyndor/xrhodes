@@ -109,7 +109,7 @@ void UILabel::UpdateText()
 {
   if (m_textDirty)
   {
-    m_textParams.UpdateMesh(m_text.c_str(), m_textMesh, true, &m_textStats);
+    m_textMesh = m_textParams.CreateMesh(m_text.c_str(), true, &m_textStats);
     m_textDirty = false;
   }
 }

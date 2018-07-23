@@ -16,7 +16,7 @@ namespace xr
 class IUIRenderer
 {
 public:
-  using Vertex = Vertex::Format<Vertex::Color0<Color>, SpriteVertexFormat>;
+  using Vertex = Vertex::Format<Vertex::Color0<Color>, Sprite::Vertex>;
 
   virtual ~IUIRenderer()
   {}

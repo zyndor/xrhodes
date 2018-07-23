@@ -21,9 +21,9 @@ namespace xr
 //==============================================================================
 XR_ASSET_DEF(TexturePack, "xtpk", 3, "xtp")
 
-struct SpriteData
+struct SpriteData // TODO: pretty sure this is just Sprite now.
 {
-  SpriteVertexFormat  vertices[Quad::Vertex::kCount];
+  Sprite::Vertex  vertices[Quad::Vertex::kCount];
   Vector2 halfSize;
   Vector2 offset;
 

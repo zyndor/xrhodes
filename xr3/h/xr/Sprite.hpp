@@ -8,22 +8,21 @@
 //
 //==============================================================================
 #include "AABB.hpp"
-#include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "Quad.hpp"
 #include "xr/fundamentals.hpp"
+#include "xr/Mesh.hpp"
 
 namespace xr
 {
 
 //==============================================================================
-using SpriteVertexFormat = Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
-
-class Sprite: public Mesh<SpriteVertexFormat>
+class Sprite
 {
 public:
   // typedef
-  using Vertex = SpriteVertexFormat;
+  using Vertex = Vertex::Format<Vertex::Pos<Vector3>, Vertex::UV0<Vector2>>;
+
 
   // static
   static const uint32_t  kUVsSize = Quad::Vertex::kCount * sizeof(Vector2);
@@ -83,6 +82,9 @@ public:
   ///@return  The offsetting that's been applied to the vertices so far.
   const Vector2& GetOffset() const;
 
+  ///@return  The vertex data of the sprite.
+  Vertex const* GetVertices() const;
+
   ///@brief Copies the UVs to the supplied array.
   template <typename VertexFormat>
   void  CopyUVsTo(VertexFormat* verts) const;
@@ -129,8 +131,12 @@ public:
   void  FlipUVsY();
   void  FlipY();
 
+  Mesh  CreateMesh() const;
+
 protected:
   // data
+  Vertex m_vertices[Quad::Vertex::kCount];
+
   float m_halfWidth;
   float m_halfHeight;
   bool  m_isUVRotated;
@@ -210,6 +216,13 @@ inline
 const Vector2&  Sprite::GetOffset() const
 {
   return m_offset;
+}
+
+//==============================================================================
+inline
+Sprite::Vertex const* Sprite::GetVertices() const
+{
+  return m_vertices;
 }
 
 //==============================================================================
