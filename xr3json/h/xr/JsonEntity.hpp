@@ -109,7 +109,7 @@ public:
   size_t      GetNumElements() const override;  // arrays. objects and values return 0
   size_t      GetValueSize() const override;    // values. objects and arrays return 0
 
-  const char* GetValue() const;  // values. objects and arrays return nullptr
+  const char* GetValue() const override;  // values. objects and arrays return nullptr
 
   Entity*     GetChild(const char* key, Type acceptType) const override;  // retrieve child from object
   Entity*     GetElement(int id, Type acceptType) const override;  // retrieve child from array
