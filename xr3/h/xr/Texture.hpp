@@ -24,10 +24,10 @@ public:
   // types
   enum Flags : FlagType
   {
-    WrapFlag = XR_MASK_ID(FlagType, 8),
-    PointFilterFlag = XR_MASK_ID(FlagType, 9),
-    MipMapsFlag = XR_MASK_ID(FlagType, 10),
-    SrgbFlag = XR_MASK_ID(FlagType, 11),
+    WrapFlag = FirstUserFlag,
+    PointFilterFlag = FirstUserFlag << 1,
+    MipMapsFlag = FirstUserFlag << 2,
+    SrgbFlag = FirstUserFlag << 3,
   };
 
   // static

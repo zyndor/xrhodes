@@ -83,7 +83,11 @@ bool ShaderComponent::OnLoaded(Buffer buffer)
     auto sourceLen = reader.GetRemainingSize();
     auto source = reader.ReadBytes(sourceLen);
     success = source != nullptr;
-    if (success)
+    if (
+#ifdef ENABLE_ASSET_BUILDING
+      !CheckAllMaskBits(GetFlags(), DryRunFlag) &&
+#endif
+      success)
     {
       m_handle = Gfx::CreateShader(m_type, { sourceLen, source });
       success = m_handle.IsValid();

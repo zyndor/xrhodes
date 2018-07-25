@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "xr/File.hpp"
 #include "xr/Counted.hpp"
 #include "xr/Counter.hpp"
@@ -44,18 +43,47 @@ public:
   using FlagType = uint32_t;
   enum Flags: FlagType
   {
-    // private
-    ErrorFlag = XR_MASK_ID(FlagType, 0),  // The processing of the asset stops when this is set. Note: error states are odd numbers.
-    LoadingFlag = XR_MASK_ID(FlagType, 1),  // Asset data is being loaded from disk.
-    ProcessingFlag = XR_MASK_ID(FlagType, 2), // Transient state between loading data and completion, to inform asset manager and help tell loading (I/O) and processing errors.
-    ReadyFlag = XR_MASK_ID(FlagType, 3), // The Asset is ready to use.
+    // private - cannot be set by client code, at the point of loading an Asset.
+    ///@brief The processing of the asset stops when this is set. Note: error
+    /// states are odd numbers.
+    ErrorFlag = XR_MASK_ID(FlagType, 0),
+
+    ///@brief Asset data is being loaded from disk.
+    LoadingFlag = XR_MASK_ID(FlagType, 1),
+
+    ///@brief Transient state between loading data and completion, to inform Asset::Manager,
+    /// and to help tell loading (I/O) and processing errors apart.
+    ProcessingFlag = XR_MASK_ID(FlagType, 2),
+
+    ///@brief The Asset is ready to use.
+    ReadyFlag = XR_MASK_ID(FlagType, 3),
 
     // public
-    ForceReloadFlag = XR_MASK_ID(FlagType, 4),  // Load() will not load an already loaded asset, unless this flag is specified.
-    LoadSyncFlag = XR_MASK_ID(FlagType, 5),  // forces the asset to load synchronously.
-    UnmanagedFlag = XR_MASK_ID(FlagType, 6), // the asset manager will not keep a reference to the asset.
-    KeepSourceDataFlag = XR_MASK_ID(FlagType, 7), // source data is discarded by default; handling this flag is a responsibility of the given asset type
-    ForceBuildFlag = XR_MASK_ID(FlagType, 8), // forces the building of the asset, intended for debug only; ignored / not meaningful when asset building is disabled.
+    ///@brief Load() will not load an already loaded asset, unless this flag is set.
+    ForceReloadFlag = XR_MASK_ID(FlagType, 4),
+
+    ///@brief Forces the asset to load synchronously.
+    LoadSyncFlag = XR_MASK_ID(FlagType, 5),
+
+    ///@brief The asset manager will not keep a reference to the Asset, Find()ing
+    /// this Asset will fail.
+    UnmanagedFlag = XR_MASK_ID(FlagType, 6),
+
+    ///@brief Signifies a request to keep the source data, which is discarded by
+    /// default. Handling this flag is a responsibility of the concrete Asset type.
+    KeepSourceDataFlag = XR_MASK_ID(FlagType, 7),
+
+    // ENABLE_ASSET_BUILDING-only flags. Intended for debug / testing.
+    ///@brief Forces the building of the asset.
+    ForceBuildFlag = XR_MASK_ID(FlagType, 8),
+
+    ///@brief This signifies a request for suppressing calls to subsystems (e.g.
+    /// graphics) when processing assets. Handling this flag is a responsibility
+    /// of the concrete Asset type.
+    DryRunFlag = XR_MASK_ID(FlagType, 9),
+
+    ///@brief This is the first flag that client code may declare.
+    FirstUserFlag = XR_MASK_ID(FlagType, 16),
 
     PrivateMask = ErrorFlag | ReadyFlag | ProcessingFlag | LoadingFlag
   };

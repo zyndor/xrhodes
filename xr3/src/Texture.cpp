@@ -234,12 +234,19 @@ bool Texture::OnLoaded(Buffer buffer)
   if (success)
   {
     flags = GetFlags();
-    uint32_t textureFlags = GetTextureFlags(flags);
 
+#ifdef ENABLE_ASSET_BUILDING
+    if (!CheckAllMaskBits(flags, DryRunFlag))
+    {
+#endif
+    const uint32_t textureFlags = GetTextureFlags(flags);
     Buffer textureBuffer = { textureDataSize, textureData };
     m_handle = Gfx::CreateTexture(format, width, height, 0, textureFlags, &textureBuffer);
     success = m_handle.IsValid();
     LTRACEIF(!success, ("%s: failed to create texture.", m_debugPath.c_str()));
+#ifdef ENABLE_ASSET_BUILDING
+    }
+#endif
   }
 
   if (success)
