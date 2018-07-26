@@ -127,7 +127,7 @@ bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fra
 //==============================================================================
 bool Shader::OnLoaded(Buffer buffer)
 {
-  auto flags = GetFlags();
+  const auto flags = GetFlags();
   BufferReader reader(buffer);
 
   HashType hash;
@@ -160,7 +160,11 @@ bool Shader::OnLoaded(Buffer buffer)
       ("%s: failed to load fragment shader component.", m_debugPath.c_str()));
   }
 
-  if (success)
+  if (
+#ifdef ENABLE_ASSET_BUILDING
+    !CheckAllMaskBits(flags, DryRunFlag) &&
+#endif
+    success)
   {
     success = SetComponents(cVertex, cFragment);
   }
