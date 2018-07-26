@@ -7,32 +7,19 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
-#include "maths.hpp"
+#include <algorithm>
 
 namespace xr
 {
 
 //==============================================================================
-///@brief Axis Aligned Bounding Box class with support for Import()ing
-/// from / Export()ing to halfsize information and for HitTest()s.
-///@note Assumes the positive Y axis pointing downwards. 
+///@brief Axis Aligned Bounding Box class with (world) coordinates of sizes.
+/// Supports Import()ing from / Export()ing to position & halfsize representation
+/// and HitTest()s vs other AABBs, points and line segments (swept points).
+///@note Assumes the positive Y axis pointing upwards.
 struct  AABB
 {
   // types
-  enum  Tags
-  {
-    ///@brief Must be specified.
-    LEFT,
-    ///@brief Must be specified.
-    TOP,
-    ///@brief Must be specified.
-    RIGHT,
-    ///@brief Must be specified.
-    BOTTOM,
-    kNumTags
-  };
-
   ///@brief Information about a HitTest() between two AABBs.
   ///@note  When removing an object from a collision, you will need to add the
   /// overlap to the relevant coordinate of its position, or subtract from it
@@ -56,9 +43,6 @@ struct  AABB
     ///@note  Only makes sense if there was a collision, i.e. hit is true.
     bool  IsYCollision() const;
   };
-
-  // static
-  static const char* const kTags[kNumTags];
 
   // data
   ///@brief The left side of the AABB.
@@ -164,8 +148,7 @@ float AABB::CalculateYness() const
 inline
 bool  AABB::HitTest(float x, float y) const
 {
-  return std::max(x - right, left - x) < .0f &&
-    std::max(y - bottom, top - y) < .0f;
+  return std::max(x - right, left - x) < .0f && std::max(y - top, bottom - y) < .0f;
 }
 
 //==============================================================================
@@ -173,7 +156,7 @@ inline
 bool  AABB::HitTest(float x, float y, HitTestInfo& inf) const
 {
   inf.xOverlap = std::max(x - right, left - x);
-  inf.yOverlap = std::max(y - bottom, top - y);
+  inf.yOverlap = std::max(y - top, bottom - y);
   inf.hit = inf.xOverlap < .0f && inf.yOverlap < .0f;
   return inf.hit;
 }
