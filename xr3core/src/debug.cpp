@@ -106,7 +106,7 @@ void DebugChannel::Trace(char const* format, ...)
   vsnprintf(message, sizeof(message), format, vl);
   va_end(vl);
 
-  XR_RAWTRACE(("[%s] %s\n", m_name, message));
+  (*s_traceHandler)(m_name, message);
 #endif
 }
 
