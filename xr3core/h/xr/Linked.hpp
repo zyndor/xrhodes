@@ -27,42 +27,12 @@ class Linked
 {
 public:
   // static
-  static void ForEach(std::function<void(T&)> fn)
-  {
-    Linked<T>* p = s_head;
-    while (p)
-    {
-      auto pp = p->m_prev;
-      fn(*p->data);
-      p = pp;
-    }
-  }
+  ///@brief Calls @a fn with each item in the Linked<> list for this type.
+  static void ForEach(std::function<void(T&)> fn);
 
   // structors
-  Linked(T& obj)
-  : data(&obj),
-    m_prev(s_head),
-    m_next(nullptr)
-  {
-    if (s_head)
-    {
-      s_head->m_next = this;
-    }
-
-    s_head = this;
-  }
-
-  ~Linked()
-  {
-    if (m_prev)
-    {
-      m_prev->m_next = m_next;
-    }
-    if (m_next)
-    {
-      m_next->m_prev = m_prev;
-    }
-  }
+  Linked(T& obj);
+  ~Linked();
 
 protected:
   // data
@@ -79,6 +49,56 @@ private:
 
 template <typename T>
 Linked<T>* Linked<T>::s_head = nullptr;
+
+//==============================================================================
+// inline
+//==============================================================================
+template<typename T>
+void Linked<T>::ForEach(std::function<void(T&)> fn)
+{
+  Linked<T>* p = s_head;
+  while (p)
+  {
+    auto pp = p->m_prev;
+    fn(*p->data);
+    p = pp;
+  }
+}
+
+//==============================================================================
+template<typename T>
+Linked<T>::Linked(T & obj)
+: data(&obj),
+  m_prev(s_head),
+  m_next(nullptr)
+{
+  if (s_head)
+  {
+    s_head->m_next = this;
+  }
+
+  s_head = this;
+}
+
+//==============================================================================
+template<typename T>
+Linked<T>::~Linked()
+{
+  if (this == s_head)
+  {
+    s_head = m_prev;
+  }
+
+  if (m_prev)
+  {
+    m_prev->m_next = m_next;
+  }
+
+  if (m_next)
+  {
+    m_next->m_prev = m_prev;
+  }
+}
 
 }
 
