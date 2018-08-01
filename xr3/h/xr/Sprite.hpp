@@ -10,13 +10,18 @@
 #include "AABB.hpp"
 #include "Vertex.hpp"
 #include "Quad.hpp"
-#include "xr/fundamentals.hpp"
-#include "xr/Mesh.hpp"
 
 namespace xr
 {
 
+struct Mesh;
+
 //==============================================================================
+///@brief A textured quad with facilities for:
+/// - setting up from upright as well as rotated definitions;
+/// - offsetting;
+/// - vertex manipulation;
+/// - Mesh creation;
 class Sprite
 {
 public:
@@ -47,8 +52,6 @@ public:
   ///@brief Determines whether the given vertices have uv rotation.
   static bool IsUVRotated(Vertex const verts[Quad::Vertex::kCount]);
 
-  static void  CopyIndicesTo(uint16_t indices[Quad::Vertex::kCount]);
-
   // structors
   Sprite();
   ~Sprite();
@@ -74,9 +77,16 @@ public:
   /// quad.
   float       GetQuadHeight() const;
 
+  ///@return  The distance between the left side of the sprite and its geometry.
   float       GetLeftPadding() const;
+
+  ///@return  The distance between the top of the sprite and its geometry.
   float       GetTopPadding() const;
+
+  ///@return  The distance between the right side of the sprite and its geometry.
   float       GetRightPadding() const;
+
+  ///@return  The distance between the bottom of the sprite and its geometry.
   float       GetBottomPadding() const;
 
   ///@return  The offsetting that's been applied to the vertices so far.
@@ -99,48 +109,64 @@ public:
 
   ///@brief Sets the halfSize of the sprite, which may be used for layouting.
   /// Note that this may be different from what the vertex data defines, if
-  /// the Sprite had fully transparent areas trimmed away. (Which a non-zero
-  /// offset will suggest.)
+  /// the Sprite had areas (of e.g. full transparency) trimmed away. (Which a
+  /// non-zero offset will suggest.)
   void  SetHalfSize(float hw, float hh, bool calculateVertices);
 
   ///@brief Adds the given amounts to the offset of the sprite, optionally
   /// updating (translating) vertex data.
   void  AddOffset(float x, float y, bool updateVertices);
 
-  ///@brief Copies vertex data, determines UV rotation, halfSize and offset
-  /// (for padding).
-  void  Import(Vertex const verts[Quad::Vertex::kCount]);
-
+  ///@brief Sets the UVs of the Sprite based on @a uvs.
   void  SetUVs(const AABB& uvs);
+
+  ///@brief Sets the UVs of the Sprite based on @a uvs, and updates the vertex
+  /// positions based on @a textureWidth and @a textureHeight (1 unit - 1 texel).
   void  SetUVsProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight);
 
-  // from a rotated definition (90 degs clockwise)
+  ///@brief Sets the UVs of the Sprite based on @a uvs, assuming a rotated
+  /// definition (i.e. 90 degrees clockwise - right is top, top is left, etc.).
   void  SetUVsRotated(const AABB& uvs);
   void  SetUVsRotatedProportional(const AABB& uvs, uint32_t textureWidth, uint32_t textureHeight);
 
+  ///@brief Scales both sprite size and vertex positions, by @a s.
   void  Scale(float s);
+
+  ///@brief Scales both sprite size and vertex positions, by @a sx in x and by
+  /// @a sy in y.
   void  Scale(float sx, float sy);
+
+  ///@brief Scales both sprite size and vertex positions, in x only, by @a sx.
   void  ScaleX(float sx);
+
+  ///@brief Scales both sprite size and vertex positions, in y only, by @a sy.
   void  ScaleY(float sy);
 
+  ///@brief Flips the x component of vertex positions and offset.
   void  FlipVerticesX();
+
+  ///@brief Flips the left and right uvs.
   void  FlipUVsX();
+
+  ///@brief Performs a combination of FlipVerticesX() and FlipUVsX().
   void  FlipX();
 
+  ///@brief Flips the y component of vertex positions and offset.
   void  FlipVerticesY();
+
+  ///@brief Flips the bottom and top uvs.
   void  FlipUVsY();
+
+  ///@brief Performs a combination of FlipVerticesY() and FlipUVsY().
   void  FlipY();
 
+  ///@brief Creates a mesh with the vertex data of the Sprite.
   Mesh  CreateMesh() const;
 
 protected:
   // data
   Vertex m_vertices[Quad::Vertex::kCount];
-
-  float m_halfWidth;
-  float m_halfHeight;
-  bool  m_isUVRotated;
-
+  Vector2 m_halfSize;
   Vector2 m_offset;
 };
 
@@ -150,21 +176,21 @@ protected:
 inline
 bool Sprite::IsUVRotated() const
 {
-  return m_isUVRotated;
+  return IsUVRotated(m_vertices);
 }
 
 //==============================================================================
 inline
 float Sprite::GetHalfWidth() const
 {
-  return m_halfWidth;
+  return m_halfSize.x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetHalfHeight() const
 {
-  return m_halfHeight;
+  return m_halfSize.y;
 }
 
 //==============================================================================
@@ -187,28 +213,28 @@ float Sprite::GetQuadHeight() const
 inline
 float Sprite::GetLeftPadding() const
 {
-  return m_halfWidth + GetVertices()[Quad::Vertex::NW].pos.x;
+  return m_halfSize.x + GetVertices()[Quad::Vertex::NW].pos.x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetTopPadding() const
 {
-  return m_halfHeight + GetVertices()[Quad::Vertex::NW].pos.y;
+  return m_halfSize.y - GetVertices()[Quad::Vertex::NW].pos.y;
 }
 
 //==============================================================================
 inline
 float Sprite::GetRightPadding() const
 {
-  return m_halfWidth - GetVertices()[Quad::Vertex::NE].pos.x;
+  return m_halfSize.x - GetVertices()[Quad::Vertex::NE].pos.x;
 }
 
 //==============================================================================
 inline
 float Sprite::GetBottomPadding() const
 {
-  return m_halfHeight - GetVertices()[Quad::Vertex::SW].pos.y;
+  return m_halfSize.y + GetVertices()[Quad::Vertex::SW].pos.y;
 }
 
 //==============================================================================

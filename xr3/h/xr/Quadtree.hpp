@@ -7,8 +7,8 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "RectObject.hpp"
+#include "AABB.hpp"
 #include "xr/functors.hpp"
 #include "xr/Queue.hpp"
 #include <list>
@@ -265,7 +265,7 @@ void  Quadtree<Alloc>::Add(const AABB& box, void* object)
 {
   XR_ASSERT(Quadtree, object != nullptr);
   XR_ASSERT(Quadtree, box.left <= box.right);
-  XR_ASSERT(Quadtree, box.top <= box.bottom);
+  XR_ASSERT(Quadtree, box.bottom <= box.top);
   s_hitBox = box;
   s_callbackData = object;
 
@@ -291,7 +291,7 @@ void  Quadtree<Alloc>::Process(const AABB& box, UnaryCallback cb)
 {
   XR_ASSERT(Quadtree, cb != nullptr);
   XR_ASSERT(Quadtree, box.left <= box.right);
-  XR_ASSERT(Quadtree, box.top <= box.bottom);
+  XR_ASSERT(Quadtree, box.bottom <= box.top);
   s_hitBox = box;
   s_unaryCallback = cb;
 
@@ -328,7 +328,7 @@ void  Quadtree<Alloc>::Process(const AABB& box, BinaryCallback cb, void* userDat
 {
   XR_ASSERT(Quadtree, cb != nullptr);
   XR_ASSERT(Quadtree, box.left <= box.right);
-  XR_ASSERT(Quadtree, box.top <= box.bottom);
+  XR_ASSERT(Quadtree, box.bottom <= box.top);
   s_hitBox = box;
   s_callbackData = userData;
   s_binaryCallback = cb;
@@ -403,7 +403,7 @@ void  Quadtree<Alloc>::_AddRecursion()
 {
   if (m_canSplit)
   {
-    if (s_hitBox.bottom <= m_position.y)
+    if (s_hitBox.bottom >= m_position.y)
     {
       if (s_hitBox.right < m_position.x)
       {
@@ -416,7 +416,7 @@ void  Quadtree<Alloc>::_AddRecursion()
         return;
       }
     }
-    else if (s_hitBox.top > m_position.y)
+    else if (s_hitBox.top < m_position.y)
     {
       if (s_hitBox.right < m_position.x)
       {
@@ -448,7 +448,7 @@ void  Quadtree<Alloc>::_ProcessRecursionUnary()
     bool  west(s_hitBox.left < m_position.x);
     bool  east(s_hitBox.right >= m_position.x);
 
-    if (s_hitBox.top <= m_position.y)
+    if (s_hitBox.top >= m_position.y)
     {
       if (west)
       {
@@ -461,7 +461,7 @@ void  Quadtree<Alloc>::_ProcessRecursionUnary()
       }
     }
 
-    if (s_hitBox.bottom > m_position.y)
+    if (s_hitBox.bottom < m_position.y)
     {
       if (west)
       {
@@ -509,7 +509,7 @@ void  Quadtree<Alloc>::_ProcessRecursionBinary()
     bool  west(s_hitBox.left < m_position.x);
     bool  east(s_hitBox.right >= m_position.x);
 
-    if (s_hitBox.top <= m_position.y)
+    if (s_hitBox.top >= m_position.y)
     {
       if (west)
       {
@@ -522,7 +522,7 @@ void  Quadtree<Alloc>::_ProcessRecursionBinary()
       }
     }
 
-    if (s_hitBox.bottom > m_position.y)
+    if (s_hitBox.bottom < m_position.y)
     {
       if (west)
       {
@@ -561,8 +561,7 @@ template  <template <typename> class Alloc>
 void  Quadtree<Alloc>::_RemoveRecursion()
 {
   typename QueueType::iterator iEnd(m_objects.end());
-  typename QueueType::iterator iFind(std::find(m_objects.begin(), iEnd,
-    s_callbackData));
+  typename QueueType::iterator iFind(std::find(m_objects.begin(), iEnd, s_callbackData));
   if (iFind != iEnd)
   {
     m_objects.adopt(m_objects, iFind);  // smooth move
@@ -628,13 +627,13 @@ void  Quadtree<Alloc>::_Create(float min)
     if (m_canSplit)
     {
       m_leaves[NW] = new Quadtree(Vector2(m_position.x - hw,
-        m_position.y - hh), hw, hh, min, m_objects.get_allocator());
+        m_position.y + hh), hw, hh, min, m_objects.get_allocator());
       m_leaves[NE] = new Quadtree(Vector2(m_position.x + hw,
-        m_position.y - hh), hw, hh, min, m_objects.get_allocator());
+        m_position.y + hh), hw, hh, min, m_objects.get_allocator());
       m_leaves[SW] = new Quadtree(Vector2(m_position.x - hw,
-        m_position.y + hh), hw, hh, min, m_objects.get_allocator());
+        m_position.y - hh), hw, hh, min, m_objects.get_allocator());
       m_leaves[SE] = new Quadtree(Vector2(m_position.x + hw,
-        m_position.y + hh), hw, hh, min, m_objects.get_allocator());
+        m_position.y - hh), hw, hh, min, m_objects.get_allocator());
     }
   }
 }

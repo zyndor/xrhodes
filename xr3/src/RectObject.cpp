@@ -5,6 +5,7 @@
 //
 //==============================================================================
 #include "xr/RectObject.hpp"
+#include "xr/AABB.hpp"
 
 namespace xr
 {
@@ -38,5 +39,12 @@ void  RectObject::SetHalfHeight(float hh)
 {
   m_halfHeight = hh;
 }
+
+//==============================================================================
+void  RectObject::Export(AABB& box) const
+{
+  box.Import(m_position.x, m_position.y, m_halfWidth, m_halfHeight);
+}
+
 
 } // XR

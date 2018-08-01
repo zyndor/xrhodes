@@ -7,16 +7,17 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
-#include "AABB.hpp"
 #include "Vector2.hpp"
 
 namespace xr
 {
 
+struct AABB;
+
 //==============================================================================
-///@brief A rectangular object with position and half-size information.
-class RectObject 
+///@brief An axis aligned, rectangular object with position and half-size
+/// information.
+class RectObject
 {
 public:
   // structors
@@ -25,24 +26,47 @@ public:
   ~RectObject();
 
   // general use
+  ///@return  The position of the RectObject.
   const Vector2& GetPosition() const;
+
+  ///@return  The position of the RectObject.
   Vector2&       GetPosition();
-  
+
+  ///@brief Coordinates of the left side.
   float  GetLeft() const;
+
+  ///@brief Coordinates of the right side.
   float  GetRight() const;
+
+  ///@brief Coordinates of the top side.
   float  GetTop() const;
+
+  ///@brief Coordinates of the bottom side.
   float  GetBottom() const;
 
+  ///@return  The halfWidth of the RectObject.
   float  GetHalfWidth() const;
+
+  ///@return  The halfHeight of the RectObject.
   float  GetHalfHeight() const;
+
+  ///@return  A reference to the half width of the RectObject.
   float& GetHalfWidthRef();
+
+  ///@return  A reference to the half height of the RectObject.
   float& GetHalfHeightRef();
 
+  ///@brief Sets the half width of the object.
   void  SetHalfWidth(float hw);
+
+  ///@brief Sets the half height of the object.
   void  SetHalfHeight(float hh);
-  
+
+  ///@brief Calculates the radius of the RectObject. Useful when the object can
+  /// rotate.
   float CalculateRadius() const;
-  
+
+  ///@brief Convenience method to import the object into the AABB @a box.
   void  Export(AABB& box) const;
 
 protected:
@@ -55,7 +79,6 @@ protected:
 //==============================================================================
 // implementation
 //==============================================================================
-///@return  The position of the RectObject.
 inline
 Vector2& RectObject::GetPosition()
 {
@@ -63,7 +86,6 @@ Vector2& RectObject::GetPosition()
 }
 
 //==============================================================================
-///@return  The position of the RectObject.
 inline
 const Vector2& RectObject::GetPosition() const
 {
@@ -71,7 +93,6 @@ const Vector2& RectObject::GetPosition() const
 }
 
 //==============================================================================
-///@return  The halfWidth of the RectObject.
 inline
 float RectObject::GetHalfWidth() const
 {
@@ -79,7 +100,6 @@ float RectObject::GetHalfWidth() const
 }
 
 //==============================================================================
-///@return  The halfHeight of the RectObject.
 inline
 float RectObject::GetHalfHeight() const
 {
@@ -87,7 +107,6 @@ float RectObject::GetHalfHeight() const
 }
 
 //==============================================================================
-///@return  A reference to the halfWidth of the RectObject.
 inline
 float& RectObject::GetHalfWidthRef()
 {
@@ -95,7 +114,6 @@ float& RectObject::GetHalfWidthRef()
 }
 
 //==============================================================================
-///@return  A reference to the halfHeight of the RectObject.
 inline
 float& RectObject::GetHalfHeightRef()
 {
@@ -120,31 +138,21 @@ float  RectObject::GetRight() const
 inline
 float  RectObject::GetTop() const
 {
-  return m_position.y - m_halfHeight;
+  return m_position.y + m_halfHeight;
 }
 
 //==============================================================================
 inline
 float  RectObject::GetBottom() const
 {
-  return m_position.y + m_halfHeight;
+  return m_position.y - m_halfHeight;
 }
 
 //==============================================================================
-///@brief Calculates the radius of the RectObject. Useful when the object can
-/// rotate.
 inline
 float RectObject::CalculateRadius() const
 {
   return sqrtf((m_halfWidth * m_halfWidth) + (m_halfHeight * m_halfHeight));
-}
-
-//==============================================================================
-///@brief Convenience method to import the object into the AABB @a box.
-inline
-void  RectObject::Export(AABB& box) const
-{
-  box.Import(m_position.x, m_position.y, m_halfWidth, m_halfHeight);
 }
 
 } // XR

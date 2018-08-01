@@ -21,57 +21,6 @@ namespace xr
 //==============================================================================
 XR_ASSET_DEF(TexturePack, "xtpk", 3, "xtp")
 
-struct SpriteData // TODO: pretty sure this is just Sprite now.
-{
-  Sprite::Vertex  vertices[Quad::Vertex::kCount];
-  Vector2 halfSize;
-  Vector2 offset;
-
-  void CalculatePositions(float baseWidth, float baseHeight)
-  {
-    float width = baseWidth;
-    float height = baseHeight;
-    bool rotated = Sprite::IsUVRotated(vertices);
-    if(rotated)
-    {
-      width *= (vertices[Quad::Vertex::NE].uv0 - vertices[Quad::Vertex::SE].uv0).Magnitude();
-      height *= (vertices[Quad::Vertex::SW].uv0 - vertices[Quad::Vertex::SE].uv0).Magnitude();
-    }
-    else
-    {
-      width *= (vertices[Quad::Vertex::SE].uv0 - vertices[Quad::Vertex::SW].uv0).Magnitude();
-      height *= (vertices[Quad::Vertex::SW].uv0 - vertices[Quad::Vertex::NW].uv0).Magnitude();
-    }
-
-    width *= .5f;
-    height *= .5f;
-    halfSize.x = width;
-    halfSize.y = height;
-
-    if(rotated)
-    {
-      std::swap(width, height);
-    }
-
-    vertices[Quad::Vertex::NW].pos = Vector3(-width, height, .0f);
-    vertices[Quad::Vertex::NE].pos = Vector3(width, height, .0f);
-    vertices[Quad::Vertex::SW].pos = Vector3(-width, -height, .0f);
-    vertices[Quad::Vertex::SE].pos = Vector3(width, -height, .0f);
-  }
-
-  void AddOffset(float x, float y)
-  {
-    offset.x += x;
-    offset.y += y;
-
-    Vector3 t(x, y, .0f);
-    vertices[Quad::Vertex::NW].pos += t;
-    vertices[Quad::Vertex::NE].pos += t;
-    vertices[Quad::Vertex::SW].pos += t;
-    vertices[Quad::Vertex::SE].pos += t;
-  }
-};
-
 using NumSpritesType = uint32_t;
 using SpriteNameHashType = uint32_t;
 
@@ -243,13 +192,13 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 
         // Calculate UVs - convert from bitmap-space to texture-space (bottom-left based).
         // TODO: consider support for non-openGL renderers where texture-space might be top-left based.
-        auto omy = texHeight - y;
+        auto texHeightLessY = texHeight - y;
         AABB  uvs =
         {
           float(x) / texWidth,
-          float(omy) / texHeight,
+          float(texHeightLessY) / texHeight,
           float(x + w) / texWidth,
-          float(omy - h) / texHeight,
+          float(texHeightLessY - h) / texHeight,
         };
 
         // Get UV rotation attribute.
@@ -257,8 +206,19 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
         const bool  isRotated = rotationAttrib != nullptr && strlen(rotationAttrib) > 0 &&
           rotationAttrib[0] == 'y';
 
+        // Calculate UVs and vertex positions.
+        Sprite sprite;
+        if (isRotated)
+        {
+          sprite.SetUVsRotatedProportional(uvs, texHeight, texWidth);
+        }
+        else
+        {
+          sprite.SetUVsProportional(uvs, texWidth, texHeight);
+        }
+
+        // Calculate offset for padding.
         // If wOffs / hOffs isn't set, then use sprite width / height, depending on whether it's rotated.
-        // We'll need these to correctly calculate offset (for padding).
         if (wOrig == 0)
         {
           wOrig = isRotated ? h : w;
@@ -269,30 +229,19 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
           hOrig = isRotated ? w : h;
         }
 
-        // Calculate UVs and vertex positions.
-        SpriteData sprite;
-        Sprite::CalculateUVs(uvs, isRotated, sprite.vertices);
-        sprite.CalculatePositions(static_cast<float>(texWidth), static_cast<float>(texHeight));
-
-        // Calculate offset for padding.
         // NOTE: y conversion (negation) applies since we're moving from bitmap space to model space.
         // TODO: consider support for non-openGL renderers where model-space might have negative Y.
         Vector2 offset;
         if (isRotated)
         {
-          offset.x = xOffs - (wOrig - h) * .5f;
-          offset.y = (hOrig - w) * .5f - yOffs;
+          std::swap(w, h);
         }
-        else
-        {
-          offset.x = xOffs - (wOrig - w) * .5f;
-          offset.y = (hOrig - h) * .5f - yOffs;
-        }
-        sprite.AddOffset(offset.x, offset.y);
+        offset.x = xOffs - (wOrig - w) * .5f;
+        offset.y = (hOrig - h) * .5f - yOffs;
+        sprite.AddOffset(offset.x, offset.y, true);
 
         // Calculate halfSize.
-        sprite.halfSize.x = wOrig * .5f;
-        sprite.halfSize.y = hOrig * .5f;
+        sprite.SetHalfSize(wOrig * .5f, hOrig * .5f, false);
 
         // Write sprite
         SpriteNameHashType hash = Hash::String32(buffer.c_str());
@@ -403,16 +352,15 @@ bool TexturePack::OnLoaded(Buffer buffer)
   }
 
   SpriteNameHashType spriteHash;
-  SpriteData sprData;
+  Sprite sprite;
   NumSpritesType i = 0;
   while (success && i < numSprites)
   {
-    success = reader.Read(spriteHash) && reader.Read(sprData);
+    success = reader.Read(spriteHash) && reader.Read(sprite);
     if (success)
     {
       Sprite& spr = m_sprites[spriteHash];
-      spr.Import(sprData.vertices);
-      spr.SetHalfSize(sprData.halfSize.x, sprData.halfSize.y, false);
+      spr = sprite;
       ++i;
     }
     else

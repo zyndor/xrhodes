@@ -12,21 +12,12 @@ namespace xr
 {
 
 //==============================================================================
-const char* const AABB::kTags[] =
-{
-  "left",
-  "bottom",
-  "right",
-  "top"
-};
-
-//==============================================================================
 void  AABB::Import(float x, float y, float hw, float hh)
 {
   left = x - hw;
   right = x + hw;
-  top = y - hh;
-  bottom = y + hh;
+  top = y + hh;
+  bottom = y - hh;
 }
 
 //==============================================================================
@@ -36,7 +27,7 @@ void  AABB::Export(float& x, float& y, float& hw, float& hh) const
   y = (top + bottom) / 2;
 
   hw = (right - left) / 2;
-  hh = (bottom - top) / 2;
+  hh = (top - bottom) / 2;
 }
 
 //==============================================================================
@@ -54,8 +45,8 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy) const
   {
     x0 - left,
     right - x0,
-    y0 - top,
-    bottom - y0,
+    y0 - bottom,
+    top - y0,
   };
 
   float t0 = -std::numeric_limits<float>::max();	// lowest() [C++11]
@@ -101,8 +92,8 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy, float& t) const
   {
     x0 - left,
     right - x0,
-    y0 - top,
-    bottom - y0,
+    y0 - bottom,
+    top - y0,
   };
 
   float t0 = -std::numeric_limits<float>::max();	// lowest() [C++11]
