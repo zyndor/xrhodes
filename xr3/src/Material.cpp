@@ -134,7 +134,7 @@ public:
         }
       }
 
-      if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_DEPTH_COMPF_MASK))
+      if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_DEPTH_TEST))
       {
         // depth compare function -- doesn't have to exist, but if it does, it
         // needs to be the correct format
@@ -161,7 +161,7 @@ public:
           }
         }
       }
-      else if (!root->TryGet("depthFunc"))
+      else if (root->TryGet("depthFunc"))
       {
         LTRACE(("%s: ignoring depth function defined when depth testing is off.",
           rawNameExt));
@@ -222,7 +222,7 @@ public:
           }
         }
       }
-      else if(!root->TryGet("blendFactors"))
+      else if(root->TryGet("blendFactors"))
       {
         LTRACE(("%s: ignoring blend factors defined for opaque material.",
           rawNameExt));
