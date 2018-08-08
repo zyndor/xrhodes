@@ -32,7 +32,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
     }
   */
   XonParser::State state;
-  auto root = XonBuildTree(buffer.As<char const>(), buffer.size, &state);
+  std::unique_ptr<XonObject>  root(XonBuildTree(buffer.As<char const>(), buffer.size, &state));
   bool success = root != nullptr;
   LTRACEIF(!success,
     ("%s: failed to parse XON somewhere around row %d, column %d.",
