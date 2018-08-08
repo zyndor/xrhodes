@@ -21,6 +21,8 @@
 
 namespace xr
 {
+namespace
+{
 
 //==============================================================================
 struct AssetHeader
@@ -201,12 +203,6 @@ struct AssetManagerImpl // TODO: improve encapsulation of members
     return success;
   }
 
-  void ClearManaged()
-  {
-    std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
-    m_assets.clear();
-  }
-
   void EnqueueJob(LoadJob& lj)
   {
     {
@@ -295,11 +291,15 @@ private:
     }
     return unloaded;
   }
+
+  void ClearManaged()
+  {
+    std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
+    m_assets.clear();
+  }
 };
 
-namespace
-{
-
+//==============================================================================
 using ReflectorMap = std::map<Asset::TypeId, detail::AssetReflector const*>;
 ReflectorMap s_reflectors;
 
@@ -462,7 +462,151 @@ void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset::FlagT
   }
 }
 
+#ifdef ENABLE_ASSET_BUILDING
+//==============================================================================
+void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr const& asset)
+{
+  bool forceBuild = CheckAllMaskBits(asset->GetFlags(), Asset::ForceBuildFlag);
+
+  // Check the name -- are we trying to load a raw or a built asset?
+  // Strip ram/rom and asset roots.
+  FilePath rawPath(File::StripRoots(path));
+  if (rawPath.StartsWith(s_assetMan->GetPath()))
+  {
+    rawPath = FilePath(rawPath.c_str() + s_assetMan->GetPath().size());
+  }
+
+  auto desc = asset->GetDescriptor();
+  FilePath builtPath = desc.ToPath();
+  bool rebuild = builtPath != rawPath;
+  if (rebuild || forceBuild) // If we're building, we'll need the correct asset path.
+  {
+    builtPath = Asset::Manager::GetAssetPath() / builtPath;
+  }
+
+  if (rebuild)
+  {
+    // Check for raw and built asset, compare last modification time.
+    auto tsRaw = File::GetModifiedTime(path); // must use original path!
+    XR_ASSERTMSG(Asset::Manager, tsRaw > 0, ("'%s' doesn't exist.", path.c_str()));
+    auto tsBuilt = File::GetModifiedTime(builtPath.c_str());
+
+    if (tsBuilt > 0 && tsBuilt >= tsRaw) // if built asset exists and isn't older
+    {
+      auto hFile = File::Open(builtPath, "rb");
+      auto guard = MakeScopeGuard([&hFile] {
+        File::Close(hFile);
+      });
+
+      // Try to see what type / version we've got here. If the file doesn't exist
+      // or can't be read, we'll rebuild. Persistent I/O errors will be dealt with
+      // later.
+      AssetHeader header = { 0, 0 };
+      if (File::Read(hFile, sizeof(header), 1, &header) == 1) // asset [header] is readable
+      {
+        if (header.typeId != desc.type)
+        {
+          LTRACE(("%s: Hash clash detected trying to build %s, pre-existing type: %.*s.",
+            path.c_str(), builtPath.c_str(), sizeof(header.typeId), &header.typeId));
+          asset->FlagError();
+          rebuild = false;  // hash clash -- error;
+        }
+        else if (header.version == version)
+        {
+          rebuild = false;  // version matches -- rebuild not required;
+        }
+      }
+    }
+  }
+
+  if (rebuild || forceBuild) // Perform the building of the asset.
+  {
+    auto iFind = s_assetBuilders.find(desc.type);
+    bool done = iFind == s_assetBuilders.end();
+    LTRACEIF(done, ("%s: failed to find builder for type '%.*s'.", path.c_str(),
+      sizeof(desc.type), &desc.type));
+
+    FileBuffer fb;
+    if (!done)  // read source file
+    {
+      done = !fb.Open(path);
+      LTRACEIF(done, ("%s: failed to read source.", path.c_str()));
+    }
+
+    if (!done)  // make asset directory if need be
+    {
+      fb.Close();
+
+      builtPath = File::GetRamPath() / builtPath;
+      done = !File::MakeDirs(builtPath);
+      LTRACEIF(done, ("%s: failed to create directory structure for '%s'.",
+        path.c_str(), builtPath.c_str()));
+    }
+
+    auto assetGuard = MakeScopeGuard([&builtPath](){
+      if (!File::Delete(builtPath))
+      {
+        LTRACE(("Failed to remove half-written asset."));
+      }
+    });
+    FileWriter assetWriter; // must be declared after the guard since it'll be cleared up backwards.
+    if (!done)  // create asset file
+    {
+      done = !assetWriter.Open(builtPath, FileWriter::Mode::Truncate, false);
+      LTRACEIF(done, ("%s: failed to create file for built asset at '%s'.",
+        path.c_str(), builtPath.c_str()));
+    }
+
+    if (!done)  // write header
+    {
+      AssetHeader header{ desc.type, version, 0 };
+      done = !assetWriter.Write(&header, sizeof(header), 1);
+      LTRACEIF(done, ("%s: failed to write asset header to '%s'.", path.c_str(),
+        builtPath.c_str()));
+    }
+
+    std::vector<FilePath> dependencies;
+    std::ostringstream assetData;
+    if (!done)  // build asset
+    {
+      done = !iFind->second->Build(rawPath.GetNameExt(), { fb.GetSize(), fb.GetData() },
+        dependencies, assetData);
+      LTRACEIF(done, ("%s: failed to build asset.", path.c_str()));
+    }
+
+    if (!done)  // write dependencies
+    {
+      done = !assetWriter.Write(NumDependenciesType(dependencies.size()));
+      for (auto i0 = dependencies.begin(), i1 = dependencies.end(); !done && i0 != i1; ++i0)
+      {
+        done = !(assetWriter.Write(DependencyPathLenType(i0->size())) &&
+          assetWriter.Write(i0->data(), 1, i0->size()));
+      }
+      LTRACEIF(done, ("%s: failed to write dependencies to %s.", path.c_str(),
+        builtPath.c_str()));
+    }
+
+    if (!done) // write built asset
+    {
+      auto str = assetData.str();
+      done = !assetWriter.Write(str.data(), 1, str.size());
+      LTRACEIF(done, ("%s: failed to write asset data to %s.", path.c_str(),
+        builtPath.c_str()));
+    }
+
+    if (done)
+    {
+      asset->FlagError();
+    }
+    else
+    {
+      assetGuard.Release();
+    }
+  }
 }
+#endif
+
+} // nonamespace
 
 //==============================================================================
 char const* const Asset::Manager::kDefaultPath = "assets";
@@ -479,7 +623,7 @@ void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
 }
 
 //==============================================================================
-const FilePath & Asset::Manager::GetAssetPath()
+const FilePath& Asset::Manager::GetAssetPath()
 {
   return s_assetMan->GetPath();
 }
@@ -602,8 +746,8 @@ bool Asset::Manager::Manage(Asset::Ptr const& asset)
 }
 
 //==============================================================================
-Asset::Ptr Asset::Manager::FindOrReflectorCreate(DescriptorCore const & desc,
-  FlagType flags, VersionType & outVersion)
+Asset::Ptr Asset::Manager::FindOrReflectorCreate(DescriptorCore const& desc,
+  FlagType flags, VersionType& outVersion)
 {
   Asset::Ptr asset;
   if (!CheckAllMaskBits(flags, UnmanagedFlag))
@@ -637,145 +781,6 @@ bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
     (CheckAnyMaskBits(oldFlags, ProcessingFlag | ReadyFlag) &&
       !CheckAllMaskBits(newFlags, ForceReloadFlag)));
 }
-
-//==============================================================================
-#ifdef ENABLE_ASSET_BUILDING
-namespace
-{
-
-void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr const& asset)
-{
-  bool forceBuild = CheckAllMaskBits(asset->GetFlags(), Asset::ForceBuildFlag);
-
-  // Check the name -- are we trying to load a raw or a built asset?
-  // Strip ram/rom and asset roots.
-  FilePath rawPath(File::StripRoots(path));
-  if (rawPath.StartsWith(s_assetMan->GetPath()))
-  {
-    rawPath = FilePath(rawPath.c_str() + s_assetMan->GetPath().size());
-  }
-
-  auto desc = asset->GetDescriptor();
-  FilePath builtPath = desc.ToPath();
-  bool rebuild = builtPath != rawPath;
-  if (rebuild || forceBuild) // If we're building, we'll need the correct asset path.
-  {
-    builtPath = Asset::Manager::GetAssetPath() / builtPath;
-  }
-
-  if (rebuild)
-  {
-    // Check for raw and built asset, compare last modification time.
-    auto tsRaw = File::GetModifiedTime(path); // must use original path!
-    XR_ASSERTMSG(Asset::Manager, tsRaw > 0, ("'%s' doesn't exist.", path.c_str()));
-    auto tsBuilt = File::GetModifiedTime(builtPath.c_str());
-
-    if (tsBuilt > 0 && tsBuilt >= tsRaw) // if built asset exists and isn't older
-    {
-      auto hFile = File::Open(builtPath, "rb");
-      auto guard = MakeScopeGuard([&hFile] {
-        File::Close(hFile);
-      });
-
-      // Try to see what type / version we've got here. If the file doesn't exist
-      // or can't be read, we'll rebuild. Persistent I/O errors will be dealt with
-      // later.
-      AssetHeader header = { 0, 0 };
-      if (File::Read(hFile, sizeof(header), 1, &header) == 1) // asset [header] is readable
-      {
-        if(header.typeId != desc.type)
-        {
-          LTRACE(("%s: Hash clash detected trying to build %s, pre-existing type: %.*s.",
-            path.c_str(), builtPath.c_str(), sizeof(header.typeId), &header.typeId));
-          asset->FlagError();
-          rebuild = false;  // hash clash -- error;
-        }
-        else if(header.version == version)
-        {
-          rebuild = false;  // version matches -- rebuild not required;
-        }
-      }
-    }
-  }
-
-  if (rebuild || forceBuild) // Perform the building of the asset.
-  {
-    auto iFind = s_assetBuilders.find(desc.type);
-    bool done = iFind == s_assetBuilders.end();
-    LTRACEIF(done, ("%s: failed to find builder for type '%.*s'.", path.c_str(),
-      sizeof(desc.type), &desc.type));
-
-    FileBuffer fb;
-    if (!done)  // read source file
-    {
-      done = !fb.Open(path);
-      LTRACEIF(done, ("%s: failed to read source.", path.c_str()));
-    }
-
-    if (!done)  // make asset directory if need be
-    {
-      fb.Close();
-
-      builtPath = File::GetRamPath() / builtPath;
-      done = !File::MakeDirs(builtPath);
-      LTRACEIF(done, ("%s: failed to create directory structure for '%s'.",
-        path.c_str(), builtPath.c_str()));
-    }
-
-    FileWriter assetWriter;
-    if (!done)  // create asset file
-    {
-      done = !assetWriter.Open(builtPath, FileWriter::Mode::Truncate, false);
-      LTRACEIF(done, ("%s: failed to create file for built asset at '%s'.",
-        path.c_str(), builtPath.c_str()));
-    }
-
-    if (!done)  // write header
-    {
-      AssetHeader header { desc.type, version, 0 };
-      done = !assetWriter.Write(&header, sizeof(header), 1);
-      LTRACEIF(done, ("%s: failed to write asset header to '%s'.", path.c_str(),
-        builtPath.c_str()));
-    }
-
-    std::vector<FilePath> dependencies;
-    std::ostringstream assetData;
-    if (!done)  // build asset
-    {
-      done = !iFind->second->Build(rawPath.GetNameExt(), { fb.GetSize(), fb.GetData() },
-        dependencies, assetData);
-      LTRACEIF(done, ("%s: failed to build asset.", path.c_str()));
-    }
-
-    if (!done)  // write built asset
-    {
-      done = !assetWriter.Write(NumDependenciesType(dependencies.size()));
-      for (auto i0 = dependencies.begin(), i1 = dependencies.end(); !done && i0 != i1; ++i0)
-      {
-        done = !(assetWriter.Write(DependencyPathLenType(i0->size())) &&
-          assetWriter.Write(i0->data(), 1, i0->size()));
-      }
-      LTRACEIF(done, ("%s: failed to write dependencies to %s.", path.c_str(),
-        builtPath.c_str()));
-    }
-
-    if (!done)
-    {
-      auto str = assetData.str();
-      done = !assetWriter.Write(str.data(), 1, str.size());
-      LTRACEIF(done, ("%s: failed to write asset data to %s.", path.c_str(),
-        builtPath.c_str()));
-    }
-
-    if (done)
-    {
-      asset->FlagError();
-    }
-  }
-}
-
-}
-#endif
 
 //==============================================================================
 void Asset::Manager::LoadInternal(VersionType version, FilePath const& path,

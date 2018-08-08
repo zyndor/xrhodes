@@ -363,6 +363,8 @@ public:
   }
 
   ///@brief Convenience method to set an error state.
+  ///@note It doesn't clear the rest of the [private] flags since those carry
+  /// information for the handling of the error.
   void FlagError()
   {
     OverrideFlags(0, ErrorFlag);
