@@ -22,7 +22,9 @@ namespace xr
 ///@param length - the size of the buffer.
 ///@param stateOut - optional; if provided, the parser state will be written
 /// to it.
-///@return The root object of the XON document.
+///@return A pointer to the root object of the XON document, or nullptr if the
+/// parse has failed.
+///@note Transfers ownership of the XonObject (and its children).
 XonObject* XonBuildTree(char const* string, size_t length,
   XonParser::State* outState = nullptr);
 
