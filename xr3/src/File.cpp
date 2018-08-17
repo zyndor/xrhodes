@@ -14,6 +14,7 @@
 
 #ifdef XR_PLATFORM_WINDOWS
 #include <direct.h>
+#include <windows.h>
 #else
 #include <sys/stat.h>
 #endif
@@ -307,6 +308,40 @@ void File::Close(Handle hFile)
   {
     fclose(static_cast<FILE*>(hFile));
   }
+}
+
+//==============================================================================
+bool File::Delete(FilePath const & path)
+{
+  struct : FileOp
+  {
+    bool Process(char const* path) override
+    {
+#ifdef XR_PLATFORM_WINDOWS
+      FilePath newPath;
+      const DWORD dwCapacity = static_cast<DWORD>(newPath.capacity());
+      auto result = GetFullPathName(path, dwCapacity, newPath.data(), nullptr);
+      if (result == 0 || result >= dwCapacity)
+      {
+        return false;
+      }
+      path = newPath.c_str();
+#else
+      path = realpath(path, nullptr);  // NOTE: path must exist.
+      auto pathGuard = MakeScopeGuard([&path]() {
+        free(path);
+      };
+#endif
+      return remove(path) == 0;
+    }
+
+    bool RomApplicable() const override
+    {
+      return false;
+    }
+  } op;
+
+  return op.Perform(path);
 }
 
 //==============================================================================
