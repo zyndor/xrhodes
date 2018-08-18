@@ -473,14 +473,13 @@ struct AssetReflector: Linked<AssetReflector const>
   using Base = Linked<AssetReflector const>;
   using CreateFn = Asset*(*)(Asset::HashType, Asset::FlagType);
 
+  // static
+  static AssetReflector const* GetReflector(const char* extension);
+  static AssetReflector const* GetReflector(uint32_t extensionHash);
+
   // structors
-  AssetReflector(Asset::TypeId type_, Asset::VersionType version_, CreateFn create_, char const* extensions_)
-  : Linked<AssetReflector const>(*this),
-    type(type_),
-    version(version_),
-    create(create_),
-    extensions(extensions_)
-  {}
+  AssetReflector(Asset::TypeId type_, Asset::VersionType version_,
+    CreateFn create_, char const* extensions_);
 
   Asset::TypeId type;
   Asset::VersionType version;

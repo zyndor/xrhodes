@@ -914,4 +914,31 @@ bool Asset::Unload()
   return doUnload;
 }
 
-} // XR
+namespace detail
+{
+
+//==============================================================================
+AssetReflector const* AssetReflector::GetReflector(const char* extension)
+{
+  return GetReflector(Hash::String32(extension));
+}
+
+//==============================================================================
+AssetReflector const* AssetReflector::GetReflector(uint32_t extensionHash)
+{
+  auto iFind = s_extensions.find(extensionHash);
+  return iFind != s_extensions.end() ? iFind->second->second : nullptr;
+}
+
+//==============================================================================
+xr::detail::AssetReflector::AssetReflector(Asset::TypeId type_,
+  Asset::VersionType version_, CreateFn create_, char const* extensions_)
+: Linked<AssetReflector const>(*this),
+  type(type_),
+  version(version_),
+  create(create_),
+  extensions(extensions_)
+{}
+
+} // detail
+} // xr
