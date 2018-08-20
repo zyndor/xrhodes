@@ -415,7 +415,7 @@ void Material::Apply() const
     }
   }
 
-  Gfx::SetProgram(m_shader->GetHandle());
+  m_shader->Use();
 }
 
 //==============================================================================

@@ -26,11 +26,16 @@ public:
   XR_ASSET_DECL(Shader)
 
   // general
-  ///@return The handle to the underlying Gfx shader program.
-  ///@note Does not transfer ownership; intended as read only.
-  Gfx::ProgramHandle GetHandle() const
+  ///@return Whether the shader is successfully created.
+  bool IsValid() const
   {
-    return m_handle;
+    return m_handle.IsValid();
+  }
+
+  ///@brief Sets the shader as current, for use.
+  void Use() const
+  {
+    Gfx::SetProgram(m_handle);
   }
 
   ///@brief Sets the shader components, (re-)links the underlying program.
