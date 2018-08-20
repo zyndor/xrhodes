@@ -6,52 +6,51 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
-
 #include "Entity.hpp"
-#include "IndexMesh.hpp"
-#include "Vertex.hpp"
+#include "Component.hpp"
+#include "xr/Material.hpp"
 
-namespace XR
+namespace xr
 {
 
+struct Mesh;
+
 //==============================================================================
-class MeshRenderer:  public Entity::ComponentT<MeshRenderer>
+class MeshRenderer:  public ComponentT<MeshRenderer>
 {
 public:
-  // types
-  using VertexFormat = Vertex::Format<Vertex::Pos<Vector3>,
-    Vertex::UV0<Vector2>,
-    Vertex::Normal,
-    Vertex::Tangent,
-    Vertex::Bitangent>;
+  // data
+  Material::Ptr material;
 
   // structors
   MeshRenderer();
   ~MeshRenderer();
-  
+
   // general
   virtual MeshRenderer*  Clone() const;
-  
-  IndexMesh<VertexFormat>*  GetMesh() const;  // no ownership transfer
-  void        SetMesh(IndexMesh<VertexFormat>* pMesh);  // no ownership transfer
-  
-  void        Render();
-  
+
+  Mesh* GetMesh() const;  // no ownership transfer
+  void  SetMesh(Mesh* pMesh);  // no ownership transfer
+
+  void  Render();
+
 protected:
   // data
-  IndexMesh<VertexFormat>*  m_pMesh;  // no ownership
+  Mesh*  m_mesh;  // no ownership
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-IndexMesh<MeshRenderer::VertexFormat>*  MeshRenderer::GetMesh() const
+Mesh*  MeshRenderer::GetMesh() const
 {
-  return  m_pMesh;
+  return  m_mesh;
 }
 
-} // XR
+}
 
 #endif // XR_MESHRENDERER_HPP

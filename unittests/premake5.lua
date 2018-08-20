@@ -25,6 +25,7 @@ project "unittests"
 		"../xr3core/h",
 		"../xr3json/h",
 		"../xr3/h",
+		"../xr3scene/h",
 		"../xr3ui/h",
 	}
 	
@@ -37,6 +38,7 @@ project "unittests"
 		"xr3core",
 		"xr3json",
 		"xr3",
+		"xr3scene",
 		"xr3ui",
 	}
 
