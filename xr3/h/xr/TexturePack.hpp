@@ -31,11 +31,9 @@ public:
 
   size_t            CountSprites() const;
 
-  Sprite*           Get(char const* name, bool allowMissing); // no ownership transfer
   Sprite*           Get(char const* name); // no ownership transfer
   Sprite*           Get(uint32_t hash); // no ownership transfer
 
-  const Sprite*     Get(char const* name, bool allowMissing) const; // no ownership transfer
   const Sprite*     Get(char const* name) const;
   const Sprite*     Get(uint32_t hash) const;
 

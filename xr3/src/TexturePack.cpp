@@ -262,32 +262,10 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
 #endif
 
 //==============================================================================
-Sprite* TexturePack::Get(const char* name, bool allowMissing)
-{
-  XR_ASSERT(TexturePack, name != nullptr);
-  Sprite* pSprite(Get(Hash::String32(name)));
-  XR_ASSERTMSG(TexturePack, pSprite != nullptr || allowMissing,
-    ("%s: sprite '%s' doesn't exist.", m_debugPath.c_str(), name));
-  return pSprite;
-}
-
-//==============================================================================
-const Sprite* TexturePack::Get(const char* name, bool allowMissing) const
-{
-  XR_ASSERT(TexturePack, name != nullptr);
-  const Sprite* pSprite(Get(Hash::String32(name)));
-  XR_ASSERTMSG(TexturePack, pSprite != nullptr || allowMissing,
-    ("%s: sprite '%s' doesn't exist.", m_debugPath.c_str(), name));
-  return pSprite;
-}
-
-//==============================================================================
 Sprite* TexturePack::Get(char const* name)
 {
   XR_ASSERT(TexturePack, name != nullptr);
-  Sprite* pSprite(Get(Hash::String32(name)));
-  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("%s: sprite '%s' doesn't exist.",
-    m_debugPath.c_str(), name));
+  Sprite* pSprite = Get(Hash::String32(name));
   return pSprite;
 }
 
@@ -295,9 +273,7 @@ Sprite* TexturePack::Get(char const* name)
 const Sprite* TexturePack::Get(char const* name) const
 {
   XR_ASSERT(TexturePack, name != nullptr);
-  const Sprite* pSprite(Get(Hash::String32(name)));
-  XR_ASSERTMSG(TexturePack, pSprite != nullptr, ("%s: sprite '%s' doesn't exist.",
-    m_debugPath.c_str(), name));
+  const Sprite* pSprite = Get(Hash::String32(name));
   return pSprite;
 }
 
