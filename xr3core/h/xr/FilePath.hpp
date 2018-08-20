@@ -36,6 +36,10 @@ public:
     NormalizeDirSeparators();
   }
 
+  FilePath(char const* path, size_t len)
+  : Base(path, len)
+  {}
+
   FilePath(Base const& rhs)
   : Base(rhs)
   {}
