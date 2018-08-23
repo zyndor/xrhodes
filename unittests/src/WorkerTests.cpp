@@ -1,3 +1,11 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
+//==============================================================================
 #include "gtest/gtest.h"
 #include "xr/Worker.hpp"
 #include "xr/ScopeGuard.hpp"
@@ -120,7 +128,7 @@ namespace xr
 
       Job j;
       j.durationMs = 20;
-      
+
       const int kNumIterations = 10;
       for (int i = 0; i < kNumIterations; ++i)
       {

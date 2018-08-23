@@ -1,5 +1,14 @@
-#pragma once
-
+#ifndef XRUT_FILELIFECYCLEMANAGER_HPP
+#define XRUT_FILELIFECYCLEMANAGER_HPP
+//==============================================================================
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
+//==============================================================================
 #include "xr/File.hpp"
 
 namespace xr
@@ -23,3 +32,5 @@ public:
 };
 
 }
+
+#endif //XRUT_FILELIFECYCLEMANAGER_HPP

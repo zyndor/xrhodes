@@ -1,3 +1,11 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
+//==============================================================================
 #include "gtest/gtest.h"
 #include "xr/Deflator.hpp"
 #include "xr/Inflator.hpp"
@@ -74,7 +82,7 @@ namespace xr
       TestObject  obj[2];
       Inflator  inflator;
       inflator.SetNext(inflator.RegisterObject(obj[0]));
-      
+
       // Clashing ID range.
       ASSERT_THROW(inflator.RegisterObject(obj[1]), std::runtime_error);
     }

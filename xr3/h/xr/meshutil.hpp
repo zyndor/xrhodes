@@ -1,6 +1,14 @@
 #ifndef XR_MESHUTILS_HPP
 #define XR_MESHUTILS_HPP
-
+//==============================================================================
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
+//==============================================================================
 #include "xr/Vector3.hpp"
 #include "xr/debug.hpp"
 #include "xr/typeutils.hpp"

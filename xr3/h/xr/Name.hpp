@@ -1,16 +1,14 @@
+#ifndef XR_NAME_HPP
+#define XR_NAME_HPP
+//==============================================================================
 //
 // XRhodes
 //
-// Name.hpp
-// @author  Gyorgy Straub <gyorgy@nuclearheart.com>
-// @date    10/04/2014
-//
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
-#ifndef XR_NAME_HPP
-#define XR_NAME_HPP
-
 #include <cstdint>
 #include <string>
 

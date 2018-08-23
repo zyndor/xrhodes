@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 
 #include "Vector3.hpp"
@@ -22,11 +24,11 @@ public:
   Vector3 position;
   Vector3 direction;
   float   length;
-  
+
   // structors
   Ray();
   Ray(const Vector3& pos, const Vector3& dir, float l);
-  
+
   // general
   ///@brief Sets the direction of the Ray, normalised (which is what most of XR
   /// will expect it to be).
@@ -48,7 +50,7 @@ public:
   ///@return  Whether the ray hits the sphere.
   bool  IntersectSphere(const Vector3& pos, float radiusSqr, float& t0,
           float& t1) const;
-  
+
   ///@brief Intersects the plane defined by @a pos (distance from origin) and
   /// @a normal, with the ray.
   ///@return  Whether the ray hits the plane. False if they're parallel.
