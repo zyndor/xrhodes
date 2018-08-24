@@ -7,7 +7,6 @@
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
 //==============================================================================
-
 #include "Matrix.hpp"
 #include "xr/debug.hpp"
 #include <cstring>
@@ -134,6 +133,36 @@ public:
     Quaternion  q;
     FromPositions(from, to, q);
     return q;
+  }
+
+  ///@brief Creates a quaternion which describes the same rotation as the matrix @a m.
+  static Quaternion FromMatrix(Matrix const& m)
+  {
+    float trace = m.xx + m.yy + m.zz;
+    if (trace > .0f)
+    {
+      const float s = .5f / std::sqrt(trace + 1.0f);
+      return Quaternion((m.zy - m.yz) * s, (m.xz - m.zx) * s,
+        (m.yx - m.xy) * s, .25f / s);
+    }
+    else if (m.xx > m.yy && m.xx > m.zz)
+    {
+      const float s = .5f / sqrtf(1.0f + m.xx - m.yy - m.zz);
+      return Quaternion(.25f / s, (m.xy + m.yx) * s, (m.xz + m.zx) * s,
+        (m.zy - m.yz) * s);
+    }
+    else if (m.yy > m.zz)
+    {
+      const float s = .5f / sqrtf(1.0f + m.yy - m.xx - m.zz);
+      return Quaternion((m.xy + m.yx) * s, .25f / s, (m.yz + m.zy) * s,
+        (m.xz - m.zx) * s);
+    }
+    else
+    {
+      const float s = .5f / sqrtf(1.0f + m.zz - m.xx - m.yy);
+      return Quaternion((m.xz + m.zx) * s, (m.yz + m.zy) * s, .25f / s,
+        (m.yx - m.xy) * s);
+    }
   }
 
   // data
