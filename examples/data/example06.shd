@@ -1,0 +1,4 @@
+{
+	vsh: "example06",
+	fsh: "example04"	# We'll reuse the fragment shader from a previous example.
+}

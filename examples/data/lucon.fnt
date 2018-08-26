@@ -1,0 +1,16 @@
+{
+  font: lucon.ttf,	# Lucida Console
+  
+  # the following properties are optional and default to these values.
+  fontSize: 128,
+  fontIndex: 0,
+  sdfSize: 4,
+  cacheSize: 1024,
+  
+  codePoints: {
+	"0x20 - 0x7f",	# if there are spaces around the hyphen, the value must be quote enclosed
+	0x0422-0x0491,	# cyrillic letters
+	0x037e-0x03ce,	# greek letters
+	0x263a-0x266b,	# pictograms
+  }
+}
