@@ -108,4 +108,44 @@ void FilePath::Up()
   }
 }
 
+//==============================================================================
+FilePath FilePath::Canonical() const
+{
+  FilePath canonical;
+  char const* token = m_buffer;
+  char const* end = strchr(token, kDirSeparator);
+  while (end)
+  {
+    if (end && end - token > 1) // ignore repeated slashes
+    {
+      if (strncmp("..", token, 2) != 0)
+      {
+        canonical.append(token, end - token);
+      }
+      else
+      {
+        canonical.Up();
+      }
+      canonical.AppendDirSeparator();
+    }
+    token = end + 1;
+    end = strchr(token, kDirSeparator);
+  }
+
+  end = m_buffer + m_size;
+  if (end - token > 1)
+  {
+    if (strncmp("..", token, 2) != 0)
+    {
+      canonical.append(token, end - token);
+    }
+    else
+    {
+      canonical.Up();
+    }
+  }
+
+  return canonical;
+}
+
 } // xr
