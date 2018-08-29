@@ -693,6 +693,8 @@ struct Impl
     REPORT_LEAKS(program);
 #undef REPORT_LEAKS
 
+    m_context->Shutdown();
+
     XR_TRACE(Gfx, ("Gfx shutdown complete."));
   }
 

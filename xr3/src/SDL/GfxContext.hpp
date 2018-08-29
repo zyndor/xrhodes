@@ -62,6 +62,8 @@ public:
 
   void Swap() const;
 
+  void Shutdown();
+
 private:
   // data
   SDL_Window& m_window; // no ownership
