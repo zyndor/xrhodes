@@ -7,7 +7,7 @@ namespace Gfx
 {
 
 //==============================================================================
-Gfx::Context::Context(SDL_Window & window)
+Gfx::Context::Context(SDL_Window& window)
 : m_window(window),
   m_ownRenderer(nullptr)
 {}
@@ -15,11 +15,7 @@ Gfx::Context::Context(SDL_Window & window)
 //==============================================================================
 Context::~Context()
 {
-  if (m_ownRenderer)
-  {
-    SDL_GL_DeleteContext(m_ownContext);
-    SDL_DestroyRenderer(m_ownRenderer);
-  }
+  Shutdown();
 }
 
 //==============================================================================
@@ -69,6 +65,19 @@ void Context::Init()
 void Context::Swap() const
 {
   SDL_GL_SwapWindow(&m_window);
+}
+
+//==============================================================================
+void Context::Shutdown()
+{
+  if (m_ownRenderer)
+  {
+    SDL_GL_MakeCurrent(nullptr, SDL_GLContext());
+
+    SDL_GL_DeleteContext(m_ownContext);
+    SDL_DestroyRenderer(m_ownRenderer);
+    m_ownRenderer = nullptr;
+  }
 }
 
 } // Gfx
