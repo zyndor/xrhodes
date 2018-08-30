@@ -14,13 +14,21 @@
 #include <cstdint>
 
 //==============================================================================
+///@brief Converts the expression @a into a string literal.
+#define XR_STRINGIFY(a) #a
+
+//==============================================================================
+///@brief Ensures usage of [local] variable @a a in order to supress compiler
+/// warnings / errors.
 #define XR_USE(a) do {} while(&a != &a);
 
 //==============================================================================
+///@brief Gets the number of elements in an array.
+///@note Works with string literals which std::extent<> doesn't.
 namespace
 {
 template <typename T, size_t N>
-char(&ArraySizeHelper(T (&)[N]))[N];  // not defined, never actually called; sizeof(function call) tells size of return type.
+char(&ArraySizeHelper(T (&)[N]))[N];  // not defined, never actually called; sizeof(function call) yields size of return type.
 }
 #define XR_ARRAY_SIZE(a) (sizeof(ArraySizeHelper(a)))
 
@@ -29,6 +37,7 @@ char(&ArraySizeHelper(T (&)[N]))[N];  // not defined, never actually called; siz
 #define XR_MASK_ID(type, id) static_cast<type>(1 << (id))
 
 //==============================================================================
+///@brief Number of bits in the size of @a x.
 #define XR_BITSIZEOF(x) (sizeof(x) * 8)
 
 //==============================================================================
