@@ -17,6 +17,7 @@ namespace xr
 
 class ParserCore;
 
+//==============================================================================
 ///@brief XRhodes Object Notation parser. Summary of the XON format:
 /// - Inspired by Lua (tables) and JSON.
 /// - Entities can be objects or values,

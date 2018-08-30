@@ -17,7 +17,7 @@
 namespace xr
 {
 
-struct AABB;
+class AABB;
 
 //==============================================================================
 /// @brief TextureCache creates and manages a buffer split into fixed height

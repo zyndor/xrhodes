@@ -17,6 +17,7 @@
 namespace xr
 {
 
+//==============================================================================
 ///@brief Attempts to parse @a string as XON and build a tree of XON entities.
 /// Adds some semantics-related handling to the XON parser: an unquoted 'null'
 /// string is interpreted as a null value.

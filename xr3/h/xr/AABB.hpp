@@ -19,8 +19,9 @@ namespace xr
 /// Supports Import()ing from / Export()ing to position & halfsize representation
 /// and HitTest()s vs other AABBs, points and line segments (swept points).
 ///@note Assumes the positive Y axis pointing upwards.
-struct  AABB
+class AABB
 {
+public:
   // types
   ///@brief Information about a HitTest() between two AABBs.
   ///@note  When removing an object from a collision, you will need to add the

@@ -10,9 +10,10 @@
 //
 //==============================================================================
 
-namespace xr {
-
-namespace JSON  {
+namespace xr
+{
+namespace JSON
+{
 
 //==============================================================================
 enum  Char
@@ -37,7 +38,6 @@ extern const char* const kFalse;
 const int kMaxParseDepthDefault = 32;
 
 } // JSON
-
 } // xr
 
 #endif // XR_JSON_HPP

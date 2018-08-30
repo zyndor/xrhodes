@@ -15,9 +15,10 @@
 #include <string>
 #include <list>
 
-namespace xr {
+namespace xr
+{
 
-struct IndexMesh;
+class IndexMesh;
 
 //==============================================================================
 ///@brief Holds the parameters of a text block that is to be presented line by

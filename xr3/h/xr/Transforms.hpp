@@ -14,9 +14,9 @@
 namespace xr
 {
 
-struct Matrix;
-struct Matrix4;
-struct ViewRayCaster;
+class Matrix;
+class Matrix4;
+class ViewRayCaster;
 
 //==============================================================================
 ///@brief Enables the management of model-view-projection transformations,
@@ -100,7 +100,7 @@ public:
 
   ///@brief Pushes the given model matrix at construction, then pops it off
   /// upon destruction.
-  struct ScopedModel
+  class ScopedModel
   {
     XR_NONCOPY_DECL(ScopedModel)
 

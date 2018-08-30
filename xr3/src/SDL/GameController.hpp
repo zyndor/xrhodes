@@ -19,8 +19,9 @@
 namespace xr
 {
 
-struct GameController
+class GameController
 {
+public:
   static float Normalize(int32_t value)
   {
     return (value + .5f) / ((1 << 15) - .5f);

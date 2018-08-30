@@ -27,81 +27,81 @@ namespace xr
 class State
 {
 public:
-	// types
-	//==============================================================================
-	///@brief Maintains a stack of states and manages their life cycles.
-	//==============================================================================
-	class	Manager
-	{
-	public:
-		// structors
-		Manager();
-		~Manager();
+  // types
+  //==============================================================================
+  ///@brief Maintains a stack of states and manages their life cycles.
+  //==============================================================================
+  class  Manager
+  {
+  public:
+    // structors
+    Manager();
+    ~Manager();
 
-		// general
-		void	Push(State& s);	// no ownership transfer
-		void	Change(State& s);	// no ownership transfer
-		void	Pop();
+    // general
+    void  Push(State& s);  // no ownership transfer
+    void  Change(State& s);  // no ownership transfer
+    void  Pop();
 
-		void	Update(int32_t tDelta);
-		void	Render();
+    void  Update(int32_t tDelta);
+    void  Render();
 
-		void	Clear();
+    void  Clear();
 
-	protected:
-		// types
-		typedef std::list<State*>	Stack;
+  protected:
+    // types
+    typedef std::list<State*>  Stack;
 
-		// data
-		Stack	m_states;
+    // data
+    Stack  m_states;
 
-		// internal
-		void	_Push(State& s);
-		void	_Pop();
-	};
+    // internal
+    void  _Push(State& s);
+    void  _Pop();
+  };
 
-	//==============================================================================
-	///@brief Signifies the result of a State Update() encapsulating State::Manager
-	/// operation and a next State to go to.
-	//==============================================================================
-	struct	Result
-	{
-		// types
-		enum	Operation
-		{
-			NONE,
-			PUSH,
-			CHANGE,
-			POP
-		};
+  //==============================================================================
+  ///@brief Signifies the result of a State Update() encapsulating State::Manager
+  /// operation and a next State to go to.
+  //==============================================================================
+  struct  Result
+  {
+    // types
+    enum  Operation
+    {
+      NONE,
+      PUSH,
+      CHANGE,
+      POP
+    };
 
-		// structors
-		Result()
-		:	operation(NONE),
-			state(nullptr)
-		{}
+    // structors
+    Result()
+    :  operation(NONE),
+      state(nullptr)
+    {}
 
-		Result(Operation op, State* p = nullptr)
-		:	operation(op),
-			state(p)
-		{}
+    Result(Operation op, State* p = nullptr)
+    :  operation(op),
+      state(p)
+    {}
 
-		// data
-		Operation	operation;
-		State*		state;
-	};
+    // data
+    Operation  operation;
+    State*    state;
+  };
 
-	// structors
-	State();
-	virtual ~State();
+  // structors
+  State();
+  virtual ~State();
 
-	// general
-	virtual void	Init()	{}
-	virtual void	Enter() =0;
-	virtual void	Update(int32_t ms, Result& result) =0;
-	virtual void	Render() =0;
-	virtual void	Exit() =0;
-	virtual void	Shutdown() {}
+  // general
+  virtual void  Init()  {}
+  virtual void  Enter() =0;
+  virtual void  Update(int32_t ms, Result& result) =0;
+  virtual void  Render() =0;
+  virtual void  Exit() =0;
+  virtual void  Shutdown() {}
 };
 
 } // XR

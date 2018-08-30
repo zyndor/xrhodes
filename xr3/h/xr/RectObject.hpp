@@ -14,7 +14,7 @@
 namespace xr
 {
 
-struct AABB;
+class AABB;
 
 //==============================================================================
 ///@brief An axis aligned, rectangular object with position and half-size

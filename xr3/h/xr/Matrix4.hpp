@@ -18,8 +18,9 @@ namespace xr
 //==============================================================================
 ///@brief 4x4 matrix class intended to facilitate the managing of projection
 /// transforms. Inherently free from any notation of colum / row major ordering.
-struct Matrix4
+class Matrix4
 {
+public:
   // types
   enum { kNumElems = 16 };
 

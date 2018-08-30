@@ -23,8 +23,9 @@ namespace xr
 //==============================================================================
 ///@brief Row-major order matrix with a 3x3 linear transformation (rotation,
 /// scaling) and 1x3 translation components.
-struct Matrix
+class Matrix
 {
+public:
   // types
   enum
   {

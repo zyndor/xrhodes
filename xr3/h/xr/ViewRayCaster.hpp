@@ -21,8 +21,9 @@ namespace xr
 /// transform, a z value for the near clipping plane and the tangent of the
 /// half of the vertical field of view. The rays intersect the near clipping
 /// plane at the given screen space or normalized screen space coordinates.
-struct ViewRayCaster
+class ViewRayCaster
 {
+public:
   // static
   static Ray GetViewRay(float nx, float ny, Matrix const& viewer, float zNear,
     float tanHalfVerticalFov)
