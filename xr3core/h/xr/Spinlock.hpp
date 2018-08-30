@@ -16,9 +16,8 @@ namespace xr
 {
 
 //==============================================================================
-///@brief Synchronisation primitive for that provides non-recursive mutual
-/// exclusion between threads of the same process. Satisfies the Lockable
-/// concept.
+///@brief Synchronisation primitive that provides non-recursive mutual exclusion
+/// between threads of the same process. Satisfies the Lockable concept.
 struct Spinlock
 {
   // general

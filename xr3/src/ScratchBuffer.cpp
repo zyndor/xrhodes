@@ -15,8 +15,9 @@ namespace xr
 namespace
 {
 
-struct ScratchBufferImpl
+class ScratchBufferImpl
 {
+public:
   ScratchBufferImpl(size_t poolSize)
   {
     m_pool.SetBuffer(poolSize, true, nullptr);

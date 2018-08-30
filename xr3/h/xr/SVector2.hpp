@@ -16,8 +16,9 @@ namespace xr
 {
 
 //==============================================================================
-struct SVector2
+class SVector2
 {
+public:
   // static
   inline
   static SVector2  Zero()

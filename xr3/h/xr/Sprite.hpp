@@ -16,7 +16,7 @@
 namespace xr
 {
 
-struct Mesh;
+class Mesh;
 
 //==============================================================================
 ///@brief A textured quad with facilities for:

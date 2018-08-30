@@ -19,8 +19,9 @@ namespace xr
 //==============================================================================
 ///@brief Smart handle to a vertex buffer and the number of vertices it was
 /// created with. Does not retain other data.
-struct Mesh
+class Mesh
 {
+public:
   // static
   ///@brief Creates a vertex buffer from an array of @a numVertices vertices in
   /// @a vertexData, and using @a flags.

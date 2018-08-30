@@ -40,8 +40,9 @@ using DependencyPathLenType = uint16_t;
 //==============================================================================
 const size_t kChunkSizeBytes = XR_KBYTES(16);
 
-struct LoadJob : Worker::Job
+class LoadJob : public Worker::Job
 {
+public:
   // data
   Asset::Ptr asset;
 
@@ -112,8 +113,9 @@ private:
 };
 
 //==============================================================================
-struct AssetManagerImpl // TODO: improve encapsulation of members
+class AssetManagerImpl // TODO: improve encapsulation of members
 {
+public:
   // structors
   AssetManagerImpl(FilePath path, Allocator* alloc)
   {

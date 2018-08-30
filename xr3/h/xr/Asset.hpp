@@ -469,8 +469,9 @@ protected:
 namespace detail
 {
 
-struct AssetReflector: Linked<AssetReflector const>
+class AssetReflector: Linked<AssetReflector const>
 {
+public:
   // types
   using Base = Linked<AssetReflector const>;
   using CreateFn = Asset*(*)(Asset::HashType, Asset::FlagType);

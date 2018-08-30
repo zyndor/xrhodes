@@ -18,8 +18,9 @@ namespace xr
 
 //==============================================================================
 ///@brief Mesh with an index buffer handle and number of indices.
-  struct IndexMesh : public Mesh
+class IndexMesh : public Mesh
 {
+public:
   // static
   ///@return IndexMesh created with @a numVertices vertices of the given
   /// @a vertexData, @a numIndices of 16-bit @a indexData, and a combination of

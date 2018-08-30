@@ -18,8 +18,9 @@ namespace xr
 {
 
 //==============================================================================
-struct Vector3
+class Vector3
 {
+public:
   // types
   enum
   {

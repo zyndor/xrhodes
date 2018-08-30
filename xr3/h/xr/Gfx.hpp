@@ -279,7 +279,9 @@ enum class UniformType: uint8_t
 };
 
 //=============================================================================
-struct HandleCoreCore {
+class HandleCoreCore
+{
+public:
   enum : uint16_t { INVALID_ID = 0xffff };
 
   uint16_t id;

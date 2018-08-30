@@ -16,7 +16,7 @@
 namespace xr
 {
 
-struct Mesh;
+class Mesh;
 
 //==============================================================================
 class MeshRenderer:  public ComponentT<MeshRenderer>

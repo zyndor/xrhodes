@@ -18,6 +18,7 @@ namespace xr
 {
 namespace Vertex
 {
+
 ///@brief Acts as a central repository and manager for VertexFormatHandles.
 class Formats
 {
