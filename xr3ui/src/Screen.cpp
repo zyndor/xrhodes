@@ -1,8 +1,9 @@
 //
-// Nuclear Heart Games
 // XRhodes
 //
-// copyright (c) 2011 - 2014. All rights reserved.
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
 #include "xr/Screen.hpp"

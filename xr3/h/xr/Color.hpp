@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 
 #include "maths.hpp"
@@ -23,7 +25,7 @@ enum
 };
 
 //==============================================================================
-class Color 
+class Color
 {
 public:
   // types
@@ -35,7 +37,7 @@ public:
     A,
     kNumComponents
   };
-  
+
   // static
   static Color  s_default;
 
@@ -43,11 +45,11 @@ public:
   {
     return value * (1.0f / 0xff);
   }
-  
+
   // data
   union
   {
-    struct 
+    struct
     {
       float  r, g, b, a;
     };
@@ -58,18 +60,18 @@ public:
   Color()
   : r(.0f), g(.0f), b(.0f), a(.0f)
   {}
-  
+
   Color(float r_, float g_, float b_, float a_)
   : r(r_),
     g(g_),
     b(b_),
     a(a_)
   {}
-  
+
   Color(float r_, float g_, float b_)
   : Color(r_, g_, b_, 1.0f)
   {}
-  
+
   explicit Color(const float data[kNumComponents])
   : Color(data[R], data[G], data[B], data[A])
   {}
@@ -164,13 +166,13 @@ public:
     Color temp(*this);
     return temp += rhs;
   }
-  
+
   Color operator -(const Color& rhs) const
   {
     Color temp(*this);
     return temp -= rhs;
   }
-  
+
   Color operator *(float s) const
   {
     return Color(r * s, g * s, b * s, a * s);

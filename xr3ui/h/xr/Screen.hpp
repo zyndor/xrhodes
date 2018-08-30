@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 #include <cstdint>
 
@@ -16,7 +18,7 @@ class ScreenManager;
 
 //==============================================================================
 ///@brief A configuration of UIElements which may be shown or hidden using a
-/// ScreenManager. Screens go through four states: showing, active, hiding, and 
+/// ScreenManager. Screens go through four states: showing, active, hiding, and
 /// hidden. Events are only handled in the 'active' state. Elements are only
 /// visible between showing and hiding. Showing and hiding allows an animation
 /// for a given duration, specified when showing or hiding a scene (which are

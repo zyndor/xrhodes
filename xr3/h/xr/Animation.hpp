@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 #include "xr/debug.hpp"
 #include <vector>
@@ -19,18 +21,18 @@ class AnimationCore
 public:
   // typedef
   enum { NO_LOOP_FRAME = -1 };
-  
+
   // data
 	float frameDelay;
 
   // structors
   AnimationCore();
   ~AnimationCore();
-  
+
   // general
   int   GetLoopFrame() const;
   void  SetLoopFrame(int lf);
-  
+
 protected:
   // data
   int m_loopFromFrame;
@@ -42,21 +44,21 @@ class	Animation:  protected AnimationCore
 public:
 	// types
 	typedef T	Type;
-	
+
 	typedef std::vector<T>	FrameVector;
 
   // using
   using AnimationCore::frameDelay;
   using AnimationCore::GetLoopFrame;
   using AnimationCore::SetLoopFrame;
-	
+
 	// data
 	FrameVector	frames;
-	
+
 	// structors
-	Animation();		
+	Animation();
 	~Animation();
-  
+
   // general
   bool  IsLooping() const;
   float GetDuration() const;
@@ -70,7 +72,7 @@ int AnimationCore::GetLoopFrame() const
 {
   return m_loopFromFrame;
 }
-  
+
 //==============================================================================
 template	<class T>
 Animation<T>::Animation()

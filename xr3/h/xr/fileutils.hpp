@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 
 #include <iterator>
@@ -37,7 +39,7 @@ bool  Write(const Container& c, int hFile)
     success = File::Write(&*i0, sizeof(typename Container::value_type), 1,
       hFile) == 1;
   }
-  return success;    
+  return success;
 }
 
 
@@ -49,7 +51,7 @@ bool  WriteVector(const Container& c, int hFile)
   bool  success = File::Write(&size, sizeof(size), 1, hFile) == 1 &&
     File::Write(&c[0], sizeof(typename Container::value_type), size, hFile) ==
     size;
-  return success;    
+  return success;
 }
 
 //==============================================================================
@@ -69,7 +71,7 @@ bool  Read(int hFile, Container& c)
     }
     --size;
   }
-  return success;    
+  return success;
 }
 
 
@@ -86,7 +88,7 @@ bool  ReadVector(int hFile, Container& c)
       &c[0]) == size;
   }
 
-  return success;    
+  return success;
 }
 
 } // XR

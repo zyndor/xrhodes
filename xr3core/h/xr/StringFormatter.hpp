@@ -1,12 +1,14 @@
+#ifndef  XR_STRINGFORMATTER_HPP
+#define  XR_STRINGFORMATTER_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
-#ifndef  XR_STRINGFORMATTER_HPP
-#define  XR_STRINGFORMATTER_HPP
-
 #include "debug.hpp"
 #include <sstream>
 

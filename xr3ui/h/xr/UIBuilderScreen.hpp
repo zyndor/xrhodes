@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 #include "Screen.hpp"
 #include "UIBuilder.hpp"
@@ -61,7 +63,7 @@ public:
 
   ///@brief Attempts to build the Screen from the given @a xml.
   bool  Build(tinyxml2::XMLElement* xml);
-  
+
   ///@return UIElement with the given handle; nullptr if wasn't found.
   UIElement*  GetElement(const char* handle);
 

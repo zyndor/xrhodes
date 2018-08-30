@@ -1,3 +1,11 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
+//==============================================================================
 #include "FileLifeCycleManager.hpp"
 
 #include "gtest/gtest.h"
@@ -146,7 +154,7 @@ namespace xr
     EnsureTestAssetExists(path);
 
     auto testAss = Asset::Manager::LoadReflected(path);
-    
+
     ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), Asset::LoadingFlag)); // load in progress
     ASSERT_TRUE(testAss->Cast<TestAsset>()); // determined correct type
     ASSERT_EQ(Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same

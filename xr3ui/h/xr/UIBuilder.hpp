@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 #include <map>
 #include <string>
@@ -150,7 +152,7 @@ public:
 
   ///@brief Registers a named element, if one with the value that @a name hashes
   /// to has not yet been registered.
-  ///@return The success of the operation, i.e. whether it resulted in registration. 
+  ///@return The success of the operation, i.e. whether it resulted in registration.
   bool  RegisterNamedElement(const char* name, UIElement* uiElem);
 
   ///@brief Attempts to build UI from the given @a xml definition. Children at the

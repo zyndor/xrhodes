@@ -1,12 +1,14 @@
+#ifndef XR_SVECTOR2_HPP
+#define XR_SVECTOR2_HPP
+//==============================================================================
 //
 // XRhodes
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
-#ifndef XR_SVECTOR2_HPP
-#define XR_SVECTOR2_HPP
-
 #include <cstdint>
 #include <cmath>
 

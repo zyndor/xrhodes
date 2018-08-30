@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 
 #include "ResManager.hpp"
@@ -19,14 +21,14 @@ namespace xr
 class Sample:  protected CrossObject
 {
   XR_CROSS_OBJECT_DECL(Sample)
-  
+
 public:
   // general
   int   GetFormat() const;
   int   GetBufferSize() const;
   int   GetNumSamples() const;
   void* GetData() const;
-  
+
   bool  Load(const char* pName);
 };
 

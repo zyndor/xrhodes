@@ -1,3 +1,11 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
+//==============================================================================
 #include "gtest/gtest.h"
 #include "xr/streamutils.hpp"
 #include "xr/memdebug.hpp"
@@ -95,7 +103,7 @@ namespace xr
 
         T* m_p;
       };
-      
+
       size_t ReadPiecewise(std::istream& is)
       {
         size_t bytesRead = 0;

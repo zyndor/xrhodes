@@ -4,6 +4,8 @@
 --
 -- copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 --
+-- License: https://github.com/zyndor/xrhodes#license-bsd-2-clause
+--
 --==============================================================================
 project "xr3ui"
 

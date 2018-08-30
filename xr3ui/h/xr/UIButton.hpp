@@ -6,6 +6,8 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 #include "UIColoredElement.hpp"
 #include "xr/utils.hpp"
@@ -16,7 +18,7 @@ namespace xr
 
 //==============================================================================
 ///@brief A button which have three possible states, each represented by a
-/// Sprite. 
+/// Sprite.
 class UIButton:  public UIColoredElement
 {
 public:

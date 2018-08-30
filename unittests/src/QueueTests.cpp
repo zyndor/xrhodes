@@ -1,3 +1,11 @@
+//
+// XRhodes
+//
+// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+//
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
+//==============================================================================
 #include "gtest/gtest.h"
 #include "xr/Queue.hpp"
 
@@ -47,7 +55,7 @@ namespace xr
     auto q2 = q;
     ASSERT_EQ(q.size(), 98U);
     ASSERT_EQ(q2.size(), 98U);
-      
+
     // assignment
     q = q2;
     ASSERT_EQ(q.size(), 98U);
