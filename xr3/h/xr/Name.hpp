@@ -21,7 +21,8 @@ class Name
 public:
   // structors
   Name();
-  explicit Name(uint32_t value);
+  Name(uint32_t value);
+  explicit Name(const char* name);
   explicit Name(const char* name, size_t length);
   explicit Name(const std::string& name);
   ~Name();

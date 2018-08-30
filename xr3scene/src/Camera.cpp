@@ -3,18 +3,26 @@
 //
 // copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
-#include "XR/Camera.hpp"
-#include "XR/ProjectionHelpers.hpp"
-#include "XR/Renderer.hpp"
+#include "xr/Camera.hpp"
+#include "xr/ViewRayCaster.hpp"
+#include "xr/ProjectionHelper.hpp"
+#include "xr/MeshRenderer.hpp"
+#include "xr/Transforms.hpp"
+#include "xr/Matrix.hpp"
+#include "xr/Ray.hpp"
+#include "xr/Matrix4.hpp"
+#include "xr/debug.hpp"
 
-namespace XR
+namespace xr
 {
 
 //==============================================================================
 Camera::Camera()
 {
-  SetPerspective(float(M_PI * .25f), .75f, 10.0f, 1000.0f);
+  SetPerspective(float(kPi * .25f), .75f, 10.0f, 1000.0f);
 }
 
 //==============================================================================
@@ -22,50 +30,54 @@ Camera* Camera::Clone() const
 {
   Camera* pClone = new Camera();
   pClone->m_isPerspective = m_isPerspective;
-  std::memcpy(&pClone->m_arPerspectiveMatrix, &m_arPerspectiveMatrix,
-    sizeof(m_arPerspectiveMatrix));
   pClone->m_zNear = m_zNear;
   pClone->m_zFar = m_zFar;
-  pClone->m_verticalFov = m_verticalFov;
+  pClone->m_orthoSize = m_orthoSize;
   pClone->m_aspectRatio = m_aspectRatio;
+  pClone->m_verticalFovRadians = m_verticalFovRadians;
+  pClone->m_tanHalfVerticalFov = m_tanHalfVerticalFov;
   return pClone;
 }
 
 //==============================================================================
-void Camera::SetPerspective(float verticalFieldOfView, float aspectRatio,
+void Camera::SetPerspective(float verticalFovRadians, float aspectRatio,
   float zNear, float zFar)
 {
-  XR_ASSERT(Camera, verticalFieldOfView > .0f);
-  XR_ASSERT(Camera, verticalFieldOfView < M_PI);
+  XR_ASSERT(Camera, verticalFovRadians > .0f);
+  XR_ASSERT(Camera, verticalFovRadians < M_PI);
   XR_ASSERT(Camera, aspectRatio > .0f);
   XR_ASSERT(Camera, zNear < zFar);
   m_isPerspective = true;
   m_zNear = zNear;
   m_zFar = zFar;
-  m_verticalFov = verticalFieldOfView;
+  //m_orthoSize not set
   m_aspectRatio = aspectRatio;
+  m_activeSize = 1.0f;
+  m_verticalFovRadians = verticalFovRadians;
 
-  ProjectionHelpers::CalculatePerspective(m_verticalFov, aspectRatio, m_zNear,
-    m_zFar, m_arPerspectiveMatrix);
+  ProjectionHelper::CalculatePerspective(verticalFovRadians, aspectRatio,
+    m_zNear, m_zFar, m_projection.data, &m_tanHalfVerticalFov);
 }
 
 //==============================================================================
-void Camera::SetOrtho(float width, float height, float zNear, float zFar)
+void Camera::SetOrthographic(float width, float height, float zNear, float zFar)
 {
   XR_ASSERT(Camera, zFar > .0f);
   XR_ASSERT(Camera, zNear < zFar);
   m_isPerspective = false;
   m_zNear = zNear;
   m_zFar = zFar;
-  m_verticalFov = .0f;
+  m_orthoSize = height;
   m_aspectRatio = width / height;
+  m_activeSize = height;
+  //m_verticalFovRadians not set
 
-  ProjectionHelpers::CalculateOrtho(width, height, zNear, zFar,
-    m_arPerspectiveMatrix);
+  ProjectionHelper::CalculateOrthographic(width, height, zNear, zFar,
+    m_projection.data);
 }
 
 //==============================================================================
-Matrix  Camera::GetView() const
+Matrix  Camera::GetViewerTransform() const
 {
   return GetOwner()->GetWorldTransform();
 }
@@ -87,48 +99,32 @@ void Camera::Reshape(float width, float height)
 {
   if(m_isPerspective)
   {
-    SetPerspective(m_verticalFov, width / height, m_zNear, m_zFar);
+    SetPerspective(m_verticalFovRadians, width / height, m_zNear, m_zFar);
   }
   else
   {
-    SetOrtho(width, height, m_zNear, m_zFar);
+    SetOrthographic(width, height, m_zNear, m_zFar);
   }
 }
 
 //==============================================================================
 Ray Camera::GetViewRay(float nx, float ny) const
 {
-  Matrix mView = GetView();
-
-  Vector3 vForward(mView.arLinear + Matrix::ZX);
-  //vForward.Normalise();
-
-  Vector3 vRight(mView.arLinear + Matrix::XX);
-  Vector3 vUp(mView.arLinear + Matrix::YX);
-
-  float hProj(m_zNear * tanf(m_verticalFov * .5f));
-  float wProj(hProj * m_aspectRatio);
-
-  vRight.Normalise(wProj);
-  vUp.Normalise(hProj);
-
-  Vector3 zNearHit((vForward * m_zNear) + (vRight * nx) + (vUp * ny));
-  zNearHit.Normalise();
-
-  return Ray(mView.t, zNearHit, std::numeric_limits<float>::max());
+  return ViewRayCaster::GetViewRay(nx, ny, GetViewerTransform(), m_zNear,
+    m_tanHalfVerticalFov);
 }
 
 //==============================================================================
 void Camera::Apply()
 {
-  Renderer::SetPerspMatrix(m_arPerspectiveMatrix);
-  Renderer::SetViewMatrix(GetView());
+  Transforms::Updater().SetViewerTransform(GetViewerTransform()).
+    SetProjection(m_projection, m_zNear, m_zFar, m_tanHalfVerticalFov);
 }
 
 //==============================================================================
-float Camera::GetPerspectiveMultiple(float height) const
+float Camera::GetPerspectiveMultiple() const
 {
-  return height * .5f * tanf(m_verticalFov * .5f);
+  return m_activeSize * .5f * m_tanHalfVerticalFov;
 }
 
-} // XR
+}

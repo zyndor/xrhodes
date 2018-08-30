@@ -23,6 +23,22 @@ namespace xr
 /// plane at the given screen space or normalized screen space coordinates.
 struct ViewRayCaster
 {
+  // static
+  static Ray GetViewRay(float nx, float ny, Matrix const& viewer, float zNear,
+    float tanHalfVerticalFov)
+  {
+    float hProj = zNear * tanHalfVerticalFov;
+    float wProj = hProj * Gfx::GetLogicalAspectRatio();
+
+    Vector3 zNearHit = viewer.GetColumn(Vector3::Z) * -zNear +
+      viewer.GetColumn(Vector3::X).Normalise(wProj * nx) +
+      viewer.GetColumn(Vector3::Y).Normalise(hProj * ny);
+    zNearHit.Normalise();
+
+    return Ray(viewer.t, zNearHit, std::numeric_limits<float>::max());
+  }
+
+  // data
   Matrix viewer;
   float zNear;
   float tanHalfVerticalFov;
@@ -51,15 +67,7 @@ struct ViewRayCaster
   ///@note The position and direction of the Ray is in world space.
   Ray GetViewRay(float nx, float ny) const
   {
-    float hProj = zNear * tanHalfVerticalFov;
-    float wProj = hProj * Gfx::GetLogicalAspectRatio();
-
-    Vector3 zNearHit = viewer.GetColumn(Vector3::Z) * -zNear +
-      viewer.GetColumn(Vector3::X).Normalise(wProj * nx) +
-      viewer.GetColumn(Vector3::Y).Normalise(hProj * ny);
-    zNearHit.Normalise();
-
-    return Ray(viewer.t, zNearHit, std::numeric_limits<float>::max());
+    return GetViewRay(nx, ny, viewer, zNear, tanHalfVerticalFov);
   }
 };
 

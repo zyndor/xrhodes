@@ -172,6 +172,9 @@ workspace "xr3"
 	
 	filter {}
 	include "xr3/premake5.lua"
+
+	filter {}
+	include "xr3scene/premake5.lua"
 	
 	filter {}
 	include "xr3ui/premake5.lua"
