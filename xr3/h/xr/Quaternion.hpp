@@ -100,7 +100,7 @@ public:
     if (d * d < 1.0f)
     {
       Vector3 c = from.Cross(to);
-      Quaternion q(c.x, c.y, c.z, d + 1.0f);
+      q = Quaternion(c.x, c.y, c.z, d + 1.0f);
       q.Normalise();
     }
   }
