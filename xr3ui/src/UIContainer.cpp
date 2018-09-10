@@ -174,7 +174,7 @@ bool UIContainer::MoveUpElement(UIElement* elem)
 }
 
 //==============================================================================
-bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e)
+bool UIContainer::OnMouseAction(const Input::MouseActionData& e)
 {
   bool  isHandled = false;
   for (UIElement::List::iterator i0(m_children.begin()), i1(m_children.end());
@@ -191,7 +191,7 @@ bool UIContainer::OnMouseAction(const Input::MouseActionEvent& e)
 }
 
 //==============================================================================
-bool UIContainer::OnMouseMotion(const Input::MouseMotionEvent& e)
+bool UIContainer::OnMouseMotion(const Input::MouseMotionData& e)
 {
   bool  handled(false);
   for (UIElement::List::iterator i0(m_children.begin()), i1(m_children.end());

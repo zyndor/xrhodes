@@ -26,10 +26,8 @@ Parser::Parser(int maxDepth)
 : m_state(),
   m_depth(0),
   m_maxDepth(maxDepth),
-  m_callback(nullptr),
-  m_callbackUser(nullptr),
-  m_onMaxDepthReached(nullptr),
-  m_onMaxDepthReachedData(nullptr)
+  m_onAtMaxDepth(nullptr),
+  m_handler(nullptr)
 {
   XR_ASSERTMSG(Json::Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
     maxDepth));
@@ -40,15 +38,13 @@ Parser::~Parser ()
 {}
 
 //==============================================================================
-bool  Parser::Parse(const char* string, size_t size, Callback callback,
-        void* userData)
+bool  Parser::Parse(const char* string, size_t size, const EntityCallback& handler)
 {
   XR_ASSERT(Json::Parser, string != nullptr);
   XR_ASSERT(Json::Parser, size >= 0);
   m_state.SetBuffer(string, size);
   m_depth = 0;
-  m_callback = callback;
-  m_callbackUser = userData;
+  m_handler.reset(static_cast<EntityCallback*>(handler.Clone()));
 
   const char* charp(m_state.ExpectChar()); // drop leading whitespace
   bool        result(!m_state.IsOver(charp));
@@ -60,7 +56,7 @@ bool  Parser::Parse(const char* string, size_t size, Callback callback,
     result = (isObject || isArray) && !m_state.IsOver(m_state.SkipChar());
     if (result) // check exceeding max depth (not an error)
     {
-      result = isObject ? _ParseObject() : _ParseArray();
+      result = isObject ? ParseObject() : ParseArray();
     }
   }
 
@@ -68,22 +64,22 @@ bool  Parser::Parse(const char* string, size_t size, Callback callback,
 }
 
 //==============================================================================
-bool  Parser::_ParseArray()
+bool  Parser::ParseArray()
 {
-  _DoCallback(E_ARRAY_BEGIN, nullptr);
-  _IncreaseDepth();
+  OnEntity(E_ARRAY_BEGIN, nullptr);
+  IncreaseDepth();
   const char* charp = m_state.ExpectChar(); // look for array end or value
   bool result = !m_state.IsOver(charp);
   if (result)
   {
     if (*charp == kArrayEnd)
     {
-      _DecreaseDepth();
+      DecreaseDepth();
       m_state.SkipChar();
     }
     else while (result)
     {
-      result = _ParseValue();
+      result = ParseValue();
       if (!result)
       {
         break;
@@ -100,27 +96,27 @@ bool  Parser::_ParseArray()
       m_state.SkipChar(); // leave character
       if (*charp == kArrayEnd)
       {
-        _DecreaseDepth();
+        DecreaseDepth();
         break;
       }
     }
   }
-  _DoCallback(E_ARRAY_END, nullptr);
+  OnEntity(E_ARRAY_END, nullptr);
   return result;
 }
 
 //==============================================================================
-bool  Parser::_ParseObject()
+bool  Parser::ParseObject()
 {
-  _DoCallback(E_OBJECT_BEGIN, nullptr);
-  _IncreaseDepth();
+  OnEntity(E_OBJECT_BEGIN, nullptr);
+  IncreaseDepth();
   const char* charp(m_state.ExpectChar());
   bool  result(!m_state.IsOver(charp));
   if (result)
   {
     if (*charp == kObjectEnd)
     {
-      _DecreaseDepth();
+      DecreaseDepth();
       m_state.SkipChar();
     }
     else while (result)
@@ -148,7 +144,7 @@ bool  Parser::_ParseObject()
 
       XR_ASSERT(Json::Parser, keyEnd >= key);
       String  str = { key, size_t(keyEnd - key) };
-      _DoCallback(E_KEY, &str);
+      OnEntity(E_KEY, &str);
 
       result = !m_state.IsOver(m_state.SkipChar());
       if (!result)
@@ -169,7 +165,7 @@ bool  Parser::_ParseObject()
         break;
       }
 
-      result = _ParseValue();
+      result = ParseValue();
       if (!result)
       {
         break;
@@ -186,17 +182,17 @@ bool  Parser::_ParseObject()
       m_state.SkipChar();
       if (*charp == kObjectEnd)
       {
-        _DecreaseDepth();
+        DecreaseDepth();
         break;
       }
     }
   }
-  _DoCallback(E_OBJECT_END, nullptr);
+  OnEntity(E_OBJECT_END, nullptr);
   return result;
 }
 
 //==============================================================================
-bool  Parser::_ParseValue()
+bool  Parser::ParseValue()
 {
   const char* charp = m_state.ExpectChar();
   bool  result(!m_state.IsOver(charp));
@@ -216,7 +212,7 @@ bool  Parser::_ParseValue()
         if (result)
         {
           String  str = { charp, size_t(pValueEnd - charp) };
-          _DoCallback(E_VALUE, &str);
+          OnEntity(E_VALUE, &str);
           m_state.SkipChar();
         }
       }
@@ -278,7 +274,7 @@ bool  Parser::_ParseValue()
         }
 
         String  str = { buffer, static_cast<size_t>(len) };
-        _DoCallback(E_VALUE, &str);
+        OnEntity(E_VALUE, &str);
       }
     }
     else if (isalpha(*charp))
@@ -296,18 +292,18 @@ bool  Parser::_ParseValue()
       {
         auto size = size_t(std::snprintf(buffer, kBufferSize - 1, "0"));
         String  str = { buffer, size };
-        _DoCallback(E_VALUE, &str);
+        OnEntity(E_VALUE, &str);
       }
       else if (strncmp(charp, kTrue, len) == 0)
       {
         auto size = size_t(std::snprintf(buffer, kBufferSize - 1, "1"));
         String  str = { buffer, size };
-        _DoCallback(E_VALUE, &str);
+        OnEntity(E_VALUE, &str);
       }
       else if (strncmp(charp, kNull, len) == 0)
       {
         String  str = { nullptr, 0 };
-        _DoCallback(E_VALUE, &str);
+        OnEntity(E_VALUE, &str);
       }
       else
       {
@@ -318,14 +314,14 @@ bool  Parser::_ParseValue()
     {
       if (!m_state.IsOver(m_state.SkipChar()))
       {
-        result = _ParseObject();
+        result = ParseObject();
       }
     }
     else if (*charp == kArrayBegin)
     {
       if (!m_state.IsOver(m_state.SkipChar()))
       {
-        result = _ParseArray();
+        result = ParseArray();
       }
     }
     else
@@ -337,40 +333,40 @@ bool  Parser::_ParseValue()
 }
 
 //==============================================================================
-void  Parser::_DoCallback(Event e, const String* data)
+void  Parser::OnEntity(Event e, const String* data)
 {
-  if (m_callback != nullptr && m_depth <= m_maxDepth)
+  if (m_handler && m_depth <= m_maxDepth)
   {
-    (*m_callback)(e, data, m_callbackUser);
+    m_handler->Call(e, data);
   }
 }
 
 //==============================================================================
-void Parser::_IncreaseDepth()
+void Parser::IncreaseDepth()
 {
   ++m_depth;
   if (m_depth == m_maxDepth + 1)
   {
-    _DoDepthCallback(true);
+    DoAtMaxDepth(true);
   }
 }
 
 //==============================================================================
-void Parser::_DecreaseDepth()
+void Parser::DecreaseDepth()
 {
   --m_depth;
   if (m_depth == m_maxDepth)
   {
-    _DoDepthCallback(false);
+    DoAtMaxDepth(false);
   }
 }
 
 //==============================================================================
-void Parser::_DoDepthCallback(bool entered)
+void Parser::DoAtMaxDepth(bool entered)
 {
-  if (m_onMaxDepthReached != nullptr)
+  if (m_onAtMaxDepth)
   {
-    (*m_onMaxDepthReached)(&entered, m_onMaxDepthReachedData);
+    m_onAtMaxDepth->Call(entered);
   }
 }
 

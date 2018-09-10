@@ -15,13 +15,6 @@ namespace JSON
 {
 
 //==============================================================================
-void  Reader::OnParserEvent(Parser::Event e, const Parser::String* string,
-  void* userData)
-{
-  static_cast<Reader*>(userData)->_HandleEvent(e, string);
-}
-
-//==============================================================================
 Reader::Reader(int depth)
 : m_parser(depth),
   m_key(),
@@ -42,7 +35,9 @@ Entity* Reader::Read(const char* string, size_t size)
   m_key.length = 0;
   m_entities.clear();
   m_root = nullptr;
-  if(!m_parser.Parse(string, size, OnParserEvent, this))
+  auto handler = MemberCallback<Reader, void, Parser::Event, Parser::String const*>
+    (*this, &Reader::OnEntity);
+  if(!m_parser.Parse(string, size, handler))
   {
     delete m_root;
     m_root = nullptr;
@@ -52,7 +47,7 @@ Entity* Reader::Read(const char* string, size_t size)
 }
 
 //==============================================================================
-void  Reader::_HandleEvent(Parser::Event e, const Parser::String* string)
+void  Reader::OnEntity(Parser::Event e, const Parser::String* string)
 {
   Entity* parent(m_entities.size() > 0 ? m_entities.back() : nullptr);
   switch(e)

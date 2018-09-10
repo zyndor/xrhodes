@@ -57,10 +57,6 @@ public:
   void  Render(IUIRenderer& r);
 
 private:
-  // static
-  static void OnMotion(void* systemData, void* userData);
-  static void OnAction(void* systemData, void* userData);
-
   // data
   bool  m_isEnabled;
   UIImage m_image;
@@ -71,6 +67,10 @@ private:
   float m_keepAliveTreshold;
 
   bool  m_isPressed;
+
+  // internal
+  void OnMotion(Input::MouseMotionData const& e);
+  void OnAction(Input::MouseActionData const& e);
 };
 
 } // xr

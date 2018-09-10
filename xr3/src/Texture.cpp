@@ -127,13 +127,13 @@ void Texture::RegisterSamplerUniform(char const* name, uint32_t textureStage)
       static bool initialized = false;
       if (!initialized)
       {
-        Gfx::RegisterShutdownCallback([](void*, void* ) {
+        Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
           ForEach([](HandleHolder& hh) {
             Gfx::Release(hh.value);
             delete &hh;
           });
           initialized = false;  // Gfx was torn down.
-        }, nullptr);
+        }, nullptr));
         initialized = true;
       }
     }

@@ -64,8 +64,8 @@ public:
 
   void  OnChange() override;
 
-  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
-  bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
+  bool  OnMouseAction(const Input::MouseActionData& e) override;
+  bool  OnMouseMotion(const Input::MouseMotionData& e) override;
 
 protected:
   // data

@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "File.hpp"
-#include "xr/Callback.hpp"
+#include "xr/Signal.hpp"
 #include "xr/fundamentals.hpp"
 #include <string>
 
@@ -35,16 +35,8 @@ class Device
 
 public:
   // types
-  enum class Event
-  {
-    Pause, // system data is nullptr
-    Resume, // system data is nullptr
-    Quit, // system data is nullptr
-    ScreenChange, // system data is ScreenChangeEvent const*
-    kCount
-  };
-
-  struct ScreenChangeEvent
+  ///@brief Information about a change to the screen resolution / orientation.
+  struct ScreenChangeData
   {
     bool      isOrientationChanged;
     uint32_t  width;
@@ -82,16 +74,17 @@ public:
   /// if undefined or not castable to an integer.
   static int GetConfigInt(const char* groupName, const char* varName, int defaultValue);
 
-  ///@brief Registers a @a callback for the given event @a ev with @a userData.
-  ///@return The success of the operation -- will fail if the @a callback has
-  /// already been registered.
-  static bool RegisterCallback(Event ev, Callback callback, void* userData);
+  ///@brief Signal about the application being suspended.
+  static Signal<void>& SuspendSignal();
 
-  ///@brief Removes a registration of the given @a callback for the given
-  /// @a event.
-  ///@return The success of the operation. Will fail if the @a callback has
-  /// not been registered.
-  static bool UnregisterCallback(Event ev, Callback callback);
+  ///@brief Signal about the application being resumed.
+  static Signal<void>& ResumeSignal();
+
+  ///@brief Signal about the application being terminated.
+  static Signal<void>& QuitSignal();
+
+  ///@brief Signal about the screen / main window resolution changing.
+  static Signal<void, ScreenChangeData const&>& ScreenChangeSignal();
 
   ///@brief Yields to the underlying OS for a duration of @a ms to allow the
   /// processing of application lifecycle and input events.

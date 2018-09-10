@@ -12,6 +12,7 @@
 #include "xr/JsonReader.hpp"
 #include "xr/JsonWriter.hpp"
 #include "xr/jsonutils.hpp"
+#include "xr/SignalBroadcaster.hpp"
 #include "xr/utils.hpp"
 #include "xr/stringutils.hpp"
 #include "GfxContext.hpp"
@@ -28,40 +29,24 @@ namespace
 static const char* const  kConfigName = "xr.json";
 
 //==============================================================================
-static void ScreenChangeEventHandler(CallbackObject::List& cbos, void* systemData)
-{
-  const SDL_Event* pEvent = static_cast<SDL_Event*>(systemData);
-  Device::ScreenChangeEvent e =
-  {
-    false,
-    uint32_t(pEvent->window.data1),
-    uint32_t(pEvent->window.data2)
-  };
-
-  CallbackObject::CallList(cbos, &e);
-}
-
-//==============================================================================
 static struct
 {
   // data
-  CallbackObject::List  callbacks[static_cast<int>(Device::Event::kCount)];
-  CallbackObject::List  postponedAdd[static_cast<int>(Device::Event::kCount)];
-  CallbackObject::List  postponedRemove[static_cast<int>(Device::Event::kCount)];
-  bool                  isQuitRequested;
-  bool                  isPauseRequested;
-  bool                  isYielding;
-  JSON::Entity*         config;
-  SDL_Window*           mainWindow;
-  uint32_t              windowWidth;
-  uint32_t              windowHeight;
-  Gfx::Context*         gfxContext;
+  SignalBroadcaster<> onPause;
+  SignalBroadcaster<> onResume;
+  SignalBroadcaster<> onQuit;
+  SignalBroadcaster<Device::ScreenChangeData const&> onScreenChange;
 
-  inline
-  CallbackObject::List& GetCallbacks(Device::Event e)
-  {
-    return callbacks[static_cast<int>(e)];
-  }
+  bool  isQuitRequested;
+  bool  isPauseRequested;
+  bool  isYielding;
+
+  JSON::Entity* config;
+
+  SDL_Window* mainWindow;
+  uint32_t  windowWidth;
+  uint32_t  windowHeight;
+  Gfx::Context* gfxContext;
 } s_deviceImpl;
 
 }
@@ -74,18 +59,18 @@ static int  FilterEvents(void* /*userData*/, SDL_Event* event)
   {
   case  SDL_APP_WILLENTERBACKGROUND:
     s_deviceImpl.isPauseRequested = true;
-    CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Pause), nullptr);
+    s_deviceImpl.onPause.Broadcast();
     break;
 
   case  SDL_APP_DIDENTERFOREGROUND:
     s_deviceImpl.isPauseRequested = false;
-    CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Resume), nullptr);
+    s_deviceImpl.onResume.Broadcast();
     break;
 
   case  SDL_APP_TERMINATING:
     XR_ASSERT(FilterEvents, s_deviceImpl.isQuitRequested != true);
     s_deviceImpl.isQuitRequested = true;
-    CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Quit), nullptr);
+    s_deviceImpl.onQuit.Broadcast();
     break;
 
   default:
@@ -248,86 +233,27 @@ int Device::GetConfigInt(const char* groupName, const char* varName, int default
 }
 
 //==============================================================================
-bool Device::RegisterCallback( Event ev, Callback callback, void* userData )
+Signal<void>& Device::SuspendSignal()
 {
-  XR_ASSERT(Device, ev != Event::kCount);
-  XR_ASSERT(Device, callback != nullptr);
-  // check if already added
-  const int iEv = static_cast<int>(ev);
-  for (CallbackObject::List::iterator i0(s_deviceImpl.callbacks[iEv].begin()),
-    i1(s_deviceImpl.callbacks[iEv].end()); i0 != i1; ++i0)
-  {
-    if (i0->callback == callback)
-    {
-      return false;
-    }
-  }
-
-  if(s_deviceImpl.isYielding)
-  {
-    // check for a postponed add as well
-    for(CallbackObject::List::iterator i0(s_deviceImpl.postponedAdd[iEv].begin()),
-      i1(s_deviceImpl.postponedAdd[iEv].end()); i0 != i1; ++i0)
-    {
-      if(i0->callback == callback)
-      {
-        return false;
-      }
-    }
-
-    s_deviceImpl.postponedAdd[iEv].push_back(CallbackObject(callback, userData));
-  }
-  else
-  {
-    s_deviceImpl.callbacks[iEv].push_back(CallbackObject(callback, userData));
-  }
-  return true;
+  return s_deviceImpl.onPause;
 }
 
 //==============================================================================
-bool Device::UnregisterCallback( Event ev, Callback callback )
+Signal<void>& Device::ResumeSignal()
 {
-  XR_ASSERT(Device, ev != Event::kCount);
-  XR_ASSERT(Device, callback != nullptr);
-  const int iEv = static_cast<int>(ev);
-  if(s_deviceImpl.isYielding)
-  {
-    // if got it, add to remove list
-    for(CallbackObject::List::iterator i0(s_deviceImpl.callbacks[iEv].begin()),
-      i1(s_deviceImpl.callbacks[iEv].end()); i0 != i1; ++i0)
-    {
-      if(i0->callback == callback)
-      {
-        s_deviceImpl.postponedRemove[iEv].push_back(*i0);
-        return true;
-      }
-    }
+  return s_deviceImpl.onResume;
+}
 
-    // if on postponed add list, remove it
-    for(CallbackObject::List::iterator i0(s_deviceImpl.postponedAdd[iEv].begin()),
-      i1(s_deviceImpl.postponedAdd[iEv].end()); i0 != i1; ++i0)
-    {
-      if(i0->callback == callback)
-      {
-        i0 = s_deviceImpl.postponedAdd[iEv].erase(i0);
-        return true;
-      }
-    }
-  }
-  else
-  {
-    // if got it, remove
-    for(CallbackObject::List::iterator i0(s_deviceImpl.callbacks[iEv].begin()),
-      i1(s_deviceImpl.callbacks[iEv].end()); i0 != i1; ++i0)
-    {
-      if(i0->callback == callback)
-      {
-        s_deviceImpl.callbacks[iEv].erase(i0);
-        return true;
-      }
-    }
-  }
-  return false;
+//==============================================================================
+Signal<void>& Device::QuitSignal()
+{
+  return s_deviceImpl.onQuit;
+}
+
+//==============================================================================
+Signal<void, Device::ScreenChangeData const&>& Device::ScreenChangeSignal()
+{
+  return s_deviceImpl.onScreenChange;
 }
 
 //==============================================================================
@@ -344,7 +270,7 @@ void  Device::YieldOS(int32_t ms)
       if (!s_deviceImpl.isQuitRequested)
       {
         s_deviceImpl.isQuitRequested = true;
-        CallbackObject::CallList(s_deviceImpl.GetCallbacks(Device::Event::Quit), nullptr);
+        s_deviceImpl.onQuit.Broadcast();
       }
       break;
 
@@ -368,7 +294,11 @@ void  Device::YieldOS(int32_t ms)
         break;
 
       case  SDL_WINDOWEVENT_RESIZED:
-        ScreenChangeEventHandler(s_deviceImpl.GetCallbacks(Event::ScreenChange), &e);
+        s_deviceImpl.onScreenChange.Broadcast(Device::ScreenChangeData{
+          false,
+          uint32_t(e.window.data1),
+          uint32_t(e.window.data2)
+        });
         break;
       }
       break;
@@ -411,7 +341,7 @@ void  Device::YieldOS(int32_t ms)
         int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
         int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
 
-        Input::TouchActionEvent  eTouch =
+        Input::TouchActionData  eTouch =
         {
           // NOTE: keep an eye on these guys; the exact range of their possible values isn't clear.
           static_cast<uint32_t>(e.tfinger.touchId),
@@ -420,7 +350,7 @@ void  Device::YieldOS(int32_t ms)
           y,
           e.tfinger.type == SDL_FINGERDOWN
         };
-        CallbackObject::CallList(InputImpl::s_instance->GetCallbacks(Input::Event::TouchAction), &eTouch);
+        InputImpl::s_instance->onTouchAction.Broadcast(eTouch);
       }
       break;
     }
@@ -431,7 +361,7 @@ void  Device::YieldOS(int32_t ms)
         int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
         int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
 
-        Input::TouchMotionEvent eTouch =
+        Input::TouchMotionData eTouch =
         {
           // NOTE: keep an eye on these guys; the exact range of their possible values isn't clear.
           static_cast<uint32_t>(e.tfinger.touchId),
@@ -439,7 +369,8 @@ void  Device::YieldOS(int32_t ms)
           x,
           y
         };
-        CallbackObject::CallList(InputImpl::s_instance->GetCallbacks(Input::Event::TouchMotion), &eTouch);
+
+        InputImpl::s_instance->onTouchMotion.Broadcast(eTouch);
       }
       break;
 
@@ -494,27 +425,6 @@ void  Device::YieldOS(int32_t ms)
     }
   }
   s_deviceImpl.isYielding = false;
-
-  for(int i = 0; i < static_cast<int>(Event::kCount); ++i)
-  {
-    Event e(static_cast<Event>(i));
-    CallbackObject::List& lRemove = s_deviceImpl.postponedRemove[i];
-    while(!lRemove.empty())
-    {
-      XR_DEBUG_ONLY(bool result =) UnregisterCallback(e, lRemove.front().callback);
-      XR_ASSERT(Device, result);
-      lRemove.pop_front();
-    }
-
-    CallbackObject::List& lAdd = s_deviceImpl.postponedAdd[i];
-    while(!lAdd.empty())
-    {
-      CallbackObject& cbo = lAdd.front();
-      XR_DEBUG_ONLY(bool result =) RegisterCallback(e, cbo.callback, cbo.userData);
-      XR_ASSERT(Device, result);
-      lAdd.pop_front();
-    }
-  }
 }
 
 //==============================================================================

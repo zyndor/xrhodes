@@ -30,7 +30,7 @@ int32_t UIVerticalSlider::CalculateRange() const
 }
 
 //==============================================================================
-bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
+bool UIVerticalSlider::OnMouseAction(const Input::MouseActionData& e )
 {
   const int32_t kRight = CalculateRight();
   const int32_t kBottom = CalculateBottom();
@@ -73,7 +73,7 @@ bool UIVerticalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 }
 
 //==============================================================================
-bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionEvent& e )
+bool UIVerticalSlider::OnMouseMotion(const Input::MouseMotionData& e )
 {
   if (m_isTouched)
   {

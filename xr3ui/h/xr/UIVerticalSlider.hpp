@@ -25,8 +25,8 @@ public:
   // general use
   int32_t CalculateRange() const override;
 
-  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
-  bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
+  bool  OnMouseAction(const Input::MouseActionData& e) override;
+  bool  OnMouseMotion(const Input::MouseMotionData& e) override;
 
   void  Render(IUIRenderer& renderer) const override;
 };

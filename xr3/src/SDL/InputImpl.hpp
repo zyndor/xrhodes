@@ -11,6 +11,7 @@
 //==============================================================================
 #include "GameController.hpp"
 #include "xr/Input.hpp"
+#include "xr/SignalBroadcaster.hpp"
 #include "SDL_events.h"
 
 namespace xr {
@@ -37,41 +38,46 @@ struct  InputImpl
   SVector2  mousePosition;
   ButtonState::Type mouseButtonStates[MouseButton::kCount];
 
-  CallbackObject::List  callbacks[static_cast<int>(Input::Event::kCount)];
+  SignalBroadcaster<Input::KeyData const&>  onKey;
+  SignalBroadcaster<Input::MouseActionData const&>  onMouseAction;
+  SignalBroadcaster<Input::MouseMotionData const&>  onMouseMotion;
+  SignalBroadcaster<Input::TouchActionData const&>  onTouchAction;
+  SignalBroadcaster<Input::TouchMotionData const&>  onTouchMotion;
+  SignalBroadcaster<Input::JoyDeviceData const&>  onJoyAdded;
+  SignalBroadcaster<Input::JoyDeviceData const&>  onJoyRemoved;
+  SignalBroadcaster<Input::JoyAxisMotionData const&>  onJoyAxis;
+  SignalBroadcaster<Input::JoyButtonPressData const&>  onJoyButton;
+  SignalBroadcaster<Input::JoyHatMotionData const&>  onJoyHat;
+  SignalBroadcaster<Input::JoyBallMotionData const&>  onJoyBall;
 
   GameController controllers[kMaxControllers];
 
   // general
-  inline
-  CallbackObject::List& GetCallbacks(Input::Event ev)
-  {
-    return callbacks[static_cast<int>(ev)];
-  }
 
   void OnKeyEvent(SDL_KeyboardEvent const& e)
   {
-    Input::KeyEvent xe{ TranslateKeyCodeNative(e.keysym.scancode),
+    Input::KeyData xe{ TranslateKeyCodeNative(e.keysym.scancode),
       e.state == SDL_PRESSED };
     ButtonState::SetAbsolute(xe.isPressed, keyStates[xe.key]);
-    CallbackObject::CallList(GetCallbacks(Input::Event::Key), &xe);
-  }
-
-  void OnMouseMotion(SDL_MouseMotionEvent const& e)
-  {
-    Input::MouseMotionEvent xe{ e.which, e.x, e.y };
-    mousePosition.x = xe.x;
-    mousePosition.y = xe.y;
-    CallbackObject::CallList(GetCallbacks(Input::Event::MouseMotion), &xe);
+    onKey.Broadcast(xe);
   }
 
   void OnMouseAction(SDL_MouseButtonEvent const& e)
   {
-    Input::MouseActionEvent xe{ e.which, MouseButton::TranslateNative(e.button),
+    Input::MouseActionData xe{ e.which, MouseButton::TranslateNative(e.button),
       e.x, e.y, e.state == SDL_PRESSED };
     ButtonState::SetAbsolute(xe.isPressed, mouseButtonStates[xe.button]);
     mousePosition.x = xe.x;
     mousePosition.y = xe.y;
-    CallbackObject::CallList(GetCallbacks(Input::Event::MouseAction), &xe);
+    onMouseAction.Broadcast(xe);
+  }
+
+  void OnMouseMotion(SDL_MouseMotionEvent const& e)
+  {
+    Input::MouseMotionData xe{ e.which, e.x, e.y };
+    mousePosition.x = xe.x;
+    mousePosition.y = xe.y;
+    onMouseMotion.Broadcast(xe);
   }
 
   void OnMouseWheel(SDL_MouseWheelEvent const& e)
@@ -81,11 +87,11 @@ struct  InputImpl
     // information. Here we translate them to a button event and use the last
     // known mouse position.
     int index = (1 - e.y) / 2 + 2 * e.x * e.x + (e.x + 1) / 2;
-    Input::MouseActionEvent xe{ e.which,
+    Input::MouseActionData xe{ e.which,
       static_cast<MouseButton::Type>(MouseButton::WheelUp + index),
       mousePosition.x, mousePosition.y, true };
     ButtonState::SetAbsolute(xe.isPressed, mouseButtonStates[xe.button]);
-    CallbackObject::CallList(GetCallbacks(Input::Event::MouseAction), &xe);
+    onMouseAction.Broadcast(xe);
   }
 
   void OpenController(int32_t id)
@@ -106,8 +112,8 @@ struct  InputImpl
         ++m_lastInstIndex;
       }
 
-      Input::JoyDeviceEvent xe = { static_cast<uint32_t>(id), controllers[id].GetName() };
-      CallbackObject::CallList(GetCallbacks(Input::Event::JoyAdded), &xe);
+      Input::JoyDeviceData xe = { static_cast<uint32_t>(id), controllers[id].GetName() };
+      onJoyAdded.Broadcast(xe);
     }
     else
     {
@@ -129,42 +135,42 @@ struct  InputImpl
 
   void OnJoyAxis(SDL_JoyAxisEvent const& e)
   {
-    Input::JoyAxisEvent xe = { static_cast<uint32_t>(e.which), e.axis,
+    Input::JoyAxisMotionData xe = { static_cast<uint32_t>(e.which), e.axis,
       GameController::Normalize(e.value) };
     GetController(e.which)->GetAxis(e.axis) = xe.value;
-    CallbackObject::CallList(GetCallbacks(Input::Event::JoyAxisMotion), &xe);
+    onJoyAxis.Broadcast(xe);
   }
 
   void OnJoyButton(SDL_JoyButtonEvent const& e)
   {
-    Input::JoyButtonEvent xe = { static_cast<uint32_t>(e.which), e.button,
+    Input::JoyButtonPressData xe = { static_cast<uint32_t>(e.which), e.button,
       e.state == SDL_PRESSED };
     ButtonState::SetAbsolute(xe.isPressed, GetController(e.which)->GetButton(e.button));
-    CallbackObject::CallList(GetCallbacks(Input::Event::JoyButton), &xe);
+    onJoyButton.Broadcast(xe);
   }
 
   void OnJoyHat(SDL_JoyHatEvent const& e)
   {
-    Input::JoyHatEvent xe = { static_cast<uint32_t>(e.which), e.hat,
+    Input::JoyHatMotionData xe = { static_cast<uint32_t>(e.which), e.hat,
       TranslateHat(e.value) };
     GetController(e.which)->GetHat(e.hat) = xe.state << HatState::kShift;
-    CallbackObject::CallList(GetCallbacks(Input::Event::JoyHat), &xe);
+    onJoyHat.Broadcast(xe);
   }
 
   void OnJoyBall(SDL_JoyBallEvent const& e)
   {
-    Input::JoyBallEvent xe = { static_cast<uint32_t>(e.which), e.ball,
+    Input::JoyBallMotionData xe = { static_cast<uint32_t>(e.which), e.ball,
       { GameController::Normalize(e.xrel),
         GameController::Normalize(e.yrel) }};
     GetController(e.which)->GetBall(e.ball) += xe.value;
-    CallbackObject::CallList(GetCallbacks(Input::Event::JoyBallMotion), &xe);
+    onJoyBall.Broadcast(xe);
   }
 
   void CloseController(int32_t id)
   {
     XR_ASSERT(Input, id >= 0 && id < kMaxControllers);
-    Input::JoyDeviceEvent xe = { static_cast<uint32_t>(id), controllers[id].GetName() };
-    CallbackObject::CallList(GetCallbacks(Input::Event::JoyRemoved), &xe);
+    Input::JoyDeviceData xe = { static_cast<uint32_t>(id), controllers[id].GetName() };
+    onJoyRemoved.Broadcast(xe);
 
     auto iFind = std::lower_bound(m_controllerInstMap, m_lastInstIndex, InstPtr{
       static_cast<uint32_t>(id), nullptr });

@@ -346,10 +346,10 @@ void Transforms::Init()
   XR_ASSERTMSG(Transforms, !s_impl, ("Already initialised!"));
   s_impl = new TransformsImpl();
 
-  Gfx::RegisterShutdownCallback([](void*, void*) {
+  Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
     delete s_impl;
     s_impl = nullptr;
-  }, nullptr);
+  }, nullptr));
 
   Updater().SetModel(Matrix::Identity()).
     SetViewerTransform(Matrix::Identity()).

@@ -42,7 +42,7 @@ public:
   void          SetGroup(const char* groupName);
   void          SetGroup(uint32_t groupHash);
 
-  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
+  bool  OnMouseAction(const Input::MouseActionData& e) override;
 
   void  OnSelectedStateChanged() override;
 

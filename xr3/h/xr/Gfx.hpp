@@ -15,6 +15,7 @@
 #include "xr/Callback.hpp"
 #include "xr/Buffer.hpp"
 #include "xr/Primitive.hpp"
+#include "xr/Signal.hpp"
 #include "xr/debug.hpp"
 
 namespace xr
@@ -581,11 +582,11 @@ void Flush();
 /// buffers.
 void Present(bool resetState = true);
 
-///@brief Registers a function to be called upon Flush().
-void RegisterFlushCallback(Callback fn, void* userData);
+///@return A signal which is emitted upon Flush().
+Signal<void>& FlushSignal();
 
-///@brief Registers a function to be called upon Shutdown().
-void RegisterShutdownCallback(Callback fn, void* userData);
+///@brief A signal which is emitted upon Shutdown().
+Signal<void>& ShutdownSignal();
 
 ///@brief shuts down the renderer.
 void Shutdown();

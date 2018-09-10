@@ -37,7 +37,7 @@ void UIButton::SetPressed( bool isIt )
 }
 
 //==============================================================================
-bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
+bool  UIButton::OnMouseAction(const Input::MouseActionData& e )
 {
   const int kRight = CalculateRight();
   const int kBottom = CalculateBottom();
@@ -86,7 +86,7 @@ bool  UIButton::OnMouseAction(const Input::MouseActionEvent& e )
 }
 
 //==============================================================================
-bool  UIButton::OnMouseMotion(const Input::MouseMotionEvent& e )
+bool  UIButton::OnMouseMotion(const Input::MouseMotionData& e )
 {
   if (IsEnabled() && IsPressed() &&
     (e.x < x || e.x >= (x + w) ||

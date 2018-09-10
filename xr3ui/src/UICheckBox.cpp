@@ -26,7 +26,7 @@ void UICheckBox::SetSelected( bool isIt )
 }
 
 //==============================================================================
-bool  UICheckBox::OnMouseAction(const Input::MouseActionEvent& e )
+bool  UICheckBox::OnMouseAction(const Input::MouseActionData& e )
 {
   const int kRight(CalculateRight());
   const int kBottom(CalculateBottom());

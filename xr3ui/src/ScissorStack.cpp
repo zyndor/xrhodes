@@ -72,10 +72,10 @@ void ScissorStack::Init()
 {
   XR_ASSERTMSG(ScissorStack, !s_impl, ("Already initialized."));
   s_impl = new Impl();
-  Gfx::RegisterShutdownCallback([](void*, void*) {
+  Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
     delete s_impl;
     s_impl = nullptr;
-  }, nullptr);
+  }, nullptr));
 }
 
 //==============================================================================

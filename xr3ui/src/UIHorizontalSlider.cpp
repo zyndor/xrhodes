@@ -30,7 +30,7 @@ int32_t UIHorizontalSlider::CalculateRange() const
 }
 
 //==============================================================================
-bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
+bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionData& e )
 {
   const int32_t kRight = CalculateRight();
   const int32_t kBottom = CalculateBottom();
@@ -73,7 +73,7 @@ bool UIHorizontalSlider::OnMouseAction(const Input::MouseActionEvent& e )
 }
 
 //==============================================================================
-bool UIHorizontalSlider::OnMouseMotion(const Input::MouseMotionEvent& e)
+bool UIHorizontalSlider::OnMouseMotion(const Input::MouseMotionData& e)
 {
   if (m_isTouched)
   {

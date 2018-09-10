@@ -12,6 +12,7 @@
 #include "json.hpp"
 #include "xr/Callback.hpp"
 #include "xr/ParserCore.hpp"
+#include <memory>
 
 namespace xr
 {
@@ -39,7 +40,8 @@ public:
     size_t      length;
   };
 
-  typedef void(*Callback)(Event e, const String* data, void* userData);
+  using EntityCallback = Callback<void, Event, const String*>;
+  using AtMaxDepthCallback = Callback<void, bool>;
 
   // structors
   explicit Parser(int maxDepth = kMaxParseDepthDefault);
@@ -50,43 +52,41 @@ public:
   /// The parser stops raising entity events past the max depth until the
   /// depth is back below the limit. The system parameter of the callback is
   /// a pointer to a boolean to indicate whether the max depth was exceeded.
-  void SetMaxDepthReachedCallback(xr::Callback onmaxDepthReachedcb, void* userData);
+  void SetAtMaxDepthCallback(AtMaxDepthCallback const& onMaxDepthReachedcb);
 
   ///@return The internal state.
   const ParserCore& GetState() const;
 
   ///@brief Parses the string in @a parBuffer,
-  bool  Parse(const char* string, size_t size, Callback callback, void* userData);
+  bool  Parse(const char* string, size_t size, EntityCallback const& handler);
 
 private:
   // data
-  ParserCore    m_state;
-  int           m_depth;
-  int           m_maxDepth;
-  Callback      m_callback;
-  void*         m_callbackUser; // no ownership
-  xr::Callback  m_onMaxDepthReached;
-  void*         m_onMaxDepthReachedData; // no ownership
+  ParserCore m_state;
+  int m_depth;
+  int m_maxDepth;
+
+  std::unique_ptr<EntityCallback> m_handler;
+  std::unique_ptr<AtMaxDepthCallback> m_onAtMaxDepth;
 
   // internal
-  bool  _ParseArray();
-  bool  _ParseObject();
-  bool  _ParseValue();
-  void  _DoCallback(Event e, const String* data);
+  bool  ParseArray();
+  bool  ParseObject();
+  bool  ParseValue();
+  void  OnEntity(Event e, const String* data);
 
-  void  _IncreaseDepth();
-  void  _DecreaseDepth();
-  void  _DoDepthCallback(bool exceeded);
+  void  IncreaseDepth();
+  void  DecreaseDepth();
+  void  DoAtMaxDepth(bool exceeded);
 };
 
 //==============================================================================
 // implementation
 //==============================================================================
 inline
-void Parser::SetMaxDepthReachedCallback(xr::Callback onMaxDepthReached, void * userData)
+void Parser::SetAtMaxDepthCallback(AtMaxDepthCallback const& onMaxDepthReached)
 {
-  m_onMaxDepthReached = onMaxDepthReached;
-  m_onMaxDepthReachedData = userData;
+  m_onAtMaxDepth.reset(static_cast<AtMaxDepthCallback*>(onMaxDepthReached.Clone()));
 }
 
 //==============================================================================

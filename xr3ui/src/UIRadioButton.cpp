@@ -83,7 +83,7 @@ void UIRadioButton::SetGroup(uint32_t groupHash)
 }
 
 //==============================================================================
-bool  UIRadioButton::OnMouseAction(const Input::MouseActionEvent& e )
+bool  UIRadioButton::OnMouseAction(const Input::MouseActionData& e )
 {
   const int kRight(CalculateRight());
   const int kBottom(CalculateBottom());

@@ -30,13 +30,13 @@ UIElement::~UIElement()
 {}
 
 //==============================================================================
-bool UIElement::OnMouseAction(const Input::MouseActionEvent& e)
+bool UIElement::OnMouseAction(const Input::MouseActionData& e)
 {
   return false;
 }
 
 //==============================================================================
-bool UIElement::OnMouseMotion(const Input::MouseMotionEvent& e)
+bool UIElement::OnMouseMotion(const Input::MouseMotionData& e)
 {
   return false;
 }

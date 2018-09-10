@@ -11,7 +11,6 @@
 
 namespace xr
 {
-
 namespace DebugDraw
 {
 
@@ -59,10 +58,10 @@ void EnsureUniformExists()
   if(!s_uColor.IsValid())
   {
     s_uColor = Gfx::CreateUniform("xruColor", Gfx::UniformType::Vec4);
-    Gfx::RegisterShutdownCallback([](void*, void*) {
+    Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
       Gfx::Release(s_uColor);
       s_uColor.Invalidate();
-    }, nullptr);
+    }, nullptr));
   }
 }
 
@@ -88,9 +87,9 @@ void SetMaterial(Material::Ptr material)
 
       s_material->SetShader(shader);
 
-      Gfx::RegisterShutdownCallback([](void*, void*){
+      Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
         s_material.Reset(nullptr);
-      }, nullptr);
+      }, nullptr));
     }
 
     material = s_material;

@@ -11,6 +11,7 @@
 #include "xr/Matrix.hpp"
 #include "xr/Device.hpp"
 #include "xr/SVector2.hpp"
+#include "xr/SignalBroadcaster.hpp"
 #include "xr/Pool.hpp"
 #include "xr/Hash.hpp"
 #include "gl_core_4_5.h"
@@ -602,6 +603,9 @@ struct Impl
     }
   }
 
+  SignalBroadcaster<> onFlush;
+  SignalBroadcaster<> onShutdown;
+
   Impl(Context* context)
   : m_context(context)
   {
@@ -673,10 +677,7 @@ struct Impl
   ~Impl()
   {
     XR_TRACE(Gfx, ("Gfx shutting down."));
-    for (auto& cb: m_onExit)
-    {
-      cb.Call(nullptr);
-    }
+    onShutdown.Broadcast();
 
     if (m_vao != 0)
     {
@@ -1677,26 +1678,13 @@ struct Impl
   {
     XR_GL_CALL(glFlush());
 
-    for (auto& cb : m_onFlush)
-    {
-      cb.Call(nullptr);
-    }
+    onFlush.Broadcast();
   }
 
   void Present(bool resetState)
   {
     Flush();
     m_context->Swap();
-  }
-
-  void RegisterFlushCallback(Callback fn, void* userData)
-  {
-    m_onFlush.push_back({ fn, userData });
-  }
-
-  void RegisterShutdownCallback(Callback fn, void* userData)
-  {
-    m_onExit.push_back({ fn, userData });
   }
 
 private:
@@ -1730,9 +1718,6 @@ private:
   TextureHandle m_activeTextures[kMaxTextureStages];  // no ownership
   ProgramHandle m_activeProgram;  // no ownership
   FrameBufferHandle m_activeFrameBuffer;  // no ownership
-
-  std::vector<CallbackObject> m_onFlush;
-  std::vector<CallbackObject> m_onExit;
 
   // internal
   VertexBufferHandle CreateVertexBufferInternal(VertexFormatHandle hFormat, Buffer const& buffer, FlagType flags)
@@ -2139,15 +2124,15 @@ void Present(bool resetState)
 }
 
 //==============================================================================
-void RegisterFlushCallback(Callback fn, void* userData)
+Signal<void>& FlushSignal()
 {
-  s_impl->RegisterFlushCallback(fn, userData);
+  return s_impl->onFlush;
 }
 
 //==============================================================================
-void RegisterShutdownCallback(Callback fn, void* userData)
+Signal<void>& ShutdownSignal()
 {
-  s_impl->RegisterShutdownCallback(fn, userData);
+  return s_impl->onShutdown;
 }
 
 }
