@@ -16,6 +16,7 @@ namespace xr
 {
 
 //==============================================================================
+///@brief Signed short integer vector type.
 class SVector2
 {
 public:
@@ -51,19 +52,19 @@ public:
   {}
 
   // general
-  int16_t Magnitude() const
+  float Magnitude() const
   {
-    return int16_t(std::ceil(std::sqrt(Dot())));
+    return std::sqrt(Dot());
   }
 
-  int16_t Dot() const
+  float Dot() const
   {
     return Dot(*this);
   }
 
-  int16_t Dot(const SVector2& rhs) const
+  float Dot(const SVector2& rhs) const
   {
-    return x * rhs.x + y * rhs.y;
+    return static_cast<float>(x * rhs.x + y * rhs.y);
   }
 
   // operators

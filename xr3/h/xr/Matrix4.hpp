@@ -17,7 +17,7 @@ namespace xr
 
 //==============================================================================
 ///@brief 4x4 matrix class intended to facilitate the managing of projection
-/// transforms. Inherently free from any notation of colum / row major ordering.
+/// transforms.
 class Matrix4
 {
 public:
@@ -27,23 +27,32 @@ public:
   // data
   float data[kNumElems];
 
-  ///@brief Multiplies @a m0 by this and stores the result in @a result.
-  /// This means post-multiplication (M0 * this) for column-major matrices and
-  /// pre-multiplication (this * M0) for row-major matrices.
-  ///@note @a result must not be this.
-  void  Multiply(Matrix4 const& m0, Matrix4& result) const
+  ///@brief Multiplies this and @a m, and stores the result in @a result.
+  /// This means post-multiplication (m * this) for column-major matrices and
+  /// pre-multiplication (this * m) for row-major matrices.
+  ///@note @a result must not alias this.
+  void  Transform(Matrix4 const& m, Matrix4& result) const
   {
     for (int i = 0; i < 4; ++i)
     {
       int iTraverse = i * 4;
       for (int j = 0; j < 4; ++j)
       {
-        result.data[iTraverse + j] = m0.data[j] * data[iTraverse] +
-          m0.data[j + 4] * data[iTraverse + 1] +
-          m0.data[j + 8] * data[iTraverse + 2] +
-          m0.data[j + 12] * data[iTraverse + 3];
+        result.data[iTraverse + j] = m.data[j] * data[iTraverse] +
+          m.data[j + 4] * data[iTraverse + 1] +
+          m.data[j + 8] * data[iTraverse + 2] +
+          m.data[j + 12] * data[iTraverse + 3];
       }
     }
+  }
+
+  ///@brief Multiplies this and @a m, and overwrites this with the result.
+  /// This means post-multiplication (m * this) for column-major matrices and
+  /// pre-multiplication (this * m) for row-major matrices.
+  void  Transform(Matrix4 const& m)
+  {
+    Matrix4 temp(*this);
+    temp.Transform(m, *this);
   }
 
   ///@brief Sets @matrix as an identity matrix with the given @a value along
@@ -81,7 +90,7 @@ public:
     *writep = value;
   }
 
-  ///@brief Calculates the transpose of this matrix.
+  ///@brief Changes this matrix to its transpose.
   void Transpose()
   {
     std::swap(data[1], data[4]);
@@ -92,13 +101,24 @@ public:
     std::swap(data[11], data[14]);
   }
 
-  ///@brief Gets the translation part of this matrix.
+  ///@brief Gets the translation part of this matrix, assuming it to be in
+  /// column-major order.
   Vector3 GetTranslation() const
   {
     return Vector3(data[12], data[13], data[14]);
   }
 
-  ///@brief Writes data from the matrix @a m into the this.
+  ///@brief Sets the translation part of this matrix, assuming it to be column-major
+  /// order.
+  void SetTranslation(Vector3 const& t)
+  {
+    data[12] = t.x;
+    data[13] = t.y;
+    data[14] = t.z;
+  }
+
+  ///@brief Writes data from the matrix @a m into this, in colum-major order.
+  ///@note Refer to Matrix's documentation for its ordering.
   void Import(Matrix const& m)
   {
     data[0] = m.xx;
@@ -119,7 +139,9 @@ public:
     data[15] = 1.0f;
   }
 
-  ///@brief Copies data from this, into the given Matrix @a m.
+  ///@brief Copies data from this, assuming it to be column-major order, into
+  /// the given Matrix @a m.
+  ///@note Refer to Matrix's documentation for its ordering.
   void Export(Matrix& m) const
   {
     m.xx = data[0];
