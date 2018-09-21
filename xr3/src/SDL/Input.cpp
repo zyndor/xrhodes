@@ -128,38 +128,69 @@ Vector2 Input::GetJoyBall(uint32_t device, uint32_t ball)
 }
 
 //==============================================================================
-bool Input::RegisterCallback(Event ev, Callback callback, void* userData)
+Signal<void, Input::KeyData const&>& Input::KeySignal()
 {
-  XR_ASSERT(Input, ev != Event::kCount);
-  XR_ASSERT(Input, callback != nullptr);
-  auto& cbs = InputImpl::s_instance->GetCallbacks(ev);
-  for (auto& i: cbs)
-  {
-    if (i.callback == callback)
-    {
-      return false;
-    }
-  }
-
-  cbs.push_back(CallbackObject(callback, userData));
-  return true;
+  return InputImpl::s_instance->onKey;
 }
 
 //==============================================================================
-bool Input::UnregisterCallback(Event ev, Callback callback)
+Signal<void, Input::MouseActionData const&>& Input::MouseActionSignal()
 {
-  XR_ASSERT(Input, ev != Event::kCount);
-  XR_ASSERT(Input, callback != nullptr);
-  auto& cbs = InputImpl::s_instance->GetCallbacks(ev);
-  for (auto i0 = cbs.begin(), i1 = cbs.end(); i0 != i1; ++i0)
-  {
-    if (i0->callback == callback)
-    {
-      cbs.erase(i0);
-      return true;
-    }
-  }
-  return false;
+  return InputImpl::s_instance->onMouseAction;
+}
+
+//==============================================================================
+Signal<void, Input::MouseMotionData const&>& Input::MouseMotionSignal()
+{
+  return InputImpl::s_instance->onMouseMotion;
+}
+
+//==============================================================================
+Signal<void, Input::TouchActionData const&>& Input::TouchActionSignal()
+{
+  return InputImpl::s_instance->onTouchAction;
+}
+
+//==============================================================================
+Signal<void, Input::TouchMotionData const&>& Input::TouchMotionSignal()
+{
+  return InputImpl::s_instance->onTouchMotion;
+}
+
+//==============================================================================
+Signal<void, Input::JoyDeviceData const&>& Input::JoyAddedSignal()
+{
+  return InputImpl::s_instance->onJoyAdded;
+}
+
+//==============================================================================
+Signal<void, Input::JoyDeviceData const&>& Input::JoyRemovedSignal()
+{
+  return InputImpl::s_instance->onJoyRemoved;
+}
+
+//==============================================================================
+Signal<void, Input::JoyAxisMotionData const&>& Input::JoyAxisSignal()
+{
+  return InputImpl::s_instance->onJoyAxis;
+}
+
+//==============================================================================
+Signal<void, Input::JoyButtonPressData const&>& Input::JoyButtonSignal()
+{
+  return InputImpl::s_instance->onJoyButton;
+}
+
+//==============================================================================
+Signal<void, Input::JoyHatMotionData const&>& Input::JoyHatSignal()
+{
+  return InputImpl::s_instance->onJoyHat;
+}
+
+//==============================================================================
+Signal<void, Input::JoyBallMotionData const&>& Input::JoyBallSignal()
+{
+  return InputImpl::s_instance->onJoyBall;
 }
 
 //==============================================================================

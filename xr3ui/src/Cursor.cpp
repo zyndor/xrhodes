@@ -12,40 +12,6 @@ namespace xr
 {
 
 //==============================================================================
-void  Cursor::OnMotion(void* systemData, void* userData)
-{
-  auto  pEvent = static_cast<Input::MouseMotionEvent*>(systemData);
-
-  Cursor* pCursor = static_cast<Cursor*>(userData);
-  int xDelta(abs(pEvent->x - pCursor->m_image.x));
-  int yDelta(abs(pEvent->y - pCursor->m_image.y));
-  xDelta *= xDelta;
-  yDelta *= yDelta;
-  xDelta += yDelta;
-  xDelta = static_cast<int32_t>(sqrtf(static_cast<float>(xDelta)));
-  int hScr = Gfx::GetLogicalHeight();
-  if(xDelta >= hScr * pCursor->m_moveTreshold ||
-    (pCursor->m_timer > 0 && xDelta >= hScr * pCursor->m_keepAliveTreshold))
-  {
-    pCursor->Wake();
-  }
-  pCursor->SetPosition(pEvent->x, pEvent->y);
-}
-
-//==============================================================================
-void  Cursor::OnAction(void* systemData, void* userData)
-{
-  auto pEvent = static_cast<Input::MouseActionEvent*>(systemData);
-
-  Cursor* pCursor = static_cast<Cursor*>(userData);
-  pCursor->m_isPressed = pEvent->isPressed;
-  if(pEvent->isPressed)
-  {
-    pCursor->Wake();
-  }
-}
-
-//==============================================================================
 Cursor::Cursor()
 : m_isEnabled(false),
   m_image(),
@@ -86,13 +52,13 @@ void  Cursor::SetEnabled(bool state)
   m_isEnabled = state;
   if(state)
   {
-    Input::RegisterCallback(Input::Event::MouseMotion, OnMotion, this);
-    Input::RegisterCallback(Input::Event::MouseAction, OnAction, this);
+    Input::MouseMotionSignal().Connect(MakeCallback(*this, &Cursor::OnMotion));
+    Input::MouseActionSignal().Connect(MakeCallback(*this, &Cursor::OnAction));
   }
   else
   {
-    Input::UnregisterCallback(Input::Event::MouseMotion, OnMotion);
-    Input::UnregisterCallback(Input::Event::MouseAction, OnAction);
+    Input::MouseMotionSignal().Disconnect(MakeCallback(*this, &Cursor::OnMotion));
+    Input::MouseActionSignal().Disconnect(MakeCallback(*this, &Cursor::OnAction));
     m_isPressed = false;
   }
 }
@@ -129,6 +95,34 @@ void  Cursor::Render(IUIRenderer& r)
   if(m_isEnabled)
   {
     m_image.Render(r);
+  }
+}
+
+//==============================================================================
+void  Cursor::OnMotion(Input::MouseMotionData const& e)
+{
+  int xDelta(abs(e.x - m_image.x));
+  int yDelta(abs(e.y - m_image.y));
+  xDelta *= xDelta;
+  yDelta *= yDelta;
+  xDelta += yDelta;
+  xDelta = static_cast<int32_t>(sqrtf(static_cast<float>(xDelta)));
+  int hScr = Gfx::GetLogicalHeight();
+  if (xDelta >= hScr * m_moveTreshold ||
+    (m_timer > 0 && xDelta >= hScr * m_keepAliveTreshold))
+  {
+    Wake();
+  }
+  SetPosition(e.x, e.y);
+}
+
+//==============================================================================
+void  Cursor::OnAction(Input::MouseActionData const& e)
+{
+  m_isPressed = e.isPressed;
+  if (e.isPressed)
+  {
+    Wake();
   }
 }
 

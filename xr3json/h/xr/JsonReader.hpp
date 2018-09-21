@@ -41,10 +41,6 @@ protected:
   // types
   typedef std::vector<Entity*>  EntityVector;
 
-  // static
-  static void OnParserEvent(Parser::Event e, const Parser::String* string,
-                void* userData);
-
   // data
   Parser          m_parser;
   Parser::String  m_key;
@@ -52,7 +48,7 @@ protected:
   Entity*         m_root;
 
   // internal
-  void  _HandleEvent(Parser::Event e, const Parser::String* string);
+  void  OnEntity(Parser::Event e, const Parser::String* string);
 };
 
 //==============================================================================

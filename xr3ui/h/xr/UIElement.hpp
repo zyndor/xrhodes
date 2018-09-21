@@ -116,11 +116,11 @@ public:
 
   ///@brief Handles a MOUSE_ACTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
-  virtual bool  OnMouseAction(const Input::MouseActionEvent& e);
+  virtual bool  OnMouseAction(const Input::MouseActionData& e);
 
   ///@brief Handles a MOUSE_MOTION_EVENT.
   ///@return  Whether the dispatcher should stop propagating the event.
-  virtual bool  OnMouseMotion(const Input::MouseMotionEvent& e);
+  virtual bool  OnMouseMotion(const Input::MouseMotionData& e);
 
 protected:
   // data

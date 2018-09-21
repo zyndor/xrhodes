@@ -22,14 +22,14 @@ void Formats::HandleHolder::EnsureOnExitRegistration()
 {
   if (!s_registeredOnShutdown)
   {
-    auto onExit = [](void*, void*) {
+    auto onExit = [](void*) {
       ForEach([](HandleHolder& hh) {
         Gfx::Release(hh.value);
         hh.value.Invalidate();
       });
       s_registeredOnShutdown = false; // Gfx is torn down.
     };
-    Gfx::RegisterShutdownCallback(onExit, nullptr);
+    Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>(onExit, nullptr));
     s_registeredOnShutdown = true;
   }
 }

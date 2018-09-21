@@ -36,7 +36,7 @@ public:
 
   void  SetSelected(bool isIt);
 
-  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
+  bool  OnMouseAction(const Input::MouseActionData& e) override;
 
   void  Render(IUIRenderer& renderer) const override;
 

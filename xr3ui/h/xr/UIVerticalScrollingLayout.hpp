@@ -32,8 +32,8 @@ public:
   void  SetYOffset(int yOffs);
   void  SetSensitivity(float s);
 
-  bool  OnMouseAction(const Input::MouseActionEvent& e) override;
-  bool  OnMouseMotion(const Input::MouseMotionEvent& e) override;
+  bool  OnMouseAction(const Input::MouseActionData& e) override;
+  bool  OnMouseMotion(const Input::MouseMotionData& e) override;
 
   void  Render(IUIRenderer& renderer) const override;
 

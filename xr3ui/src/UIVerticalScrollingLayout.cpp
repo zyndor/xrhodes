@@ -26,7 +26,7 @@ UIVerticalScrollingLayout::UIVerticalScrollingLayout()
 }
 
 //==============================================================================
-bool UIVerticalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e )
+bool UIVerticalScrollingLayout::OnMouseAction(const Input::MouseActionData& e )
 {
   if (e.x >= x && e.x < (x + w) &&
     e.y >= y && e.y < (y + h))
@@ -52,7 +52,7 @@ bool UIVerticalScrollingLayout::OnMouseAction(const Input::MouseActionEvent& e )
 }
 
 //==============================================================================
-bool UIVerticalScrollingLayout::OnMouseMotion(const Input::MouseMotionEvent& e )
+bool UIVerticalScrollingLayout::OnMouseMotion(const Input::MouseMotionData& e )
 {
   if (m_isTouched)
   {

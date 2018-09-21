@@ -15,6 +15,7 @@
 #include "HatState.hpp"
 #include "SVector2.hpp"
 #include "Vector2.hpp"
+#include "xr/Signal.hpp"
 #include "xr/fundamentals.hpp"
 #include "xr/Callback.hpp"
 
@@ -35,29 +36,15 @@ class Input
 
 public:
   // types
-  enum class Event
-  {
-    Key,  // Key pressed or released
-    MouseAction,  // Mouse button pressed or released
-    MouseMotion,  // Mouse moved
-    TouchAction,  // Touch pressed or released
-    TouchMotion,  // Touch motion between press and release
-    JoyAdded, // A game controller is connected to the system.
-    JoyRemoved, // A game controller is disconnected form the system.
-    JoyAxisMotion,  // Motion along one of the given controller's axes.
-    JoyButton,  // A game controller button was pressed.
-    JoyHat, // A game controller hat's state has changed.
-    JoyBallMotion,  // A game controller's ball position has changed.
-    kCount
-  };
-
-  struct  KeyEvent
+  ///@brief Information about a keystroke event.
+  struct  KeyData
   {
     KeyCode key;
     bool    isPressed;
   };
 
-  struct  MouseActionEvent
+  ///@brief Information about a mouse or pointer button press event.
+  struct  MouseActionData
   {
     uint32_t  device;
     MouseButton::Type button;
@@ -66,14 +53,16 @@ public:
     bool      isPressed;
   };
 
-  struct  MouseMotionEvent
+  ///@brief Information about a mouse or pointer motion event.
+  struct  MouseMotionData
   {
     uint32_t  device;
     int32_t   x;
     int32_t   y;
   };
 
-  struct  TouchActionEvent
+  ///@brief Information about a touch press / release event.
+  struct  TouchActionData
   {
     uint32_t  device;
     uint32_t  touch;
@@ -82,7 +71,8 @@ public:
     bool      isPressed;
   };
 
-  struct  TouchMotionEvent
+  ///@brief Information about a touch motion event.
+  struct  TouchMotionData
   {
     uint32_t  device;
     uint32_t  touch;
@@ -90,34 +80,39 @@ public:
     int       y;
   };
 
-  struct JoyDeviceEvent
+  ///@brief Information about a game controller being added or removed.
+  struct JoyDeviceData
   {
     uint32_t device;
     const char* name;
   };
 
-  struct JoyAxisEvent
+  ///@brief Information about a game controller axis motion event.
+  struct JoyAxisMotionData
   {
     uint32_t device;
     uint8_t axis;
     float value;
   };
 
-  struct JoyButtonEvent
+  ///@brief Information about a game controller button press event.
+  struct JoyButtonPressData
   {
     uint32_t device;
     uint8_t button;
     bool isPressed;
   };
 
-  struct JoyHatEvent
+  ///@brief Information about a game controller hat motion.
+  struct JoyHatMotionData
   {
     uint32_t device;
     uint8_t hat;
     uint8_t state;
   };
 
-  struct JoyBallEvent
+  ///@brief Information about a game controller ball motion.
+  struct JoyBallMotionData
   {
     uint32_t device;
     uint8_t ball;
@@ -183,17 +178,17 @@ public:
   ///@note The device must be active.
   static Vector2 GetJoyBall(uint32_t device, uint32_t ball);
 
-  ///@brief Registers a callback for the given input event @a ev, with the
-  /// given @a userData.
-  ///@return The success of the operation -- will fail if the @a callback has
-  /// already been registered.
-  static bool RegisterCallback(Event ev, Callback callback, void* userData);
-
-  ///@brief Removes a registration of the given @a callback for the given
-  /// event @a ev.
-  ///@return The success of the operation. Will fail if the @a callback has
-  /// not been registered.
-  static bool UnregisterCallback(Event ev, Callback callback);
+  static Signal<void, KeyData const&>& KeySignal();
+  static Signal<void, MouseActionData const&>& MouseActionSignal();
+  static Signal<void, MouseMotionData const&>& MouseMotionSignal();
+  static Signal<void, TouchActionData const&>& TouchActionSignal();
+  static Signal<void, TouchMotionData const&>& TouchMotionSignal();
+  static Signal<void, JoyDeviceData const&>& JoyAddedSignal();
+  static Signal<void, JoyDeviceData const&>& JoyRemovedSignal();
+  static Signal<void, JoyAxisMotionData const&>& JoyAxisSignal();
+  static Signal<void, JoyButtonPressData const&>& JoyButtonSignal();
+  static Signal<void, JoyHatMotionData const&>& JoyHatSignal();
+  static Signal<void, JoyBallMotionData const&>& JoyBallSignal();
 
   static void Shutdown();
 };

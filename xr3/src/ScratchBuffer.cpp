@@ -105,14 +105,14 @@ void ScratchBuffer::Init(size_t poolSize)
   XR_ASSERTMSG(ScratchBuffer, !s_impl, ("Already initialized!"));
   s_impl = new ScratchBufferImpl(poolSize);
 
-  Gfx::RegisterFlushCallback([](void*, void*) {
+  Gfx::FlushSignal().Connect(FunctionPtrCallback<void>([](void*) {
     Flush();
-  }, nullptr);
+  }, nullptr));
 
-  Gfx::RegisterShutdownCallback([](void*, void*) {
+  Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
     delete s_impl;
     s_impl = nullptr;
-  }, nullptr);
+  }, nullptr));
 }
 
 //==============================================================================

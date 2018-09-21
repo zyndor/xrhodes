@@ -11,8 +11,9 @@
 //==============================================================================
 #include "UIElement.hpp"
 #include "xr/Input.hpp"
-#include "xr/EventNotifier.hpp"
+#include "xr/SignalNotifier.hpp"
 #include <list>
+#include <memory>
 
 namespace xr
 {
@@ -26,7 +27,7 @@ class UIEventNotifier
 {
 public:
   // types
-  using ZeroHitCallback = void(*)(const Input::MouseActionEvent&, void*);
+  using ZeroHitCallback = Callback<void, Input::MouseActionData const&>;
 
   // structors
   UIEventNotifier();
@@ -42,7 +43,8 @@ public:
 
   ///@brief Sets a function to call in case a mouse action has happened but
   /// was not handled by either of the registered listeners.
-  void  SetZeroHitCallback(ZeroHitCallback onZeroHit, void* userData);
+  ///@note Transfers ownership of @a onZeroHit.
+  void  SetZeroHitCallback(ZeroHitCallback* onZeroHit);
 
   ///@brief Attempts to add an UIElement to handle mouse action and motion
   /// events.
@@ -55,20 +57,16 @@ public:
   /// registered).
   bool  RemoveListener(UIElement* listener);
 
-  ///@brief Clearrs the notifier of all listeners.
-  void  RemoveAllListeners();
-
 protected:
-  // static
-  static void UIPointerActionCallback(void* systemData, void* userData);
-  static void UIPointerMotionCallback(void* systemData, void* userData);
-
   // data
-  EventNotifier<const Input::MouseActionEvent&> m_actionNotifier;
-  EventNotifier<const Input::MouseMotionEvent&> m_motionNotifier;
+  SignalNotifier<const Input::MouseActionData&> m_actionNotifier;
+  SignalNotifier<const Input::MouseMotionData&> m_motionNotifier;
 
-  ZeroHitCallback m_onZeroHit;
-  void*           m_onZeroHitData;
+  std::unique_ptr<ZeroHitCallback> m_onZeroHit;
+
+  // internal
+  void OnMouseAction(Input::MouseActionData const& e);
+  void OnMouseMotion(Input::MouseMotionData const& e);
 };
 
 } // xr
