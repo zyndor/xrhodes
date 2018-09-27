@@ -19,7 +19,7 @@ function isVS()
 end
 
 -- target option
-tbl_target_values = 
+tbl_target_values =
 {
 	{ "windows", "VS2015 projects targeting Windows 32/64 bits" },
     { "macosx", "Xcode4 projects targeting OS X" },
@@ -32,7 +32,7 @@ newoption
 	allowed = tbl_target_values
 }
 
--- validation
+-- validate target
 target_env = _OPTIONS["target"]
 if not target_env then
 	print "Command-line option --target is required with one of the following values:"
@@ -47,11 +47,11 @@ workspace "xr3"
 
 	sln_location = ".projects/"..target_env
 	location(sln_location)
-	
+
 	if isVS() then
 		startproject("unittests")
 	end
-	
+
 	-- platforms setup
 	tbl_platforms = {}
 	if target_env == "windows" then
@@ -61,14 +61,14 @@ workspace "xr3"
 		table.insert(tbl_platforms, "Universal64")
 	end
 	platforms(tbl_platforms)
-	
+
 	-- configurations
 	tbl_configurations = {
 		"Debug",
 		"Release"
 	}
 	configurations(tbl_configurations)
-	
+
 	-- shared project settings
 	language "C++"
 	editandcontinue("Off")
@@ -85,13 +85,13 @@ workspace "xr3"
 		optimize "Full"
 		runtime "Release"
 	filter{}
-	
+
 	-- paths
 	debugdir ""
-	
+
 	bin_location = ".artifacts/"..target_env
 	obj_location = ".intermediate/"..target_env
-	
+
 	if isVS() then
 		local pc = "/$(PlatformShortName)-$(Configuration)"
 		targetdir(bin_location..pc)
@@ -108,13 +108,13 @@ workspace "xr3"
 			end
 		end
 	end
-	
+
 	-- defines
 	defines {
 		"_CRT_SECURE_NO_WARNINGS",
 		"_SCL_SECURE_NO_WARNINGS",
 	}
-	
+
 	filter{ "Debug" }
 		defines {
 			"XR_DEBUG"
@@ -129,7 +129,7 @@ workspace "xr3"
 			"-fvisibility-ms-compat",
 		}
 	end
-	
+
 	-- target-specific setup
 	filter {}
 	-- Windows
@@ -140,10 +140,10 @@ workspace "xr3"
 				--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.
 			}
 		end
-		
+
 		system("windows")
 		systemversion "8.1"
-		
+
 		target_desktop = true
 	end
 
@@ -152,34 +152,48 @@ workspace "xr3"
 		flags {
 			"StaticRuntime"
 		}
-		
+
 		target_desktop = true
     end
 
+	-- all desktop builds: enable asset building in debug
 	if target_desktop then
 		filter { "Debug" }
 			defines  {
 				"ENABLE_ASSET_BUILDING"
 			}
 	end
-	
+
+	-- create a project that just reruns the premake script.
+	project "regenerate_projects"
+	kind "ConsoleApp"	-- not actually, but it has to be something.
+	local generate_projects_suffix = "";
+	if target_env == "windows" then
+		generate_projects_suffix = ".bat"
+	end
+
+	postbuildcommands{
+		-- at this point we're in .projects/${target_env}/
+		"../../tools/"..target_env.."/generate_projects"..generate_projects_suffix,
+	}
+	filter {}
+
 	-- create projects
 	filter {}
 	include "xr3core/premake5.lua"
-	
+
 	filter {}
 	include "xr3json/premake5.lua"
-	
+
 	filter {}
 	include "xr3/premake5.lua"
 
 	filter {}
 	include "xr3scene/premake5.lua"
-	
+
 	filter {}
 	include "xr3ui/premake5.lua"
-	
+
 	filter {}
 	include "unittests/premake5.lua"
-	
-	
+
