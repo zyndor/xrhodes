@@ -63,7 +63,7 @@ void ProjectionHelper::CalculateOrthographic(float size, float zNear, float zFar
   XR_ASSERT(ProjectionHelper, size >= 0.0f);
 
   size *= .5f;
-  CalculateOrthographic(-size, size, size, -size, zNear, zFar, outMatrix);
+  CalculateOrthographic(-size, size, -size, size, zNear, zFar, outMatrix);
 }
 
 //==============================================================================
