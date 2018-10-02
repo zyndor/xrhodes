@@ -149,7 +149,7 @@ public:
       Matrix4 modelViewProjection;
       if (CheckAnyMaskBits(m_dirtyFlags, MODEL_DIRTY | VIEW_DIRTY))
       {
-        model.Multiply(m_view, modelViewProjection);  // hijack mvp for the model view calculation.
+        model.Transform(m_view, modelViewProjection);  // hijack mvp for the model view calculation.
         Gfx::SetUniform(m_xruModelView, 1, modelViewProjection.data);
 
         Matrix normal;
@@ -160,10 +160,10 @@ public:
       }
 
       Matrix4 viewProjection;
-      m_view.Multiply(m_projection, viewProjection);
+      m_view.Transform(m_projection, viewProjection);
       Gfx::SetUniform(m_xruViewProjection, 1, viewProjection.data);
 
-      model.Multiply(viewProjection, modelViewProjection);
+      model.Transform(viewProjection, modelViewProjection);
       Gfx::SetUniform(m_xruModelViewProjection, 1, modelViewProjection.data);
 
       m_dirtyFlags = 0;

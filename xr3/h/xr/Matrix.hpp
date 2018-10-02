@@ -77,11 +77,7 @@ public:
   Vector3 t;
 
   // structors
-  Matrix()
-  : Matrix(Vector3::Zero())
-  {}
-
-  explicit Matrix(Vector3 const& t_)
+  explicit Matrix(Vector3 const& t_ = Vector3::Zero())
   : xx(1.0f), xy(.0f), xz(.0f),
     yx(.0f), yy(1.0f), yz(.0f),
     zx(.0f), zy(.0f), zz(1.0f),
@@ -116,6 +112,75 @@ public:
     linear[i] = v.x;
     linear[i + Vector3::kNumComponents] = v.y;
     linear[i + 2 * Vector3::kNumComponents] = v.z;
+  }
+
+  ///@brief Sets the linear transformation component of the Matrix to be an
+  /// an elemental rotation of @a theta radians counter-clockwise, around the
+  /// positive X axis. @a resetLinear determines whether the elements of the
+  /// matrix not involved in creating the rotation shall be set to 0.
+  void SetRotationX(float theta, bool resetLinear)
+  {
+    xx = 1.f;
+    const float c = std::cos(theta);
+    yy = c;
+    zz = c;
+    const float s = std::sin(theta);
+    zy = s;
+    yz = -s;
+
+    if (resetLinear)
+    {
+      xy = 0.f;
+      xz = 0.f;
+      yx = 0.f;
+      zx = 0.f;
+    }
+  }
+
+  ///@brief Sets the linear transformation component of the Matrix to be an
+  /// an elemental rotation of @a theta radians counter-clockwise, around the
+  /// positive Y axis. @a resetLinear determines whether the elements of the
+  /// matrix not involved in creating the rotation shall be set to 0.
+  void SetRotationY(float theta, bool resetLinear)
+  {
+    yy = 1.f;
+    const float c = std::cos(theta);
+    zz = c;
+    xx = c;
+    const float s = std::sin(theta);
+    zx = -s;
+    xz = s;
+
+    if (resetLinear)
+    {
+      xy = 0.f;
+      yx = 0.f;
+      yz = 0.f;
+      zy = 0.f;
+    }
+  }
+
+  ///@brief Sets the linear transformation component of the Matrix to be an
+  /// an elemental rotation of @a theta radians counter-clockwise, around the
+  /// positive Z axis. @a resetLinear determines whether the elements of the
+  /// matrix not involved in creating the rotation shall be set to 0.
+  void SetRotationZ(float theta, bool resetLinear)
+  {
+    zz = 1.f;
+    const float c = std::cos(theta);
+    xx = c;
+    yy = c;
+    const float s = std::sin(theta);
+    xy = -s;
+    yx = s;
+
+    if (resetLinear)
+    {
+      xz = 0.f;
+      yz = 0.f;
+      zx = 0.f;
+      zy = 0.f;
+    }
   }
 
   ///@brief Scales the x component of the linear transformation by the scalar @a s.
@@ -156,133 +221,10 @@ public:
     zz *= s;
   }
 
-  ///@brief Sets the matrix to represent a rotation around the X axis,
-  /// with the option to reset the translation part (@a resetTrans)
-  /// and set the value of the components that aren't involved in the
-  /// rotation, to zero (@a setZeros).
-  void  SetRotationX(float theta, bool resetTrans, bool setZeros)
-  {
-    if (resetTrans)
-    {
-      t = Vector3::Zero();
-    }
-
-    if (setZeros)
-    {
-      xy = .0f;
-      xz = .0f;
-      yx = .0f;
-      zx = .0f;
-    }
-
-    xx = 1.0f;
-    yy = zz = cosf(theta);
-    yz = -(zy = sinf(theta));
-  }
-
-  ///@brief Sets the matrix to represent a rotation around the Y axis,
-  /// with the option to reset the translation part (@a resetTrans)
-  /// and set the value of the components that aren't involved in the
-  /// rotation, to zero (@a setZeros).
-  void  SetRotationY(float theta, bool resetTrans, bool setZeros)
-  {
-    if (resetTrans)
-    {
-      t = Vector3::Zero();
-    }
-
-    if (setZeros)
-    {
-      xy = .0f;
-      yz = .0f;
-      yx = .0f;
-      zy = .0f;
-    }
-
-    yy = 1.0f;
-    xx = zz = cosf(theta);
-    zx = -(xz = sinf(theta));
-  }
-
-  ///@brief Sets the matrix to represent a rotation around the Z axis,
-  /// with the option to reset the translation part (@a resetTrans)
-  /// and set the value of the components that aren't involved in the
-  /// rotation, to zero (@a setZeros).
-  void  SetRotationZ(float theta, bool resetTrans, bool setZeros)
-  {
-    if (resetTrans)
-    {
-      t = Vector3::Zero();
-    }
-
-    if (setZeros)
-    {
-      xz = .0f;
-      yz = .0f;
-      zx = .0f;
-      zy = .0f;
-    }
-
-    zz = 1.0f;
-    xx = yy = cosf(theta);
-    xy = -(yx = sinf(theta));
-  }
-
-  ///@brief Transform the linear transformation part of the matrix only, by
-  /// rotating it @a theta degrees around the X axis.
-  void  RotateX(float theta)
-  {
-    Matrix  m;
-    m.SetRotationX(theta, true, true);
-    RotateBy(m);
-  }
-
-  ///@brief Transform the linear transformation part of the matrix only, by
-  /// rotating it @a theta degrees around the Y axis.
-  void  RotateY(float theta)
-  {
-    Matrix  m;
-    m.SetRotationY(theta, true, true);
-    RotateBy(m);
-  }
-
-  ///@brief Transform the linear transformation part of the matrix only, by
-  /// rotating it @a theta degrees around the Z axis.
-  void  RotateZ(float theta)
-  {
-    Matrix  m;
-    m.SetRotationZ(theta, true, true);
-    RotateBy(m);
-  }
-
-  ///@brief Calculates the amount of rotation the matrix represents around the
-  /// X axis.
-  float DirX() const
-  {
-    Vector3 v(RotateVec(Vector3::UnitX()));
-    return  atan2f(v.y, v.z);
-  }
-
-  ///@brief Calculates the amount of rotation the matrix represents around the
-  /// Y axis.
-  float DirY() const
-  {
-    Vector3 v(RotateVec(Vector3::UnitY()));
-    return  atan2f(v.x, v.z);
-  }
-
-  ///@brief Calculates the amount of rotation the matrix represents around the
-  /// Z axis.
-  float DirZ() const
-  {
-    Vector3 v(RotateVec(Vector3::UnitZ()));
-    return  atan2f(v.y, v.x);
-  }
-
   ///@brief Copies the linear transformation part from the given array.
-  void  CopyLinear(const float parLinear[kNumLinearComponents])
+  void  CopyLinear(const float source[kNumLinearComponents])
   {
-    memcpy(linear, parLinear, sizeof(linear));
+    memcpy(linear, source, sizeof(linear));
   }
 
   ///@brief Copies the linear transformation part of the given matrix.
@@ -351,7 +293,7 @@ public:
     float dz = vz.Dot(vz);
     if (dz > .0f)
     {
-      dz = 1.0f / sqrtf(dz);
+      dz = 1.0f / std::sqrt(dz);
       vz *= dz;
     }
     else
@@ -360,7 +302,9 @@ public:
     }
 
     Vector3  vx(up.Cross(vz));  // local x axis
+    vx.Normalise();
     Vector3  vy(vz.Cross(vx));  // local y axis
+    vy.Normalise();
     memcpy(linear + XX, vx.data, sizeof(vx));
     memcpy(linear + YX, vy.data, sizeof(vy));
     memcpy(linear + ZX, vz.data, sizeof(vz));

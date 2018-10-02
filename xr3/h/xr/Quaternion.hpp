@@ -10,6 +10,7 @@
 //
 //==============================================================================
 #include "Matrix.hpp"
+#include "Vector3.hpp"
 #include "xr/debug.hpp"
 #include <cstring>
 #include <cstdint>
@@ -36,21 +37,23 @@ public:
   inline
   static Quaternion Identity()
   {
-    return Quaternion(.0f, .0f, .0f, 1.0f);
+    return Quaternion(0.f, 0.f, 0.f, 1.f);
   }
 
   ///@brief Creates a quaternion from a vector of pitch, yaw, roll rotations.
   ///@note The angles are in radians.
-  static void FromPitchYawRoll(Vector3 pitchYawRoll, Quaternion& q)
+  static void FromPitchYawRoll(float pitch, float yaw, float roll, Quaternion& q)
   {
-    pitchYawRoll *= .5f;
+    pitch *= .5f;
+    yaw *= .5f;
+    roll *= .5f;
 
-    const float c1 = cosf(pitchYawRoll.y);
-    const float c2 = cosf(pitchYawRoll.x);
-    const float c3 = cosf(pitchYawRoll.z);
-    const float s1 = sinf(pitchYawRoll.y);
-    const float s2 = sinf(pitchYawRoll.x);
-    const float s3 = sinf(pitchYawRoll.z);
+    const float c1 = std::cos(yaw);
+    const float c2 = std::cos(pitch);
+    const float c3 = std::cos(roll);
+    const float s1 = std::sin(yaw);
+    const float s2 = std::sin(pitch);
+    const float s3 = std::sin(roll);
 
     const float c2c3 = c2 * c3;
     const float s2s3 = s2 * s3;
@@ -63,10 +66,22 @@ public:
     q.w = c1 * c2c3 - s1 * s2s3;
   }
 
+  static void FromPitchYawRoll(Vector3 const& pitchYawRoll, Quaternion& q)
+  {
+    FromPitchYawRoll(pitchYawRoll.x, pitchYawRoll.y, pitchYawRoll.z, q);
+  }
+
+  static Quaternion FromPitchYawRoll(float pitch, float yaw, float roll)
+  {
+    Quaternion  q;
+    FromPitchYawRoll(pitch, yaw, roll, q);
+    return q;
+  }
+
   static Quaternion FromPitchYawRoll(Vector3 const& pitchYawRoll)
   {
     Quaternion  q;
-    FromPitchYawRoll(pitchYawRoll, q);
+    FromPitchYawRoll(pitchYawRoll.x, pitchYawRoll.y, pitchYawRoll.z, q);
     return q;
   }
 
@@ -76,9 +91,9 @@ public:
   static void FromAxisAngle(Vector3 const& axis, float angle, Quaternion& q)
   {
     angle *= .5f;
-    q.w = cosf(angle);
+    q.w = std::cos(angle);
 
-    const float s = sinf(angle);
+    const float s = std::sin(angle);
     q.i = axis.x * s;
     q.j = axis.y * s;
     q.k = axis.z * s;
@@ -97,10 +112,10 @@ public:
   static void FromPositionsNormalised(Vector3 const& from, Vector3 const& to, Quaternion& q)
   {
     float d = from.Dot(to);
-    if (d * d < 1.0f)
+    if (d * d < 1.f)
     {
       Vector3 c = from.Cross(to);
-      q = Quaternion(c.x, c.y, c.z, d + 1.0f);
+      q = Quaternion(c.x, c.y, c.z, d + 1.f);
       q.Normalise();
     }
   }
@@ -117,15 +132,15 @@ public:
   static void FromPositions(Vector3 from, Vector3 to, Quaternion& q)
   {
     float dFrom = from.Dot();
-    if (dFrom > .0f)
+    if (dFrom > 0.f)
     {
-      from *= 1.0f / sqrtf(dFrom);
+      from *= 1.f / std::sqrt(dFrom);
     }
 
     float dTo = to.Dot();
-    if (dTo > .0f)
+    if (dTo > 0.f)
     {
-      to *= 1.0f / sqrtf(dTo);
+      to *= 1.f / std::sqrt(dTo);
     }
 
     FromPositionsNormalised(from, to, q);
@@ -142,27 +157,27 @@ public:
   static Quaternion FromMatrix(Matrix const& m)
   {
     float trace = m.xx + m.yy + m.zz;
-    if (trace > .0f)
+    if (trace > 0.f)
     {
-      const float s = .5f / std::sqrt(trace + 1.0f);
+      const float s = .5f / std::sqrt(trace + 1.f);
       return Quaternion((m.zy - m.yz) * s, (m.xz - m.zx) * s,
         (m.yx - m.xy) * s, .25f / s);
     }
     else if (m.xx > m.yy && m.xx > m.zz)
     {
-      const float s = .5f / sqrtf(1.0f + m.xx - m.yy - m.zz);
+      const float s = .5f / std::sqrt(1.f + m.xx - m.yy - m.zz);
       return Quaternion(.25f / s, (m.xy + m.yx) * s, (m.xz + m.zx) * s,
         (m.zy - m.yz) * s);
     }
     else if (m.yy > m.zz)
     {
-      const float s = .5f / sqrtf(1.0f + m.yy - m.xx - m.zz);
+      const float s = .5f / std::sqrt(1.f + m.yy - m.xx - m.zz);
       return Quaternion((m.xy + m.yx) * s, .25f / s, (m.yz + m.zy) * s,
         (m.xz - m.zx) * s);
     }
     else
     {
-      const float s = .5f / sqrtf(1.0f + m.zz - m.xx - m.yy);
+      const float s = .5f / std::sqrt(1.f + m.zz - m.xx - m.yy);
       return Quaternion((m.xz + m.zx) * s, (m.yz + m.zy) * s, .25f / s,
         (m.yx - m.xy) * s);
     }
@@ -180,7 +195,7 @@ public:
 
   // structors
   Quaternion()
-  : i(.0f), j(.0f), k(.0f), w(1.0f)
+  : Quaternion(0.f, 0.f, 0.f, 1.f)
   {}
 
   explicit Quaternion(const float data_[kNumQuaternionInds])
@@ -189,14 +204,15 @@ public:
   }
 
   Quaternion(float i_, float j_, float k_, float w_)
-  : i(i_),
-    j(j_),
-    k(k_),
-    w(w_)
+  : i{ i_ },
+    j{ j_ },
+    k{ k_ },
+    w{ w_ }
   {}
 
   // general
-  /// Calculates the conjugate of this quaternion.
+  ///@brief Calculates the conjugate of this quaternion.
+  ///@note For a unit quaternion, this is also its inverse.
   void  Conjugate()
   {
     i = -i;
@@ -207,42 +223,50 @@ public:
   ///@brief Calculates the magnitude of this quaternion.
   float Magnitude() const
   {
-    return sqrtf(w * w + i * i + j * j + k * k);
+    return std::sqrt(w * w + i * i + j * j + k * k);
   }
 
-  ///@brief Scales this quaternion by the inverse of the magnitude, i.e.
-  /// makes its magnitude 1.0f.
+  ///@brief Normalises this quaternion so that its magnitude is 1.
   ///@note Quaternion must be non zero.
   void  Normalise()
   {
     float mag = Magnitude();
-    XR_ASSERT(Quaternion, mag > .0f);
+    XR_ASSERT(Quaternion, mag > 0.f);
 
-    mag = 1.0f / mag;
+    mag = 1.f / mag;
     i *= mag;
     j *= mag;
     k *= mag;
     w *= mag;
   }
 
+  ///@return A copy of this quaternion, scaled so that its magnitude is 1.
+  ///@note Quaternion must be non zero.
+  Quaternion Normalised() const
+  {
+    Quaternion q(*this);
+    q.Normalise();
+    return q;
+  }
+
   ///@brief Calculates an axis and an angle that describe the rotation
   /// that the quaternion represents, and stores it in the given values.
   void  GetAxisAngle(float& x, float& y, float& z, float& theta) const
   {
-    theta = 2.0f * acosf(w);
+    theta = 2.f * std::acos(w);
     float w2 = w * w;
-    if (w2 < 1.0f)
+    if (w2 < 1.f)
     {
-      w2 = 1.0f / (1.0f - sqrtf(w2));
+      w2 = 1.f / (1.f - std::sqrt(w2));
       x = i * w2;
       y = j * w2;
       z = k * w2;
     }
     else
     {
-      x = .0f;
-      y = .0f;
-      z = .0f;
+      x = 0.f;
+      y = 0.f;
+      z = 0.f;
     }
   }
 
@@ -293,9 +317,9 @@ public:
     const float jSqr = j * j;
     const float kSqr = k * k;
 
-    Vector3 v(asinf(-2.0f * (i * k - j * w)),
-      atan2f(2.0f * (k * j + i * w), 1.0f - 2.0f * (iSqr + jSqr)),
-      atan2f(2.0f * (i * j + k * w), 1.0f - 2.0f * (jSqr + kSqr)));
+    Vector3 v(std::asin(-2.f * (i * k - j * w)),
+      atan2f(2.f * (k * j + i * w), 1.f - 2.f * (iSqr + jSqr)),
+      atan2f(2.f * (i * j + k * w), 1.f - 2.f * (jSqr + kSqr)));
     return v;
   }
 
@@ -309,15 +333,15 @@ public:
 
   Quaternion& operator*=(Quaternion const& rhs)
   {
-    const float w0 = w;
     const float i0 = i;
     const float j0 = j;
     const float k0 = k;
+    const float w0 = w;
 
-    const float w1 = rhs.w;
     const float i1 = rhs.i;
     const float j1 = rhs.j;
     const float k1 = rhs.k;
+    const float w1 = rhs.w;
 
     w = w0 * w1 - i0 * i1 - j0 * j1 - k0 * k1;
     i = w0 * i1 + i0 * w1 + j0 * k1 - k0 * j1;
@@ -334,10 +358,10 @@ public:
 
   Quaternion& operator*=(float s)
   {
-    w *= s;
     i *= s;
     j *= s;
     k *= s;
+    w *= s;
     return *this;
   }
 
@@ -347,19 +371,34 @@ public:
     return temp *= s;
   }
 
+  Quaternion& operator+=(Quaternion const& rhs)
+  {
+    i += rhs.i;
+    j += rhs.j;
+    k += rhs.k;
+    w += rhs.w;
+    return *this;
+  }
+
+  Quaternion operator+(Quaternion const& rhs) const
+  {
+    Quaternion temp(*this);
+    return temp += rhs;
+  }
+
   operator Matrix() const
   {
-    const float ij = 2.0f * i * j;
-    const float wk = 2.0f * w * k;
-    const float ik = 2.0f * i * k;
-    const float wj = 2.0f * w * j;
-    const float jk = 2.0f * j * k;
-    const float wi = 2.0f * w * i;
+    const float ij = 2.f * i * j;
+    const float wk = 2.f * w * k;
+    const float ik = 2.f * i * k;
+    const float wj = 2.f * w * j;
+    const float jk = 2.f * j * k;
+    const float wi = 2.f * w * i;
 
-    const float wSqr = w * w;
     const float iSqr = i * i;
     const float jSqr = j * j;
     const float kSqr = k * k;
+    const float wSqr = w * w;
 
     const float matrixData[Matrix::kNumLinearComponents] =
     {

@@ -32,25 +32,25 @@ public:
   inline
   static Vector2  Zero()
   {
-    return Vector2(.0f, .0f);
+    return Vector2(0.f, 0.f);
   }
 
   inline
   static Vector2  One()
   {
-    return Vector2(1.0f, 1.0f);
+    return Vector2(1.f, 1.f);
   }
 
   inline
   static Vector2  UnitX()
   {
-    return Vector2(1.0f, .0f);
+    return Vector2(1.f, 0.f);
   }
 
   inline
   static Vector2  UnitY()
   {
-    return Vector2(.0f, 1.0f);
+    return Vector2(0.f, 1.f);
   }
 
   // data
@@ -65,23 +65,24 @@ public:
 
   // structors
   Vector2()
-  : x(.0f), y(.0f)
+  : Vector2(0.f, 0.f)
   {}
 
   Vector2(float x_, float y_)
-  : x(x_), y(y_)
+  : x{ x_ },
+    y{ y_ }
   {}
 
   explicit Vector2(const float data_[kNumComponents])
-  : x(data_[X]),
-    y(data_[Y])
+  : x{ data_[X] },
+    y{ data_[Y] }
   {}
 
   // general
   ///@brief Calculates the magnitude of this vector.
   float Magnitude() const
   {
-    return sqrtf(Dot());
+    return std::sqrt(Dot());
   }
 
   ///@brief Calculates the dot product of this vector with itself.
@@ -96,12 +97,21 @@ public:
     return x * rhs.x + y * rhs.y;
   }
 
-  ///@brief Normalises this vector.
-  Vector2&  Normalise(float s = 1.0f)
+  ///@brief Scales the vector so that its length is @a length.
+  ///@note This vector must be non-zero.
+  Vector2& Normalise(float length = 1.f)
   {
-    float d = Dot(*this);
-    XR_ASSERT(Vector2, d > .0f);
-    return this->operator*=(s / sqrtf(d));
+    float d = Dot();
+    XR_ASSERT(Vector2, d > 0.f);
+    return this->operator*=(length / std::sqrt(d));
+  }
+
+  //@return A copy of this vector, normalised to @a length.
+  ///@note This vector must be non-zero.
+  Vector2 Normalised(float length = 1.f) const
+  {
+    Vector2 result(*this);
+    return result.Normalise(length);
   }
 
   ///@brief Pseudo-cross product - calculates the dot product of this
@@ -111,7 +121,8 @@ public:
     return x * rhs.y - y * rhs.x;
   }
 
-  ///@brief Linearly interpolates between this vector and @a to, at the given @a t blend factor.
+  ///@brief Linearly interpolates between this vector and @a to, at the given
+  /// blend factor @a t.
   Vector2 Lerp(Vector2 const& to, float t) const
   {
     return Vector2(x + (to.x - x) * t, y + (to.y - y) * t);
@@ -166,24 +177,24 @@ public:
     return *this;
   }
 
-  Vector2&  operator /=(float s)
-  {
-    XR_ASSERT(Vector2, s != .0f);
-    s = 1.0f / s;
-    x *= s;
-    y *= s;
-    return *this;
-  }
-
   Vector2  operator *(float s) const
   {
     return Vector2(x * s, y * s);
   }
 
+  Vector2&  operator /=(float s)
+  {
+    XR_ASSERT(Vector2, s > 0.f);
+    s = 1.f / s;
+    x *= s;
+    y *= s;
+    return *this;
+  }
+
   Vector2  operator /(float s) const
   {
-    XR_ASSERT(Vector2, s != .0f);
-    s = 1.0f / s;
+    XR_ASSERT(Vector2, s * s > 0.f);
+    s = 1.f / s;
     return Vector2(x * s, y * s);
   }
 
@@ -203,9 +214,9 @@ public:
 
   Vector2&  operator/=(Vector2 const& rhs)
   {
-    XR_ASSERT(Vector2, rhs.x != .0f);
+    XR_ASSERT(Vector2, rhs.x * rhs.x > 0.f);
     x /= rhs.x;
-    XR_ASSERT(Vector2, rhs.y != .0f);
+    XR_ASSERT(Vector2, rhs.y * rhs.y > 0.f);
     y /= rhs.y;
     return *this;
   }
