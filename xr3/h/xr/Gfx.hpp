@@ -552,7 +552,9 @@ void SetState(FlagType flags = F_STATE_NONE);
 /// @a front.
 void SetStencilState(FlagType front, FlagType back = F_STENCIL_SAME);
 
-///@brief Sets instance data to be used for the subsequent Draw calls.
+///@brief Sets instance data to be used for the next Draw call only.
+///@note Flush() / Present() does not affect this; instance data set with this
+/// method is only consumed by a subsequent Draw() call.
 void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count);
 
 ///@brief Sets a shader program to be used for the subsequent Draw calls.
@@ -574,8 +576,7 @@ void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive primitive, ui
 void Clear(FlagType flags, Color color = Color(0xff000000), float depth = 1.0f,
   uint8_t stencil = 0x00);
 
-///@brief Flushes the pipeline and calls all callbacks registered with
-/// RegisterFlushCallback().
+///@brief Flushes the pipeline and calls all callbacks registered on FlushSignal().
 void Flush();
 
 ///@brief Flushes the pipeline and performs the swapping of the front and back
@@ -588,7 +589,8 @@ Signal<void>& FlushSignal();
 ///@brief A signal which is emitted upon Shutdown().
 Signal<void>& ShutdownSignal();
 
-///@brief shuts down the renderer.
+///@brief shuts down the renderer and calls all callbacks registere on
+/// ShutdownSignal().
 void Shutdown();
 
 } // GFX
