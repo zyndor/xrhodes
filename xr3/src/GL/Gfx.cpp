@@ -1751,6 +1751,7 @@ private:
       VertexBufferObject const& instBuffer = m_vbos[m_hActiveInstDataBuffer.id];
       instBuffer.Bind();
       program.BindInstanceData(m_activeInstDataBufferStride, m_instanceOffset);
+      m_hActiveInstDataBuffer.Invalidate();
     }
     else
     {
