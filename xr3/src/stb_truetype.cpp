@@ -2,7 +2,7 @@
 //
 // XRhodes
 //
-// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+// copyright (c) Gyorgy Straub. All rights reserved.
 //
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //

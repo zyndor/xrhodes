@@ -2,7 +2,7 @@
 --
 -- XRhodes
 --
--- copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+-- copyright (c) Gyorgy Straub. All rights reserved.
 --
 -- License: https://github.com/zyndor/xrhodes#license-bsd-2-clause
 --
@@ -72,7 +72,7 @@ project "unittests"
         }
 
     else
-        if target_env == "macosx" then
+        if target_env == "macos" then
             -- OSX
             links
             {

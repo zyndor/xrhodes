@@ -1,8 +1,0 @@
-#!/bin/bash
-
-#
-# Install the SDL2 libraries.
-#
-TARGET=/Library/Frameworks/
-
-sudo cp -R ../../external/SDL2/SDL2.framework $TARGET

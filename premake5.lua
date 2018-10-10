@@ -1,8 +1,7 @@
---==============================================================================
 --
 -- XRhodes
 --
--- copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+-- copyright (c) Gyorgy Straub. All rights reserved.
 --
 -- License: https://github.com/zyndor/xrhodes#license-bsd-2-clause
 --
@@ -22,7 +21,7 @@ end
 tbl_target_values =
 {
 	{ "windows", "VS2015 projects targeting Windows 32/64 bits" },
-    { "macosx", "Xcode4 projects targeting OS X" },
+    { "macos", "Xcode4 projects targeting OS X" },
 }
 
 newoption
@@ -57,7 +56,7 @@ workspace "xr3"
 	if target_env == "windows" then
 		table.insert(tbl_platforms, "x86")
 		table.insert(tbl_platforms, "x64")
-	elseif target_env == "macosx" then
+	elseif target_env == "macos" then
 		table.insert(tbl_platforms, "Universal64")
 	end
 	platforms(tbl_platforms)
@@ -148,7 +147,7 @@ workspace "xr3"
 	end
 
     -- Mac OSX
-    if target_env == "macosx" then
+    if target_env == "macos" then
 		flags {
 			"StaticRuntime"
 		}

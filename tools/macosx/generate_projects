@@ -1,2 +1,0 @@
-#!/bin/sh
-./premake5 --target=macosx xcode4 --file=../../premake5.lua
