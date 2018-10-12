@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/IndexServer.hpp"
+#include "xr/memory/IndexServer.hpp"
 #include <sstream>
 
 namespace xr

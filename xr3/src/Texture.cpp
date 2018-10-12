@@ -8,10 +8,10 @@
 //==============================================================================
 #include "xr/Texture.hpp"
 #include "xr/Image.hpp"
-#include "xr/ParserCore.hpp"
-#include "xr/BufferReader.hpp"
 #include "xr/FileWriter.hpp"
-#include "xr/streamutils.hpp"
+#include "xr/strings/ParserCore.hpp"
+#include "xr/memory/BufferReader.hpp"
+#include "xr/io/streamutils.hpp"
 
 #define LTRACE(format) XR_TRACE(Texture, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Texture, condition, format)

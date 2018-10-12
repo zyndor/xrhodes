@@ -9,10 +9,9 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
-#include "fundamentals.hpp"
-#include "debug.hpp"
 #include "Spinlock.hpp"
+#include "xr/types/fundamentals.hpp"
+#include "xr/debug.hpp"
 #include <mutex>
 
 namespace xr

@@ -10,13 +10,13 @@
 //
 //==============================================================================
 #include "xr/File.hpp"
-#include "xr/Counted.hpp"
-#include "xr/Counter.hpp"
 #include "xr/Hash.hpp"
-#include "xr/Linked.hpp"
-#include "xr/Buffer.hpp"
-#include "xr/fundamentals.hpp"
-#include "xr/memory.hpp"
+#include "xr/memory/Counted.hpp"
+#include "xr/threading/Counter.hpp"
+#include "xr/memory/Buffer.hpp"
+#include "xr/memory/memory.hpp"
+#include "xr/types/Linked.hpp"
+#include "xr/types/fundamentals.hpp"
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
 #include <memory>

@@ -7,9 +7,9 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/Deflator.hpp"
-#include "xr/Inflator.hpp"
-#include "xr/streamutils.hpp"
+#include "xr/io/Deflator.hpp"
+#include "xr/io/Inflator.hpp"
+#include "xr/io/streamutils.hpp"
 #include <memory>
 #include <vector>
 #include <algorithm>

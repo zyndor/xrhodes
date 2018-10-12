@@ -11,7 +11,7 @@
 //==============================================================================
 #include <map>
 #include <string>
-#include "xr/memory.hpp"
+#include "xr/memory/memory.hpp"
 #include "xr/Font.hpp"
 #include "xr/Sprite.hpp"
 #include "UIContainer.hpp"

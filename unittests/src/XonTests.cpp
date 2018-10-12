@@ -8,9 +8,9 @@
 //==============================================================================
 #include "gtest/gtest.h"
 #include "FileLifeCycleManager.hpp"
-#include "xr/XonParser.hpp"
-#include "xr/XonBuildTree.hpp"
 #include "xr/FileBuffer.hpp"
+#include "xr/xon/XonParser.hpp"
+#include "xr/xon/XonBuildTree.hpp"
 #include <list>
 #include <functional>
 

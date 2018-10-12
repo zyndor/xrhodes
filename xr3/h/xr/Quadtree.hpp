@@ -11,8 +11,8 @@
 //==============================================================================
 #include "RectObject.hpp"
 #include "AABB.hpp"
-#include "xr/functors.hpp"
-#include "xr/Queue.hpp"
+#include "xr/memory/Queue.hpp"
+#include "xr/functions/functors.hpp"
 #include <list>
 
 #if defined  _MSC_VER

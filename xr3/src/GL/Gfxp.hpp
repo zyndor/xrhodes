@@ -10,8 +10,8 @@
 //
 //==============================================================================
 #include "xr/Gfx.hpp"
-#include "xr/IndexServer.hpp"
-#include "xr/memory.hpp"
+#include "xr/memory/IndexServer.hpp"
+#include "xr/memory/memory.hpp"
 
 #define XR_ALIGN16(val) xr::Align<uint32_t>(val, 16)
 

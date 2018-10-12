@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "json.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <sstream>
 #include <vector>
 

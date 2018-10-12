@@ -11,7 +11,7 @@
 //==============================================================================
 #include "xr/Mesh.hpp"
 #include "xr/Gfx.hpp"
-#include "xr/Buffer.hpp"
+#include "xr/memory/Buffer.hpp"
 
 namespace xr
 {

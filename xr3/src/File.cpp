@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "xr/File.hpp"
-#include "xr/stringutils.hpp"
+#include "xr/strings/stringutils.hpp"
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
 #include <sys/stat.h>

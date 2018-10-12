@@ -9,11 +9,10 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
 #include <string.h>
 #include <ctype.h>
 #include <algorithm>
-#include "debug.hpp"
+#include "xr/debug.hpp"
 
 #ifdef _MSC_VER
 // Suppress warnings for known safe uses of strcpy(), strncpy(), sprintf() etc.

@@ -7,8 +7,8 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/SignalNotifier.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/events/SignalNotifier.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <list>
 
 using namespace xr;

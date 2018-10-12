@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/HardString.hpp"
+#include "xr/strings/HardString.hpp"
 
 namespace xr
 {

@@ -12,12 +12,12 @@
 #endif
 
 #include "xr/TextureCache.hpp"
-#include "xr/XonBuildTree.hpp"
+#include "xr/xon/XonBuildTree.hpp"
 #include "xr/FileBuffer.hpp"
 #include "xr/Font.hpp"
-#include "xr/BufferReader.hpp"
-#include "xr/streamutils.hpp"
-#include "xr/stringutils.hpp"
+#include "xr/memory/BufferReader.hpp"
+#include "xr/io/streamutils.hpp"
+#include "xr/strings/stringutils.hpp"
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
 #include "stb_truetype.h"

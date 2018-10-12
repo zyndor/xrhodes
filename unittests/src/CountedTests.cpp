@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/Counted.hpp"
+#include "xr/memory/Counted.hpp"
 
 namespace xr
 {

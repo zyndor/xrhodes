@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/stringutils.hpp"
+#include "xr/strings/stringutils.hpp"
 #include "xr/debug.hpp"
 #include <algorithm>
 #include <cctype>

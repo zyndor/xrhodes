@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "Signal.hpp"
-#include "ScopeGuard.hpp"
+#include "xr/memory/ScopeGuard.hpp"
 
 namespace xr
 {

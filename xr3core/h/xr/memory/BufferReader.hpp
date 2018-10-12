@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Buffer.hpp"
+#include "xr/memory/Buffer.hpp"
 
 namespace xr
 {

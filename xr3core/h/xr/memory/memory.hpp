@@ -9,8 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
-#include "debug.hpp"
+#include "xr/debug.hpp"
 #include <stdint.h>
 #include <stdlib.h>
 

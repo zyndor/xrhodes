@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Signal.hpp"
+#include "xr/events/Signal.hpp"
 #include "xr/debug.hpp"
 #include <algorithm>
 

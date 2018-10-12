@@ -6,9 +6,9 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/XonBuildTree.hpp"
-#include "xr/Queue.hpp"
-#include "xr/stringutils.hpp"
+#include "xr/xon/XonBuildTree.hpp"
+#include "xr/memory/Queue.hpp"
+#include "xr/strings/stringutils.hpp"
 #include <list>
 
 namespace xr

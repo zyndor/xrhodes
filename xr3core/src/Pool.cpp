@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Pool.hpp"
+#include "xr/memory/Pool.hpp"
 #include "xr/debug.hpp"
 
 namespace xr

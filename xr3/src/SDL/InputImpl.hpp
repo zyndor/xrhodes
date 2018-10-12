@@ -11,7 +11,7 @@
 //==============================================================================
 #include "GameController.hpp"
 #include "xr/Input.hpp"
-#include "xr/SignalBroadcaster.hpp"
+#include "xr/events/SignalBroadcaster.hpp"
 #include "SDL_events.h"
 
 namespace xr {

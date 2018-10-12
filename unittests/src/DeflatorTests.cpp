@@ -7,8 +7,8 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/Deflator.hpp"
-#include "xr/streamutils.hpp"
+#include "xr/io/Deflator.hpp"
+#include "xr/io/streamutils.hpp"
 
 namespace xr
 {

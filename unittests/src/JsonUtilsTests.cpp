@@ -11,7 +11,7 @@
 #include "xr/File.hpp"
 #include "xr/jsonutils.hpp"
 #include "xr/JsonReader.hpp"
-#include "xr/ScopeGuard.hpp"
+#include "xr/memory/ScopeGuard.hpp"
 #include "xr/debug.hpp"
 
 namespace xr

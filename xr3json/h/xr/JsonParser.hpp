@@ -10,8 +10,8 @@
 //
 //==============================================================================
 #include "json.hpp"
-#include "xr/Callback.hpp"
-#include "xr/ParserCore.hpp"
+#include "xr/events/Callback.hpp"
+#include "xr/strings/ParserCore.hpp"
 #include <memory>
 
 namespace xr

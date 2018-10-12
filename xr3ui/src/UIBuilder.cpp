@@ -20,11 +20,11 @@
 #include "xr/UIHorizontalScrollingLayout.hpp"
 #include "xr/UIVerticalScrollingLayout.hpp"
 #include "xr/UIGridLayout.hpp"
-#include "xr/debug.hpp"
-#include "xr/Hash.hpp"
 #include "xr/Parse.hpp"
-#include "xr/Pool.hpp"
+#include "xr/memory/Pool.hpp"
+#include "xr/Hash.hpp"
 #include "xr/utils.hpp"
+#include "xr/debug.hpp"
 
 #define ARRAY_SIZE(x) std::extent<decltype(x)>::value
 

@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/stringutils.hpp"
+#include "xr/strings/stringutils.hpp"
 #include <vector>
 
 namespace xr

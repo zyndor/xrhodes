@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/StringFormatter.hpp"
+#include "xr/strings/StringFormatter.hpp"
 
 namespace xr
 {

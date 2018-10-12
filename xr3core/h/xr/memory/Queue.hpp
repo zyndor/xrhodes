@@ -9,10 +9,9 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
 #include <algorithm>
 #include <iterator>
-#include "debug.hpp"
+#include "xr/debug.hpp"
 
 namespace xr
 {

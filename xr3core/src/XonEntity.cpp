@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/XonEntity.hpp"
+#include "xr/xon/XonEntity.hpp"
 #include <algorithm>
 #include <string>
 

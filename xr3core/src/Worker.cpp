@@ -6,9 +6,9 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Worker.hpp"
 #include "xr/debug.hpp"
-#include "xr/RefHolder.hpp"
+#include "xr/threading/Worker.hpp"
+#include "xr/types/RefHolder.hpp"
 
 namespace xr
 {

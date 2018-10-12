@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/IdGenerator.hpp"
+#include "xr/io/IdGenerator.hpp"
 
 namespace xr
 {
