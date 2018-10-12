@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Color.hpp"
+#include "xr/math/Color.hpp"
 
 namespace xr
 {

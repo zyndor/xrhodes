@@ -10,8 +10,8 @@
 //
 //==============================================================================
 #include "Gfx.hpp"
-#include "Vector3.hpp"
-#include "Color.hpp"
+#include "xr/math/Vector3.hpp"
+#include "xr/math/Color.hpp"
 
 namespace xr
 {

@@ -10,8 +10,8 @@
 //
 //==============================================================================
 #include "Quaternion.hpp"
-#include "Vector3.hpp"
-#include "Vector2.hpp"
+#include "xr/math/Vector3.hpp"
+#include "xr/math/Vector2.hpp"
 
 namespace xr
 {

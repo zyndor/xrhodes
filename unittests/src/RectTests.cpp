@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/Rect.hpp"
+#include "xr/math/Rect.hpp"
 
 namespace xr
 {

@@ -9,7 +9,7 @@
 #include "xr/UILabel.hpp"
 #include "xr/UIRenderer.hpp"
 #include "xr/Transforms.hpp"
-#include "xr/Matrix.hpp"
+#include "xr/math/Matrix.hpp"
 #include <cstring>
 #include <cstdlib>
 

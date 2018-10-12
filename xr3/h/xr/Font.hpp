@@ -13,7 +13,7 @@
 #include "Asset.hpp"
 #include "AABB.hpp"
 #include "IMaterialisable.hpp"
-#include "Vector2.hpp"
+#include "xr/math/Vector2.hpp"
 #include <map>
 
 namespace xr

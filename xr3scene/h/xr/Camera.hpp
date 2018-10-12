@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "Component.hpp"
-#include "xr/Matrix4.hpp"
+#include "xr/math/Matrix4.hpp"
 
 namespace xr
 {
