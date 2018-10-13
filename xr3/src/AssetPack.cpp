@@ -7,10 +7,10 @@
 //
 //==============================================================================
 #include "xr/AssetPack.hpp"
-#include "xr/XonBuildTree.hpp"
+#include "xr/xon/XonBuildTree.hpp"
 #include "xr/FileBuffer.hpp"
-#include "xr/BufferReader.hpp"
-#include "xr/streamutils.hpp"
+#include "xr/memory/BufferReader.hpp"
+#include "xr/io/streamutils.hpp"
 
 #define LTRACE(format) XR_TRACE(AssetPack, format)
 

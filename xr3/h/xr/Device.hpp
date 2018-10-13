@@ -10,8 +10,8 @@
 //
 //==============================================================================
 #include "File.hpp"
-#include "xr/Signal.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/events/Signal.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <string>
 
 namespace xr

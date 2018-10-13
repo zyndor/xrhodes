@@ -12,8 +12,8 @@
 
 #include "Parse.hpp"
 #include "Animation.hpp"
-#include "xr/ParserCore.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/strings/ParserCore.hpp"
+#include "xr/types/fundamentals.hpp"
 #include "tinyxml2.h"
 #include <list>
 

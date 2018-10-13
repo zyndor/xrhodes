@@ -16,7 +16,7 @@
 #include "Renderer.hpp"
 #include "Timer.hpp"
 #include "Input.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 
 namespace xr
 {

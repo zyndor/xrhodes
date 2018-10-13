@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/memdebug.hpp"
+#include "xr/memory/memdebug.hpp"
 #include <sstream>
 #include <iomanip>
 #include <stdint.h>

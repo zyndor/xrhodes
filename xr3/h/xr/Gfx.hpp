@@ -12,10 +12,10 @@
 #include "xr/Color.hpp"
 #include "xr/utils.hpp"
 #include "xr/Rect.hpp"
-#include "xr/Callback.hpp"
-#include "xr/Buffer.hpp"
 #include "xr/Primitive.hpp"
-#include "xr/Signal.hpp"
+#include "xr/events/Callback.hpp"
+#include "xr/events/Signal.hpp"
+#include "xr/memory/Buffer.hpp"
 #include "xr/debug.hpp"
 
 namespace xr

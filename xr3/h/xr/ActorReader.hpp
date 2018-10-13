@@ -9,10 +9,10 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/HardString.hpp"
-#include "xr/fundamentals.hpp"
 #include "AnimationReader.hpp"
 #include "Actor.hpp"
+#include "xr/strings/HardString.hpp"
+#include "xr/types/fundamentals.hpp"
 
 namespace xr
 {

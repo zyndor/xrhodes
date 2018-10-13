@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "xr/UIContainer.hpp"
-#include "xr/functors.hpp"
+#include "xr/functions/functors.hpp"
 #include <algorithm>
 
 namespace xr

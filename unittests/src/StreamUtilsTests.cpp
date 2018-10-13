@@ -7,8 +7,8 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/streamutils.hpp"
-#include "xr/memdebug.hpp"
+#include "xr/io/streamutils.hpp"
+#include "xr/memory/memdebug.hpp"
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
 #include <algorithm>

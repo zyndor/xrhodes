@@ -15,9 +15,9 @@
 #include "HatState.hpp"
 #include "SVector2.hpp"
 #include "Vector2.hpp"
-#include "xr/Signal.hpp"
-#include "xr/fundamentals.hpp"
-#include "xr/Callback.hpp"
+#include "xr/events/Signal.hpp"
+#include "xr/types/fundamentals.hpp"
+#include "xr/events/Callback.hpp"
 
 namespace xr
 {

@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "Asset.hpp"
-#include "xr/Queue.hpp"
+#include "xr/memory/Queue.hpp"
 #include <map>
 
 namespace xr

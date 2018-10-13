@@ -8,9 +8,9 @@
 //==============================================================================
 #include "xr/TexturePack.hpp"
 #include "xr/utils.hpp"
-#include "xr/FilePath.hpp"
-#include "xr/BufferReader.hpp"
-#include "xr/streamutils.hpp"
+#include "xr/strings/FilePath.hpp"
+#include "xr/memory/BufferReader.hpp"
+#include "xr/io/streamutils.hpp"
 #include "xr/debug.hpp"
 #include "tinyxml2.h"
 

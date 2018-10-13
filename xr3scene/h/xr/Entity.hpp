@@ -12,8 +12,8 @@
 #include "xr/Matrix.hpp"
 #include "xr/Quaternion.hpp"
 #include "xr/Name.hpp"
-#include "xr/fundamentals.hpp"
-#include "xr/typeutils.hpp"
+#include "xr/types/fundamentals.hpp"
+#include "xr/types/typeutils.hpp"
 #include <vector>
 
 namespace xr

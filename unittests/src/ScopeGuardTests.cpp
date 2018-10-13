@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/ScopeGuard.hpp"
+#include "xr/memory/ScopeGuard.hpp"
 #include <list>
 
 namespace xr

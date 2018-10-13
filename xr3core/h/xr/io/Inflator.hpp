@@ -9,12 +9,11 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
 #include "Inflatable.hpp"
-#include "xr/IdGenerator.hpp"
-#include "xr/fundamentals.hpp"
+#include "IdGenerator.hpp"
+#include "xr/types/fundamentals.hpp"
+#include "xr/types/typeutils.hpp"
 #include "xr/debug.hpp"
-#include "xr/typeutils.hpp"
 #include <map>
 #include <set>
 

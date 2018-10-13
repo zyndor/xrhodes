@@ -10,8 +10,8 @@
 //
 //==============================================================================
 #include "Inflatable.hpp"
-#include "xr/IdGenerator.hpp"
-#include "xr/fundamentals.hpp"
+#include "IdGenerator.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <map>
 #include <set>
 

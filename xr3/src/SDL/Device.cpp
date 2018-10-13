@@ -7,15 +7,15 @@
 //
 //==============================================================================
 #include "InputImpl.hpp"
+#include "GfxContext.hpp"
 #include "xr/Device.hpp"
 #include "xr/FileWriter.hpp"
 #include "xr/JsonReader.hpp"
 #include "xr/JsonWriter.hpp"
 #include "xr/jsonutils.hpp"
-#include "xr/SignalBroadcaster.hpp"
+#include "xr/events/SignalBroadcaster.hpp"
+#include "xr/strings/stringutils.hpp"
 #include "xr/utils.hpp"
-#include "xr/stringutils.hpp"
-#include "GfxContext.hpp"
 #include "SDL_events.h"
 #include "SDL.h"
 #include <cstdlib>

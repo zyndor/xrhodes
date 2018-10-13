@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/SignalBroadcaster.hpp"
+#include "xr/events/SignalBroadcaster.hpp"
 #include <memory>
 
 using namespace xr;

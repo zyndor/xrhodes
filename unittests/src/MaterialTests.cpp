@@ -9,19 +9,20 @@
 #include "FileLifeCycleManager.hpp"
 
 #include "gtest/gtest.h"
-#include "xr/Asset.hpp"
-#include "xr/Hash.hpp"
 
-#include "xr/Image.hpp"
 #include "xr/Texture.hpp"
 #include "xr/Material.hpp"
 
-#include "xr/Device.hpp"
-#include "xr/Gfx.hpp"
-#include "xr/ScopeGuard.hpp"
+#include "xr/Asset.hpp"
+#include "xr/Image.hpp"
 #include "xr/VertexFormats.hpp"
 #include "xr/Transforms.hpp"
+#include "xr/Gfx.hpp"
+#include "xr/Device.hpp"
 #include "xr/Matrix.hpp"
+
+#include "xr/memory/ScopeGuard.hpp"
+#include "xr/Hash.hpp"
 
 #include <numeric>
 

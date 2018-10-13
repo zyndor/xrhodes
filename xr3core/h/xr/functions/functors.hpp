@@ -9,11 +9,10 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
+#include "xr/types/typeutils.hpp"
 #include <algorithm>
 #include <functional>
 #include <iostream>
-#include "typeutils.hpp"
 
 namespace xr
 {

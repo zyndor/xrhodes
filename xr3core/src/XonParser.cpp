@@ -6,8 +6,8 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/XonParser.hpp"
-#include "xr/ParserCore.hpp"
+#include "xr/xon/XonParser.hpp"
+#include "xr/strings/ParserCore.hpp"
 #include "xr/debug.hpp"
 #include <string>
 

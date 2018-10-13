@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Deflator.hpp"
+#include "xr/io/Deflator.hpp"
 #include <sstream>
 
 namespace xr

@@ -8,7 +8,7 @@
 //==============================================================================
 #include "xr/Entity.hpp"
 #include "xr/Component.hpp"
-#include "xr/functors.hpp"
+#include "xr/functions/functors.hpp"
 #include "xr/utils.hpp"
 
 namespace xr

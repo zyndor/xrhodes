@@ -11,7 +11,7 @@
 //==============================================================================
 
 #include "File.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <stdint.h>
 
 namespace xr

@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "xr/Rect.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 
 namespace xr
 {

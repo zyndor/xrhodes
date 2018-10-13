@@ -11,8 +11,8 @@
 //==============================================================================
 #include "Vertex.hpp"
 #include "Gfx.hpp"
-#include "xr/fundamentals.hpp"
-#include "xr/Linked.hpp"
+#include "xr/types/fundamentals.hpp"
+#include "xr/types/Linked.hpp"
 
 namespace xr
 {

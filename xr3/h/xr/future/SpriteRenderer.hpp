@@ -11,8 +11,8 @@
 //==============================================================================
 #include "Sprite.hpp"
 #include "Matrix.hpp"
-#include "xr/fundamentals.hpp"
-#include "xr/Pool.hpp"
+#include "xr/types/fundamentals.hpp"
+#include "xr/memory/Pool.hpp"
 #include "xr/SharedPoolAllocator.hpp"
 #include <list>
 

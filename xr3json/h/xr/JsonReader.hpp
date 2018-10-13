@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 #include "JsonEntity.hpp"
 #include "JsonParser.hpp"
 

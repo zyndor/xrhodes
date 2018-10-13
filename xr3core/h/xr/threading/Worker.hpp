@@ -9,8 +9,8 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "Queue.hpp"
 #include "Semaphore.hpp"
+#include "xr/memory/Queue.hpp"
 #include <thread>
 #include <mutex>
 #include <atomic>

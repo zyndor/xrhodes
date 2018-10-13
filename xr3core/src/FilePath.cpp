@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/FilePath.hpp"
+#include "xr/strings/FilePath.hpp"
 
 namespace xr
 {

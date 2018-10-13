@@ -11,7 +11,7 @@
 //==============================================================================
 #include "UIElement.hpp"
 #include "xr/Input.hpp"
-#include "xr/SignalNotifier.hpp"
+#include "xr/events/SignalNotifier.hpp"
 #include <list>
 #include <memory>
 

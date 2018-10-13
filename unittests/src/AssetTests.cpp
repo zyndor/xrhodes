@@ -11,7 +11,7 @@
 #include "gtest/gtest.h"
 #include "xr/Asset.hpp"
 #include "xr/Hash.hpp"
-#include "xr/BufferReader.hpp"
+#include "xr/memory/BufferReader.hpp"
 #include "xr/FileWriter.hpp"
 
 #include <random>

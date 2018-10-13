@@ -8,7 +8,7 @@
 //==============================================================================
 #include "xr/debug.hpp"
 #include "xr/platform.hpp"
-#include "xr/StringProxy.hpp"
+#include "xr/strings/StringProxy.hpp"
 #include <set>
 #include <cstdarg>
 

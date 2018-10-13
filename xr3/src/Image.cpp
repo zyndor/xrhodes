@@ -9,7 +9,7 @@
 #include "xr/Image.hpp"
 #include "xr/FileBuffer.hpp"
 #include "xr/FileWriter.hpp"
-#include "xr/ScopeGuard.hpp"
+#include "xr/memory/ScopeGuard.hpp"
 #include "xr/debug.hpp"
 #include "png.h"
 

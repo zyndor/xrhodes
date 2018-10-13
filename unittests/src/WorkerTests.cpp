@@ -7,8 +7,8 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/Worker.hpp"
-#include "xr/ScopeGuard.hpp"
+#include "xr/threading/Worker.hpp"
+#include "xr/memory/ScopeGuard.hpp"
 #include <list>
 #include <chrono>
 

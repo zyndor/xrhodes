@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/IndexServer.hpp"
+#include "xr/memory/IndexServer.hpp"
 #include <memory>
 
 namespace xr

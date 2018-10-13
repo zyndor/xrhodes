@@ -11,7 +11,7 @@
 //==============================================================================
 
 #include "Color.hpp"
-#include "xr/fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 
 namespace xr
 {

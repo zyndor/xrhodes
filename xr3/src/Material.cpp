@@ -8,10 +8,10 @@
 //==============================================================================
 #include "xr/Material.hpp"
 #include "xr/FileWriter.hpp"
-#include "xr/XonBuildTree.hpp"
-#include "xr/BufferReader.hpp"
-#include "xr/streamutils.hpp"
-#include "xr/stringutils.hpp"
+#include "xr/xon/XonBuildTree.hpp"
+#include "xr/memory/BufferReader.hpp"
+#include "xr/io/streamutils.hpp"
+#include "xr/strings/stringutils.hpp"
 #include <algorithm>
 #include <unordered_map>
 

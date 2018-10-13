@@ -11,7 +11,7 @@
 //==============================================================================
 #include "xr/Vector3.hpp"
 #include "xr/debug.hpp"
-#include "xr/typeutils.hpp"
+#include "xr/types/typeutils.hpp"
 #include <stdint.h>
 #include <type_traits>
 

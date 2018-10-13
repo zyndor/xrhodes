@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/SharedPoolAllocator.hpp"
+#include "xr/memory/SharedPoolAllocator.hpp"
 
 namespace xr
 {

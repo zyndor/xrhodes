@@ -10,7 +10,7 @@
 //
 //==============================================================================
 
-#include "xr/fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <cstdint>
 
 namespace xr

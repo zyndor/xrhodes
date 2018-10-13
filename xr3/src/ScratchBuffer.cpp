@@ -8,7 +8,7 @@
 //==============================================================================
 #include "xr/ScratchBuffer.hpp"
 #include "xr/VertexFormats.hpp"
-#include "xr/Pool.hpp"
+#include "xr/memory/Pool.hpp"
 
 namespace xr
 {

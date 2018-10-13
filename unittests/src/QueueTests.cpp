@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/Queue.hpp"
+#include "xr/memory/Queue.hpp"
 
 namespace xr
 {

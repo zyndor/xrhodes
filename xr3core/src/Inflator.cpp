@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Inflator.hpp"
+#include "xr/io/Inflator.hpp"
 #include <sstream>
 
 namespace xr

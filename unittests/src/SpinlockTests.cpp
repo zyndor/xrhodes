@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "gtest/gtest.h"
-#include "xr/Spinlock.hpp"
+#include "xr/threading/Spinlock.hpp"
 #include "xr/debug.hpp"
 #include <vector>
 #include <mutex>

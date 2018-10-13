@@ -9,9 +9,9 @@
 #include "xr/Asset.hpp"
 #include "xr/FileBuffer.hpp"
 #include "xr/FileWriter.hpp"
-#include "xr/Worker.hpp"
+#include "xr/threading/Worker.hpp"
+#include "xr/memory/ScopeGuard.hpp"
 #include "xr/Hash.hpp"
-#include "xr/ScopeGuard.hpp"
 #include <map>
 
 #ifdef ENABLE_ASSET_BUILDING

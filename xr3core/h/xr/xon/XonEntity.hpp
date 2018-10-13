@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "fundamentals.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <map>
 #include <vector>
 

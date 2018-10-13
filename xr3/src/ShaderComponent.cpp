@@ -7,8 +7,8 @@
 //
 //==============================================================================
 #include "xr/ShaderComponent.hpp"
-#include "xr/BufferReader.hpp"
-#include "xr/streamutils.hpp"
+#include "xr/memory/BufferReader.hpp"
+#include "xr/io/streamutils.hpp"
 #include <map>
 
 namespace xr
