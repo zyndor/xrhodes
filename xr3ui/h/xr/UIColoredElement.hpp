@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/maths.hpp"
+#include "xr/math/mathutils.hpp"
 #include "xr/Sprite.hpp"
 #include "UIElement.hpp"
 #include "IUIRenderer.hpp"

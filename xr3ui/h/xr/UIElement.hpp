@@ -11,7 +11,7 @@
 //==============================================================================
 #include <list>
 #include "xr/utils.hpp"
-#include "xr/Rect.hpp"
+#include "xr/math/Rect.hpp"
 #include "xr/Input.hpp"
 
 namespace xr

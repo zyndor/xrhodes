@@ -8,7 +8,7 @@
 //
 //==============================================================================
 #include "xr/debug.hpp"
-#include "xr/maths.hpp"
+#include "xr/math/mathutils.hpp"
 #include <vector>
 #include <cstdint>
 

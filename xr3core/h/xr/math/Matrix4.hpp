@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "Matrix.hpp"
-#include "Vector3.hpp"
+#include "xr/math/Vector3.hpp"
 
 namespace xr
 {

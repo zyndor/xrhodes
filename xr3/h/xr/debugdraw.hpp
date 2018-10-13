@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "Vector3.hpp"
+#include "xr/math/Vector3.hpp"
 #include "Material.hpp"
 
 namespace xr

@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/SVector2.hpp"
+#include "xr/math/SVector2.hpp"
 #include "SDL.h"
 
 namespace xr

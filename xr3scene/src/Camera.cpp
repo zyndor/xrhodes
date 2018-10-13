@@ -11,9 +11,9 @@
 #include "xr/ProjectionHelper.hpp"
 #include "xr/MeshRenderer.hpp"
 #include "xr/Transforms.hpp"
-#include "xr/Matrix.hpp"
-#include "xr/Ray.hpp"
-#include "xr/Matrix4.hpp"
+#include "xr/math/Matrix.hpp"
+#include "xr/math/Ray.hpp"
+#include "xr/math/Matrix4.hpp"
 #include "xr/debug.hpp"
 
 namespace xr

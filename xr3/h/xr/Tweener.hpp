@@ -9,9 +9,8 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
 #include <list>
-#include "maths.hpp"
+#include "xr/math/mathutils.hpp"
 #include "xr/types/fundamentals.hpp"
 
 namespace xr

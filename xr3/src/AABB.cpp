@@ -8,7 +8,7 @@
 //==============================================================================
 #include <limits>
 #include "xr/AABB.hpp"
-#include "xr/maths.hpp"
+#include "xr/math/mathutils.hpp"
 
 namespace xr
 {

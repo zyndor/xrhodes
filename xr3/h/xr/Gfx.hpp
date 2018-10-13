@@ -9,14 +9,14 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Color.hpp"
-#include "xr/utils.hpp"
-#include "xr/Rect.hpp"
 #include "xr/Primitive.hpp"
 #include "xr/events/Callback.hpp"
 #include "xr/events/Signal.hpp"
 #include "xr/memory/Buffer.hpp"
+#include "xr/math/Rect.hpp"
+#include "xr/math/Color.hpp"
 #include "xr/debug.hpp"
+#include "xr/utils.hpp"
 
 namespace xr
 {

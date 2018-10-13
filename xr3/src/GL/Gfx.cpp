@@ -8,9 +8,9 @@
 //==============================================================================
 #include "Gfxp.hpp"
 #include "xrgl.hpp"
-#include "xr/Matrix.hpp"
+#include "xr/math/Matrix.hpp"
 #include "xr/Device.hpp"
-#include "xr/SVector2.hpp"
+#include "xr/math/SVector2.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/memory/Pool.hpp"
 #include "xr/Hash.hpp"

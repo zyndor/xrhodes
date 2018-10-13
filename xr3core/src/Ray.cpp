@@ -6,8 +6,8 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Ray.hpp"
-#include "xr/maths.hpp"
+#include "xr/math/Ray.hpp"
+#include "xr/math/mathutils.hpp"
 #include <limits>
 
 namespace xr

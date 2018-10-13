@@ -8,7 +8,7 @@
 //==============================================================================
 #include <stdio.h>
 #include "xr/Parse.hpp"
-#include "xr/maths.hpp"
+#include "xr/math/mathutils.hpp"
 
 namespace xr
 {

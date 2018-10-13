@@ -8,9 +8,9 @@
 //
 //==============================================================================
 #include "Gfx.hpp"
-#include "Ray.hpp"
-#include "Matrix.hpp"
-#include "Vector3.hpp"
+#include "xr/math/Ray.hpp"
+#include "xr/math/Matrix.hpp"
+#include "xr/math/Vector3.hpp"
 #include <cmath>
 
 namespace xr

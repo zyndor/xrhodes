@@ -19,7 +19,7 @@
 #include "xr/Transforms.hpp"
 #include "xr/Gfx.hpp"
 #include "xr/Device.hpp"
-#include "xr/Matrix.hpp"
+#include "xr/math/Matrix.hpp"
 
 #include "xr/memory/ScopeGuard.hpp"
 #include "xr/Hash.hpp"

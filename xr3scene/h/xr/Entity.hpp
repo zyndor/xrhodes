@@ -9,9 +9,9 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Matrix.hpp"
-#include "xr/Quaternion.hpp"
 #include "xr/Name.hpp"
+#include "xr/math/Matrix.hpp"
+#include "xr/math/Quaternion.hpp"
 #include "xr/types/fundamentals.hpp"
 #include "xr/types/typeutils.hpp"
 #include <vector>

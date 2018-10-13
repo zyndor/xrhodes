@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Vector2.hpp"
+#include "xr/math/Vector2.hpp"
 #include "xr/ButtonState.hpp"
 #include "xr/HatState.hpp"
 #include "SDL_joystick.h"

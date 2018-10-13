@@ -6,9 +6,9 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include <cmath>
-#include "xr/Grid.hpp"
+#include "xr/math/Grid.hpp"
 #include "xr/debug.hpp"
+#include <cmath>
 
 namespace xr
 {

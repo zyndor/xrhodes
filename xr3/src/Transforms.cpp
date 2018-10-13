@@ -10,7 +10,7 @@
 #include "xr/ViewRayCaster.hpp"
 #include "xr/Gfx.hpp"
 #include "xr/ProjectionHelper.hpp"
-#include "xr/Matrix4.hpp"
+#include "xr/math/Matrix4.hpp"
 #include "xr/debug.hpp"
 #include <vector>
 #include <memory>
