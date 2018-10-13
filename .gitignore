@@ -1,0 +1,10 @@
+*.orig
+*.bak
+*.o
+*.obj
+*.ilk
+*.tlog
+
+.projects/**
+.intermediate/**
+.artifacts/**
