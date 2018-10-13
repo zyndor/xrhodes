@@ -4,7 +4,7 @@
 //
 // XRhodes
 //
-// copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+// copyright (c) Gyorgy Straub. All rights reserved.
 //
 //==============================================================================
 #include <cstdint>

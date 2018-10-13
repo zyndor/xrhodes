@@ -1,10 +1,12 @@
 ::
 :: XRhodes
 ::
-:: copyright (c) Nuclear Heart Interactive Ltd. All rights reserved.
+:: copyright (c) Gyorgy Straub. All rights reserved.
+::
+:: License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 ::
 ::==============================================================================
-:: Builds every target of XR3.SDL
+:: Builds every target of xr3 for windows.
 
 @echo off
 pushd %~dp0
