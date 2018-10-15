@@ -24,7 +24,9 @@ namespace xr
 /// file, which is a XON document with the following properties:
 /// font: path to the .ttf, .ttc or .otf file to generate glyphs from;
 /// codePoints: hyphen-separated ranges or individual code points to import, as
-///   either a literal ('a') or a hex value (0x61).
+///   either a literal ('a') or a hex value (0x61). Note that even the pairs are
+///   single string values, therefore they either need to be enclosed in quotes,
+///   or there must be no space around the hyphen.
 /// cacheSize: the pixel width and height of the texture cache that the Font
 ///   is going to maintain; optional, default: 1024.
 /// fontSize: the pixel height the glyphs should be, including 1/8 SDF padding;
