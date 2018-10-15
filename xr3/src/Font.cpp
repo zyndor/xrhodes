@@ -46,6 +46,7 @@ XR_ASSET_DEF(Font, "xfnt", 2, "fnt")
     font: "ComicSans.ttf",
     fontSize: 128,
     fontIndex: 0,
+    sdfSize: 4,
     codePoints: {
       '\\'',          # ascii character, escaped
       '!'-'z',        # ascii character range
@@ -236,7 +237,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   int fontSize = kDefaultFontSize; // includes padding for SDF, see below.
   int sdfSize = kDefaultSdfSize;
   int cacheSize = kDefaultCacheSize;
-  Asset::HashType shaderHash = 0;
   XonEntity* xon = nullptr;
   if (success && (xon = root->TryGet("fontIndex")))
   {
@@ -344,25 +344,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       XR_ASSERT(Font, e.type == XonEntity::Exception::Type::InvalidType);
       success = false;
       LTRACE(("%s: %s has invalid type.", rawNameExt, "cacheSize"));
-    }
-  }
-
-  if (success && (xon = root->TryGet("shader")))
-  {
-    try
-    {
-      auto& shader = xon->ToValue();
-      if (auto shaderPath = shader.GetString())
-      {
-        dependencies.push_back(shaderPath);
-        shaderHash = Asset::Manager::HashPath(dependencies.back());
-      }
-    }
-    catch (XonEntity::Exception const& e)
-    {
-      XR_ASSERT(Font, e.type == XonEntity::Exception::Type::InvalidType);
-      success = false;
-      LTRACE(("%s: %s has invalid type.", rawNameExt, "shader"));
     }
   }
 
@@ -556,11 +537,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     }
   }
 
-  if (success)
-  {
-    success = WriteBinaryStream(shaderHash, data);
-    LTRACEIF(!success, ("%s: Failed to write shader hash.", rawNameExt));
-  }
   return success;
 }
 
