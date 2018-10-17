@@ -50,6 +50,8 @@ protected:
   // internal
   bool OnLoaded(Buffer buffer) override;
   void OnUnload() override;
+
+  bool SetSourceInternal(Gfx::ShaderType type, Buffer buffer);
 };
 
 } // XR

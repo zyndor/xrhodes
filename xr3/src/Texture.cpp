@@ -171,11 +171,14 @@ Texture::Ptr Texture::FromHandle(Gfx::TextureHandle handle)
 }
 
 //==============================================================================
-bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height, Buffer buffer)
+bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height,
+  Buffer buffer)
 {
   OnUnload();
 
   const uint32_t flags = GetFlags();
+  XR_ASSERT(Texture, CheckAllMaskBits(flags, ErrorFlag) ||
+    !CheckAnyMaskBits(flags, LoadingFlag | ProcessingFlag));
   uint32_t textureFlags = GetTextureFlags(flags);
 
   // Create Gfx texture.
@@ -187,7 +190,8 @@ bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height,
   bool success = m_handle.IsValid();
   if (success && CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
   {
-    m_data.resize(sizeof(format) + sizeof(m_width) + sizeof(m_height) + sizeof(uint32_t) + buffer.size);
+    m_data.resize(sizeof(format) + sizeof(m_width) + sizeof(m_height) + sizeof(uint32_t) +
+      buffer.size);
     class FixedStreamBuf: public std::streambuf
     {
     public:
@@ -200,6 +204,8 @@ bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height,
     std::ostream sourceBuffer(&fsb);
     success = SerializeTexture(format, width, height, buffer, sourceBuffer);
   }
+
+  OverrideFlags(PrivateMask, success ? ReadyFlag : (ProcessingFlag | ErrorFlag));
 
   return success;
 }
