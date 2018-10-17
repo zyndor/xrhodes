@@ -57,20 +57,16 @@ private:
 //==============================================================================
 bool ShaderComponent::SetSource(Gfx::ShaderType type, char const* source)
 {
+  XR_DEBUG_ONLY(auto flags = GetFlags());
+  XR_ASSERT(ShaderComponent, CheckAllMaskBits(flags, ErrorFlag) ||
+    !CheckAnyMaskBits(flags, LoadingFlag | ProcessingFlag));
+
   Gfx::Release(m_handle);
   auto p = reinterpret_cast<uint8_t const*>(source);
-  m_handle = Gfx::CreateShader(type, { strlen(source), p });
+  const bool success = SetSourceInternal(type, { strlen(source), p });
 
-  bool success = m_handle.IsValid();
-  if(success)
-  {
-    m_type = type;
+  OverrideFlags(PrivateMask, success ? ReadyFlag : (ProcessingFlag | ErrorFlag));
 
-    if(CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
-    {
-      m_data.assign(p, p + strlen(source));
-    }
-  }
   return success;
 }
 
@@ -79,7 +75,8 @@ bool ShaderComponent::OnLoaded(Buffer buffer)
 {
   BufferReader reader(buffer);
 
-  bool success = reader.Read(m_type);
+  Gfx::ShaderType type;
+  bool success = reader.Read(type);
   if (success)
   {
     auto sourceLen = reader.GetRemainingSize();
@@ -91,13 +88,7 @@ bool ShaderComponent::OnLoaded(Buffer buffer)
 #endif
       success)
     {
-      m_handle = Gfx::CreateShader(m_type, { sourceLen, source });
-      success = m_handle.IsValid();
-    }
-
-    if (success && CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
-    {
-      m_data.assign(buffer.data, buffer.data + buffer.size);
+      success = SetSourceInternal(type, { sourceLen, source });
     }
   }
   return success;
@@ -110,6 +101,25 @@ void xr::ShaderComponent::OnUnload()
   m_handle.Invalidate();
 
   std::vector<uint8_t>().swap(m_data);
+}
+
+//==============================================================================
+bool ShaderComponent::SetSourceInternal(Gfx::ShaderType type, Buffer buffer)
+{
+  auto handle = Gfx::CreateShader(type, buffer);
+  bool success = handle.IsValid();
+  if (success)
+  {
+    m_handle = handle;
+    m_type = type;
+
+    if (CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
+    {
+      m_data.assign(buffer.data, buffer.data + buffer.size);
+    }
+  }
+
+  return success;
 }
 
 }

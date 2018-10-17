@@ -97,6 +97,13 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 //==============================================================================
 bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fragment)
 {
+  // NOTE: since this method is called from OnLoaded(), we can't include the
+  // ProcessingFlag in the below check. Nor did I want to create a separate
+  // SetComponentsInternal(), leaving only an assert here.
+  XR_DEBUG_ONLY(auto flags = GetFlags());
+  XR_ASSERT(ShaderComponent, CheckAllMaskBits(flags, ErrorFlag) ||
+    !CheckAnyMaskBits(flags, LoadingFlag));
+
   auto hVertex = vertex->GetHandle();
   auto hFragment = fragment->GetHandle();
   bool success = hVertex.IsValid() && vertex->GetType() == Gfx::ShaderType::Vertex;
@@ -123,6 +130,9 @@ bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fra
     m_vertexShader = vertex;
     m_fragmentShader = fragment;
   }
+
+  OverrideFlags(PrivateMask, success ? ReadyFlag : (ProcessingFlag | ErrorFlag));
+
   return success;
 }
 
