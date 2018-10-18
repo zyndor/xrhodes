@@ -26,7 +26,6 @@ project "unittests"
 		"../xr3json/h",
 		"../xr3/h",
 		"../xr3scene/h",
-		"../xr3ui/h",
 	}
 	
 	defines { "DATA_PATH=\""..path.getabsolute("./data").."\"" }
@@ -39,7 +38,6 @@ project "unittests"
 		"xr3json",
 		"xr3",
 		"xr3scene",
-		"xr3ui",
 	}
 
 	if isVS() then
