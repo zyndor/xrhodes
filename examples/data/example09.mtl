@@ -1,0 +1,5 @@
+{
+	shader: "example09.shd",
+	textures: "xrhodes.png",
+	state: { depthTest, depthWrite, cullBack }
+}

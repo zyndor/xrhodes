@@ -1,0 +1,4 @@
+{
+	shader: "example08-depth.shd",
+	state: { depthTest, depthWrite, cullFront }
+}

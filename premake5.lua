@@ -48,7 +48,7 @@ workspace "xr3"
 	location(sln_location)
 
 	if isVS() then
-		startproject("unittests")
+		startproject("examples")
 	end
 
 	-- platforms setup
@@ -164,7 +164,7 @@ workspace "xr3"
 	end
 
 	-- create a project that just reruns the premake script.
-	project "regenerate_projects"
+	project "!regenerate_projects"
 	kind "ConsoleApp"	-- not actually, but it has to be something.
 	local generate_projects_suffix = "";
 	if target_env == "windows" then
@@ -195,4 +195,7 @@ workspace "xr3"
 
 	filter {}
 	include "unittests/premake5.lua"
+
+	filter {}
+	include "examples/premake5.lua"
 

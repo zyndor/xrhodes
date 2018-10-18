@@ -1,0 +1,5 @@
+{
+	shader: "example03.shd",
+	textures: "xrhodes.png",
+	state: { alphaBlend }
+}

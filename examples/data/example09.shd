@@ -1,0 +1,4 @@
+{
+	vsh: "example08", # reuse vertex shader.
+	fsh: "example09"
+}
