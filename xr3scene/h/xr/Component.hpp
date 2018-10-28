@@ -9,14 +9,19 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "Entity.hpp"
+#include <cstddef>
+#include "xr/types/fundamentals.hpp"
+#include "xr/types/typeutils.hpp"
 
 namespace xr
 {
 
+class Entity;
+
 //==============================================================================
 ///@brief Component class which defines a single unique aspect of an Entity,
 /// with access to the Entity that owns it.
+///@note Classes deriving from Component must be default constructible.
 class Component
 {
   XR_NONCOPY_DECL(Component)
@@ -26,6 +31,7 @@ public:
   template <typename T>
   static size_t GetTypeIdImpl()
   {
+    static_assert(std::is_base_of<Component, T>(), "T must derive from Component.");
     return TypeId<T>();
   }
 
@@ -38,6 +44,8 @@ public:
   virtual size_t  GetTypeId() const =0;
 
   ///@brief Creates a copy of the component which will then be returned.
+  ///@note For derived classes, the m_owner of the clone should be (left as)
+  /// nullptr.
   virtual Component*  Clone() const =0;
 
   // general
