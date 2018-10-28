@@ -29,8 +29,8 @@ public:
   ///@brief Calls each connected callbacks with @a args.
   void Broadcast(Args... args)
   {
-    SetDispatching(true);
-    auto dispatchingGuard = MakeScopeGuard([this] { SetDispatching(false); });
+    BaseType::SetDispatching(true);
+    auto dispatchingGuard = MakeScopeGuard([this] { BaseType::SetDispatching(false); });
 
     for (auto& i: BaseType::GetCallbacks())
     {

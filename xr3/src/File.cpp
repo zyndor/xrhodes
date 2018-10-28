@@ -10,16 +10,17 @@
 #include "xr/strings/stringutils.hpp"
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
-#include <sys/stat.h>
-#include <algorithm>
-#include <fstream>
 
 #ifdef XR_PLATFORM_WINDOWS
 #include <direct.h>
 #include <windows.h>
 #else
-#include <sys/stat.h>
+#include "xr/memory/ScopeGuard.hpp"
 #endif
+
+#include <sys/stat.h>
+#include <algorithm>
+#include <fstream>
 
 #define XR_ASSERT_HANDLE_VALID(h) XR_ASSERTMSG(File, h != nullptr, ("Invalid file handle."))
 
@@ -329,10 +330,11 @@ bool File::Delete(FilePath const & path)
       }
       path = newPath.c_str();
 #else
-      path = realpath(path, nullptr);  // NOTE: path must exist.
-      auto pathGuard = MakeScopeGuard([&path]() {
-        free(path);
-      };
+      char* rpath = realpath(path, nullptr);  // NOTE: path must exist.
+      path = rpath;
+      auto pathGuard = MakeScopeGuard([rpath]() {
+        free(rpath);
+      });
 #endif
       return remove(path) == 0;
     }

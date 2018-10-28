@@ -26,8 +26,8 @@ Parser::Parser(int maxDepth)
 : m_state(),
   m_depth(0),
   m_maxDepth(maxDepth),
-  m_onAtMaxDepth(nullptr),
-  m_handler(nullptr)
+  m_handler(nullptr),
+  m_onAtMaxDepth(nullptr)
 {
   XR_ASSERTMSG(Json::Parser, maxDepth > 1, ("%d is not a sensible value for maxDepth.",
     maxDepth));

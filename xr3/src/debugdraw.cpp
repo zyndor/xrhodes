@@ -21,8 +21,6 @@ namespace
 Gfx::UniformHandle s_uColor;
 Material::Ptr  s_material;
 
-#define XR_STRINGIFY(x) #x
-
 char const* const kVertexShader = "#version 300 es\n"
 XR_STRINGIFY(
 
