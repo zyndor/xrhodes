@@ -21,14 +21,14 @@ Entity::Entity(Entity* parent)
 
 //==============================================================================
 Entity::Entity(Name n, Entity* parent)
-: m_nextWorldUpdate(parent ? parent->m_nextWorldUpdate : nullptr),
+: m_parent(nullptr),  // not yet
+  m_firstChild(nullptr),
+  m_nextSibling(nullptr),
+  m_nextWorldUpdate(parent ? parent->m_nextWorldUpdate : nullptr),
   m_translation(Vector3::Zero()),
   m_rotation(Quaternion::Identity()),
   m_scale(Vector3::One()),
-  m_worldTransform(parent ? parent->m_worldTransform:  Matrix::Identity()),
-  m_parent(nullptr),  // not yet
-  m_firstChild(nullptr),
-  m_nextSibling(nullptr),
+  m_worldTransform(parent ? parent->m_worldTransform : Matrix::Identity()),
   m_name(n)
 {
   if (parent != nullptr)
