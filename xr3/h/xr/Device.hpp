@@ -44,11 +44,12 @@ public:
   };
 
   // general
+  ///@brief Initialises the device abstraction, creates a window with the given
+  /// @a title, and starts event processing.
   static void  Init(char const* title = nullptr);
 
-  ///@brief Gets native window representation of the main window; primarily for
-  /// context creation in Gfx. This window only exists between calls to Init()
-  /// and Shutdown().
+  ///@brief Gets a graphics context which can be used to initialise Gfx.
+  ///@note This only exists between Init() and Shutdown();
   static Gfx::Context* GetGfxContext();
 
   static void  SetMainWindowTitle(char const* title);
@@ -62,17 +63,19 @@ public:
   /// resume event.
   static bool  IsPaused();
 
+  ///@deprecated Use xr::Config::Get().
   ///@brief Gets a configuration option stored under the given @a groupName
   /// (which may be nullptr), and @a varName.
   ///@return The string value of the configuration option; empty string if
   /// undefined.
-  static std::string  GetConfig(const char* groupName, const char* varName);
+  static std::string  GetConfig(char const* groupName, char const* varName);
 
+  ///@deprecated Use xr::Config::GetInt().
   ///@brief Attempts to get a configuration option, stored under @a groupName
   /// (which may be nullptr), and @a varName, as an integer.
   ///@return The integer value of the configuration option; @a defaultValue
   /// if undefined or not castable to an integer.
-  static int GetConfigInt(const char* groupName, const char* varName, int defaultValue);
+  static int GetConfigInt(char const* groupName, char const* varName, int defaultValue);
 
   ///@brief Signal about the application being suspended.
   static Signal<void>& SuspendSignal();

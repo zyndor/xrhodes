@@ -7,12 +7,18 @@
 //
 //==============================================================================
 #include "GfxContext.hpp"
-#include "xr/Device.hpp"
+#include "xr/Config.hpp"
+#include "xr/debug.hpp"
 
 namespace xr
 {
 namespace Gfx
 {
+namespace
+{
+const int kDefaultGlMajorVersion = 3;
+const int kDefaultGlMinorVersion = 3;
+}
 
 //==============================================================================
 Gfx::Context::Context(SDL_Window& window)
@@ -30,7 +36,7 @@ Context::~Context()
 void Context::Init()
 {
   uint32_t flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
-  if (Device::GetConfigInt("Display", "vsync", false))
+  if (Config::GetInt("XR_DISPLAY_VSYNC", false))
   {
     flags |= SDL_RENDERER_PRESENTVSYNC;
   }
@@ -40,8 +46,8 @@ void Context::Init()
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
   // Create GL context.
-  m_glVersionMajor = 3;
-  m_glVersionMinor = 3;
+  m_glVersionMajor = Config::GetInt("XR_GFX_GL_VERSION_MAJOR", kDefaultGlMajorVersion);
+  m_glVersionMinor = Config::GetInt("XR_GFX_GL_VERSION_MINOR", kDefaultGlMinorVersion);
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, m_glVersionMajor);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, m_glVersionMinor);
