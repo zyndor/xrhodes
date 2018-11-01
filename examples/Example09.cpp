@@ -260,7 +260,7 @@ public:
 
     float orthoSize = 11.5f;
     m_renderPasses[RenderPass::DEPTH] = { // depth pre-pass
-      Gfx::CreateFrameBuffer(1, &hShadowMap, false),
+      Gfx::CreateFrameBuffer(1, &hShadowMap),
       Viewer{
         Matrix{ Quaternion::FromAxisAngle(Vector3::UnitX(), kPiHalf),
           Vector3(0., orthoSize, -10.) },
@@ -280,7 +280,7 @@ public:
 
     m_shadowMap = Texture::FromHandle(hShadowMap);
 
-    // This time, our main pass is being rendered into on off-screen buffer.
+    // This time, our main pass is being rendered into an off-screen buffer.
     // Note the use of an alpha channel - we will be writing normalized depth
     // values into it. The difference between the focal length and this will
     // determine how much each fragment will need to be blurred.
@@ -298,7 +298,7 @@ public:
     });
 
     m_renderPasses[RenderPass::MAIN] = { // main pass
-      Gfx::CreateFrameBuffer(2, hOffscreen, false),
+      Gfx::CreateFrameBuffer(2, hOffscreen),
       Viewer{
         Matrix::Identity(),
       },
@@ -335,7 +335,8 @@ public:
       Gfx::GetLogicalHeight(), -10.f, 10.f,
       m_renderPasses[RenderPass::POST].viewer.projection.data);
 
-    // Transfer ownership of offscreen texture handle to a material
+    // Create post-processing material and transfer ownership of offscreen texture
+    // handle to it.
     material = Material::Ptr(Material::Create(0, Asset::UnmanagedFlag)->Cast<Material>());
 
     auto& postMaterial = material;

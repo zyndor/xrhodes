@@ -39,10 +39,9 @@ public:
   /// Gfx is Shutdown().
   static void RegisterSamplerUniform(char const* name, uint32_t textureStage);
 
-  ///@brief Creates a Texture, transferring the ownership of @a handle to it,
-  /// only if the handle is both valid, and is to a 2D texture. The resulting
-  /// Texture will be unmanaged or - if its type or the handle was invalid -
-  /// null.
+  ///@brief Creates a Texture from the given @a handle. Only If the handle was
+  /// valid, and is for a 2D texture, the ownership of it is transferred, to the
+  /// Texture. The resulting Texture will be unmanaged.
   static Texture::Ptr FromHandle(Gfx::TextureHandle handle);
 
   // general

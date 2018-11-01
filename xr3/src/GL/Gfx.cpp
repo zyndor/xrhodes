@@ -1953,13 +1953,26 @@ FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32
 }
 
 //=============================================================================
-FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures, bool ownTextures)
+FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures)
+{
+  return s_impl->CreateFrameBuffer(textureCount, hTextures, false);
+}
+
+//=============================================================================
+FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* attachments)
+{
+  return s_impl->CreateFrameBuffer(textureCount, attachments, false);
+}
+
+//=============================================================================
+FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures,
+  bool ownTextures)
 {
   return s_impl->CreateFrameBuffer(textureCount, hTextures, ownTextures);
 }
 
 //=============================================================================
-FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const * attachments, bool ownTextures)
+FrameBufferHandle CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* attachments, bool ownTextures)
 {
   return s_impl->CreateFrameBuffer(textureCount, attachments, ownTextures);
 }
@@ -1973,7 +1986,7 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 
 //=============================================================================
 void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-  TextureFormat format, uint16_t colorAttachment, void * mem)
+  TextureFormat format, uint16_t colorAttachment, void* mem)
 {
   s_impl->ReadFrameBuffer(x, y, width, height, format, colorAttachment, mem);
 }
@@ -2051,7 +2064,7 @@ void SetScissor(Rect const* rect)
 }
 
 //==============================================================================
-void SetUniform(UniformHandle h, void const * data)
+void SetUniform(UniformHandle h, void const* data)
 {
   s_impl->SetUniform(h, 1, data);
 }

@@ -166,7 +166,7 @@ public:
     // Set up renderpasses
     float orthoSize = 11.5f;
     m_renderPasses[RenderPass::DEPTH] = { // depth pre-pass
-      Gfx::CreateFrameBuffer(1, &hShadowMap, false),
+      Gfx::CreateFrameBuffer(1, &hShadowMap),
       {
         Matrix{ Quaternion::FromAxisAngle(Vector3::UnitX(), kPiHalf),
           Vector3(0., orthoSize, -10.) },
