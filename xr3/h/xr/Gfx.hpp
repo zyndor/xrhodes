@@ -27,6 +27,13 @@ namespace Gfx
 class Context;
 
 //=============================================================================
+///@brief Upper limit on number of texture stages.
+enum : uint8_t { kMaxTextureStages = 8 };
+
+///@brief Upper limit on number of instance data buffers.
+enum : uint8_t { kMaxInstanceData = 4 };
+
+//=============================================================================
 namespace Comparison
 {
 using Type = uint8_t;
@@ -254,12 +261,14 @@ enum class TextureFormat
 //=============================================================================
 struct TextureInfo
 {
-  TextureFormat format = TextureFormat::kCount;
-  uint16_t width = 0;
-  uint16_t height = 0;
-  uint16_t depth = 0;
-  uint8_t mipCount = 0;
-  FlagType flags = F_TEXTURE_NONE;
+  static uint8_t CalculateMipLevels(uint16_t width, uint16_t height, FlagType flags);
+
+  TextureFormat format;
+  uint16_t width;
+  uint16_t height;
+  uint16_t depth;
+  uint8_t mipLevels;
+  FlagType flags;
 };
 
 //=============================================================================
@@ -288,8 +297,8 @@ public:
 
   uint16_t id;
 
-  HandleCoreCore()
-  : id{ INVALID_ID }
+  HandleCoreCore(uint16_t id_)
+  : id{ id_ }
   {}
 
   bool IsValid() const
@@ -306,12 +315,22 @@ public:
 template <typename T>
 struct HandleCore : HandleCoreCore
 {
+  HandleCore(uint16_t id_)
+  : HandleCoreCore(id_)
+  {}
+
   bool operator==(T const& rhs) const { return id == rhs.id; }
   bool operator!=(T const& rhs) const { return !operator==(rhs); }
   bool operator<(T const& rhs) const { return id < rhs.id; }
 };
 
-#define GFX_HANDLE_DECL(name) struct name: HandleCore<name> {}
+#define GFX_HANDLE_DECL(name) struct name: HandleCore<name> \
+  { \
+    name(uint16_t id_ = HandleCoreCore::INVALID_ID) \
+    : HandleCore<name>(id_) \
+    {}  \
+  };
+
 GFX_HANDLE_DECL(VertexFormatHandle);
 GFX_HANDLE_DECL(VertexBufferHandle);
 GFX_HANDLE_DECL(IndexBufferHandle);
@@ -382,11 +401,17 @@ constexpr FlagType StencilToState(uint8_t ref, uint8_t mask,
 
 //=============================================================================
 ///@brief Initialises Gfx with the given Gfx::Context, which the client should
-/// get from Device. Depending on implementation, this may be called from a
-/// thread that you intend to use as your rendering thread, and in one such
-/// scenario - still depending on implementation -, 1, the main thread should
-/// wait for the initialization to complete, and 2, you are expected to make
-/// all subsequent Gfx calls from the same thread which Init() was called from.
+/// get from Device.<br />
+/// Gfx supports multithreaded rendering. When this is enabled, render commands
+/// are queued in a buffer, which the renderer processes when the pipeline was
+/// Flush()ed or a frame was Present()ed.<br/>
+/// Multithreaded rendering may be configured using the following options:<br />
+/// XR_GFX_MULTITHREADED: 0 (off, default) / 1 (on).
+/// XR_GFX_COMMAND_BUFFER_SIZE: size of command buffer in bytes. Default is 64KB.
+///@note Multithreaded rendering may be useful when you find your game update
+/// expensive; otherwise it is not guaranteed to perform better than single
+/// threaded.
+///@note Gfx APIs must still only be called from a single thread.
 void Init(Context* context);
 
 ///@return Logical width of rendering area in pixels.
@@ -406,6 +431,29 @@ int GetPhysicalHeight();
 
 ///@return The ratio of the width to the height of the physical size.
 float GetPhysicalAspectRatio();
+
+// default textures.
+///@return Handle to the default 2D texture.
+///@note Does not transfer ownership; don't try to Release() it.
+///@note Returns a constant value. Always synchronous.
+TextureHandle GetDefaultTexture2D();
+
+///@return Handle to the default 3D texture.
+///@note Does not transfer ownership; don't try to Release() it.
+///@note Returns a constant value. Always synchronous.
+TextureHandle GetDefaultTexture3D();
+
+///@return Handle to the default cubemap texture.
+///@note Does not transfer ownership; don't try to Release() it.
+///@note Returns a constant value. Always synchronous.
+TextureHandle GetDefaultTextureCube();
+
+///@return Handle to the default framebuffer.
+///@note The front and back buffers are color attachments 0 and 1, respectively.
+///@note The texture format of the attachments is RGBA8.
+///@note Does not transfer ownership; don't try to Release() it.
+///@note Returns a constant value. Always synchronous.
+FrameBufferHandle GetDefaultFrameBuffer();
 
 ///@brief Registers a vertex format definition.
 VertexFormatHandle RegisterVertexFormat(VertexFormat const& format);
@@ -451,21 +499,13 @@ TextureHandle CreateTexture(TextureFormat format, uint16_t width,
 TextureHandle CreateTexture(TextureFormat format, uint16_t width,
   uint16_t height, uint16_t depth, FlagType flags);
 
-// default textures.
-TextureHandle GetDefaultTexture2D();
-TextureHandle GetDefaultTexture3D();
-TextureHandle GetDefaultTextureCube();
-
+///@return Description of the texture that @a h is for.
 TextureInfo GetTextureInfo(TextureHandle h);
 
 ///@brief Signifies the end of ownership of a texture, destroying it if
 /// no other owners were left.
 ///@note Framebuffers' use of a texture also increments its refcount.
 void Release(TextureHandle h);
-
-///@return Handle to the default framebuffer. The front and back buffers are color
-/// attachments 0 and 1.
-FrameBufferHandle GetDefaultFrameBuffer();
 
 ///@brief Creates a render target along with a 2D texture of the given format.
 /// Such a frame buffer may be suitable for use with ReadFrameBuffer() only,
@@ -489,7 +529,7 @@ FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
-[[deprecated("ownTextures is no-op, use the overload without it.")]]
+[[deprecated("ownTextures is ignored, use the overload without it.")]]
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   TextureHandle const* hTextures, bool ownTextures);
 
@@ -497,31 +537,17 @@ FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
-[[deprecated("ownTextures is no-op, use the overload without it.")]]
+[[deprecated("ownTextures is ignored, use the overload without it.")]]
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   FrameBufferAttachment const* attachments, bool ownTextures);
-
-///@brief Reads the content of the first colour attachment of the currently
-/// set framebuffer, within the boundaries of the given rectangle and in the
-/// given format. The texture format of the default framebuffer is RGBA8.
-///@note The buffer pointed to by @a mem must be large enough to hold
-/// the data.
-void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-  TextureFormat format, void* mem);
-
-///@brief Reads given colour attachment of currently set framebuffer; if
-/// this is the default one then the contents of the front or back
-/// buffers may be read by specifying attachments 0 or 1, respectively.
-void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-  TextureFormat format, uint8_t colorAttachment, void* mem);
 
 ///@brief Deletes framebuffer, Release()ing all attached textures.
 void Release(FrameBufferHandle h);
 
 ///@brief Creates a Uniform, to be recognized in shaders that are created following
 /// this call. This means that a uniform of a given name should always have the
-/// same type and array size across the board. Note that the maximum array size
-/// is 255.
+/// same type and array size across the board.
+///@note The maximum array size is 255.
 ///@note If a uniform with the given name (and matching type and size)
 /// already exists, its reference count is incremented instead.
 UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize = 1);
@@ -551,6 +577,11 @@ ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment);
 void Release(ProgramHandle h);
 
 // State and drawing
+///@brief Clears the given buffers of the currently bound frame buffer to the
+/// specified values.
+void Clear(FlagType flags, Color color = Color(0xff000000), float depth = 1.0f,
+  uint8_t stencil = 0x00);
+
 ///@brief Sets the viewport.
 void SetViewport(Rect const& rect);
 
@@ -597,19 +628,57 @@ void Draw(VertexBufferHandle vbh, Primitive primitive, uint32_t offset, uint32_t
 /// starting from @a offset.
 void Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive primitive, uint32_t offset, uint32_t count);
 
-///@brief Clears the given buffers of the currently bound frame buffer to the
-/// specified values.
-void Clear(FlagType flags, Color color = Color(0xff000000), float depth = 1.0f,
-  uint8_t stencil = 0x00);
-
 ///@brief Flushes the pipeline and calls all callbacks registered on FlushSignal().
+///@note In multithreaded mode, this will start processing the commands issued
+/// thus far (including this one).
 void Flush();
 
 ///@brief Flushes the pipeline and performs the swapping of the front and back
 /// buffers.
+///@note In multithreaded mode, this will start processing the commands issued
+/// thus far (including this one).
 void Present(bool resetState = true);
 
+///@brief Callback to call upon the completion of a ReadFrameBuffer command.
+/// Its void* parameter is the chunk of memory that was passed to ReadFrameBuffer.
+using ReadFrameBufferCompleteCallback = Callback<void, void*>;
+
+///@brief Reads the contents of the first colour attachment of the currently
+/// set framebuffer, within the boundaries of the given rectangle and in the
+/// given format.<br />
+/// If provided, @a onComplete will be called upon completion, passing @a mem.
+///@note The buffer pointed to by @a mem must be large enough to hold
+/// the data.
+///@note In multithreaded mode, this will start processing the commands issued
+/// thus far (including this one).
+///@note Does not transfer ownership of @a onComplete (if any); it will be CLone()d.
+///@note @a onComplete (if any) will be called from the rendering thread.
+///@note In multithreaded mode, client code must guarantee at least two flushes
+/// before attempting to access the result; it's recommended to use the
+/// completion callback instead.
+void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+  TextureFormat format, void* mem,
+  ReadFrameBufferCompleteCallback* onComplete = nullptr);
+
+///@brief Reads the contents of the given @a colourAttachment of the currently
+/// set framebuffer.<br />
+/// If provided, @a onComplete will be called upon completion, passing @a mem.
+///@note The buffer pointed to by @a mem must be large enough to hold
+/// the data.
+///@note In multithreaded mode, this will start processing the commands issued
+/// thus far (including this one).
+///@note Does not transfer ownership of @a onComplete (if any); it will be CLone()d.
+///@note @a onComplete (if any) will be called from the rendering thread.
+///@note In multithreaded mode, client code must guarantee at least two flushes
+/// before attempting to access the result; it's recommended to use the
+/// completion callback instead.
+void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+  TextureFormat format, uint8_t colorAttachment, void* mem,
+  ReadFrameBufferCompleteCallback* onComplete = nullptr);
+
 ///@return A signal which is emitted upon Flush().
+///@note In multithreaded mode, this means the issuing of a Flush command, not
+/// the execution.
 Signal<void>& FlushSignal();
 
 ///@brief A signal which is emitted upon Shutdown().
@@ -619,7 +688,7 @@ Signal<void>& ShutdownSignal();
 /// ShutdownSignal().
 void Shutdown();
 
-} // GFX
-} // XR
+} // Gfx
+}
 
 #endif // XR_GFX_HPP

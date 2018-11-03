@@ -79,6 +79,7 @@ public:
     // shader handles; we need to release our local copies.
     Gfx::Release(hVert);
     Gfx::Release(hFrag);
+    Gfx::Flush();
   }
 
   virtual void Update() override

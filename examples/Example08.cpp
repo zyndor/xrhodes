@@ -199,6 +199,7 @@ public:
 
     // Transfer ownership of shadowmap to managed pointer.
     m_shadowMap = Texture::FromHandle(hShadowMap);
+    Gfx::Flush();
 
     // Load shader for visualising depth buffer
     m_debugShader = Asset::Manager::Load<Shader>("example08-debug.shd");

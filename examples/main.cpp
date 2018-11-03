@@ -233,7 +233,8 @@ int main(int argc, char** argv)
   // Set a few environment variables that XRhodes will use during its initialisation.
   putenv("XR_DISPLAY_FULLSCREEN=0");  // this is the default
   putenv("XR_DISPLAY_WIDTH=1024");
-  putenv("XR_DISPLAY_VSYNC=1");
+  //putenv("XR_DISPLAY_VSYNC=1");
+  //putenv("XR_GFX_MULTITHREADED=1");
 
   return Application(argc, argv).Run();
 }

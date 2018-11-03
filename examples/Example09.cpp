@@ -356,6 +356,7 @@ public:
 
     Vector4 focalLengthAmountInvAspectRatio(0.333, 1.0, 1.0f / Gfx::GetLogicalAspectRatio());
     Gfx::SetUniform(m_uFocalLength_Amount_InvAspectRatio, focalLengthAmountInvAspectRatio.data);
+    Gfx::Flush();
 
     m_rotation = Quaternion::Identity();
     m_dragControl.Reset();

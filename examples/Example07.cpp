@@ -126,6 +126,7 @@ public:
     Gfx::SetUniform(m_uLightDirection, &lightDirection);
 
     Texture::RegisterSamplerUniform("uTexture0", 0);
+    Gfx::Flush();
 
     m_rotation = Quaternion::Identity();
     m_dragControl.Reset();
