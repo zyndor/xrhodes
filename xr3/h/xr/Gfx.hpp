@@ -17,6 +17,7 @@
 #include "xr/math/Color.hpp"
 #include "xr/debug.hpp"
 #include "xr/utils.hpp"
+#include <cstring>
 
 namespace xr
 {

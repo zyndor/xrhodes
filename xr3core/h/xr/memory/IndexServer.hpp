@@ -11,6 +11,7 @@
 //==============================================================================
 #include "xr/debug.hpp"
 #include <vector>
+#include <cstdlib>
 
 namespace xr
 {

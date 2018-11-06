@@ -10,14 +10,14 @@
 project "examples"
 
 	kind "ConsoleApp"
-	
+
 	files
 	{
 		"*.cpp",
 		"*.hpp",
 		"data/*"
 	}
-	
+
 	includedirs
 	{
 		"../external/libpng",
@@ -26,17 +26,16 @@ project "examples"
 		"../xr3json/h",
 		"../xr3/h",
 		"../xr3scene/h",
-		"../samples",
 	}
-	
+
 	defines { "DATA_PATH=\""..path.getabsolute("./data").."\"" }
-	
+
 	links
 	{
-		"xr3core",
-		"xr3json",
-		"xr3",
 		"xr3scene",
+		"xr3",
+		"xr3json",
+		"xr3core",
 	}
 
 	if isVS() then
@@ -45,85 +44,84 @@ project "examples"
 		buildoptions { "-Wno-error" }
 	end
 
-    -- link options
-    if target_env == "windows" then
-        -- Windows
-        links
-        {
-            "libpng16",
-            "zlib",
-            "opengl32",
-			
+	-- link options
+	if target_env == "windows" then
+		-- Windows
+		links
+		{
+			"libpng16",
+			"zlib",
+			"opengl32",
+
 			"SDL2",
-			
+
 			"tinyxml2",
-        }
-    
-        libdirs
-        {
-            "../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
-            "../external/tinyxml2/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
-            "../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
-            "../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
-        }
+		}
 
-    else
-        if target_env == "macosx" then
-            -- OSX
-            links
-            {
-                "SDL2.framework"
-            }
-        
-            -- note: unlike the libdirs, these are _two_ folders out. not entirely sure why.
-            local framework_paths = {
-                "-F../../external/SDL2/",
-            }
-        
-            buildoptions(framework_paths)
-            linkoptions(framework_paths)
-        else
-            -- other *nix
-            for _, p in ipairs(tbl_platforms) do
-                for _, c in ipairs(tbl_configurations) do
-                    local pc = "/"..p.."-"..c
-                    filter{ "platforms:"..p, c }
-                
-                    libdirs
-                    {
-                        "../external/SDL2/lib/"..target_env..pc,
-                    }
-                end
-            end
-        end
+		libdirs
+		{
+			"../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
+			"../external/tinyxml2/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
+			"../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
+			"../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
+		}
 
-        -- common *nix link options
-        filter {}
-        links
-        {
-            "png16",
-            "z"
-        }
+	else
+		if target_env == "macos" then
+			-- OSX
+			links
+			{
+				"SDL2.framework"
+			}
 
-        libdirs
-        {
-            "../external/libpng/lib/"..target_env.."/",
-            "../external/zlib/lib/"..target_env.."/",
-        }
-        
-		for _, p in ipairs(tbl_platforms) do
-			for _, c in ipairs(tbl_configurations) do
-				local pc = "/"..p.."-"..c
-				filter{ "platforms:"..p, c }
-                libdirs
-                {
-					"../external/tinyxml2/lib/"..target_env..pc,
-                }
-            end
-        end
-    end
+			libdirs
+			{
+				"../external/libpng/lib/"..target_env.."/",
+				"../external/zlib/lib/"..target_env.."/",
+			}
 
-    if target_env == "windows" then -- copy SDL dlls
+			for _, p in ipairs(tbl_platforms) do
+				for _, c in ipairs(tbl_configurations) do
+					local pc = "/"..p.."-"..c
+					filter{ "platforms:"..p, c }
+					libdirs
+					{
+						"../external/tinyxml2/lib/"..target_env..pc,
+					}
+				end
+			end
+			filter {}
+
+			-- note: unlike the libdirs, these are _two_ folders out. not entirely sure why.
+			local framework_paths = {
+				"-F../../external/SDL2/",
+			}
+
+			buildoptions(framework_paths)
+			linkoptions(framework_paths)
+
+		else
+			-- other *nix
+			links
+			{
+				"tinyxml2",
+				"SDL2",
+				"GL",
+				"pthread"
+			}
+		end
+
+
+		-- common *nix link options
+		links
+		{
+			"png16",
+			"z"
+		}
+
+	end
+
+	if target_env == "windows" then -- copy SDL dlls
 		local external_rel_path = "../../external/"; -- current directory at this point is .projects/windows
 		local artifacts_rel_path = "../../"..bin_location.."/";
 		for _, p in ipairs(tbl_platforms) do

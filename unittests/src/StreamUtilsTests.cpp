@@ -12,6 +12,7 @@
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
 #include <algorithm>
+#include <cstring>
 
 namespace xr
 {

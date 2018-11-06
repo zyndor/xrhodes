@@ -35,7 +35,7 @@ public:
   // static
   ///@brief The separator character used in an Entity path to FindChild(), e.g.
   /// "Zone.Locators.PlayerStart"
-  static const char kSeparator = '.';
+  static const char kSeparator;
 
   // structors
   explicit Entity(Entity* pParent);

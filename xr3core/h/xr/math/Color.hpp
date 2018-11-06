@@ -11,6 +11,7 @@
 //==============================================================================
 #include "mathutils.hpp"
 #include "xr/debug.hpp"
+#include <cstdint>
 
 namespace xr
 {

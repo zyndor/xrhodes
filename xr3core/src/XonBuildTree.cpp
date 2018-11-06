@@ -10,6 +10,7 @@
 #include "xr/memory/Queue.hpp"
 #include "xr/strings/stringutils.hpp"
 #include <list>
+#include <cstring>
 
 namespace xr
 {
@@ -26,7 +27,7 @@ struct XonTreeBuildState
     {
       if (keyCache.start)
       {
-        XR_ASSERT(XonTreeBuildState, keyCache.length != -1);
+        XR_ASSERT(XonTreeBuildState, keyCache.length < std::numeric_limits<size_t>::max());
         object->AddElement(std::string(keyCache.start, keyCache.length), v);
         keyCache.start = nullptr;  // consume key
       }

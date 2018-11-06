@@ -12,6 +12,7 @@
 #include "xr/memory/ScopeGuard.hpp"
 #include "xr/debug.hpp"
 #include "png.h"
+#include <cstring>
 
 namespace xr
 {

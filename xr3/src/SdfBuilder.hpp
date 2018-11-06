@@ -6,6 +6,8 @@
 //
 // copyright (c) Gyorgy Straub. All rights reserved.
 //
+// License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
+//
 //==============================================================================
 #include "xr/debug.hpp"
 #include "xr/math/mathutils.hpp"
@@ -91,7 +93,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -101,7 +103,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -111,7 +113,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -121,7 +123,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -148,7 +150,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -158,7 +160,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -168,7 +170,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
@@ -178,7 +180,7 @@ public:
           auto b = *(p + offset);
           int dx = x - b.x;
           int dy = y - b.y;
-          *d = std::sqrtf(float(dx * dx + dy * dy));
+          *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 

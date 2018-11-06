@@ -12,7 +12,7 @@
 
 namespace  xr
 {
-namespace
+namespace  detail
 {
 //==============================================================================
 ///@brief Scope Guard provides a lightweight, RAII based facility to execute
@@ -53,13 +53,13 @@ private:
   mutable bool  m_isEngaged;
 };
 
-}
+} // detail
 
-typedef const ScopeGuardCore&  ScopeGuard;
+using ScopeGuard = const detail::ScopeGuardCore&;
 
 //==============================================================================
 template  <class Func>
-class  ScopeGuardImpl:  public ScopeGuardCore
+class  ScopeGuardImpl:  public detail::ScopeGuardCore
 {
 public:
   // structors

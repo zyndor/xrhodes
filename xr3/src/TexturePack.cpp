@@ -309,12 +309,6 @@ bool TexturePack::OnLoaded(Buffer buffer)
   bool success = reader.Read(textureHash);
   LTRACEIF(!success, ("%s: failed to read texture id.", m_debugPath.c_str()));
 
-  FlagType flags = 0;
-  if (success)
-  {
-    flags = GetFlags();
-  }
-
   if (success)
   {
     m_texture = Manager::Find(Descriptor<Texture>(textureHash));

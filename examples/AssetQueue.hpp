@@ -18,9 +18,9 @@ class AssetQueue
 {
 public:
   template <typename T>
-  void Add(xr::Counted<T>& asset)
+  void Add(xr::Counted<T> asset)
   {
-    m_assets.push_back(Asset::Ptr(asset.Get()));
+    m_assets.push_back(xr::Asset::Ptr(asset.Get()));
   }
 
   void Update()
