@@ -6,12 +6,12 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#include "IsSpaceUtf8.hpp"
 #include "xr/BoxText.hpp"
 #include "xr/Sprite.hpp"
 #include "xr/IndexMesh.hpp"
 #include "xr/meshutil.hpp"
 #include "utf8/unchecked.h"
-#include <locale>
 
 namespace xr {
 
@@ -85,7 +85,6 @@ void BoxText::Measure(char const* text, Measurement & m) const
   auto numBytes = strlen(text);
   auto end = utf8::find_invalid(text, text + numBytes);
 
-  std::locale loc;
   while (text != end)
   {
     bool hasAdvanced = false;
@@ -131,7 +130,7 @@ void BoxText::Measure(char const* text, Measurement & m) const
       }
 
       // Check word boundary.
-      bool isSpace = std::isspace(cp, loc) != 0;
+      bool isSpace = IsSpaceUtf8(cp);
       if ((wordStart != nullptr) == isSpace) // If we have a word started, and hit space, or if have no word started and hit non-whitespace.
       {
         if (wordStart)  // Had word, now finished.

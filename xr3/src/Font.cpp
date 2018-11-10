@@ -11,6 +11,7 @@
 #include "SdfBuilder.hpp"
 #endif
 
+#include "IsSpaceUtf8.hpp"
 #include "xr/TextureCache.hpp"
 #include "xr/xon/XonBuildTree.hpp"
 #include "xr/FileBuffer.hpp"
@@ -417,7 +418,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     size_t glyphBytesWritten = 0;
     auto iRanges = codePointsRoot->Lowest();
 
-    std::locale loc;
     while(iRanges)
     {
       for(auto i0 = iRanges->start, i1 = iRanges->end; i0 != i1; ++i0)
@@ -447,7 +447,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         glyph.height = (y1 - y0 + 2.0f * sdfSizeUnits) * kUnitsToPixel;
         glyph.yBearing = (y0 - sdfSizeUnits) * kUnitsToPixel;
 
-        if (std::isspace(i0, loc)) // if whitespace, don't waste memory.
+        if (IsSpaceUtf8(i0)) // if whitespace, don't waste memory.
         {
           glyph.fieldHeight = 0;
           glyph.fieldWidth = 0;
