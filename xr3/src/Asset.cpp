@@ -653,7 +653,7 @@ Asset::HashType Asset::Manager::HashPath(FilePath path)
   if (!path.GetExt() &&
     path.size() == 20 &&
     nameExt == path.data() + 4 &&
-    sscanf(nameExt, "%llx", &hash) == 1)
+    sscanf(nameExt, "%" PRIx64, &hash) == 1)
   {
     if (DescriptorCore(0, hash).ToPath() != path)
     {

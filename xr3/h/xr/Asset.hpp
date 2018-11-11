@@ -22,6 +22,7 @@
 #include <memory>
 #include <vector>
 #include <ostream>
+#include <cinttypes>
 
 namespace xr
 {
@@ -111,7 +112,7 @@ public:
     FilePath ToPath() const
     {
       char hashBuffer[17];
-      sprintf(hashBuffer, "%.16llx", hash);
+      sprintf(hashBuffer, "%.16" PRIx64, hash);
       FilePath path;
       path.append(hashBuffer, 1);
       path.AppendDirSeparator();

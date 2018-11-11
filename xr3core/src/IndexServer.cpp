@@ -8,6 +8,7 @@
 //==============================================================================
 #include "xr/memory/IndexServer.hpp"
 #include <sstream>
+#include <algorithm>
 
 namespace xr
 {

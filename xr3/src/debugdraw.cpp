@@ -182,8 +182,8 @@ void  Circle(float radius, Material::Ptr const& material)
 {
   uint32_t numVerts = GetCircleNumVerts(radius);
   float theta = float(M_PI / numVerts);
-  float c = std::cosf(theta);
-  float s = std::sinf(theta);
+  float c = std::cos(theta);
+  float s = std::sin(theta);
   Vector3 v(radius, .0f, .0f);
 
   numVerts *= 2;

@@ -10,6 +10,8 @@
 
 using namespace xr;
 
+const int64_t DragController::kMaxPressDurationMs = 2000;
+
 void DragController::Reset()
 {
   m_tLastFrameMs = Timer::GetUST();
@@ -43,7 +45,7 @@ void DragController::Update()
   auto now = Timer::GetUST();
   auto timer = m_pressTimerMs + BoolToSign<int64_t>(m_isButtonDown) *
     static_cast<int64_t>(now - m_tLastFrameMs);
-  m_pressTimerMs = std::min(std::max(0i64, timer), kMaxPressDurationMs);
+  m_pressTimerMs = std::min(std::max(static_cast<decltype(timer)>(0), timer), kMaxPressDurationMs);
   m_tLastFrameMs = now;
 
   m_motion += m_accumulators[m_iActiveAccumulator];

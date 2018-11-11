@@ -10,6 +10,7 @@
 
 #include "gtest/gtest.h"
 #include "xr/Image.hpp"
+#include <cstring>
 
 class ImageTests : public ::testing::Test
 {

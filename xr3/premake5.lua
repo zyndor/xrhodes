@@ -9,12 +9,12 @@
 project "xr3"
 
 	kind "StaticLib"
-	
+
 	files {
 		"h/**.hpp",
 		"src/*.cpp",
 	}
-	
+
 	includedirs {
 		"h/",
 		"../xr3core/h/",
@@ -24,7 +24,7 @@ project "xr3"
 		"../external/stb",
 		"../external/utf8cpp",
 	}
-	
+
 	if target_desktop then
 		files {
 			"src/GL/*.hpp",
@@ -32,9 +32,10 @@ project "xr3"
 			"src/SDL/*.hpp",
 			"src/SDL/*.cpp",
 		}
-		
+
 		includedirs {
 			"../external/SDL2/include/",
 			"src/SDL/",	-- NOTE: for access to GfxContext.hpp; for some reason filter{ "files:src/GL/Gfx.cpp" } didn't work.
 		}
 	end
+

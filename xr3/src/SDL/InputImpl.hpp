@@ -13,6 +13,7 @@
 #include "xr/Input.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "SDL_events.h"
+#include <cstring>
 
 namespace xr {
 

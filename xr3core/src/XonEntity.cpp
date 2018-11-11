@@ -9,6 +9,7 @@
 #include "xr/xon/XonEntity.hpp"
 #include <algorithm>
 #include <string>
+#include <cstring>
 
 namespace xr
 {

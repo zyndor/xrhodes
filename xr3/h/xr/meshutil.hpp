@@ -12,8 +12,9 @@
 #include "xr/math/Vector3.hpp"
 #include "xr/debug.hpp"
 #include "xr/types/typeutils.hpp"
-#include <stdint.h>
+#include <cstdint>
 #include <type_traits>
+#include <limits>
 
 namespace xr
 {
