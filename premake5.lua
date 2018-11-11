@@ -169,6 +169,8 @@ workspace "xr3"
 	local generate_projects_suffix = "";
 	if target_env == "windows" then
 		generate_projects_suffix = ".bat"
+	else
+		generate_projects_suffix = ".sh"
 	end
 
 	postbuildcommands{
