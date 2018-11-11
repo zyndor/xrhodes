@@ -37,10 +37,10 @@ auto kFragShader = "#version 330\n"
 XR_STRINGIFY(
   precision mediump float;
   in vec4 vColor;
-
+  out vec4 FragColor;
   void main()
   {
-    gl_FragColor = vColor;
+    FragColor = vColor;
   });
 
 // We'll initialise the graphics and scratch buffer, then create a uniform
