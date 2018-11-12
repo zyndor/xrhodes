@@ -7,5 +7,8 @@
 # License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 #
 #===============================================================================
-# Generates xcode4 projects for macOS.
-./premake5 --target=macos xcode4 --file=../../premake5.lua
+# Generates makefile projects for linux.
+
+SCRIPT_DIR=$(dirname $0)
+
+$SCRIPT_DIR/premake5 --target=linux gmake --file=$SCRIPT_DIR/../../premake5.lua

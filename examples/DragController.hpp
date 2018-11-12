@@ -54,7 +54,7 @@ public:
   xr::Vector2 const& GetTotalMotion() const;
 
 private:
-  static const int64_t kMaxPressDurationMs = 2000;
+  static const int64_t kMaxPressDurationMs;
 
   bool m_isButtonDown = false; // is the button pressed and held?
   uint64_t m_tLastFrameMs = 0;  // timestamp of last frame

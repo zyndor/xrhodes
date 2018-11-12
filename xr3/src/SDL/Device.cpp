@@ -8,26 +8,18 @@
 //==============================================================================
 #include "InputImpl.hpp"
 #include "GfxContext.hpp"
+#include "xr/Config.hpp"
 #include "xr/Device.hpp"
-#include "xr/FileWriter.hpp"
-#include "xr/JsonReader.hpp"
-#include "xr/JsonWriter.hpp"
-#include "xr/jsonutils.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/strings/stringutils.hpp"
-#include "xr/utils.hpp"
 #include "SDL_events.h"
 #include "SDL.h"
-#include <cstdlib>
 
 namespace xr
 {
 
 namespace
 {
-//==============================================================================
-static const char* const  kConfigName = "xr.json";
-
 //==============================================================================
 static struct
 {
@@ -41,13 +33,22 @@ static struct
   bool  isPauseRequested;
   bool  isYielding;
 
-  JSON::Entity* config;
-
   SDL_Window* mainWindow;
   uint32_t  windowWidth;
   uint32_t  windowHeight;
   Gfx::Context* gfxContext;
 } s_deviceImpl;
+
+//@deprecate
+std::string ConcatGroupVarNames(char const* groupName, char const* varName)
+{
+  std::string result(GetStringSafe(groupName));
+  if (!result.empty())
+  {
+    result += "_";
+  }
+  return result + varName;
+}
 
 }
 
@@ -94,58 +95,17 @@ void Device::Init(char const* title)
   s_deviceImpl.isQuitRequested = false;
   s_deviceImpl.isYielding = false;
 
-  if (!File::CheckExists(kConfigName))
-  {
-    std::ostringstream cfgStream;
-    JSON::Writer  writer(cfgStream);
-    writer.SetLinebreaks(true);
-    writer.SetIndent("  ");
-    writer.SetSpaces(true);
-    writer.SetAutoEscape(true);
-
-    {
-      auto root = writer.OpenObject();
-
-      root.OpenObject("Device").
-        WriteValue("logging", true);
-
-      root.OpenObject("Display").
-        WriteValue("width", 800).
-        WriteValue("height", 600).
-        WriteValue("windowed", true).
-        WriteValue("vsync", true);
-
-      root.OpenObject("GFX").
-        WriteValue("framePoolSize", 256000);
-
-      root.OpenObject("Input").
-        WriteValue("ignoreControllers", false);
-    }
-
-    std::string json = cfgStream.str();
-    FileWriter file;
-    result = file.Open(kConfigName, FileWriter::Mode::Truncate, false) &&
-      file.Write(json.c_str(), json.size(), 1) == 1;
-    if (!result)
-    {
-      XR_TRACE(Device, ("Failed to write xr.json"));
-      exit(1);
-    }
-  }
-
-  s_deviceImpl.config = LoadJSON(kConfigName, 64, false);
-
   // create window
   if (!title)
   {
     title = "XRhodes Application";
   }
 
-  s_deviceImpl.windowWidth = Device::GetConfigInt("Display", "width", 800);
-  s_deviceImpl.windowHeight = Device::GetConfigInt("Display", "height", 600);
+  s_deviceImpl.windowWidth = Config::GetInt("XR_DISPLAY_WIDTH", 800);
+  s_deviceImpl.windowHeight = Config::GetInt("XR_DISPLAY_HEIGHT", 600);
 
   uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-  if (Device::GetConfigInt("Display", "windowed", false) == 0)
+  if (Config::GetInt("XR_DISPLAY_FULLSCREEN", false) == 1)
   {
     flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
@@ -187,49 +147,17 @@ bool Device::IsPaused()
 }
 
 //==============================================================================
-std::string Device::GetConfig(const char* groupName, const char* varName)
+std::string Device::GetConfig(char const* groupName, char const* varName)
 {
-  XR_ASSERT(Device, varName != nullptr);
-  std::string result;
-  if (s_deviceImpl.config)
-  {
-    if (groupName != nullptr)
-    {
-      JSON::Entity* groupEntity = s_deviceImpl.config->GetChild(groupName, JSON::OBJECT);
-      XR_ASSERTMSG(Device, groupEntity != nullptr, ("'%s' is not a groupName in root.",
-        groupName));
-      if (groupEntity != nullptr)
-      {
-        JSON::Object* groupObject = groupEntity->ToObject();
-        groupEntity = groupObject->GetChild(varName, JSON::VALUE);
-        XR_ASSERTMSG(Device, groupEntity != nullptr, ("'%s' is not a value in '%s'.",
-          varName, groupName));
-        if (groupEntity != nullptr)
-        {
-          result = groupEntity->ToValue()->GetValue();
-        }
-      }
-    }
-    else
-    {
-      JSON::Entity* groupEntity = s_deviceImpl.config->GetChild(varName, JSON::VALUE);
-      XR_ASSERTMSG(Device, groupEntity != nullptr, ("'%s' is not a value in root.",
-        varName));
-      if (groupEntity != nullptr)
-      {
-        result = GetStringSafe(groupEntity->GetValue());
-      }
-    }
-  }
-
-  return result;
+  std::string groupVarName = ConcatGroupVarNames(groupName, varName);
+  return Config::Get(groupVarName.c_str());
 }
 
 //==============================================================================
-int Device::GetConfigInt(const char* groupName, const char* varName, int defaultValue)
+int Device::GetConfigInt(char const* groupName, char const* varName, int defaultValue)
 {
-  std::string  value(GetConfig(groupName, varName).c_str());
-  return value.empty() ? defaultValue : atoi(value.c_str());
+  std::string groupVarName = ConcatGroupVarNames(groupName, varName);
+  return Config::GetInt(groupVarName.c_str(), defaultValue);
 }
 
 //==============================================================================
@@ -445,9 +373,6 @@ void Device::Shutdown()
   s_deviceImpl.mainWindow = nullptr;
 
   SDL_Quit();
-
-  delete s_deviceImpl.config;
-  s_deviceImpl.config = nullptr;
 }
 
 } // XR

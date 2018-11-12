@@ -11,6 +11,7 @@
 #include "xr/FileWriter.hpp"
 #include "xr/strings/ParserCore.hpp"
 #include "xr/memory/BufferReader.hpp"
+#include "xr/io/FixedStreamBuf.hpp"
 #include "xr/io/streamutils.hpp"
 
 #define LTRACE(format) XR_TRACE(Texture, format)
@@ -25,13 +26,15 @@ XR_ASSET_DEF(Texture, "xtex", 2, "png;tga"/*";ktx"*/)
 //==============================================================================
 namespace {
 
+using Size = uint32_t;  // serialized size
+
 bool SerializeTexture(Gfx::TextureFormat format, uint32_t width, uint32_t height,
   Buffer const& pixelData, std::ostream& dataOut)
 {
   return WriteBinaryStream(format, dataOut) &&
     WriteBinaryStream(width, dataOut) &&
     WriteBinaryStream(height, dataOut) &&
-    WriteRangeBinaryStream<uint32_t>(pixelData.data, pixelData.data + pixelData.size, dataOut);
+    WriteRangeBinaryStream<Size>(pixelData.data, pixelData.data + pixelData.size, dataOut);
 }
 
 XR_ASSET_BUILDER_DECL(Texture)
@@ -190,17 +193,9 @@ bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height,
   bool success = m_handle.IsValid();
   if (success && CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
   {
-    m_data.resize(sizeof(format) + sizeof(m_width) + sizeof(m_height) + sizeof(uint32_t) +
+    m_data.resize(sizeof(format) + sizeof(m_width) + sizeof(m_height) + sizeof(Size) +
       buffer.size);
-    class FixedStreamBuf: public std::streambuf
-    {
-    public:
-      FixedStreamBuf(char* buffer, size_t size)
-      {
-        setp(buffer, buffer + size);
-      }
-    } fsb(reinterpret_cast<char*>(m_data.data()), m_data.size());
-
+    FixedStreamBuf fsb(m_data.size(), reinterpret_cast<char*>(m_data.data()));
     std::ostream sourceBuffer(&fsb);
     success = SerializeTexture(format, width, height, buffer, sourceBuffer);
   }

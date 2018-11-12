@@ -47,10 +47,10 @@ XR_STRINGIFY(
   precision mediump float;
   uniform sampler2D uTexture0;
   in vec2 vUv;
-
+  out vec4 FragColor;
   void main()
   {
-    gl_FragColor = texture(uTexture0, vUv);
+    FragColor = texture(uTexture0, vUv);
   });
 
 // We are loading an image file, creating a texture from its pixel data, and

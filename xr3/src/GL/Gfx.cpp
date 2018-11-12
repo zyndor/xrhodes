@@ -93,7 +93,7 @@ const GLenum kPrimitiveTypes[] =
 };
 
 //=============================================================================
-const GLenum kBlendFactors[] =
+constexpr GLenum kBlendFactors[] =
 {
   GLenum(-1),
   GL_ZERO,
@@ -129,7 +129,7 @@ void GetBlendFactors(FlagType flags, GLenum blendFactors[4])
 }
 
 //=============================================================================
-const GLenum kComparisons[] =
+constexpr GLenum kComparisons[] =
 {
   GLenum(-1),
   GL_NEVER,
@@ -1257,7 +1257,7 @@ struct Impl
       }
 
       size_t used = 0;
-      for (int i = 0; i < kMaxInstanceData; ++i)
+      for (uint32_t i = 0; i < kMaxInstanceData; ++i)
       {
         XR_GL_CALL(GLint loc = glGetAttribLocation(program.name, kInstanceDataName[i]));
         if (loc != -1)

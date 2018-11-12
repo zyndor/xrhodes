@@ -11,6 +11,7 @@
 #include "xr/Input.hpp"
 #include "xr/Timer.hpp"
 #include "xr/Gfx.hpp"
+#include <cstdlib>
 
 using namespace xr;
 
@@ -229,5 +230,10 @@ private:
 
 int main(int argc, char** argv)
 {
+  // Set a few environment variables that XRhodes will use during its initialisation.
+  putenv("XR_DISPLAY_FULLSCREEN=0");  // this is the default
+  putenv("XR_DISPLAY_WIDTH=1024");
+  putenv("XR_DISPLAY_VSYNC=1");
+
   return Application(argc, argv).Run();
 }

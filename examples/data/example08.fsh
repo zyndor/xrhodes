@@ -24,11 +24,13 @@ in vec3 vNormal;
 in vec3 vViewPos;
 in vec3 vLightSpacePos;
 
-const vec2 kOffsets[] = {
+out vec4 FragColor;
+
+const vec2 kOffsets[3] = vec2[](
   vec2(0., 1.),
   vec2(.866, -.5),
-  vec2(-.866, -.5),
-};
+  vec2(-.866, -.5)
+);
 
 float CalculateShadowPCF()
 {
@@ -66,5 +68,5 @@ void main()
   float shadow = CalculateShadowPCF();
   rgba.rgb *= shadow;
 
-  gl_FragColor = rgba;
+  FragColor = rgba;
 }

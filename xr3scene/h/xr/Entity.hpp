@@ -9,17 +9,14 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#include "Component.hpp"
 #include "xr/Name.hpp"
 #include "xr/math/Matrix.hpp"
 #include "xr/math/Quaternion.hpp"
-#include "xr/types/fundamentals.hpp"
-#include "xr/types/typeutils.hpp"
 #include <vector>
 
 namespace xr
 {
-
-class Component;
 
 //==============================================================================
 ///@brief Entity is an object in the world, with a transform and a set of
@@ -38,7 +35,7 @@ public:
   // static
   ///@brief The separator character used in an Entity path to FindChild(), e.g.
   /// "Zone.Locators.PlayerStart"
-  static const char kSeparator = '.';
+  static const char kSeparator;
 
   // structors
   explicit Entity(Entity* pParent);
@@ -280,10 +277,11 @@ T*  Entity::AddComponent()
 {
   T* component = nullptr;
   const size_t typeId = Component::GetTypeIdImpl<T>();
-  if(FindComponentIterator(typeId) == nullptr)
+  auto iFind = FindComponentIterator(typeId);
+  if(iFind == m_components.end() || (*iFind)->GetTypeId() != typeId)
   {
     component = new T();
-    AddComponentImpl(*component, &typeId);
+    m_components.insert(iFind, component);
   }
   return component;
 }
@@ -293,10 +291,10 @@ template  <class T>
 inline
 void Entity::RemoveComponent()
 {
-  Component*  pComponent = FindComponent<T>();
-  if(pComponent != nullptr && RemoveComponent(*pComponent))
+  Component*  component = FindComponent<T>();
+  if(component != nullptr && RemoveComponent(*component))
   {
-    delete pComponent;
+    delete component;
   }
 }
 

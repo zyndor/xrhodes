@@ -6,9 +6,10 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include <stdio.h>
 #include "xr/Parse.hpp"
 #include "xr/math/mathutils.hpp"
+#include <cstdio>
+#include <cstring>
 
 namespace xr
 {

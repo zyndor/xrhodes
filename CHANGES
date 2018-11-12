@@ -1,0 +1,13 @@
+v1.1
+
+- fixed macOS build configuration and Clang compilation / link errors;
+- fixed GLSL syntax that would not fly on macOS;
+- fixed Entity/Component implementation (and AddComponent());
+- added xr::FixedStreamBuf to xr3core;
+- added xr::Config to replace Device::GetConfig{|Int}() and changed
+  implementation to use environment variables;
+- added Linux (64-bits) as a supported platform;
+
+v1.0
+
+- Initial release.

@@ -6,7 +6,7 @@ XRhodes is a game development / creative coding framework delivered as a set of 
 
 Its aim is to provide flexible tools, rather than a complete pipeline, while abstracting most platform-specific details away.
 
-XRhodes is written in modern C++, and it currently supports Windows 8+ and Mac OS X; support for other platforms are in the pipeline - stay tuned!
+XRhodes is written in modern C++, and it currently supports Windows 8+ (32 / 64 bits), Mac OS and Linux (64 bits); support for other platforms are in the pipeline - stay tuned!
 
 It comes with a fair amount of documentation and with unit tests and usage examples.
 
@@ -34,6 +34,17 @@ XRhodes is made up from the following libraries:
 * xr3json: XRhodes' JSON parsing and writing library for both event-based parsing and building a DOM-tree;
 * xr3: device abstraction, file system, input, graphics, asset management, meshes, sprites, text and other higher level facilities;
 * xr3scene: entity / component system;
+
+System Requirements
+-------------------
+
+Graphics:
+	OpenGL3.3 capable GPU.
+
+Build environment:
+	Windows: Visual Studio Community 2015+
+	MacOS: Xcode 4+
+	Linux: GCC with C++14 support & make; get the sdl2, libpng, zlib and tinyxml2 libraries from your distribution provider.
 
 Getting started
 ---------------

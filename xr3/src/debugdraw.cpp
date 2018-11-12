@@ -21,9 +21,8 @@ namespace
 Gfx::UniformHandle s_uColor;
 Material::Ptr  s_material;
 
-#define XR_STRINGIFY(x) #x
-
-char const* const kVertexShader = "#version 300 es\n"
+// TODO: Abstract shader language / version away.
+char const* const kVertexShader = "#version 330\n"
 XR_STRINGIFY(
 
 precision mediump float;
@@ -38,7 +37,7 @@ void main()
 }
 );
 
-char const* const kFragmentShader = "#version 300 es\n"
+char const* const kFragmentShader = "#version 330\n"
 XR_STRINGIFY(
 precision mediump float;
 
@@ -184,8 +183,8 @@ void  Circle(float radius, Material::Ptr const& material)
 {
   uint32_t numVerts = GetCircleNumVerts(radius);
   float theta = float(M_PI / numVerts);
-  float c = std::cosf(theta);
-  float s = std::sinf(theta);
+  float c = std::cos(theta);
+  float s = std::sin(theta);
   Vector3 v(radius, .0f, .0f);
 
   numVerts *= 2;

@@ -32,8 +32,8 @@ public:
   ///@return Whether any of the connected callbacks has handled the event.
   bool Notify(Args... args)
   {
-    SetDispatching(true);
-    auto dispatchingGuard = MakeScopeGuard([this] { SetDispatching(false); });
+    BaseType::SetDispatching(true);
+    auto dispatchingGuard = MakeScopeGuard([this] { BaseType::SetDispatching(false); });
 
     for (auto& i: BaseType::GetCallbacks())
     {

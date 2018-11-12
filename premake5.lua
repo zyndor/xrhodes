@@ -21,7 +21,8 @@ end
 tbl_target_values =
 {
 	{ "windows", "VS2015 projects targeting Windows 32/64 bits" },
-    { "macos", "Xcode4 projects targeting OS X" },
+	{ "macos", "Xcode4 projects targeting OS X" },
+	{ "linux", "Makefile projects targeting Linux (64 bits)" },
 }
 
 newoption
@@ -55,6 +56,8 @@ workspace "xr3"
 	tbl_platforms = {}
 	if target_env == "windows" then
 		table.insert(tbl_platforms, "x86")
+		table.insert(tbl_platforms, "x64")
+	elseif target_env == "linux" then
 		table.insert(tbl_platforms, "x64")
 	elseif target_env == "macos" then
 		table.insert(tbl_platforms, "Universal64")
@@ -146,14 +149,17 @@ workspace "xr3"
 		target_desktop = true
 	end
 
-    -- Mac OSX
-    if target_env == "macos" then
-		flags {
-			"StaticRuntime"
-		}
+	-- Mac OSX
+	if target_env == "macos" then
+		staticruntime "On"
 
 		target_desktop = true
-    end
+	end
+
+	-- Linux
+	if target_env == "linux" then
+		target_desktop = true
+	end
 
 	-- all desktop builds: enable asset building in debug
 	if target_desktop then
@@ -165,10 +171,12 @@ workspace "xr3"
 
 	-- create a project that just reruns the premake script.
 	project "!regenerate_projects"
-	kind "ConsoleApp"	-- not actually, but it has to be something.
+	kind "Utility"
 	local generate_projects_suffix = "";
 	if target_env == "windows" then
 		generate_projects_suffix = ".bat"
+	else
+		generate_projects_suffix = ".sh"
 	end
 
 	postbuildcommands{
