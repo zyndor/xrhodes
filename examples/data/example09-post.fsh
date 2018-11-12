@@ -23,6 +23,8 @@ uniform vec4 uFocalLength_Amount_InvAspectRatio;
 
 in vec2 vUv;
 
+out vec4 FragColor;
+
 // Calculate sine and cosine of golden angle up front if possible.
 const float kSinGolden = sin(GOLDEN_ANGLE);
 const float kCosGolden = cos(GOLDEN_ANGLE);
@@ -68,5 +70,5 @@ void main(void)
 
   acc /= div;
 
-  gl_FragColor = vec4(acc, 1.);
+  FragColor = vec4(acc, 1.);
 }

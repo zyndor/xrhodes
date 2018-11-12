@@ -14,9 +14,11 @@ uniform sampler2D uTexture0;
 
 in vec2 vUv;
 
+out vec4 FragColor;
+
 void main()
 {
   vec4 rgba = texture(uTexture0, vUv);
   rgba.a *= .5;
-  gl_FragColor = rgba;
+  FragColor = rgba;
 }

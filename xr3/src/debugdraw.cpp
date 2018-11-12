@@ -21,7 +21,8 @@ namespace
 Gfx::UniformHandle s_uColor;
 Material::Ptr  s_material;
 
-char const* const kVertexShader = "#version 300 es\n"
+// TODO: Abstract shader language / version away.
+char const* const kVertexShader = "#version 330\n"
 XR_STRINGIFY(
 
 precision mediump float;
@@ -36,7 +37,7 @@ void main()
 }
 );
 
-char const* const kFragmentShader = "#version 300 es\n"
+char const* const kFragmentShader = "#version 330\n"
 XR_STRINGIFY(
 precision mediump float;
 

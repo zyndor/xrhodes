@@ -14,6 +14,8 @@ uniform sampler2D uTexture0;
 
 in vec2 vUv;
 
+out vec4 FragColor;
+
 const float kRefValueLow = .2;
 const float kRefValueHigh = .6;
 
@@ -27,5 +29,5 @@ void main()
 
   float shadowAlpha = shadow * (1. - component);
 
-  gl_FragColor = vec4(vec3(component), component + shadowAlpha);
+  FragColor = vec4(vec3(component), component + shadowAlpha);
 }

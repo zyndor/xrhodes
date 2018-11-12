@@ -21,6 +21,8 @@ in vec3 vColor;
 in vec3 vNormal;
 in vec3 vViewPos;
 
+out vec4 FragColor;
+
 void main()
 {
   // Renormalize normal, since this gets interpolated between fragment shader instances.
@@ -46,5 +48,5 @@ void main()
   rgba.rgb *= .5 + uLightColor.rgb * lambertian;
   rgba.rgb += uLightColor.rgb * specular;
 
-  gl_FragColor = rgba;
+  FragColor = rgba;
 }
