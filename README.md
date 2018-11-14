@@ -38,13 +38,12 @@ XRhodes is made up from the following libraries:
 System Requirements
 -------------------
 
-Graphics:
-	OpenGL3.3 capable GPU.
+Graphics: OpenGL3.3 capable GPU.
 
 Build environment:
-	Windows: Visual Studio Community 2015+
-	MacOS: Xcode 4+
-	Linux: GCC with C++14 support & make; get the sdl2, libpng, zlib and tinyxml2 libraries from your distribution provider.
+* Windows: Visual Studio Community 2015+
+* MacOS: Xcode 4+
+* Linux: GCC v5.4+ & make; get the libsdl2-dev, libpng16-16, zlib and libtinyxml2-dev libraries from your distribution provider.
 
 Getting started
 ---------------

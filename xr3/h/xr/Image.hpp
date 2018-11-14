@@ -11,6 +11,7 @@
 //==============================================================================
 #include <vector>
 #include <cstdint>
+#include <cstddef>
 
 namespace xr
 {
