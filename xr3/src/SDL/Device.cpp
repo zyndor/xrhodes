@@ -39,7 +39,7 @@ static struct
   Gfx::Context* gfxContext;
 } s_deviceImpl;
 
-//@deprecate
+// TODO: deprecate with GetConfig*().
 std::string ConcatGroupVarNames(char const* groupName, char const* varName)
 {
   std::string result(GetStringSafe(groupName));
