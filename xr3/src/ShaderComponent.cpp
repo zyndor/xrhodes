@@ -11,6 +11,9 @@
 #include "xr/io/streamutils.hpp"
 #include <map>
 
+#define LTRACE(format) XR_TRACE(ShaderComponent, format)
+#define LTRACEIF(condition, format) XR_TRACEIF(ShaderComponent, condition, format)
+
 namespace xr
 {
 
@@ -35,11 +38,11 @@ public:
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
     auto ext = strrchr(rawNameExt, '.');
-    XR_ASSERT(Asset::Manager, ext);
+    XR_ASSERT(ShaderComponent, ext);
     ++ext;
 
     auto iFind = m_types.find(Hash::String32(ext));
-    XR_ASSERT(ShaderComponentBuilder, iFind != m_types.end());
+    XR_ASSERT(ShaderComponent, iFind != m_types.end());
 
     // TODO: support includes
     return WriteBinaryStream(iFind->second, data) &&
@@ -52,7 +55,6 @@ private:
 #endif
 
 }
-
 
 //==============================================================================
 bool ShaderComponent::SetSource(Gfx::ShaderType type, char const* source)
@@ -82,15 +84,27 @@ bool ShaderComponent::OnLoaded(Buffer buffer)
     auto sourceLen = reader.GetRemainingSize();
     auto source = reader.ReadBytes(sourceLen);
     success = source != nullptr;
-    if (
-#ifdef ENABLE_ASSET_BUILDING
-      !CheckAllMaskBits(GetFlags(), DryRunFlag) &&
-#endif
-      success)
+    if (success)
     {
+#ifdef ENABLE_ASSET_BUILDING
+      if (!CheckAllMaskBits(GetFlags(), DryRunFlag))
+      {
+#endif
       success = SetSourceInternal(type, { sourceLen, source });
+#ifdef ENABLE_ASSET_BUILDING
+      }
+#endif
+    }
+    else
+    {
+      LTRACE(("%s: failed to read source.", m_debugPath.c_str()));
     }
   }
+  else
+  {
+    LTRACE(("%s: failed to read type.", m_debugPath.c_str()));
+  }
+
   return success;
 }
 
@@ -117,6 +131,10 @@ bool ShaderComponent::SetSourceInternal(Gfx::ShaderType type, Buffer buffer)
     {
       m_data.assign(buffer.data, buffer.data + buffer.size);
     }
+  }
+  else
+  {
+    LTRACE(("%s: Shader compilation has failed; see errors above.", m_debugPath.c_str()));
   }
 
   return success;
