@@ -12,12 +12,13 @@
 #include "GameController.hpp"
 #include "xr/Input.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
+#include "xr/types/Singleton.hpp"
 #include "SDL_events.h"
 #include <cstring>
 
 namespace xr {
 
-struct  InputImpl
+struct  InputImpl: Singleton<InputImpl>
 {
   // types
   enum { kMaxControllers = 8 };
@@ -53,8 +54,14 @@ struct  InputImpl
 
   GameController controllers[kMaxControllers];
 
-  // general
+  // structors
+  InputImpl()
+  {
+    memset(keyStates, 0x00, sizeof(keyStates));
+    memset(mouseButtonStates, 0x00, sizeof(mouseButtonStates));
+  }
 
+  // general
   void OnKeyEvent(SDL_KeyboardEvent const& e)
   {
     Input::KeyData xe{ TranslateKeyCodeNative(e.keysym.scancode),
