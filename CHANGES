@@ -1,3 +1,12 @@
+v1.1.2
+- fixed a broken include in Singleton.hpp;
+- deprecated the option to transfer ownership of a texture via
+  GFx::CreateFrameBuffer();
+- improved error logging from ShaderComponent and Shader;
+- added Singleton::Instance() and deprecated GetInst();
+- added C++14-standard deprecation markers to previously deprecated APIs;
+- changed InputImpl to a Singleton;
+
 v1.1.1
 - GCC v5.4 compilation errors fixed; 
 
