@@ -86,8 +86,12 @@ const GLenum kShaderTypes[] = {
 //=============================================================================
 const GLenum kPrimitiveTypes[] =
 {
+  GL_POINTS,
   GL_LINES,
   GL_LINE_STRIP,
+  GL_TRIANGLES,
+  GL_TRIANGLE_STRIP,
+  // TODO: remove along with Primitive::TriList / TriStrip.
   GL_TRIANGLES,
   GL_TRIANGLE_STRIP,
 };
