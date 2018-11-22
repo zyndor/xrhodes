@@ -63,18 +63,18 @@ public:
   /// resume event.
   static bool  IsPaused();
 
-  ///@deprecated Use xr::Config::Get().
   ///@brief Gets a configuration option stored under the given @a groupName
   /// (which may be nullptr), and @a varName.
   ///@return The string value of the configuration option; empty string if
   /// undefined.
+  [[deprecated("Use xr::Config::Get().")]]
   static std::string  GetConfig(char const* groupName, char const* varName);
 
-  ///@deprecated Use xr::Config::GetInt().
   ///@brief Attempts to get a configuration option, stored under @a groupName
   /// (which may be nullptr), and @a varName, as an integer.
   ///@return The integer value of the configuration option; @a defaultValue
   /// if undefined or not castable to an integer.
+  [[deprecated("Use xr::Config::GetInt().")]]
   static int GetConfigInt(char const* groupName, char const* varName, int defaultValue);
 
   ///@brief Signal about the application being suspended.

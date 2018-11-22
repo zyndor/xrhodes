@@ -409,25 +409,34 @@ float GetPhysicalAspectRatio();
 
 ///@brief Registers a vertex format definition.
 VertexFormatHandle RegisterVertexFormat(VertexFormat const& format);
+
+///@brief Signifies the end of ownership of a vertex format, destroying it when
+/// no other owners were left.
 void Release(VertexFormatHandle h);
 
 ///@brief Creates a vertex buffer with the given format, data and
-/// options.
+/// options. Shares ownership of @a hFormat.
 VertexBufferHandle  CreateVertexBuffer(VertexFormatHandle hFormat,
   Buffer const& buffer, FlagType flags = F_BUFFER_NONE);
 
+///@brief Signifies the end of ownership of a vertex buffer, destroying it if
+/// no other owners were left.
 void Release(VertexBufferHandle h);
 
 ///@brief Creates an instance data buffer.
 InstanceDataBufferHandle  CreateInstanceDataBuffer(Buffer const& buffer,
   uint16_t stride);
 
+///@brief Signifies the end of ownership of an instance data buffer, destroying
+/// it if no other owners were left.
 void Release(InstanceDataBufferHandle h);
 
 ///@brief Creates an index buffer with the given format, data and
 /// options.
 IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, FlagType flags = F_BUFFER_NONE);
 
+///@brief Signifies the end of ownership of an index buffer, destroying it if
+/// no other owners were left.
 void Release(IndexBufferHandle h);
 
 ///@brief Creates a texture with the given parameters and texel data in @a buffer.
@@ -449,8 +458,9 @@ TextureHandle GetDefaultTextureCube();
 
 TextureInfo GetTextureInfo(TextureHandle h);
 
-///@brief Decrements the reference count of a texture, and if it has reached 0
-/// zero, deletes it.
+///@brief Signifies the end of ownership of a texture, destroying it if
+/// no other owners were left.
+///@note Framebuffers' use of a texture also increments its refcount.
 void Release(TextureHandle h);
 
 ///@return Handle to the default framebuffer. The front and back buffers are color
@@ -459,14 +469,27 @@ FrameBufferHandle GetDefaultFrameBuffer();
 
 ///@brief Creates a render target along with a 2D texture of the given format.
 /// Such a frame buffer may be suitable for use with ReadFrameBuffer() only,
-/// since there is no way to access its attachments' texture handle.
+/// since there is no way to access the texture handle of its attachment.
 FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width,
   uint32_t height, FlagType flags);
+
+///@brief Creates a render target, attaching the given @a hTextures. The framebuffer
+/// retains ownership of the textures in the @a hTextures array, i.e. the caller
+/// is required to Release() them once they're no longer needed.
+FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
+  TextureHandle const* hTextures);
+
+///@brief Creates a render target with the given @a attachments. The framebuffer
+/// retains ownership of the textures in the @a attachments, i.e. the caller is
+/// required to Release() them once they're no longer needed.
+FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
+  FrameBufferAttachment const* attachments);
 
 ///@brief Creates a render target, attaching the given @a hTextures. If
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
+[[deprecated("ownTextures is no-op, use the overload without it.")]]
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   TextureHandle const* hTextures, bool ownTextures);
 
@@ -474,6 +497,7 @@ FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
+[[deprecated("ownTextures is no-op, use the overload without it.")]]
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   FrameBufferAttachment const* attachments, bool ownTextures);
 
@@ -491,7 +515,7 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
   TextureFormat format, uint16_t colorAttachment, void* mem);
 
-///@brief Deletes framebuffer, decrementing the refcount of all attached textures.
+///@brief Deletes framebuffer, Release()ing all attached textures.
 void Release(FrameBufferHandle h);
 
 ///@brief Creates a Uniform, to be recognized in shaders that are created following
@@ -502,26 +526,27 @@ void Release(FrameBufferHandle h);
 /// already exists, its reference count is incremented instead.
 UniformHandle CreateUniform(char const* name, UniformType type, uint8_t arraySize = 1);
 
-///@brief Decrements the reference count of a uniform, and if it has reached 0,
-/// destroys it.
+///@brief Signifies the end of ownership of a uniform, destroying it if
+/// no other owners were left.
 ///@note Programs' usage of a uniform also increments its refCount.
 void Release(UniformHandle h);
 
 ///@brief Compiles preprocessed shader. Source isn't kept around.
-///@return Handle, if the shader compilation was successful. INVALID_HANDLE
+///@return Handle, if the shader compilation was successful. Invalid handle
 /// if not.
 ShaderHandle CreateShader(ShaderType t, Buffer const& buffer);
 
-///@brief Decrements the reference count of the shader and if it has reached 0,
-/// destroys it.
+///@brief Signifies the end of ownership of a shader, destroying it if
+/// no other owners were left.
+///@note Programs' usage of a shader also increments its refcount.
 void Release(ShaderHandle h);
 
 ///@brief Creates and links a shader program from the given vertex
 /// and fragment shaders.
-///@return Handle, if linking was successful. INVALID_HANDLE if not.
+///@return Handle, if linking was successful. Invalid handle if not.
 ProgramHandle CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment);
 
-///@brief Destroys the given program and releases the shaders and uniforms that
+///@brief Destroys the given program and Release()s the shaders and uniforms that
 /// it uses.
 void Release(ProgramHandle h);
 

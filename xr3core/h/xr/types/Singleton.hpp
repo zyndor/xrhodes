@@ -9,8 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
-#include "debug.hpp"
+#include "xr/debug.hpp"
 
 namespace xr
 {
@@ -28,7 +27,14 @@ public:
 
   // static
   ///@return A pointer to the instance, if any.
-  static Type* GetInst(); // no ownership transfer
+  ///@note This will not create an instance.
+  static Type* Instance(); // no ownership transfer
+
+  [[deprecated("Use Instance()")]]
+  static Type* GetInst()
+  {
+    return Instance();
+  }
 
 protected:
   // structors
@@ -48,7 +54,7 @@ T* Singleton<T>::s_pInstance = nullptr;
 
 //==============================================================================
 template  <class T>
-T* Singleton<T>::GetInst()
+T* Singleton<T>::Instance()
 {
   return s_pInstance;
 }

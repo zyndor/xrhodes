@@ -39,7 +39,7 @@ static struct
   Gfx::Context* gfxContext;
 } s_deviceImpl;
 
-//@deprecate
+// TODO: deprecate with GetConfig*().
 std::string ConcatGroupVarNames(char const* groupName, char const* varName)
 {
   std::string result(GetStringSafe(groupName));
@@ -233,38 +233,38 @@ void  Device::YieldOS(int32_t ms)
 
     case  SDL_KEYDOWN:
     case  SDL_KEYUP:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnKeyEvent(e.key);
+        input->OnKeyEvent(e.key);
       }
       break;
 
     case  SDL_MOUSEMOTION:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnMouseMotion(e.motion);
+        input->OnMouseMotion(e.motion);
       }
       break;
 
     case  SDL_MOUSEBUTTONDOWN:
     case  SDL_MOUSEBUTTONUP:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnMouseAction(e.button);
+        input->OnMouseAction(e.button);
       }
       break;
 
     case  SDL_MOUSEWHEEL:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnMouseWheel(e.wheel);
+        input->OnMouseWheel(e.wheel);
       }
       break;
 
     case  SDL_FINGERUP:
     case  SDL_FINGERDOWN:
     {
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
         int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
         int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
@@ -278,13 +278,13 @@ void  Device::YieldOS(int32_t ms)
           y,
           e.tfinger.type == SDL_FINGERDOWN
         };
-        InputImpl::s_instance->onTouchAction.Broadcast(eTouch);
+        input->onTouchAction.Broadcast(eTouch);
       }
       break;
     }
 
     case  SDL_FINGERMOTION:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
         int16_t x = int16_t(std::round(e.tfinger.x * s_deviceImpl.windowWidth));
         int16_t y = int16_t(std::round(e.tfinger.y * s_deviceImpl.windowHeight));
@@ -298,50 +298,50 @@ void  Device::YieldOS(int32_t ms)
           y
         };
 
-        InputImpl::s_instance->onTouchMotion.Broadcast(eTouch);
+        input->onTouchMotion.Broadcast(eTouch);
       }
       break;
 
     case  SDL_JOYDEVICEADDED:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OpenController(e.jdevice.which);
+        input->OpenController(e.jdevice.which);
       }
       break;
 
     case  SDL_JOYDEVICEREMOVED:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->CloseController(e.jdevice.which);
+        input->CloseController(e.jdevice.which);
       }
       break;
 
     case  SDL_JOYAXISMOTION:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnJoyAxis(e.jaxis);
+        input->OnJoyAxis(e.jaxis);
       }
       break;
 
     case  SDL_JOYBUTTONDOWN:
     case  SDL_JOYBUTTONUP:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnJoyButton(e.jbutton);
+        input->OnJoyButton(e.jbutton);
       }
       break;
 
     case  SDL_JOYHATMOTION:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnJoyHat(e.jhat);
+        input->OnJoyHat(e.jhat);
       }
       break;
 
     case  SDL_JOYBALLMOTION:
-      if (InputImpl::s_instance)
+      if (auto input = InputImpl::Instance())
       {
-        InputImpl::s_instance->OnJoyBall(e.jball);
+        input->OnJoyBall(e.jball);
       }
       break;
 

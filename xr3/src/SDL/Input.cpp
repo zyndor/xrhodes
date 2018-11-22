@@ -14,34 +14,26 @@ namespace xr
 {
 
 //==============================================================================
-InputImpl*  InputImpl::s_instance = nullptr;
-
-//==============================================================================
 void Input::Init()
 {
-  XR_ASSERTMSG(Input, InputImpl::s_instance == nullptr, ("Already initialized."));
-  InputImpl::s_instance = new InputImpl();
-
-  memset(InputImpl::s_instance->keyStates, 0x00,
-    sizeof(InputImpl::s_instance->keyStates));
-  memset(InputImpl::s_instance->mouseButtonStates, 0x00,
-    sizeof(InputImpl::s_instance->mouseButtonStates));
+  XR_ASSERTMSG(Input, !InputImpl::Instance(), ("Already initialized."));
+  new InputImpl();
 }
 
 //==============================================================================
 void Input::Update()
 {
-  for (auto& k: InputImpl::s_instance->keyStates)
+  for (auto& k: InputImpl::Instance()->keyStates)
   {
     ButtonState::Poll(k);
   }
 
-  for (auto& m: InputImpl::s_instance->mouseButtonStates)
+  for (auto& m: InputImpl::Instance()->mouseButtonStates)
   {
     ButtonState::Poll(m);
   }
 
-  for (auto& c: InputImpl::s_instance->controllers)
+  for (auto& c: InputImpl::Instance()->controllers)
   {
     c.Update();
   }
@@ -51,154 +43,153 @@ void Input::Update()
 ButtonState::Type Input::GetKeyState(KeyCode k)
 {
   XR_ASSERT(Input, k < kKeyCount);
-  return InputImpl::s_instance->keyStates[k] & ButtonState::Down;
+  return InputImpl::Instance()->keyStates[k] & ButtonState::Down;
 }
 
 //==============================================================================
 SVector2 Input::GetMousePosition()
 {
-  return InputImpl::s_instance->mousePosition;
+  return InputImpl::Instance()->mousePosition;
 }
 
 //==============================================================================
 ButtonState::Type Input::GetMouseButtonState(MouseButton::Type mb)
 {
   XR_ASSERT(Input, mb < MouseButton::kCount);
-  return InputImpl::s_instance->mouseButtonStates[mb] & ButtonState::Down;
+  return InputImpl::Instance()->mouseButtonStates[mb] & ButtonState::Down;
 }
 
 //==============================================================================
 bool Input::IsJoyActive(uint32_t device)
 {
-  return InputImpl::s_instance->controllers[device].IsActive();
+  return InputImpl::Instance()->controllers[device].IsActive();
 }
 
 //==============================================================================
 char const * Input::GetJoyName(uint32_t device)
 {
-  return InputImpl::s_instance->controllers[device].GetName();
+  return InputImpl::Instance()->controllers[device].GetName();
 }
 
 //==============================================================================
 uint32_t Input::GetJoyNumAxes(uint32_t device)
 {
-  return InputImpl::s_instance->controllers[device].GetNumAxes();
+  return InputImpl::Instance()->controllers[device].GetNumAxes();
 }
 
 //==============================================================================
 uint32_t Input::GetJoyNumButtons(uint32_t device)
 {
-  return InputImpl::s_instance->controllers[device].GetNumButtons();
+  return InputImpl::Instance()->controllers[device].GetNumButtons();
 }
 
 //==============================================================================
 uint32_t Input::GetJoyNumHats(uint32_t device)
 {
-  return InputImpl::s_instance->controllers[device].GetNumHats();
+  return InputImpl::Instance()->controllers[device].GetNumHats();
 }
 
 //==============================================================================
 uint32_t Input::GetJoyNumBalls(uint32_t device)
 {
-  return InputImpl::s_instance->controllers[device].GetNumBalls();
+  return InputImpl::Instance()->controllers[device].GetNumBalls();
 }
 
 //==============================================================================
 float Input::GetJoyAxis(uint32_t device, uint32_t axis)
 {
-  return InputImpl::s_instance->controllers[device].GetAxis(axis);
+  return InputImpl::Instance()->controllers[device].GetAxis(axis);
 }
 
 //==============================================================================
 ButtonState::Type Input::GetJoyButton(uint32_t device, uint32_t button)
 {
-  return InputImpl::s_instance->controllers[device].GetButton(button) & ButtonState::Down;
+  return InputImpl::Instance()->controllers[device].GetButton(button) & ButtonState::Down;
 }
 
 //==============================================================================
 HatState::Type Input::GetJoyHat(uint32_t device, uint32_t hat)
 {
-  return InputImpl::s_instance->controllers[device].GetHat(hat);
+  return InputImpl::Instance()->controllers[device].GetHat(hat);
 }
 
 //==============================================================================
 Vector2 Input::GetJoyBall(uint32_t device, uint32_t ball)
 {
-  return InputImpl::s_instance->controllers[device].GetBall(ball);
+  return InputImpl::Instance()->controllers[device].GetBall(ball);
 }
 
 //==============================================================================
 Signal<void, Input::KeyData const&>& Input::KeySignal()
 {
-  return InputImpl::s_instance->onKey;
+  return InputImpl::Instance()->onKey;
 }
 
 //==============================================================================
 Signal<void, Input::MouseActionData const&>& Input::MouseActionSignal()
 {
-  return InputImpl::s_instance->onMouseAction;
+  return InputImpl::Instance()->onMouseAction;
 }
 
 //==============================================================================
 Signal<void, Input::MouseMotionData const&>& Input::MouseMotionSignal()
 {
-  return InputImpl::s_instance->onMouseMotion;
+  return InputImpl::Instance()->onMouseMotion;
 }
 
 //==============================================================================
 Signal<void, Input::TouchActionData const&>& Input::TouchActionSignal()
 {
-  return InputImpl::s_instance->onTouchAction;
+  return InputImpl::Instance()->onTouchAction;
 }
 
 //==============================================================================
 Signal<void, Input::TouchMotionData const&>& Input::TouchMotionSignal()
 {
-  return InputImpl::s_instance->onTouchMotion;
+  return InputImpl::Instance()->onTouchMotion;
 }
 
 //==============================================================================
 Signal<void, Input::JoyDeviceData const&>& Input::JoyAddedSignal()
 {
-  return InputImpl::s_instance->onJoyAdded;
+  return InputImpl::Instance()->onJoyAdded;
 }
 
 //==============================================================================
 Signal<void, Input::JoyDeviceData const&>& Input::JoyRemovedSignal()
 {
-  return InputImpl::s_instance->onJoyRemoved;
+  return InputImpl::Instance()->onJoyRemoved;
 }
 
 //==============================================================================
 Signal<void, Input::JoyAxisMotionData const&>& Input::JoyAxisSignal()
 {
-  return InputImpl::s_instance->onJoyAxis;
+  return InputImpl::Instance()->onJoyAxis;
 }
 
 //==============================================================================
 Signal<void, Input::JoyButtonPressData const&>& Input::JoyButtonSignal()
 {
-  return InputImpl::s_instance->onJoyButton;
+  return InputImpl::Instance()->onJoyButton;
 }
 
 //==============================================================================
 Signal<void, Input::JoyHatMotionData const&>& Input::JoyHatSignal()
 {
-  return InputImpl::s_instance->onJoyHat;
+  return InputImpl::Instance()->onJoyHat;
 }
 
 //==============================================================================
 Signal<void, Input::JoyBallMotionData const&>& Input::JoyBallSignal()
 {
-  return InputImpl::s_instance->onJoyBall;
+  return InputImpl::Instance()->onJoyBall;
 }
 
 //==============================================================================
 void Input::Shutdown()
 {
-  XR_ASSERTMSG(Input, InputImpl::s_instance != nullptr, ("Not initialized."));
-  delete InputImpl::s_instance;
-  InputImpl::s_instance = nullptr;
+  XR_ASSERTMSG(Input, InputImpl::Instance() != nullptr, ("Not initialized."));
+  delete InputImpl::Instance();
 }
 
 } // XR

@@ -106,14 +106,27 @@ bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fra
 
   auto hVertex = vertex->GetHandle();
   auto hFragment = fragment->GetHandle();
-  bool success = hVertex.IsValid() && vertex->GetType() == Gfx::ShaderType::Vertex;
-  LTRACEIF(!success, ("%s: vertex input has invalid type.", m_debugPath.c_str()));
+  bool success = hVertex.IsValid();
+  LTRACEIF(!success, ("%s: %s shader component is invalid.", m_debugPath.c_str(),
+    "vertex"));
 
   if (success)
   {
-    success = hFragment.IsValid() && fragment->GetType() == Gfx::ShaderType::Fragment;
-    LTRACEIF(!success, ("%s: fragment input has invalid type.",
-      m_debugPath.c_str()));
+    success = vertex->GetType() == Gfx::ShaderType::Vertex;
+    LTRACEIF(!success, ("%s: %s input has invalid type.", m_debugPath.c_str(), "vertex"));
+  }
+
+  if (success)
+  {
+    success = hFragment.IsValid();
+    LTRACEIF(!success, ("%s: %s shader component is invalid.", m_debugPath.c_str(),
+      "fragment"));
+  }
+
+  if (success)
+  {
+    success = fragment->GetType() == Gfx::ShaderType::Fragment;
+    LTRACEIF(!success, ("%s: %s input has invalid type.", m_debugPath.c_str(), "fragment"));
   }
 
   if (success)
@@ -144,23 +157,23 @@ bool Shader::OnLoaded(Buffer buffer)
 
   HashType hash;
   bool success = reader.Read(hash);
-  LTRACEIF(!success, ("%s: failed to read vertex shader hash.",
-    m_debugPath.c_str()));
+  LTRACEIF(!success, ("%s: failed to read %s shader hash.",
+    m_debugPath.c_str(), "vertex"));
 
   ShaderComponent::Ptr cVertex;
   if (success)  // Read vertex shader
   {
     cVertex = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
     success = cVertex != nullptr;
-    LTRACEIF(!success, ("%s: failed to load vertex shader component.",
-      m_debugPath.c_str()));
+    LTRACEIF(!success, ("%s: failed to load %s shader component.",
+      m_debugPath.c_str(), "vertex"));
   }
 
   if (success)
   {
     success = reader.Read(hash);
-    LTRACEIF(!success, ("%s: failed to read fragment shader hash.",
-      m_debugPath.c_str()));
+    LTRACEIF(!success, ("%s: failed to read %s shader hash.",
+      m_debugPath.c_str(), "fragment"));
   }
 
   ShaderComponent::Ptr cFragment;
@@ -168,8 +181,8 @@ bool Shader::OnLoaded(Buffer buffer)
   {
     cFragment = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
     success = cFragment != nullptr;
-    LTRACEIF(!success,
-      ("%s: failed to load fragment shader component.", m_debugPath.c_str()));
+    LTRACEIF(!success, ("%s: failed to load %s shader component.", m_debugPath.c_str(),
+      "fragment"));
   }
 
   if (
