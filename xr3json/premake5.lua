@@ -13,6 +13,7 @@ project "xr3json"
 	files {
 		"h/**.hpp",
 		"src/**.cpp",
+		"premake5.lua"
 	}
 
 	includedirs {

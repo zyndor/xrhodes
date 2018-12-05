@@ -15,7 +15,8 @@ project "examples"
 	{
 		"*.cpp",
 		"*.hpp",
-		"data/*"
+		"data/*",
+		"premake5.lua"
 	}
 
 	includedirs
