@@ -65,6 +65,8 @@ protected:
 template <typename Return, typename... Args>
 struct Callback: CallbackBase
 {
+  using SelfType = Callback<Return, Args...>;
+
   explicit Callback(void* data)
   : CallbackBase{ data }
   {}
@@ -72,6 +74,7 @@ struct Callback: CallbackBase
   virtual ~Callback()
   {}
 
+  virtual SelfType* Clone() const =0;
   virtual Return Call(Args...) =0;
 };
 
