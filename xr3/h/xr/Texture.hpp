@@ -18,6 +18,7 @@ namespace xr
 {
 
 //==============================================================================
+///@brief A 2D texture asset.
 class Texture: public Asset
 {
 public:
@@ -47,11 +48,11 @@ public:
   // general
   ///@return The number of texels the texture has horizontally at the highest
   /// mipmap level.
-  int GetWidth() const;
+  uint16_t GetWidth() const;
 
   ///@return The number of texels the texture has vertically at the highest
   /// mipmap level.
-  int GetHeight() const;
+  uint16_t GetHeight() const;
 
   ///@return Whether the texture has an alpha channel.
   bool HasAlpha() const;
@@ -59,7 +60,7 @@ public:
   ///@brief Creates / updates a handle with one that's for a texture
   /// created with the given data.
   ///@note Must be called from the render thread.
-  bool Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height,
+  bool Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
     Buffer buffer);
 
   ///@brief Binds texture to its target, for the given texture @a stage.
@@ -68,8 +69,8 @@ public:
 
 private:
   // data
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
+  uint16_t m_width = 0;
+  uint16_t m_height = 0;
   bool m_hasAlpha = false;
 
   Gfx::TextureHandle  m_handle;
@@ -82,14 +83,14 @@ private:
 
 //==============================================================================
 inline
-int Texture::GetWidth() const
+uint16_t Texture::GetWidth() const
 {
 	return m_width;
 }
 
 //==============================================================================
 inline
-int Texture::GetHeight() const
+uint16_t Texture::GetHeight() const
 {
 	return m_height;
 }

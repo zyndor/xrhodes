@@ -836,9 +836,9 @@ struct Impl
     Release(hConv);
   }
 
-  TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-    uint32_t height, uint32_t depth, FlagType flags, Buffer const* buffer,
-    size_t numBuffers)
+  TextureHandle CreateTexture(TextureFormat format, uint16_t width,
+    uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,
+    uint8_t numBuffers)
   {
     XR_ASSERT(Gfx, width > 0);
     XR_ASSERT(Gfx, height > 0);
@@ -1047,7 +1047,7 @@ struct Impl
   }
 
   void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-    TextureFormat format, uint16_t colorAttachment, void* mem)
+    TextureFormat format, uint8_t colorAttachment, void* mem)
   {
     XR_ASSERT(Gfx, !m_activeFrameBuffer.IsValid() ||
       m_fbos[m_activeFrameBuffer.id].numColorAttachments > colorAttachment);
@@ -1894,15 +1894,15 @@ void Release(InstanceDataBufferHandle h)
 }
 
 //=============================================================================
-TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-  uint32_t height, uint32_t depth, FlagType flags, Buffer const* buffer,
-  size_t numBuffers)
+TextureHandle CreateTexture(TextureFormat format, uint16_t width,
+  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,
+  uint8_t numBuffers)
 {
   return s_impl->CreateTexture(format, width, height, depth, flags, buffer, numBuffers);
 }
 
 //=============================================================================
-TextureHandle CreateTexture(TextureFormat format, uint32_t width, uint32_t height, uint32_t depth, FlagType flags)
+TextureHandle CreateTexture(TextureFormat format, uint16_t width, uint16_t height, uint16_t depth, FlagType flags)
 {
   XR_ASSERTMSG(Gfx, !kTextureFormats[static_cast<int>(format)].compressed,
     ("Cannot create compressed texture without buffer."));
@@ -1950,7 +1950,7 @@ FrameBufferHandle GetDefaultFrameBuffer()
 }
 
 //=============================================================================
-FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint32_t width, uint32_t height,
+FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint16_t width, uint16_t height,
   FlagType flags)
 {
   return s_impl->CreateFrameBuffer(format, width, height, flags);
@@ -1990,7 +1990,7 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 
 //=============================================================================
 void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-  TextureFormat format, uint16_t colorAttachment, void* mem)
+  TextureFormat format, uint8_t colorAttachment, void* mem)
 {
   s_impl->ReadFrameBuffer(x, y, width, height, format, colorAttachment, mem);
 }
@@ -2080,7 +2080,7 @@ void SetUniform(UniformHandle h, uint8_t num, void const* data)
 }
 
 //==============================================================================
-void SetTexture(TextureHandle h, uint32_t stage)
+void SetTexture(TextureHandle h, uint8_t stage)
 {
   XR_ASSERT(Gfx, stage < kMaxTextureStages);
   s_impl->SetTexture(h, stage);
@@ -2099,7 +2099,7 @@ void SetStencilState(FlagType front, FlagType back)
 }
 
 //==============================================================================
-void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count)
+void SetInstanceData(InstanceDataBufferHandle h, uint32_t offset, uint32_t count)
 {
   s_impl->SetInstanceData(h, offset, count);
 }

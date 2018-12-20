@@ -441,15 +441,15 @@ void Release(IndexBufferHandle h);
 
 ///@brief Creates a texture with the given parameters and texel data in @a buffer.
 ///@note The texel data isn't kept around by Gfx.
-TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-  uint32_t height, uint32_t depth, FlagType flags, Buffer const* buffer,
-  size_t numBuffers = 1);
+TextureHandle CreateTexture(TextureFormat format, uint16_t width,
+  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,
+  uint8_t numBuffers = 1);
 
 ///@brief Creates a texture width the given parameters and no texel data. Such
 /// a texture may be suitable for a render target (framebuffer attachment).
 ///@note @a format may only be one of the non-compressed ones.
-TextureHandle CreateTexture(TextureFormat format, uint32_t width,
-  uint32_t height, uint32_t depth, FlagType flags);
+TextureHandle CreateTexture(TextureFormat format, uint16_t width,
+  uint16_t height, uint16_t depth, FlagType flags);
 
 // default textures.
 TextureHandle GetDefaultTexture2D();
@@ -470,8 +470,8 @@ FrameBufferHandle GetDefaultFrameBuffer();
 ///@brief Creates a render target along with a 2D texture of the given format.
 /// Such a frame buffer may be suitable for use with ReadFrameBuffer() only,
 /// since there is no way to access the texture handle of its attachment.
-FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint32_t width,
-  uint32_t height, FlagType flags);
+FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint16_t width,
+  uint16_t height, FlagType flags);
 
 ///@brief Creates a render target, attaching the given @a hTextures. The framebuffer
 /// retains ownership of the textures in the @a hTextures array, i.e. the caller
@@ -513,7 +513,7 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 /// this is the default one then the contents of the front or back
 /// buffers may be read by specifying attachments 0 or 1, respectively.
 void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-  TextureFormat format, uint16_t colorAttachment, void* mem);
+  TextureFormat format, uint8_t colorAttachment, void* mem);
 
 ///@brief Deletes framebuffer, Release()ing all attached textures.
 void Release(FrameBufferHandle h);
@@ -564,7 +564,7 @@ void SetUniform(UniformHandle h, void const* data);
 void SetUniform(UniformHandle h, uint8_t numElems, void const* data);
 
 ///@brief Binds the given texture for a texture stage.
-void SetTexture(TextureHandle h, uint32_t stage = 0);
+void SetTexture(TextureHandle h, uint8_t stage = 0);
 
 ///@brief Sets render state. See the F_STATE_* flags and also F_BLENDF_* values
 /// and BlendFactorToState().
@@ -581,7 +581,7 @@ void SetStencilState(FlagType front, FlagType back = F_STENCIL_SAME);
 ///@brief Sets instance data to be used for the next Draw call only.
 ///@note Flush() / Present() does not affect this; instance data set with this
 /// method is only consumed by a subsequent Draw() call.
-void SetInstanceData(InstanceDataBufferHandle h, uint16_t offset, uint16_t count);
+void SetInstanceData(InstanceDataBufferHandle h, uint32_t offset, uint32_t count);
 
 ///@brief Sets a shader program to be used for the subsequent Draw calls.
 void SetProgram(ProgramHandle h);
