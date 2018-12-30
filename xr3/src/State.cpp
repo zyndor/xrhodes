@@ -29,22 +29,22 @@ void  State::Manager::Push(State& s)
     m_states.back()->Shutdown();
   }
 
-  _Push(s);
+  PushInternal(s);
 }
 
 //==============================================================================
 void  State::Manager::Change(State& s)
 {
   XR_ASSERT(State::Manager, !m_states.empty());
-  _Pop();
-  _Push(s);
+  PopInternal();
+  PushInternal(s);
 }
 
 //==============================================================================
 void  State::Manager::Pop()
 {
   XR_ASSERT(State::Manager, !m_states.empty());
-  _Pop();
+  PopInternal();
 
   if(!m_states.empty())
   {
@@ -97,7 +97,7 @@ void  State::Manager::Clear()
   if(!m_states.empty())
   {
     // Exit() and Shutdown() current state only.
-    _Pop();
+    PopInternal();
 
     // rest of them, if any, only need to be Shutdown().
     while(!m_states.empty())
@@ -109,7 +109,7 @@ void  State::Manager::Clear()
 }
 
 //==============================================================================
-void  State::Manager::_Push(State& s)
+void  State::Manager::PushInternal(State& s)
 {
   m_states.push_back(&s);
   s.Init();
@@ -117,9 +117,9 @@ void  State::Manager::_Push(State& s)
 }
 
 //==============================================================================
-void  State::Manager::_Pop()
+void  State::Manager::PopInternal()
 {
-  m_states.back()->Shutdown();
+  m_states.back()->Exit();
   m_states.back()->Shutdown();
   m_states.pop_back();
 }
