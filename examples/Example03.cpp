@@ -43,6 +43,7 @@ public:
     // Use Texture's helper to register a sampler uniform which will be automatically
     // released when Gfx is shut down.
     Texture::RegisterSamplerUniform("uTexture0", 0);
+    Gfx::Flush();
 
     // Load material with alpha blended XRhodes logo,asynchronously.
     m_loading = true;

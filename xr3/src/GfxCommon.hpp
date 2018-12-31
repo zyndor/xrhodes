@@ -1,5 +1,5 @@
-#ifndef XR_GFXP_HPP
-#define XR_GFXP_HPP
+#ifndef XR_GFXAUX_HPP
+#define XR_GFXAUX_HPP
 //==============================================================================
 //
 // XRhodes
@@ -10,6 +10,7 @@
 //
 //==============================================================================
 #include "xr/Gfx.hpp"
+#include "xr/types/fundamentals.hpp"
 #include "xr/memory/IndexServer.hpp"
 #include "xr/memory/memory.hpp"
 
@@ -19,6 +20,17 @@ namespace xr
 {
 namespace Gfx
 {
+
+//=============================================================================
+class Const
+{
+  XR_NONOBJECT_DECL(Const)
+
+public:
+  static const uint32_t kUniformTypeSize[];
+  static const char* const kAttributeName[];
+  static const char* const kInstanceDataName[];
+};
 
 //=============================================================================
 enum class AttachmentType : uint8_t
@@ -38,9 +50,13 @@ struct Ref
 };
 
 //==============================================================================
+// TODO: ServicedArrayCore or dynamic allocation
 template <typename T, size_t n, size_t exempt = 0>
-struct ServicedArray
+class ServicedArray
 {
+  XR_NONCOPY_DECL(ServicedArray)
+
+public:
   static const size_t kSize = n;
 
   static size_t size()
@@ -67,31 +83,6 @@ struct ServicedArray
     return data[i];
   }
 };
-
-//==============================================================================
-const uint32_t kMaxTextureStages = 8;
-const uint32_t kMaxInstanceData = 4;
-
-const uint32_t kUniformTypeSize[] =
-{
-  sizeof(int32_t),
-  sizeof(float) * 4,
-  sizeof(float) * 3 * 3,
-  sizeof(float) * 4 * 4,
-  1
-};
-static_assert(XR_ARRAY_SIZE(kUniformTypeSize) == size_t(UniformType::kCount) + 1,
-  "Uniform type count / size definition count mustmatch.");
-
-//==============================================================================
-struct Uniform
-{
-  UniformType type;
-  uint8_t     arraySize;
-  std::string name;
-};
-
-using UniformRef = Ref<Uniform>;
 
 //==============================================================================
 class ConstBuffer
@@ -170,7 +161,7 @@ public:
 
   void WriteData(UniformType t, uint8_t arraySize, uint16_t loc, void const* data)
   {
-    const uint32_t dataSize = kUniformTypeSize[uint8_t(t)] * arraySize;
+    const uint32_t dataSize = Const::kUniformTypeSize[uint8_t(t)] * arraySize;
     XR_ASSERT(ConstBuffer, m_pos + sizeof(uint32_t) + dataSize < m_size);
     uint32_t refTypeSizeLoc = ((uint8_t(t) & 0x7f) << 24) // 1 bits ref (0), 7 bits type
       | (arraySize << 16) // 8 bits size
@@ -212,13 +203,11 @@ private:
 
   uint32_t m_pos;
   uint32_t m_size;
-  uint8_t  m_buffer[16 - (sizeof(uint32_t) + sizeof(uint32_t))]; // buffer includes padding to 16 bytes - actual size will vary.
+  uint8_t  m_buffer[16 - (sizeof(uint32_t) + sizeof(uint32_t))]; // buffer includes padding to 16 bytes - actual size will vary. Refer to Create().
 };
 static_assert(sizeof(ConstBuffer) == 16, "sizeof(ConstBuffer) must be 16 bytes.");
 
-}
+} // Gfx
 }
 
-#else
-#error "One include only, please."
 #endif

@@ -21,14 +21,14 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(Texture, "xtex", 2, "png;tga"/*";ktx"*/)
+XR_ASSET_DEF(Texture, "xtex", 3, "png;tga"/*";ktx"*/)
 
 //==============================================================================
 namespace {
 
 using Size = uint32_t;  // serialized size
 
-bool SerializeTexture(Gfx::TextureFormat format, uint32_t width, uint32_t height,
+bool SerializeTexture(Gfx::TextureFormat format, uint16_t width, uint16_t height,
   Buffer const& pixelData, std::ostream& dataOut)
 {
   return WriteBinaryStream(format, dataOut) &&
@@ -49,8 +49,19 @@ XR_ASSET_BUILDER_BUILD_SIG(Texture)
 
   if (success)
   {
-    uint32_t width = img.GetWidth();
-    uint32_t height = img.GetHeight();
+    const uint32_t kMaxWidth =
+      std::numeric_limits<decltype(Gfx::TextureInfo::width)>::max();
+    const uint32_t kMaxHeight =
+      std::numeric_limits<decltype(Gfx::TextureInfo::height)>::max();
+    success = img.GetWidth() <= kMaxWidth && img.GetWidth() <= kMaxHeight;
+    LTRACEIF(!success, ("%s: image dimension excessive: %u x %u; 16bits maximum.",
+      img.GetWidth(), img.GetHeight()));
+  }
+
+  if (success)
+  {
+    uint16_t width = img.GetWidth();
+    uint16_t height = img.GetHeight();
 
     // TOOD: support compressed textures.
     Gfx::TextureFormat  format;
@@ -74,9 +85,9 @@ XR_ASSET_BUILDER_BUILD_SIG(Texture)
 }
 #endif
 
-uint32_t GetTextureFlags(uint32_t flags)
+Asset::FlagType GetTextureFlags(Asset::FlagType flags)
 {
-  uint32_t textureFlags = 0;
+  Asset::FlagType textureFlags = 0;
   if (CheckAllMaskBits(flags, Texture::WrapFlag))
   {
     textureFlags |= Gfx::F_TEXTURE_WRAP;
@@ -174,12 +185,12 @@ Texture::Ptr Texture::FromHandle(Gfx::TextureHandle handle)
 }
 
 //==============================================================================
-bool Texture::Upload(Gfx::TextureFormat format, uint32_t width, uint32_t height,
+bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
   Buffer buffer)
 {
   OnUnload();
 
-  const uint32_t flags = GetFlags();
+  const auto flags = GetFlags();
   XR_ASSERT(Texture, CheckAllMaskBits(flags, ErrorFlag) ||
     !CheckAnyMaskBits(flags, LoadingFlag | ProcessingFlag));
   uint32_t textureFlags = GetTextureFlags(flags);
@@ -217,8 +228,8 @@ bool Texture::OnLoaded(Buffer buffer)
   BufferReader reader(buffer);
 
   Gfx::TextureFormat format = Gfx::TextureFormat::kCount;
-  uint32_t width = 0;
-  uint32_t height = 0;
+  uint16_t width = 0;
+  uint16_t height = 0;
   bool success = reader.Read(format) && reader.Read(width) && reader.Read(height);
   LTRACEIF(!success, ("%s: failed to read texture dimensions.",
     m_debugPath.c_str()));

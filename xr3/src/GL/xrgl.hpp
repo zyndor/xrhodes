@@ -9,7 +9,6 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-
 #include "xr/debug.hpp"
 #include "gl_core_4_5.h"
 #include "SDL_opengl.h"

@@ -56,8 +56,8 @@ public:
     Stack  m_states;
 
     // internal
-    void  _Push(State& s);
-    void  _Pop();
+    void  PushInternal(State& s);
+    void  PopInternal();
   };
 
   //==============================================================================

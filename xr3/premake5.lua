@@ -13,6 +13,8 @@ project "xr3"
 	files {
 		"h/**.hpp",
 		"src/*.cpp",
+		"src/*.hpp",
+		"premake5.lua"
 	}
 
 	includedirs {
@@ -35,6 +37,7 @@ project "xr3"
 
 		includedirs {
 			"../external/SDL2/include/",
+			"src/",
 			"src/SDL/",	-- NOTE: for access to GfxContext.hpp; for some reason filter{ "files:src/GL/Gfx.cpp" } didn't work.
 		}
 	end

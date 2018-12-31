@@ -134,7 +134,7 @@ void  Entity::AddChild(Entity& e)
 {
 #if defined XR_DEBUG
   XR_ASSERTMSG(Entity, !e.IsAncestor(this),
-    ("'%s' already a parent pf '%s'; can't add as child.", e.GetName().GetDebugValue(),
+    ("'%s' already a parent of '%s'; can't add as child.", e.GetName().GetDebugValue(),
       m_name.GetDebugValue()));
 #endif  //XR_DEBUG
 
@@ -144,13 +144,13 @@ void  Entity::AddChild(Entity& e)
   {
     if (*iInsert == &e)
     {
-      XR_TRACE(Entity, ("'%s' is already a child of '%s'", e.m_name.GetDebugValue(),
+      XR_TRACE(Entity, ("'%s' is already a child of '%s'.", e.m_name.GetDebugValue(),
         m_name.GetDebugValue()));
       return;
     }
     else
     {
-      XR_TRACE(Entity, ("'%s' is not a unique child name on '%s",
+      XR_TRACE(Entity, ("'%s' is not a unique child name on '%s'.",
         e.m_name.GetDebugValue(), m_name.GetDebugValue()));
     }
   }
@@ -183,7 +183,7 @@ void Entity::AddChild(Entity& e, size_t index)
 {
 #if defined XR_DEBUG
   XR_ASSERTMSG(Entity, !e.IsAncestor(this),
-    ("'%s' already a parent pf '%s'; can't add as child.", e.GetName().GetDebugValue(),
+    ("'%s' already a parent of '%s'; can't add as child.", e.GetName().GetDebugValue(),
       m_name.GetDebugValue()));
 #endif  //XR_DEBUG
 
@@ -193,13 +193,13 @@ void Entity::AddChild(Entity& e, size_t index)
   {
     if (*iInsert == &e)
     {
-      XR_TRACE(Entity, ("'%s' is already a child of '%s'", e.m_name.GetDebugValue(),
+      XR_TRACE(Entity, ("'%s' is already a child of '%s'.", e.m_name.GetDebugValue(),
         m_name.GetDebugValue()));
       return;
     }
     else
     {
-      XR_TRACE(Entity, ("'%s' is not a unique child name on '%s",
+      XR_TRACE(Entity, ("'%s' is not a unique child name on '%s'.",
         e.m_name.GetDebugValue(), m_name.GetDebugValue()));
     }
   }
@@ -331,7 +331,8 @@ bool Entity::RemoveComponent(Component& component)
 //==============================================================================
 Entity* Entity::Clone(Entity* parent) const
 {
-  Entity* clone = new Entity(GetName(), parent);
+  // NOTE: only assign to parent following traversal.
+  Entity* clone = new Entity(GetName(), nullptr);
 
   // copy local transformation
   clone->m_translation = m_translation;
@@ -344,7 +345,9 @@ Entity* Entity::Clone(Entity* parent) const
   for (auto i : m_components)
   {
     auto comp = i;
-    clone->m_components.push_back(comp->Clone());
+    comp = comp->Clone();
+    comp->m_owner = clone;
+    clone->m_components.push_back(comp);
   }
 
   // clone children to newly cloned entity - recursive
@@ -352,6 +355,8 @@ Entity* Entity::Clone(Entity* parent) const
   {
     i->Clone(clone);
   }
+
+  parent->AddChild(*clone);
 
   return clone;
 }
@@ -417,7 +422,23 @@ Component* Entity::FindComponent(size_t typeId)
 }
 
 //==============================================================================
+Component const* Entity::FindComponent(size_t typeId) const
+{
+  auto iFind = FindComponentIterator(typeId);
+  return (iFind != m_components.end() && (*iFind)->GetTypeId() == typeId) ? *iFind : nullptr;
+}
+
+//==============================================================================
 Entity::Components::iterator  Entity::FindComponentIterator(size_t typeId)
+{
+  return std::lower_bound(m_components.begin(), m_components.end(), typeId,
+    [](Component* c, size_t typeId) {
+      return c->GetTypeId() < typeId;
+    });
+}
+
+//==============================================================================
+Entity::Components::const_iterator Entity::FindComponentIterator(size_t typeId) const
 {
   return std::lower_bound(m_components.begin(), m_components.end(), typeId,
     [](Component* c, size_t typeId) {

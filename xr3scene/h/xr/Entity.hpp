@@ -130,7 +130,12 @@ public:
   ///@brief If this Entity has a component of type T, a pointer to it is
   /// returned, otherwise nullptr.
   template <class T>
-  T*  FindComponent() const;
+  T*  FindComponent();
+
+  ///@brief If this Entity has a component of type T, a pointer to it is
+  /// returned, otherwise nullptr.
+  template <class T>
+  T const*  FindComponent() const;
 
   ///@brief Adds a default constructed component of type T to this Entity.
   ///@return Pointer to the component, or nullptr if component of the given
@@ -200,8 +205,11 @@ private:
   void UpdateWorldTransformInternal();
 
   List::iterator FindChildIterator(Name name);
+
   Component* FindComponent(size_t typeId);
+  Component const* FindComponent(size_t typeId) const;
   Components::iterator  FindComponentIterator(size_t typeId);
+  Components::const_iterator  FindComponentIterator(size_t typeId) const;
 };
 
 //==============================================================================
@@ -265,9 +273,17 @@ const Entity::List& Entity::GetChildren() const
 //==============================================================================
 template  <class T>
 inline
-T*  Entity::FindComponent() const
+T*  Entity::FindComponent()
 {
   return static_cast<T*>(FindComponent(Component::GetTypeIdImpl<T>()));
+}
+
+//==============================================================================
+template  <class T>
+inline
+T const*  Entity::FindComponent() const
+{
+  return static_cast<T const*>(FindComponent(Component::GetTypeIdImpl<T>()));
 }
 
 //==============================================================================
@@ -281,6 +297,7 @@ T*  Entity::AddComponent()
   if(iFind == m_components.end() || (*iFind)->GetTypeId() != typeId)
   {
     component = new T();
+    component->m_owner = this;
     m_components.insert(iFind, component);
   }
   return component;

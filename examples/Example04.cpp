@@ -75,6 +75,7 @@ public:
     m_rotation = Quaternion::Identity();
 
     Texture::RegisterSamplerUniform("uTexture0", 0);
+    Gfx::Flush();
 
     m_loading = true;
     m_material = Asset::Manager::Load<Material>("example04.mtl");

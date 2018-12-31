@@ -13,6 +13,7 @@ project "xr3scene"
 	files {
 		"h/**.hpp",
 		"src/**.cpp",
+		"premake5.lua"
 	}
 
 	includedirs {

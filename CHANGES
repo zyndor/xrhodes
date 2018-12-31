@@ -1,3 +1,15 @@
+v1.2.0
+- fixed xr::Entity::FindComponent<>();
+- fixed xr::Entity::AddComponent<>() - owner is correctly assigned;
+- fixed xr::Entity::Clone() - cloning an Entity as a child to itself no longer
+  causes infinite recursion, and the owner of cloned Components is now correctly
+  assigned;
+- fixed xr::StateManager::Pop/Change(), where the current state is now Exit()ed
+  first and only Shutdown() once;
+- fixed inconsistencies in the uses of int types in the Gfx API;
+- added multi-threaded Gfx implementation;
+- added support for PointList Primitives in Gfx;
+
 v1.1.2
 - fixed a broken include in Singleton.hpp;
 - deprecated the option to transfer ownership of a texture via

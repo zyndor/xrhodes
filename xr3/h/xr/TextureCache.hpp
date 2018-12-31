@@ -125,7 +125,7 @@ private:
   // data
   FormatSpec m_format;
 
-  uint32_t m_size;
+  uint16_t m_size;
   uint32_t m_blockWidth;
   uint32_t m_rowHeight;
 

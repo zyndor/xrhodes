@@ -53,6 +53,7 @@ public:
     m_uTime = Gfx::CreateUniform("uTime", Gfx::UniformType::Vec4);
 
     Texture::RegisterSamplerUniform("uTexture0", 0);
+    Gfx::Flush();
 
     m_text3dSize = Vector2(300.f, 260.f);
     m_text3dVerticalAlignment = BoxText::Alignment::Near;

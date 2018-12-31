@@ -85,6 +85,7 @@ public:
 
     Gfx::Release(hVert);
     Gfx::Release(hFrag);
+    Gfx::Flush();
 
     // Load an image and create a texture from its pixel data.
     Image img;

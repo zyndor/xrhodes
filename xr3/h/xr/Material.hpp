@@ -12,6 +12,7 @@
 #include "xr/math/Color.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
+#include "Gfx.hpp"
 
 namespace xr
 {
@@ -42,7 +43,7 @@ public:
   XR_ASSET_DECL(Material)
 
   // types
-  enum { kMaxTextureStages = 8 };  // TODO: expose in Gfx, remove from here.
+  enum { kMaxTextureStages = Gfx::kMaxTextureStages };
 
   // general
   ///@return The flags that this Material passes to xr::Gfx::SetState().

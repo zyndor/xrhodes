@@ -17,8 +17,13 @@ namespace xr
 ///@brief Drawing primitives supported by XRhodes.
 enum class Primitive
 {
+  PointList,
   LineList,
   LineStrip,
+  TriangleList,
+  TriangleStrip,
+
+  // deprecated
   TriList,
   TriStrip,
 };

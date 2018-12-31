@@ -15,6 +15,7 @@ project "unittests"
 	{
 		"h/**.hpp",
 		"src/**.cpp",
+		"premake5.lua"
 	}
 
 	includedirs

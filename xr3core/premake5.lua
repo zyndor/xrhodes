@@ -13,6 +13,7 @@ project "xr3core"
 	files {
 		"h/**.hpp",
 		"src/**.cpp",
+		"premake5.lua"
 	}
 
 	includedirs {

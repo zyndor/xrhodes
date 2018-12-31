@@ -94,6 +94,7 @@ public:
     m_hInstanceData = Gfx::CreateInstanceDataBuffer({ instanceData.size() * sizeof(InstanceData), reinterpret_cast<uint8_t*>(instanceData.data()) }, sizeof(InstanceData));
 
     Texture::RegisterSamplerUniform("uTexture0", 0);
+    Gfx::Flush();
 
     m_loading = true;
     m_material = Asset::Manager::Load<Material>("example06.mtl");

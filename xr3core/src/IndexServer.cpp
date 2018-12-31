@@ -41,7 +41,7 @@ size_t IndexServer::Acquire()
     throw std::bad_alloc();
   }
 
-  // if we were successful, we'll now shit the tracker up.
+  // if we were successful, we'll now shift the tracker up.
   ++m_iReleased;
 
   return i;

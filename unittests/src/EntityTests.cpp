@@ -109,3 +109,66 @@ TEST_F(EntityTests, Transforms)
   ASSERT_TRUE(IsEqual(expectTransform, eChild.GetWorldTransform(true)));
   ASSERT_TRUE(IsEqual(expectTransform, eChild.GetWorldTransform(false)));
 }
+
+class XR_COMPONENT_DECL(TestComponent)
+{
+public:
+  int mFoo;
+
+  TestComponent* Clone() const
+  {
+    auto clone = new TestComponent();
+    clone->mFoo = mFoo;
+    return clone;
+  }
+};
+
+TEST_F(EntityTests, AddFindComponment)
+{
+  Entity e(nullptr);
+  auto c = e.AddComponent<TestComponent>();
+  ASSERT_EQ(c->GetOwner(), &e); // Owner correctly set.
+  ASSERT_EQ(c, e.FindComponent<TestComponent>());
+
+  const auto eConst = &e;
+  ASSERT_EQ(c, eConst->FindComponent<TestComponent>());
+
+  ASSERT_EQ(e.AddComponent<TestComponent>(), nullptr);  // Already have this type - do nothing.
+}
+
+template <typename T, size_t N>
+void AssertEqualData(T(&d0)[N], T(&d1)[N])
+{
+  for(size_t i = 0; i < N; ++i)
+  {
+    ASSERT_EQ(d0[i], d1[i]);
+  }
+}
+
+TEST_F(EntityTests, Clone)
+{
+  Entity e(Name("test"), nullptr);
+  e.SetScale(Vector3(1., 2., 3.));
+  e.SetRotation(Quaternion::FromPitchYawRoll(Vector3(1., -2., 0.)));
+  e.SetTranslation(Vector3(-10., 25., 0.));
+
+  auto c = e.AddComponent<TestComponent>();
+  c->mFoo = 17;
+
+  auto e2 = e.Clone(&e);
+  ASSERT_NE(e2, &e);
+  ASSERT_EQ(e2->GetName(), e.GetName());
+  AssertEqualData(e2->GetTranslation().data, e.GetTranslation().data);
+  AssertEqualData(e2->GetRotation().data, e.GetRotation().data);
+  AssertEqualData(e2->GetScale().data, e.GetScale().data);
+
+  ASSERT_EQ(e.GetChildren().size(), 1);
+  ASSERT_EQ(e.GetFirstChild(), e2);
+
+  ASSERT_TRUE(e2->GetChildren().empty());
+  ASSERT_EQ(e2->GetParent(), &e);
+
+  auto c2 = e2->FindComponent<TestComponent>();
+  ASSERT_NE(c, c2);
+  ASSERT_EQ(c->mFoo, c2->mFoo);
+}
