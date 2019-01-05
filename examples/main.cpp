@@ -7,11 +7,14 @@
 //
 //==============================================================================
 #include "Example.hpp"
+#include "xr/GameLoop.hpp"
 #include "xr/Device.hpp"
 #include "xr/Input.hpp"
 #include "xr/Timer.hpp"
 #include "xr/Gfx.hpp"
 #include <cstdlib>
+#include <thread>
+#include <chrono>
 
 using namespace xr;
 
@@ -73,73 +76,10 @@ public:
 
   int Run()
   {
-    uint32_t numUpdates = 0;
-    uint32_t numRenders = 0;
-    uint64_t tLast = Timer::GetUST();
-    uint64_t tNow = tLast;
-    uint64_t tSecond = tNow + 1000;
-    int64_t tAccum = kFrameDelayMs;
-
-    while (!(Device::IsQuitting() || m_quitRequested))
-    {
-      // Accumulate delay by rendering (only if not paused).
-      if (!m_paused)
-      {
-        if (m_activeExample)
-        {
-          m_activeExample->Render();
-          ++numRenders;
-        }
-
-        if (tLast >= tSecond)
-        {
-          HardString<32> stats;
-          stats += " (";
-          stats += numUpdates;
-          stats += " / ";
-          stats += numRenders;
-          stats += ")";
-          Device::SetMainWindowTitle((GetTitle() + stats.c_str()).c_str());
-          numUpdates = 0;
-          numRenders = 0;
-
-          tSecond += 1000;
-        }
-      }
-
-      tLast = tNow;
-      tNow = Timer::GetUST();
-
-      auto tDelta = std::min(tNow - tLast, kFrameCappingMs);
-      tAccum += tDelta;
-
-      // Spend time by updating the state.
-      while(tAccum > 0)
-      {
-        // Yield to OS for event processing and handle quitting.
-        Device::YieldOS(0);
-        if (Device::IsQuitting())
-        {
-          break;
-        }
-
-        // Update input and (if not paused,) example.
-        Input::Update();
-        if (!m_paused && m_activeExample)
-        {
-          m_activeExample->Update();
-        }
-
-        ++numUpdates;
-        tAccum -= kFrameDelayMs;
-      }
-
-      if (m_requestedExample)
-      {
-        SwitchExample(m_requestedExample);
-        m_requestedExample = nullptr;
-      }
-    }
+    auto onUpdate = MakeCallback(*this, &Application::OnUpdate);
+    auto onRender = MakeCallback(*this, &Application::OnRender);
+    auto onSecond = MakeCallback(*this, &Application::OnSecond);
+    GameLoop::Run(kFrameDelayMs, kFrameCappingMs, onUpdate, onRender, &onSecond);
 
     if (m_activeExample)
     {
@@ -154,6 +94,51 @@ private:
   bool m_paused = false;
   Example* m_activeExample = nullptr; // no ownership
   Example* m_requestedExample = nullptr;
+
+  void OnUpdate(GameLoop::Action& action)
+  {
+    if (m_quitRequested)
+    {
+      action = GameLoop::Action::Exit;
+    }
+    else
+    {
+      if (!m_paused && m_activeExample)
+      {
+        m_activeExample->Update();
+      }
+
+      if (m_requestedExample)
+      {
+        SwitchExample(m_requestedExample);
+        m_requestedExample = nullptr;
+        action = GameLoop::Action::Skip;
+      }
+    }
+  }
+
+  void OnRender()
+  {
+    if (!m_paused && m_activeExample)
+    {
+      m_activeExample->Render();
+    }
+    else
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(kFrameDelayMs));
+    }
+  }
+
+  void OnSecond(GameLoop::Second sec)
+  {
+    HardString<32> stats;
+    stats += " (";
+    stats += sec.updateCount;
+    stats += " / ";
+    stats += sec.renderCount;
+    stats += ")";
+    Device::SetMainWindowTitle((GetTitle() + stats.c_str()).c_str());
+  }
 
   void SwitchExample(Example* e)
   {
