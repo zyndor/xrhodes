@@ -218,7 +218,7 @@ public:
 } // nonamespace
 
 //==============================================================================
-Asset::Ptr AssetPack::Get(Asset::HashType alias) const
+Asset::Ptr AssetPack::GetAssetPtr(HashType alias) const
 {
   Asset::Ptr result;
   auto iFind = m_aliased.find(alias);
@@ -230,9 +230,9 @@ Asset::Ptr AssetPack::Get(Asset::HashType alias) const
 }
 
 //==============================================================================
-Asset::Ptr AssetPack::Get(const char * alias) const
+Asset::Ptr AssetPack::GetAssetPtr(const char * alias) const
 {
-  return Get(Hash::String(alias));
+  return GetAssetPtr(Hash::String(alias));
 }
 
 //==============================================================================

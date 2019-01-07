@@ -62,6 +62,10 @@ TEST_F(AssetPackTests, Contents)
   ASSERT_TRUE(randomAsset);
   ASSERT_EQ(randomAsset->GetDescriptor().type, Material::kTypeId);
   ASSERT_EQ(randomAsset->GetRefCount(), 3); // us, manager, pack
+
+  // getters work
+  ASSERT_EQ(randomAsset.Get(), pack->GetAssetPtr("logo").Get());
+  ASSERT_EQ(randomAsset.Get(), pack->GetAsset<Material>("logo").Get());
 }
 
 TEST_F(AssetPackTests, ContentsUnmanaged)
@@ -95,12 +99,12 @@ TEST_F(AssetPackTests, Aliases)
   auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag);
 
   // check assets from the pack - now present.
-  auto randomAsset = pack->Get("logo");
+  auto randomAsset = pack->GetAssetPtr("logo");
   ASSERT_TRUE(randomAsset);
   ASSERT_EQ(randomAsset->GetDescriptor().type, Material::kTypeId);
   const auto hash = randomAsset->GetDescriptor().hash;
 
-  randomAsset = pack->Get(Hash::String("logo"));
+  randomAsset = pack->GetAssetPtr(Hash::String("logo"));
   ASSERT_TRUE(randomAsset);
   ASSERT_EQ(randomAsset->GetDescriptor().type, Material::kTypeId);
   ASSERT_EQ(randomAsset->GetDescriptor().hash, hash); // same asset

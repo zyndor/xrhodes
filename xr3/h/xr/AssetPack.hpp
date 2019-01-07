@@ -11,7 +11,7 @@
 //==============================================================================
 #include "Asset.hpp"
 #include "xr/memory/Queue.hpp"
-#include <map>
+#include <unordered_map>
 
 namespace xr
 {
@@ -40,16 +40,69 @@ public:
   ///@brief Attempts to get an Asset by the alias that it was given.
   ///@note Assets loaded by this AssetPack can be retrieved directly from
   /// Asset::Manager, using their path / hash.
-  Asset::Ptr Get(HashType alias) const;
+  [[deprecated("Use GetAssetPtr.")]]
+  Asset::Ptr Get(HashType alias) const
+  {
+    return GetAssetPtr(alias);
+  }
 
   ///@brief Attempts to get an Asset by the alias that it was given.
   ///@note Assets loaded by this AssetPack can be retrieved directly from
   /// Asset::Manager, using their path / hash.
-  Asset::Ptr Get(const char* alias) const;
+  [[deprecated("Use GetAssetPtr.")]]
+  Asset::Ptr Get(const char* alias) const
+  {
+    return GetAssetPtr(alias);
+  }
+
+  ///@brief Attempts to get an Asset by the hash of the alias that it was given
+  /// in the pack.
+  ///@note Assets loaded by this AssetPack may be retrieved directly from
+  /// Asset::Manager, using their path / hash (unless UnmanagedFlag was set).
+  Asset::Ptr GetAssetPtr(HashType alias) const;
+
+  ///@brief Attempts to get an Asset by the alias that it was given in the pack.
+  ///@note Assets loaded by this AssetPack may be retrieved directly from
+  /// Asset::Manager, using their path / hash (unless UnmanagedFlag was set).
+  Asset::Ptr GetAssetPtr(const char* alias) const;
+
+  ///@brief Attempts to get an Asset of type T, by the hash of the alias that it
+  /// was given in the pack.
+  ///@note Assets loaded by this AssetPack may be retrieved directly from
+  /// Asset::Manager, using their path / hash (unless UnmanagedFlag was set).
+  template <typename T>
+  typename T::Ptr GetAsset(HashType alias) const
+  {
+    typename T::Ptr result;
+    if (auto ptr = GetAssetPtr(alias))
+    {
+      result.Reset(ptr->Cast<T>());
+    }
+    return result;
+  }
+
+  ///@brief Attempts to get an Asset of type T, by the alias that it was given
+  /// in the pack.
+  ///@note Assets loaded by this AssetPack may be retrieved directly from
+  /// Asset::Manager, using their path / hash (unless UnmanagedFlag was set).
+  template <typename T>
+  typename T::Ptr GetAsset(const char* alias) const
+  {
+    return GetAsset<T>(Hash::String(alias));
+  }
 
 private:
+  // types
+  struct IdentityHash
+  {
+    HashType operator()(HashType h) const
+    {
+      return h;
+    }
+  };
+
   // data
-  std::map<HashType, Asset::Ptr> m_aliased;
+  std::unordered_map<HashType, Asset::Ptr, IdentityHash> m_aliased;
   Queue<Asset::Ptr> m_unnamed; // ownership only; they're never actually retrieved from the pack.
 
   // internal
