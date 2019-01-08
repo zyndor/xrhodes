@@ -22,8 +22,8 @@ const uint32_t kMsInSecond = 1000;
 }
 
 //==============================================================================
-void GameLoop::Run(uint64_t frameDelayMs, uint64_t frameCapMs, OnUpdate& onUpdate,
-  OnRender& onRender, OnSecond* onSecond)
+void GameLoop::Run(uint64_t frameDelayMs, uint64_t frameCapMs,
+  OnUpdate const& onUpdate, OnRender const& onRender, OnSecond const* onSecond)
 {
   uint32_t numUpdates = 0;
   uint32_t numRenders = 0;

@@ -76,10 +76,11 @@ public:
 
   int Run()
   {
-    auto onUpdate = MakeCallback(*this, &Application::OnUpdate);
-    auto onRender = MakeCallback(*this, &Application::OnRender);
     auto onSecond = MakeCallback(*this, &Application::OnSecond);
-    GameLoop::Run(kFrameDelayMs, kFrameCappingMs, onUpdate, onRender, &onSecond);
+    GameLoop::Run(kFrameDelayMs, kFrameCappingMs,
+      MakeCallback(*this, &Application::OnUpdate),
+      MakeCallback(*this, &Application::OnRender),
+      &onSecond);
 
     if (m_activeExample)
     {

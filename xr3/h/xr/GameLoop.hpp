@@ -62,7 +62,8 @@ public:
   ///@note onSecond is not Clone()d; it will need to stay valid until Run()
   /// returns.
   static void Run(uint64_t frameDelayMs, uint64_t frameCapMs,
-    OnUpdate& onUpdate, OnRender& onRender, OnSecond* onSecond = nullptr);
+    OnUpdate const& onUpdate, OnRender const& onRender,
+    OnSecond const* onSecond = nullptr);
 };
 
 }
