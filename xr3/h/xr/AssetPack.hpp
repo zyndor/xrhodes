@@ -20,17 +20,19 @@ namespace xr
 ///@brief AssetPack is an aggregate of Assets that are defined in it, with
 /// their dependencies consolidated. Each asset may have an alias defined,
 /// which can be used to retrieve it from the AssetPack.
-/// Additionally, the AssetPack keeps a reference to all of its assets,
+///@par Additionally, the AssetPack keeps a reference to all of its assets,
 /// thereby preventing them being unloaded as unused (until the AssetPack itself
 /// is unloaded).
-/// The AssetPack adds all Assets to the Asset::Manager. If the UnmanagedFlag
-/// was specified, then only the AssetPack and any dependencies will not be
-/// managed.
-/// Format:
+///@par Format:
 /// {
 ///   "path/to/asset.x",
 ///   "my_alias": "path/to/asset.y"
 /// }
+///@note Multiply defined assets are consolidated and written only once.
+///@note Multiple aliases for the same asset are ignored, and the only the latest
+/// one is used.
+///@note The AssetPack adds all Assets to the Asset::Manager. If the UnmanagedFlag
+/// was specified, then only the AssetPack will not be managed.
 class AssetPack: public Asset
 {
 public:
