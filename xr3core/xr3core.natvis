@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="xr::Counted&lt;*&gt;">
+    <DisplayString>{m_p}</DisplayString>
+    <Expand>
+      <Item Name="object">m_p</Item>
+      <Item Name="deleter">m_d</Item>
+    </Expand>
+  </Type>
+  <Type Name="xr::HardString&lt;*&gt;">
+    <DisplayString>{m_buffer,na} ({m_size})</DisplayString>
+  </Type>
+  <Type Name="xr::Matrix">
+    <DisplayString>{{ {xx,g}, {xy,g}, {xz,g},
+    {xy,g}, {yy,g}, {yz,g},
+    {zx,g}, {zy,g}, {zz,g},
+    {t} }}</DisplayString>
+  </Type>
+  <Type Name="xr::Quaternion">
+    <DisplayString>{{ {(float)((int)(i * 10000) / 10000.f),g}, {(float)((int)(j * 10000) / 10000.f),g}, {(float)((int)(k * 10000) / 10000.f),g}, {(float)((int)(w * 10000) / 10000.f),g} }}</DisplayString>
+  </Type>
+  <Type Name="xr::Vector2">
+    <DisplayString>{{ {x,g}, {y,g} }}</DisplayString>
+  </Type>
+  <Type Name="xr::Vector3">
+    <DisplayString>{{ {x,g}, {y,g}, {z,g} }}</DisplayString>
+  </Type>
+  <Type Name="xr::Vector4">
+    <DisplayString>{{ {x,g}, {y,g}, {z,g}, {w,g} }}</DisplayString>
+  </Type>
+</AutoVisualizer>

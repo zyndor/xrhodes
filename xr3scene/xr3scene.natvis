@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="xr::Entity">
+    <DisplayString>{m_name} T{m_translation} R{m_rotation} S{m_scale}</DisplayString>
+  </Type>
+</AutoVisualizer>

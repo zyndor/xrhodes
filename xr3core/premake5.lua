@@ -16,6 +16,10 @@ project "xr3core"
 		"premake5.lua"
 	}
 
+	if (isVS()) then
+		files { "xr3core.natvis"}
+	end
+
 	includedirs {
 		"h/",
 	}
