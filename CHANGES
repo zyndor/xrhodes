@@ -1,3 +1,22 @@
+v1.3.0
+- fixed xr::AssetPack's handling of dependencies and aliases:
+  * fixed the management of AssetPack contents - when UnmanagedFlag was set, it
+    is only the AssetPack itself that isn't managed;
+  * fixed redundant building and writing of contents that are also dependencies
+    of other content;
+  * dependencies not defined in the pack but having a dependency on content,
+    are now being built into the pack;
+  * the availability of internal dependencies is now ensured;
+  * multiply defined assets (of the same path) are ignored with a warning;
+  * multiply defined aliases override previous definitions with a warning;
+- xr::CallbackBase<>::Call() is now a const method;
+- deprecated xr::AssetPack::Get() in favour of the new GetAssetPtr();
+- xr::Asset::Manager::Manage() only acquires the lock if the asset was valid in
+  the first place;
+- added xr::AssetPack::GetAsset<>();
+- added xr::GameLoop;
+- added xr::ReverseAdaptor<>;
+
 v1.2.0
 - fixed xr::Entity::FindComponent<>();
 - fixed xr::Entity::AddComponent<>() - owner is correctly assigned;
