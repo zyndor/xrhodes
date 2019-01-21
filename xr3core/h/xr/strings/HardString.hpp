@@ -23,11 +23,26 @@
 namespace xr
 {
 
+namespace detail
+{
+class HardStringCore
+{
+protected:// structors
+  HardStringCore(size_t size)
+  : m_size{ size }
+  {}
+
+protected:// data
+  size_t m_size = 0;
+};
+
+};
+
 //==============================================================================
 ///@brief Fixed capacity string class that doesn't allocate memory through its
 /// lifespan.
 template  <size_t N>
-class HardString
+class HardString: protected detail::HardStringCore
 {
 public:
   // types
@@ -90,7 +105,6 @@ public:
 
 protected:
   // data
-  size_t m_size;
   char   m_buffer[N];
 };
 
@@ -147,7 +161,7 @@ char* strrstr(const char* haystack, const char* needle)
 template  <size_t N>
 inline
 HardString<N>::HardString()
-: m_size(0)
+: HardStringCore{ 0 }
 {
   m_buffer[0] = '\0';
 }
@@ -163,7 +177,7 @@ HardString<N>::HardString(const char* cs)
 template  <size_t N>
 inline
 HardString<N>::HardString(const char* cs, size_t size)
-: m_size(size)
+: HardStringCore{ size }
 {
   XR_ASSERT(HardString, cs != nullptr);
   XR_ASSERT(HardString, size <= capacity());

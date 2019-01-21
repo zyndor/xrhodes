@@ -49,19 +49,27 @@ TEST_F(AssetPackTests, Contents)
   ASSERT_FALSE(randomAsset);
 
   // load pack
-  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag);
+  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
 
-  // check dependency of asset from the pack - now present.
-  randomAsset.Reset(Asset::Manager::Find<Texture>("assets/xrhodes.png").Get());
+  // check pack on manager - present
+  ASSERT_EQ(pack->GetRefCount(), 2);  // us, manager
+  ASSERT_TRUE(Asset::Manager::Find<AssetPack>("assets/assets.pak"));
+
+  // check dependency of asset from the pack - present.
+  randomAsset.Reset(Asset::Manager::Find<Shader>("assets/xrhodes.shd").Get());
   ASSERT_TRUE(randomAsset);
-  ASSERT_EQ(randomAsset->GetDescriptor().type, Texture::kTypeId);
+  ASSERT_EQ(randomAsset->GetDescriptor().type, Shader::kTypeId);
   ASSERT_EQ(randomAsset->GetRefCount(), 3); // us, material, manager
 
   // check asset from the pack -- present.
   randomAsset.Reset(Asset::Manager::Find<Material>("assets/xrhodes.mtl").Get());
   ASSERT_TRUE(randomAsset);
   ASSERT_EQ(randomAsset->GetDescriptor().type, Material::kTypeId);
-  ASSERT_EQ(randomAsset->GetRefCount(), 3); // us, manager, pack
+  ASSERT_EQ(randomAsset->GetRefCount(), 3); // us, pack, manager
+
+  // getters work
+  ASSERT_EQ(randomAsset.Get(), pack->GetAssetPtr("logo").Get());
+  ASSERT_EQ(randomAsset.Get(), pack->GetAsset<Material>("logo").Get());
 }
 
 TEST_F(AssetPackTests, ContentsUnmanaged)
@@ -71,11 +79,16 @@ TEST_F(AssetPackTests, ContentsUnmanaged)
   ASSERT_FALSE(randomAsset);
 
   // load pack
-  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::UnmanagedFlag | Asset::DryRunFlag | Asset::LoadSyncFlag);
+  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::UnmanagedFlag | Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
 
-  // check dependency on manager -- not present.
-  randomAsset.Reset(Asset::Manager::Find<Texture>("assets/xrhodes.png").Get());
-  ASSERT_FALSE(randomAsset);
+  // check pack on manager - not present
+  ASSERT_EQ(pack->GetRefCount(), 1);  // us only
+  ASSERT_FALSE(Asset::Manager::Find<AssetPack>("assets/assets.pak"));
+
+  // check dependency of asset from pack -- present.
+  randomAsset.Reset(Asset::Manager::Find<Shader>("assets/xrhodes.shd").Get());
+  ASSERT_TRUE(randomAsset);
+  ASSERT_EQ(randomAsset->GetRefCount(), 3); // us, material, manager
 
   // check asset from pack -- present.
   randomAsset.Reset(Asset::Manager::Find<Material>("assets/xrhodes.mtl").Get());
@@ -86,24 +99,32 @@ TEST_F(AssetPackTests, ContentsUnmanaged)
   // check dependency via asset -- present.
   randomAsset.Reset(randomAsset->Cast<Material>()->GetTexture(0).Get());
   ASSERT_TRUE(randomAsset);
-  ASSERT_EQ(randomAsset->GetRefCount(), 2); // us, material
+  ASSERT_EQ(randomAsset->GetRefCount(), 4); // us, material, pack, manager
 }
 
 TEST_F(AssetPackTests, Aliases)
 {
   // load pack
-  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag);
+  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
 
   // check assets from the pack - now present.
-  auto randomAsset = pack->Get("logo");
+  auto randomAsset = pack->GetAssetPtr("logo");
   ASSERT_TRUE(randomAsset);
   ASSERT_EQ(randomAsset->GetDescriptor().type, Material::kTypeId);
   const auto hash = randomAsset->GetDescriptor().hash;
 
-  randomAsset = pack->Get(Hash::String("logo"));
+  randomAsset = pack->GetAssetPtr(Hash::String("logo"));
   ASSERT_TRUE(randomAsset);
   ASSERT_EQ(randomAsset->GetDescriptor().type, Material::kTypeId);
   ASSERT_EQ(randomAsset->GetDescriptor().hash, hash); // same asset
+
+  // asset by overridden alias - not found
+  randomAsset = pack->GetAssetPtr(Hash::String("mytex"));
+  ASSERT_FALSE(randomAsset);
+
+  // asset by new alias - found
+  randomAsset = pack->GetAssetPtr(Hash::String("texture"));
+  ASSERT_TRUE(randomAsset);
 }
 
 #endif

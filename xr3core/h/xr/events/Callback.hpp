@@ -75,7 +75,7 @@ struct Callback: CallbackBase
   {}
 
   virtual SelfType* Clone() const =0;
-  virtual Return Call(Args...) =0;
+  virtual Return Call(Args...) const =0;
 };
 
 //==============================================================================
@@ -99,7 +99,7 @@ struct MemberCallback : Callback<Return, Args...>
     return new SelfType(CallbackBase::GetObject<T>(), m_function);
   }
 
-  Return Call(Args... args) override
+  Return Call(Args... args) const override
   {
     return (static_cast<T*>(CallbackBase::m_data)->*m_function)(args...);
   }
@@ -135,7 +135,7 @@ struct MemberCallback<T, void, Args...> : Callback<void, Args...>
     return new SelfType(CallbackBase::GetObject<T>(), m_function);
   }
 
-  void Call(Args... args) override
+  void Call(Args... args) const override
   {
     (static_cast<T*>(CallbackBase::m_data)->*m_function)(args...);
   }
@@ -175,7 +175,7 @@ struct FunctionPtrCallback : Callback<Return, Args...>
     return new SelfType(m_function, const_cast<void*>(CallbackBase::m_data));
   }
 
-  Return Call(Args... args) override
+  Return Call(Args... args) const override
   {
     return m_function(args..., CallbackBase::m_data);
   }
@@ -211,7 +211,7 @@ struct FunctionPtrCallback<void, Args...> : Callback<void, Args...>
     return new SelfType(m_function, const_cast<void*>(CallbackBase::m_data));
   }
 
-  void Call(Args... args) override
+  void Call(Args... args) const override
   {
     m_function(args..., CallbackBase::m_data);
   }

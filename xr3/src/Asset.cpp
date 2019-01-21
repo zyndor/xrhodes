@@ -166,11 +166,11 @@ public:
 
   bool Manage(Asset::Ptr const& a)
   {
-    std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
     auto const& desc = a->GetDescriptor();
     bool success = desc.IsValid();
     if (success)
     {
+      std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
       auto iFind = m_assets.find(desc);
       success = iFind == m_assets.end();
       if (success)

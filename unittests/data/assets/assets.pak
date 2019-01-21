@@ -1,3 +1,6 @@
 {
 	"logo": "assets/xrhodes.mtl",
+	"assets/xrhodes.png", # sorted after a dependent; must not be left as external dependency, and must be correctly resolved as internal dependency.
+	"mytex": "assets/xrhodes.png", # this is a duplicate, and shall be ignored, but it defines an alias, which must be used.
+	"texture": "assets/xrhodes.png", # ignore duplicate, override alias.
 }
