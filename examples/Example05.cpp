@@ -55,14 +55,13 @@ public:
     Texture::RegisterSamplerUniform("uTexture0", 0);
     Gfx::Flush();
 
-    m_text3dSize = Vector2(300.f, 260.f);
+    m_text3dSize = Vector2(350.f, 300.f);
     m_text3dVerticalAlignment = BoxText::Alignment::Near;
     m_text3dHorizontalAlignment = BoxText::Alignment::Near;
 
-    m_text2dSize = Vector2(Gfx::GetLogicalWidth(), Gfx::GetLogicalHeight());
-
     // Load a text file whose contents we'll display.
     m_buffer.Open("example05.txt");
+    m_buffer.Close();
 
     m_loading = true;
 
@@ -86,21 +85,24 @@ public:
       if (!loading)
       {
         // Once successfully loaded, create material from font, using shader.
-        m_text3dMaterial = m_font->Materialise(Gfx::F_STATE_ALPHA_BLEND, m_text3dShader);
-        m_text2dMaterial = m_font->Materialise(Gfx::F_STATE_ALPHA_BLEND, m_text2dShader);
+        auto state = Gfx::F_STATE_ALPHA_BLEND;
+        m_text3dMaterial = m_font->Materialise(state, m_text3dShader);
+        m_text2dMaterial = m_font->Materialise(state, m_text2dShader);
 
-        // Create 3D text block
-        CreateText3d();
 
         // Create 2D text block
         BoxText text;
-        text.SetFont(m_font);
         text.SetScale(.5f);
-        text.SetBoxSize(m_text2dSize.x, m_text2dSize.y);
+        text.SetFont(m_font);
+        text.EnsureVerticalFit();
         text.SetHorizontalAlignment(BoxText::Alignment::Near);
         text.SetVerticalAlignment(BoxText::Alignment::Near);
+        text.SetOrigin(Vector2(.5f, -.5f));
 
-        m_text2dMesh = text.CreateMesh("Press TAB to cycle through alignment options.", true, nullptr);
+        m_text2dMesh = text.CreateMesh("Press TAB to cycle through alignment options. Cursor keys adjust box size.", true, nullptr);
+
+        // Create 3D text block
+        CreateText3d();
 
         m_loading = loading;
       }
@@ -129,6 +131,37 @@ public:
 
         CreateText3d();
       }
+
+      const float dSize = 6.f;
+      bool rebuildText = false;
+      if (Input::GetKeyState(K_LEFT) == ButtonState::Down && m_text3dSize.x - dSize > 0.f)
+      {
+        m_text3dSize.x -= dSize;
+        rebuildText = true;
+      }
+
+      if (Input::GetKeyState(K_RIGHT) == ButtonState::Down)
+      {
+        m_text3dSize.x += dSize;
+        rebuildText = true;
+      }
+
+      if (Input::GetKeyState(K_UP) == ButtonState::Down && m_text3dSize.y - dSize > 0.f)
+      {
+        m_text3dSize.y -= dSize;
+        rebuildText = true;
+      }
+
+      if (Input::GetKeyState(K_DOWN) == ButtonState::Down)
+      {
+        m_text3dSize.y += dSize;
+        rebuildText = true;
+      }
+
+      if (rebuildText)
+      {
+        CreateText3d();
+      }
     }
   }
 
@@ -152,7 +185,7 @@ public:
       XR_TRANSFORMS_SCOPED_MODEL(m);
 
       m_text3dMaterial->Apply();
-      m_text3dMesh.Render(Primitive::TriList);
+      m_text3dMesh.Render(Primitive::TriangleList);
 
       // Use DebugDraw to visualize the border of the 3D text area.
       DebugDraw::SetColor(Color(0xff44ffbb));
@@ -164,10 +197,10 @@ public:
       -Gfx::GetLogicalHeight(), 0.f, -100.f, 100.f);
 
     {
-      XR_TRANSFORMS_SCOPED_MODEL(Matrix(Vector3(m_text2dSize.x * .5f, m_text2dSize.y * -.5f, 0.f)));
+      XR_TRANSFORMS_SCOPED_MODEL(Matrix::Identity());
 
       m_text2dMaterial->Apply();
-      m_text2dMesh.Render(Primitive::TriList);
+      m_text2dMesh.Render(Primitive::TriangleList);
     }
 
     Gfx::Present();
@@ -213,7 +246,6 @@ private:
   Material::Ptr m_text3dMaterial;
   IndexMesh m_text3dMesh;
 
-  Vector2 m_text2dSize;
   Material::Ptr m_text2dMaterial;
   IndexMesh m_text2dMesh;
 
@@ -227,8 +259,11 @@ private:
     text.SetBoxSize(m_text3dSize.x, m_text3dSize.y);
     text.SetHorizontalAlignment(m_text3dHorizontalAlignment);
     text.SetVerticalAlignment(m_text3dVerticalAlignment);
+    text.SetHorizontalSpacing(3.f);
+    text.SetVerticalSpacing(-2.f);
 
-    m_text3dMesh = text.CreateMesh(m_buffer.CastData<char const>(), true, nullptr);
+    m_text3dMesh = text.CreateMesh(m_buffer.CastData<char const>(),
+      m_buffer.GetSize(), true, nullptr);
   }
 } example;
 

@@ -9,6 +9,9 @@
  path: {m_debugPath} }}
     </DisplayString>
   </Type>
+  <Type Name="xr::BoxText::Measurement::Line">
+    <DisplayString>{{ { start,[end-start]na } ({ end - start } bytes, width: { width }) }}</DisplayString>
+  </Type>
   <Type Name="xr::Gfx::HandleCoreCore">
     <DisplayString Condition="id == INVALID_ID">invalid</DisplayString>
     <DisplayString>id={id}</DisplayString>
