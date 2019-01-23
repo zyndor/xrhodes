@@ -96,7 +96,6 @@ namespace xr
     data.write(reinterpret_cast<char*>(histogram), sizeof(histogram));
     return true;
   }
-#endif
 
   void EnsureTestAssetExists(FilePath const& path)
   {
@@ -190,7 +189,6 @@ namespace xr
 
   std::vector<Asset::DescriptorCore> DependantTestAsset::s_order;
 
-#ifdef ENABLE_ASSET_BUILDING
   XR_ASSET_BUILDER_BUILD_SIG(DependantTestAsset)
   {
     auto start = buffer.data;
@@ -217,7 +215,6 @@ namespace xr
 
     return true;
   }
-#endif
 
   TEST_F(AssetTests, Dependencies)
   {
@@ -263,4 +260,5 @@ namespace xr
     ASSERT_EQ(DependantTestAsset::s_order[2], dep2->GetDescriptor());
     ASSERT_EQ(DependantTestAsset::s_order[3], testAss->GetDescriptor());
   }
+#endif
 }
