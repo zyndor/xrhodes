@@ -9,10 +9,18 @@
 #include "xr/memory/memdebug.hpp"
 #include <sstream>
 #include <iomanip>
-#include <stdint.h>
+#include <algorithm>
+#include <cstdint>
 
 namespace xr
 {
+namespace
+{
+
+const size_t kBytesPerRow = 16;
+const size_t kDigitsPerByte = 2;
+
+}
 
 //==============================================================================
 std::string LogMemory(void const* buffer, size_t numBytes)
@@ -27,21 +35,25 @@ void LogMemory(void const* buffer, size_t numBytes, std::ostream & os)
   uint8_t const* readp = static_cast<uint8_t const*>(buffer);
 
   uint8_t const* readEnd = readp + numBytes;
-  while (readp < readEnd)
+  std::ostringstream visBuffer;
+  while (readp != readEnd)
   {
     os << static_cast<const void*>(readp) << "  " << std::hex <<
-      std::setw(2U) << std::setfill('0') << int(*readp);
+      std::setw(kDigitsPerByte) << std::setfill('0') << int{ *readp };
+    visBuffer << ((*readp >= ' ') ? char(*readp) : '.' );
     ++readp;
 
-    std::ostringstream visBuffer;
-    for (size_t i = 0; i < 15; ++i)
+    size_t bytes = std::min(kBytesPerRow - 1, size_t(readEnd - readp));
+    for (size_t i = 0; i < bytes; ++i)
     {
-      os << " " << std::setw(2U) << std::setfill('0') << int(*readp);
+      os << " " << std::setw(kDigitsPerByte) << std::setfill('0') << int{ *readp };
       visBuffer << ((*readp >= ' ') ? char(*readp) : '.');
       ++readp;
     }
 
-    os << "  " << visBuffer.str() << "\n";
+    os << std::string((kBytesPerRow - 1 - bytes) * (kDigitsPerByte + 1), ' ') <<
+      "  " << visBuffer.str() << "\n";
+    visBuffer.str("");
   }
 }
 
