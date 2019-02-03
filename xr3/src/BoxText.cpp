@@ -13,14 +13,19 @@
 #include "xr/meshutil.hpp"
 #include "utf8/unchecked.h"
 
+namespace utf8u = utf8::unchecked;
+
 namespace xr {
 
 //==============================================================================
 BoxText::BoxText()
-: m_scale(1.0f),
-  m_boxSize(.0f, .0f),
+: m_scale(1.f),
+  m_boxSize(std::numeric_limits<float>::max(), 0.f),
   m_horizontalAlignment(Alignment::Center),
-  m_verticalAlignment(Alignment::Center)
+  m_verticalAlignment(Alignment::Center),
+  m_origin(0.f, 0.f),
+  m_horizontalSpacing(0.f),
+  m_verticalSpacing(0.f)
 {}
 
 //==============================================================================
@@ -42,8 +47,8 @@ void BoxText::SetScale(float scale)
 //==============================================================================
 void  BoxText::SetBoxSize(float width, float height)
 {
-  XR_ASSERT(Text, width >= .0f);
-  XR_ASSERT(Text, height >= .0f);
+  XR_ASSERT(BoxText, width >= 0.f);
+  XR_ASSERT(BoxText, height >= 0.f);
 
   m_boxSize = Vector2(width, height);
 }
@@ -61,173 +66,224 @@ void BoxText::SetVerticalAlignment(Alignment va)
 }
 
 //==============================================================================
-namespace utf8u = utf8::unchecked;
+void BoxText::SetHorizontalSpacing(float hs)
+{
+  m_horizontalSpacing = hs;
+}
 
-void BoxText::Measure(char const* text, Measurement & m) const
+//==============================================================================
+void BoxText::SetVerticalSpacing(float vs)
+{
+  m_verticalSpacing = vs;
+}
+
+//==============================================================================
+void BoxText::SetOrigin(Vector2 origin)
+{
+  m_origin = origin;
+}
+
+//==============================================================================
+void BoxText::EnsureVerticalFit(uint32_t numLines)
+{
+  XR_ASSERT(BoxText, m_font);
+  float requiredHeight = m_font->GetLineHeight() * m_scale * numLines +
+    m_verticalSpacing * m_scale * (numLines > 0)  * (numLines - 1);
+  if (m_boxSize.y < requiredHeight)
+  {
+    m_boxSize.y = requiredHeight;
+  }
+}
+
+//==============================================================================
+void BoxText::Measure(char const* text, Measurement& m) const
+{
+  auto numBytes = strlen(text);
+  Measure(text, numBytes, m);
+}
+
+//==============================================================================
+void BoxText::Measure(char const* text, size_t numBytes, Measurement& m) const
 {
   const Font& font = *m_font;
 
+  const float missingGlyphAdvance = 0.f;
+  const float missingGlyphBearing = 0.f;
   const float lineHeight = font.GetLineHeight();
-  Measurement tm = { Vector2::Zero(), 0 };
 
-  // convert maxSize into font units, since that's what glyph metrics are stored in.
+  // convert boxSize into font units, since that's what glyph metrics are stored in.
   const Vector2 boxSize = m_boxSize / m_scale;
+  if (lineHeight > boxSize.y) // can't fit a single line
+  {
+    m = { Vector2::Zero(), 0 };
+    return;
+  }
 
-  const float missingGlyphAdvance = .0f;
-  float width = .0f;  // of current row, world units
-  float widthWordEnd = .0f; // width at the end of the last completed word, world units
-  float widthWordStart = .0f; // width at the start of the current word, world units
-  bool newLine = false;
-  bool firstChar = true;
+  const float hSpacing = m_horizontalSpacing / m_scale;
+  const float vSpacing = m_verticalSpacing / m_scale;
+
+  float position = 0.f;  // of current row, world units
+  float widthLineStart = 0.f;
+  float widthWordEnd = 0.f; // width at the end of the last completed word, world units
+  float widthWordStart = 0.f; // width at the start of the current word, world units
   char const* wordStart = nullptr;
   char const* wordEnd = nullptr;
-  Measurement::Line line = { text };
-  auto numBytes = strlen(text);
-  auto end = utf8::find_invalid(text, text + numBytes);
+  char const* nextLineStart = nullptr;
 
-  while (text != end)
+  Measurement tm = { Vector2::Zero(), 0 };
+  tm.lines.reserve(size_t(std::floor(boxSize.y / (lineHeight + vSpacing))));
+
+  Measurement::Line line = { nullptr };
+
+  auto endText = utf8::find_invalid(text, text + numBytes);
+  while (text != endText)
   {
-    bool hasAdvanced = false;
-    auto cp = utf8u::peek_next(text);
-    if (cp == '\n')  // line end
+    const auto cp = utf8u::peek_next(text);
+    const bool isCr = cp == '\r';
+    if (isCr || cp == '\n')  // line break
     {
-      line.width = width;
       line.end = text;
-
-      width = .0f;
+      line.width = position - widthLineStart;
 
       wordStart = nullptr;
-      newLine = true;
 
       utf8u::advance(text, 1);  // skip newline
-      hasAdvanced = true;
+      if (isCr && text != endText && utf8u::peek_next(text) == '\n')  // if CR/LF, keep going
+      {
+        utf8u::advance(text, 1);
+      }
+
+      nextLineStart = text;
+      position = 0.f;
     }
     else
     {
       // Get glyph.
       auto glyph = font.GetGlyph(cp);
-      float wGlyph = missingGlyphAdvance;
+      float glyphAdvance = missingGlyphAdvance;
+      float glyphBearing = missingGlyphBearing;
       if (glyph)
       {
-        wGlyph = glyph->advance;
+        glyphAdvance = glyph->advance;
+        glyphBearing = glyph->xBearing;
         if (glyph->fieldHeight != 0)
         {
           ++tm.numGlyphs;
         }
-
-        if (firstChar)
-        {
-          wGlyph -= glyph->xBearing;
-          firstChar = false;
-        }
       }
 
       // If glyph is wider than row, terminate processing.
-      if (wGlyph > boxSize.x)
+      if (glyphAdvance > boxSize.x)
       {
         wordStart = nullptr;
         break;
       }
 
-      // Check word boundary.
-      bool isSpace = IsSpaceUtf8(cp);
+      // Check word boundary and line start.
+      const bool isSpace = IsSpaceUtf8(cp);
       if ((wordStart != nullptr) == isSpace) // If we have a word started, and hit space, or if have no word started and hit non-whitespace.
       {
         if (wordStart)  // Had word, now finished.
         {
-          widthWordEnd = width;
+          widthWordEnd = position;
           wordEnd = text;
           wordStart = nullptr;
         }
         else
         {
-          widthWordStart = width;
+          widthWordStart = position;
           wordStart = text;
+          if (!line.start)
+          {
+            line.start = text;
+            widthLineStart = position;
+            glyphAdvance -= glyphBearing;
+          }
         }
       }
 
-      if (width + wGlyph > boxSize.x) // We've reached the end of the row.
+      if (position + glyphAdvance > boxSize.x) // We've reached the end of the row.
       {
-        newLine = true;
-        if (wordEnd > line.start) // There was at least one complete word.
+        if (line.start && wordEnd > line.start) // There was at least one complete word.
         {
-          // We're discarding space. Maybe there should be an option to keep it.
-          line.width = widthWordEnd;
           line.end = wordEnd;
+          line.width = widthWordEnd - widthLineStart;
           if (wordStart)
           {
-            width = width - widthWordStart + wGlyph;
+            position = position - widthWordStart + glyphAdvance + hSpacing;
           }
           else
           {
-            width = wGlyph;
+            position = 0.f; // discarding space
           }
+          nextLineStart = wordStart;
         }
         else // We're either amidst whitespace, or in a word that has spanned the whole row -- we have to linebreak.
         {
-          line.width = width;
           line.end = text;
-          width = wGlyph;
-
-          if (!isSpace)  // It is a word, the start of which we'll have processed - repoint wordStart to the current position.
+          line.width = position - widthLineStart;
+          if (isSpace)
+          {
+            wordStart = nullptr;
+            position = 0.f;
+          }
+          else  // in a word; just break on the character and signal new line start.
           {
             wordStart = text;
-          }
-        }
+            position = glyphAdvance - glyphBearing + hSpacing;
 
-        if (!wordStart && isSpace)  // If the line ends in whitespace, skip it.
-        {
-          utf8u::advance(text, 1);
-          hasAdvanced = true;
+            widthLineStart = 0.f;
+          }
+          nextLineStart = wordStart;
         }
       }
       else
       {
-        width += wGlyph;
+        position += glyphAdvance + hSpacing;
       }
+
+      utf8u::advance(text, 1);
     }
 
     // Process new line
-    if (newLine)
+    if (line.end)
     {
+      XR_ASSERT(BoxText, line.start && line.end);
+      auto lineChars = utf8u::distance(line.start, line.end);
+      line.width -= hSpacing * (lineChars > 0);
       line.width *= m_scale;  // Convert to scaled units.
+
       tm.size.x = std::max(line.width, tm.size.x);
-      tm.lines.push_back(line); // TODO: avoid allocating here -- enforce an API to do it up front (and bail once we're out of space?).
+      tm.lines.push_back(line);
 
-      if (wordStart)
-      {
-        line.start = wordStart;
-      }
-      else
-      {
-        line.start = text;
-      }
-
-      tm.size.y += lineHeight;
-      if (tm.size.y + lineHeight >= boxSize.y)  // Prevent vertical overflow.
+      tm.size.y += lineHeight + vSpacing;
+      if (tm.size.y + lineHeight > boxSize.y)  // Prevent vertical overflow.
       {
         break;
       }
 
-      newLine = false;
-      firstChar = true;
-    }
-
-    if (!hasAdvanced)
-    {
-      utf8u::advance(text, 1);
+      // new line starts here
+      line.start = nextLineStart;
+      line.end = nullptr;
+      // NOTE: nextLineStart = nullptr; not required - we only read it on the previous line and end-of-line scenarios are supposed to set it.
     }
   }
 
   // Process last row - if there's enough vertical space and row not empty.
-  if (wordStart && tm.size.y + lineHeight <= boxSize.y)
+  if (text == endText && line.start && tm.size.y + lineHeight <= boxSize.y)
   {
-    line.width = width * m_scale;
-    tm.size.x = std::max(line.width, tm.size.x);
     line.end = text;
+
+    auto lineChars = utf8u::distance(line.start, line.end);
+    line.width = position - widthLineStart - hSpacing * (lineChars > 0);
+    line.width *= m_scale;
+
+    tm.size.x = std::max(line.width, tm.size.x);
     tm.size.y += lineHeight;
     tm.lines.push_back(line);
   }
+
+  // TODO: ellipses for truncated text?
 
   // Convert to scaled units now.
   tm.size.y *= m_scale;
@@ -238,11 +294,13 @@ void BoxText::Measure(char const* text, Measurement & m) const
 //==============================================================================
 namespace
 {
-  const std::function<void(float, float&)> horizontalAligners[] = {
-    [](float width, float& x) {},
-    [](float width, float& x) { x += width * .5f; },
-    [](float width, float& x) { x += width; },
-  };
+
+const std::function<void(float, float&)> kHorizontalAligners[] = {
+  [](float width, float& x) {},
+  [](float width, float& x) { x += width * .5f; },
+  [](float width, float& x) { x += width; },
+};
+
 }
 
 void BoxText::Generate(Measurement const& m, uint32_t attribStride,
@@ -251,21 +309,23 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
   Font& font = *m_font;
 
   const float lineHeight = font.GetLineHeight() * m_scale;
-  float maxLineWidth = .0f;
+  float maxLineWidth = 0.f;
   float height = m.size.y;
 
+  XR_DEBUG_ONLY(auto posEnd = XR_ADVANCE_PTR(positions, attribStride * m.numGlyphs *
+    Quad::Vertex::kCount);)
   if (m.numGlyphs > 0)
   {
     // Calculate the starting position -- offset by ascent (i.e. to baseline).
-    const float x0 = m_boxSize.x * -.5f;
-    Vector3 cursor = Vector3(x0, m_boxSize.y * .5f, .0f);
+    const float x0 = m_boxSize.x * (m_origin.x - .5f);
+    Vector3 cursor = Vector3(x0, m_boxSize.y * (.5f + m_origin.y), 0.f);
     switch (m_verticalAlignment)
     {
-    case Alignment::Center:
+    case Alignment::Centered:
       cursor.y -= (m_boxSize.y - height) * .5f;
       break;
 
-    case Alignment::Far:
+    case Alignment::Positive:
       cursor.y -= (m_boxSize.y - height);
       break;
 
@@ -273,7 +333,7 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
       break;
     }
 
-    const auto hAligner = horizontalAligners[static_cast<int>(m_horizontalAlignment)];
+    const auto hAligner = kHorizontalAligners[static_cast<int>(m_horizontalAlignment)];
 
     cursor.y -= font.GetAscent() * m_scale;
 
@@ -285,44 +345,38 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
       maxLineWidth = std::max(maxLineWidth, line.width);
 
       auto i = line.start;
-      bool firstChar = true;
-      XR_ASSERT(Text, utf8::is_valid(line.start, line.end));
+      XR_ASSERT(BoxText, utf8::is_valid(line.start, line.end));
       while (i != line.end)
       {
+        XR_ASSERT(BoxText, positions < posEnd);
         auto codePoint = utf8u::peek_next(i);
         cg = font.CacheGlyph(codePoint);
         if (cg)
         {
-          if (cg->uvs.right > .0f)
+          if (cg->uvs.right > 0.f)
           {
             // set pos, uv
-            if (firstChar)
-            {
-              cursor.x -= cg->glyph->xBearing;
-              firstChar = false;
-            }
-
             const float gx = cursor.x + cg->glyph->xBearing * m_scale;
             const float gy = cursor.y + cg->glyph->yBearing * m_scale;
             const float gw = cg->glyph->width * m_scale;
             const float gh = cg->glyph->height * m_scale;
 
-            *positions = Vector3(gx, gy + gh, .0f);
+            *positions = Vector3(gx, gy + gh, 0.f);
             *uvs = Vector2(cg->uvs.left, cg->uvs.top);
             positions = XR_ADVANCE_PTR(positions, attribStride);
             uvs = XR_ADVANCE_PTR(uvs, attribStride);
 
-            *positions = Vector3(gx + gw, gy + gh, .0f);
+            *positions = Vector3(gx + gw, gy + gh, 0.f);
             *uvs = Vector2(cg->uvs.right, cg->uvs.top);
             positions = XR_ADVANCE_PTR(positions, attribStride);
             uvs = XR_ADVANCE_PTR(uvs, attribStride);
 
-            *positions = Vector3(gx, gy, .0f);
+            *positions = Vector3(gx, gy, 0.f);
             *uvs = Vector2(cg->uvs.left, cg->uvs.bottom);
             positions = XR_ADVANCE_PTR(positions, attribStride);
             uvs = XR_ADVANCE_PTR(uvs, attribStride);
 
-            *positions = Vector3(gx + gw, gy, .0f);
+            *positions = Vector3(gx + gw, gy, 0.f);
             *uvs = Vector2(cg->uvs.right, cg->uvs.bottom);
             positions = XR_ADVANCE_PTR(positions, attribStride);
             uvs = XR_ADVANCE_PTR(uvs, attribStride);
@@ -330,12 +384,12 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
 
           cursor.x += cg->glyph->advance * m_scale;
         }
+        cursor.x += m_horizontalSpacing;
 
-        firstChar = false;
         utf8u::advance(i, 1);
       }
 
-      cursor.y -= lineHeight;
+      cursor.y -= lineHeight + m_verticalSpacing;
       cursor.x = x0;
     }
   }
@@ -347,22 +401,32 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
 
   if (statsOut)
   {
-    *statsOut = { uint32_t(m.lines.size()), maxLineWidth, height };
+    *statsOut = Stats{ uint32_t(m.lines.size()), maxLineWidth, height };
   }
 }
 
 //==============================================================================
 IndexMesh BoxText::CreateMesh(const char* text, bool updateGlyphCache, Stats* statsOut)
 {
+  return CreateMesh(text, strlen(text), updateGlyphCache, statsOut);
+}
+
+//==============================================================================
+IndexMesh BoxText::CreateMesh(const char* text, size_t numBytes, bool updateGlyphCache,
+  Stats* statsOut)
+{
   // Prepare measurement
   Measurement m;
-  Measure(text, m);
+  Measure(text, numBytes, m);
 
   // Allocate buffer, set index pattern
   std::vector<Vertex> vertices(m.numGlyphs * Quad::Vertex::kCount);
   std::vector<uint16_t> indices(Quad::kIndexCount * m.numGlyphs);
-  meshutil::SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
-    m.numGlyphs, indices.data());
+  if (indices.data())
+  {
+    meshutil::SetIndexPattern(Quad::kIndices, Quad::kIndexCount, Quad::Vertex::kCount,
+      m.numGlyphs, indices.data());
+  }
 
   Generate(m, vertices.data(), updateGlyphCache, statsOut);
 

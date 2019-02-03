@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="xr::Asset::DescriptorCore">
+    <DisplayString>{{ {(char*)&amp;type,4na} {hash,H} }}</DisplayString>
+  </Type>
+  <Type Name="xr::Asset">
+    <DisplayString>{{ {m_descriptor}; refs: {m_refs.m_counter};
+ flags: {(int)((m_flags &amp; ErrorFlag) != 0)}{(int)((m_flags &amp; LoadingFlag) != 0)}{(int)((m_flags &amp; ProcessingFlag) != 0)}{(int)((m_flags &amp; ReadyFlag) != 0)}:{(int)((m_flags &amp; ForceReloadFlag) != 0)}{(int)((m_flags &amp; LoadSyncFlag) != 0)}{(int)((m_flags &amp; UnmanagedFlag) != 0)}{(int)((m_flags &amp; KeepSourceDataFlag) != 0)}:{(int)((m_flags &amp; ForceBuildFlag) != 0)}{(int)((m_flags &amp; DryRunFlag) != 0)};
+ path: {m_debugPath} }}
+    </DisplayString>
+  </Type>
+  <Type Name="xr::BoxText::Measurement::Line">
+    <DisplayString>{{ { start,[end-start]na } ({ end - start } bytes, width: { width }) }}</DisplayString>
+  </Type>
+  <Type Name="xr::Gfx::HandleCoreCore">
+    <DisplayString Condition="id == INVALID_ID">invalid</DisplayString>
+    <DisplayString>id={id}</DisplayString>
+  </Type>
+  <Type Name="xr::Image">
+    <DisplayString>{m_width}x{m_height}@{(int)m_bytesPerPixel * 8}</DisplayString>
+  </Type>
+  <Type Name="xr::Name" Priority="High">
+    <DisplayString>name={m_debugValue} ({m_value,H})</DisplayString>
+  </Type>
+  <Type Name="xr::Name">
+    <DisplayString>hash={m_value,H}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::Format&lt;&gt;">
+    <DisplayString></DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::Format&lt;*&gt;">
+    <Expand>
+      <Synthetic Name="pos" Optional="1">
+        <DisplayString>{ pos }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="uv0" Optional="1">
+        <DisplayString>{ uv0 }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="uv1" Optional="1">
+        <DisplayString>{ uv1 }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="uv2" Optional="1">
+        <DisplayString>{ uv2 }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="uv3" Optional="1">
+        <DisplayString>{ uv3 }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="color0" Optional="1">
+        <DisplayString>{ color0 }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="color1" Optional="1">
+        <DisplayString>{ color1 }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="normal" Optional="1">
+        <DisplayString>{ normal }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="tangent" Optional="1">
+        <DisplayString>{ tangent }</DisplayString>
+      </Synthetic>
+      <Synthetic Name="bitangent" Optional="1">
+        <DisplayString>{ bitangent }</DisplayString>
+      </Synthetic>
+    </Expand>
+  </Type>
+  <Type Name="xr::Vertex::Pos&lt;*&gt;">
+    <DisplayString>{pos}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::UV0&lt;*&gt;">
+    <DisplayString>{uv0}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::UV1&lt;*&gt;">
+    <DisplayString>{uv1}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::UV2&lt;*&gt;">
+    <DisplayString>{uv2}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::UV3&lt;*&gt;">
+    <DisplayString>{uv3}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::Color0&lt;*&gt;">
+    <DisplayString>{color0}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::Color1&lt;*&gt;">
+    <DisplayString>{color1}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::Normal&lt;*&gt;">
+    <DisplayString>{normal}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::Tangent&lt;*&gt;">
+    <DisplayString>{tangent}</DisplayString>
+  </Type>
+  <Type Name="xr::Vertex::Bitangent&lt;*&gt;">
+    <DisplayString>{bitangent}</DisplayString>
+  </Type>
+</AutoVisualizer>

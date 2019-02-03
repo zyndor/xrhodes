@@ -1,3 +1,25 @@
+v1.4.0
+- fixed multiple bugs around new lines, discarding whitespace and calculating
+  line width, in xr::BoxText::Measure();
+- fixed xr::BoxText::Generate() - removed first glyph xBearing from the cursor
+  calculation as already accounted for in the Measurement;
+- fixed xr::BoxText::CreateMesh() - empty measurements are safely ignored;
+- fixed LogMemory() bugs:
+  * removed out of bounds access;
+  * all 16 bytes of the 'row' are printed in a human readable form;
+- fixed AssetTests to no longer run in Release;
+- improved xr::BoxText's usability:
+  * improved the handling of Windows-style line breaks (CR/LF);
+  * default box width is the maximum value float can represent;
+  * added EnsureVerticalFit() to grow the box (if smaller) to
+    n lines with given font and scale;
+  * added Get/SetOrigin() to facilitate positioning the text;
+  * added Get/SetHorizontal/VerticalSpacing();
+  * added overloads to Measure() / CreateMesh() that take the
+    number of bytes [of text] to be processed;
+- added VS debug visualisers for the most commonly used types;
+- updated premake to 5.0.0-alpha13 on all platforms;
+
 v1.3.0
 - fixed xr::AssetPack's handling of dependencies and aliases:
   * fixed the management of AssetPack contents - when UnmanagedFlag was set, it

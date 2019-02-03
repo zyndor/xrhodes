@@ -84,3 +84,4 @@ Acknowledgements
 * [stb_truetype](https://github.com/nothings/stb/blob/master/stb_truetype.h) - TTF support;
 * [utf8cpp](http://utfcpp.sourceforge.net/) - concise and easy-to-use UTF8 library;
 * [tinyxml2](http://www.grinninglizard.com/tinyxml2/) - XML parsing;
+* [MurmurHash](https://github.com/aappleby/smhasher) - powers xr::Hash;
