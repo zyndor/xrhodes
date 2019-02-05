@@ -1,3 +1,6 @@
+v1.4.1
+- Made xr::BoxText::Generate() and CreateMesh() const methods;
+
 v1.4.0
 - fixed multiple bugs around new lines, discarding whitespace and calculating
   line width, in xr::BoxText::Measure();
