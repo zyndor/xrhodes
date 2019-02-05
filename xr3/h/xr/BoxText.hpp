@@ -138,7 +138,7 @@ public:
   /// written into @a m.
   void Measure(char const* text, size_t numBytes, Measurement& m) const;
 
-  ///@brief Generates the mesh for the given text.
+  ///@brief Calculates vertex positions and UVs for the given Measurement.
   ///@param m measurement with text.
   ///@param attribStride byte offset from one position / uv element to the next;
   /// must be the same for both positions / uvs.
@@ -149,20 +149,19 @@ public:
   ///@param stats Optional Stats object to write to.
   ///@note Expects to have at least m.numGlyphs * 4 elements in the @a positions
   /// and @a uvs arrays.
-  void Generate(Measurement const& m, uint32_t attribStride,
-    Vector3* positions, Vector2* uvs, bool updateGlyphCache, Stats* statsOut);
+  void Generate(Measurement const& m, uint32_t attribStride, Vector3* positions,
+    Vector2* uvs, bool updateGlyphCache, Stats* statsOut) const;
 
-  ///@brief Convenience function to generate the mesh for the given text into the
-  /// given array of vertices in the given vertex format (which must have Vector3
-  /// position and Vector2 uv). Currently restricted to using UV stream 0.
-  /// If @a updateGlyphCache is set, it will update the glyph cache of the
-  /// font.
-  ///@note Expects to have at least m.numGlyps * 4 elements in the @a verts
-  /// array.
+  ///@brief Convenience function to calculate vertex positions and UVs for the
+  /// given Measurement into the given array of vertices, in the given vertex format
+  /// (which must have Vector3 position and Vector2 uv). Currently restricted to
+  /// using UV stream 0. If @a updateGlyphCache is set, it will update the glyph
+  /// cache of the font.
+  ///@note Expects to have at least m.numGlyps * 4 elements in the @a verts array.
   template <class VertexFormat>
   inline
   void Generate(Measurement const& m, VertexFormat* verts, bool updateGlyphCache,
-    Stats* statsOut)
+    Stats* statsOut) const
   {
     Generate(m, VertexFormat::kSize, &verts->pos, &verts->uv0, updateGlyphCache,
       statsOut);
@@ -171,13 +170,13 @@ public:
   ///@brief Convenience function to create an IndexMesh with the given text, up
   /// to the first null terminator.
   /// If @a updateGlyphCache is set, it will update the glyph cache of the font.
-  IndexMesh CreateMesh(const char* text, bool updateGlyphCache, Stats* statsOut);
+  IndexMesh CreateMesh(const char* text, bool updateGlyphCache, Stats* statsOut) const;
 
   ///@brief Convenience function to create an IndexMesh with @a numBytes bytes
   /// of the given text. If @a updateGlyphCache is set, it will update the glyph
   /// cache of the font.
   IndexMesh CreateMesh(const char* text, size_t numBytes, bool updateGlyphCache,
-    Stats* statsOut);
+    Stats* statsOut) const;
 
 protected:
   // data
