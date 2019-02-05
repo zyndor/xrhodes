@@ -304,7 +304,7 @@ const std::function<void(float, float&)> kHorizontalAligners[] = {
 }
 
 void BoxText::Generate(Measurement const& m, uint32_t attribStride,
-  Vector3* positions, Vector2* uvs, bool updateGlyphCache, Stats* statsOut)
+  Vector3* positions, Vector2* uvs, bool updateGlyphCache, Stats* statsOut) const
 {
   Font& font = *m_font;
 
@@ -406,14 +406,14 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
 }
 
 //==============================================================================
-IndexMesh BoxText::CreateMesh(const char* text, bool updateGlyphCache, Stats* statsOut)
+IndexMesh BoxText::CreateMesh(const char* text, bool updateGlyphCache, Stats* statsOut) const
 {
   return CreateMesh(text, strlen(text), updateGlyphCache, statsOut);
 }
 
 //==============================================================================
 IndexMesh BoxText::CreateMesh(const char* text, size_t numBytes, bool updateGlyphCache,
-  Stats* statsOut)
+  Stats* statsOut) const
 {
   // Prepare measurement
   Measurement m;
