@@ -11,6 +11,7 @@
 #include "xr/Device.hpp"
 #include "xr/Timer.hpp"
 #include "xr/ScratchBuffer.hpp"
+#include "xr/Sprite.hpp"
 #include "xr/Material.hpp"
 #include "xr/Asset.hpp"
 #include "xr/math/Quaternion.hpp"
@@ -35,7 +36,7 @@ public:
   virtual void Init() override
   {
     Gfx::Init(Device::GetGfxContext());
-    ScratchBuffer::Init(64);
+    ScratchBuffer::Init(96);
 
     // Initialize asset manager.
     Asset::Manager::Init(".assets");
@@ -99,6 +100,9 @@ public:
       Vector2(-.25f, .125f),
     };
 
+    // Use a Sprite to make vertex position calculations easier.
+    Sprite sprite;
+    sprite.SetUVs(Sprite::kWholeTexture);
     auto motion = m_dragControl.GetTotalMotion() * 0.01f;
     for (int i = 0; i < XR_ARRAY_SIZE(offsets); ++i)
     {
@@ -107,15 +111,11 @@ public:
       Vector2 offset(c * offsets[i].x - s * offsets[i].y,
         s * offsets[i].x + c * offsets[i].y);
 
-      auto vertices = ScratchBuffer::Start2dUv(4);
-      vertices[0].pos = Vector2(-halfWidth, halfHeight) + offset;
-      vertices[0].uv0 = Vector2(0.f, 1.f);
-      vertices[1].pos = Vector2(halfWidth, halfHeight) + offset;
-      vertices[1].uv0 = Vector2(1.f, 1.f);
-      vertices[2].pos = Vector2(-halfWidth, -halfHeight) + offset;
-      vertices[2].uv0 = Vector2(0.f, 0.f);
-      vertices[3].pos = Vector2(halfWidth, -halfHeight) + offset;
-      vertices[3].uv0 = Vector2(1.f, 0.f);
+      auto vertices = ScratchBuffer::Start3dUv(4);
+      sprite.SetHalfSize(halfWidth, halfHeight, true);
+      sprite.AddOffset(offset.x, offset.y, true);
+      sprite.CopyPositionsTo(vertices);
+      sprite.CopyUVsTo(vertices);
       ScratchBuffer::Finish(Primitive::TriStrip);
 
       // Reuse scratch buffer. NOTE: Flush is automatically called when Gfx is
