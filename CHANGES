@@ -1,3 +1,21 @@
+v1.5.0
+- xr::Font fixes:
+  * fixed the number of glyphs written to the built asset, excluding the ones
+    that were requested, but aren't available in the font;
+  * fixed memory corruption caused by incorrect sizing of intermediate glyph
+    bitmap buffers;
+  * fixed the logging of an error message when failing to write glyph bitmap
+    data;
+- fixed asserts in BoxText::Generate() - reaching the end of the vertex buffer
+  is only an error if there's more glyphs to write;
+- ENABLE_GLYPH_DEBUG no longer writes individual .tgas, rather than dumping
+  glyph data to stdout, for both the bitmap and SDF;
+- SDF generation is now optional to allow better quality where text is not put
+  through scaling / rotation and sharp corners are desired;
+- added xr::Font::GetGlyphBitmapData();
+- minor const correctness improvement in AssetPackBuilder;
+- updated Example 03 to demonstrate a use of xr::Sprites;
+
 v1.4.1
 - Made xr::BoxText::Generate() and CreateMesh() const methods;
 
