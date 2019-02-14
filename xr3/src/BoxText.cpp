@@ -348,11 +348,11 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
       XR_ASSERT(BoxText, utf8::is_valid(line.start, line.end));
       while (i != line.end)
       {
-        XR_ASSERT(BoxText, positions < posEnd);
         auto codePoint = utf8u::peek_next(i);
         cg = font.CacheGlyph(codePoint);
         if (cg)
         {
+          XR_ASSERT(BoxText, positions < posEnd);
           if (cg->uvs.right > 0.f)
           {
             // set pos, uv
