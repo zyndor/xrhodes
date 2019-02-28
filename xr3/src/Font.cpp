@@ -69,14 +69,14 @@ struct Range
   uint32_t end;
 };
 
-const int kMinFontSize = 32;
-const int kDefaultFontSize = 128;
+const int32_t kMinFontSize = 32;
+const int32_t kDefaultFontSize = 128;
 
-const int kMinSdfSize = 1;
-const int kDefaultSdfSize = 4;
+const int32_t kMinSdfSize = 1;
+const int32_t kDefaultSdfSize = 4;
 
-const int kMinCacheSize = 256;
-const int kDefaultCacheSize = 1024;
+const int32_t kMinCacheSize = 256;
+const int32_t kDefaultCacheSize = 1024;
 
 const float kUnitsToPixel = 1.0f / 64.0f;
 
@@ -245,7 +245,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   }
 
   // Handle some optional attributes.
-  int numFonts = 0;
+  int32_t numFonts = 0;
   if (success)
   {
     numFonts = stbtt_GetNumberOfFonts(ttfData.GetData());
@@ -254,10 +254,10 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       numFonts));
   }
 
-  int fontIndex = 0;
-  int fontSize = kDefaultFontSize; // includes padding for SDF, see below.
-  int sdfSize = kDefaultSdfSize;
-  int cacheSize = kDefaultCacheSize;
+  int32_t fontIndex = 0;
+  int32_t fontSize = kDefaultFontSize; // includes padding for SDF, see below.
+  int32_t sdfSize = kDefaultSdfSize;
+  int32_t cacheSize = kDefaultCacheSize;
   XonEntity* xon = nullptr;
   if (success && (xon = root->TryGet("fontIndex")))
   {
@@ -377,19 +377,19 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     LTRACEIF(!success, ("%s: failed to initialise font.", rawNameExt));
   }
 
-  // Calculate and write some font metrics. These are in 1/64 sub-pixel units.
+  // Calculate and write some font metrics. These come in 1/64 sub-pixel units.
   // We're writing pixels.
-  int ascent, descent, lineGap;
+  int32_t ascent, descent, lineGap;
   float sdfSizeUnits;
-  int x0, x1, y0, y1;
+  int32_t x0, x1, y0, y1;
   float pixelScale; // reciprocal of total line height, i.e. ascent - descent + lineGap.
   if (success)
   {
     stbtt_GetFontVMetrics(&stbFont, &ascent, &descent, &lineGap);
-    const int lineHeightUnits = ascent - descent + lineGap;
+    const int32_t lineHeightUnits = ascent - descent + lineGap;
 
     stbtt_GetFontBoundingBox(&stbFont, &x0, &y0, &x1, &y1);
-    int heightUnits = y1 - y0;
+    const int32_t heightUnits = y1 - y0;
     sdfSizeUnits = (sdfSize / float(fontSize)) * heightUnits;
 
     pixelScale = stbtt_ScaleForPixelHeight(&stbFont, float(fontSize - sdfSize * 2));
@@ -400,7 +400,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     LTRACEIF(!success, ("%s: failed to write font metrics.", rawNameExt));
   }
 
-  // Get code point ranges.
+  // Process code point ranges.
   std::vector<Range> ranges;
   ranges.reserve(8);
   if (success)
@@ -473,13 +473,17 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   // functionality is that we want to control (and minimize) the allocations.
   if(success)
   {
-    const int ascentPixels = int(std::ceil(ascent * pixelScale));
+    const int32_t ascentPixels = int(std::ceil(ascent * pixelScale));
 
-    const int glyphPadding = 1; // We pad the glyph bitmap to simplify comparing neighbour pixels, where we'd need to special case at the edges - reading off by one.
-    const int glyphSizePadded = fontSize + glyphPadding * 2;
+    const int32_t glyphPadding = 1; // We pad the glyph bitmap to simplify comparing neighbour pixels, where we'd need to special case at the edges - reading off by one.
+    const int32_t totalPadding = glyphPadding + sdfSize;
+    const int32_t maxWidth = int32_t(std::ceil((x1 - x0) * pixelScale));
+    const int32_t maxHeight = int32_t(std::ceil((y1 - y0) * pixelScale));
+    const int32_t glyphWidthPadded = maxWidth + totalPadding * 2;
+    const int32_t glyphHeightPadded = maxHeight + totalPadding * 2;
 
-    std::vector<uint8_t> glyphBitmap(glyphSizePadded * glyphSizePadded);
-    uint8_t* glyphBitmapPadded = glyphBitmap.data() + glyphSizePadded + glyphPadding;
+    std::vector<uint8_t> glyphBitmap(glyphWidthPadded * glyphHeightPadded);
+    uint8_t* glyphBitmapPadded = glyphBitmap.data() + glyphWidthPadded + glyphPadding;
 
     SdfBuilder sdf(fontSize, sdfSize);
     Font::Glyph glyph;
@@ -495,8 +499,8 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         glyph.codePoint = i0;
 
         // Get glyph metrics.
-        int advance;
-        int xBearing;
+        int32_t advance;
+        int32_t xBearing;
         stbtt_GetGlyphHMetrics(&stbFont, iGlyph, &advance, &xBearing);
         glyph.advance = advance * kUnitsToPixel;
         glyph.xBearing = (xBearing - sdfSizeUnits) * kUnitsToPixel;
@@ -526,31 +530,31 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           // Y0 is top (ascent + y0 for absolute coords), Y1 is bottom.
           stbtt_GetGlyphBitmapBox(&stbFont, iGlyph, pixelScale, pixelScale,
             &x0, &y0, &x1, &y1);
-          int w = x1 - x0;
-          int h = y1 - y0;
+          int32_t w = x1 - x0;
+          int32_t h = y1 - y0;
 
-          auto xBearingPixels = int(std::ceil(glyph.xBearing * pixelScale));
-          auto xPixelOffs = sdfSize + xBearingPixels;
-          auto yPixelOffs = sdfSize + ascentPixels + y0;
-          auto bufferOffset = xPixelOffs + yPixelOffs * glyphSizePadded;
+          auto xBearingPixels = int32_t(std::ceil(glyph.xBearing * pixelScale));
+          auto xPixelOffs = std::max(0, sdfSize + xBearingPixels);
+          auto yPixelOffs = std::max(0, sdfSize + ascentPixels + y0);
+          auto bufferOffset = xPixelOffs + yPixelOffs * glyphWidthPadded;
 
           // Blit the glyph at its absolute position (sdf padding and ascent applies).
           stbtt_MakeGlyphBitmap(&stbFont, glyphBitmapPadded + bufferOffset,
-            w, h, glyphSizePadded, pixelScale, pixelScale, iGlyph);
+            w, h, glyphWidthPadded, pixelScale, pixelScale, iGlyph);
 
           // Calculate SDF metrics & generate SDF around glyph.
           auto sx0 = std::max(xPixelOffs - sdfSize, 0);
           auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
           auto sx1 = std::min(xPixelOffs + w + sdfSize, fontSize);
           auto sy1 = std::min(yPixelOffs + h + sdfSize, fontSize);
-          auto sw = sx1 - sx0;
-          auto sh = sy1 - sy0;
-          bufferOffset = sx0 + sy0 * glyphSizePadded;
-          sdf.Generate(glyphBitmapPadded + bufferOffset, glyphSizePadded, sw, sh);
-          sdf.ConvertToBitmap(sw, sh, glyphBitmap.data());
+          w = sx1 - sx0;
+          h = sy1 - sy0;
+          bufferOffset = sx0 + sy0 * glyphWidthPadded;
+          sdf.Generate(glyphBitmapPadded + bufferOffset, glyphWidthPadded, w, h);
+          sdf.ConvertToBitmap(w, h, glyphBitmap.data());
 
-          glyph.fieldWidth = sw;
-          glyph.fieldHeight = sh;
+          glyph.fieldWidth = w;
+          glyph.fieldHeight = h;
           XR_ASSERT(Font, glyphBytesWritten < std::numeric_limits<decltype(glyph.dataOffset)>::max());
           glyph.dataOffset = static_cast<uint32_t>(glyphBytesWritten);
 
@@ -566,7 +570,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           img.Save(path, true);
 #endif
 
-          if (!WriteRangeBinaryStream<uint32_t>(p, p + (sw * sh), glyphBitmaps,
+          if (!WriteRangeBinaryStream<uint32_t>(p, p + (w * h), glyphBitmaps,
             &glyphBytesWritten))
           {
             success = false;
