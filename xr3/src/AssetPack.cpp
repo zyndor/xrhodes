@@ -90,7 +90,7 @@ public:
     Record::Vector& records)
   {
     return std::lower_bound(records.begin(), records.end(), path,
-      [](Record::Ptr& rp, FilePath const& path) {
+      [](Record::Ptr const& rp, FilePath const& path) {
         return path < rp->path;
       });
   }
@@ -305,7 +305,7 @@ public:
       }
     }
 
-    // Traverse records for non-contents that have no depemndencies on
+    // Traverse records for non-contents that have no dependencies on
     // contents. These are basically dependencies to the AssetPack itself
     // (and are removed from records).
     std::function<bool(Record const& r)> hasContentDependency =
