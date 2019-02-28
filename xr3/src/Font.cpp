@@ -7,7 +7,6 @@
 //
 //==============================================================================
 #ifdef ENABLE_ASSET_BUILDING
-#include "RangeTree.hpp"
 #include "SdfBuilder.hpp"
 #endif
 
@@ -41,7 +40,7 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(Font, "xfnt", 2, "fnt")
+XR_ASSET_DEF(Font, "xfnt", 3, "fnt")
 
 /*
   {
@@ -63,6 +62,12 @@ XR_ASSET_DEF(Font, "xfnt", 2, "fnt")
 
 #ifdef ENABLE_ASSET_BUILDING
 namespace {
+
+struct Range
+{
+  uint32_t start;
+  uint32_t end;
+};
 
 const int kMinFontSize = 32;
 const int kDefaultFontSize = 128;
@@ -103,21 +108,20 @@ bool ParseHexCodePoint(std::string const& value, uint32_t& c)
   return success;
 }
 
-bool ParseRange(char const* def, std::unique_ptr<RangeTree>& range)
+bool ParseRange(char const* def, Range& range)
 {
   std::cmatch results;
   bool success = std::regex_match(def, results, kValueRegex);
   if (success)
   {
-    RangeTree r;
     std::string match = results[2].str();
     if (!match.empty())
     {
-      success = ParseLiteralChar(match, r.start);
+      success = ParseLiteralChar(match, range.start);
     }
     else
     {
-      success = ParseHexCodePoint(results[3].str(), r.start); // results[3].str() cannot be empty, since it's matched the regex.
+      success = ParseHexCodePoint(results[3].str(), range.start); // results[3].str() cannot be empty, since it's matched the regex.
     }
 
     if(success)
@@ -125,45 +129,91 @@ bool ParseRange(char const* def, std::unique_ptr<RangeTree>& range)
       match = results[6].str();
       if (!match.empty())
       {
-        success = ParseLiteralChar(match, r.end);
+        success = ParseLiteralChar(match, range.end);
       }
       else
       {
         match = results[7].str();
         if(!match.empty())
         {
-          success = ParseHexCodePoint(match, r.end);
+          success = ParseHexCodePoint(match, range.end);
         }
         else
         {
-          r.end = r.start;
+          range.end = range.start;
         }
       }
     }
 
     if (success)
     {
-      if (r.end < r.start)
+      if (range.end < range.start)
       {
-        std::swap(r.start, r.end);
+        std::swap(range.start, range.end);
       }
 
-      ++r.end;
-      success = r.end > r.start;
-      if(success)
-      {
-        if(range)
-        {
-          range->Add(r);
-        }
-        else
-        {
-          range.reset(new RangeTree(r));
-        }
-      }
+      ++range.end;
+      success = range.end > range.start;
     }
   }
   return success;
+}
+
+void MergeRange(Range range, std::vector<Range>& ranges)
+{
+  XR_ASSERT(Font, range.end >= range.start);
+  auto i0 = std::lower_bound(ranges.begin(), ranges.end(), range,
+    [](Range const& r0, Range const& r1) {
+      return r0.start < r1.start;
+    });
+  if (i0 != ranges.end() && range.end >= i0->start)
+  {
+    i0->start = std::min(i0->start, range.start);
+
+    auto i1 = std::upper_bound(i0, ranges.end(), range,
+      [](Range const& r0, Range const& r1) {
+        return r0.end < r1.end;
+      });
+    if (i1 != ranges.end())
+    {
+      range.end = std::max(range.end, i1->end);
+    }
+    i0->end = std::max(i0->end, range.end);
+
+    ++i0;
+    ranges.erase(i0, i1);
+  }
+  else
+  {
+    i0 = ranges.insert(i0, range);
+  }
+}
+
+void SplitRanges(uint32_t value, std::vector<Range>& ranges)
+{
+  auto i0 = std::upper_bound(ranges.begin(), ranges.end(), value,
+    [](uint32_t value, Range const& range) {
+      return value < range.end;
+    });
+  if (i0 != ranges.end())
+  {
+    if (i0->start == value)
+    {
+      ++i0->start;
+    }
+    else
+    {
+      const uint32_t end = i0->end;
+      i0->end = value;
+
+      ++value;
+      if (value < end)
+      {
+        ++i0;
+        ranges.insert(i0, Range{ value, end });
+      }
+    }
+  }
 }
 
 XR_ASSET_BUILDER_DECL(Font)
@@ -191,37 +241,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     {
       success = false;
       LTRACE(("%s: missing definition for '%s'", rawNameExt, "font"));
-    }
-  }
-
-  // Get code point ranges.
-  std::unique_ptr<RangeTree> codePointsRoot;
-  if(success)
-  {
-    try
-    {
-      auto& codePoints = root->Get("codePoints").ToObject();
-      for(size_t i0 = 0, i1 = codePoints.GetNumElements(); i0 < i1; ++i0)
-      {
-        try
-        {
-          char const* rangeDef = codePoints[i0].ToValue().GetString();
-          if(!ParseRange(rangeDef, codePointsRoot))
-          {
-            LTRACE(("%s: '%s' is not a valid code point range.", rawNameExt,
-              rangeDef));
-          }
-        }
-        catch(XonEntity::Exception const&)
-        {
-          LTRACE(("%s: ignoring code point entry %d: should be a value.", rawNameExt, i0));
-        }
-      }
-    }
-    catch(XonEntity::Exception const&)
-    {
-      success = false;
-      LTRACE(("%s: missing definition for '%s'", rawNameExt, "codePoints"));
     }
   }
 
@@ -381,18 +400,68 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     LTRACEIF(!success, ("%s: failed to write font metrics.", rawNameExt));
   }
 
+  // Get code point ranges.
+  std::vector<Range> ranges;
+  ranges.reserve(8);
+  if (success)
+  {
+    try
+    {
+      auto& codePoints = root->Get("codePoints").ToObject();
+      Range range;
+      for (size_t i0 = 0, i1 = codePoints.GetNumElements(); i0 < i1; ++i0)
+      {
+        try
+        {
+          char const* rangeDef = codePoints[i0].ToValue().GetString();
+          if (!ParseRange(rangeDef, range))
+          {
+            LTRACE(("%s: '%s' is not a valid code point range.", rawNameExt,
+              rangeDef));
+          }
+          else
+          {
+            MergeRange(range, ranges);
+          }
+        }
+        catch (XonEntity::Exception const&)
+        {
+          LTRACE(("%s: ignoring code point entry %d: should be a value.", rawNameExt, i0));
+        }
+      }
+    }
+    catch (XonEntity::Exception const&)
+    {
+      success = false;
+      LTRACE(("%s: missing definition for '%s'", rawNameExt, "codePoints"));
+    }
+  }
+
   // Calculate and write number of glyphs
   uint32_t numGlyphs = 0;
   if(success)
   {
-    auto iRanges = codePointsRoot->Lowest();
-    while (iRanges)
+    std::vector<uint32_t> invalid;
+    invalid.reserve(8);
+    for (auto& r: ranges)
     {
-      numGlyphs += iRanges->end - iRanges->start;
-      iRanges = iRanges->Higher();
+      numGlyphs += r.end - r.start;
+      for (auto i0 = r.start; i0 != r.end; ++i0)
+      {
+        if (stbtt_FindGlyphIndex(&stbFont, i0) <= 0)  // TODO: cache index?
+        {
+          LTRACE(("%s: no glyph found for code point 0x%x.", rawNameExt, i0));
+          --numGlyphs;
+          invalid.push_back(i0);
+        }
+      }
     }
 
-    // generate glyphs
+    for (auto i: invalid)
+    {
+      SplitRanges(i, ranges);
+    }
+
     if (!WriteBinaryStream(numGlyphs, data))
     {
       success = false;
@@ -416,18 +485,12 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     Font::Glyph glyph;
     std::ostringstream glyphBitmaps;
     size_t glyphBytesWritten = 0;
-    auto iRanges = codePointsRoot->Lowest();
-
-    while(iRanges)
+    for (auto& r: ranges)
     {
-      for(auto i0 = iRanges->start, i1 = iRanges->end; i0 != i1; ++i0)
+      for(auto i0 = r.start, i1 = r.end; i0 != i1; ++i0)
       {
         auto const iGlyph = stbtt_FindGlyphIndex(&stbFont, i0);
-        if(iGlyph < 0)
-        {
-          LTRACE(("%s: no glyph found for code point 0x%x.", rawNameExt, i0));
-          continue;
-        }
+        XR_ASSERT(Font, iGlyph > 0);
 
         glyph.codePoint = i0;
 
@@ -507,8 +570,8 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
             &glyphBytesWritten))
           {
             success = false;
-            LTRACE(("%s: failed to write glyph bitmap data for 0x%x in '%s'.",
-              rawNameExt, i0));
+            LTRACE(("%s: failed to write glyph bitmap data for 0x%x.", rawNameExt,
+              i0));
             break;
           }
         }
@@ -521,8 +584,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           break;
         }
       }
-
-      iRanges = iRanges->Higher();
     }
 
     if(success && !WriteBinaryStream(static_cast<uint32_t>(glyphBytesWritten), data))
