@@ -60,9 +60,30 @@ XR_ASSET_DEF(Font, "xfnt", 3, "fnt")
   }
 */
 
-#ifdef ENABLE_ASSET_BUILDING
 namespace {
 
+#ifdef ENABLE_GLYPH_DEBUG
+char const* const kAsciiPalette = ".,:;cijlkdG608$@";
+
+void VisualizeBuffer(uint8_t* p, int32_t w, int32_t h, uint32_t stride)
+{
+  printf("%d x %d\n", w, h);
+  auto rowDiff = stride - w;
+  for (int i = 0; i < h; ++i)
+  {
+    printf("%03d ", i);
+    for (int j = 0; j < w; ++j)
+    {
+      printf("%c", kAsciiPalette[(*p >> 4)]);
+      ++p;
+    }
+    p += rowDiff;
+    printf("\n");
+  }
+}
+#endif
+
+#ifdef ENABLE_ASSET_BUILDING
 struct Range
 {
   uint32_t start;
@@ -481,6 +502,9 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     const int32_t maxHeight = int32_t(std::ceil((y1 - y0) * pixelScale));
     const int32_t glyphWidthPadded = maxWidth + totalPadding * 2;
     const int32_t glyphHeightPadded = maxHeight + totalPadding * 2;
+#ifdef ENABLE_GLYPH_DEBUG
+    printf("max: %d x %d\n", glyphWidthPadded, glyphHeightPadded);
+#endif
 
     std::vector<uint8_t> glyphBitmap(glyphWidthPadded * glyphHeightPadded);
     uint8_t* glyphBitmapPadded = glyphBitmap.data() + glyphWidthPadded + glyphPadding;
@@ -542,6 +566,11 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           stbtt_MakeGlyphBitmap(&stbFont, glyphBitmapPadded + bufferOffset,
             w, h, glyphWidthPadded, pixelScale, pixelScale, iGlyph);
 
+#ifdef ENABLE_GLYPH_DEBUG
+          printf("%04x: ", i0);
+          VisualizeBuffer(glyphBitmapPadded + bufferOffset, w, h, glyphWidthPadded);
+#endif
+
           // Calculate SDF metrics & generate SDF around glyph.
           auto sx0 = std::max(xPixelOffs - sdfSize, 0);
           auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
@@ -553,6 +582,11 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           sdf.Generate(glyphBitmapPadded + bufferOffset, glyphWidthPadded, w, h);
           sdf.ConvertToBitmap(w, h, glyphBitmap.data());
 
+#ifdef ENABLE_GLYPH_DEBUG
+          printf("SDF %04x: ", i0);
+          VisualizeBuffer(glyphBitmap.data(), w, h, w);
+#endif
+
           glyph.fieldWidth = w;
           glyph.fieldHeight = h;
           XR_ASSERT(Font, glyphBytesWritten < std::numeric_limits<decltype(glyph.dataOffset)>::max());
@@ -560,20 +594,11 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
 
           // write glyph bitmap data to other stream.
           auto p = glyphBitmap.data();
-#ifdef ENABLE_GLYPH_DEBUG
-          Image img;
-          img.SetPixelData(p, w, h, 1);
+          success = WriteRangeBinaryStream<uint32_t>(p, p + (w * h), glyphBitmaps,
+            &glyphBytesWritten);
 
-          FilePath path;
-          sprintf(path.data(), "glyph-%04x.tga", i0);
-          path.UpdateSize();
-          img.Save(path, true);
-#endif
-
-          if (!WriteRangeBinaryStream<uint32_t>(p, p + (w * h), glyphBitmaps,
-            &glyphBytesWritten))
+          if (!success)
           {
-            success = false;
             LTRACE(("%s: failed to write glyph bitmap data for 0x%x.", rawNameExt,
               i0));
             break;
@@ -608,8 +633,8 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   return success;
 }
 
+#endif  // ENABLE_ASSET_BUILDING
 }
-#endif
 
 //==============================================================================
 bool Font::OnLoaded(Buffer buffer)
