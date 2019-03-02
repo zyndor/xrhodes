@@ -18,21 +18,41 @@ namespace DebugDraw
 {
 
 //==============================================================================
+///@brief Sets the color of the default material that may be used by the debug
+/// drawing API (accessible outside as the uniform named xruColor).
 void  SetColor(Color const& color);
 
+///@brief Draws a line from the current transform to the position @a v, with the
+/// given material (if null, a default material will be used).
 void  Line(const Vector3& v, Material::Ptr const& material = nullptr);
+
+///@brief Draws a line strip using the first @a numVerts positions in @a verts,
+/// with the given material (if null, a default material will be used).
 void  LineStrip(const Vector3* verts, int numVerts, Material::Ptr const& material = nullptr);
+
+///@brief Draws a line list using the first @a numVerts positions in @a verts,
+/// with the given material (if null, a default material will be used).
 void  LineList(const Vector3* verts, int numVerts, Material::Ptr const& material = nullptr);
 
+///@brief Draws a rectangle of half width @a hw and half height @a hh, centered
+/// on the current transform, with the given @a material (if null, a
+/// default material will be used).
 void  Rect(float hw, float hh, Material::Ptr const& material = nullptr);
+
+///@brief Draws a filled rectangle of half width @a hw and half height @a hh,
+/// centered on the current transform, with the given @a material (if null, a
+/// default material will be used).
 void  FillRect(float hw, float hh, Material::Ptr const& material = nullptr);
 
+///@brief Draws a circle of half width @a hw and half height @a hh, centered
+/// on the current transform, with the given @a material (if null, a
+/// default material will be used).
 void  Circle(float radius, Material::Ptr const& material = nullptr);
-void  FillCircle(float radius, Material::Ptr const& material = nullptr);
 
-//==============================================================================
-// implementation
-//==============================================================================
+///@brief Draws a filled circle of half width @a hw and half height @a hh,
+/// centered on the current transform, with the given @a material (if null, a
+/// default material will be used).
+void  FillCircle(float radius, Material::Ptr const& material = nullptr);
 
 } // DebugDraw
 } // XR
