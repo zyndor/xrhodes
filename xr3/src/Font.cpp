@@ -93,8 +93,7 @@ struct Range
 const int32_t kMinFontSize = 32;
 const int32_t kDefaultFontSize = 128;
 
-const int32_t kMinSdfSize = 1;
-const int32_t kDefaultSdfSize = 4;
+const int32_t kDefaultSdfSize = 0;
 
 const int32_t kMinCacheSize = 256;
 const int32_t kDefaultCacheSize = 1024;
@@ -336,12 +335,6 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         LTRACE(("%s: failed to parse %s for %s, defaulting to %d.", rawNameExt,
           sizeValue.GetString(), "sdfSize", sdfSize));
       }
-      else if (sdfSize < kMinSdfSize)
-      {
-        LTRACE(("%s: clamped %s (%d) to minimum (%d).", "sdfSize", rawNameExt,
-          sdfSize, kMinSdfSize));
-        sdfSize = kMinSdfSize;
-      }
       else
       {
         const int maxSdfSize = (fontSize / 2) - 1;
@@ -509,7 +502,12 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     std::vector<uint8_t> glyphBitmap(glyphWidthPadded * glyphHeightPadded);
     uint8_t* glyphBitmapPadded = glyphBitmap.data() + glyphWidthPadded + glyphPadding;
 
-    SdfBuilder sdf(fontSize, sdfSize);
+    std::unique_ptr<SdfBuilder> sdf;
+    if (sdfSize > 0)
+    {
+      sdf.reset(new SdfBuilder(fontSize, sdfSize));
+    }
+
     Font::Glyph glyph;
     std::ostringstream glyphBitmaps;
     size_t glyphBytesWritten = 0;
@@ -557,43 +555,52 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           int32_t w = x1 - x0;
           int32_t h = y1 - y0;
 
-          auto xBearingPixels = int32_t(std::ceil(glyph.xBearing * pixelScale));
-          auto xPixelOffs = std::max(0, sdfSize + xBearingPixels);
-          auto yPixelOffs = std::max(0, sdfSize + ascentPixels + y0);
-          auto bufferOffset = xPixelOffs + yPixelOffs * glyphWidthPadded;
+          if (sdf)
+          {
+            // Blit the glyph at its absolute position (sdf padding and ascent applies).
+            auto xBearingPixels = int32_t(std::ceil(glyph.xBearing * pixelScale));
+            auto xPixelOffs = std::max(0, sdfSize + xBearingPixels);
+            auto yPixelOffs = std::max(0, sdfSize + ascentPixels + y0);
+            auto bufferOffset = xPixelOffs + yPixelOffs * glyphWidthPadded;
 
-          // Blit the glyph at its absolute position (sdf padding and ascent applies).
-          stbtt_MakeGlyphBitmap(&stbFont, glyphBitmapPadded + bufferOffset,
-            w, h, glyphWidthPadded, pixelScale, pixelScale, iGlyph);
-
-#ifdef ENABLE_GLYPH_DEBUG
-          printf("%04x: ", i0);
-          VisualizeBuffer(glyphBitmapPadded + bufferOffset, w, h, glyphWidthPadded);
-#endif
-
-          // Calculate SDF metrics & generate SDF around glyph.
-          auto sx0 = std::max(xPixelOffs - sdfSize, 0);
-          auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
-          auto sx1 = std::min(xPixelOffs + w + sdfSize, fontSize);
-          auto sy1 = std::min(yPixelOffs + h + sdfSize, fontSize);
-          w = sx1 - sx0;
-          h = sy1 - sy0;
-          bufferOffset = sx0 + sy0 * glyphWidthPadded;
-          sdf.Generate(glyphBitmapPadded + bufferOffset, glyphWidthPadded, w, h);
-          sdf.ConvertToBitmap(w, h, glyphBitmap.data());
+            stbtt_MakeGlyphBitmap(&stbFont, glyphBitmapPadded + bufferOffset,
+              w, h, glyphWidthPadded, pixelScale, pixelScale, iGlyph);
 
 #ifdef ENABLE_GLYPH_DEBUG
-          printf("SDF %04x: ", i0);
-          VisualizeBuffer(glyphBitmap.data(), w, h, w);
+            printf("%04x: ", i0);
+            VisualizeBuffer(glyphBitmapPadded + bufferOffset, w, h, glyphWidthPadded);
 #endif
+
+            // Calculate SDF metrics & generate SDF around glyph.
+            auto sx0 = std::max(xPixelOffs - sdfSize, 0);
+            auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
+            auto sx1 = std::min(xPixelOffs + w + sdfSize, fontSize);
+            auto sy1 = std::min(yPixelOffs + h + sdfSize, fontSize);
+            w = sx1 - sx0;
+            h = sy1 - sy0;
+            bufferOffset = sx0 + sy0 * glyphWidthPadded;
+            sdf->Generate(glyphBitmapPadded + bufferOffset, glyphWidthPadded, w, h);
+            sdf->ConvertToBitmap(w, h, glyphBitmap.data());
+          }
+          else
+          {
+            // Blit the glyph at its absolute position (ascent applies).
+            stbtt_MakeGlyphBitmap(&stbFont, glyphBitmap.data(), w, h, w, pixelScale,
+              pixelScale, iGlyph);
+          }
 
           glyph.fieldWidth = w;
           glyph.fieldHeight = h;
           XR_ASSERT(Font, glyphBytesWritten < std::numeric_limits<decltype(glyph.dataOffset)>::max());
           glyph.dataOffset = static_cast<uint32_t>(glyphBytesWritten);
 
-          // write glyph bitmap data to other stream.
           auto p = glyphBitmap.data();
+#ifdef ENABLE_GLYPH_DEBUG
+          printf("%s%04x: ", sdf ? "SDF " : "", i0);
+          VisualizeBuffer(p, w, h, w);
+#endif
+
+          // write glyph bitmap data to other stream.
           success = WriteRangeBinaryStream<uint32_t>(p, p + (w * h), glyphBitmaps,
             &glyphBytesWritten);
 

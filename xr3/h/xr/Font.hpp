@@ -20,28 +20,32 @@ namespace xr
 {
 
 //==============================================================================
-///@brief A Signed Distance Field based Font asset. A Font is built from an .fnt
-/// file, which is a XON document with the following properties:
+///@brief A Font asset, which supports bitmap or SDF based usage. Fonts are built
+/// from .fnt files, which are XON documents  with the following properties:
 /// font: path to the .ttf, .ttc or .otf file to generate glyphs from;
 /// codePoints: hyphen-separated ranges or individual code points to import, as
 ///   either a literal ('a') or a hex value (0x61). Note that even the pairs are
-///   single string values, therefore they either need to be enclosed in quotes,
-///   or there must be no space around the hyphen.
-/// cacheSize: the pixel width and height of the texture cache that the Font
-///   is going to maintain; optional, default: 1024.
+///   single string (XON) values, therefore they either need to be enclosed in
+///   quotes, or there must be no space around the hyphen.
+/// cacheSize: the pixel width and height of the texture cache that the Font is
+///   going to maintain; optional, default: 1024.
 /// fontSize: the pixel height the glyphs should be, including 1/8 SDF padding;
 ///   optional, default: 128.
 /// fontIndex: the index of the font from a .ttc file (.ttf files only contain
 ///   a single font); optional, default: 0 (first font).
 /// sdfSize: the amount of pixels the Signed Distance Field will extend from
-///   the glyph; optional, default: 4. Minimum: 1. Maximum: (font size / 2) - 1.
+///   the glyph; optional, default: 0 - this means a bitmap font. Maximum: (font
+///   size / 2) - 1.
+///@note The bitmap / SDF use requires an appropriate shader.
+///@note Bitmap fonts degrade quality when put through scaling / rotation, while
+/// SDF fonts struggle to correctly represent sharp corners; pick your poison.
 class Font: public Asset, public IMaterialisable
 {
 public:
   XR_ASSET_DECL(Font)
 
   // types
-  ///@brief Glyph size information.
+  ///@brief Glyph size information. All dimensions are pixels.
   struct  Glyph
   {
     uint32_t codePoint;
