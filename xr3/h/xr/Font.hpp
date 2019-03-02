@@ -56,7 +56,7 @@ public:
     float yBearing;
     uint32_t fieldWidth;
     uint32_t fieldHeight;
-    uint32_t dataOffset;
+    uint32_t dataOffset;  // -1 means invalid; it should be accompanied by field width / height of 0.
 
     bool operator<(Glyph const& rhs) const
     {
@@ -84,7 +84,11 @@ public:
   float GetScaleForHeight(float heightPixels) const;
 
   ///@return Glyph data, if it exists for the given @a codePoint in the Font.
-  const Glyph* GetGlyph(uint32_t codePoint) const;
+  Glyph const* GetGlyph(uint32_t codePoint) const;
+
+  ///@return The binary blob of glyph bitmaps, indexible into using Glyph::dataOffset,
+  /// fieldWidth and fieldHeight.
+  uint8_t const* GetGlyphBitmapData() const;
 
   ///@brief Attempts to copy a glyph's data to the cache and return its UVs.
   ///@return A pointer to the UVs of of the glyph over the cache texture; nullptr
@@ -166,6 +170,13 @@ Font::Glyph const*  Font::GetGlyph(uint32_t codePoint) const
 {
   GlyphMap::const_iterator iFind(m_glyphs.find(codePoint));
   return iFind != m_glyphs.end() ? &iFind->second : nullptr;
+}
+
+//==============================================================================
+inline
+uint8_t const* Font::GetGlyphBitmapData() const
+{
+  return m_glyphBitmaps.data();
 }
 
 } // XR
