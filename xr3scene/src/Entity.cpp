@@ -70,6 +70,27 @@ void Entity::SetTranslation(Vector3 const& t)
 }
 
 //==============================================================================
+void Entity::SetXTranslation(float x)
+{
+  m_translation.x = x;
+  FlagUpdateNeeded(this);
+}
+
+//==============================================================================
+void Entity::SetYTranslation(float y)
+{
+  m_translation.y = y;
+  FlagUpdateNeeded(this);
+}
+
+//==============================================================================
+void Entity::SetZTranslation(float z)
+{
+  m_translation.z = z;
+  FlagUpdateNeeded(this);
+}
+
+//==============================================================================
 void Entity::SetRotation(Quaternion const& r)
 {
   m_rotation = r;
@@ -80,6 +101,27 @@ void Entity::SetRotation(Quaternion const& r)
 void Entity::SetScale(Vector3 const& s)
 {
   m_scale = s;
+  FlagUpdateNeeded(this);
+}
+
+//==============================================================================
+void Entity::SetXScale(float x)
+{
+  m_scale.x = x;
+  FlagUpdateNeeded(this);
+}
+
+//==============================================================================
+void Entity::SetYScale(float y)
+{
+  m_scale.y = y;
+  FlagUpdateNeeded(this);
+}
+
+//==============================================================================
+void Entity::SetZScale(float z)
+{
+  m_scale.z = z;
   FlagUpdateNeeded(this);
 }
 
