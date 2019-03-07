@@ -80,8 +80,13 @@ T  Lerp(T v0, T v1, float blendFactor);
 
 ///@brief Calculates a value based on the given @a controlPoints and @a blendFactor
 /// between .0 and 1.0.
-template  <typename T, size_t N>
-T Bezier(T* const controlPoints, float blendFactor);
+template  <typename T, size_t kNumSamples>
+typename std::decay<T>::type Bezier(T const* controlPoints, float blendFactor);
+
+///@brief Calculates a value based on the given @a controlPoints and @a blendFactor
+/// between .0 and 1.0.
+template  <typename T, size_t kNumSamples>
+typename std::decay<T>::type Bezier(T(&controlPoints)[kNumSamples], float blendFactor);
 
 ///@return	Interpolated value between @a edge0 and @a edge1.
 float SmoothStep(float edge0, float edge1, float x);
@@ -170,6 +175,9 @@ T Lerp(T v0, T v1, float blendFactor)
 }
 
 //==============================================================================
+namespace detail
+{
+
 template  <typename T, size_t kNumSamples>
 struct  BezierImpl
 {
@@ -196,11 +204,20 @@ struct  BezierImpl<T, 1>
   }
 };
 
+} // detail
+
 template  <typename T, size_t kNumSamples>
 inline
-T Bezier(T const* controlPoints, float blendFactor)
+typename std::decay<T>::type Bezier(T const* controlPoints, float blendFactor)
 {
-  return BezierImpl<T, kNumSamples>::Calculate(controlPoints, blendFactor);
+  return detail::BezierImpl<typename std::decay<T>::type, kNumSamples>::Calculate(controlPoints, blendFactor);
+}
+
+template <typename T, size_t kNumSamples>
+inline
+typename std::decay<T>::type Bezier(T (&controlPoints)[kNumSamples], float blendFactor)
+{
+  return detail::BezierImpl<typename std::decay<T>::type, kNumSamples>::Calculate(controlPoints, blendFactor);
 }
 
 //==============================================================================
