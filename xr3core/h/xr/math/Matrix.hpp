@@ -221,6 +221,24 @@ public:
     zz *= s;
   }
 
+  ///@return The scaling along the X axis.
+  float GetXScaling() const
+  {
+    return Vector3(linear2d[Vector3::X]).Magnitude();
+  }
+
+  ///@return The scaling along the Y axis.
+  float GetYScaling() const
+  {
+    return Vector3(linear2d[Vector3::Y]).Magnitude();
+  }
+
+  ///@return The scaling along the Z axis.
+  float GetZScaling() const
+  {
+    return Vector3(linear2d[Vector3::Z]).Magnitude();
+  }
+
   ///@brief Copies the linear transformation part from the given array.
   void  CopyLinear(const float source[kNumLinearComponents])
   {
