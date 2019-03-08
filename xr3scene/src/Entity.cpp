@@ -140,13 +140,14 @@ void Entity::UpdateWorldTransform()
 {
   if (m_nextWorldUpdate)
   {
-    if (!m_nextWorldUpdate->GetParent())  // process root separately.
+    auto nextWorldUpdate = m_nextWorldUpdate;
+    if (!nextWorldUpdate->GetParent())  // process root separately.
     {
-      m_nextWorldUpdate->m_nextWorldUpdate = nullptr;
-      m_nextWorldUpdate->m_worldTransform = m_nextWorldUpdate->GetLocalTransform();
+      nextWorldUpdate->m_worldTransform = m_nextWorldUpdate->GetLocalTransform();
+      nextWorldUpdate->m_nextWorldUpdate = nullptr;
     }
 
-    m_nextWorldUpdate->Visit([](Entity& e) {
+    nextWorldUpdate->Visit([](Entity& e) {
       e.UpdateWorldTransformInternal();
     });
   }

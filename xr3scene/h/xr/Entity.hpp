@@ -107,7 +107,8 @@ public:
   /// and the transform of the parents.
   void  UpdateWorldTransform();
 
-  ///@brief Current (cached) world transform of this Entity.
+  ///@param update Whether to process a pending updates first.
+  ///@return Current (cached) world transform of this Entity.
   Matrix const&  GetWorldTransform(bool update = true) const;
 
   ///@return The parent of this Entity, or nullptr if none.
