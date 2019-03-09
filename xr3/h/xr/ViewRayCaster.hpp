@@ -7,7 +7,7 @@
 // copyright (c) Gyorgy Straub. All rights reserved.
 //
 //==============================================================================
-#include "Gfx.hpp"
+#include "Gfx.hpp"  // TODO: remove
 #include "xr/math/Ray.hpp"
 #include "xr/math/Matrix.hpp"
 #include "xr/math/Vector3.hpp"
@@ -25,15 +25,23 @@ class ViewRayCaster
 {
 public:
   // static
+  [[deprecated("supply aspect ratio; the Gfx dependency is being removed.")]]
   static Ray GetViewRay(float nx, float ny, Matrix const& viewer, float zNear,
     float tanHalfVerticalFov)
   {
-    float hProj = zNear * tanHalfVerticalFov;
-    float wProj = hProj * Gfx::GetLogicalAspectRatio();
+    return GetViewRay(nx, ny, viewer, Gfx::GetLogicalAspectRatio(), zNear,
+      tanHalfVerticalFov);
+  }
 
-    Vector3 zNearHit = viewer.GetColumn(Vector3::Z) * -zNear +
-      viewer.GetColumn(Vector3::X).Normalise(wProj * nx) +
-      viewer.GetColumn(Vector3::Y).Normalise(hProj * ny);
+  static Ray GetViewRay(float nx, float ny, Matrix const& viewer, float aspectRatio,
+    float zNear, float tanHalfVerticalFov)
+  {
+    float hProj = zNear * tanHalfVerticalFov;
+    float wProj = hProj * aspectRatio;
+
+    Vector3 zNearHit = Vector3(viewer.linear2d[Vector3::Z]) * -zNear +
+      Vector3(viewer.linear2d[Vector3::X]).Normalise(wProj * nx) +
+      Vector3(viewer.linear2d[Vector3::Y]).Normalise(hProj * ny);
     zNearHit.Normalise();
 
     return Ray(viewer.t, zNearHit, std::numeric_limits<float>::max());
@@ -41,6 +49,7 @@ public:
 
   // data
   Matrix viewer;
+  float aspectRatio;
   float zNear;
   float tanHalfVerticalFov;
 
@@ -68,7 +77,7 @@ public:
   ///@note The position and direction of the Ray is in world space.
   Ray GetViewRay(float nx, float ny) const
   {
-    return GetViewRay(nx, ny, viewer, zNear, tanHalfVerticalFov);
+    return GetViewRay(nx, ny, viewer, aspectRatio, zNear, tanHalfVerticalFov);
   }
 };
 
