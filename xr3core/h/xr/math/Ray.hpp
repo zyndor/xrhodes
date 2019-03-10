@@ -61,6 +61,13 @@ public:
   /// intersection.
   ///@return  Whether the ray hits the plane. False if they're parallel.
   bool  IntersectPlane(const Vector3& pos, const Vector3& normal, float& t) const;
+
+  ///@brief Convenience function to calculate the point along the ray using the
+  /// parameter @a t.
+  Vector3 GetPoint(float t) const;
+
+  ///@brief Convenience function to calculate the end point of the ray.
+  Vector3 GetEnd() const;
 };
 
 //==============================================================================
@@ -79,6 +86,20 @@ bool  Ray::IntersectPlane(const Vector3& pos, const Vector3& normal) const
 {
   static float t;
   return IntersectPlane(pos, normal, t);
+}
+
+//==============================================================================
+inline
+Vector3 Ray::GetPoint(float t) const
+{
+  return position + direction * t;
+}
+
+//==============================================================================
+inline
+Vector3 Ray::GetEnd() const
+{
+  return GetPoint(length);
 }
 
 } // XR
