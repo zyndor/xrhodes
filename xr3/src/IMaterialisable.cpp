@@ -20,7 +20,7 @@ Material::Ptr IMaterialisable::Materialise(Material::Ptr const & material)
 //==============================================================================
 Material::Ptr IMaterialisable::Materialise(Gfx::FlagType state, Shader::Ptr const & shader)
 {
-  Material::Ptr material(Material::Create(0, Asset::UnmanagedFlag)->Cast<Material>());
+  Material::Ptr material(Material::Create(0, Asset::UnmanagedFlag));
   material->OverrideStateFlags(0, state);
   material->SetShader(shader);
   material->SetTexture(0, GetTexture());

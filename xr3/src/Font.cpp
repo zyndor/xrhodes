@@ -733,7 +733,7 @@ bool Font::OnLoaded(Buffer buffer)
   if (success)
   {
     uint32_t flags = GetFlags() | UnmanagedFlag;  // shouldn't need explicit unmanage.
-    m_texture.Reset(Texture::Create(0, flags)->Cast<Texture>());
+    m_texture.Reset(Texture::Create(0, flags));
 
     m_textureCache = new TextureCache(m_cacheSideSizePixels,
       TextureCache::Format::U8, 8, maxHeight);

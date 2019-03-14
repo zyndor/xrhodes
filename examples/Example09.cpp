@@ -337,7 +337,7 @@ public:
 
     // Create post-processing material and transfer ownership of offscreen texture
     // handle to it.
-    material = Material::Ptr(Material::Create(0, Asset::UnmanagedFlag)->Cast<Material>());
+    material = Material::Ptr(Material::Create(0, Asset::UnmanagedFlag));
 
     auto& postMaterial = material;
     postMaterial->OverrideStateFlags(0, Gfx::F_STATE_CULL_BACK);
