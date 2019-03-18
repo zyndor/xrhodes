@@ -1,3 +1,23 @@
+v1.5.1
+- fixed the handling of window size in xr::Device::Init(): it stores the size of
+  the window that we get from SDL2, rather than the size that was requested.
+  This fixes touch handling in full screen mode;
+- fixed null pointer dereference in xr::Entity::UpdateWorldTransform();
+- fixed projection calculation in xr::ViewRayCaster::GetViewRay();
+- fixed xr::Bezier()'s return type, stripping cv-qualifiers and references;
+- modified XR_ASSET_DECL() to generate a Create() method returning a pointer
+  to the concrete type, and modified XR_ASSET_DEF() to wrap it with a function
+  for the creation of the related AssetReflector;
+- moved BezierImpl to the xr::details namespace;
+- added an aspect ratio member to xr::ViewRayCaster and an overload of
+  GetViewRay() that accepts it from client code; deprecated the one only relying
+  on Gfx as both incorrect and overly restrictive;
+- added an overload of xr::Bezier() with less verbose usage for entire, static
+  arrays;
+- added methods for component-wise setting of xr::Entity's local translation and
+  scale;
+- added xr::Ray::GetPoint() and GetEnd();
+
 v1.5.0
 - xr::Font fixes:
   * fixed the number of glyphs written to the built asset, excluding the ones
