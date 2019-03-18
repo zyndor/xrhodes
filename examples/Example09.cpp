@@ -337,7 +337,7 @@ public:
 
     // Create post-processing material and transfer ownership of offscreen texture
     // handle to it.
-    material = Material::Ptr(Material::Create(0, Asset::UnmanagedFlag)->Cast<Material>());
+    material = Material::Ptr(Material::Create(0, Asset::UnmanagedFlag));
 
     auto& postMaterial = material;
     postMaterial->OverrideStateFlags(0, Gfx::F_STATE_CULL_BACK);
@@ -381,7 +381,7 @@ public:
       float weight = 1.f - m_dragControl.GetPressTimerPercent();
 
       const float controlPoints[] = { 0.f, .12f, .88f, 1.f };
-      weight = Bezier<float, 4>(controlPoints, weight);
+      weight = Bezier(controlPoints, weight);
 
       auto motion = m_dragControl.GetFrameMotion() * 0.01f;
       m_rotation *= Quaternion::FromAxisAngle(Vector3(.2, .5, 0.f), weight * .002f) *

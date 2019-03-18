@@ -54,6 +54,21 @@ public:
   /// world transform.
   void SetTranslation(Vector3 const& t);
 
+  ///@brief Sets the x component of the local translation of this Entity, and flags
+  /// it for the updating of local and world transforms, as well as all children
+  /// for the updating of world transform.
+  void SetXTranslation(float x);
+
+  ///@brief Sets the y component of the local translation of this Entity, and flags
+  /// it for the updating of local and world transforms, as well as all children
+  /// for the updating of world transform.
+  void SetYTranslation(float y);
+
+  ///@brief Sets the z component of the local translation of this Entity, and flags
+  /// it for the updating of local and world transforms, as well as all children
+  /// for the updating of world transform.
+  void SetZTranslation(float z);
+
   ///@return Local rotation of this Entity.
   Quaternion const& GetRotation() const;
 
@@ -70,6 +85,21 @@ public:
   /// world transform.
   void SetScale(Vector3 const& s);
 
+  ///@brief Sets the x component of the local scale of this Entity, and flags it
+  /// for the updating of local and world transforms, as well as all children for
+  /// the updating of world transform.
+  void SetXScale(float x);
+
+  ///@brief Sets the y component of the local scale of this Entity, and flags it
+  /// for the updating of local and world transforms, as well as all children for
+  /// the updating of world transform.
+  void SetYScale(float y);
+
+  ///@brief Sets the z component of the local scale of this Entity, and flags it
+  /// for the updating of local and world transforms, as well as all children for
+  /// the updating of world transform.
+  void SetZScale(float z);
+
   ///@return Local transformation calculated from translation, rotation and scale.
   Matrix GetLocalTransform() const;
 
@@ -77,7 +107,8 @@ public:
   /// and the transform of the parents.
   void  UpdateWorldTransform();
 
-  ///@brief Current (cached) world transform of this Entity.
+  ///@param update Whether to process a pending updates first.
+  ///@return Current (cached) world transform of this Entity.
   Matrix const&  GetWorldTransform(bool update = true) const;
 
   ///@return The parent of this Entity, or nullptr if none.

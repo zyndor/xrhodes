@@ -101,8 +101,8 @@ void Device::Init(char const* title)
     title = "XRhodes Application";
   }
 
-  s_deviceImpl.windowWidth = Config::GetInt("XR_DISPLAY_WIDTH", 800);
-  s_deviceImpl.windowHeight = Config::GetInt("XR_DISPLAY_HEIGHT", 600);
+  int windowWidth = Config::GetInt("XR_DISPLAY_WIDTH", 800);
+  int windowHeight = Config::GetInt("XR_DISPLAY_HEIGHT", 600);
 
   uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
   if (Config::GetInt("XR_DISPLAY_FULLSCREEN", false) == 1)
@@ -112,7 +112,11 @@ void Device::Init(char const* title)
 
   s_deviceImpl.mainWindow = SDL_CreateWindow(title,
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    s_deviceImpl.windowWidth, s_deviceImpl.windowHeight, flags);
+    windowWidth, windowHeight, flags);
+
+  SDL_GetWindowSize(s_deviceImpl.mainWindow, &windowWidth, &windowHeight);
+  s_deviceImpl.windowWidth = windowWidth;
+  s_deviceImpl.windowHeight = windowHeight;
 
   s_deviceImpl.gfxContext = new Gfx::Context(*s_deviceImpl.mainWindow);
 

@@ -73,15 +73,15 @@ void SetMaterial(Material::Ptr material)
       EnsureUniformExists();
 
       Asset::FlagType flags = Asset::UnmanagedFlag;
-      s_material.Reset(Material::Create(0, flags)->Cast<Material>());
+      s_material.Reset(Material::Create(0, flags));
 
-      ShaderComponent::Ptr vertexShader(ShaderComponent::Create(0, flags)->Cast<ShaderComponent>());
+      ShaderComponent::Ptr vertexShader(ShaderComponent::Create(0, flags));
       vertexShader->SetSource(Gfx::ShaderType::Vertex, kVertexShader);
 
-      ShaderComponent::Ptr fragmentShader(ShaderComponent::Create(0, flags)->Cast<ShaderComponent>());
+      ShaderComponent::Ptr fragmentShader(ShaderComponent::Create(0, flags));
       fragmentShader->SetSource(Gfx::ShaderType::Fragment, kFragmentShader);
 
-      Shader::Ptr shader(Shader::Create(0, flags)->Cast<Shader>());
+      Shader::Ptr shader(Shader::Create(0, flags));
       shader->SetComponents(vertexShader, fragmentShader);
 
       s_material->SetShader(shader);

@@ -578,7 +578,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 \
   static TypeId const kTypeId;\
   static VersionType const kVersion;\
-  static Asset* Create(HashType hash, FlagType flags) {\
+  static className* Create(HashType hash, FlagType flags) {\
     return new className(DescriptorCore(kTypeId, hash), flags);\
   }\
 \
@@ -610,7 +610,10 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 \
   namespace {\
   xr::detail::AssetReflector xr ## className ## Reflector(className::kTypeId,\
-    className::kVersion, className::Create, extensions);\
+    className::kVersion,\
+    [](xr::Asset::HashType h, xr::Asset::FlagType f) -> xr::Asset* {\
+      return className::Create(h, f);\
+    }, extensions);\
   }
 
 //==============================================================================

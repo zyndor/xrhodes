@@ -118,7 +118,7 @@ public:
       float weight = 1.f - m_dragControl.GetPressTimerPercent();
 
       const float controlPoints[] = { 0.f, .12f, .88f, 1.f };
-      weight = Bezier<float, 4>(controlPoints, weight);
+      weight = Bezier(controlPoints, weight);
 
       auto motion = m_dragControl.GetFrameMotion() * 0.005f;
       m_rotation *= Quaternion::FromAxisAngle(Vector3(.2, .5, 0.f), weight * .002f) *

@@ -110,8 +110,8 @@ void Camera::Reshape(float width, float height)
 //==============================================================================
 Ray Camera::GetViewRay(float nx, float ny) const
 {
-  return ViewRayCaster::GetViewRay(nx, ny, GetViewerTransform(), m_zNear,
-    m_tanHalfVerticalFov);
+  return ViewRayCaster::GetViewRay(nx, ny, GetViewerTransform(), m_aspectRatio,
+    m_zNear, m_tanHalfVerticalFov);
 }
 
 //==============================================================================
