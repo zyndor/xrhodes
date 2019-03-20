@@ -128,10 +128,10 @@ public:
     // Render mesh as list of triangles. We're rendering it twice for a 3d transparency
     // effect, culling front faces first, then back faces.
     Gfx::SetState(m_material->GetStateFlags() | Gfx::F_STATE_CULL_FRONT);
-    Gfx::Draw(m_hVertexBuffer, m_hIndexBuffer, Primitive::TriList, 0, m_numIndices);
+    Gfx::Draw(m_hVertexBuffer, m_hIndexBuffer, Primitive::TriangleList, 0, m_numIndices);
 
     Gfx::SetState(m_material->GetStateFlags() | Gfx::F_STATE_CULL_BACK);
-    Gfx::Draw(m_hVertexBuffer, m_hIndexBuffer, Primitive::TriList, 0, m_numIndices);
+    Gfx::Draw(m_hVertexBuffer, m_hIndexBuffer, Primitive::TriangleList, 0, m_numIndices);
 
     Gfx::Present();
   }
