@@ -99,7 +99,8 @@ uint32_t VertexFormat::CalculateHash() const
 //==============================================================================
 uint8_t TextureInfo::CalculateMipLevels(uint16_t width, uint16_t height, FlagType flags)
 {
-  return static_cast<uint8_t>(std::log2(std::min(width, height)));
+  return CheckAllMaskBits(flags, F_TEXTURE_MIPMAPS) ?
+    static_cast<uint8_t>(std::log2(std::min(width, height))) : 1;
 }
 
 //==============================================================================
