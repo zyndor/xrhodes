@@ -275,7 +275,7 @@ public:
 
     auto material = Asset::Manager::Load<Material>("example08-depth.mtl");
     m_renderPasses[RenderPass::DEPTH].renderables.push_back(
-      std::make_unique<InstancedMeshRenderable<Mesh, Primitive::TriList>>(material, m_mesh, m_hInstanceData, m_numInstances));
+      std::make_unique<InstancedMeshRenderable<Mesh, Primitive::TriangleList>>(material, m_mesh, m_hInstanceData, m_numInstances));
     m_assetQueue.Add(material);
 
     m_shadowMap = Texture::FromHandle(hShadowMap);
@@ -317,7 +317,7 @@ public:
 
     material = Asset::Manager::Load<Material>("example09.mtl");
     m_renderPasses[RenderPass::MAIN].renderables.push_back(
-      std::make_unique<InstancedMeshRenderable<Mesh, Primitive::TriList>>(material, m_mesh, m_hInstanceData, m_numInstances));
+      std::make_unique<InstancedMeshRenderable<Mesh, Primitive::TriangleList>>(material, m_mesh, m_hInstanceData, m_numInstances));
     m_assetQueue.Add(material);
 
     // Create pass for post processing.

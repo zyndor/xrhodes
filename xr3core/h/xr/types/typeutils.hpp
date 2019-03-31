@@ -122,26 +122,34 @@ struct  UnPointer<T*>
 };
 
 //==============================================================================
-namespace
+namespace detail
 {
 template  <typename T>
-inline
-size_t  TypeIdImpl()
+struct TypeId
 {
-  static char c;
-  return reinterpret_cast<size_t>(&c);
-}
+  static size_t Get()
+  {
+    return reinterpret_cast<size_t>(&s);
+  }
 
-}	// noname
+private:
+  static char s;
+};
 
-///@brief Static typeId based on of address of function-static variable.
+template <typename T>
+char TypeId<T>::s; // don't actually care about the value
+
+}	// detail
+
+///@brief Static typeId based on the address of a static variable of a template
+/// class.
 ///@note  TypeId() doesn't persist across executions/platforms.
 ///@note	Discards constness and pointerness of T.
 template	<typename T>
 inline
 size_t	TypeId()
 {
-	return TypeIdImpl<typename UnPointer<typename UnConst<T>::Type>::Type>();
+	return detail::TypeId<typename UnPointer<typename UnConst<T>::Type>::Type>::Get();
 }
 
 }  // xr

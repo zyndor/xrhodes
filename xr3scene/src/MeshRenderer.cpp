@@ -46,7 +46,7 @@ void  MeshRenderer::Render()
   // stack update, rather than regenerating the world transform from scratch.
   XR_TRANSFORMS_SCOPED_MODEL(GetOwner()->GetLocalTransform());
   material->Apply();
-  m_mesh->Render(Primitive::TriList);
+  m_mesh->Render(Primitive::TriangleList);
 }
 
 }

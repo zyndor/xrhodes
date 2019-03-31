@@ -1,3 +1,9 @@
+v1.5.2
+- fixed xr::TypeId<>() on (MSVC) Release builds;
+- fixed xr::Gfx::CreateTexture() - no longer generating mipmaps when not 
+  requested;
+- removed usages of deprecated xr::Primitive values;
+
 v1.5.1
 - fixed the handling of window size in xr::Device::Init(): it stores the size of
   the window that we get from SDL2, rather than the size that was requested.

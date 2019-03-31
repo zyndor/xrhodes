@@ -181,7 +181,7 @@ public:
     Gfx::SetInstanceData(m_hInstanceData, 0, m_numInstances);
 
     // Render mesh (instances -- since we've set instance data).
-    m_mesh.Render(Primitive::TriList);
+    m_mesh.Render(Primitive::TriangleList);
 
     Gfx::Present();
   }
