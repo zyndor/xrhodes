@@ -21,8 +21,8 @@ namespace xr {
 BoxText::BoxText()
 : m_scale(1.f),
   m_boxSize(std::numeric_limits<float>::max(), 0.f),
-  m_horizontalAlignment(Alignment::Center),
-  m_verticalAlignment(Alignment::Center),
+  m_horizontalAlignment(Alignment::Centered),
+  m_verticalAlignment(Alignment::Centered),
   m_origin(0.f, 0.f),
   m_horizontalSpacing(0.f),
   m_verticalSpacing(0.f)

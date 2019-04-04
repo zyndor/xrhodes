@@ -23,9 +23,8 @@ enum class Primitive
   TriangleList,
   TriangleStrip,
 
-  // deprecated
-  TriList,
-  TriStrip,
+  TriList [[deprecated]],
+  TriStrip[[deprecated]],
 };
 
 } // xr

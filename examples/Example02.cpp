@@ -143,7 +143,7 @@ public:
     vertices[2].uv0 = Vector2(0.f, 0.f);
     vertices[3].pos = Vector2(halfWidth, -halfHeight);
     vertices[3].uv0 = Vector2(1.f, 0.f);
-    ScratchBuffer::Finish(Primitive::TriStrip);
+    ScratchBuffer::Finish(Primitive::TriangleStrip);
 
     // Present the back buffer.
     Gfx::Present();

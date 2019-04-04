@@ -187,7 +187,7 @@ namespace xr
 
       Gfx::Clear(Gfx::F_CLEAR_DEPTH);
       material->Apply();
-      Gfx::Draw(vbo, Primitive::TriStrip, 0, 4);
+      Gfx::Draw(vbo, Primitive::TriangleStrip, 0, 4);
       Gfx::Present();
 
       Image cap;

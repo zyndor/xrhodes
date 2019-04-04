@@ -1,4 +1,4 @@
-﻿//
+//
 // XRhodes
 //
 // copyright (c) Gyorgy Straub. All rights reserved.
@@ -56,8 +56,8 @@ public:
     Gfx::Flush();
 
     m_text3dSize = Vector2(350.f, 300.f);
-    m_text3dVerticalAlignment = BoxText::Alignment::Near;
-    m_text3dHorizontalAlignment = BoxText::Alignment::Near;
+    m_text3dVerticalAlignment = BoxText::Alignment::Negative;
+    m_text3dHorizontalAlignment = BoxText::Alignment::Negative;
 
     // Load a text file whose contents we'll display.
     m_buffer.Open("example05.txt");
@@ -95,8 +95,8 @@ public:
         text.SetScale(.5f);
         text.SetFont(m_font);
         text.EnsureVerticalFit();
-        text.SetHorizontalAlignment(BoxText::Alignment::Near);
-        text.SetVerticalAlignment(BoxText::Alignment::Near);
+        text.SetHorizontalAlignment(BoxText::Alignment::Negative);
+        text.SetVerticalAlignment(BoxText::Alignment::Negative);
         text.SetOrigin(Vector2(.5f, -.5f));
 
         m_text2dMesh = text.CreateMesh("Press TAB to cycle through alignment options. Cursor keys adjust box size.", true, nullptr);

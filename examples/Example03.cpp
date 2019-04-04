@@ -116,7 +116,7 @@ public:
       sprite.AddOffset(offset.x, offset.y, true);
       sprite.CopyPositionsTo(vertices);
       sprite.CopyUVsTo(vertices);
-      ScratchBuffer::Finish(Primitive::TriStrip);
+      ScratchBuffer::Finish(Primitive::TriangleStrip);
 
       // Reuse scratch buffer. NOTE: Flush is automatically called when Gfx is
       // Flush()ed or Presented().
