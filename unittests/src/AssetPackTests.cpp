@@ -45,7 +45,7 @@ private:
 TEST_F(AssetPackTests, Contents)
 {
   // check assets from the pack - not present.
-  Asset::Ptr randomAsset(Asset::Manager::Find<Texture>("assets/xrhodes.png").Get());
+  Asset::Ptr randomAsset(Asset::Manager::Find<Texture>("assets/xrhodes.tex").Get());
   ASSERT_FALSE(randomAsset);
 
   // load pack

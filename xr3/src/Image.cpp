@@ -26,6 +26,14 @@ Image::Image ()
 {}
 
 //==============================================================================
+Image::Image(Image&& other)
+: m_width(other.m_width),
+  m_height(other.m_height),
+  m_bytesPerPixel(std::move(other.m_bytesPerPixel)),
+  m_bytes(std::move(other.m_bytes))
+{}
+
+//==============================================================================
 Image::Image(const Image& rhs)
 : m_width(rhs.m_width),
   m_height(rhs.m_height),
@@ -176,6 +184,22 @@ void Image::Reset()
 	m_height = 0;
 	m_bytesPerPixel = 0;
 	m_bytes.clear();
+}
+
+//==============================================================================
+Image& Image::operator=(Image const& other)
+{
+  Image tmp(other);
+  Swap(tmp);
+  return *this;
+}
+
+//==============================================================================
+Image& Image::operator=(Image&& other)
+{
+  Image tmp(other);
+  Swap(tmp);
+  return *this;
 }
 
 //==============================================================================

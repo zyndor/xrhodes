@@ -155,7 +155,7 @@ namespace xr
 
       FilePath path("assets/xrhodes.mtl");
 
-      auto testFlags = Asset::KeepSourceDataFlag | Texture::PointFilterFlag;
+      auto testFlags = Asset::KeepSourceDataFlag;
       Material::Ptr material = Asset::Manager::Load<Material>(path, testFlags);
 
       while (!CheckAnyMaskBits(material->GetFlags(), Asset::ReadyFlag | Asset::ErrorFlag))

@@ -769,7 +769,7 @@ void Core::CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& 
   GLenum  wrapMode(CheckAllMaskBits(flags, F_TEXTURE_WRAP) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
   XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_WRAP_S, wrapMode));
   XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_WRAP_T, wrapMode));
-  if (t.target == GL_TEXTURE_3D)
+  if (t.target == GL_TEXTURE_3D || t.target == GL_TEXTURE_CUBE_MAP)
   {
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_WRAP_R, wrapMode));
   }
@@ -793,7 +793,7 @@ void Core::CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& 
   int iBuffer = 0;
   for (uint8_t i = 0; i < layers; ++i)
   {
-    for (int j = 0; j < sides; ++j)
+    for (uint8_t j = 0; j < sides; ++j)
     {
       if (formatDesc.compressed)
       {
