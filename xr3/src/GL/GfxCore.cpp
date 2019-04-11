@@ -146,6 +146,19 @@ void GetStencilOps(FlagType flags, GLenum ops[3])
 }
 
 //=============================================================================
+const GLenum kFilterModes[] =
+{
+  GL_LINEAR,
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST,
+  GL_LINEAR_MIPMAP_LINEAR,
+  GL_NEAREST_MIPMAP_LINEAR,
+  GL_LINEAR_MIPMAP_NEAREST,
+  GL_NEAREST_MIPMAP_NEAREST,
+};
+
+//=============================================================================
 struct ExtensionGL
 {
   enum Name
@@ -761,10 +774,13 @@ void Core::CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& 
     XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_WRAP_R, wrapMode));
   }
 
-  GLenum  filterMode(CheckAllMaskBits(flags, F_TEXTURE_FILTER_POINT) ?
-    GL_NEAREST : GL_LINEAR);
-  XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MIN_FILTER, filterMode));
-  XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MAG_FILTER, filterMode));
+  int fm = (CheckAllMaskBits(flags, F_TEXTURE_FILTER_POINT) ? 1 : 0) |
+    ((CheckAllMaskBits(flags, F_TEXTURE_FILTER_POINT) ? 1 : 0) << 1);
+  GLenum minFilter = kFilterModes[fm + ((t.info.mipLevels > 1) * 4)];
+  XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MIN_FILTER, minFilter));
+
+  GLenum magFilter = kFilterModes[fm];
+  XR_GL_CALL(glTexParameteri(t.target, GL_TEXTURE_MAG_FILTER, magFilter));
 
   auto& formatDesc = kTextureFormats[static_cast<int>(format)];
   GLenum fmtInternal = (CheckAllMaskBits(flags, F_TEXTURE_SRGB) && formatDesc.srgbInternal != GL_ZERO) ?
@@ -772,8 +788,10 @@ void Core::CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& 
 
   GLenum target = t.target != GL_TEXTURE_CUBE_MAP ? t.target : GL_TEXTURE_CUBE_MAP_POSITIVE_X;
   const uint8_t sides = t.target != GL_TEXTURE_CUBE_MAP ? 1 : 6;
-  const uint8_t mipLevels = t.info.mipLevels;
-  for (uint8_t i = 0; i < mipLevels; ++i)
+  const uint8_t layers = numBuffers / sides;
+  XR_ASSERT(Gfx, layers > 0);
+  int iBuffer = 0;
+  for (uint8_t i = 0; i < layers; ++i)
   {
     for (int j = 0; j < sides; ++j)
     {
@@ -783,13 +801,14 @@ void Core::CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& 
         {
         case GL_TEXTURE_3D:
           XR_GL_CALL(glCompressedTexImage3D(target, i, fmtInternal, width, height,
-            depth, 0, static_cast<GLsizei>(buffers->size), buffers->data));
+            depth, 0, static_cast<GLsizei>(buffers[iBuffer].size), buffers[iBuffer].data));
           break;
 
         case GL_TEXTURE_2D:
         case GL_TEXTURE_CUBE_MAP:
           XR_GL_CALL(glCompressedTexImage2D(target + j, i, fmtInternal,
-            width, height, 0, static_cast<GLsizei>(buffers[j].size), buffers[j].data));
+            width, height, 0, static_cast<GLsizei>(buffers[iBuffer].size),
+            buffers[iBuffer].data));
           break;
         }
       }
@@ -799,20 +818,27 @@ void Core::CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& 
         {
         case GL_TEXTURE_3D:
           XR_GL_CALL(glTexImage3D(t.target, i, fmtInternal, width, height, depth,
-            0, formatDesc.format, formatDesc.type, buffers->data));
+            0, formatDesc.format, formatDesc.type, buffers[iBuffer].data));
           break;
 
         case GL_TEXTURE_2D:
         case GL_TEXTURE_CUBE_MAP:
           XR_GL_CALL(glTexImage2D(target + j, i, fmtInternal,
-            width, height, 0, formatDesc.format, formatDesc.type, buffers[j].data));
+            width, height, 0, formatDesc.format, formatDesc.type, buffers[iBuffer].data));
           break;
         }
       }
+
+      ++iBuffer;
     }
 
     width /= 2;
     height /= 2;
+  }
+
+  if (layers < t.info.mipLevels)
+  {
+    XR_GL_CALL(glGenerateMipmap(t.target));
   }
 
   tr.refCount = 1;
