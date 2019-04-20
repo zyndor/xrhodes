@@ -7,9 +7,9 @@
 //
 //==============================================================================
 #include "xr/Camera.hpp"
+#include "xr/Entity.hpp"
 #include "xr/ViewRayCaster.hpp"
 #include "xr/ProjectionHelper.hpp"
-#include "xr/MeshRenderer.hpp"
 #include "xr/Transforms.hpp"
 #include "xr/math/Matrix.hpp"
 #include "xr/math/Ray.hpp"
