@@ -19,6 +19,7 @@ namespace xr
 //==============================================================================
 ///@brief Interpolates Float values over a duration to their given target,
 /// using a function.
+///@note DEPRECATED, use xr::Animator.
 class  Tweener
 {
   XR_NONCOPY_DECL(Tweener)
@@ -37,6 +38,7 @@ public:
   ~Tweener();
 
   // general use
+  [[deprecated("Use xr::Animator")]]
   void  Add(float duration, Function function, float target, float& value,
     Callback onFrame, Callback onFinished, void* data);
   bool  Remove(float& value, bool finish);

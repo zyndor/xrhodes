@@ -1,3 +1,16 @@
+v1.6.0
+- deprecation of enum values from Primitive and BoxText is now enforced;
+- fixed the handling of mipmaps in that they're only generated when requested;
+- added mipmap filtering modes to Gfx, and a Gfx::F_TEXTURE_MIPMAP_NEAREST to
+  disable trilinear filtering (which is default for mipmaps);
+- replaced the use of Texture's user flags for controlling options at creation,
+  with support for parsing options from the file name;
+- added support for a .tex format to define xr::Textures;
+- added support for cubemaps to xr::Texture, and an example for demonstration;
+- added a new xr::Animator class to replace xr::Tweener and its auxilaries as a
+  more generic and robust facility for value animation;
+- enabled multi-processor compilation for VS builds on Windows;
+
 v1.5.2
 - fixed xr::TypeId<>() on (MSVC) Release builds;
 - fixed xr::Gfx::CreateTexture() - no longer generating mipmaps when not 

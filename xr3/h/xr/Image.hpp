@@ -27,7 +27,8 @@ class Image
 public:
   // structors
   Image();
-  Image(Image const& rhs);
+  Image(Image&& other);
+  Image(Image const& other);
   ~Image();
 
   // general
@@ -86,6 +87,9 @@ public:
   ///@note Doesn't deallocate the buffer of pixel data. Image().Swap(img) may be
   /// used to work around this.
   void Reset();
+
+  Image& operator=(Image const& other);
+  Image& operator=(Image&& other);
 
 private:
   // data

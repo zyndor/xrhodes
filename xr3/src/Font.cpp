@@ -777,8 +777,9 @@ void Font::UpdateCache()
   if (m_cacheDirty)
   {
     auto size = m_textureCache->GetSize();
-    m_texture->Upload(Gfx::TextureFormat::R8, size, size, { size *
-      m_textureCache->GetPitch(), m_textureCache->GetBuffer() });
+    Buffer buffer = { size * m_textureCache->GetPitch(), m_textureCache->GetBuffer() };
+    m_texture->Upload(Gfx::TextureFormat::R8, size, size, Gfx::F_TEXTURE_NONE,
+      1, &buffer);
     m_cacheDirty = false;
 
 #ifdef ENABLE_GLYPH_DEBUG

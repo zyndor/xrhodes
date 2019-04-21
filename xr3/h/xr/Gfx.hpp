@@ -117,7 +117,9 @@ enum : FlagType
   F_TEXTURE_WRAP = XR_MASK_ID(FlagType, 0), // clamp is default
   F_TEXTURE_FILTER_POINT = XR_MASK_ID(FlagType, 1), // linear filtering is default
   F_TEXTURE_SRGB = XR_MASK_ID(FlagType, 2),
-  F_TEXTURE_MIPMAPS = XR_MASK_ID(FlagType, 6),  // no mipmaps by default
+  F_TEXTURE_MIPMAP_NEAREST = XR_MASK_ID(FlagType, 5),  // trilinear filtering for mipmaps is default; requires F_TEXTURE_MIPMAPS also set;
+  F_TEXTURE_MIPMAPS [[deprecated("use F_TEXTURE_MIPMAP")]] = XR_MASK_ID(FlagType, 6),  // no mipmap by default
+  F_TEXTURE_MIPMAP = XR_MASK_ID(FlagType, 6),  // no mipmap by default
   F_TEXTURE_CUBE = XR_MASK_ID(FlagType, 7),
 
   F_STATE_NONE = 0,
@@ -488,6 +490,9 @@ IndexBufferHandle  CreateIndexBuffer(Buffer const& buffer, FlagType flags = F_BU
 void Release(IndexBufferHandle h);
 
 ///@brief Creates a texture with the given parameters and texel data in @a buffer.
+/// Mipmap levels may be provided if the F_TEXTURE_MIPMAP flag is set; the buffer
+/// layout should be per level (highest to lowest), and within that, faces (1 for
+/// 2D, 6 for cubemaps, in +x, -x, +y ... order).
 ///@note The texel data isn't kept around by Gfx.
 TextureHandle CreateTexture(TextureFormat format, uint16_t width,
   uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,

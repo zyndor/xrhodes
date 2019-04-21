@@ -40,10 +40,9 @@ public:
     Centered,
     Positive,
 
-    // Deprecated
-    Near = Negative, // Deprecated; Left / Top
-    Center = Centered, // Deprecated
-    Far = Positive,  // Deprecated; Right / Bottom
+    Near [[deprecated]] = Negative, // Left / Top
+    Center[[deprecated]] = Centered,
+    Far [[deprecated]] = Positive,  // Right / Bottom
   };
 
   ///@brief The result of preprocessing a string of text. Specifies the size of

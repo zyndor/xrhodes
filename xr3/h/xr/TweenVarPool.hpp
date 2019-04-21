@@ -17,6 +17,7 @@ namespace xr
 {
 
 //==============================================================================
+///@note DEPRECATED, use xr::Animator.
 class TweenVarPoolCore
 {
 public:
@@ -36,6 +37,7 @@ public:
 };
 
 //==============================================================================
+///@note DEPRECATED, use xr::Animator.
 template  <typename T>
 class TweenVarPool: protected TweenVarPoolCore
 {
@@ -48,6 +50,7 @@ public:
   ~TweenVarPool();
 
   // general
+  [[deprecated("Use xr::Animator")]]
   void  Add(float duration, Tweener::Function function, Type target,
     Type& value, Tweener::Callback onFrame, Tweener::Callback onFinished,
     void* callbackData, Tweener& tweener);

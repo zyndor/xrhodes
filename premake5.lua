@@ -137,6 +137,8 @@ workspace "xr3"
 	-- Windows
 	if target_env == "windows" then
 		if isVS() then
+			flags { "MultiProcessorCompile" }
+			
 			buildoptions {
 				"/WX",
 				--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.

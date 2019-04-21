@@ -175,7 +175,7 @@ void  FillRect(float hw, float hh, Material::Ptr const& material)
   verts[2].pos = Vector3(hw, -hh, .0f);
   verts[3].pos = Vector3(hw, hh, .0f);
 
-  ScratchBuffer::Finish(Primitive::TriStrip);
+  ScratchBuffer::Finish(Primitive::TriangleStrip);
 }
 
 //==============================================================================
@@ -230,7 +230,7 @@ void  FillCircle(float radius, Material::Ptr const& material)
 
   verts->pos = Vector3(-radius, .0f, .0f);
 
-  ScratchBuffer::Finish(Primitive::TriStrip);
+  ScratchBuffer::Finish(Primitive::TriangleStrip);
 }
 
 } // DebugDraw

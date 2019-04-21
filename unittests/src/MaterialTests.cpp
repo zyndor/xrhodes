@@ -155,7 +155,7 @@ namespace xr
 
       FilePath path("assets/xrhodes.mtl");
 
-      auto testFlags = Asset::KeepSourceDataFlag | Texture::PointFilterFlag;
+      auto testFlags = Asset::KeepSourceDataFlag;
       Material::Ptr material = Asset::Manager::Load<Material>(path, testFlags);
 
       while (!CheckAnyMaskBits(material->GetFlags(), Asset::ReadyFlag | Asset::ErrorFlag))
@@ -187,7 +187,7 @@ namespace xr
 
       Gfx::Clear(Gfx::F_CLEAR_DEPTH);
       material->Apply();
-      Gfx::Draw(vbo, Primitive::TriStrip, 0, 4);
+      Gfx::Draw(vbo, Primitive::TriangleStrip, 0, 4);
       Gfx::Present();
 
       Image cap;

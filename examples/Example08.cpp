@@ -315,7 +315,7 @@ public:
     verts[2].uv0 = Vector2(0., 1.);
     verts[3].pos = Vector2(quadSize, quadSize);
     verts[3].uv0 = Vector2(1., 1.);
-    ScratchBuffer::Finish(Primitive::TriStrip);
+    ScratchBuffer::Finish(Primitive::TriangleStrip);
 
     Gfx::Present();
   }
