@@ -16,7 +16,7 @@ project "xr3scene"
 		"premake5.lua"
 	}
 
-	if (isVS()) then
+	if (is_vs()) then
 		files { "xr3scene.natvis"}
 	end
 
