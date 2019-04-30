@@ -71,11 +71,13 @@ public:
     ///@brief Sets the view to the given @a matrix.
     Updater& SetView(Matrix4 const& matrix);
 
-    ///@brief Sets the projection to the given @a matrix. Transforms can cache
-    /// the near / far values for the frustum and the tangent of the half of vertical
-    /// field of view if you pass them in here.
-    ///@note @a tanHalfVerticalFov is required for GetPerspectiveMultiple() to
-    /// work correctly.
+    ///@brief Sets the projection to the given @a matrix. Transforms caches
+    /// zNear, zFar and tanHalfVerticalFov values for internal operations.
+    /// If they were not provided (i.e. are zero), they will be calculated
+    /// from @a matrix as follows:<br />
+    /// tanHalfVerticalFov = 1.f / matrix[5];
+    /// zNear = matrix[14] / (matrix[10] - 1.f);
+    /// zFar = (matrix[10] - 1.f) / (matrix[10] + 1.f) * zNear;
     Updater& SetProjection(Matrix4 const& matrix, float zNear = .0f, float zFar = .0f,
       float tanHalfVerticalFov = .0f);
 
