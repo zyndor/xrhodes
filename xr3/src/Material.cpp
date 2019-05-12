@@ -42,6 +42,39 @@ const std::string kBlendFactorKeys[4] = {
   "dstAlpha",
 };
 
+const std::unordered_map<uint32_t, uint32_t> kGfxStates {
+  { Hash::String32("depthTest"), Gfx::F_STATE_DEPTH_TEST },
+  { Hash::String32("depthWrite"), Gfx::F_STATE_DEPTH_WRITE },
+  { Hash::String32("alphaBlend"), Gfx::F_STATE_ALPHA_BLEND },
+  { Hash::String32("cullBack"), Gfx::F_STATE_CULL_BACK },
+  { Hash::String32("cullFront"), Gfx::F_STATE_CULL_FRONT },
+  { Hash::String32("wireframe"), Gfx::F_STATE_WIREFRAME }, // experimental
+};
+
+const std::unordered_map<uint32_t, Gfx::Comparison::Value> kComparisonFunctions {
+  { Hash::String32("fail"), Gfx::Comparison::FAIL },
+  { Hash::String32("less"), Gfx::Comparison::LESS },
+  { Hash::String32("lequal"), Gfx::Comparison::LEQUAL },
+  { Hash::String32("equal"), Gfx::Comparison::EQUAL },
+  { Hash::String32("gequal"), Gfx::Comparison::GEQUAL },
+  { Hash::String32("greater"), Gfx::Comparison::GREATER },
+  { Hash::String32("nequal"), Gfx::Comparison::NEQUAL },
+  { Hash::String32("pass"), Gfx::Comparison::PASS },
+};
+
+const std::unordered_map<uint32_t, Gfx::BlendFactor::Value> kBlendFactors {
+  { Hash::String32("zero"), Gfx::BlendFactor::ZERO },
+  { Hash::String32("one"), Gfx::BlendFactor::ONE },
+  { Hash::String32("srcColor"), Gfx::BlendFactor::SRC_COLOR },
+  { Hash::String32("invSrcColor"), Gfx::BlendFactor::INV_SRC_COLOR },
+  { Hash::String32("srcAlpha"), Gfx::BlendFactor::SRC_ALPHA },
+  { Hash::String32("invSrcAlpha"), Gfx::BlendFactor::INV_SRC_ALPHA },
+  { Hash::String32("dstColor"), Gfx::BlendFactor::DST_COLOR },
+  { Hash::String32("invDstColor"), Gfx::BlendFactor::INV_DST_COLOR },
+  { Hash::String32("dstAlpha"), Gfx::BlendFactor::DST_ALPHA },
+  { Hash::String32("invDstAlpha"), Gfx::BlendFactor::INV_DST_ALPHA },
+};
+
 static class MaterialBuilder : public Asset::Builder
 {
 public:
@@ -60,37 +93,7 @@ public:
     }
   */
   MaterialBuilder()
-  : Builder(Material::kTypeId),
-    m_states{
-      { Hash::String32("depthTest"), Gfx::F_STATE_DEPTH_TEST },
-      { Hash::String32("depthWrite"), Gfx::F_STATE_DEPTH_WRITE },
-      { Hash::String32("alphaBlend"), Gfx::F_STATE_ALPHA_BLEND },
-      { Hash::String32("cullBack"), Gfx::F_STATE_CULL_BACK },
-      { Hash::String32("cullFront"), Gfx::F_STATE_CULL_FRONT },
-      { Hash::String32("wireframe"), Gfx::F_STATE_WIREFRAME }, // experimental
-    },
-    m_comparisonFunctions{
-      { Hash::String32("fail"), Gfx::Comparison::FAIL },
-      { Hash::String32("less"), Gfx::Comparison::LESS },
-      { Hash::String32("lequal"), Gfx::Comparison::LEQUAL },
-      { Hash::String32("equal"), Gfx::Comparison::EQUAL },
-      { Hash::String32("gequal"), Gfx::Comparison::GEQUAL },
-      { Hash::String32("greater"), Gfx::Comparison::GREATER },
-      { Hash::String32("nequal"), Gfx::Comparison::NEQUAL },
-      { Hash::String32("pass"), Gfx::Comparison::PASS },
-    },
-    m_blendFactors{
-      { Hash::String32("zero"), Gfx::BlendFactor::ZERO },
-      { Hash::String32("one"), Gfx::BlendFactor::ONE },
-      { Hash::String32("srcColor"), Gfx::BlendFactor::SRC_COLOR },
-      { Hash::String32("invSrcColor"), Gfx::BlendFactor::INV_SRC_COLOR },
-      { Hash::String32("srcAlpha"), Gfx::BlendFactor::SRC_ALPHA },
-      { Hash::String32("invSrcAlpha"), Gfx::BlendFactor::INV_SRC_ALPHA },
-      { Hash::String32("dstColor"), Gfx::BlendFactor::DST_COLOR },
-      { Hash::String32("invDstColor"), Gfx::BlendFactor::INV_DST_COLOR },
-      { Hash::String32("dstAlpha"), Gfx::BlendFactor::DST_ALPHA },
-      { Hash::String32("invDstAlpha"), Gfx::BlendFactor::INV_DST_ALPHA },
-    }
+  : Builder(Material::kTypeId)
   {}
 
   bool Build(char const* rawNameExt, Buffer buffer,
@@ -335,14 +338,10 @@ public:
   }
 
 protected:
-  std::unordered_map<uint32_t, uint32_t> m_states;
-  std::unordered_map<uint32_t, Gfx::Comparison::Value> m_comparisonFunctions;
-  std::unordered_map<uint32_t, Gfx::BlendFactor::Value> m_blendFactors;
-
   bool InterpretState(char const* value, Gfx::FlagType& flags) const
   {
-    auto iFind = m_states.find(Hash::String32(value));
-    const bool success = iFind != m_states.end();
+    auto iFind = kGfxStates.find(Hash::String32(value));
+    const bool success = iFind != kGfxStates.end();
     if (success)
     {
       flags |= iFind->second;
@@ -352,8 +351,8 @@ protected:
 
   bool InterpretComparison(char const* value, Gfx::Comparison::Value& comparison) const
   {
-    auto iFind = m_comparisonFunctions.find(Hash::String32(value));
-    const bool success = iFind != m_comparisonFunctions.end();
+    auto iFind = kComparisonFunctions.find(Hash::String32(value));
+    const bool success = iFind != kComparisonFunctions.end();
     if (success)
     {
       comparison = iFind->second;
@@ -363,8 +362,8 @@ protected:
 
   bool InterpretBlendFactor(char const* value, Gfx::BlendFactor::Value& blendFactor) const
   {
-    auto iFind = m_blendFactors.find(Hash::String32(value));
-    const bool success = iFind != m_blendFactors.end();
+    auto iFind = kBlendFactors.find(Hash::String32(value));
+    const bool success = iFind != kBlendFactors.end();
     if (success)
     {
       blendFactor = iFind->second;
