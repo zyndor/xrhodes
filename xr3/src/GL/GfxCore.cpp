@@ -544,6 +544,7 @@ struct CoreContext
   TextureHandle mActiveTextures[kMaxTextureStages];  // no ownership
   ProgramHandle mActiveProgram;  // no ownership
   FrameBufferHandle mActiveFrameBuffer;  // no ownership
+  uint8_t mActiveTextureStage = 0;
 
   // NOTE: we're just providing these, never actually use them in here;
   // they should be synchronized, and one major version later maybe they will be.
@@ -662,6 +663,11 @@ void Core::Init(Context* context, ResourceManager* resources)
   auto& defaultFbo = fbos[GetDefaultFrameBuffer().id];
   defaultFbo.numColorAttachments = 2;
   defaultFbo.name = 0;
+
+  for (auto& h: sContext->mActiveTextures)
+  {
+    h = GetDefaultTexture2D();
+  }
 
   sContext->mActiveFrameBuffer = GetDefaultFrameBuffer();
 
@@ -842,6 +848,13 @@ void Core::CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& 
   }
 
   tr.refCount = 1;
+
+  XR_ASSERT(Gfx, sContext->mActiveTextureStage < kMaxTextureStages);
+  auto hActiveTexture = sContext->mActiveTextures[sContext->mActiveTextureStage];
+  if (hActiveTexture.IsValid())
+  {
+    BindTexture(sContext->mResources->GetTextures()[hActiveTexture.id].inst);
+  }
 }
 
 void Core::Release(TextureHandle h)
@@ -857,6 +870,14 @@ void Core::Release(TextureHandle h)
     std::memset(&texture.inst, 0x00, sizeof(Texture));
 
     textures.server.Release(h.id);
+  }
+
+  for (auto& th: sContext->mActiveTextures)
+  {
+    if (th == h)
+    {
+      th.Invalidate();
+    }
   }
 }
 
@@ -939,6 +960,12 @@ bool Core::CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* 
       }
     }
   }
+
+  auto hActiveFrameBuffer = sContext->mActiveFrameBuffer;
+  if (hActiveFrameBuffer.IsValid())
+  {
+    BindFrameBuffer(sContext->mResources->GetFbos().data[hActiveFrameBuffer.id]);
+  }
   return result;
 }
 
@@ -956,6 +983,16 @@ void Core::Release(FrameBufferHandle h)
 
   XR_GL_CALL(glDeleteFramebuffers(1, &fbo.name));
   fbos.server.Release(h.id);
+
+  // If currently active framebuffer was released, invalidate its handle, otherwise re-bind it.
+  if (h != sContext->mActiveFrameBuffer)
+  {
+    BindFrameBuffer(fbos[sContext->mActiveFrameBuffer.id]);
+  }
+  else
+  {
+    sContext->mActiveFrameBuffer.Invalidate();
+  }
 }
 
 bool Core::CreateShader(ShaderType type, Buffer const& buffer, ShaderRef& sr)
@@ -1068,8 +1105,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
     //XR_GL_CALL(glGetProgramiv(program.name, GL_ACTIVE_ATTRIBUTES, &program.numActiveAttribs));
     for (int i = 0; i < uint8_t(Attribute::kCount); ++i)
     {
-      XR_GL_CALL(GLint loc = glGetAttribLocation(program.name,
-        Const::kAttributeName[i]));
+      XR_GL_CALL(GLint loc = glGetAttribLocation(program.name, Const::kAttributeName[i]));
       if (loc != kInvalidLoc)
       {
         program.attribLoc[i] = loc;
@@ -1084,8 +1120,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
     size_t used = 0;
     for (uint32_t i = 0; i < kMaxInstanceData; ++i)
     {
-      XR_GL_CALL(GLint loc = glGetAttribLocation(program.name,
-        Const::kInstanceDataName[i]));
+      XR_GL_CALL(GLint loc = glGetAttribLocation(program.name, Const::kInstanceDataName[i]));
       if (loc != kInvalidLoc)
       {
         program.instanceDataLoc[used] = loc;
@@ -1188,6 +1223,11 @@ void Core::Release(ProgramHandle h)
   p.uniforms = nullptr;
 
   programs.server.Release(h.id);
+
+  if (h == sContext->mActiveProgram)
+  {
+    sContext->mActiveProgram.Invalidate();
+  }
 }
 
 void Core::Clear(FlagType flags, Color const& color, float depth, uint8_t stencil)
@@ -1253,6 +1293,7 @@ void Core::SetTexture(TextureHandle h, uint8_t stage)
   if (sContext->mActiveTextures[stage] != h)
   {
     sContext->mActiveTextures[stage] = h;
+    sContext->mActiveTextureStage = stage;
     XR_GL_CALL(glActiveTexture(GL_TEXTURE0 + stage));
 
     auto& textures = sContext->mResources->GetTextures();

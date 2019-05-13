@@ -494,6 +494,7 @@ void Release(IndexBufferHandle h);
 /// layout should be per level (highest to lowest), and within that, faces (1 for
 /// 2D, 6 for cubemaps, in +x, -x, +y ... order).
 ///@note The texel data isn't kept around by Gfx.
+///@brief The texture will not be active yet; use SetTexture().
 TextureHandle CreateTexture(TextureFormat format, uint16_t width,
   uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,
   uint8_t numBuffers = 1);
@@ -501,6 +502,7 @@ TextureHandle CreateTexture(TextureFormat format, uint16_t width,
 ///@brief Creates a texture width the given parameters and no texel data. Such
 /// a texture may be suitable for a render target (framebuffer attachment).
 ///@note @a format may only be one of the non-compressed ones.
+///@brief The texture will not be active yet; use SetTexture().
 TextureHandle CreateTexture(TextureFormat format, uint16_t width,
   uint16_t height, uint16_t depth, FlagType flags);
 
@@ -515,18 +517,21 @@ void Release(TextureHandle h);
 ///@brief Creates a render target along with a 2D texture of the given format.
 /// Such a frame buffer may be suitable for use with ReadFrameBuffer() only,
 /// since there is no way to access the texture handle of its attachment.
+///@note The frame buffer will not be active yet; use SetFrameBuffer().
 FrameBufferHandle  CreateFrameBuffer(TextureFormat format, uint16_t width,
   uint16_t height, FlagType flags);
 
 ///@brief Creates a render target, attaching the given @a hTextures. The framebuffer
 /// retains ownership of the textures in the @a hTextures array, i.e. the caller
 /// is required to Release() them once they're no longer needed.
+///@note The frame buffer will not be active yet; use SetFrameBuffer().
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   TextureHandle const* hTextures);
 
 ///@brief Creates a render target with the given @a attachments. The framebuffer
 /// retains ownership of the textures in the @a attachments, i.e. the caller is
 /// required to Release() them once they're no longer needed.
+///@note The frame buffer will not be active yet; use SetFrameBuffer().
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   FrameBufferAttachment const* attachments);
 
@@ -534,6 +539,7 @@ FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
+///@note The frame buffer will not be active yet; use SetFrameBuffer().
 [[deprecated("ownTextures is ignored, use the overload without it.")]]
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   TextureHandle const* hTextures, bool ownTextures);
@@ -542,6 +548,7 @@ FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
 /// @a ownTextures is set, the render target assumes ownership, i.e.
 /// the refcount of the textures is not incremented (but will be
 /// decremented when the render target is destroyed).
+///@note The frame buffer will not be active yet; use SetFrameBuffer().
 [[deprecated("ownTextures is ignored, use the overload without it.")]]
 FrameBufferHandle  CreateFrameBuffer(uint8_t textureCount,
   FrameBufferAttachment const* attachments, bool ownTextures);
