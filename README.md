@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-BSD--2%20clause-blue.svg)](https://zyndor.github.io/xrhodes/license.html)
 
-XRhodes is a game development / creative coding framework delivered as a set of static libraries. It's aimed at developers who seek more control and less complicated licensing terms than popular engines offer and is best suited at small to medium sized games.
+XRhodes is a game development / creative coding framework delivered as a set of static libraries. It's aimed at developers who seek more control and less complicated licensing terms than popular engines offer, and is best suited at small to medium sized games.
 
 Its aim is to provide flexible tools, rather than a complete pipeline, while abstracting most platform-specific details away.
 
@@ -52,7 +52,15 @@ Visit the tools/ subfolder for your chosen development platform and run the gene
 
 Projects are generated in the .projects folder in the root.
 
-Run examples and unit tests, study the project configuration files, create your own projects.
+Run examples and unit tests.
+
+Creating your own projects
+--------------------------
+
+1. Set an 'XR3_PATH' environment variable with the location of XRhodes.
+2. Copy and rename the template/ folder to your desired location.
+3. Edit the config.lua file with your desired settings for project name, files to include in the build, and external includes location.
+4. Run premake with the premake5.lua script.
 
 Happy building!
 

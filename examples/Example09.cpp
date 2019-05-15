@@ -249,7 +249,7 @@ public:
 
     // create uniform for bokeh parameters
     m_uNear_InvDepth = Gfx::CreateUniform("uNear_InvDepth", Gfx::UniformType::Vec4);
-    m_uFocalLength_Amount_InvAspectRatio = Gfx::CreateUniform("uFocalLength_Amount_InvAspectRatio", Gfx::UniformType::Vec4);
+    m_uFocalLength_Amount = Gfx::CreateUniform("uFocalLength_Amount", Gfx::UniformType::Vec4);
 
     Texture::RegisterSamplerUniform("uTexture0", 0);
     Texture::RegisterSamplerUniform("uShadowMap", 1);
@@ -258,7 +258,7 @@ public:
     auto hShadowMap = Gfx::CreateTexture(Gfx::TextureFormat::D32,
         shadowMapSize, shadowMapSize, 0, Gfx::F_TEXTURE_FILTER_POINT);
 
-    float orthoSize = 11.5f;
+    float orthoSize = 12.5f;
     m_renderPasses[RenderPass::DEPTH] = { // depth pre-pass
       Gfx::CreateFrameBuffer(1, &hShadowMap),
       Viewer{
@@ -354,8 +354,8 @@ public:
     Vector4 nearInvDepth(zNearMain, 1.f / (zFarMain - zNearMain));
     Gfx::SetUniform(m_uNear_InvDepth, nearInvDepth.data);
 
-    Vector4 focalLengthAmountInvAspectRatio(0.333, 1.0, 1.0f / Gfx::GetLogicalAspectRatio());
-    Gfx::SetUniform(m_uFocalLength_Amount_InvAspectRatio, focalLengthAmountInvAspectRatio.data);
+    Vector4 focalLengthAmountInvAspectRatio(0.333, 1.0);
+    Gfx::SetUniform(m_uFocalLength_Amount, focalLengthAmountInvAspectRatio.data);
     Gfx::Flush();
 
     m_rotation = Quaternion::Identity();
@@ -487,8 +487,8 @@ public:
     Gfx::Release(m_uNear_InvDepth);
     m_uNear_InvDepth.Invalidate();
 
-    Gfx::Release(m_uFocalLength_Amount_InvAspectRatio);
-    m_uFocalLength_Amount_InvAspectRatio.Invalidate();
+    Gfx::Release(m_uFocalLength_Amount);
+    m_uFocalLength_Amount.Invalidate();
 
     Asset::Manager::Shutdown();
     Gfx::Shutdown();
@@ -503,7 +503,7 @@ private:
   Gfx::UniformHandle m_uLightDirection_InvShadowMapSize;
   Gfx::UniformHandle m_uLightColor;
   Gfx::UniformHandle m_uNear_InvDepth;
-  Gfx::UniformHandle m_uFocalLength_Amount_InvAspectRatio;
+  Gfx::UniformHandle m_uFocalLength_Amount;
 
   AssetQueue m_assetQueue;
 

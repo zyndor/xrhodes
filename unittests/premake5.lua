@@ -41,7 +41,7 @@ project "unittests"
 		"xr3core",
 	}
 
-	if isVS() then
+	if is_vs() then
 		buildoptions { "/WX-" }
 	else
 		buildoptions { "-Wno-error" }

@@ -13,7 +13,7 @@ namespace xr
 namespace Quad
 {
 
-const uint16_t  kIndices[kIndexCount] = { 0, 2, 3, 3, 1, 0 };
+const uint16_t  kIndices[kIndexCount] = { 0, 1, 3, 3, 2, 0 };
 
 }
 }

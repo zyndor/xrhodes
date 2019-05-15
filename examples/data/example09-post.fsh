@@ -12,11 +12,10 @@ precision mediump float;
 
 uniform sampler2D uTexture0;
 
-uniform vec4 uFocalLength_Amount_InvAspectRatio;
+uniform vec4 uFocalLength_Amount;
 
-#define FOCAL_LENGTH uFocalLength_Amount_InvAspectRatio.x
-#define BOKEH_AMOUNT uFocalLength_Amount_InvAspectRatio.z
-#define INV_ASPECT_RATIO uFocalLength_Amount_InvAspectRatio.w
+#define FOCAL_LENGTH uFocalLength_Amount.x
+#define BOKEH_AMOUNT uFocalLength_Amount.z
 
 #define PI 3.141596
 #define GOLDEN_ANGLE 7.19996323
@@ -45,7 +44,7 @@ void main(void)
   bias *= smoothstep(.0, .0625, bias);
 
   // Get (delta) uv to neighbor to blur with.
-  vec2 texel = vec2(INV_ASPECT_RATIO, 1.) * bias * .025;
+  vec2 texel = vec2(1.) * bias * .0125;
 
   // We will sample neighboring texels using a rotated coordinate.
   vec2 sample = vec2(0., 1.);

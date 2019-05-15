@@ -20,8 +20,8 @@ namespace Vertex
 enum Value
 {
   NW,
-  NE,
   SW,
+  NE,
   SE,
   kCount
 };

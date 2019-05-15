@@ -73,8 +73,6 @@ void GameLoop::Run(uint64_t frameDelayMs, uint64_t frameCapMs,
         return;
       }
 
-      Input::Update();
-
       // do the update.
       Action action = Action::Continue;
       onUpdate.Call(action);

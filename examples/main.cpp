@@ -98,6 +98,7 @@ private:
 
   void OnUpdate(GameLoop::Action& action)
   {
+    Input::Update();
     if (m_quitRequested)
     {
       action = GameLoop::Action::Exit;

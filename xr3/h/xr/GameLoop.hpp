@@ -10,6 +10,7 @@
 //
 //==============================================================================
 #include "xr/events/Callback.hpp"
+#include "xr/types/fundamentals.hpp"
 #include <cstdint>
 
 namespace xr
@@ -19,8 +20,12 @@ namespace xr
 ///@brief Implements a canonical game loop, calling out to update, render, and
 /// (optionally) per second callbacks. The frequency of updates is fixed, and
 /// capping is applied when a frame takes too long.
+///@note Calls xr::Device::YieldOS(), so the callbacks from subsystems are
+/// processed. For an event
 class GameLoop
 {
+  XR_NONOBJECT_DECL(GameLoop)
+
 public:
   // types
   ///@brief Update / render data relating to the last second.

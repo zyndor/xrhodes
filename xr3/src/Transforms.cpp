@@ -49,9 +49,22 @@ public:
     float tanHalfVerticalFov)
   {
     m_projection = matrix;
+
+    if (std::abs(tanHalfVerticalFov) <= kEpsilon && std::abs(matrix.data[5]) > 0.f)
+    {
+      tanHalfVerticalFov = 1.f / matrix.data[5];
+    }
     m_tanHalfVerticalFov = tanHalfVerticalFov;
+
+    if (std::abs(zNear) <= kEpsilon && std::abs(zFar) <= kEpsilon)
+    {
+      const float zz = matrix.data[10];
+      zNear = matrix.data[14] / (zz - 1.f);
+      zFar = (zz - 1.f) / (zz + 1.f) * zNear;
+    }
     m_zNear = zNear;
     m_zFar = zFar;
+
     m_dirtyFlags |= PROJECTION_DIRTY;
   }
 

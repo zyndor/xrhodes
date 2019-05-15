@@ -1,3 +1,22 @@
+v1.6.1
+- fixed xr::Gfx active resource caching: when a texture / framebuffer / shader
+  program is released and it's found to be active, it's invalidated (and in case
+  of frame buffers, the currently active one - if different -, is bound again).
+  Textures and frame buffers also will no longer be accidentally active after
+  their creation;
+- fixed xr::Transforms: the near / far / tangent of half vertical FOV values
+  are now calculated from an arbitrary projection matrix (unless they were
+  provided);
+- fixed Example09: the post-process shader doesn't need the aspect ratio, since
+  the frame buffer has the same dimensions as the screen;
+- changed the Vertex order in xr::Quad, to make it easier to render a quad as a
+  triangle strip as well. NOTE: uses relying on xr::Quad::kIndices must swap the
+  second and third vertex (NE and SW);
+- xr::GameLoop is no longer performing Input::Update(), to make it more generic;
+- xr::GameLoop is now an XR_NONOBJECT;
+- added a template for project creation (and refactored xr3's premake to share
+  bits of it);
+  
 v1.6.0
 - deprecation of enum values from Primitive and BoxText is now enforced;
 - fixed the handling of mipmaps in that they're only generated when requested;
