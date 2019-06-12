@@ -22,6 +22,9 @@ namespace DebugDraw
 /// drawing API (accessible outside as the uniform named xruColor).
 void  SetColor(Color const& color);
 
+///@brief Sets the state that shader of the default material will use.
+void  SetState(Gfx::FlagType clear, Gfx::FlagType set);
+
 ///@brief Draws a line from the current transform to the position @a v, with the
 /// given material (if null, a default material will be used).
 void  Line(const Vector3& v, Material::Ptr const& material = nullptr);
