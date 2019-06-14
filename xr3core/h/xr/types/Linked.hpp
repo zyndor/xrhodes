@@ -32,6 +32,14 @@ public:
   ///@brief Calls @a fn with each item in the Linked<> list for this type.
   static void ForEach(std::function<void(T&)> fn);
 
+  template <typename... Args>
+  static void ForEach(std::function<void(T&, Args...)> fn, Args... args);
+
+  ///@brief Calls T:: @a method with each item in the Linked<> list for this
+  /// type, and thegiven @a args arguments.
+  template <typename... Args>
+  static void ForEach(void(T::*method)(Args...), Args... args);
+
   // structors
   Linked(T& obj);
   ~Linked();
@@ -55,7 +63,7 @@ Linked<T>* Linked<T>::s_head = nullptr;
 //==============================================================================
 // inline
 //==============================================================================
-template<typename T>
+template <typename T>
 void Linked<T>::ForEach(std::function<void(T&)> fn)
 {
   Linked<T>* p = s_head;
@@ -63,6 +71,34 @@ void Linked<T>::ForEach(std::function<void(T&)> fn)
   {
     auto pp = p->m_prev;
     fn(*p->data);
+    p = pp;
+  }
+}
+
+//==============================================================================
+template <typename T>
+template <typename... Args>
+void Linked<T>::ForEach(std::function<void(T&, Args...)> fn, Args... args)
+{
+  Linked<T>* p = s_head;
+  while (p)
+  {
+    auto pp = p->m_prev;
+    fn(*p->data, args...);
+    p = pp;
+  }
+}
+
+//==============================================================================
+template <typename T>
+template <typename... Args>
+void Linked<T>::ForEach(void(T::*method)(Args...), Args... args)
+{
+  Linked<T>* p = s_head;
+  while (p)
+  {
+    auto pp = p->m_prev;
+    (p->data->*method)(args...);
     p = pp;
   }
 }
