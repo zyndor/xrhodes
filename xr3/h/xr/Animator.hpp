@@ -46,8 +46,8 @@ public:
   ///@brief Identifier of an animation, which can be used to Stop() it.
   struct Handle
   {
-    const Size mSize; // size 0 indicates an invalid key.
-    const Key mKey;
+    Size mSize; // size 0 indicates an invalid key.
+    Key mKey;
   };
 
   // structors
