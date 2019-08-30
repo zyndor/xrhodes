@@ -10,6 +10,7 @@
 //
 //==============================================================================
 #include "xr/types/typeutils.hpp"
+#include <type_traits>
 
 namespace xr
 {
@@ -87,7 +88,9 @@ struct MemberCallback : Callback<Return, Args...>
 {
   using BaseType = Callback<Return, Args...>;
   using SelfType = MemberCallback<T, Return, Args...>;
-  using Function = Return(T::*)(Args...);
+  using Function = typename std::conditional<std::is_const<T>::value,
+    Return(T::*)(Args...) const,
+    Return(T::*)(Args...)>::type;
 
   MemberCallback(T& object, Function fn)
   : BaseType{ &object },
@@ -123,7 +126,9 @@ struct MemberCallback<T, void, Args...> : Callback<void, Args...>
 {
   using BaseType = Callback<void, Args...>;
   using SelfType = MemberCallback<T, void, Args...>;
-  using Function = void(T::*)(Args...);
+  using Function = typename std::conditional<std::is_const<T>::value,
+    void(T::*)(Args...) const,
+    void(T::*)(Args...)>::type;
 
   MemberCallback(T& object, Function fn)
   : BaseType{ &object },
