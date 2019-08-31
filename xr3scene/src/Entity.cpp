@@ -399,7 +399,10 @@ Entity* Entity::Clone(Entity* parent) const
     i->Clone(clone);
   }
 
-  parent->AddChild(*clone);
+  if (parent)
+  {
+    parent->AddChild(*clone);
+  }
 
   return clone;
 }

@@ -671,6 +671,7 @@ void Core::Init(Context* context, ResourceManager* resources)
 
   sContext->mActiveFrameBuffer = GetDefaultFrameBuffer();
 
+  XR_GL_CALL(glEnable(GL_PROGRAM_POINT_SIZE));
   XR_TRACE(Gfx, ("Initialisation complete."));
 }
 

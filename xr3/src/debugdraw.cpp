@@ -64,32 +64,36 @@ void EnsureUniformExists()
   }
 }
 
+void EnsureMaterialExists()
+{
+  if (!s_material)
+  {
+    Asset::FlagType flags = Asset::UnmanagedFlag;
+    s_material.Reset(Material::Create(0, flags));
+
+    ShaderComponent::Ptr vertexShader(ShaderComponent::Create(0, flags));
+    vertexShader->SetSource(Gfx::ShaderType::Vertex, kVertexShader);
+
+    ShaderComponent::Ptr fragmentShader(ShaderComponent::Create(0, flags));
+    fragmentShader->SetSource(Gfx::ShaderType::Fragment, kFragmentShader);
+
+    Shader::Ptr shader(Shader::Create(0, flags));
+    shader->SetComponents(vertexShader, fragmentShader);
+
+    s_material->SetShader(shader);
+
+    Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
+      s_material.Reset(nullptr);
+    }, nullptr));
+  }
+}
+
 void SetMaterial(Material::Ptr material)
 {
   if (!material)
   {
-    if (!s_material)
-    {
-      EnsureUniformExists();
-
-      Asset::FlagType flags = Asset::UnmanagedFlag;
-      s_material.Reset(Material::Create(0, flags));
-
-      ShaderComponent::Ptr vertexShader(ShaderComponent::Create(0, flags));
-      vertexShader->SetSource(Gfx::ShaderType::Vertex, kVertexShader);
-
-      ShaderComponent::Ptr fragmentShader(ShaderComponent::Create(0, flags));
-      fragmentShader->SetSource(Gfx::ShaderType::Fragment, kFragmentShader);
-
-      Shader::Ptr shader(Shader::Create(0, flags));
-      shader->SetComponents(vertexShader, fragmentShader);
-
-      s_material->SetShader(shader);
-
-      Gfx::ShutdownSignal().Connect(FunctionPtrCallback<void>([](void*) {
-        s_material.Reset(nullptr);
-      }, nullptr));
-    }
+    EnsureUniformExists();
+    EnsureMaterialExists();
 
     material = s_material;
   }
@@ -125,6 +129,13 @@ void  SetColor(Color const& color)
 {
   EnsureUniformExists();
   Gfx::SetUniform(s_uColor, &color);
+}
+
+//==============================================================================
+void SetState(Gfx::FlagType clear, Gfx::FlagType set)
+{
+  EnsureMaterialExists();
+  s_material->OverrideStateFlags(clear, set);
 }
 
 //==============================================================================
