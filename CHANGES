@@ -1,3 +1,13 @@
+v1.6.2
+- fixed a nullptr dereference in xr::Entity;
+- (GL) enabled point size control from shader programs;
+- relaxed the constness of xr::Animator::Handle members to allow assigning
+  Handle objects;
+- added xr::DebugDraw::SetState();
+- added xr::Linked<T>::ForEach() overload that works with member methods of T,
+  and added support for variadic arguments to the pre-existing overload;
+- added support for const member methods to xr::MemberCallback<>;
+
 v1.6.1
 - fixed xr::Gfx active resource caching: when a texture / framebuffer / shader
   program is released and it's found to be active, it's invalidated (and in case
