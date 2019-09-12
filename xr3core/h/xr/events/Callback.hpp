@@ -234,10 +234,21 @@ protected:
     return m_function == static_cast<SelfType const&>(other).m_function;
   }
 };
+
 //==============================================================================
+///@brief Convenience function to create a MemberCallback for an object and
+/// a method of its type.
 template <class T, typename Return, typename... Args>
-MemberCallback<T, Return, Args...> MakeCallback(T& object,
-  Return(T::*fn)(Args...))
+MemberCallback<T, Return, Args...> MakeCallback(T& object, Return(T::*fn)(Args...))
+{
+  return MemberCallback<T, Return, Args...>(object, fn);
+}
+
+//==============================================================================
+///@brief Convenience function to create a MemberCallback for a const object and
+/// a const method of its type.
+template <class T, typename Return, typename... Args>
+MemberCallback<T, Return, Args...> MakeCallback(T const& object, Return(T::*fn)(Args...) const)
 {
   return MemberCallback<T, Return, Args...>(object, fn);
 }
