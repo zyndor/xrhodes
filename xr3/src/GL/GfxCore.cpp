@@ -1141,6 +1141,13 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
       XR_GL_CALL(glGetActiveUniform(program.name, i, maxLen, NULL, &arraySize, &type, nameBuffer));
       loc = glGetUniformLocation(program.name, nameBuffer);
 
+      if (arraySize > 1)
+      {
+        auto& bracket = nameBuffer[strlen(nameBuffer) - 3];
+        XR_ASSERT(Gfx, bracket == '[');
+        bracket = '\0';
+      }
+
       auto hUniform = sContext->mResources->FindUniform(nameBuffer);
       if (hUniform.IsValid())
       {
