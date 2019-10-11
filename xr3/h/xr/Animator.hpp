@@ -21,7 +21,7 @@ namespace xr
 
 //==============================================================================
 ///@brief Manages animations of values which custom interpolation and custom
-/// setters may be provided.
+/// setters may be provided for.
 class Animator
 {
   XR_NONCOPY_DECL(Animator)
@@ -75,7 +75,8 @@ public:
   void Update(float tDelta);
 
   ///@brief Removes all animations. If @a complete is true, their values will be
-  /// set to their target.
+  /// set to their target and their onStop callback will be called (for those that
+  /// had it provided).
   void Clear(bool complete);
 
 private:
@@ -135,8 +136,8 @@ private:
 // inline
 //==============================================================================
 template<typename T>
-Animator::Handle Animator::Animate(float duration, T const & start, T const & target,
-   FnTween<T> tween, FnSet<T> const & setter, OnStop const * onStop)
+Animator::Handle Animator::Animate(float duration, T const& start, T const& target,
+   FnTween<T> tween, FnSet<T> const& setter, OnStop const* onStop)
 {
   if (duration > 0.f)
   {

@@ -111,12 +111,12 @@ void Animator::Update(float tDelta)
 }
 
 //==============================================================================
-void Animator::Clear(bool finish)
+void Animator::Clear(bool complete)
 {
   XR_ASSERT(Animator, !mIsTraversing);
   Merge();
 
-  if (finish)
+  if (complete)
   {
     mIsTraversing = true;
     std::unique_ptr<bool, void(*)(bool*)> traversingGuard(&mIsTraversing, [](bool* p) {
