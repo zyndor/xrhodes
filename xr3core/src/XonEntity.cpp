@@ -180,7 +180,7 @@ void XonObject::AddElement(std::string key, XonEntity& value)
 }
 
 //==============================================================================
-void XonObject::GetKeys(std::vector<std::string>& keys)
+void XonObject::GetKeys(std::vector<std::string>& keys) const
 {
   if(keys.size() < m_keyedElements.size())
   {

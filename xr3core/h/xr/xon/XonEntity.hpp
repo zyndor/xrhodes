@@ -126,7 +126,7 @@ public:
   }
 
   ///@brief Writes the keys of its elements into @a keys, in lexicographic order.
-  void GetKeys(std::vector<std::string>& keys);
+  void GetKeys(std::vector<std::string>& keys) const;
 
   ///@brief Adds the given element @a elem as a child at the next index.
   void AddElement(XonEntity& elem);  // ownership transfer
