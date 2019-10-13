@@ -1,3 +1,10 @@
+v1.6.3
+- fixed array uniform registrations not being found;
+- changed xr::XonObject::GetKeys() to a const method;
+- added an xr::MakeCallback() overload for const methods;
+- added operator() to xr::Callback<>s();
+- added unit tests for xr::Animator and cleaned up the class;
+
 v1.6.2
 - fixed a nullptr dereference in xr::Entity;
 - (GL) enabled point size control from shader programs;
