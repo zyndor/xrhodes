@@ -7,9 +7,11 @@
 //
 //==============================================================================
 #include "xr/Shader.hpp"
-#include "xr/xon/XonBuildTree.hpp"
 #include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
+#include "xr/xon/XonBuildTree.hpp"
 #include "xr/io/streamutils.hpp"
+#endif
 
 #define LTRACE(format) XR_TRACE(Shader, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Shader, condition, format)

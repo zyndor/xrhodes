@@ -7,15 +7,17 @@
 //
 //==============================================================================
 #include "xr/Texture.hpp"
-#include "xr/Image.hpp"
-#include "xr/FileWriter.hpp"
-#include "xr/strings/ParserCore.hpp"
 #include "xr/memory/BufferReader.hpp"
 #include "xr/io/FixedStreamBuf.hpp"
 #include "xr/io/streamutils.hpp"
+#ifdef ENABLE_ASSET_BUILDING
+#include "xr/Image.hpp"
+#include "xr/FileWriter.hpp"
+#include "xr/strings/ParserCore.hpp"
 #include "xr/xon/XonBuildTree.hpp"
 #include <unordered_map>
 #include <regex>
+#endif
 
 #define LTRACE(format) XR_TRACE(Texture, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Texture, condition, format)

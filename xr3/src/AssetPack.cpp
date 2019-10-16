@@ -7,11 +7,13 @@
 //
 //==============================================================================
 #include "xr/AssetPack.hpp"
+#include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
 #include "xr/xon/XonBuildTree.hpp"
 #include "xr/FileBuffer.hpp"
-#include "xr/memory/BufferReader.hpp"
 #include "xr/io/streamutils.hpp"
 #include <unordered_map>
+#endif
 
 #define LTRACE(format) XR_TRACE(AssetPack, format)
 #define LTRACEIF(cond, format) XR_TRACEIF(AssetPack, cond, format)

@@ -7,13 +7,15 @@
 //
 //==============================================================================
 #include "xr/Material.hpp"
+#include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
 #include "xr/FileWriter.hpp"
 #include "xr/xon/XonBuildTree.hpp"
-#include "xr/memory/BufferReader.hpp"
 #include "xr/io/streamutils.hpp"
 #include "xr/strings/stringutils.hpp"
 #include <algorithm>
 #include <unordered_map>
+#endif
 
 #define LTRACE(format) XR_TRACE(Material, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Material, condition, format)

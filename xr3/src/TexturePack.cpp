@@ -7,12 +7,14 @@
 //
 //==============================================================================
 #include "xr/TexturePack.hpp"
+#include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
 #include "xr/utils.hpp"
 #include "xr/strings/FilePath.hpp"
-#include "xr/memory/BufferReader.hpp"
 #include "xr/io/streamutils.hpp"
 #include "xr/debug.hpp"
 #include "tinyxml2.h"
+#endif
 
 #define LTRACE(format) XR_TRACE(TexturePack, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(TexturePack, condition, format)

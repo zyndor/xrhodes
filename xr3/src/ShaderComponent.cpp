@@ -8,8 +8,11 @@
 //==============================================================================
 #include "xr/ShaderComponent.hpp"
 #include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
 #include "xr/io/streamutils.hpp"
 #include <map>
+#include <regex>
+#endif
 
 #define LTRACE(format) XR_TRACE(ShaderComponent, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(ShaderComponent, condition, format)
@@ -24,6 +27,7 @@ namespace
 {
 
 #ifdef ENABLE_ASSET_BUILDING
+
 class ShaderComponentBuilder : public Asset::Builder
 {
 public:
