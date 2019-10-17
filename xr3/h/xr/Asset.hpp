@@ -30,8 +30,20 @@ namespace xr
 class FileWriter;
 
 //==============================================================================
-///@brief The Asset API provides facilities to create and asynchronously
-/// load assets, while managing dependencies and ownership.
+///@brief The Asset API provides facilities to create and asynchronously load
+/// assets, while managing dependencies and ownership.
+///@par The Asset::Manager builds assets from their raw format upon loading, in
+/// ENABLE_ASSET_BUILDING versions of XRhodes (as Debug is), if the raw asset is
+/// newer than its built counterpart, or the asset version was mismatched, or if
+/// the ForceBuild flag was specified.
+///@par The location that the built assets are saved is ${ram path}/${asset path}
+/// (refer to xr::File for more information).
+///@par Built assets are identified by a hash of their original (relative) path.
+///@par The Asset system supports 'asset options' which may be supplied at load
+/// time (be it procedural or via asset dependencies), by adding identifiers to
+/// the name of the asset prefixed with Asset::kOptionDelimiter, i.e.
+/// path/to/my.asset$option1$option2. Asset options therefore form part of the
+/// hash of the built asset.
 ///@note Use XR_ASSET_DECL and XR_ASSET_DEF to facilitate implementation of
 /// concrete Asset types.
 class Asset: public Countable
@@ -333,6 +345,14 @@ public:
   };
 
   // static
+  ///@brief Indicates asset options that may be passed as part of the path,
+  /// into asset loading functions, e.g. name.ext$option1$option2.
+  /// What options are supported, depends on the concrete Asset type.
+  static const char* const kOptionDelimiter;
+
+  ///@brief Attempts to create an Asset based on the given @a typeId, and with
+  /// the given @a hash and @a flags.
+  ///@return The newly created Asset instance.
   static Asset* Reflect(TypeId typeId, HashType hash, FlagType flags = 0);
 
   // structors

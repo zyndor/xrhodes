@@ -488,10 +488,14 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     builtPath = Asset::Manager::GetAssetPath() / builtPath;
   }
 
+  // Pure path is the actual location, without any options.
+  XR_ASSERT(Asset, path.GetExt());
+  auto iOptions = (path.GetExt() - path.c_str()) + strcspn(path.GetExt(), Asset::kOptionDelimiter);
+  auto purePath = FilePath(path.c_str(), iOptions);
   if (rebuild)
   {
     // Check for raw and built asset, compare last modification time.
-    auto tsRaw = File::GetModifiedTime(path); // must use original path!
+    auto tsRaw = File::GetModifiedTime(purePath); // must use original path!
     XR_ASSERTMSG(Asset::Manager, tsRaw > 0, ("'%s' doesn't exist.", path.c_str()));
     auto tsBuilt = File::GetModifiedTime(builtPath.c_str());
 
@@ -530,16 +534,16 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     LTRACEIF(done, ("%s: failed to find builder for type '%.*s'.", path.c_str(),
       sizeof(desc.type), &desc.type));
 
-    FileBuffer fb;
+    FileBuffer srcBuf;
     if (!done)  // read source file
     {
-      done = !fb.Open(path);
+      done = !srcBuf.Open(purePath);
       LTRACEIF(done, ("%s: failed to read source.", path.c_str()));
     }
 
     if (!done)  // make asset directory if need be
     {
-      fb.Close();
+      srcBuf.Close();
 
       builtPath = File::GetRamPath() / builtPath;
       done = !File::MakeDirs(builtPath);
@@ -550,7 +554,7 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     auto assetGuard = MakeScopeGuard([&builtPath](){
       if (!File::Delete(builtPath))
       {
-        LTRACE(("Failed to remove half-written asset."));
+        LTRACE(("Failed to remove half-written asset at '%s'.", builtPath.c_str()));
       }
     });
     FileWriter assetWriter; // must be declared after the guard since it'll be cleared up backwards.
@@ -573,7 +577,7 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     std::ostringstream assetData;
     if (!done)  // build asset
     {
-      done = !iFind->second->Build(rawPath.GetNameExt(), { fb.GetSize(), fb.GetData() },
+      done = !iFind->second->Build(rawPath.GetNameExt(), { srcBuf.GetSize(), srcBuf.GetData() },
         dependencies, assetData);
       LTRACEIF(done, ("%s: failed to build asset.", path.c_str()));
     }
@@ -690,7 +694,10 @@ Asset::Ptr Asset::Manager::LoadReflected(FilePath const& path, FlagType flags)
   auto ext = path.GetExt();
   if (ext)
   {
-    uint32_t hash = Hash::String32(ext);
+    // If there is an extension, i.e. the asset isn't built, then we'd like
+    // it without any options, thanks.
+    auto extLen = strcspn(ext, kOptionDelimiter);
+    uint32_t hash = Hash::String32(ext, extLen);
     auto iFind = s_extensions.find(hash);
     if (iFind != s_extensions.end())
     {
@@ -870,6 +877,8 @@ void Asset::Manager::Shutdown()
 }
 
 //==============================================================================
+const char* const Asset::kOptionDelimiter = "$";
+
 Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
 {
   auto iFind = s_reflectors.find(typeId);
