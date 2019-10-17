@@ -11,12 +11,12 @@
 #include "xr/io/FixedStreamBuf.hpp"
 #include "xr/io/streamutils.hpp"
 #ifdef ENABLE_ASSET_BUILDING
+#include "ParseAssetOptions.hpp"
 #include "xr/Image.hpp"
 #include "xr/FileWriter.hpp"
 #include "xr/strings/ParserCore.hpp"
 #include "xr/xon/XonBuildTree.hpp"
 #include <unordered_map>
-#include <regex>
 #endif
 
 #define LTRACE(format) XR_TRACE(Texture, format)
@@ -65,8 +65,6 @@ XR_ASSET_BUILDER_DECL(Texture)
 using FormatHandler = bool(*)(const char* rawNameExt, Buffer buffer,
   std::vector<FilePath>& dependencies, std::ostream& data);
 
-const std::regex kFilenameFlagRegex("(\\$[^\\$\\.\\s]+)");
-
 const std::unordered_map<std::string, Gfx::FlagType> kFlags{
   { "wrap", Gfx::F_TEXTURE_WRAP },
   { "filterPoint", Gfx::F_TEXTURE_FILTER_POINT },
@@ -89,24 +87,20 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
   std::vector<FilePath>& dependencies, std::ostream& data)
 {
   // parse filename for flags e.g. &wrap&mipmap.
-  Gfx::FlagType createFlags = [rawNameExt]() {
-    Gfx::FlagType flags = Gfx::F_TEXTURE_NONE;
-    std::cregex_iterator iFlags(rawNameExt, rawNameExt + strlen(rawNameExt),
-      kFilenameFlagRegex);
-    std::cregex_iterator iFlagsEnd;
-    while (iFlags != iFlagsEnd)
+  Gfx::FlagType createFlags = Gfx::F_TEXTURE_NONE;
+  ParseAssetOptions(rawNameExt, [rawNameExt, &createFlags](const char* option) {
+    auto iFind = kFlags.find(option);
+    bool result = iFind != kFlags.end();
+    if (result)
     {
-      auto iFind = kFlags.find((*iFlags).str().substr(1));
-      if (iFind != kFlags.end())
-      {
-        flags |= iFind->second;
-      }
-
-      ++iFlags;
+      createFlags |= iFind->second;
     }
-
-    return flags;
-  }();
+    else
+    {
+      LTRACE(("%s: Unsupported option: %s.", rawNameExt, option));
+    }
+    return result;
+  });
 
   // parse image
   Image img;
