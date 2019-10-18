@@ -27,6 +27,17 @@ namespace
 {
 
 #ifdef ENABLE_ASSET_BUILDING
+const std::regex kEolRegex("\\r\\n?");
+const std::string kEolReplace("\n");
+
+const std::regex kCommentsRegex(
+  "(\\/\\/.*|" // C++-style comments
+  "/\\*.*\\n(.*\\n)*.*\\*/)*"  // C-style comments
+);
+
+const std::regex kHeadingWhiteSpaceRegex("(^|\\n)\\s+");
+const std::regex kTrailingWhiteSpaceRegex("\\s+($|\\n)");
+
 
 class ShaderComponentBuilder : public Asset::Builder
 {
@@ -48,9 +59,16 @@ public:
     auto iFind = m_types.find(Hash::String32(ext));
     XR_ASSERT(ShaderComponent, iFind != m_types.end());
 
+    // Remove comments and whitespace bloat from source.
+    std::string source(buffer.As<char const>(), buffer.size);
+    source = std::regex_replace(source, kEolRegex, kEolReplace);
+    source = std::regex_replace(source, kCommentsRegex, "");
+    source = std::regex_replace(source, kHeadingWhiteSpaceRegex, "$1");
+    source = std::regex_replace(source, kTrailingWhiteSpaceRegex, "$1");
+
     // TODO: support includes
     return WriteBinaryStream(iFind->second, data) &&
-      data.write(buffer.As<char const>(), buffer.size);
+      data.write(source.c_str(), source.size());
   }
 
 private:
