@@ -41,7 +41,7 @@ public:
   bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
-    auto ext = strrchr(rawNameExt, '.');
+    auto ext = strchr(rawNameExt, '.');
     XR_ASSERT(ShaderComponent, ext);
     ++ext;
 
