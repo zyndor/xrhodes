@@ -18,6 +18,14 @@ namespace xr
 //==============================================================================
 ///@brief Provides one part of the shader pipeline -- either a fragment or a
 /// vertex shader.
+///@note Asset options may be supplied (when loading directly or referencing from
+/// another asset), where each option translates into a #define in the code of the
+/// shader, in the order they were specified i.e. terrain.fsh$DEFERRED$ALPHA_TEST ->
+/// #define DEFERRED
+/// #define ALPHA_TEST
+///@note These #defines are inserted after the first block (not line), of
+/// preprocessor instructions, AFTER the builder has stripped all code comments,
+/// heading and trailing space and empty lines.
 class ShaderComponent: public Asset
 {
 public:
