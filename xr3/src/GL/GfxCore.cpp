@@ -1020,7 +1020,30 @@ bool Core::CreateShader(ShaderType type, Buffer const& buffer, ShaderRef& sr)
   {
     char log[1024];
     XR_GL_CALL(glGetShaderInfoLog(shader.name, sizeof(log), 0, log));
-    XR_TRACE(Gfx, ("\n%s", buffer.data));
+    uint32_t row = 0;
+    auto i = buffer.data;
+    auto iEnd = i + buffer.size;
+    do
+    {
+      ++row;
+      auto iRow = i;
+      while (i != iEnd && !strchr("\n\r", *i))
+      {
+        ++i;
+      }
+
+      auto length = i - iRow;
+      XR_ASSERT(Gfx, length < std::numeric_limits<int32_t>::max());
+      if (length > 0)
+      {
+        XR_RAWTRACE(("%02d| %.*s\n", row, static_cast<int32_t>(i - iRow), iRow));
+      }
+      while (i != iEnd && strchr("\n\r", *i))
+      {
+        ++i;
+      }
+    }
+    while (i != iEnd);
     XR_TRACE(Gfx, ("Failed to compile shader: %s", log));
 
     XR_GL_CALL(glDeleteShader(shader.name));
