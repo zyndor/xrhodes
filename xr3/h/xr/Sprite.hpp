@@ -162,6 +162,12 @@ public:
   ///@brief Performs a combination of FlipVerticesY() and FlipUVsY().
   void  FlipY();
 
+  ///@brief Recalculates the uvs of this sprite, as if its texture has been
+  /// remapped to @a whole.
+  ///@note Use { -whole.left, -whole.bottom, 1.f / (whole.right - whole.left),
+  /// 1.f / (whole.top - whole.bottom) } to reverse its effect.
+  void RemapUVs(AABB const& whole);
+
   ///@brief Creates a mesh with the vertex data of the Sprite.
   Mesh  CreateMesh() const;
 
