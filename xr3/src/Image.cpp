@@ -117,7 +117,7 @@ bool  Image::Load(FilePath const& path)
 }
 
 //==============================================================================
-bool Image::Save(FilePath path, bool overwrite)
+bool Image::Save(FilePath path, bool overwrite) const
 {
   auto ext = path.GetExt();
   bool success = ext != nullptr;

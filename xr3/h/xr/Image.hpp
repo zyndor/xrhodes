@@ -71,7 +71,7 @@ public:
   /// given @a path. If a file of the same name exists, the method will fail
   /// unless @a overwrite was set to true.
   ///@return The result of the operation.
-  bool Save(FilePath path, bool overwrite);
+  bool Save(FilePath path, bool overwrite) const;
 
   ///@brief Attemts to parse loaded image information into a file.
   ///@note Currently PNG and TGA are the only supported formates.
