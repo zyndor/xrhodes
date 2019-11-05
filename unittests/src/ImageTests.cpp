@@ -43,7 +43,7 @@ TEST_F(ImageTests, Basic)
   ASSERT_EQ(img.GetWidth(), width);
   ASSERT_EQ(img.GetHeight(), height);
   ASSERT_EQ(img.GetBytesPerPixel(), bpp);
-  ASSERT_EQ(img.GetStride(), width * bpp);
+  ASSERT_EQ(img.GetPitch(), width * bpp);
   ASSERT_EQ(img.GetPixelDataSize(), width * height * bpp);
   ASSERT_NE(img.GetPixelData(), nullptr);
 

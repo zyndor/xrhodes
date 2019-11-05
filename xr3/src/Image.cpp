@@ -64,9 +64,15 @@ uint8_t Image::GetBytesPerPixel() const
 }
 
 //==============================================================================
-size_t  Image::GetStride() const
+size_t Image::GetPitch() const
 {
   return m_width * m_bytesPerPixel;
+}
+
+//==============================================================================
+size_t Image::GetStride() const
+{
+  return GetPitch();
 }
 
 //==============================================================================

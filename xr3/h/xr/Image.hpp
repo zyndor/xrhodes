@@ -42,6 +42,9 @@ public:
   uint8_t GetBytesPerPixel() const;
 
   ///@return Length of a single row in the pixel data, in bytes.
+  size_t GetPitch() const;
+
+  [[deprecated("Use GetPitch().")]]
   size_t GetStride() const;
 
   ///@return  Pointer to native pixel data.
