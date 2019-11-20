@@ -253,6 +253,19 @@ MemberCallback<T, Return, Args...> MakeCallback(T const& object, Return(T::*fn)(
   return MemberCallback<T, Return, Args...>(object, fn);
 }
 
+//==============================================================================
+///@brief Convenience function to create a FunctionPtrCallback from a free standing
+/// function.
+template <typename Return, typename... Args>
+FunctionPtrCallback<Return, Args...> MakeCallback(Return(*fn)(Args...))
+{
+  auto adaptor = [](Args... args, void* userData) {
+    auto fn = static_cast<Return(*)(Args...)>(userData);
+    return fn(args...);
+  };
+  return FunctionPtrCallback<Return, Args...>(adaptor, fn);
+}
+
 } //xr
 
 #endif //XR_CALLBACK_HPP
