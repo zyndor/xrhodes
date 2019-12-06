@@ -74,12 +74,13 @@ public:
   ///@note A subsequent BakeIndices() or Finish() call invalidates this memory.
   static uint16_t* AllocateIndices(uint32_t count);
 
-  ///@brief Creates an index buffer object from the scratch data, which is
-  /// then consumed.
-  ///@note Requires AllocateIndices() methods to be called beforehand
-  /// (and no BakeIndices() or Finish() since that).
-  ///@note The number of indices is whatever was supplied to the preceding
-  /// AllocateIndices().
+  ///@brief Uploads the vertex, and if AllocateIndices() was called, the index
+  /// buffer to the GPU, returning the resulting pair of handles, along with
+  /// ownership.
+  ///@note One of the Start methods must have been called beforehand.
+  ///@note Invalidates the buffers, i.e. client code must not call Finish().
+  ///@note The vertex / index count is whatever was supplied to the Start and
+  /// AllocateIndices methods prior to Bake().
   static Handles Bake();
 
   ///@brief Renders and consumes the scratch buffer data.
