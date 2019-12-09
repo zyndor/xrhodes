@@ -50,6 +50,7 @@ const std::unordered_map<uint32_t, uint32_t> kGfxStates {
   { Hash::String32("alphaBlend"), Gfx::F_STATE_ALPHA_BLEND },
   { Hash::String32("cullBack"), Gfx::F_STATE_CULL_BACK },
   { Hash::String32("cullFront"), Gfx::F_STATE_CULL_FRONT },
+  { Hash::String32("stencilTest"), Gfx::F_STATE_STENCIL_TEST },
   { Hash::String32("wireframe"), Gfx::F_STATE_WIREFRAME }, // experimental
 };
 

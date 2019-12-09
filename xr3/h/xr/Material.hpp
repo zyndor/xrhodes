@@ -29,7 +29,7 @@ namespace xr
 ///   Optional.
 /// state: the rendering states to set; a combination of the following are
 ///   supported: depthTest, depthWrite, alphaBlend, cullBack, cullFront,
-///     wireframe. Optional.
+///     stencilTest, wireframe. Optional.
 /// blendFactors: if alphaBlend was enabled, a blendFactors object may define
 ///   the blending function used with the material (otherwise ignored). It must
 ///   at least specify srcColor and dstColor values. Optionally, srcAlpha and
