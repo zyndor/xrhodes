@@ -145,8 +145,9 @@ public:
   ///@return The distance of the far clipping plane from the viewer.
   static float GetZFarClippingPlane();
 
-  ///@return The position along view-space Z at which objects appear at scale 1.
-  /// As the name implies, it's only meaningful using a perspective projection.
+  ///@return The perspective multiple. Multiply this by the projection height to
+  /// get the (view space) z position at which objects appear at a scale of 1.
+  ///@note As the name implies, it's only meaningful using a perspective projection.
   static float GetPerspectiveMultiple();
 
   ///@brief Creates a ViewRayCaster with the current view and projection
