@@ -55,6 +55,7 @@ public:
       tanHalfVerticalFov = 1.f / matrix.data[5];
     }
     m_tanHalfVerticalFov = tanHalfVerticalFov;
+    m_perspectiveMultiple = 1.f / (2.f * tanHalfVerticalFov);
 
     if (std::abs(zNear) <= kEpsilon && std::abs(zFar) <= kEpsilon)
     {
@@ -82,6 +83,7 @@ public:
     m_zNear = zNear;
     m_zFar = zFar;
     m_tanHalfVerticalFov = .0f;
+    m_perspectiveMultiple = 0.f;
     m_dirtyFlags |= PROJECTION_DIRTY;
   }
 
@@ -91,8 +93,11 @@ public:
     XR_ASSERT(Transforms, zNear < zFar);
     XR_ASSERT(Transforms, aspectRatio > .0f);
 
+    float tanHalfVerticalFov;
     ProjectionHelper::CalculatePerspective(verticalFov, aspectRatio, zNear, zFar,
-      m_projection.data, &m_tanHalfVerticalFov);
+      m_projection.data, &tanHalfVerticalFov);
+    m_tanHalfVerticalFov = tanHalfVerticalFov;
+    m_perspectiveMultiple = 1.f / (2.f * tanHalfVerticalFov);
     m_zNear = zNear;
     m_zFar = zFar;
     m_dirtyFlags |= PROJECTION_DIRTY;
@@ -207,7 +212,7 @@ public:
 
   float GetPerspectiveMultiple() const
   {
-    return m_tanHalfVerticalFov * (Gfx::GetLogicalHeight() / 2);
+    return m_perspectiveMultiple;
   }
 
   float GetZNearClippingPlane() const
@@ -256,6 +261,7 @@ private:
   float m_zNear;
   float m_zFar;
   float m_tanHalfVerticalFov;
+  float m_perspectiveMultiple;  // 1.f / (2.f * m_tanHalfVerticalFov)
 };
 
 TransformsImpl* s_impl;

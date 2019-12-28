@@ -64,9 +64,15 @@ uint8_t Image::GetBytesPerPixel() const
 }
 
 //==============================================================================
-size_t  Image::GetStride() const
+size_t Image::GetPitch() const
 {
   return m_width * m_bytesPerPixel;
+}
+
+//==============================================================================
+size_t Image::GetStride() const
+{
+  return GetPitch();
 }
 
 //==============================================================================
@@ -117,7 +123,7 @@ bool  Image::Load(FilePath const& path)
 }
 
 //==============================================================================
-bool Image::Save(FilePath path, bool overwrite)
+bool Image::Save(FilePath path, bool overwrite) const
 {
   auto ext = path.GetExt();
   bool success = ext != nullptr;

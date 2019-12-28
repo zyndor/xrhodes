@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/TexturePack.hpp"
+#include "xr/SpriteSheet.hpp"
 #include "xr/memory/BufferReader.hpp"
 #ifdef ENABLE_ASSET_BUILDING
 #include "xr/utils.hpp"
@@ -16,15 +16,15 @@
 #include "tinyxml2.h"
 #endif
 
-#define LTRACE(format) XR_TRACE(TexturePack, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(TexturePack, condition, format)
+#define LTRACE(format) XR_TRACE(SpriteSheet, format)
+#define LTRACEIF(condition, format) XR_TRACEIF(SpriteSheet, condition, format)
 
 namespace xr
 {
 
-//==============================================================================
-XR_ASSET_DEF(TexturePack, "xtpk", 3, "xtp")
+XR_ASSET_DEF(SpriteSheet, "ssht", 1, ".sprites")
 
+using ImagePathLenType = uint16_t;
 using NumSpritesType = uint32_t;
 using SpriteNameHashType = uint32_t;
 
@@ -35,7 +35,6 @@ namespace
 enum
 {
   TAG_IMAGE_PATH,
-  TAG_SHADER_PATH,
   TAG_WIDTH,
   TAG_HEIGHT,
   TAG_SPRITE,
@@ -54,7 +53,6 @@ enum
 static const char* const kTags[] =
 {
   "imagePath",
-  "shaderPath",
   "width",
   "height",
   "sprite",
@@ -70,9 +68,10 @@ static const char* const kTags[] =
   "r"
 };
 
-XR_ASSET_BUILDER_DECL(TexturePack)
 
-XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
+XR_ASSET_BUILDER_DECL(SpriteSheet)
+
+XR_ASSET_BUILDER_BUILD_SIG(SpriteSheet)
 {
   // load xml
   tinyxml2::XMLDocument doc;
@@ -87,23 +86,23 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
     LTRACEIF(!success, ("%s: no root element found.", rawNameExt));
   }
 
-  // Base texture name
-  const char* textureName = nullptr;
+  // Image path
+  const char* imagePath = nullptr;
   if (success)
   {
-    textureName = elem->Attribute(kTags[TAG_IMAGE_PATH]);
-    success = textureName != nullptr;
+    imagePath = elem->Attribute(kTags[TAG_IMAGE_PATH]);
+    success = imagePath != nullptr;
     LTRACEIF(!success, ("%s: '%s' is a required attribute.", rawNameExt,
       kTags[TAG_IMAGE_PATH]));
   }
 
   if (success)
   {
-    dependencies.push_back(textureName);
-
-    Asset::HashType hash = Asset::Manager::HashPath(dependencies.back());
-    success = WriteBinaryStream(hash, data);
-    LTRACEIF(!success, ("%s: failed to write texture hash.", rawNameExt));
+    size_t imagePathLen = strlen(imagePath);
+    XR_ASSERT(SpriteSheet, imagePathLen < std::numeric_limits<ImagePathLenType>::max());
+    success = WriteRangeBinaryStream<ImagePathLenType>(imagePath,
+      imagePath + imagePathLen, data);
+    LTRACEIF(!success, ("%s: failed to write image path.", rawNameExt));
   }
 
   // Base texture size.
@@ -129,11 +128,11 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
   NumSpritesType numSprites = 0;
   if (success)
   {
-    auto counter = elem->FirstChildElement("sprite");
+    auto counter = elem->FirstChildElement(kTags[TAG_SPRITE]);
     while (counter)
     {
       ++numSprites;
-      counter = counter->NextSiblingElement("sprite");
+      counter = counter->NextSiblingElement(kTags[TAG_SPRITE]);
     }
 
     success = WriteBinaryStream(numSprites, data);
@@ -143,12 +142,14 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
   // Sprite data
   if (success)
   {
+    SpriteSheet::SpriteVector sprites;
+    sprites.reserve(numSprites);
+
     elem = elem->FirstChildElement(kTags[TAG_SPRITE]);
 
     HardString<256> buffer;
     int x, y; // position of top left corner on sprite sheet
     int w, h; // actual size on sprite sheet. This will inform the halfSize. Needs swapping if the sprite is rotated.
-    size_t numSprites = 0;
     while (success && elem)
     {
       // Amount of translation padding left of and above sprite, or bottom and left, if sprite is rotated.
@@ -194,6 +195,13 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
           buffer.UpdateSize();
         }
 
+        SpriteNameHashType hash = Hash::String32(buffer.c_str());
+        auto iSprite = std::lower_bound(sprites.begin(), sprites.end(), hash, SpriteSheet::Entry::Compare);
+        if (iSprite == sprites.end() || iSprite->mKey != hash)
+        {
+          iSprite = sprites.insert(iSprite, SpriteSheet::Entry{ hash, Sprite{} });
+        }
+
         // Calculate UVs - convert from bitmap-space to texture-space (bottom-left based).
         // TODO: consider support for non-openGL renderers where texture-space might be top-left based.
         auto texHeightLessY = texHeight - y;
@@ -211,7 +219,7 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
           rotationAttrib[0] == 'y';
 
         // Calculate UVs and vertex positions.
-        Sprite sprite;
+        Sprite& sprite = iSprite->mSprite;
         if (isRotated)
         {
           sprite.SetUVsRotatedProportional(uvs, texHeight, texWidth);
@@ -247,14 +255,19 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
         // Calculate halfSize.
         sprite.SetHalfSize(wOrig * .5f, hOrig * .5f, false);
 
-        // Write sprite
-        SpriteNameHashType hash = Hash::String32(buffer.c_str());
-        success = WriteBinaryStream(hash, data) && WriteBinaryStream(sprite, data);
-        LTRACEIF(!success, ("%s: failed to write sprite %d.", rawNameExt,
-          numSprites));
-
         elem = elem->NextSiblingElement(kTags[TAG_SPRITE]);
         ++numSprites;
+      }
+    }
+
+    if (success)
+    {
+      for (auto& s : sprites)
+      {
+        // Write sprite
+        success = WriteBinaryStream(s, data);
+        LTRACEIF(!success, ("%s: failed to write sprite %d.", rawNameExt,
+          &s - sprites.data()));
       }
     }
   }
@@ -262,94 +275,86 @@ XR_ASSET_BUILDER_BUILD_SIG(TexturePack)
   return success;
 }
 
-}
+} // nonamespace
 #endif
 
 //==============================================================================
-Sprite* TexturePack::Get(char const* name)
-{
-  XR_ASSERT(TexturePack, name != nullptr);
-  Sprite* pSprite = Get(Hash::String32(name));
-  return pSprite;
-}
-
-//==============================================================================
-const Sprite* TexturePack::Get(char const* name) const
-{
-  XR_ASSERT(TexturePack, name != nullptr);
-  const Sprite* pSprite = Get(Hash::String32(name));
-  return pSprite;
-}
-
-//==============================================================================
-void  TexturePack::ScaleSprites(float x)
-{
-  ScaleSprites(x, x);
-}
-
-//==============================================================================
-void  TexturePack::ScaleSprites(float x, float y)
-{
-  for (SpriteMap::iterator i0(m_sprites.begin()), i1(m_sprites.end()); i0 != i1; ++i0)
-  {
-    i0->second.Scale(x, y);
-  }
-}
-
-//==============================================================================
-void TexturePack::Clear()
-{
-  m_sprites.clear();
-}
-
-//==============================================================================
-bool TexturePack::OnLoaded(Buffer buffer)
+bool SpriteSheet::OnLoaded(Buffer buffer)
 {
   BufferReader reader(buffer);
 
-  HashType textureHash;
-  bool success = reader.Read(textureHash);
-  LTRACEIF(!success, ("%s: failed to read texture id.", m_debugPath.c_str()));
-
-  if (success)
+  ImagePathLenType imagePathLen;
+  if (auto p = reader.ReadBytesWithSize(imagePathLen))
   {
-    m_texture = Manager::Find(Descriptor<Texture>(textureHash));
-    success = m_texture != nullptr;
-    LTRACEIF(!success, ("%s: failed to retrieve texture.", m_debugPath.c_str()));
-  }
-
-  NumSpritesType numSprites;
-  if (success)
-  {
-    success = reader.Read(numSprites);
-    LTRACEIF(!success, ("%s: failed to read sprite count.", m_debugPath.c_str()));
-  }
-
-  SpriteNameHashType spriteHash;
-  Sprite sprite;
-  NumSpritesType i = 0;
-  while (success && i < numSprites)
-  {
-    success = reader.Read(spriteHash) && reader.Read(sprite);
-    if (success)
+    if (imagePathLen >= FilePath::kCapacity)
     {
-      Sprite& spr = m_sprites[spriteHash];
-      spr = sprite;
-      ++i;
+      LTRACE(("%s: image path exceeds size limit.", m_debugPath.c_str()));
+      return false;
     }
     else
     {
-      LTRACE(("%s: failed to read sprite %d.", m_debugPath.c_str(), i));
+      mImagePath.assign(reinterpret_cast<char const*>(p), imagePathLen);
     }
   }
-  return success;
+
+  NumSpritesType numSprites;
+  if (!reader.Read(numSprites))
+  {
+    LTRACE(("%s: failed to read sprite count.", m_debugPath.c_str()));
+    return false;
+  }
+
+  mSprites.resize(numSprites);
+
+  auto i = mSprites.begin();
+  auto iEnd = mSprites.end();
+  while (i != iEnd)
+  {
+    if (!reader.Read(*i))
+    {
+      LTRACE(("%s: failed to read sprite %d.", m_debugPath.c_str(), i));
+      return false;
+    }
+    ++i;
+  }
+  return true;
 }
 
 //==============================================================================
-void TexturePack::OnUnload()
+void SpriteSheet::OnUnload()
 {
-  m_texture.Reset(nullptr);
-  m_sprites.clear();
+  mImagePath.clear();
+  mSprites.clear();
 }
 
-} // XR
+//==============================================================================
+FilePath const& SpriteSheet::GetImagePath() const
+{
+  return mImagePath;
+}
+
+//==============================================================================
+Sprite const& SpriteSheet::Get(char const* name) const
+{
+  return Get(Hash::String32(name));
+}
+
+//==============================================================================
+Sprite& SpriteSheet::Get(char const* name)
+{
+  return Get(Hash::String32(name));
+}
+
+//==============================================================================
+Sprite const* SpriteSheet::TryGet(char const* name) const
+{
+  return TryGet(Hash::String32(name));
+}
+
+//==============================================================================
+Sprite* SpriteSheet::TryGet(char const* name)
+{
+  return TryGet(Hash::String32(name));
+}
+
+}

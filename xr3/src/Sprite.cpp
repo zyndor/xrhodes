@@ -308,6 +308,19 @@ void Sprite::FlipY()
 }
 
 //==============================================================================
+void Sprite::RemapUVs(AABB const& whole)
+{
+  const float wWhole = whole.right - whole.left;
+  const float hWhole = whole.top - whole.bottom;
+  for (auto& v : m_vertices)
+  {
+    auto& uv = v.uv0;
+    uv.x = whole.left + uv.x * wWhole;
+    uv.y = whole.bottom + uv.y * hWhole;
+  }
+}
+
+//==============================================================================
 Mesh Sprite::CreateMesh() const
 {
   return Mesh::Create(XR_ARRAY_SIZE(m_vertices), m_vertices);

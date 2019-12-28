@@ -68,7 +68,7 @@ char* FilePath::GetNameExt()
 //==============================================================================
 char const* FilePath::GetExt() const
 {
-  auto ext = strrchr(GetNameExt(), kExtSeparator);
+  auto ext = strchr(GetNameExt(), kExtSeparator);
   if (ext)
   {
     ++ext;
@@ -79,7 +79,7 @@ char const* FilePath::GetExt() const
 //==============================================================================
 char* FilePath::GetExt()
 {
-  auto ext = strrchr(GetNameExt(), kExtSeparator);
+  auto ext = strchr(GetNameExt(), kExtSeparator);
   if (ext)
   {
     ++ext;

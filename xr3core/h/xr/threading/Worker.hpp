@@ -96,9 +96,6 @@ private:
   std::condition_variable m_suspendCV;
   bool                    m_isSuspended;
 
-  // static
-  static void ThreadFunction(Worker& worker);
-
   // internal
   void Loop();
 };

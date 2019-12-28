@@ -7,13 +7,15 @@
 //
 //==============================================================================
 #include "xr/Material.hpp"
+#include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
 #include "xr/FileWriter.hpp"
 #include "xr/xon/XonBuildTree.hpp"
-#include "xr/memory/BufferReader.hpp"
 #include "xr/io/streamutils.hpp"
 #include "xr/strings/stringutils.hpp"
 #include <algorithm>
 #include <unordered_map>
+#endif
 
 #define LTRACE(format) XR_TRACE(Material, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Material, condition, format)
@@ -48,6 +50,7 @@ const std::unordered_map<uint32_t, uint32_t> kGfxStates {
   { Hash::String32("alphaBlend"), Gfx::F_STATE_ALPHA_BLEND },
   { Hash::String32("cullBack"), Gfx::F_STATE_CULL_BACK },
   { Hash::String32("cullFront"), Gfx::F_STATE_CULL_FRONT },
+  { Hash::String32("stencilTest"), Gfx::F_STATE_STENCIL_TEST },
   { Hash::String32("wireframe"), Gfx::F_STATE_WIREFRAME }, // experimental
 };
 

@@ -8,8 +8,12 @@
 //==============================================================================
 #include "xr/ShaderComponent.hpp"
 #include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
+#include "ParseAssetOptions.hpp"
 #include "xr/io/streamutils.hpp"
 #include <map>
+#include <regex>
+#endif
 
 #define LTRACE(format) XR_TRACE(ShaderComponent, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(ShaderComponent, condition, format)
@@ -18,12 +22,27 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(ShaderComponent, "xshc", 1, "vsh;fsh")
+XR_ASSET_DEF(ShaderComponent, "xshc", 2, "vsh;fsh")
 
 namespace
 {
 
 #ifdef ENABLE_ASSET_BUILDING
+const std::regex kDefineRegex("[[:alpha:]_][[:alnum:]_]*");
+
+const std::regex kEolRegex("\\r\\n?");
+const std::string kEolReplace("\n");
+
+const std::regex kCommentsRegex(
+  "(\\/\\/.*|" // C++-style comments
+  "/\\*.*\\n(.*\\n)*.*\\*/)*"  // C-style comments
+);
+
+const std::regex kHeadingWhiteSpaceRegex("(^|\\n)\\s+");
+const std::regex kTrailingWhiteSpaceRegex("\\s+($|\\n)");
+
+const std::regex kPreprocessorRegex("^#.*\\s*");
+
 class ShaderComponentBuilder : public Asset::Builder
 {
 public:
@@ -37,16 +56,63 @@ public:
   bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
-    auto ext = strrchr(rawNameExt, '.');
+    const auto definesBlock = [rawNameExt](){
+      std::ostringstream stream;
+      ParseAssetOptions(rawNameExt, [rawNameExt, &stream](char const* option) {
+        bool result = std::regex_match(option, kDefineRegex);
+        if (result)
+        {
+          stream << "#define " << option << std::endl;
+        }
+        else
+        {
+          LTRACE(("%s: invalid option '%s'", rawNameExt, option));
+        }
+        return result;
+      });
+      return stream.str();
+    }();
+
+    auto ext = strchr(rawNameExt, '.');
     XR_ASSERT(ShaderComponent, ext);
     ++ext;
 
-    auto iFind = m_types.find(Hash::String32(ext));
+    auto extHash = Hash::String32(ext, strcspn(ext, Asset::kOptionDelimiter));
+    auto iFind = m_types.find(extHash);
     XR_ASSERT(ShaderComponent, iFind != m_types.end());
+
+    // Remove comments and whitespace bloat from source.
+    std::string source(buffer.As<char const>(), buffer.size);
+    source = std::regex_replace(source, kEolRegex, kEolReplace);
+    source = std::regex_replace(source, kCommentsRegex, "");
+    source = std::regex_replace(source, kHeadingWhiteSpaceRegex, "$1");
+    source = std::regex_replace(source, kTrailingWhiteSpaceRegex, "$1");
+
+    // Add defines
+    if (!definesBlock.empty())
+    {
+      std::ostringstream stream;
+      std::cmatch preprocResults;
+      char const* p = source.c_str();
+      while (std::regex_search(p, preprocResults, kPreprocessorRegex) &&
+        preprocResults[0].first == p)
+      {
+        auto pNew = preprocResults[0].second;
+        while (p != pNew)
+        {
+          stream.put(*p);
+          ++p;
+        }
+      }
+
+      stream << definesBlock;
+      stream << p;
+      source = stream.str();
+    }
 
     // TODO: support includes
     return WriteBinaryStream(iFind->second, data) &&
-      data.write(buffer.As<char const>(), buffer.size);
+      data.write(source.c_str(), source.size());
   }
 
 private:

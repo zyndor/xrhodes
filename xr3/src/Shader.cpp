@@ -7,9 +7,13 @@
 //
 //==============================================================================
 #include "xr/Shader.hpp"
-#include "xr/xon/XonBuildTree.hpp"
 #include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
+#include "ParseAssetOptions.hpp"
+#include "xr/xon/XonBuildTree.hpp"
 #include "xr/io/streamutils.hpp"
+#include <set>
+#endif
 
 #define LTRACE(format) XR_TRACE(Shader, format)
 #define LTRACEIF(condition, format) XR_TRACEIF(Shader, condition, format)
@@ -18,7 +22,7 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(Shader, "xshd", 1, "shd")
+XR_ASSET_DEF(Shader, "xshd", 2, "shd")
 
 namespace {
 
@@ -33,6 +37,27 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
       fsh: "path/to/vertex_shader", # fsh extension is optional
     }
   */
+  // Get a string with all the options.
+  auto options = [rawNameExt]() {
+    std::set<std::string> options;
+    ParseAssetOptions(rawNameExt, [rawNameExt, &options](char const* option) {
+      if (!options.insert(option).second)
+      {
+        LTRACE(("%s: ignored repeated instance of option '%s'.",
+          rawNameExt, option));
+      }
+      return true;
+    });
+
+    std::ostringstream strOptions;
+    for (auto& o : options)
+    {
+      strOptions << Asset::kOptionDelimiter << o;
+    }
+
+    return strOptions.str();
+  }();
+
   XonParser::State state;
   std::unique_ptr<XonObject>  root(XonBuildTree(buffer.As<char const>(), buffer.size, &state));
   bool success = root != nullptr;
@@ -50,6 +75,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
       {
         vertexEntry += ".vsh";
       }
+      vertexEntry += options.c_str();
       dependencies.push_back(vertexEntry);
 
       Asset::HashType hash = Asset::Manager::HashPath(vertexEntry);
@@ -74,6 +100,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
       {
         fragmentEntry += ".fsh";
       }
+      fragmentEntry += options.c_str();
       dependencies.push_back(fragmentEntry);
 
       Asset::HashType hash = Asset::Manager::HashPath(fragmentEntry);

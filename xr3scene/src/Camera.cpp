@@ -32,10 +32,10 @@ Camera* Camera::Clone() const
   pClone->m_isPerspective = m_isPerspective;
   pClone->m_zNear = m_zNear;
   pClone->m_zFar = m_zFar;
-  pClone->m_orthoSize = m_orthoSize;
   pClone->m_aspectRatio = m_aspectRatio;
   pClone->m_verticalFovRadians = m_verticalFovRadians;
   pClone->m_tanHalfVerticalFov = m_tanHalfVerticalFov;
+  pClone->m_perspectiveMultiple = m_perspectiveMultiple;
   return pClone;
 }
 
@@ -50,13 +50,13 @@ void Camera::SetPerspective(float verticalFovRadians, float aspectRatio,
   m_isPerspective = true;
   m_zNear = zNear;
   m_zFar = zFar;
-  //m_orthoSize not set
-  m_aspectRatio = aspectRatio;
-  m_activeSize = 1.0f;
   m_verticalFovRadians = verticalFovRadians;
 
+  float tanHalfVerticalFov;
   ProjectionHelper::CalculatePerspective(verticalFovRadians, aspectRatio,
-    m_zNear, m_zFar, m_projection.data, &m_tanHalfVerticalFov);
+    m_zNear, m_zFar, m_projection.data, &tanHalfVerticalFov);
+  m_tanHalfVerticalFov = tanHalfVerticalFov;
+  m_perspectiveMultiple = 1.f / (2.f * tanHalfVerticalFov);
 }
 
 //==============================================================================
@@ -67,13 +67,13 @@ void Camera::SetOrthographic(float width, float height, float zNear, float zFar)
   m_isPerspective = false;
   m_zNear = zNear;
   m_zFar = zFar;
-  m_orthoSize = height;
   m_aspectRatio = width / height;
-  m_activeSize = height;
-  //m_verticalFovRadians not set
+  m_verticalFovRadians = 0.f;
 
   ProjectionHelper::CalculateOrthographic(width, height, zNear, zFar,
     m_projection.data);
+  m_tanHalfVerticalFov = 0.f;
+  m_perspectiveMultiple = 0.f;
 }
 
 //==============================================================================
@@ -124,7 +124,7 @@ void Camera::Apply()
 //==============================================================================
 float Camera::GetPerspectiveMultiple() const
 {
-  return m_activeSize * .5f * m_tanHalfVerticalFov;
+  return m_perspectiveMultiple;
 }
 
 }

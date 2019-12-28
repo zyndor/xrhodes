@@ -49,11 +49,20 @@ public:
   ///@return The world space transform of its owner.
   Matrix  GetViewerTransform() const;
 
+  ///@return The position of the near clipping plane.
   float GetNearZ() const;
+
+  ///@return The position of the far clipping plane.
   float GetFarZ() const;
+
+  ///@return The perspective multiple, which, multiplied by the height of the projection
+  /// will yield the view space z position at which objects appear at scale 1.0.
+  ///@note The camera must be set up for perspective projection.
   float GetPerspectiveMultiple() const;
 
   ///@brief Alters the size of the projection.
+  ///@note The field of view is retained (which should only matter for perspective
+  /// projection).
   ///@note The default is perspective projection.
   void  Reshape(float width, float height);
 
@@ -72,11 +81,10 @@ protected:
   bool  m_isPerspective;
   float m_zNear;  // depth of the near clipping plane
   float m_zFar; // depth of the far clipping plane
-  float m_orthoSize;  // width of the projection, if orthographic;
-  float m_activeSize; // height of the current projection (if not ortho, this is 1.0);
   float m_aspectRatio;  // ratio of width to height; width = activeSize * aspectRatio;
   float m_verticalFovRadians; // vertical field of view in radians;
   float m_tanHalfVerticalFov; // tangent of the half vertical field of view;
+  float m_perspectiveMultiple;
 
   Matrix4 m_projection;
 };

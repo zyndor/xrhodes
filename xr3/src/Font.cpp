@@ -6,16 +6,14 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#ifdef ENABLE_ASSET_BUILDING
-#include "SdfBuilder.hpp"
-#endif
-
 #include "IsSpaceUtf8.hpp"
 #include "xr/TextureCache.hpp"
-#include "xr/xon/XonBuildTree.hpp"
-#include "xr/FileBuffer.hpp"
 #include "xr/Font.hpp"
 #include "xr/memory/BufferReader.hpp"
+#ifdef ENABLE_ASSET_BUILDING
+#include "SdfBuilder.hpp"
+#include "xr/xon/XonBuildTree.hpp"
+#include "xr/FileBuffer.hpp"
 #include "xr/io/streamutils.hpp"
 #include "xr/strings/stringutils.hpp"
 #include "xr/utils.hpp"
@@ -26,6 +24,7 @@
 #include <list>
 #include <regex>
 #include <locale>
+#endif
 
 //#define ENABLE_GLYPH_DEBUG
 

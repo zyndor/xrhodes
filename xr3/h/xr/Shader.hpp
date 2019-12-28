@@ -17,11 +17,16 @@ namespace xr
 {
 
 //==============================================================================
-///@brief Provides a shader pipeline complete with vertex and fragment shaders,
+///@brief Provides a shader pipeline, complete with vertex and fragment shaders,
 /// creatable from a .shd file, which is a XON document with support for the
 /// following properties:
-/// vsh: path to the vertex shader definition; required.
-/// fsh: path to the fragment shader definition; required.
+/// vsh: path to the vertex shader definition (*.vsh may be omitted); required.
+/// fsh: path to the fragment shader definition (*.fsh may be omitted); required.
+///@note Asset options may be supplied (when loading directly or referencing from
+/// another asset) to be forwarded to all shader components e.g.
+/// terrain.shd$DEFERRED$ALPHA_TEST (the meaning of these defines dopends on your
+/// shader implementation). Please refer to the documentation of/ ShaderComponent
+/// for further details.
 class Shader: public Asset
 {
 public:

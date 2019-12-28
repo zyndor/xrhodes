@@ -8,21 +8,14 @@
 //==============================================================================
 #include "xr/debug.hpp"
 #include "xr/threading/Worker.hpp"
-#include "xr/types/RefHolder.hpp"
 
 namespace xr
 {
 
 //==============================================================================
-void Worker::ThreadFunction(Worker& worker)
-{
-  worker.Loop();
-}
-
-//==============================================================================
 Worker::Worker()
 : m_finishing(false),
-  m_thread(std::thread(ThreadFunction, MakeRefHolder(*this))),
+  m_thread(std::thread(&Worker::Loop, this)),
   m_isSuspended(false)
 {}
 
