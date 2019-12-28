@@ -1,8 +1,31 @@
+v1.7.0
+- fix: xr::FilePath::GetExt() is looking for the first, rather than the last
+  occurrence of the '.';
+- fix: ShaderBuilder uses the first rather than the last '.' to determine the
+  extension;
+- fix: eliminated out of bounds access in shader compilation error reporting
+  from GfxCore;
+- fix: xr::Image::Save() is now a const method;
+- fix: fixed the calculation of the perspective multiple in xr::Transforms and
+  xr::Camera, also decoupling it resolution reported by Gfx;
+- added support to asset options that are appended to the file path (i.e. after
+  the extension) rather than to the file name;
+- added support for configuring shader #defines using asset options, in
+  xr::Shader and xr::ShaderComponent;
+- ShaderBuilder removes comments and whitespace bloat from shader source;
+- shader compilation error reporting outputs line numbers;
+- added xr::ScratchBuffer::Handles and Bake();
+- added xr::SpriteSheet;
+- added xr::Collage, for the runtime building of sprite sheets;
+- added xr::Sprite::RemapUVs();
+- added xr::Sprite;:GetPitch(), which supersedes GetStride();
+- added an xr::MakeCallback() overload for free standing functions;
+- added support for enabling stencil test from material assets;
+
 v1.6.3
 - fixed array uniform registrations not being found;
 - changed xr::XonObject::GetKeys() to a const method;
 - added an xr::MakeCallback() overload for const methods;
-- added operator() to xr::Callback<>s();
 - added unit tests for xr::Animator and cleaned up the class;
 
 v1.6.2
