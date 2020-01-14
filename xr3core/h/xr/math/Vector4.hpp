@@ -35,25 +35,25 @@ public:
 
   // static
   ///@return Vector4 packed from up to two Vector2s.
-  static Vector4 From(Vector2 const& v, Vector2 const& v2 = Vector2::Zero())
+  static constexpr Vector4 From(Vector2 const& v, Vector2 const& v2 = Vector2::Zero())
   {
     return Vector4(v.x, v.y, v2.x, v2.y);
   }
 
   ///@return Vector4 packed from a Vector3 and an optional scalar.
-  static Vector4 From(Vector3 const& v, float s = 0.f)
+  static constexpr Vector4 From(Vector3 const& v, float s = 0.f)
   {
     return Vector4(v.x, v.y, v.z, s);
   }
 
   ///@return Vector4 packed from a scalar and an optional Vector3.
-  static Vector4 From(float s, Vector3 const& v = Vector3::Zero())
+  static constexpr Vector4 From(float s, Vector3 const& v = Vector3::Zero())
   {
     return Vector4(s, v.x, v.y, v.z);
   }
 
   ///@return Quaternion as a Vector4.
-  static Vector4 From(Quaternion const& q)
+  static constexpr Vector4 From(Quaternion const& q)
   {
     return Vector4(q.i, q.j, q.k, q.w);
   }
@@ -73,7 +73,7 @@ public:
   };
 
   // structors
-  Vector4(float x_ = 0.f, float y_ = 0.f, float z_ = 0.f, float w_ = 0.f)
+  constexpr Vector4(float x_ = 0.f, float y_ = 0.f, float z_ = 0.f, float w_ = 0.f)
   : x{ x_ },
     y{ y_ },
     z{ z_ },
