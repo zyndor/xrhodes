@@ -436,7 +436,10 @@ const std::unordered_map<std::string, FormatHandler> kFormatHandlers{
 
 XR_ASSET_BUILDER_BUILD_SIG(Texture)
 {
-  std::string extension = FilePath(rawNameExt).GetExt();
+  std::string extension = [](char const* nameExt) {
+    auto ext = FilePath(nameExt).GetExt();
+    return std::string(ext, strcspn(ext, Asset::kOptionDelimiter));
+  }(rawNameExt);
   auto iFind = kFormatHandlers.find(extension.c_str());
   XR_ASSERT(Texture, iFind != kFormatHandlers.end());
   return iFind->second(rawNameExt, buffer, dependencies, data);
