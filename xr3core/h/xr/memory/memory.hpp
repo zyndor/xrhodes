@@ -73,7 +73,7 @@ T Align(T value, T alignment)
   XR_ASSERT(Align, alignment > 0);
   const T alignmentLess1 = alignment - 1;
   XR_ASSERT(Align, (alignment & alignmentLess1) == 0);
-  return value + alignment - (value & alignmentLess1);
+  return (value + alignmentLess1) & ~alignmentLess1;
 }
 
 } // xr
