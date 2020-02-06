@@ -12,6 +12,7 @@
 #include "xr/io/streamutils.hpp"
 #ifdef ENABLE_ASSET_BUILDING
 #include "ParseAssetOptions.hpp"
+#include "Ktx.hpp"
 #include "xr/Image.hpp"
 #include "xr/FileWriter.hpp"
 #include "xr/strings/ParserCore.hpp"
@@ -26,7 +27,7 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(Texture, "xtex", 4, "png;tga;tex"/*";ktx"*/)
+XR_ASSET_DEF(Texture, "xtex", 4, "png;tga;ktx;tex")
 
 //==============================================================================
 namespace {
@@ -83,12 +84,10 @@ const std::unordered_map<std::string, size_t> kCubeFaces{
   { "-z", 5 }
 };
 
-bool  ProcessImage(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data)
+Gfx::FlagType ParseTextureOptions(char const* nameExt)
 {
-  // parse filename for flags e.g. &wrap&mipmap.
   Gfx::FlagType createFlags = Gfx::F_TEXTURE_NONE;
-  ParseAssetOptions(rawNameExt, [rawNameExt, &createFlags](const char* option) {
+  ParseAssetOptions(nameExt, [nameExt, &createFlags](const char* option) {
     auto iFind = kFlags.find(option);
     bool result = iFind != kFlags.end();
     if (result)
@@ -97,10 +96,17 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
     }
     else
     {
-      LTRACE(("%s: Unsupported option: %s.", rawNameExt, option));
+      LTRACE(("%s: Unsupported option '%s' ignored.", nameExt, option));
     }
     return result;
   });
+  return createFlags;
+}
+
+bool  ProcessImage(const char* rawNameExt, Buffer buffer,
+  std::vector<FilePath>& dependencies, std::ostream& data)
+{
+  Gfx::FlagType createFlags = ParseTextureOptions(rawNameExt);
 
   // parse image
   Image img;
@@ -138,6 +144,36 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
     static_cast<TextureSize>(img.GetHeight()), createFlags, 1 };
   Buffer pixelBuffer { img.GetPixelDataSize(), img.GetPixelData() };
   if (!SerializeTexture(header, &pixelBuffer, data))
+  {
+    LTRACE(("%s: failed to serialize texture.", rawNameExt));
+    return false;
+  }
+  return true;
+}
+
+bool ProcessKtx(const char* rawNameExt, Buffer buffer,
+  std::vector<FilePath>& dependencies, std::ostream& data)
+{
+  Gfx::FlagType createFlags = ParseTextureOptions(rawNameExt);
+
+  Ktx ktx;
+  if (!ktx.Parse(buffer.size, buffer.data))
+  {
+    LTRACE(("%s: failed to parse image data.", rawNameExt));
+    return false;
+  }
+
+  createFlags |= Gfx::F_TEXTURE_CUBE * (ktx.mFaceCount > 1);
+  createFlags |= Gfx::F_TEXTURE_MIPMAP * (ktx.mMipLevelCount > 1);
+  TextureHeader header
+  {
+    ktx.mFormat,
+    ktx.mWidthPx,
+    ktx.mHeightPx,
+    createFlags,
+    static_cast<uint32_t>(ktx.mImages.size())
+  };
+  if (!SerializeTexture(header, ktx.mImages.data(), data))
   {
     LTRACE(("%s: failed to serialize texture.", rawNameExt));
     return false;
@@ -431,6 +467,7 @@ bool  ProcessTex(const char* rawNameExt, Buffer buffer,
 const std::unordered_map<std::string, FormatHandler> kFormatHandlers{
   { "png", ProcessImage },
   { "tga", ProcessImage },
+  { "ktx", ProcessKtx },
   { "tex", ProcessTex },
 };
 
