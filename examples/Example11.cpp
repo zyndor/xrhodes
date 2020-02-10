@@ -25,11 +25,11 @@ using namespace xr;
 namespace
 {
 
-class Example10 : public Example
+class Example11 : public Example
 {
 public:
-  Example10()
-  : Example("10 - Cubemap")
+  Example11()
+  : Example("11 - Image Based Lighting")
   {}
 
   virtual void Init() override
@@ -37,6 +37,13 @@ public:
     Gfx::Init(Device::GetGfxContext());
     Asset::Manager::Init(".assets");
     Transforms::Init();
+
+    // Create uniforms required for IBL - maximum level of detail and rotation of environment.
+    m_uMaxLod = Gfx::CreateUniform("uMaxLod", Gfx::UniformType::Vec4);
+    Vector4 maxLod(6.f);
+    Gfx::SetUniform(m_uMaxLod, maxLod.data);
+
+    m_uEnvRotation = Gfx::CreateUniform("uEnvRotation", Gfx::UniformType::Vec4);
 
     using VertexType = Vertex::Format<Vertex::Pos<>>;
 
@@ -86,13 +93,17 @@ public:
 
     Texture::RegisterSamplerUniform("uTexture0", 0);
 
+    // Register additional samplers for IBL.
+    Texture::RegisterSamplerUniform("uIrradiance", 1);
+    Texture::RegisterSamplerUniform("uRadiance", 2);
+
     m_skyboxShader = Asset::Manager::Load<Shader>("skybox.shd");
     m_assetQueue.Add(m_skyboxShader);
 
     m_cubemap = Asset::Manager::Load<Texture>("skybox.tex");
     m_assetQueue.Add(m_cubemap);
 
-    m_objectsMaterial = Asset::Manager::Load<Material>("example06.mtl");
+    m_objectsMaterial = Asset::Manager::Load<Material>("example11.mtl");
     m_assetQueue.Add(m_objectsMaterial);
 
     CreateObjects();
@@ -133,10 +144,15 @@ public:
       return;
     }
 
-    // Clear depth buffer only - the skybox will fill the screen anyway.
     Gfx::Clear(Gfx::F_CLEAR_DEPTH);
 
-    // draw objects
+    // Calculate environment rotation and update IBL uniform.
+    auto q = Quaternion::FromAxisAngle(Vector3::UnitY(), kPi);
+    auto rotation = m_rotation;
+    rotation.Conjugate();
+    rotation *= q;
+    Gfx::SetUniform(m_uEnvRotation, rotation.data);
+
     {
       XR_TRANSFORMS_SCOPED_MODEL(Matrix(m_rotation, Vector3::UnitZ() * -20.f));
 
@@ -178,11 +194,17 @@ public:
     m_cubemap.Reset(nullptr);
     m_skyboxShader.Reset(nullptr);
 
+    Gfx::Release(m_uMaxLod);
+    Gfx::Release(m_uEnvRotation);
+
     Asset::Manager::Shutdown();
     Gfx::Shutdown();
   }
 
 private:
+  Gfx::UniformHandle  m_uEnvRotation;
+  Gfx::UniformHandle  m_uMaxLod;
+
   AssetQueue m_assetQueue;
 
   DragController m_dragControl;
@@ -199,6 +221,8 @@ private:
 
   void CreateObjects()
   {
+    // N.B. that there are no normals and tangents in the vertex format --
+    // we're going to calculate them on the fly.
     using VertexType = Vertex::Format<Vertex::Pos<>, Vertex::UV0<>, Vertex::Color0<Color>>;
     VertexType vertices[] = {
       VertexType(Vector3::UnitY() * .8f, Vector2(.5f, .5f), Color(1.f, 1.f, 1.f, 0.f)), // CT
@@ -214,38 +238,47 @@ private:
       VertexType(Vector3::UnitY() * -.8f, Vector2(.5f, .5f), Color(0.f, 0.f, 0.f, 0.f)), // CB
     };
 
+    // We're just going to rotate the mesh data so the instances face us as
+    // the rotation has been removed from the instance data for this example.
+    for (auto& v : vertices)
+    {
+      Quaternion::FromAxisAngle(Vector3::UnitX(), kPi * .5f).RotateVec(v.pos);
+    }
+
     std::vector<uint16_t> indices{ 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1,
       9, 8, 7, 9, 7, 6, 9, 6, 5, 9, 5, 8 };
 
     m_objectMesh = IndexMesh::Create(XR_ARRAY_SIZE(vertices), vertices, indices.size(), indices.data());
 
-    m_numInstances = 32;
+    // Create 5 x 5 grid of objects with roughness and metalness going from
+    // 0 to 1 along the x and y axes, respectively.
+    const decltype(m_numInstances) instances = 5;
+    m_numInstances = instances * instances;
     struct InstanceData
     {
       Vector3 pos;
       float scale;
-      Quaternion rotation;
+      Vector4 metalnessRoughness;
     };
     std::vector<InstanceData> instanceData;
     instanceData.reserve(m_numInstances);
 
-    float inc = kPi * (3.f - std::sqrt(5.f));
-    float off = 2.f / instanceData.capacity();
+    float spacing = 4.f;
+    float offset = spacing * (instances - 1) * -.5f;
     InstanceData id;
-    for (size_t i = 0; i < m_numInstances; ++i)
+    id.scale = 1.5f;
+    id.pos = { offset, -offset, 0.f };
+    for (int y = 0; y < instances; ++y)
     {
-      id.pos.y = i * off - 1.f + off * .5f;
-      float r = std::sqrt(1.f - id.pos.y * id.pos.y);
-      float phi = i * inc;
-      id.pos.x = std::cos(phi) * r;
-      id.pos.z = std::sin(phi) * r;
-      id.pos.Normalise();
-
-      id.rotation = Quaternion::FromPositions(Vector3::UnitY(), id.pos);
-      id.pos *= 8.f;
-      id.scale = 1.f;
-
-      instanceData.push_back(id);
+      id.metalnessRoughness.x = y / float(instances - 1);
+      for (int x = 0; x < instances; ++x)
+      {
+        id.metalnessRoughness.y = x / float(instances - 1);
+        instanceData.push_back(id);
+        id.pos.x += spacing;
+      }
+      id.pos.x = offset;
+      id.pos.y -= spacing;
     }
 
     m_hInstanceData = Gfx::CreateInstanceDataBuffer({ instanceData.size() * sizeof(InstanceData), reinterpret_cast<uint8_t*>(instanceData.data()) }, sizeof(InstanceData));

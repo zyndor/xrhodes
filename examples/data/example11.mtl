@@ -1,0 +1,15 @@
+{
+	shader: "example11.shd",
+	textures: {
+		0: "xrhodes.png",
+		
+		# The following images derive from the work of Emil Persson, aka Humus.
+		# http://www.humus.name
+		#
+		# This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+		# http://creativecommons.org/licenses/by/3.0/
+		1: "lycksele-irr.ktx",
+		2: "lycksele-rad.ktx"
+	},
+	state: { depthTest, depthWrite, cullBack }
+}
