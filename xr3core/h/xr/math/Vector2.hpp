@@ -141,6 +141,28 @@ public:
     return Vector2(cosf(x) * y, sinf(x) * y);
   }
 
+  ///@brief Applies the function @a fn, to pairs of @a value (which is updated
+  /// from each execution of @a fn), and each component of this, in this order.
+  ///@return The result of performing @a fn with each component and @a value.
+  float ComponentWise(float(*fn)(float, float), float value) const
+  {
+    for (auto f : data)
+    {
+      value = fn(value, f);
+    }
+    return value;
+  }
+
+  ///@brief Applies the function @a fn to each component of this, reassigning
+  /// the result to the component.
+  void ComponentWise(float(*fn)(float))
+  {
+    for (auto& f : data)
+    {
+      f = fn(f);
+    }
+  }
+
   // operators
   Vector2& operator +=(Vector2 const& rhs)
   {
