@@ -112,10 +112,10 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
 
   const uint32_t kMaxWidth = std::numeric_limits<TextureSize>::max();
   const uint32_t kMaxHeight = std::numeric_limits<TextureSize>::max();
-  if (!(img.GetWidth() <= kMaxWidth && img.GetWidth() <= kMaxHeight))
+  if (!(img.GetWidth() <= kMaxWidth && img.GetHeight() <= kMaxHeight))
   {
     LTRACE(("%s: image dimension excessive: %u x %u; 16bits maximum.",
-      img.GetWidth(), img.GetHeight()));
+      rawNameExt, img.GetWidth(), img.GetHeight()));
     return false;
   }
 
@@ -391,10 +391,10 @@ bool  ProcessTex(const char* rawNameExt, Buffer buffer,
     {
       const auto kMaxWidth = std::numeric_limits<TextureSize>::max();
       const auto kMaxHeight = std::numeric_limits<TextureSize>::max();
-      if (image.GetWidth() > kMaxWidth || image.GetWidth() > kMaxHeight)
+      if (image.GetWidth() > kMaxWidth || image.GetHeight() > kMaxHeight)
       {
         LTRACE(("%s: image dimension excessive: %u x %u; 16bits maximum.",
-          image.GetWidth(), image.GetHeight()));
+          rawNameExt, image.GetWidth(), image.GetHeight()));
         return false;
       }
     }
