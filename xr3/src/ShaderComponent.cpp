@@ -34,8 +34,8 @@ const std::regex kEolRegex("\\r\\n?");
 const std::string kEolReplace("\n");
 
 const std::regex kCommentsRegex(
-  "(\\/\\/.*|" // C++-style comments
-  "/\\*.*\\n(.*\\n)*.*\\*/)*"  // C-style comments
+  "(//.*|" // C++-style comments
+  "/\\*.*\\n(.*\\n)*.*\\*/)+"  // C-style comments
 );
 
 const std::regex kHeadingWhiteSpaceRegex("(^|\\n)\\s+");

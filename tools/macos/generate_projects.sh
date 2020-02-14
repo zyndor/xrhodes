@@ -8,4 +8,6 @@
 #
 #===============================================================================
 # Generates xcode4 projects for macOS.
-./premake5 --target=macos xcode4 --file=../../premake5.lua
+SCRIPT_DIR=$(dirname $0)
+
+$SCRIPT_DIR/premake5 --target=macos xcode4 --file=$SCRIPT_DIR/../../premake5.lua

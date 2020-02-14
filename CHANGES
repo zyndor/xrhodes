@@ -1,3 +1,15 @@
+v1.7.1
+- fix: TextureBuilder can locate the file extension even when asset options were
+  supplied;
+- fix: ShaderBuilder no longer obliterates the entire source when replacing
+  comments on MacOS - more than 0 instances of the comment sub-expression must
+  be found for a match;
+- fix: xr::Align<>() no longer increases the value if it's already aligned;
+- fix: TextureBuilder size checks no longer ignore height; added missing first
+  string argument for LTRACE() in error messages;
+- the MacOS version of generate_projects.sh may now be successfully invoked from
+  outside of its directory;
+
 v1.7.0
 - fix: xr::FilePath::GetExt() is looking for the first, rather than the last
   occurrence of the '.';
