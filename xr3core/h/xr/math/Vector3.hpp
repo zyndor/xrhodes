@@ -282,6 +282,18 @@ public:
   }
 };
 
+inline
+Vector3 operator *(float lhs, Vector3 const& rhs)
+{
+  return rhs * lhs;
+}
+
+inline
+Vector3 operator /(float lhs, Vector3 const& rhs)
+{
+  return Vector3(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
+}
+
 }
 
 #define XR_TRACE_VECTOR3(chnl, vector)\

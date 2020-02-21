@@ -224,6 +224,18 @@ public:
   }
 };
 
+inline
+Vector4 operator *(float lhs, Vector4 const& rhs)
+{
+  return rhs * lhs;
+}
+
+inline
+Vector4 operator /(float lhs, Vector4 const& rhs)
+{
+  return Vector4(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z, lhs / rhs.w);
+}
+
 }
 
 #endif //XR_VECTOR4_HPP
