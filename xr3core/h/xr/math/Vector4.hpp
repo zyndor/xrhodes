@@ -141,7 +141,7 @@ public:
     return *this;
   }
 
-  Vector4 operator+(Vector4 const& v)
+  Vector4 operator+(Vector4 const& v) const
   {
     Vector4 tmp(*this);
     return tmp += v;
@@ -158,7 +158,7 @@ public:
     return *this;
   }
 
-  Vector4 operator-(Vector4 const& v)
+  Vector4 operator-(Vector4 const& v) const
   {
     Vector4 tmp(*this);
     return tmp -= v;
@@ -173,7 +173,7 @@ public:
     return *this;
   }
 
-  Vector4 operator*(float s)
+  Vector4 operator*(float s) const
   {
     Vector4 tmp(*this);
     return tmp *= s;
@@ -190,7 +190,7 @@ public:
     return *this;
   }
 
-  Vector4 operator/(float s)
+  Vector4 operator/(float s) const
   {
     Vector4 tmp(*this);
     return tmp /= s;
