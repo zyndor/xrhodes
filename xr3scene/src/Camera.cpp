@@ -96,6 +96,18 @@ float Camera::GetFarZ() const
 }
 
 //==============================================================================
+float Camera::GetPerspectiveMultiple() const
+{
+  return m_perspectiveMultiple;
+}
+
+//==============================================================================
+Matrix4 const& Camera::GetProjectionMatrix() const
+{
+  return m_projection;
+}
+
+//==============================================================================
 void Camera::Reshape(float width, float height)
 {
   if(m_isPerspective)
@@ -120,12 +132,6 @@ void Camera::Apply()
 {
   Transforms::Updater().SetViewerTransform(GetViewerTransform()).
     SetProjection(m_projection, m_zNear, m_zFar, m_tanHalfVerticalFov);
-}
-
-//==============================================================================
-float Camera::GetPerspectiveMultiple() const
-{
-  return m_perspectiveMultiple;
 }
 
 }
