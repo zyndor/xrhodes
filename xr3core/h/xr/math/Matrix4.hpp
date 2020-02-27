@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "Matrix.hpp"
-#include "xr/math/Vector3.hpp"
+#include "xr/math/Vector4.hpp"
 
 namespace xr
 {
@@ -158,6 +158,19 @@ public:
     m.t.z = data[14];
   }
 };
+
+///@brief Multiplies the Vector4 @a v by the Matrix4 @a m. This means pre-multiplication
+/// (v * m) for a column vector/-major matrix or post-multiplication (m * v) for
+/// a row vector/-major matrix.
+///@return The result of the operation.
+inline
+Vector4 operator*(Matrix4 const& m, Vector4 const& v)
+{
+  return Vector4(Vector4(m.data[0], m.data[4], m.data[8], m.data[12]).Dot(v),
+    Vector4(m.data[1], m.data[5], m.data[9], m.data[13]).Dot(v),
+    Vector4(m.data[2], m.data[6], m.data[10], m.data[14]).Dot(v),
+    Vector4(m.data[3], m.data[7], m.data[11], m.data[15]).Dot(v));
+}
 
 } // XR
 
