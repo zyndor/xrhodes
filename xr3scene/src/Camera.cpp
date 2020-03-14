@@ -50,6 +50,7 @@ void Camera::SetPerspective(float verticalFovRadians, float aspectRatio,
   m_isPerspective = true;
   m_zNear = zNear;
   m_zFar = zFar;
+  m_aspectRatio = aspectRatio;
   m_verticalFovRadians = verticalFovRadians;
 
   float tanHalfVerticalFov;
