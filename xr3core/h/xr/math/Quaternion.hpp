@@ -35,7 +35,7 @@ class Quaternion
 public:
   // static
   inline
-  static Quaternion Identity()
+  static constexpr Quaternion Identity()
   {
     return Quaternion(0.f, 0.f, 0.f, 1.f);
   }
@@ -194,16 +194,15 @@ public:
   };
 
   // structors
-  Quaternion()
+  constexpr Quaternion()
   : Quaternion(0.f, 0.f, 0.f, 1.f)
   {}
 
-  explicit Quaternion(const float data_[kNumQuaternionInds])
-  {
-    memcpy(data, data_, sizeof(data));
-  }
+  explicit constexpr Quaternion(const float data[kNumQuaternionInds])
+  : i{ data[QI] }, j{ data[QJ] }, k{ data[QK] }, w{ data[QW] }
+  {}
 
-  Quaternion(float i_, float j_, float k_, float w_)
+  constexpr Quaternion(float i_, float j_, float k_, float w_)
   : i{ i_ },
     j{ j_ },
     k{ k_ },

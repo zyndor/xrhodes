@@ -30,25 +30,25 @@ public:
 
   // static
   inline
-  static Vector2  Zero()
+  static constexpr Vector2  Zero()
   {
     return Vector2(0.f, 0.f);
   }
 
   inline
-  static Vector2  One()
+  static constexpr Vector2  One()
   {
     return Vector2(1.f, 1.f);
   }
 
   inline
-  static Vector2  UnitX()
+  static constexpr Vector2  UnitX()
   {
     return Vector2(1.f, 0.f);
   }
 
   inline
-  static Vector2  UnitY()
+  static constexpr Vector2  UnitY()
   {
     return Vector2(0.f, 1.f);
   }
@@ -64,16 +64,17 @@ public:
   };
 
   // structors
-  Vector2()
-  : Vector2(0.f, 0.f)
+  constexpr Vector2()
+  : x{ 0.f },
+    y{ 0.f }
   {}
 
-  Vector2(float x_, float y_)
+  constexpr Vector2(float x_, float y_)
   : x{ x_ },
     y{ y_ }
   {}
 
-  explicit Vector2(const float data_[kNumComponents])
+  constexpr explicit Vector2(float const data_[kNumComponents])
   : x{ data_[X] },
     y{ data_[Y] }
   {}

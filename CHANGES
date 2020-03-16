@@ -1,3 +1,10 @@
+v1.7.2
+- fix: Vector4's non-compound arithmetic operators are const;
+- fix: single-line C-style comments are handled correctly by ShaderComponentBuilder;
+- fix: xr::Camera::SetPerspective() stores the aspect ratio;
+- Constructors of vector types have changed to constexpr (where possible) and so
+  did the static methods returning unit / zero / etc. vectors;
+
 v1.7.1
 - fix: TextureBuilder can locate the file extension even when asset options were
   supplied;

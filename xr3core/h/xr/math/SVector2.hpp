@@ -22,7 +22,7 @@ class SVector2
 public:
   // static
   inline
-  static SVector2  Zero()
+  static constexpr SVector2  Zero()
   {
     return SVector2(0, 0);
   }
@@ -38,17 +38,18 @@ public:
   };
 
   // structors
-  SVector2()
-  : x(0), y(0)
+  constexpr SVector2()
+  : SVector2{ 0, 0 }
   {}
 
-  SVector2(int16_t x_, int16_t y_)
-  : x(x_), y(y_)
+  constexpr SVector2(int16_t x_, int16_t y_)
+  : x{ x_ },
+    y{ y_ }
   {}
 
-  explicit SVector2(const int16_t data_[2])
-  : x(data_[0]),
-    y(data_[1])
+  explicit constexpr SVector2(int16_t const data_[2])
+  : x{ data_[0] },
+    y{ data_[1] }
   {}
 
   // general

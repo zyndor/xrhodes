@@ -32,31 +32,31 @@ public:
 
   // static
   inline
-  static Vector3  Zero()
+  static constexpr Vector3  Zero()
   {
     return Vector3(0.f, 0.f, 0.f);
   }
 
   inline
-  static Vector3  One()
+  static constexpr Vector3  One()
   {
     return Vector3(1.f, 1.f, 1.f);
   }
 
   inline
-  static Vector3  UnitX()
+  static constexpr Vector3  UnitX()
   {
     return Vector3(1.f, 0.f, 0.f);
   }
 
   inline
-  static Vector3  UnitY()
+  static constexpr Vector3  UnitY()
   {
     return Vector3(0.f, 1.f, 0.f);
   }
 
   inline
-  static Vector3  UnitZ()
+  static constexpr Vector3  UnitZ()
   {
     return Vector3(0.f, 0.f, 1.f);
   }
@@ -78,20 +78,20 @@ public:
   };
 
   // structors
-  Vector3()
-  : x(0.f), y(0.f), z(0.f)
+  constexpr Vector3()
+  : Vector3{ 0.f, 0.f, 0.f }
   {}
 
-  explicit Vector3(float const data_[kNumComponents])
-  : x(data_[X]),
-    y(data_[Y]),
-    z(data_[Z])
-  {}
-
-  Vector3(float x_, float y_, float z_)
+  constexpr Vector3(float x_, float y_, float z_)
   : x{ x_ },
     y{ y_ },
     z{ z_ }
+  {}
+
+  explicit constexpr Vector3(float const data[kNumComponents])
+  : x{ data[X] },
+    y{ data[Y] },
+    z{ data[Z] }
   {}
 
   // general
