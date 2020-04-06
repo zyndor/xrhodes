@@ -199,7 +199,7 @@ struct TextureFormatGL
 };
 
 // Pack color / depth / stencil bits.
-#define PACK_TEX_COMP(component, size) ((size) & 0x3f) << (2 + ((component) * 6))
+#define PACK_TEX_COMP(component, size) ((size) & 0x7f) << (2 + ((component) * 7))
 
 const TextureFormatGL kTextureFormats[] =
 {
@@ -213,6 +213,10 @@ const TextureFormatGL kTextureFormats[] =
     uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 32), false },
   { GL_RGBA8, GL_SRGB8_ALPHA8, GL_BGRA, GL_UNSIGNED_BYTE,
     uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 32), false },
+  { GL_RGB16F, GL_ZERO, GL_RGB, GL_FLOAT,
+    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 48), false },
+  { GL_RGB32F, GL_ZERO, GL_RGB, GL_FLOAT,
+    uint8_t(AttachmentType::Color) | PACK_TEX_COMP(0, 96), false },
 
   // compressed
   // depth/stencil

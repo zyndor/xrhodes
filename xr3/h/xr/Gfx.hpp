@@ -249,6 +249,8 @@ enum class TextureFormat
   RGB8,
   RGBA8,
   BGRA8,
+  RGB16F,
+  RGB32F,
 
   // compressed
   // depth / stencil

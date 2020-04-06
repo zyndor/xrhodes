@@ -12,7 +12,7 @@
 
 precision mediump float;
 
-uniform samplerCube uTextureCube;
+uniform samplerCube uTexture0;
 
 in vec3 vUv;
 
@@ -20,8 +20,8 @@ out vec4 FragColor;
 
 void main()
 {
-  vec4 rgba = texture(uTextureCube, vUv);
-  
+  vec4 rgba = texture(uTexture0, vUv);
+
 #ifdef DEBUG
   vec3 absUv = abs(vUv);
   float ma = max(absUv.x, max(absUv.y, absUv.z));
@@ -38,7 +38,7 @@ void main()
   {
 	col = vec3(vec2(vUv.x * ((float(absUv.z == vUv.z) * 2.) - 1.), -vUv.y) * .5 + .5, 1.0);
   }
-  
+
   rgba = vec4(col, 1.f) - fwidth(smoothstep(.3, .7, rgba));
 #endif
   FragColor = rgba;

@@ -97,6 +97,9 @@ private:
 class XonObject : public XonEntity
 {
 public:
+  // types
+  using Xontainer = std::vector<XonEntity*>;
+
   // structors
   XonObject();
   ~XonObject();
@@ -139,6 +142,13 @@ public:
   ///@return Whether this has the given element @a elem.
   bool HasElement(XonEntity const& elem) const;
 
+  // range based for support
+  Xontainer::iterator begin() { return m_elements.begin(); }
+  Xontainer::iterator end() { return m_elements.end(); }
+
+  Xontainer::const_iterator begin() const { return m_elements.cbegin(); }
+  Xontainer::const_iterator end() const { return m_elements.cend(); }
+
   // operators
   ///@return a referenec to the @a index th element this object has. A XonException
   /// of type IndexOutOfBounds will be thrown if index is outside of the range
@@ -152,7 +162,7 @@ public:
 
 private:
   // data
-  std::vector<XonEntity*> m_elements; // ownership
+  Xontainer m_elements; // ownership
   std::map<std::string, XonEntity*> m_keyedElements;  // no ownership
 };
 

@@ -1,3 +1,17 @@
+v1.8.0
+- added support for loading xr::Textures from the .ktx format;
+- added support for 16- and 32-bits RGB floating point texture formats;
+- added xr::Stick, a convenience class for string literals;
+- added xr::ReturnSelf<>, for functions that return a pointer to a function of
+  their own signature;
+- added xr::Matrix4::Invert();
+- added support for Matrix4 x Vector4 multiplication;
+- added two ComponentWise() methods to floating point vector types;
+- added support vector multiplication expressions in the scalar x vector form;
+- added range based for support to xr::XonObject;
+- added xr::Camera::GetProjectionMatrix();
+- added an Image Based Lighting example;
+  
 v1.7.2
 - fix: Vector4's non-compound arithmetic operators are const;
 - fix: single-line C-style comments are handled correctly by ShaderComponentBuilder;

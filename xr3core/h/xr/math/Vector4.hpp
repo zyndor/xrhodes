@@ -129,6 +129,28 @@ public:
     return result.Normalise(length);
   }
 
+  ///@brief Applies the function @a fn, to pairs of @a value (which is updated
+  /// from each execution of @a fn), and each component of this, in this order.
+  ///@return The result of performing @a fn with each component and @a value.
+  float ComponentWise(float(*fn)(float, float), float value) const
+  {
+    for (auto f : data)
+    {
+      value = fn(value, f);
+    }
+    return value;
+  }
+
+  ///@brief Applies the function @a fn to each component of this, reassigning
+  /// the result to the component.
+  void ComponentWise(float(*fn)(float))
+  {
+    for (auto& f : data)
+    {
+      f = fn(f);
+    }
+  }
+
   // operators
   Vector4& operator+=(Vector4 const& v)
   {
@@ -201,6 +223,18 @@ public:
     return Vector4(-x, -y, -z, -w);
   }
 };
+
+inline
+Vector4 operator *(float lhs, Vector4 const& rhs)
+{
+  return rhs * lhs;
+}
+
+inline
+Vector4 operator /(float lhs, Vector4 const& rhs)
+{
+  return Vector4(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z, lhs / rhs.w);
+}
 
 }
 

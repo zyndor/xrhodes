@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "Matrix.hpp"
-#include "xr/math/Vector3.hpp"
+#include "xr/math/Vector4.hpp"
 
 namespace xr
 {
@@ -101,6 +101,76 @@ public:
     std::swap(data[11], data[14]);
   }
 
+  ///@brief Calculates the inverse of this matrix, if possible.
+  bool Invert()
+  {
+    float adj[kNumElems];
+    adj[0] = data[5] * data[10] * data[15] - data[5] * data[11] * data[14] -
+      data[9] * data[6] * data[15] + data[9] * data[7] * data[14] +
+      data[13] * data[6] * data[11] - data[13] * data[7] * data[10];
+    adj[4] = data[4] * data[11] * data[14] - data[4] * data[10] * data[15] +
+      data[8] * data[6] * data[15] - data[8] * data[7] * data[14] -
+      data[12] * data[6] * data[11] + data[12] * data[7] * data[10];
+    adj[8] = data[4] * data[9] * data[15] - data[4] * data[11] * data[13] -
+      data[8] * data[5] * data[15] + data[8] * data[7] * data[13] +
+      data[12] * data[5] * data[11] - data[12] * data[7] * data[9];
+    adj[12] = data[4] * data[10] * data[13] - data[4] * data[9] * data[14] +
+      data[8] * data[5] * data[14] - data[8] * data[6] * data[13] -
+      data[12] * data[5] * data[10] + data[12] * data[6] * data[9];
+
+    float determinant = data[0] * adj[0] + data[1] * adj[4] + data[2] * adj[8] + data[3] * adj[12];
+    if (determinant * determinant < kEpsilon)
+    {
+      return false;
+    }
+
+    adj[1] = data[1] * data[11] * data[14] - data[1] * data[10] * data[15] +
+      data[9] * data[2] * data[15] - data[9] * data[3] * data[14] -
+      data[13] * data[2] * data[11] + data[13] * data[3] * data[10];
+    adj[5] = data[0] * data[10] * data[15] - data[0] * data[11] * data[14] -
+      data[8] * data[2] * data[15] + data[8] * data[3] * data[14] +
+      data[12] * data[2] * data[11] - data[12] * data[3] * data[10];
+    adj[9] = data[0] * data[11] * data[13] - data[0] * data[9] * data[15] +
+      data[8] * data[1] * data[15] - data[8] * data[3] * data[13] -
+      data[12] * data[1] * data[11] + data[12] * data[3] * data[9];
+    adj[13] = data[0] * data[9] * data[14] - data[0] * data[10] * data[13] -
+      data[8] * data[1] * data[14] + data[8] * data[2] * data[13] +
+      data[12] * data[1] * data[10] - data[12] * data[2] * data[9];
+    adj[2] = data[1] * data[6] * data[15] - data[1] * data[7] * data[14] -
+      data[5] * data[2] * data[15] + data[5] * data[3] * data[14] +
+      data[13] * data[2] * data[7] - data[13] * data[3] * data[6];
+    adj[6] = data[0] * data[7] * data[14] - data[0] * data[6] * data[15] +
+      data[4] * data[2] * data[15] - data[4] * data[3] * data[14] -
+      data[12] * data[2] * data[7] + data[12] * data[3] * data[6];
+    adj[10] = data[0] * data[5] * data[15] - data[0] * data[7] * data[13] -
+      data[4] * data[1] * data[15] + data[4] * data[3] * data[13] +
+      data[12] * data[1] * data[7] - data[12] * data[3] * data[5];
+    adj[14] = data[0] * data[6] * data[13] - data[0] * data[5] * data[14] +
+      data[4] * data[1] * data[14] - data[4] * data[2] * data[13] -
+      data[12] * data[1] * data[6] + data[12] * data[2] * data[5];
+    adj[3] = data[1] * data[7] * data[10] - data[1] * data[6] * data[11] +
+      data[5] * data[2] * data[11] - data[5] * data[3] * data[10] -
+      data[9] * data[2] * data[7] + data[9] * data[3] * data[6];
+    adj[7] = data[0] * data[6] * data[11] - data[0] * data[7] * data[10] -
+      data[4] * data[2] * data[11] + data[4] * data[3] * data[10] +
+      data[8] * data[2] * data[7] - data[8] * data[3] * data[6];
+    adj[11] = data[0] * data[7] * data[9] - data[0] * data[5] * data[11] +
+      data[4] * data[1] * data[11] - data[4] * data[3] * data[9] -
+      data[8] * data[1] * data[7] + data[8] * data[3] * data[5];
+    adj[15] = data[0] * data[5] * data[10] - data[0] * data[6] * data[9] -
+      data[4] * data[1] * data[10] + data[4] * data[2] * data[9] +
+      data[8] * data[1] * data[6] - data[8] * data[2] * data[5];
+
+    determinant = 1.0f / determinant;
+    auto writep = data;
+    std::for_each(adj, adj + kNumElems, [determinant, &writep](float v) {
+      *writep = v * determinant;
+      ++writep;
+    });
+
+    return true;
+  }
+
   ///@brief Gets the translation part of this matrix, assuming it to be in
   /// column-major order.
   Vector3 GetTranslation() const
@@ -158,6 +228,19 @@ public:
     m.t.z = data[14];
   }
 };
+
+///@brief Multiplies the Vector4 @a v by the Matrix4 @a m. This means pre-multiplication
+/// (v * m) for a column vector/-major matrix or post-multiplication (m * v) for
+/// a row vector/-major matrix.
+///@return The result of the operation.
+inline
+Vector4 operator*(Matrix4 const& m, Vector4 const& v)
+{
+  return Vector4(Vector4(m.data[0], m.data[4], m.data[8], m.data[12]).Dot(v),
+    Vector4(m.data[1], m.data[5], m.data[9], m.data[13]).Dot(v),
+    Vector4(m.data[2], m.data[6], m.data[10], m.data[14]).Dot(v),
+    Vector4(m.data[3], m.data[7], m.data[11], m.data[15]).Dot(v));
+}
 
 } // XR
 

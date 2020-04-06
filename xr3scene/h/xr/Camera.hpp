@@ -55,6 +55,9 @@ public:
   ///@return The position of the far clipping plane.
   float GetFarZ() const;
 
+  ///@return The projection matrix used by this camera.
+  Matrix4 const& GetProjectionMatrix() const;
+
   ///@return The perspective multiple, which, multiplied by the height of the projection
   /// will yield the view space z position at which objects appear at scale 1.0.
   ///@note The camera must be set up for perspective projection.
@@ -72,7 +75,7 @@ public:
   /// top right.
   Ray GetViewRay(float nx, float ny) const;
 
-  ///@brief Applies the perspective matrix and the worldspace transform of
+  ///@brief Applies the projection matrix and the worldspace transform of
   /// the Camera's owner as a view matrix.
   void Apply();
 
