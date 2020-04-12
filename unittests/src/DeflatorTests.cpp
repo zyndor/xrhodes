@@ -10,71 +10,72 @@
 #include "xr/io/Deflator.hpp"
 #include "xr/io/streamutils.hpp"
 
-namespace xr
+using namespace xr;
+
+namespace
 {
-  namespace
-  {
-    struct A : public xr::Inflatable
-    {
-      int a;
 
-      // Inherited via Inflatable
-      virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
-      {}
+struct A : public xr::Inflatable
+{
+  int a;
 
-      virtual void Restore(std::istream & stream, Inflator & inflator) override
-      {}
-    };
-  }
+  // Inherited via Inflatable
+  virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
+  {}
 
-  TEST(Deflator, Basics)
-  {
-    A a[4];
-    Deflator  deflator;
+  virtual void Restore(std::istream & stream, Inflator & inflator) override
+  {}
+};
 
-    ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // first ID from deflator is 0.
-    ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
-    ASSERT_EQ(deflator.RegisterObject(a[1]), 1); // next object gets the next ID.
-    ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
+TEST(Deflator, Basics)
+{
+  A a[4];
+  Deflator  deflator;
 
-    deflator.SetNext(10);
-    ASSERT_EQ(deflator.RegisterObject(a[2]), 10); // next object gets next ID.
-    ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
+  ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // first ID from deflator is 0.
+  ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
+  ASSERT_EQ(deflator.RegisterObject(a[1]), 1); // next object gets the next ID.
+  ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
 
-    // ID is still valid and same as when registered
-    ASSERT_EQ(deflator.GetId(&a[0]), 0);
-    ASSERT_EQ(deflator.GetId(&a[1]), 1);
-    ASSERT_EQ(deflator.GetId(&a[2]), 10);
-    ASSERT_EQ(deflator.GetId(&a[3]), IdGenerator::kInvalidId); // unregistered object - gets an invalid ID.
-    ASSERT_EQ(deflator.GetId(nullptr), IdGenerator::kInvalidId); // nullptrs always get an an invalid ID.
-  }
+  deflator.SetNext(10);
+  ASSERT_EQ(deflator.RegisterObject(a[2]), 10); // next object gets next ID.
+  ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
 
-  TEST(Deflator, RegisterInvalid)
-  {
-    A a;
-    Deflator deflator;
+  // ID is still valid and same as when registered
+  ASSERT_EQ(deflator.GetId(&a[0]), 0);
+  ASSERT_EQ(deflator.GetId(&a[1]), 1);
+  ASSERT_EQ(deflator.GetId(&a[2]), 10);
+  ASSERT_EQ(deflator.GetId(&a[3]), IdGenerator::kInvalidId); // unregistered object - gets an invalid ID.
+  ASSERT_EQ(deflator.GetId(nullptr), IdGenerator::kInvalidId); // nullptrs always get an an invalid ID.
+}
 
-    // Registering under reserved invalid ID shall fail.
-    deflator.SetNext(IdGenerator::kInvalidId);
-    ASSERT_THROW(deflator.RegisterObject(a), std::logic_error);
+TEST(Deflator, RegisterInvalid)
+{
+  A a;
+  Deflator deflator;
 
-    // Failed registration does not result in the object being registered.
-    ASSERT_EQ(deflator.GetId(&a), IdGenerator::kInvalidId);
-  }
+  // Registering under reserved invalid ID shall fail.
+  deflator.SetNext(IdGenerator::kInvalidId);
+  ASSERT_THROW(deflator.RegisterObject(a), std::logic_error);
 
-  TEST(Deflator, IdRangeClash)
-  {
-    Deflator deflator;
-    A a[2];
+  // Failed registration does not result in the object being registered.
+  ASSERT_EQ(deflator.GetId(&a), IdGenerator::kInvalidId);
+}
 
-    // Registration that causes ID range clash shall fail.
-    deflator.RegisterObject(a[0]);
-    deflator.SetNext(deflator.GetId(&a[0]));
+TEST(Deflator, IdRangeClash)
+{
+  Deflator deflator;
+  A a[2];
 
-    // Registration that causes ID clash.
-    ASSERT_THROW(deflator.RegisterObject(a[1]), std::logic_error);
+  // Registration that causes ID range clash shall fail.
+  deflator.RegisterObject(a[0]);
+  deflator.SetNext(deflator.GetId(&a[0]));
 
-    // Failed registration does not result in the object being registered.
-    ASSERT_EQ(deflator.GetId(&a[1]), IdGenerator::kInvalidId);
-  }
+  // Registration that causes ID clash.
+  ASSERT_THROW(deflator.RegisterObject(a[1]), std::logic_error);
+
+  // Failed registration does not result in the object being registered.
+  ASSERT_EQ(deflator.GetId(&a[1]), IdGenerator::kInvalidId);
+}
+
 }

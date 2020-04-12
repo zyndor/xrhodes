@@ -76,7 +76,7 @@ bool Animator::Stop(Handle handle, bool complete)
         : ValueBase(handle, 1e-6f, nullptr)
         {}
 
-        void UpdateValue(float)
+        void UpdateValue(float) override
         {}
       };
       new (value) DeadValue(handle);
@@ -169,19 +169,40 @@ void Animator::RemoveExpired()
   auto& valueBuffer = mValueBuffers[0];
 #ifdef ANIMATOR_MEMORY_DEBUG
   const bool doDump = !valueBuffer.empty();
-  XR_TRACEIF(Animator, doDump, ("Before Remove()")); DumpValues();
+
+  auto dumpValues = [this]()
+  {
+    auto& valueBuffer = mValueBuffers[0];
+    XR_TRACEIF(Animator, !valueBuffer.empty(), ("Buffer size: %d", valueBuffer.size()));
+    auto i0 = valueBuffer.data();
+    auto i1 = i0 + valueBuffer.size();
+    while (i0 != i1)
+    {
+      auto value = reinterpret_cast<ValueBase const*>(i0);
+      XR_TRACE(Animator, ("Prop#%d: %d bytes, progress: %.3f", value->mHandle.mKey,
+        value->GetSize(), value->mProgress));
+      i0 += value->GetSize();
+    }
+  };
+
+  XR_TRACEIF(Animator, doDump, ("Before Remove()")); dumpValues();
 #endif
 
   auto i0 = valueBuffer.data();
   auto i1 = i0 + valueBuffer.size();
   uint8_t* moveTarget = nullptr;
-  int n = 0;
   do
   {
     uint8_t* moveSource = nullptr;
     uint8_t* moveEnd = nullptr;
     while (i0 != i1)
     {
+      // The purpose of the inner loop is to:
+      // 1, find the first expired value, whose address will be the target of the memmove;
+      // 2, find the first non-expired value, whose address will be the source of the memmove;
+      // 4, invoke destructors on every ValueBase between the two;
+      // 3, find the second expired value (or end of value buffer), which will determine
+      //   the size of the block being moved.
       auto value = reinterpret_cast<ValueBase*>(i0);
       const auto size = value->GetSize();
       if (value->mProgress >= 1.f)
@@ -198,7 +219,6 @@ void Animator::RemoveExpired()
         else if (moveSource)  // end of block
         {
           moveEnd = i0;
-          ++n;
           break;
         }
       }
@@ -206,7 +226,6 @@ void Animator::RemoveExpired()
       {
         moveSource = i0;
       }
-      ++n;
       i0 += size;
     }
 
@@ -220,26 +239,14 @@ void Animator::RemoveExpired()
       moveSource = moveEnd;
     }
 
-    const auto gapSize = moveSource - moveTarget;
     auto blockSize = moveEnd - moveSource;
-    const auto opSize = std::min(gapSize, blockSize);
-    if (opSize > 0)
+    if (blockSize > 0)
     {
 #ifdef ANIMATOR_MEMORY_DEBUG
-      XR_TRACE(Animator, ("gap: %d+%d, block: %d+%d", moveTarget - valueBuffer.data(),
-        gapSize, moveSource - valueBuffer.data(), blockSize));
+      XR_TRACE(Animator, ("gap: %d(%d), block: %d+%d", moveTarget - valueBuffer.data(),
+        moveSource - moveTarget, moveSource - valueBuffer.data(), blockSize));
 #endif
-      std::memcpy(moveTarget, moveSource, opSize);
-      if (blockSize > gapSize)
-      {
-        // TODO: could memcpy block by block.
-        moveTarget += opSize;
-        moveSource += opSize;
-
-        blockSize -= gapSize;
-        std::memmove(moveTarget, moveSource, blockSize);
-      }
-
+      std::copy(moveSource, moveSource + blockSize, moveTarget);
       moveTarget += blockSize;
       moveSource = nullptr;
       moveEnd = nullptr;
@@ -260,7 +267,7 @@ void Animator::RemoveExpired()
   }
 
 #ifdef ANIMATOR_MEMORY_DEBUG
-  XR_TRACEIF(Animator, doDump, ("After Remove()")); DumpValues();
+  XR_TRACEIF(Animator, doDump, ("After Remove()")); dumpValues();
 #endif
 }
 
@@ -287,24 +294,6 @@ void Animator::Merge()
 {
   mValueBuffers[0].insert(mValueBuffers[0].end(), mValueBuffers[1].begin(), mValueBuffers[1].end());
   mValueBuffers[1].clear();
-}
-
-//==============================================================================
-void Animator::DumpValues() const
-{
-#ifdef ANIMATOR_MEMORY_DEBUG
-  auto& valueBuffer = mValueBuffers[0];
-  XR_TRACEIF(Animator, !valueBuffer.empty(), ("Buffer size: %d", valueBuffer.size()));
-  auto i0 = valueBuffer.data();
-  auto i1 = i0 + valueBuffer.size();
-  while (i0 != i1)
-  {
-    auto value = reinterpret_cast<ValueBase const*>(i0);
-    XR_TRACE(Animator, ("Prop#%d: %d bytes, progress: %.3f", value->mHandle.mKey,
-      value->GetSize(), value->mProgress));
-    i0 += value->GetSize();
-  }
-#endif
 }
 
 } // xr

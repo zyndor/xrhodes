@@ -12,6 +12,9 @@
 
 using namespace xr;
 
+namespace
+{
+
 class EntityTests: public ::testing::Test
 {
 public:
@@ -171,4 +174,6 @@ TEST_F(EntityTests, Clone)
   auto c2 = e2->FindComponent<TestComponent>();
   ASSERT_NE(c, c2);
   ASSERT_EQ(c->mFoo, c2->mFoo);
+}
+
 }

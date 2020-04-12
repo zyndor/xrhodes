@@ -39,7 +39,6 @@ struct Tester : InstCounted<Tester>
     return handled;
   }
 };
-}
 
 TEST(SignalNotifier, Basics)
 {
@@ -94,4 +93,6 @@ TEST(SignalNotifier, Basics)
   {
     ASSERT_FALSE(notifier.Disconnect(MakeCallback(t, &Tester::OnEvent)));
   }
+}
+
 }

@@ -9,7 +9,9 @@
 #include "gtest/gtest.h"
 #include "xr/math/Rect.hpp"
 
-namespace xr
+using namespace xr;
+
+namespace
 {
 
 void AssertEqual(Rect const& lhs, Rect const& rhs)

@@ -12,6 +12,9 @@
 
 using namespace xr;
 
+namespace
+{
+
 const size_t kAnimatorSize = 32;
 
 const float kDuration = 1.f;
@@ -137,4 +140,6 @@ TEST(Animator, ClearComplete)
   ASSERT_EQ(g, 0.f);
   ASSERT_EQ(h, 2.5f);
   ASSERT_EQ(stops, 2);
+}
+
 }

@@ -68,10 +68,12 @@ public:
   ///@brief Attempts to stop an animation with the given @a handle. If @a complete
   /// is true, the value will be set to its target and the onStop callback will
   /// be called (if one was provided for the animation).
+  ///@return Whether an animation with the given @a handle could be found.
   bool Stop(Handle handle, bool complete);
 
   ///@brief Simulates the passage of @a tDelta units of time, updating all animations.
-  /// The ones that reach their target duration are removed.
+  /// The ones that reach their target duration are removed, and if they had an
+  /// onStop function specified, it's called.
   void Update(float tDelta);
 
   ///@brief Removes all animations. If @a complete is true, their values will be
@@ -128,8 +130,6 @@ private:
 
   void RemoveExpired();
   void Merge();
-
-  void DumpValues() const;
 };
 
 //==============================================================================

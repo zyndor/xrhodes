@@ -11,6 +11,9 @@
 
 using namespace xr;
 
+namespace
+{
+
 struct FooBase
 {
   virtual ~FooBase() {}
@@ -38,4 +41,6 @@ TEST(TypeId, Basics)
   ASSERT_TRUE(TypeId<FooBase>() != TypeId<FooT<int>>());
   ASSERT_TRUE(TypeId<Foo>() != TypeId<FooT<char>>());
   ASSERT_TRUE(TypeId<FooBase>() != TypeId<FooT<char>>());
+}
+
 }

@@ -12,7 +12,7 @@
 
 using namespace xr;
 
-namespace xr
+namespace
 {
 
 void OnAdd(int v, void* userData)
@@ -75,8 +75,6 @@ struct EventCounterHolder : EventCounter
     OnEvent();
   }
 };
-
-}
 
 TEST(SignalBroadcaster, Basics)
 {
@@ -147,4 +145,6 @@ TEST(SignalBroadcaster, PostponedRemove)
   ASSERT_EQ(removeTester.eventsReceived, 2);  // did receive event
   ASSERT_TRUE(!*removeTester.result);  // unsuccessful remove - alreday removed
   ASSERT_EQ(removeTester.counter.eventsReceived, 1);  // did not receive event
+}
+
 }
