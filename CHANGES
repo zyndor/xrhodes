@@ -1,3 +1,7 @@
+v1.8.1
+- Animator optimisation, cleanup and improvements to documentation;
+- improved namespacing (and consistency thereof) in unittests;
+
 v1.8.0
 - added support for loading xr::Textures from the .ktx format;
 - added support for 16- and 32-bits RGB floating point texture formats;
