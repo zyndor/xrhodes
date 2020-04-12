@@ -11,6 +11,9 @@
 
 using namespace xr;
 
+namespace
+{
+
 struct ReverseAdaptorTests: public testing::Test
 {
   static void SetUpTestCase()
@@ -41,4 +44,6 @@ TEST_F(ReverseAdaptorTests, Array)
 {
   uint32_t data[] = { 100, 10, 1 };
   TestReverseAdaptor(data);
+}
+
 }

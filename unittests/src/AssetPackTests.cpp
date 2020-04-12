@@ -14,6 +14,9 @@
 
 using namespace xr;
 
+namespace
+{
+
 #ifdef ENABLE_ASSET_BUILDING
 class AssetPackTests : public ::testing::Test
 {
@@ -128,3 +131,5 @@ TEST_F(AssetPackTests, Aliases)
 }
 
 #endif
+}
+

@@ -14,70 +14,74 @@
 #include "xr/memory/ScopeGuard.hpp"
 #include "xr/debug.hpp"
 
-namespace xr
+using namespace xr;
+
+namespace
 {
-  class JsonUtils: public ::testing::Test
-  {
-  public:
-    static void SetUpTestCase()
-    {}
 
-    static void TearDownTestCase()
-    {}
+class JsonUtils: public ::testing::Test
+{
+public:
+  static void SetUpTestCase()
+  {}
 
-  private:
-    FileLifeCycleManager  flcm;
-  };
+  static void TearDownTestCase()
+  {}
 
-  TEST_F(JsonUtils, LoadJson)
-  {
-    auto json = LoadJSON("loadjson.json", 3, false);
-    ASSERT_NE(json, nullptr);
+private:
+  FileLifeCycleManager  flcm;
+};
 
-    ASSERT_EQ(json->GetType(), JSON::OBJECT);
-    ASSERT_NE(json->ToObject(), nullptr);
-    ASSERT_EQ(json->GetNumChildren(), 4);
+TEST_F(JsonUtils, LoadJson)
+{
+  auto json = LoadJSON("loadjson.json", 3, false);
+  ASSERT_NE(json, nullptr);
 
-    auto intValue = json->GetChild("intValue");
-    ASSERT_NE(intValue, nullptr);
-    ASSERT_EQ(intValue->GetType(), JSON::VALUE);
-    ASSERT_NE(intValue->ToValue(), nullptr);
-    ASSERT_STREQ(intValue->GetValue(), "17753623");
+  ASSERT_EQ(json->GetType(), JSON::OBJECT);
+  ASSERT_NE(json->ToObject(), nullptr);
+  ASSERT_EQ(json->GetNumChildren(), 4);
 
-    auto doubleValue = json->GetChild("doubleValue");
-    ASSERT_NE(doubleValue, nullptr);
-    ASSERT_EQ(doubleValue->GetType(), JSON::VALUE);
-    ASSERT_NE(doubleValue->ToValue(), nullptr);
-    ASSERT_STREQ(doubleValue->GetValue(), "0.27541829630000001");
+  auto intValue = json->GetChild("intValue");
+  ASSERT_NE(intValue, nullptr);
+  ASSERT_EQ(intValue->GetType(), JSON::VALUE);
+  ASSERT_NE(intValue->ToValue(), nullptr);
+  ASSERT_STREQ(intValue->GetValue(), "17753623");
 
-    auto stringValue = json->GetChild("stringValue");
-    ASSERT_NE(stringValue, nullptr);
-    ASSERT_EQ(stringValue->GetType(), JSON::VALUE);
-    ASSERT_NE(stringValue->ToValue(), nullptr);
-    ASSERT_STREQ(stringValue->GetValue(), "lorem ipsum dolor sic amet e pluribus unum veni vidi vici");
+  auto doubleValue = json->GetChild("doubleValue");
+  ASSERT_NE(doubleValue, nullptr);
+  ASSERT_EQ(doubleValue->GetType(), JSON::VALUE);
+  ASSERT_NE(doubleValue->ToValue(), nullptr);
+  ASSERT_STREQ(doubleValue->GetValue(), "0.27541829630000001");
 
-    auto array = json->GetChild("array");
-    ASSERT_NE(array, nullptr);
-    ASSERT_EQ(array->GetType(), JSON::ARRAY);
-    ASSERT_NE(array->ToArray(), nullptr);
-    ASSERT_EQ(array->GetNumElements(), 6);
+  auto stringValue = json->GetChild("stringValue");
+  ASSERT_NE(stringValue, nullptr);
+  ASSERT_EQ(stringValue->GetType(), JSON::VALUE);
+  ASSERT_NE(stringValue->ToValue(), nullptr);
+  ASSERT_STREQ(stringValue->GetValue(), "lorem ipsum dolor sic amet e pluribus unum veni vidi vici");
 
-    // false is collapsed into 0
-    ASSERT_STREQ(array->GetElement(0)->GetValue(), "0");
+  auto array = json->GetChild("array");
+  ASSERT_NE(array, nullptr);
+  ASSERT_EQ(array->GetType(), JSON::ARRAY);
+  ASSERT_NE(array->ToArray(), nullptr);
+  ASSERT_EQ(array->GetNumElements(), 6);
 
-    auto object = array->GetElement(4);
-    ASSERT_EQ(object->GetType(), JSON::OBJECT);
-    ASSERT_STREQ(object->GetChild("name")->GetValue(), "four");
-    ASSERT_STREQ(object->GetChild("value")->GetValue(), "4");
+  // false is collapsed into 0
+  ASSERT_STREQ(array->GetElement(0)->GetValue(), "0");
 
-    array = array->GetElement(5);
-    ASSERT_EQ(array->GetNumElements(), 3);
+  auto object = array->GetElement(4);
+  ASSERT_EQ(object->GetType(), JSON::OBJECT);
+  ASSERT_STREQ(object->GetChild("name")->GetValue(), "four");
+  ASSERT_STREQ(object->GetChild("value")->GetValue(), "4");
 
-    // Max depth exceeded entities are empty.
-    object = array->GetElement(2);
-    ASSERT_NE(object, nullptr);
-    ASSERT_EQ(object->GetType(), JSON::OBJECT);
-    ASSERT_NE(object->ToObject(), nullptr);
-    ASSERT_EQ(object->GetNumChildren(), 0);
-  }
+  array = array->GetElement(5);
+  ASSERT_EQ(array->GetNumElements(), 3);
+
+  // Max depth exceeded entities are empty.
+  object = array->GetElement(2);
+  ASSERT_NE(object, nullptr);
+  ASSERT_EQ(object->GetType(), JSON::OBJECT);
+  ASSERT_NE(object->ToObject(), nullptr);
+  ASSERT_EQ(object->GetNumChildren(), 0);
+}
+
 }

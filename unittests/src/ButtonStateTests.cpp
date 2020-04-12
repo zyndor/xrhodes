@@ -10,7 +10,9 @@
 #include "xr/ButtonState.hpp"
 #include "xr/utils.hpp"
 
-namespace xr
+using namespace xr;
+
+namespace
 {
 
 TEST(ButtonState, Basics)
