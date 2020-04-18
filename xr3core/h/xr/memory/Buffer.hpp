@@ -21,9 +21,17 @@ struct Buffer
   ///@brief Convenience method to create a buffer from an array.
   template <typename T, size_t n>
   inline
-  static Buffer FromArray(T(&ar)[n])
+    static Buffer FromArray(T const(&ar)[n])
   {
-    return { sizeof(ar), reinterpret_cast<const uint8_t*>(ar) };
+    return{ sizeof(ar), reinterpret_cast<uint8_t const*>(ar) };
+  }
+
+  ///@brief Convenience method to create a buffer from an array.
+  template <typename T>
+  inline
+    static Buffer FromArray(size_t n, const T* ar)
+  {
+    return{ sizeof(T) * n, reinterpret_cast<uint8_t const*>(ar) };
   }
 
   // data
