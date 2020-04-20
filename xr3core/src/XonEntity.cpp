@@ -226,7 +226,7 @@ XonValue::XonValue()
 {}
 
 //==============================================================================
-XonValue::XonValue(const char * value, size_t length)
+XonValue::XonValue(const char* value, size_t length)
 : XonEntity(Type::Value),
   m_value(value != nullptr ? new char[length + 1] : nullptr)
 {
@@ -236,6 +236,11 @@ XonValue::XonValue(const char * value, size_t length)
     m_value[length] = '\0';
   }
 }
+
+//==============================================================================
+XonValue::XonValue(std::string const& string)
+: XonValue(string.c_str(), string.size())
+{}
 
 //==============================================================================
 XonValue::~XonValue()
