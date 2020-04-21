@@ -1,5 +1,5 @@
-#ifndef XR_XONREADER_HPP
-#define XR_XONREADER_HPP
+#ifndef XR_XONBUILDTREE_HPP
+#define XR_XONBUILDTREE_HPP
 //==============================================================================
 //
 // XRhodes
@@ -33,4 +33,4 @@ XonObject* XonBuildTree(char const* string, size_t length,
 
 } // xr
 
-#endif  //XR_XONREADER_HPP
+#endif  //XR_XONBUILDTREE_HPP
