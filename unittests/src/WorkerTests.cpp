@@ -120,7 +120,7 @@ TEST(Worker, CancelPendingJobs)
 
   const int testExec = j.GetExecutedCount();
   const auto executedPlusCancelled = testExec + j.cancelled;
-  XR_TRACEIF(WorkerTests, executedPlusCancelled != kNumIterations,
+  XR_TRACEIF(Worker, executedPlusCancelled != kNumIterations,
     ("%d enqueued, %d executed, %d cancelled does not add up.", kNumIterations, testExec, j.cancelled));
   ASSERT_EQ(executedPlusCancelled, kNumIterations);
 }

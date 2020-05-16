@@ -18,7 +18,7 @@ namespace
 {
 
 #ifdef ENABLE_ASSET_BUILDING
-class AssetPackTests : public ::testing::Test
+class AssetPack : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -27,14 +27,14 @@ public:
   static void TearDownTestCase()
   {}
 
-  AssetPackTests()
+  AssetPack()
   {
     xr::Device::Init();
 
     Asset::Manager::Init(".assets");
   }
 
-  ~AssetPackTests()
+  ~AssetPack()
   {
     Asset::Manager::Shutdown();
 
@@ -45,18 +45,18 @@ private:
   FileLifeCycleManager  flcm;
 };
 
-TEST_F(AssetPackTests, Contents)
+TEST_F(AssetPack, Contents)
 {
   // check assets from the pack - not present.
   Asset::Ptr randomAsset(Asset::Manager::Find<Texture>("assets/xrhodes.tex").Get());
   ASSERT_FALSE(randomAsset);
 
   // load pack
-  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
+  auto pack = Asset::Manager::Load<xr::AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
 
   // check pack on manager - present
   ASSERT_EQ(pack->GetRefCount(), 2);  // us, manager
-  ASSERT_TRUE(Asset::Manager::Find<AssetPack>("assets/assets.pak"));
+  ASSERT_TRUE(Asset::Manager::Find<xr::AssetPack>("assets/assets.pak"));
 
   // check dependency of asset from the pack - present.
   randomAsset.Reset(Asset::Manager::Find<Shader>("assets/xrhodes.shd").Get());
@@ -75,18 +75,18 @@ TEST_F(AssetPackTests, Contents)
   ASSERT_EQ(randomAsset.Get(), pack->GetAsset<Material>("logo").Get());
 }
 
-TEST_F(AssetPackTests, ContentsUnmanaged)
+TEST_F(AssetPack, ContentsUnmanaged)
 {
   // check assets from the pack - not present.
   Asset::Ptr randomAsset(Asset::Manager::Find<Texture>("assets/xrhodes.png").Get());
   ASSERT_FALSE(randomAsset);
 
   // load pack
-  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::UnmanagedFlag | Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
+  auto pack = Asset::Manager::Load<xr::AssetPack>("assets/assets.pak", Asset::UnmanagedFlag | Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
 
   // check pack on manager - not present
   ASSERT_EQ(pack->GetRefCount(), 1);  // us only
-  ASSERT_FALSE(Asset::Manager::Find<AssetPack>("assets/assets.pak"));
+  ASSERT_FALSE(Asset::Manager::Find<xr::AssetPack>("assets/assets.pak"));
 
   // check dependency of asset from pack -- present.
   randomAsset.Reset(Asset::Manager::Find<Shader>("assets/xrhodes.shd").Get());
@@ -105,10 +105,10 @@ TEST_F(AssetPackTests, ContentsUnmanaged)
   ASSERT_EQ(randomAsset->GetRefCount(), 4); // us, material, pack, manager
 }
 
-TEST_F(AssetPackTests, Aliases)
+TEST_F(AssetPack, Aliases)
 {
   // load pack
-  auto pack = Asset::Manager::Load<AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
+  auto pack = Asset::Manager::Load<xr::AssetPack>("assets/assets.pak", Asset::DryRunFlag | Asset::LoadSyncFlag | Asset::ForceBuildFlag);
 
   // check assets from the pack - now present.
   auto randomAsset = pack->GetAssetPtr("logo");

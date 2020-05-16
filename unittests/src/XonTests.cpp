@@ -19,7 +19,7 @@ using namespace xr;
 namespace
 {
 
-class XonTests: public ::testing::Test
+class Xon: public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -50,7 +50,7 @@ static bool  SimpleEventHandler(XonParser::Event e, XonParser::String const* pSt
   return true;
 }
 
-TEST_F(XonTests, ParseValid) // Parse a XON file that tries to capture all sorts of scenarios.
+TEST_F(Xon, ParseValid) // Parse a XON file that tries to capture all sorts of scenarios.
 {
   xr::FileBuffer  buffer;
   buffer.Open("xontest1.xon");
@@ -142,7 +142,7 @@ static bool  XonNoopHandler(XonParser::Event, XonParser::String const*, void*)
   return true;
 }
 
-TEST_F(XonTests, ParseInvalid)  // Parsing a number of invalid XON files. Should all fail.
+TEST_F(Xon, ParseInvalid)  // Parsing a number of invalid XON files. Should all fail.
 {
   char arBuffer[256];
   xr::XonParser parser;
@@ -159,7 +159,7 @@ TEST_F(XonTests, ParseInvalid)  // Parsing a number of invalid XON files. Should
   }
 }
 
-TEST_F(XonTests, ParserReuse)  // The same parser instance can be reused; the state from one parse shall not affect the result of a subsequent parse.
+TEST_F(Xon, ParserReuse)  // The same parser instance can be reused; the state from one parse shall not affect the result of a subsequent parse.
 {
   xr::XonParser parser;
   bool success;
@@ -180,7 +180,7 @@ TEST_F(XonTests, ParserReuse)  // The same parser instance can be reused; the st
   }
 }
 
-TEST_F(XonTests, ReadValid) // Read xon and construct tree.
+TEST_F(Xon, ReadValid) // Read xon and construct tree.
 {
   xr::FileBuffer  buffer;
   buffer.Open("xontest1.xon");
@@ -285,7 +285,7 @@ TEST_F(XonTests, ReadValid) // Read xon and construct tree.
   ASSERT_EQ(v6.ToValue().GetString(), std::string("null"));
 }
 
-TEST_F(XonTests, ReadInvalid)  // Read a bunch of invalid xon files. All should fail.
+TEST_F(Xon, ReadInvalid)  // Read a bunch of invalid xon files. All should fail.
 {
   char arBuffer[256];
   for (int i = 0; i < 5; ++i)
@@ -310,7 +310,7 @@ void TestXonError(std::function<void()> fn, XonEntity::Exception::Type testType)
   }
   catch (XonEntity::Exception& x)
   {
-    XR_TRACE(XonTests, (x.what()));
+    XR_TRACE(Xon, (x.what()));
     ASSERT_EQ(x.type, testType);
   }
   catch (...)
@@ -319,7 +319,7 @@ void TestXonError(std::function<void()> fn, XonEntity::Exception::Type testType)
   }
 }
 
-TEST_F(XonTests, Errors) // Test for entity errors.
+TEST_F(Xon, Errors) // Test for entity errors.
 {
   xr::FileBuffer  buffer;
   buffer.Open("xontest1.xon");

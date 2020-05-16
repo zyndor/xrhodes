@@ -18,7 +18,7 @@ using namespace xr;
 namespace
 {
 
-class HashTests : public ::testing::Test
+class Hash : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -27,9 +27,9 @@ public:
   static void TearDownTestCase()
   {}
 
-  ~HashTests()
+  ~Hash()
   {
-    Hash::SetSeed(Hash::kSeed);
+    xr::Hash::SetSeed(xr::Hash::kSeed);
   }
 };
 
@@ -60,17 +60,17 @@ char const* strings[] =
   "interact",
 };
 
-TEST_F(HashTests, StringCaseInsensitive)
+TEST_F(Hash, StringCaseInsensitive)
 {
-  auto hash1 = Hash::String(caseCmpString1);
-  auto hash2 = Hash::String(caseCmpString2);
+  auto hash1 = xr::Hash::String(caseCmpString1);
+  auto hash2 = xr::Hash::String(caseCmpString2);
   ASSERT_EQ(hash1, hash2);
 }
 
-TEST_F(HashTests, String32CaseInsensitive)
+TEST_F(Hash, String32CaseInsensitive)
 {
-  auto hash1 = Hash::String32(caseCmpString1);
-  auto hash2 = Hash::String32(caseCmpString2);
+  auto hash1 = xr::Hash::String32(caseCmpString1);
+  auto hash2 = xr::Hash::String32(caseCmpString2);
   ASSERT_EQ(hash1, hash2);
 }
 
@@ -102,7 +102,7 @@ void DumpHashes(std::map<T, std::string> const& hashes)
   {
     ++occurences[(i.first >> (XR_BITSIZEOF(T) - 8)) & 0xff];
     Format(i.second.c_str(), i.first, arBuffer);
-    XR_TRACE(HashTests, (arBuffer));
+    XR_TRACE(Hash, (arBuffer));
   }
 
   int max = 0;
@@ -122,14 +122,14 @@ void DumpHashes(std::map<T, std::string> const& hashes)
       cMin = i.first;
     }
     sprintf(arBuffer, "%x : %d", i.first, i.second);
-    XR_TRACE(HashTests, (arBuffer));
+    XR_TRACE(Hash, (arBuffer));
   }
 
   sprintf(arBuffer, "min: %d (%x)", min, cMin);
-  XR_TRACE(HashTests, (arBuffer));
+  XR_TRACE(Hash, (arBuffer));
 
   sprintf(arBuffer, "max: %d (%x)", max, cMax);
-  XR_TRACE(HashTests, (arBuffer));
+  XR_TRACE(Hash, (arBuffer));
 }
 
 void DoStringUniqueness(bool dump)
@@ -143,11 +143,11 @@ void DoStringUniqueness(bool dump)
       for (int z = 0; z < XR_ARRAY_SIZE(strings); ++z)
       {
         auto len = sprintf(arBuffer, "ins_%c_%s%d_anims", i + 'a', strings[z], j);
-        auto hash = Hash::String(arBuffer, len, false);
+        auto hash = xr::Hash::String(arBuffer, len, false);
 
         auto iFind = hashes.find(hash);
         bool hashClashing = iFind != hashes.end();
-        XR_TRACEIF(HashTests, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
+        XR_TRACEIF(Hash, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
         ASSERT_FALSE(hashClashing);
         hashes[hash] = arBuffer;
       }
@@ -157,14 +157,14 @@ void DoStringUniqueness(bool dump)
   if(dump) DumpHashes(hashes);
 }
 
-TEST_F(HashTests, StringUniqueness)
+TEST_F(Hash, StringUniqueness)
 {
-  Hash::SetSeed(Hash::kSeed);
+  xr::Hash::SetSeed(xr::Hash::kSeed);
   DoStringUniqueness(false);
 
   for (int i = 0; i < 32; ++i)
   {
-    Hash::SetSeed((1 << i) - 1);
+    xr::Hash::SetSeed((1 << i) - 1);
     DoStringUniqueness(false);
   }
 }
@@ -180,11 +180,11 @@ void DoString32Uniqueness(bool dump)
       for (int z = 0; z < XR_ARRAY_SIZE(strings); ++z)
       {
         auto len = sprintf(arBuffer, "ins_%c_%s%d_anims", i + 'a', strings[z], j);
-        auto hash = Hash::String32(arBuffer, len);
+        auto hash = xr::Hash::String32(arBuffer, len);
 
         auto iFind = hashes.find(hash);
         bool hashClashing = iFind != hashes.end();
-        XR_TRACEIF(HashTests, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
+        XR_TRACEIF(Hash, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
         ASSERT_FALSE(hashClashing);
         hashes[hash] = arBuffer;
       }
@@ -194,19 +194,19 @@ void DoString32Uniqueness(bool dump)
   if (dump) DumpHashes(hashes);
 }
 
-TEST_F(HashTests, String32Uniqueness)
+TEST_F(Hash, String32Uniqueness)
 {
-  Hash::SetSeed(Hash::kSeed);
+  xr::Hash::SetSeed(xr::Hash::kSeed);
   DoString32Uniqueness(false);
 
   for (int i = 0; i <= 32; ++i)
   {
-    Hash::SetSeed((1 << i) - 1);
+    xr::Hash::SetSeed((1 << i) - 1);
     DoString32Uniqueness(false);
   }
 }
 
-//TEST_F(HashTests, ShortString32Uniqueness)
+//TEST_F(Hash, ShortString32Uniqueness)
 //{
 //  char const kAlphabet[] = "abcdefghijklmnopqrstuvwxyz";// 0123456789";
 //  const auto kAlphaSize = XR_ARRAY_SIZE(kAlphabet) - 1;
@@ -235,7 +235,7 @@ TEST_F(HashTests, String32Uniqueness)
 //      //hashes.insert(hash);
 //      //
 //      //Format(buffer, hash, logBuffer);
-//      //XR_TRACE(HashTests, (logBuffer));
+//      //XR_TRACE(Hash, (logBuffer));
 //    }
 //  }
 //}

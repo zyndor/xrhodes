@@ -146,9 +146,9 @@ TEST(StreamUtils, ReadPiecewise)
   A a2;
   a2.ReadPiecewise(io);
 
-  XR_TRACE(StreamUtilsTests, (LogMemory(&a, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtilsTests, (LogMemory(&a2, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtilsTests, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
+  XR_TRACE(StreamUtils, (LogMemory(&a, sizeof(A)).c_str()));
+  XR_TRACE(StreamUtils, (LogMemory(&a2, sizeof(A)).c_str()));
+  XR_TRACE(StreamUtils, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
   ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
 }
 
@@ -165,9 +165,9 @@ TEST(StreamUtils, ReadWhole)
   A a2;
   a2.ReadWhole(io);
 
-  XR_TRACE(StreamUtilsTests, (LogMemory(&a, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtilsTests, (LogMemory(&a2, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtilsTests, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
+  XR_TRACE(StreamUtils, (LogMemory(&a, sizeof(A)).c_str()));
+  XR_TRACE(StreamUtils, (LogMemory(&a2, sizeof(A)).c_str()));
+  XR_TRACE(StreamUtils, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
   ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
 }
 

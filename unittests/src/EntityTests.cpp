@@ -15,7 +15,7 @@ using namespace xr;
 namespace
 {
 
-class EntityTests: public ::testing::Test
+class Entity: public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -25,21 +25,21 @@ public:
   {}
 };
 
-TEST_F(EntityTests, AddRemoveDetach)
+TEST_F(Entity, AddRemoveDetach)
 {
-  Entity eRoot(Name("root"), nullptr);
+  xr::Entity eRoot(Name("root"), nullptr);
   ASSERT_EQ(eRoot.GetChildren().size(), 0);
 
-  auto eA = new Entity(Name("A"), &eRoot);
+  auto eA = new xr::Entity(Name("A"), &eRoot);
   ASSERT_EQ(eA->GetParent(), &eRoot);
   ASSERT_EQ(eRoot.GetChildren().size(), 1);
   ASSERT_EQ(eA->GetChildren().size(), 0);
 
-  auto eB = new Entity(Name("B"), eA);
+  auto eB = new xr::Entity(Name("B"), eA);
   ASSERT_EQ(eB->GetParent(), eA);
   ASSERT_EQ(eB->GetChildren().size(), 0);
 
-  auto eC = new Entity(Name("C"), eA);
+  auto eC = new xr::Entity(Name("C"), eA);
   ASSERT_EQ(eC->GetParent(), eA);
   ASSERT_EQ(eC->GetChildren().size(), 0);
   ASSERT_EQ(eA->GetChildren().size(), 2);
@@ -58,13 +58,13 @@ TEST_F(EntityTests, AddRemoveDetach)
   delete eC;
 }
 
-TEST_F(EntityTests, FindChild)
+TEST_F(Entity, FindChild)
 {
-  Entity eRoot(Name("root"), nullptr);
-  auto eA = new Entity(Name("A"), &eRoot);
-  auto eB = new Entity(Name("B"), eA);
-  auto eC = new Entity(Name("C"), eA);
-  auto eC2 = new Entity(Name("C"), eB);
+  xr::Entity eRoot(Name("root"), nullptr);
+  auto eA = new xr::Entity(Name("A"), &eRoot);
+  auto eB = new xr::Entity(Name("B"), eA);
+  auto eC = new xr::Entity(Name("C"), eA);
+  auto eC2 = new xr::Entity(Name("C"), eB);
 
   ASSERT_EQ(eRoot.FindChild(Name("C")), nullptr);
   ASSERT_EQ(eRoot.FindChild("A.C"), eC);
@@ -93,15 +93,15 @@ bool IsEqual(Matrix const& m0, Matrix const& m1)
   return abs(diff) < 1e-4;
 }
 
-TEST_F(EntityTests, Transforms)
+TEST_F(Entity, Transforms)
 {
-  Entity eRoot(Name("root"), nullptr);
+  xr::Entity eRoot(Name("root"), nullptr);
   eRoot.SetTranslation(Vector3::UnitX());
   eRoot.SetRotation(Quaternion::FromAxisAngle(Vector3::UnitZ(), M_PI * .5f));
   ASSERT_TRUE(IsEqual(Matrix(eRoot.GetRotation(), eRoot.GetTranslation()),
     eRoot.GetLocalTransform()));
 
-  Entity eChild(Name("child"), &eRoot);
+  xr::Entity eChild(Name("child"), &eRoot);
   eChild.SetTranslation(Vector3::UnitY());
   ASSERT_TRUE(IsEqual(Matrix(eChild.GetTranslation()), eChild.GetLocalTransform()));
 
@@ -126,9 +126,9 @@ public:
   }
 };
 
-TEST_F(EntityTests, AddFindComponment)
+TEST_F(Entity, AddFindComponment)
 {
-  Entity e(nullptr);
+  xr::Entity e(nullptr);
   auto c = e.AddComponent<TestComponent>();
   ASSERT_EQ(c->GetOwner(), &e); // Owner correctly set.
   ASSERT_EQ(c, e.FindComponent<TestComponent>());
@@ -148,9 +148,9 @@ void AssertEqualData(T(&d0)[N], T(&d1)[N])
   }
 }
 
-TEST_F(EntityTests, Clone)
+TEST_F(Entity, Clone)
 {
-  Entity e(Name("test"), nullptr);
+  xr::Entity e(Name("test"), nullptr);
   e.SetScale(Vector3(1., 2., 3.));
   e.SetRotation(Quaternion::FromPitchYawRoll(Vector3(1., -2., 0.)));
   e.SetTranslation(Vector3(-10., 25., 0.));

@@ -14,7 +14,7 @@ using namespace xr;
 namespace
 {
 
-struct ReverseAdaptorTests: public testing::Test
+struct ReverseAdaptor: public testing::Test
 {
   static void SetUpTestCase()
   {}
@@ -34,13 +34,13 @@ struct ReverseAdaptorTests: public testing::Test
   }
 };
 
-TEST_F(ReverseAdaptorTests, Container)
+TEST_F(ReverseAdaptor, Container)
 {
   std::vector<uint32_t> data{ 100, 10, 1 };
   TestReverseAdaptor(data);
 }
 
-TEST_F(ReverseAdaptorTests, Array)
+TEST_F(ReverseAdaptor, Array)
 {
   uint32_t data[] = { 100, 10, 1 };
   TestReverseAdaptor(data);

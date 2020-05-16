@@ -14,7 +14,7 @@ using namespace xr;
 
 namespace
 {
-class VertexTests: public ::testing::Test
+class Vertex: public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -23,25 +23,25 @@ public:
   static void TearDownTestCase()
   {}
 
-  VertexTests()
+  Vertex()
   {
-    Device::Init("VertexTests");
+    Device::Init("Vertex");
     Gfx::Init(Device::GetGfxContext());
   }
 
-  ~VertexTests()
+  ~Vertex()
   {
     Gfx::Shutdown();
     Device::Shutdown();
   }
 };
 
-TEST_F(VertexTests, Basics)
+TEST_F(Vertex, Basics)
 {
-  using VF1 = Vertex::Format<
-    Vertex::Pos<Vector3>,
-    Vertex::UV0<Vector2>,
-    Vertex::Color0<Vector3>>;
+  using VF1 = xr::Vertex::Format<
+    xr::Vertex::Pos<Vector3>,
+    xr::Vertex::UV0<Vector2>,
+    xr::Vertex::Color0<Vector3>>;
 
   // Construction omitting some subtypes.
 #ifdef XR_PLATFORM_OSX  // TODO: Remove once https://bugreport.apple.com/web/?problemID=36213140 is resolved.
@@ -62,7 +62,7 @@ TEST_F(VertexTests, Basics)
   ASSERT_EQ(v1.uv0.y, .0f);
 
   // Assignment of subtype
-  using VF2 = Vertex::Format<Vertex::Bitangent, VF1>;
+  using VF2 = xr::Vertex::Format<xr::Vertex::Bitangent, VF1>;
   VF2 v2;
   static_assert(VF2::kSize == sizeof(v2), "Size mismatch.");
   Vector3 testBitangent(.707f, .707f, .0f);
@@ -79,7 +79,7 @@ TEST_F(VertexTests, Basics)
 
   // Assignment of single component
   const Vector3 testColor(1.0f, .25f, .25f);
-  v2 = Vertex::Color0<Vector3>(testColor);
+  v2 = xr::Vertex::Color0<Vector3>(testColor);
   ASSERT_EQ(v2.pos.x, v1.pos.x);
   ASSERT_EQ(v2.pos.y, v1.pos.y);
   ASSERT_EQ(v2.pos.z, v1.pos.z);
