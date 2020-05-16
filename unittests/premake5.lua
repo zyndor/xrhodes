@@ -15,6 +15,7 @@ project "unittests"
 	{
 		"h/**.hpp",
 		"src/**.cpp",
+		"data/**",
 		"premake5.lua"
 	}
 
