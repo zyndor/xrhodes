@@ -41,7 +41,7 @@ const std::regex kCommentsRegex(
 const std::regex kHeadingWhiteSpaceRegex("(^|\\n)\\s+");
 const std::regex kTrailingWhiteSpaceRegex("\\s+($|\\n)");
 
-const std::regex kPreprocessorRegex("^#.*\\s*");
+const std::regex kVersionRegex("^#\\s*version\\s+.*\\s*");
 
 class ShaderComponentBuilder : public Asset::Builder
 {
@@ -92,17 +92,20 @@ public:
     if (!definesBlock.empty())
     {
       std::ostringstream stream;
-      std::cmatch preprocResults;
+
+      // If the shader source starts with '#version', as it is required to in GLSL,
+      // skip over that.
+      std::cmatch versionResults;
       char const* p = source.c_str();
-      while (std::regex_search(p, preprocResults, kPreprocessorRegex) &&
-        preprocResults[0].first == p)
+      if (std::regex_search(p, versionResults, kVersionRegex) &&
+        versionResults[0].first == p)
       {
-        auto pNew = preprocResults[0].second;
-        while (p != pNew)
+        auto pNew = versionResults[0].second;
+        do
         {
           stream.put(*p);
-          ++p;
         }
+        while (++p != pNew);
       }
 
       stream << definesBlock;
