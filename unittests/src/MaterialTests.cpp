@@ -103,7 +103,7 @@ static void AssertEq(T const& a, T const& b)
   ASSERT_EQ(a, b);
 }
 
-class MaterialTestsCore : public ::testing::Test
+class MaterialCore : public ::testing::Test
 {
 public:
   static void SetUpTestCase()
@@ -112,7 +112,7 @@ public:
   static void TearDownTestCase()
   {}
 
-  explicit MaterialTestsCore(bool multiThreaded)
+  explicit MaterialCore(bool multiThreaded)
   {
     if (multiThreaded)
     {
@@ -133,7 +133,7 @@ public:
       SetViewerTransform(xr::Matrix(xr::Vector3(.0f, .0f, .0f)));
   }
 
-  ~MaterialTestsCore()
+  ~MaterialCore()
   {
     Asset::Manager::Shutdown();
 
@@ -196,7 +196,7 @@ protected:
     Image cap;
     cap.SetSize(Gfx::GetLogicalWidth(), Gfx::GetLogicalHeight(), 3);
 
-    MemberCallback<MaterialTestsCore, void, void*>  mcb(*this, &MaterialTestsCore::OnReadFrameBufferComplete);
+    MemberCallback<MaterialCore, void, void*>  mcb(*this, &MaterialCore::OnReadFrameBufferComplete);
     Gfx::ReadFrameBuffer(0, 0, cap.GetWidth(), cap.GetHeight(), Gfx::TextureFormat::RGB8,
       0, cap.GetPixelData(), &mcb);
 
@@ -242,23 +242,23 @@ private:
 };
 
 template <bool kMultiThreaded>
-class MaterialTests: public MaterialTestsCore
+class Material: public MaterialCore
 {
 public:
-  MaterialTests()
-  : MaterialTestsCore(kMultiThreaded)
+  Material()
+  : MaterialCore(kMultiThreaded)
   {}
 };
 
 #ifdef ENABLE_ASSET_BUILDING
-using MaterialTestsSingle = MaterialTests<false>;
-TEST_F(MaterialTestsSingle, Textures)
+using MaterialSingle = Material<false>;
+TEST_F(MaterialSingle, Textures)
 {
   DoTexturesTest();
 }
 
-using MaterialTestsMulti = MaterialTests<true>;
-TEST_F(MaterialTestsMulti, TexturesMulti)
+using MaterialMulti = Material<true>;
+TEST_F(MaterialMulti, TexturesMulti)
 {
   DoTexturesTest();
 }

@@ -17,13 +17,13 @@ using namespace xr;
 namespace
 {
 
-class ImageTests : public ::testing::Test
+class Image : public ::testing::Test
 {
 private:
   FileLifeCycleManager  flcm;
 };
 
-static void Compare(Image const& img, Image const& check)
+static void Compare(xr::Image const& img, xr::Image const& check)
 {
   ASSERT_EQ(check.GetWidth(), img.GetWidth());
   ASSERT_EQ(check.GetHeight(), img.GetHeight());
@@ -32,9 +32,9 @@ static void Compare(Image const& img, Image const& check)
   ASSERT_TRUE(std::memcmp(check.GetPixelData(), img.GetPixelData(), img.GetPixelDataSize()) == 0);
 }
 
-TEST_F(ImageTests, Basic)
+TEST_F(Image, Basic)
 {
-  Image img;
+  xr::Image img;
   ASSERT_EQ(img.GetWidth(), 0);
   ASSERT_EQ(img.GetHeight(), 0);
   ASSERT_EQ(img.GetBytesPerPixel(), 0);
@@ -69,7 +69,7 @@ TEST_F(ImageTests, Basic)
   // Png round trip
   ASSERT_TRUE(img.Save("imgTest.png", true));
 
-  Image check;
+  xr::Image check;
   ASSERT_TRUE(check.Load("imgTest.png"));
   Compare(img, check);
 

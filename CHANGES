@@ -1,3 +1,11 @@
+v1.8.2
+- fix: ShaderComponentBuilder inserts #defines at the correct location.
+- fix: xr::XonObject::GetKeys() checks the capacity, not the size, of the vector
+  supplied by the client.
+- fix: synced XonBuildTree.hpp's inclusion guard with its name.
+- fix: included the data/ folder in the project files for unittests.
+- Unittests naming improvements - dropping "Tests" from the name of each case.
+
 v1.8.1
 - Animator optimisation, cleanup and improvements to documentation;
 - improved namespacing (and consistency thereof) in unittests;

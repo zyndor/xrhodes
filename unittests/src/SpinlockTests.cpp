@@ -38,7 +38,7 @@ struct Data
     auto elapsed = duration.count();
     char arBuffer[64];
     sprintf(arBuffer, "Time taken: %fms", elapsed);
-    XR_TRACE(SpinlockTests, (arBuffer));
+    XR_TRACE(Spinlock, (arBuffer));
   }
 
   void Assert(int n)
