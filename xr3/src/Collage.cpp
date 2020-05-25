@@ -22,7 +22,6 @@ Collage::Collage()
 //=============================================================================
 void Collage::Init(uint16_t width, uint16_t height, uint8_t stride, uint16_t minBlockSize)
 {
-  mStride = stride;
   mMinBlockSize = minBlockSize;
 
   mData.SetSize(width, height, stride);
@@ -45,8 +44,9 @@ bool Collage::Paste(uint16_t width, uint16_t height, uint16_t pitch,
   if (data)
   {
     auto atlasWidth = mData.GetWidth();
-    const uint32_t readRowSize = pitch * mStride;
-    const uint32_t writeRowSize = atlasWidth * mStride;
+    auto stride = mData.GetBytesPerPixel();
+    const uint32_t readRowSize = pitch * stride;
+    const uint32_t writeRowSize = atlasWidth * stride;
     for (uint16_t y = 0; y < height; ++y)
     {
       memcpy(writep, data, readRowSize);
@@ -68,7 +68,8 @@ bool Collage::Paste(uint16_t width, uint16_t height, uint8_t const* data, xr::AA
 uint8_t* Collage::Allocate(uint16_t width, uint16_t height, xr::AABB& outUVs)
 {
   XR_ASSERT(Collage, mData.GetPixelData());
-  XR_ASSERT(Collage, mStride > 0);
+  auto stride = mData.GetBytesPerPixel();
+  XR_ASSERT(Collage, stride > 0);
 
   // find block with closest matching dimensions
   if (mBlocks.empty())
@@ -171,7 +172,7 @@ uint8_t* Collage::Allocate(uint16_t width, uint16_t height, xr::AABB& outUVs)
   outUVs.right = (blockSave.mX + width) / float(atlasWidth);
   outUVs.top = (blockSave.mY + height) / float(atlasHeight);
 
-  uint8_t* writep = mData.GetPixelData() + (blockSave.mY * atlasWidth + blockSave.mX) * mStride;
+  uint8_t* writep = mData.GetPixelData() + (blockSave.mY * atlasWidth + blockSave.mX) * stride;
   return writep;
 }
 

@@ -77,7 +77,6 @@ private:
   };
 
   // data
-  uint8_t mStride = 0;  // bytes
   uint16_t mMinBlockSize = 0; // pixels
 
   xr::Image mData;
