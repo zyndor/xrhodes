@@ -49,27 +49,26 @@ public:
     const auto sub = GetNextSubstitutor();
 
     std::ostringstream  buffer;
-    auto iFind = m_string.find(sub.buffer);
-    size_t stringSize = m_string.size();
+    std::string todo{ std::move(m_string) };
+    auto iFind = todo.find(sub.buffer);
     while (iFind != std::string::npos)
     {
-      const auto afterSub = iFind + sub.size;
-      buffer.str("");
-      buffer << m_string.substr(0, iFind) << value << m_string.substr(afterSub);
-      buffer.str().swap(m_string);
+      buffer << todo.substr(0, iFind);
+      buffer << value;
 
-      // NOTE: we should start looking for the next token at the end of this
-      // substitution to avoid the fatal and unrealistic scenario of a token
-      // being replaced with itself (part or whole).
-      // i.e. in "%1 morning!" % "Good %1" we should not look to replace the
-      // %1 generated in the substitution. Note that "%1 morning!" % "Good %2"
-      // will work as expected.
-      const auto oldStringSize = stringSize;
-      stringSize = m_string.size();
-      iFind = m_string.find(sub.buffer, afterSub + ptrdiff_t(stringSize - oldStringSize));
+      todo = todo.substr(iFind + sub.size);
+      iFind = todo.find(sub.buffer);
     }
 
+    buffer << todo;
+    buffer.str().swap(m_string);
+
     return *this;
+  }
+
+  operator std::string() const
+  {
+    return m_string;
   }
 
 private:
