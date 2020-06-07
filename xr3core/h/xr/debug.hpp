@@ -14,12 +14,12 @@
 
 //==============================================================================
 ///@brief Printing to stdout followed by explicit flush.
-#define XR_RAWTRACE(format)	printf format; fflush(stdout);
+#define XR_RAWTRACE(format)	do { printf format; fflush(stdout); } while(0)
 
 //==============================================================================
 ///@brief Binary debugging aid - wrap call to help determine whether it causes a
 /// crash / exception.
-#define XR_SURVIVE(call)  { XR_RAWTRACE(("SURVIVE: %s (%s:%d)\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"); }
+#define XR_SURVIVE(call)  do { XR_RAWTRACE(("SURVIVE: %s (%s:%d)\n", #call, __FILE__, __LINE__)); call; printf("OK.\n"); } while(0)
 
 //==============================================================================
 #if !defined(XR_DEBUG) && defined(XR_DEBUG_PERFORMANCE)
