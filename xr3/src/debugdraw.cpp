@@ -64,10 +64,13 @@ void EnsureUniformExists()
   }
 }
 
+//==============================================================================
 void EnsureMaterialExists()
 {
   if (!s_material)
   {
+    EnsureUniformExists();
+
     Asset::FlagType flags = Asset::UnmanagedFlag;
     s_material.Reset(Material::Create(0, flags));
 
@@ -88,11 +91,11 @@ void EnsureMaterialExists()
   }
 }
 
+//==============================================================================
 void SetMaterial(Material::Ptr material)
 {
   if (!material)
   {
-    EnsureUniformExists();
     EnsureMaterialExists();
 
     material = s_material;
@@ -100,6 +103,7 @@ void SetMaterial(Material::Ptr material)
   material->Apply();
 }
 
+//==============================================================================
 void  DrawLineInternal(const Vector3* positions, int numVerts, Material::Ptr const& material,
   Primitive primitive)
 {
@@ -116,6 +120,7 @@ void  DrawLineInternal(const Vector3* positions, int numVerts, Material::Ptr con
   ScratchBuffer::Finish(primitive);
 }
 
+//==============================================================================
 uint32_t GetCircleNumVerts(float radius)
 {
   XR_ASSERT(GetCircleNumVerts, radius >= .0f);
