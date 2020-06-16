@@ -1,3 +1,10 @@
+v1.8.3
+- fix: DebugDraw no longer calls EnsureMaterialExists() without calling
+  EnsureUniformExists() first;
+- fix: XR_RAWTRACE and XR_SURVIVE may now be used from un-braced scopes;
+- removed redundant data member from xr::Collage;
+- replaced the use of std::function<> with a function pointer in xr::BoxText;
+
 v1.8.2
 - fix: ShaderComponentBuilder inserts #defines at the correct location.
 - fix: xr::XonObject::GetKeys() checks the capacity, not the size, of the vector
