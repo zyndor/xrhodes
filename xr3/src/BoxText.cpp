@@ -295,7 +295,9 @@ void BoxText::Measure(char const* text, size_t numBytes, Measurement& m) const
 namespace
 {
 
-const std::function<void(float, float&)> kHorizontalAligners[] = {
+using Aligner = void(*)(float, float&);
+
+const Aligner kHorizontalAligners[] = {
   [](float width, float& x) {},
   [](float width, float& x) { x += width * .5f; },
   [](float width, float& x) { x += width; },
