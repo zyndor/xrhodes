@@ -16,7 +16,8 @@
 #include "SDL_events.h"
 #include <cstring>
 
-namespace xr {
+namespace xr
+{
 
 struct  InputImpl: Singleton<InputImpl>
 {
@@ -24,8 +25,6 @@ struct  InputImpl: Singleton<InputImpl>
   enum { kMaxControllers = 8 };
 
   // static
-  static InputImpl* s_instance;
-
   static HatState::Type TranslateHat(uint8_t state)
   {
     return ((state & SDL_HAT_UP) ? HatState::Up : 0) |
