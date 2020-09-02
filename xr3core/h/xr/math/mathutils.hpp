@@ -80,6 +80,11 @@ constexpr float Saturate(float val);
 template <typename T>
 constexpr T  Lerp(T v0, T v1, float blendFactor);
 
+///@brief Performs the inverse of linear interpolation.
+///@return The alpha value of @a value given edges @a edge0 and @a edge1.
+template <typename T>
+constexpr T  InvLerp(T edge0, T edge1, float value);
+
 ///@brief Calculates a value based on the given @a controlPoints and @a blendFactor
 /// between .0 and 1.0.
 template <typename T, size_t kNumSamples>
@@ -177,6 +182,14 @@ constexpr T Lerp(T v0, T v1, float blendFactor)
 }
 
 //==============================================================================
+template <typename T>
+inline
+constexpr T InvLerp(T edge0, T edge1, float value)
+{
+  return (value - edge0) / (edge1 - edge0);
+}
+
+//==============================================================================
 namespace detail
 {
 
@@ -226,7 +239,7 @@ constexpr typename std::decay<T>::type Bezier(T (&controlPoints)[kNumSamples], f
 inline
 float SmoothStep(float edge0, float edge1, float x)
 {
-  x = Saturate((x - edge0) / (edge1 - edge0));
+  x = Saturate(InvLerp(edge0, edge1, x));
   return x * x * (3.0f - 2.0f * x);
 }
 
@@ -234,7 +247,7 @@ float SmoothStep(float edge0, float edge1, float x)
 inline
 float SmootherStep(float edge0, float edge1, float x)
 {
-  x = Saturate((x - edge0) / (edge1 - edge0));
+  x = Saturate(InvLerp(edge0, edge1, x));
   return x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f);
 }
 
