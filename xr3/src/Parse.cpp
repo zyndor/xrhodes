@@ -160,7 +160,7 @@ bool  Parse::Int(int base, const char* value, int& v)
 
       if (success)
       {
-        intValue = static_cast<int>(Round(float(multi * base)));
+        intValue = static_cast<int>(std::round(float(multi * base)));
       }
     }
     else if (strchr(value, '.') != 0)
@@ -174,7 +174,7 @@ bool  Parse::Int(int base, const char* value, int& v)
 
       if (success)
       {
-        intValue = static_cast<int>(Round(float(scalar * base)));
+        intValue = static_cast<int>(std::round(float(scalar * base)));
       }
     }
     else
