@@ -13,30 +13,48 @@ namespace xr
 {
 
 //==============================================================================
-int       QuadtreeCore::s_maxSubdivisions = 5;
-AABB      QuadtreeCore::s_hitBox;
-void*     QuadtreeCore::s_callbackData = nullptr;
+int QuadtreeCore::sMaxSubdivisions = kDefaultSubdivisionLimit;
 
-QuadtreeCore::UnaryCallback   QuadtreeCore::s_unaryCallback = nullptr;
-QuadtreeCore::BinaryCallback  QuadtreeCore::s_binaryCallback = nullptr;
+//==============================================================================
+float QuadtreeCore::CalculateMin(float hw, float hh, uint32_t maxSubdivisions)
+{
+  return float(static_cast<int>(floorf(hw + hh)) >> (maxSubdivisions + 1));
+}
+
+//==============================================================================
+float QuadtreeCore::CalculateMin(float hw, float hh)
+{
+  return CalculateMin(hw, hh, sMaxSubdivisions);
+}
+
+//==============================================================================
+int QuadtreeCore::GetMaxSubdivisions()
+{
+  return sMaxSubdivisions;
+}
 
 //==============================================================================
 void QuadtreeCore::SetMaxSubdivisions(int maxSubdivisions)
 {
   XR_ASSERT(QuadtreeCore, maxSubdivisions >= 0);
-  s_maxSubdivisions = maxSubdivisions;
+  sMaxSubdivisions = maxSubdivisions;
+}
+
+//==============================================================================
+AABB const& QuadtreeCore::GetCandidateBox()
+{
+  static AABB dummy{ 0.f, 0.f, 0.f, 0.f };
+  return dummy;
 }
 
 //==============================================================================
 QuadtreeCore::QuadtreeCore()
-: RectObject(),
-  m_canSplit(false)
+: RectObject()
 {}
 
 //==============================================================================
-QuadtreeCore::QuadtreeCore(const Vector2 &pos, float hw, float hh)
-: RectObject(hw, hh, pos),
-  m_canSplit(false)
+QuadtreeCore::QuadtreeCore(Vector2 const& pos, float hw, float hh)
+: RectObject(hw, hh, pos)
 {}
 
 //==============================================================================

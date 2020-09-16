@@ -10,6 +10,7 @@
 //
 //==============================================================================
 #include "xr/math/Vector2.hpp"
+#include "xr/AABB.hpp"
 
 namespace xr
 {
@@ -23,16 +24,16 @@ class RectObject
 {
 public:
   // structors
-  RectObject(const Vector2& pos = Vector2::Zero());
-  RectObject(float hw, float hh, const Vector2& pos = Vector2::Zero());
+  RectObject(Vector2 const& pos = Vector2::Zero());
+  RectObject(float hw, float hh, Vector2 const& pos = Vector2::Zero());
   ~RectObject();
 
   // general use
   ///@return  The position of the RectObject.
-  const Vector2& GetPosition() const;
+  Vector2 const& GetPosition() const;
 
   ///@return  The position of the RectObject.
-  Vector2&       GetPosition();
+  Vector2&  GetPosition();
 
   ///@brief Coordinates of the left side.
   float  GetLeft() const;
@@ -73,9 +74,9 @@ public:
 
 protected:
   // data
-  Vector2 m_position;
-  float   m_halfWidth;
-  float   m_halfHeight;
+  Vector2 mPosition;
+  float   mHalfWidth;
+  float   mHalfHeight;
 };
 
 //==============================================================================
@@ -84,79 +85,79 @@ protected:
 inline
 Vector2& RectObject::GetPosition()
 {
-  return m_position;
+  return mPosition;
 }
 
 //==============================================================================
 inline
-const Vector2& RectObject::GetPosition() const
+Vector2 const& RectObject::GetPosition() const
 {
-  return m_position;
+  return mPosition;
 }
 
 //==============================================================================
 inline
 float RectObject::GetHalfWidth() const
 {
-  return m_halfWidth;
+  return mHalfWidth;
 }
 
 //==============================================================================
 inline
 float RectObject::GetHalfHeight() const
 {
-  return m_halfHeight;
+  return mHalfHeight;
 }
 
 //==============================================================================
 inline
 float& RectObject::GetHalfWidthRef()
 {
-  return m_halfWidth;
+  return mHalfWidth;
 }
 
 //==============================================================================
 inline
 float& RectObject::GetHalfHeightRef()
 {
-  return m_halfHeight;
+  return mHalfHeight;
 }
 
 //==============================================================================
 inline
 float  RectObject::GetLeft() const
 {
-  return m_position.x - m_halfWidth;
+  return mPosition.x - mHalfWidth;
 }
 
 //==============================================================================
 inline
 float  RectObject::GetRight() const
 {
-  return m_position.x + m_halfWidth;
+  return mPosition.x + mHalfWidth;
 }
 
 //==============================================================================
 inline
 float  RectObject::GetTop() const
 {
-  return m_position.y + m_halfHeight;
+  return mPosition.y + mHalfHeight;
 }
 
 //==============================================================================
 inline
 float  RectObject::GetBottom() const
 {
-  return m_position.y - m_halfHeight;
+  return mPosition.y - mHalfHeight;
 }
 
 //==============================================================================
 inline
 float RectObject::CalculateRadius() const
 {
-  return sqrtf((m_halfWidth * m_halfWidth) + (m_halfHeight * m_halfHeight));
+  return sqrtf((mHalfWidth * mHalfWidth) + (mHalfHeight * mHalfHeight));
 }
 
-} // XR
+} // xr
 
 #endif  //XR_RECTOBJECT_HPP
