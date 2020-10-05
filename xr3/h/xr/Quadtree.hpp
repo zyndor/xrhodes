@@ -122,6 +122,21 @@ public:
   ///@note Previously added objects are lost.
   void  Create(AABB const& box, float min);
 
+  ///@brief Offsets the position of the Quadtree (and all of its leaves) by @a delta,
+  /// without re-creating its structure.
+  void  Translate(Vector2 const& delta);
+
+  ///@brief Multiplies the half-width and -height of the Quadtree (and all of its
+  /// leaves) by @a sx and @a sy respectively, without re-creating its structure.
+  /// In additon, the position of the leaves are adjusted to fulfil the Quadtree
+  /// criterion.
+  void  Scale(float sx, float sy);
+
+  ///@brief Multiplies the half-width and -height of the Quadtree (and all of its
+  /// leaves) by @a s, without re-creating its structure. In additon, the position
+  /// of the leaves are adjusted to fulfil the Quadtree criterion.
+  void  Scale(float s);
+
   ///@brief Adds the @a object bounded by the AABB @a box, to the Quadtree.
   ///@note Does not transfer ownership of @a object to the Quadtree.
   void  Add(const AABB& box, void* object);
@@ -272,6 +287,63 @@ void  Quadtree<Alloc>::Create(AABB const& box, float min)
   box.Export(mPosition.x, mPosition.y, mHalfWidth, mHalfHeight);
 
   CreateRecursion(min);
+}
+
+//==============================================================================
+template <template <typename> class Alloc>
+void  Quadtree<Alloc>::Translate(Vector2 const& delta)
+{
+  mPosition += delta;
+
+  if (IsSubdivided())
+  {
+    for (auto l : mLeaves)
+    {
+      static_cast<SelfType*>(l)->Translate(delta);
+    }
+  }
+}
+
+//==============================================================================
+template <template <typename> class Alloc>
+void  Quadtree<Alloc>::Scale(float sx, float sy)
+{
+  XR_ASSERT(Quadtree, sx * sx > std::numeric_limits<float>::epsilon());
+  XR_ASSERT(Quadtree, sy * sy > std::numeric_limits<float>::epsilon());
+  float hw = mHalfWidth * sx;
+  float hh = mHalfHeight * sy;
+  mHalfWidth = hw;
+  mHalfHeight = hh;
+
+  if (IsSubdivided())
+  {
+    hw *= .5f;
+    hh *= .5f;
+    auto l = mLeaves;
+
+    static_cast<SelfType*>(*l)->mPosition = mPosition + Vector2{ -hw, -hh };
+    static_cast<SelfType*>(*l)->Scale(sx, sy);
+    ++l;
+
+    static_cast<SelfType*>(*l)->mPosition = mPosition + Vector2{ hw, -hh };
+    static_cast<SelfType*>(*l)->Scale(sx, sy);
+    ++l;
+
+    static_cast<SelfType*>(*l)->mPosition = mPosition + Vector2{ -hw, hh };
+    static_cast<SelfType*>(*l)->Scale(sx, sy);
+    ++l;
+
+    static_cast<SelfType*>(*l)->mPosition = mPosition + Vector2{ hw, hh };
+    static_cast<SelfType*>(*l)->Scale(sx, sy);
+  }
+}
+
+//==============================================================================
+template <template <typename> class Alloc>
+inline
+void  Quadtree<Alloc>::Scale(float s)
+{
+  Scale(s, s);
 }
 
 //==============================================================================

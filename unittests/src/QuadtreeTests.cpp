@@ -132,4 +132,59 @@ TEST(Quadtree, Binary)
   ASSERT_EQ(ro2.mCounter, 0u);
 }
 
+TEST(Quadtree, Translate)
+{
+  Quadtree<>  qt(Vector2::Zero(), 1024.f, 1024.f, 512.f);
+
+  QuadtreeTester ro1(511.9f, 511.9f, Vector2::One() * 512.f);
+
+  Vector2 pos = ro1.GetPosition();
+
+  AABB box;
+  ro1.Export(box);
+  qt.Add(box, &ro1);
+
+  qt.Process(pos, UnaryTester);
+  ASSERT_EQ(ro1.mCounter, 1u);  // hit with own position
+
+  qt.Clear();
+
+  Vector2 delta{ 1024.f, 0.f };
+  qt.Translate(delta);
+  pos += delta;
+
+  qt.Add(box, &ro1);
+
+  ro1.mCounter = 0;
+  qt.Process(pos, UnaryTester);
+  ASSERT_EQ(ro1.mCounter, 0); // not hit after translating quadtree and offsetting checking pos by the same amount
+}
+
+TEST(Quadtree, Scale)
+{
+  Quadtree<>  qt(Vector2::Zero(), 1024.f, 1024.f, QuadtreeCore::CalculateMin(1024.f, 1024.f, 2));
+
+  QuadtreeTester ro1(255.9f, 255.9f, Vector2::One() * 768.f);
+
+  Vector2 pos = ro1.GetPosition();
+
+  AABB box;
+  ro1.Export(box);
+  qt.Add(box, &ro1);
+
+  qt.Process(pos, UnaryTester);
+  ASSERT_EQ(ro1.mCounter, 1u);  // hit with own position
+
+  qt.Clear();
+
+  qt.Scale(2.f);
+  pos *= 2.f;
+
+  qt.Add(box, &ro1);
+
+  ro1.mCounter = 0;
+  qt.Process(pos, UnaryTester);
+  ASSERT_EQ(ro1.mCounter, 0); // not hit after scaling quadtree and checking pos by the same amount.
+}
+
 }
