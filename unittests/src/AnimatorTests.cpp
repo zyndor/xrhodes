@@ -23,6 +23,10 @@ const auto kSetter = [](float x, void* data) {
   *static_cast<float*>(data) = x;
 };
 
+const auto kSetterByRef = [](float const& x, void* data) {
+  *static_cast<float*>(data) = x;
+};
+
 const auto kOnStop = [](void* data) {
   ++*static_cast<int*>(data);
 };
@@ -30,6 +34,11 @@ const auto kOnStop = [](void* data) {
 FunctionPtrCallback<void, float> MakeSetter(float& f)
 {
   return FunctionPtrCallback<void, float>(kSetter, &f);
+}
+
+FunctionPtrCallback<void, float const&> MakeSetterByRef(float& f)
+{
+  return FunctionPtrCallback<void, float const&>(kSetterByRef, &f);
 }
 
 FunctionPtrCallback<void> MakeOnStop(int& stops)
@@ -105,7 +114,7 @@ TEST(Animator, ClearNoComplete)
   int stops = 0;
   auto onStop = MakeOnStop(stops);
   animator.Animate(kDuration, f, 1.f, Lerp, MakeSetter(f), &onStop);
-  animator.Animate(kDuration, g, 0.f, Lerp, MakeSetter(g), &onStop);
+  animator.Animate(kDuration, g, 0.f, Lerp, MakeSetterByRef(g), &onStop);
 
   animator.Update(kDuration * .5f);
   animator.Clear(false);
@@ -128,7 +137,7 @@ TEST(Animator, ClearComplete)
   int stops = 0;
   auto onStop = MakeOnStop(stops);
   animator.Animate(kDuration, f, 1.f, Lerp, MakeSetter(f), &onStop);
-  animator.Animate(kDuration, g, 0.f, Lerp, MakeSetter(g), &onStop);
+  animator.Animate(kDuration, g, 0.f, Lerp, MakeSetterByRef(g), &onStop);
 
   animator.Update(kDuration * .5f);
   animator.Clear(true);

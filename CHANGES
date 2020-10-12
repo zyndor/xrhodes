@@ -1,3 +1,22 @@
+v1.9.0
+- xr::Animator::Animate() supports setters that take value by const reference;
+- added an xr::Buffer::FromArray() overload which takes a pointer and number of
+  elements;
+- added an xr::XonValue constructor overload that takes std::string;
+- xr::StringFormatter usability and performance improvements;
+- added a Reflect() method to xr::Vector2 and Vector3;
+- xr::TranslateKeyCodeNative() performance improvements and more readable key
+  code values for Escape, Insert and Delete, deprecating previous details;
+- mathutils maintenance: constexpr functions; deprecated Round();
+- added xr::InvLerp<>();
+- xr::Quadtree cleanup and refactor for re-entrancy and minimal size; position
+  and size no longer modifyable after the Quadtree was created;
+- added xr::Quadtree::Translate() and Scale();
+- removed redundant s_instance from xr::InputImpl;
+- build_all.bat attempts to use the MSBUILD_PATH defined in the environment, or
+  if it wasn't, it will look for MSBuild.exe;
+- added tools/linux/build_all.sh
+
 v1.8.3
 - fix: DebugDraw no longer calls EnsureMaterialExists() without calling
   EnsureUniformExists() first;

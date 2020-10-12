@@ -35,7 +35,7 @@ public:
 
   ///@brief Sets the updated value on the target.
   template <typename T>
-  using FnSet = xr::Callback<void, T>;
+  using FnSet [[deprecated]] = xr::Callback<void, T>;
 
   ///@brief An operation performed upon the completion of the animation.
   using OnStop = xr::Callback<void>;
@@ -63,7 +63,17 @@ public:
   /// the animation.
   template <typename T>
   Handle Animate(float duration, T const& start, T const& target, FnTween<T> tween,
-    FnSet<T> const& setter, OnStop const* onStop = nullptr);
+    Callback<void, T> const& setter, OnStop const* onStop = nullptr);
+
+  ///@brief Starts an animation, to run for @a duration units of time, interpolating
+  /// with the use of the given @a tween, between the @a start and @a end values,
+  /// setting the result with @a setter. An optional @a onStop callback may be
+  /// provided, to be called when the animation is stopped for any reason.
+  ///@return Handle to the animation. This may be used for manually Stop()ping
+  /// the animation.
+  template <typename T>
+  Handle Animate(float duration, T const& start, T const& target, FnTween<T> tween,
+    Callback<void, T const&> const& setter, OnStop const* onStop = nullptr);
 
   ///@brief Attempts to stop an animation with the given @a handle. If @a complete
   /// is true, the value will be set to its target and the onStop callback will
@@ -116,6 +126,24 @@ private:
     virtual void UpdateValue(float alpha) =0;
   };
 
+  template <typename T>
+  struct ValueT: ValueBase
+  {
+    using RawT = typename std::decay<T>::type;
+
+    RawT mStart;
+    RawT mTarget;
+    FnTween<T> mTween;
+
+    ValueT(Handle handle, float duration, OnStop const* onStop,
+      T const& start, T const& target, FnTween<T> const& tween)
+    : ValueBase(handle, duration, onStop),
+      mStart(start),
+      mTarget(target),
+      mTween(tween)
+    {}
+  };
+
   using ValueBuffer = std::vector<uint8_t>;
 
   // data
@@ -135,40 +163,75 @@ private:
 //==============================================================================
 // inline
 //==============================================================================
-template<typename T>
+template <typename T>
 Animator::Handle Animator::Animate(float duration, T const& start, T const& target,
-   FnTween<T> tween, FnSet<T> const& setter, OnStop const* onStop)
+  FnTween<T> tween, Callback<void, T> const& setter, OnStop const* onStop)
 {
   if (duration > 0.f)
   {
-    using RawT = typename std::decay<T>::type;
-    struct Value : ValueBase
+    struct Value : ValueT<T>
     {
-      RawT mStart;
-      RawT mTarget;
-      FnTween<T> mTween;
-      std::unique_ptr<FnSet<T>> mSetter;
+      std::unique_ptr<Callback<void, T>> mSetter;
 
-      Value(Key key, float duration, FnTween<T> tween, FnSet<T> const& setter,
-        T const& start, T const& target, OnStop const* onStop)
-      : ValueBase(Handle { sizeof(Value), key }, duration, onStop),
-        mStart(start),
-        mTarget(target),
-        mTween(tween),
+      Value(Key key, float duration, T const& start, T const& target, FnTween<T> tween,
+        Callback<void, T> const& setter, OnStop const* onStop)
+      : ValueT<T>(Handle{ sizeof(Value), key }, duration, onStop, start, target, tween),
         mSetter(setter.Clone())
       {}
 
       virtual void UpdateValue(float alpha) override
       {
-        mSetter->Call(mTween(mStart, mTarget, alpha));
+        mSetter->Call(ValueT<T>::mTween(ValueT<T>::mStart, ValueT<T>::mTarget, alpha));
       }
     };
 
     void* buffer = Allocate(sizeof(Value));
     XR_ASSERT(Animator, buffer);
 
-    auto result = new (buffer) Value(mNextKey, duration, tween, setter, start,
-      target, onStop);
+    auto result = new (buffer) Value(mNextKey, duration, start, target, tween,
+      setter, onStop);
+    ++mNextKey;
+    return result->mHandle;
+  }
+  else
+  {
+    setter.Call(target);
+    if (onStop)
+    {
+      onStop->Call();
+    }
+    return{ 0, 0 };
+  }
+}
+
+//==============================================================================
+template <typename T>
+Animator::Handle Animator::Animate(float duration, T const& start, T const& target,
+  FnTween<T> tween, Callback<void, T const&> const& setter, OnStop const* onStop)
+{
+  if (duration > 0.f)
+  {
+    struct Value : ValueT<T>
+    {
+      std::unique_ptr<Callback<void, T const&>> mSetter;
+
+      Value(Key key, float duration, T const& start, T const& target, FnTween<T> tween,
+        Callback<void, T const&> const& setter, OnStop const* onStop)
+      : ValueT<T>(Handle{ sizeof(Value), key }, duration, onStop, start, target, tween),
+        mSetter(setter.Clone())
+      {}
+
+      virtual void UpdateValue(float alpha) override
+      {
+        mSetter->Call(ValueT<T>::mTween(ValueT<T>::mStart, ValueT<T>::mTarget, alpha));
+      }
+    };
+
+    void* buffer = Allocate(sizeof(Value));
+    XR_ASSERT(Animator, buffer);
+
+    auto result = new (buffer) Value(mNextKey, duration, start, target, tween,
+      setter, onStop);
     ++mNextKey;
     return result->mHandle;
   }

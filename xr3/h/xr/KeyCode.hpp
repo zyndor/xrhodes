@@ -9,6 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#include <cstdint>
 
 namespace xr
 {
@@ -28,19 +29,19 @@ enum  KeyCode
   K_DOWN,
   K_RIGHT,
 
-  K_ESC,
+  K_ESCAPE,
   K_BACKSPACE,
   K_TAB,
   K_CAPSLOCK,
   K_ENTER,
   K_SPACE,
 
-  K_INS,
+  K_INSERT,
   K_HOME,
   K_PGUP,
   K_PGDOWN,
   K_END,
-  K_DEL,
+  K_DELETE,
 
   K_PAUSE,
 
@@ -113,14 +114,21 @@ enum  KeyCode
   K_OK,
 
   kKeyCount,
-  K_UNKNOWN = kKeyCount
+  K_UNKNOWN = kKeyCount,
+
+  K_ESC [[deprecated]] = K_ESCAPE,
+  K_INS [[deprecated]] = K_INSERT,
+  K_DEL [[deprecated]] = K_DELETE,
 };
 
 //==============================================================================
+[[deprecated]]
 extern const int kKeyCodesNative[kKeyCount];
 
 //==============================================================================
-KeyCode TranslateKeyCodeNative(int kc);
+///@brief Attempts to translate a native keycode @a kc to a KeyCode value. If there
+/// exists no mapping for it, the result will be K_UNKNOWN.
+KeyCode TranslateKeyCodeNative(uint32_t kc);
 
 } // xr
 

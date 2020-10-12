@@ -95,10 +95,10 @@ public:
   {}
 
   // general
-  ///@brief Calculates the magnitude of this vector.
-  float Magnitude() const
+  ///@brief Calculates the dot product of this vector with @a rhs.
+  float Dot(Vector3 const& rhs) const
   {
-    return std::sqrt(Dot());
+    return x * rhs.x + y * rhs.y + z * rhs.z;
   }
 
   ///@brief Calculates the dot product of this vector with itself.
@@ -107,10 +107,10 @@ public:
     return Dot(*this);
   }
 
-  ///@brief Calculates the dot product of this vector with @a rhs.
-  float Dot(Vector3 const& rhs) const
+  ///@brief Calculates the magnitude of this vector.
+  float Magnitude() const
   {
-    return x * rhs.x + y * rhs.y + z * rhs.z;
+    return std::sqrt(Dot());
   }
 
   ///@brief Scales the vector so that its length is @a length.
@@ -135,6 +135,12 @@ public:
   {
     return Vector3(y * rhs.z - z * rhs.y, z * rhs.x - x * rhs.z, x * rhs.y -
       y * rhs.x);
+  }
+
+  ///@brief Calculates the reflection of this vector off the given @a normal.
+  Vector3 Reflect(Vector3 const& normal) const
+  {
+    return *this - normal * (2.f * Dot(normal));
   }
 
   ///@brief Linearly interpolates between this vector and @a to, at the given

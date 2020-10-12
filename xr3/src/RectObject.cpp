@@ -14,16 +14,16 @@ namespace xr
 
 //==============================================================================
 RectObject::RectObject(const Vector2& pos)
-: m_position(pos),
-  m_halfWidth(0),
-  m_halfHeight(0)
+: mPosition(pos),
+  mHalfWidth(0.f),
+  mHalfHeight(0.f)
 {}
 
 //==============================================================================
 RectObject::RectObject(float hw, float hh, const Vector2& pos)
-: m_position(pos),
-  m_halfWidth(hw),
-  m_halfHeight(hh)
+: mPosition(pos),
+  mHalfWidth(hw),
+  mHalfHeight(hh)
 {}
 
 //==============================================================================
@@ -33,19 +33,19 @@ RectObject::~RectObject()
 //==============================================================================
 void  RectObject::SetHalfWidth(float hw)
 {
-  m_halfWidth = hw;
+  mHalfWidth = hw;
 }
 
 //==============================================================================
 void  RectObject::SetHalfHeight(float hh)
 {
-  m_halfHeight = hh;
+  mHalfHeight = hh;
 }
 
 //==============================================================================
 void  RectObject::Export(AABB& box) const
 {
-  box.Import(m_position.x, m_position.y, m_halfWidth, m_halfHeight);
+  box.Import(mPosition.x, mPosition.y, mHalfWidth, mHalfHeight);
 }
 
 

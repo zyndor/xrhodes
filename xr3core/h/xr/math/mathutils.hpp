@@ -50,43 +50,50 @@ extern const float kEpsilon;
 extern const float kRecRandMax;
 
 //==============================================================================
-///@return  +1 if true, -1 if false.
-template  <typename T>
-int Sign(T t);
+///@return +1 if true, -1 if false.
+template <typename T>
+constexpr int Sign(T t);
 
-///@return  the value rounded to the nearest integral value
+///@return the value rounded to the nearest integral value
+[[deprecated("Use std::round().")]]
 float Round(float f);
 
-///@return  An integer unit with a pseudo-random sign.
+///@return An integer unit with a pseudo-random sign.
 int RandSign();
 
-///@return  A pseudo-random floating point number in the [.0, 1.0] range.
+///@return A pseudo-random floating point number in the [.0, 1.0] range.
 float  FlopRand();
 
-///@return  +1 if @a check is true, -1 otherwise.
-template  <typename T>
-T BoolToSign(bool check);
+///@return +1 if @a check is true, -1 otherwise.
+template <typename T>
+constexpr T BoolToSign(bool check);
 
-///@return  The value @a val clamped to @a min and @a max.
-template  <typename T>
-T  Clamp(T val, T min, T max);
+///@return The value @a val clamped to @a min and @a max.
+template <typename T>
+constexpr T  Clamp(T val, T min, T max);
 
-///@return  The value @a val clamped to @a min and @a max.
-float Saturate(float val);
+///@return The value @a val clamped to @a min and @a max.
+constexpr float Saturate(float val);
 
-///@return  Linear interpolated value between @a v0 and @A v1 at @a blendFactor.
-template  <typename T>
-T  Lerp(T v0, T v1, float blendFactor);
+///@brief Performs linear interpolation.
+///@return Value interpolated between @a v0 and @a v1, by @a blendFactor.
+template <typename T>
+constexpr T  Lerp(T v0, T v1, float blendFactor);
+
+///@brief Performs the inverse of linear interpolation.
+///@return The alpha value of @a value given edges @a edge0 and @a edge1.
+template <typename T>
+constexpr T  InvLerp(T edge0, T edge1, float value);
 
 ///@brief Calculates a value based on the given @a controlPoints and @a blendFactor
 /// between .0 and 1.0.
-template  <typename T, size_t kNumSamples>
-typename std::decay<T>::type Bezier(T const* controlPoints, float blendFactor);
+template <typename T, size_t kNumSamples>
+constexpr typename std::decay<T>::type Bezier(T const* controlPoints, float blendFactor);
 
 ///@brief Calculates a value based on the given @a controlPoints and @a blendFactor
 /// between .0 and 1.0.
-template  <typename T, size_t kNumSamples>
-typename std::decay<T>::type Bezier(T(&controlPoints)[kNumSamples], float blendFactor);
+template <typename T, size_t kNumSamples>
+constexpr typename std::decay<T>::type Bezier(T(&controlPoints)[kNumSamples], float blendFactor);
 
 ///@return	Interpolated value between @a edge0 and @a edge1.
 float SmoothStep(float edge0, float edge1, float x);
@@ -94,20 +101,20 @@ float SmoothStep(float edge0, float edge1, float x);
 ///@return	Interpolated value between @a edge0 and @a edge1.
 float SmootherStep(float edge0, float edge1, float x);
 
-///@return  Per-frame speed value based on per second speed @a v and @a fps.
+///@return Per-frame speed value based on per second speed @a v and @a fps.
 float CalcSpeedPerFrame(float v, float fps);
 
-///@return  Per-frame acceleration value based on per second acceleration @a v
+///@return Per-frame acceleration value based on per second acceleration @a v
 /// and @a fps.
 float CalcAccelerationPerFrame(float v, float fps);
 
-///@return  Per-frame scaling value based on per second scaling @a v and
+///@return Per-frame scaling value based on per second scaling @a v and
 /// @a fps.
 float CalcScalingPerFrame(float v, float fps);
 
 ///@brief Calculates the quadratic roots of @a a, @a b, @a c and stores them in
 /// @a x0 and @a x1.
-///@return  Whether the quadratic has a solution.
+///@return Whether the quadratic has a solution.
 ///@note If the quadratic doesn't have a solution, the values of @a x0 and @a x1
 /// will not be changed and should be ignored.
 bool  SolveQuadratic(float a, float b, float c, float& x0, float& x1);
@@ -115,9 +122,9 @@ bool  SolveQuadratic(float a, float b, float c, float& x0, float& x1);
 //==============================================================================
 // implementation
 //==============================================================================
-template  <typename T>
+template <typename T>
 inline
-int Sign(T t)
+constexpr int Sign(T t)
 {
   return static_cast<int>((t > 0) - (t < 0));
 }
@@ -126,7 +133,7 @@ int Sign(T t)
 inline
 float Round(float f)
 {
-  return floorf(f + .5f);
+  return std::round(f);
 }
 
 //==============================================================================
@@ -144,41 +151,49 @@ float  FlopRand()
 }
 
 //==============================================================================
-template  <typename T>
+template <typename T>
 inline
-T BoolToSign(bool check)
+constexpr T BoolToSign(bool check)
 {
   return static_cast<T>((static_cast<int>(check) << 1) - 1);
 }
 
 //==============================================================================
-template  <typename T>
+template <typename T>
 inline
-T  Clamp(T val, T min, T max)
+constexpr T  Clamp(T val, T min, T max)
 {
   return (val > min) ? ((val < max) ? val : max) : min;
 }
 
 //==============================================================================
 inline
-float Saturate(float val)
+constexpr float Saturate(float val)
 {
-  return val < 1.0f ? (val > .0f ? val : .0f) : 1.0f;
+  return Clamp(val, 0.f, 1.f);
 }
 
 //==============================================================================
-template  <typename T>
+template <typename T>
 inline
-T Lerp(T v0, T v1, float blendFactor)
+constexpr T Lerp(T v0, T v1, float blendFactor)
 {
   return v0 + (v1 - v0) * blendFactor;
+}
+
+//==============================================================================
+template <typename T>
+inline
+constexpr T InvLerp(T edge0, T edge1, float value)
+{
+  return (value - edge0) / (edge1 - edge0);
 }
 
 //==============================================================================
 namespace detail
 {
 
-template  <typename T, size_t kNumSamples>
+template <typename T, size_t kNumSamples>
 struct  BezierImpl
 {
   static_assert(kNumSamples > 0, "Invalid number of samples.B");
@@ -195,7 +210,7 @@ struct  BezierImpl
   }
 };
 
-template  <typename T>
+template <typename T>
 struct  BezierImpl<T, 1>
 {
   static T Calculate(const T* parSamples, float blendFactor)
@@ -206,16 +221,16 @@ struct  BezierImpl<T, 1>
 
 } // detail
 
-template  <typename T, size_t kNumSamples>
+template <typename T, size_t kNumSamples>
 inline
-typename std::decay<T>::type Bezier(T const* controlPoints, float blendFactor)
+constexpr typename std::decay<T>::type Bezier(T const* controlPoints, float blendFactor)
 {
   return detail::BezierImpl<typename std::decay<T>::type, kNumSamples>::Calculate(controlPoints, blendFactor);
 }
 
 template <typename T, size_t kNumSamples>
 inline
-typename std::decay<T>::type Bezier(T (&controlPoints)[kNumSamples], float blendFactor)
+constexpr typename std::decay<T>::type Bezier(T (&controlPoints)[kNumSamples], float blendFactor)
 {
   return detail::BezierImpl<typename std::decay<T>::type, kNumSamples>::Calculate(controlPoints, blendFactor);
 }
@@ -224,7 +239,7 @@ typename std::decay<T>::type Bezier(T (&controlPoints)[kNumSamples], float blend
 inline
 float SmoothStep(float edge0, float edge1, float x)
 {
-  x = Saturate((x - edge0) / (edge1 - edge0));
+  x = Saturate(InvLerp(edge0, edge1, x));
   return x * x * (3.0f - 2.0f * x);
 }
 
@@ -232,7 +247,7 @@ float SmoothStep(float edge0, float edge1, float x)
 inline
 float SmootherStep(float edge0, float edge1, float x)
 {
-  x = Saturate((x - edge0) / (edge1 - edge0));
+  x = Saturate(InvLerp(edge0, edge1, x));
   return x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f);
 }
 
