@@ -896,7 +896,7 @@ TextureHandle M::CreateTexture(TextureFormat format, uint16_t width,
   uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffers,
   uint8_t numBuffers)
 {
-  auto buffersCopy = reinterpret_cast<Buffer*>(Alloc<Buffer>(numBuffers));
+  auto buffersCopy = Alloc<Buffer>(numBuffers);
   if (!buffersCopy)
   {
     return TextureHandle();
@@ -981,7 +981,7 @@ FrameBufferHandle M::CreateFrameBuffer(TextureFormat format, uint16_t width,
 FrameBufferHandle M::CreateFrameBuffer(uint8_t textureCount,
   TextureHandle const* hTextures)
 {
-  auto hTexturesCopy = reinterpret_cast<TextureHandle*>(Alloc<TextureHandle>(textureCount));
+  auto hTexturesCopy = Alloc<TextureHandle>(textureCount);
   if (!hTexturesCopy)
   {
     return FrameBufferHandle();
@@ -1008,8 +1008,7 @@ FrameBufferHandle M::CreateFrameBuffer(uint8_t textureCount,
 FrameBufferHandle M::CreateFrameBuffer(uint8_t attachmentCount,
   FrameBufferAttachment const* attachments)
 {
-  auto attachmentsCopy =
-    reinterpret_cast<FrameBufferAttachment*>(Alloc<FrameBufferAttachment>(attachmentCount));
+  auto attachmentsCopy = Alloc<FrameBufferAttachment>(attachmentCount);
   if (!attachmentsCopy)
   {
     return FrameBufferHandle();
