@@ -670,7 +670,7 @@ Asset::HashType Asset::Manager::HashPath(FilePath path)
     const size_t size = path.size();
     if (size > 0)
     {
-      hash = Hash::String(path.c_str(), size, true);
+      hash = Hash::String(path.c_str(), size);
     }
     else
     {

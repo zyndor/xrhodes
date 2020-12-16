@@ -34,9 +34,15 @@ public:
   static uint32_t String32(const char* data, size_t size);
   static uint32_t Data32(const void* data, size_t size);
 
-  static uint64_t String(const char* string, bool assertUnique = true);
-  static uint64_t String(const char* string, size_t size, bool assertUnique = true);
+  static uint64_t String(const char* string);
+  static uint64_t String(const char* string, size_t size);
   static uint64_t Data(const void* data, size_t size);
+
+  [[deprecated("Drop the last argument")]]
+  static uint64_t String(const char* string, bool assertUnique);
+
+  [[deprecated("Drop the last argument")]]
+  static uint64_t String(const char* string, size_t size, bool assertUnique);
 };
 
 } // xr
