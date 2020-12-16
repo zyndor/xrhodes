@@ -1130,7 +1130,8 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
     std::fill(program.activeAttribs, program.activeAttribs +
       XR_ARRAY_SIZE(program.activeAttribs), uint8_t(Attribute::kCount));
     ResetProgramAttribBindings(program);
-    //XR_GL_CALL(glGetProgramiv(program.name, GL_ACTIVE_ATTRIBUTES, &program.numActiveAttribs));
+
+    program.numActiveAttribs = 0;
     for (int i = 0; i < uint8_t(Attribute::kCount); ++i)
     {
       XR_GL_CALL(GLint loc = glGetAttribLocation(program.name, Const::kAttributeName[i]));
