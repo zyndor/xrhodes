@@ -299,7 +299,6 @@ public:
 
     ///@brief Calls Unload() on all assets who have a single reference, held by
     /// the Asset::Manager.
-    ///@note This doesn't remove them from the manager.
     static void UnloadUnused();
 
     ///@brief Pumps the asynchronous asset loading queue, processing the loaded

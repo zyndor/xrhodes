@@ -172,8 +172,18 @@ public:
   void UnloadUnused()
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
-    while (UnloadUnusedInternal())
-    {}
+    auto i = m_assets.begin();
+    while (i != m_assets.end())
+    {
+      if (i->second->GetRefCount() == 1)
+      {
+        i = m_assets.erase(i);
+      }
+      else
+      {
+        ++i;
+      }
+    }
   }
 
 private:
@@ -190,21 +200,6 @@ private:
   Queue<AssetLoadJob*> m_pending;
 
   // internal
-  bool UnloadUnusedInternal()
-  {
-    bool unloaded = false;
-    for (auto& i : m_assets)
-    {
-      auto& ptr = i.second;
-      if (CheckAllMaskBits(ptr->GetFlags(), Asset::ReadyFlag) && ptr->GetRefCount() == 1)
-      {
-        i.second->Unload();
-        unloaded = true;
-      }
-    }
-    return unloaded;
-  }
-
   void ClearManaged()
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
