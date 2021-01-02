@@ -6,6 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#include "AssetLoadJob.hpp"
 #include "xr/Asset.hpp"
 #include "xr/FileBuffer.hpp"
 #include "xr/FileWriter.hpp"
@@ -35,81 +36,6 @@ struct AssetHeader
 
 using NumDependenciesType = uint16_t;
 using DependencyPathLenType = uint16_t;
-
-//==============================================================================
-const size_t kChunkSizeBytes = XR_KBYTES(16);
-
-class LoadJob : public Worker::Job
-{
-public:
-  // data
-  Asset::Ptr asset;
-
-  // structors
-  explicit LoadJob(File::Handle hFile, size_t size, Asset::Ptr const& a)
-  : asset(a),
-    m_hFile(hFile),
-    m_data(size)
-  {}
-
-  ~LoadJob()
-  {
-    CloseHandle();
-  }
-
-  // general
-  virtual void Start()
-  {
-    m_nextWrite = m_data.data();
-  }
-
-  virtual bool Process()
-  {
-    const auto progress = m_nextWrite - m_data.data();
-    const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - progress);
-    const size_t readSize = File::Read(m_hFile, 1, nextChunkSize, m_nextWrite);
-    bool done = readSize != nextChunkSize;
-    if (done)
-    {
-      LTRACE(("Failed to read %d bytes of asset '%s' @ %d of %d bytes",
-        nextChunkSize, asset->GetDescriptor().ToPath().c_str(), progress,
-        m_data.size()));
-      asset->FlagError();
-    }
-    else
-    {
-      m_nextWrite += readSize;
-
-      done = progress + readSize == m_data.size();
-      if (done)
-      {
-        asset->OverrideFlags(Asset::LoadingFlag, Asset::ProcessingFlag);
-      }
-    }
-
-    return done;
-  }
-
-  bool ProcessData()
-  {
-    return asset->ProcessData({ m_data.size(), m_data.data() });
-  }
-
-private:
-  // data
-  File::Handle          m_hFile = nullptr;
-  std::vector<uint8_t>  m_data;
-  uint8_t*              m_nextWrite = nullptr;
-
-  void CloseHandle()
-  {
-    if(m_hFile)
-    {
-      File::Close(m_hFile);
-      m_hFile = nullptr;
-    }
-  }
-};
 
 //==============================================================================
 class AssetManagerImpl // TODO: improve encapsulation of members
@@ -206,7 +132,7 @@ public:
     return success;
   }
 
-  void EnqueueJob(LoadJob& lj)
+  void EnqueueJob(AssetLoadJob& lj)
   {
     {
       std::unique_lock<decltype(m_pendingLock)> lock(m_pendingLock);
@@ -253,9 +179,9 @@ public:
     m_worker.Resume();
   }
 
-  void DeleteJob(LoadJob& lj)
+  void DeleteJob(AssetLoadJob& lj)
   {
-    lj.~LoadJob();
+    lj.~AssetLoadJob();
     m_allocator->Deallocate(&lj);
   }
 
@@ -277,7 +203,7 @@ private:
   std::map<Asset::DescriptorCore, Asset::Ptr> m_assets;
 
   Spinlock m_pendingLock;
-  Queue<LoadJob*> m_pending;
+  Queue<AssetLoadJob*> m_pending;
 
   // internal
   bool UnloadUnusedInternal()
@@ -598,7 +524,7 @@ void LoadAsset(Asset::VersionType version, Asset& asset, Asset::FlagType flags)
 
   if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
   {
-    LoadJob lj(hFile, size, Asset::Ptr(&asset));
+    AssetLoadJob lj(hFile, size, Asset::Ptr(&asset));
     lj.Start();
     while (!lj.Process())
     {
@@ -611,8 +537,8 @@ void LoadAsset(Asset::VersionType version, Asset& asset, Asset::FlagType flags)
   }
   else
   {
-    void* jobBuffer = s_assetMan->GetAllocator()->Allocate(sizeof(LoadJob));
-    auto lj = new (jobBuffer) LoadJob(hFile, size, Asset::Ptr(&asset));
+    void* jobBuffer = s_assetMan->GetAllocator()->Allocate(sizeof(AssetLoadJob));
+    auto lj = new (jobBuffer) AssetLoadJob(hFile, size, Asset::Ptr(&asset));
     s_assetMan->EnqueueJob(*lj);
   }
 
