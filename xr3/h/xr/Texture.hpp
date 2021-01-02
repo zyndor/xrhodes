@@ -44,6 +44,10 @@ public:
   XR_ASSET_DECL(Texture)
 
   // types
+#ifdef XR_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
   enum [[deprecated("Use filename flags or .tex")]] Flags : FlagType
   {
     WrapFlag = FirstUserFlag,
@@ -51,6 +55,9 @@ public:
     MipMapsFlag = FirstUserFlag << 2,
     SrgbFlag = FirstUserFlag << 3,
   };
+#ifdef XR_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif
 
   // static
   ///@brief Convenience function to register a sampler uniform with the given
