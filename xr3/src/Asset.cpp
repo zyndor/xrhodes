@@ -42,25 +42,9 @@ class AssetManagerImpl // TODO: improve encapsulation of members
 {
 public:
   // structors
-  AssetManagerImpl(FilePath path, Allocator* alloc)
+  AssetManagerImpl(FilePath const& path, Allocator* alloc)
+  : m_path(path)
   {
-    if(path.StartsWith(File::kRawProto))
-    {
-      path = path.c_str() + File::kRawProto.size();
-    }
-
-    path = File::StripRoots(path);
-    if (path.empty())
-    {
-      path = Asset::Manager::kDefaultPath;
-    }
-    path.AppendDirSeparator();
-    m_path = path;
-
-#ifdef ENABLE_ASSET_BUILDING
-    File::MakeDirs(m_path);
-#endif
-
     if (!alloc)
     {
       static Mallocator mallocator;
@@ -560,8 +544,24 @@ Asset::Builder::~Builder() = default;
 char const* const Asset::Manager::kDefaultPath = "assets";
 
 //==============================================================================
-void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
+void Asset::Manager::Init(FilePath path, Allocator* alloc)
 {
+  if (path.StartsWith(File::kRawProto))
+  {
+    path = path.c_str() + File::kRawProto.size();
+  }
+
+  path = File::StripRoots(path);
+  if (path.empty())
+  {
+    path = Asset::Manager::kDefaultPath;
+  }
+  path.AppendDirSeparator();
+
+#ifdef ENABLE_ASSET_BUILDING
+  File::MakeDirs(path);
+#endif
+
   s_assetMan.reset(new AssetManagerImpl(path, alloc));
 
   detail::AssetReflector::Base::ForEach(RegisterReflector);

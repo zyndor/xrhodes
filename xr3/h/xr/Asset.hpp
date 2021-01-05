@@ -202,7 +202,7 @@ public:
     /// will be stripped from the supplied path.
     ///@note The asset path should not contain any other data, at the risk of
     /// being overwrittens.
-    static void Init(FilePath const& path = kDefaultPath, Allocator* alloc = nullptr);
+    static void Init(FilePath path = kDefaultPath, Allocator* alloc = nullptr);
 
     ///@return The path that the Asset::Manager was initialised with.
     static const FilePath& GetAssetPath();
