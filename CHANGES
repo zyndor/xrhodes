@@ -1,3 +1,16 @@
+v1.9.1
+- Fix: attempting to create an empty vertex / index / instance data buffer no
+  longer results in an invalid handle.
+- Removed redundant reinterpret_casts in Gfx::M.
+- Fixed xr::SVector2::operator-.
+- Deprecated the overloads of Hash::String() that take a boolean.
+- Fix: resetting Gfx internal Program::numActiveAttribs before counting them.
+- Gfx internals maintenance and minor improvements.
+- xr::Asset maintenance.
+- Moved LoadJob from the Asset implementation to its own files, as AssetLoadJob.
+- Moved the processing of the asset path out of the AssetManagerImpl constructor.
+- xr::Asset::Manager::UnloadUnused() removes unused assets completely.
+
 v1.9.0
 - xr::Animator::Animate() supports setters that take value by const reference;
 - added an xr::Buffer::FromArray() overload which takes a pointer and number of
