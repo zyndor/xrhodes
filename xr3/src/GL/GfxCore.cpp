@@ -22,6 +22,8 @@
 #include <unordered_map>
 #include <functional>
 
+#define LTRACE(x) XR_TRACE(Gfx, x)
+
 namespace xr
 {
 namespace Gfx
@@ -296,6 +298,7 @@ void UpdateProgramUniforms(Program& program, size_t numUniforms, void const* con
         break;
 
       default:
+        LTRACE(("Invalid uniform type: %d", type));
         break;
       }
     }
@@ -606,7 +609,7 @@ void CreateDefaultTexture(TextureHandle const& handle, GLenum target)
 //=============================================================================
 void Core::Init(Context* context, ResourceManager* resources)
 {
-  XR_TRACE(Gfx, ("Initialising..."));
+  LTRACE(("Initialising..."));
   sContext = new CoreContext;
   sContext->mContext = context;
   context->Init();
@@ -622,13 +625,13 @@ void Core::Init(Context* context, ResourceManager* resources)
   auto numFailed = ogl_LoadFunctions();
   if (numFailed > 0)
   {
-    XR_TRACE(Gfx, ("Failed to load %d functions.", numFailed));
+    LTRACE(("Failed to load %d functions.", numFailed));
   }
 
   // log vendor, renderer, driver version
-  XR_TRACE(Gfx, ("Vendor: %s", glGetString(GL_VENDOR)));
-  XR_TRACE(Gfx, ("Renderer: %s", glGetString(GL_RENDERER)));
-  XR_TRACE(Gfx, ("Version: %s", glGetString(GL_VERSION)));
+  LTRACE(("Vendor: %s", glGetString(GL_VENDOR)));
+  LTRACE(("Renderer: %s", glGetString(GL_RENDERER)));
+  LTRACE(("Version: %s", glGetString(GL_VERSION)));
 
   // initialise extensions
   InitExtensions(context->GetGlVersionMajor() * 10 + context->GetGlVersionMinor());
@@ -676,7 +679,7 @@ void Core::Init(Context* context, ResourceManager* resources)
   sContext->mActiveFrameBuffer = GetDefaultFrameBuffer();
 
   XR_GL_CALL(glEnable(GL_PROGRAM_POINT_SIZE));
-  XR_TRACE(Gfx, ("Initialisation complete."));
+  LTRACE(("Initialisation complete."));
 }
 
 void Core::Release(VertexFormatHandle h)
@@ -955,7 +958,7 @@ bool Core::CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* 
   bool result = GL_FRAMEBUFFER_COMPLETE == status;
   if (!result)
   {
-    XR_TRACE(Gfx, ("Failed to create framebuffer, status: 0x%x", status));
+    LTRACE(("Failed to create framebuffer, status: 0x%x", status));
 
     if (!ownTextures)
     {
@@ -1048,7 +1051,7 @@ bool Core::CreateShader(ShaderType type, Buffer const& buffer, ShaderRef& sr)
       }
     }
     while (i != iEnd);
-    XR_TRACE(Gfx, ("Failed to compile shader: %s", log));
+    LTRACE(("Failed to compile shader: %s", log));
 
     XR_GL_CALL(glDeleteShader(shader.name));
   }
@@ -1104,7 +1107,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
     {
       char log[1024];
       XR_GL_CALL(glGetProgramInfoLog(program.name, sizeof(log), 0, log));
-      XR_TRACE(Gfx, ("Failed to link program (hVertex: %d, hFragment: %d): %s",
+      LTRACE(("Failed to link program (hVertex: %d, hFragment: %d): %s",
         hVertex, hFragment, log));
     }
   }
@@ -1123,14 +1126,14 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
     char* nameBuffer = (char*)alloca(maxLen);
 
     // process attribs
-    GLint arraySize;
     GLenum type;
 
     std::memset(reinterpret_cast<GLint*>(program.attribLoc), 0xff, sizeof(program.attribLoc));
-    std::fill(program.activeAttribs, program.activeAttribs +
-      XR_ARRAY_SIZE(program.activeAttribs), uint8_t(Attribute::kCount));
+    std::fill(std::begin(program.activeAttribs), std::end(program.activeAttribs),
+      uint8_t(Attribute::kCount));
     ResetProgramAttribBindings(program);
-    //XR_GL_CALL(glGetProgramiv(program.name, GL_ACTIVE_ATTRIBUTES, &program.numActiveAttribs));
+
+    program.numActiveAttribs = 0;
     for (int i = 0; i < uint8_t(Attribute::kCount); ++i)
     {
       XR_GL_CALL(GLint loc = glGetAttribLocation(program.name, Const::kAttributeName[i]));
@@ -1138,8 +1141,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
       {
         program.attribLoc[i] = loc;
         program.activeAttribs[program.numActiveAttribs] = i;
-        XR_TRACE(Gfx, ("Attribute %s at location %d",
-          Const::kAttributeName[i], loc));
+        LTRACE(("Attribute %s at location %d", Const::kAttributeName[i], loc));
 
         ++program.numActiveAttribs;
       }
@@ -1152,8 +1154,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
       if (loc != kInvalidLoc)
       {
         program.instanceDataLoc[used] = loc;
-        XR_TRACE(Gfx, ("Attribute %s at location %d",
-          Const::kInstanceDataName[i], loc));
+        LTRACE(("Attribute %s at location %d", Const::kInstanceDataName[i], loc));
 
         ++used;
       }
@@ -1161,6 +1162,9 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
     program.instanceDataLoc[used] = kInvalidLoc;
 
     // process uniforms
+    auto& uniforms = sContext->mResources->GetUniforms();
+
+    GLint arraySize;
     GLint num, loc;
     XR_GL_CALL(glGetProgramiv(program.name, GL_ACTIVE_UNIFORMS, &num));
     for (int i = 0; i < num; ++i)
@@ -1178,7 +1182,6 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
       auto hUniform = sContext->mResources->FindUniform(nameBuffer);
       if (hUniform.IsValid())
       {
-        auto& uniforms = sContext->mResources->GetUniforms();
         UniformRef& ur = uniforms[hUniform.id];
         ++ur.refCount;
 
@@ -1189,12 +1192,12 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
         program.uniforms->WriteHandle(ur.inst.type, ur.inst.arraySize, 0, hUniform);
         program.uniforms->Write(loc);
 
-        XR_TRACE(Gfx, ("Uniform %s: %s[%d] at location %d", nameBuffer, GetGLSLTypeName(type),
+        LTRACE(("Uniform %s: %s[%d] at location %d", nameBuffer, GetGLSLTypeName(type),
           arraySize, loc));
       }
       else
       {
-        XR_TRACE(Gfx, ("WARNING: ignored unregistered uniform '%s' (%s[%d]).", nameBuffer,
+        LTRACE(("WARNING: ignored unregistered uniform '%s' (%s[%d]).", nameBuffer,
           GetGLSLTypeName(type), arraySize));
       }
     }
@@ -1646,7 +1649,7 @@ void Core::OnShutdown()
 
 void Core::Shutdown()
 {
-  XR_TRACE(Gfx, ("Shutting down."));
+  LTRACE(("Shutting down."));
   if (sContext->mVao != 0)
   {
     XR_GL_CALL(glDeleteVertexArrays(1, &sContext->mVao));
@@ -1657,7 +1660,7 @@ void Core::Shutdown()
   delete sContext;
   sContext =nullptr;
 
-  XR_TRACE(Gfx, ("Shutdown complete."));
+  LTRACE(("Shutdown complete."));
 }
 
 } // Gfx

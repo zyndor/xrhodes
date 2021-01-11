@@ -92,8 +92,8 @@ public:
 
   SVector2  operator -(const SVector2& rhs) const
   {
-    SVector2  temp(rhs);
-    temp -= *this;
+    SVector2  temp(*this);
+    temp -= rhs;
     return temp;
   }
 

@@ -143,13 +143,13 @@ uint32_t Hash::Data32(const void* data, size_t size)
 }
 
 //==============================================================================
-uint64_t  Hash::String(const char* string, bool assertUnique)
+uint64_t  Hash::String(const char* string)
 {
-  return String(string, strlen(string), assertUnique);
+  return String(string, strlen(string));
 }
 
 //==============================================================================
-uint64_t  Hash::String(const char* string, size_t size, bool assertUnique)
+uint64_t  Hash::String(const char* string, size_t size)
 {
   return MurmurHash64B<ToLower>(string, size, s_seed);
 }
@@ -159,5 +159,18 @@ uint64_t  Hash::Data(const void* data, size_t size)
 {
   return MurmurHash64B<ByteNoOp>(data, size, s_seed);
 }
+
+//==============================================================================
+uint64_t  Hash::String(const char* string, bool /*assertUnique*/)
+{
+  return String(string, strlen(string));
+}
+
+//==============================================================================
+uint64_t  Hash::String(const char* string, size_t size, bool /*assertUnique*/)
+{
+  return MurmurHash64B<ToLower>(string, size, s_seed);
+}
+
 
 } // xr

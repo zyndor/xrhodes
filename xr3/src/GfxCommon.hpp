@@ -203,7 +203,7 @@ private:
 
   uint32_t m_pos;
   uint32_t m_size;
-  uint8_t  m_buffer[16 - (sizeof(uint32_t) + sizeof(uint32_t))]; // buffer includes padding to 16 bytes - actual size will vary. Refer to Create().
+  uint8_t  m_buffer[16 - (sizeof(decltype(m_pos)) + sizeof(decltype(m_size)))]; // buffer includes padding to 16 bytes - actual size will vary. Refer to Create().
 };
 static_assert(sizeof(ConstBuffer) == 16, "sizeof(ConstBuffer) must be 16 bytes.");
 

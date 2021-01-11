@@ -144,9 +144,7 @@ TEST_F(Asset, Basics)
   testAss.Reset(nullptr);
 
   xr::Asset::Manager::UnloadUnused();
-  auto cp = xr::Asset::Manager::Find(desc);
-  ASSERT_EQ(cp->GetRefCount(), 2);  // not removed
-  ASSERT_FALSE(CheckAllMaskBits(cp->GetFlags(), xr::Asset::ReadyFlag)); // unloaded
+  ASSERT_FALSE(xr::Asset::Manager::Find(desc));  // removed
 }
 
 TEST_F(Asset, LoadReflected)

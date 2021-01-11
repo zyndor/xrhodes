@@ -36,15 +36,15 @@ class FileWriter;
 /// ENABLE_ASSET_BUILDING versions of XRhodes (as Debug is), if the raw asset is
 /// newer than its built counterpart, or the asset version was mismatched, or if
 /// the ForceBuild flag was specified.
-///@par The location that the built assets are saved is ${ram path}/${asset path}
+///@par The location that the built assets are saved to is ${ram_path}/${asset_path}
 /// (refer to xr::File for more information).
 ///@par Built assets are identified by a hash of their original (relative) path.
 ///@par The Asset system supports 'asset options' which may be supplied at load
 /// time (be it procedural or via asset dependencies), by adding identifiers to
-/// the name of the asset prefixed with Asset::kOptionDelimiter, i.e.
+/// the name of the asset, prefixed with Asset::kOptionDelimiter, e.g.
 /// path/to/my.asset$option1$option2. Asset options therefore form part of the
 /// hash of the built asset.
-///@note Use XR_ASSET_DECL and XR_ASSET_DEF to facilitate implementation of
+///@note Use XR_ASSET_DECL and XR_ASSET_DEF to facilitate the implementation of
 /// concrete Asset types.
 class Asset: public Countable
 {
@@ -97,10 +97,11 @@ public:
     /// of the concrete Asset type.
     DryRunFlag = XR_MASK_ID(FlagType, 9),
 
-    ///@brief This is the first flag that client code may declare.
-    FirstUserFlag = XR_MASK_ID(FlagType, 16),
+    FirstUserFlag [[deprecated]] = XR_MASK_ID(FlagType, 16),
 
-    PrivateMask = ErrorFlag | ReadyFlag | ProcessingFlag | LoadingFlag
+    ///@brief Captures states of an asset that should not be set by client code.
+    PrivateMask = ErrorFlag | ReadyFlag | ProcessingFlag | LoadingFlag,
+
   };
 
   ///@brief Carries information about the type and identifier of an Asset.
@@ -174,13 +175,9 @@ public:
     const TypeId type;
 
     // structors
-    explicit Builder(TypeId type_)
-    : Base(*this),
-      type(type_)
-    {}
+    explicit Builder(TypeId type_);
 
-    virtual ~Builder()
-    {}
+    virtual ~Builder();
 
     ///@brief Parses @a buffer of size @a size bytes, and produces two buffers
     /// of @a dependencies and asset @a data for writing into the built asset.
@@ -205,8 +202,9 @@ public:
     /// will be stripped from the supplied path.
     ///@note The asset path should not contain any other data, at the risk of
     /// being overwrittens.
-    static void Init(FilePath const& path = kDefaultPath, Allocator* alloc = nullptr);
+    static void Init(FilePath path = kDefaultPath, Allocator* alloc = nullptr);
 
+    ///@return The path that the Asset::Manager was initialised with.
     static const FilePath& GetAssetPath();
 
     ///@brief Calculates the hash of the given path.
@@ -227,12 +225,7 @@ public:
       flags &= ~PrivateMask;
       Descriptor<T> desc(HashPath(path));
       Counted<T> asset = FindOrCreateInternal<T>(desc, flags);
-
-      auto foundFlags = asset->GetFlags();
-      if (IsLoadable(foundFlags, flags))
-      {
-        LoadInternal(T::kVersion, path, asset.template StaticCast<Asset>(), flags);
-      }
+      LoadInternal(T::kVersion, path, *asset, flags);
       return asset;
     }
 
@@ -244,12 +237,7 @@ public:
     {
       flags &= ~PrivateMask;
       Counted<T> asset = FindOrCreateInternal<T>(desc, flags);
-
-      auto foundFlags = asset->GetFlags();
-      if (IsLoadable(foundFlags, flags))
-      {
-        LoadInternal(T::kVersion, asset.template StaticCast<Asset>(), flags);
-      }
+      LoadInternal(T::kVersion, *asset, flags);
       return asset;
     }
 
@@ -311,7 +299,6 @@ public:
 
     ///@brief Calls Unload() on all assets who have a single reference, held by
     /// the Asset::Manager.
-    ///@note This doesn't remove them from the manager.
     static void UnloadUnused();
 
     ///@brief Pumps the asynchronous asset loading queue, processing the loaded
@@ -337,11 +324,9 @@ public:
     static Ptr FindOrReflectorCreate(DescriptorCore const& desc, FlagType flags,
       VersionType& outVersion);
 
-    static bool IsLoadable(FlagType oldFlags, FlagType newFlags);
-
-    static void LoadInternal(VersionType version, FilePath const& path, Ptr const& asset,
+    static void LoadInternal(VersionType version, FilePath const& path, Asset& asset,
       FlagType flags);
-    static void LoadInternal(VersionType version, Ptr const& asset, FlagType flags);
+    static void LoadInternal(VersionType version, Asset& asset, FlagType flags);
   };
 
   // static
@@ -356,8 +341,7 @@ public:
   static Asset* Reflect(TypeId typeId, HashType hash, FlagType flags = 0);
 
   // structors
-  virtual ~Asset()
-  {}
+  virtual ~Asset();
 
   // general
   DescriptorCore const& GetDescriptor() const
@@ -417,7 +401,7 @@ public:
   }
 
   ///@brief Marks a usage or dependency.
-  void Acquire()
+  void Acquire() override
   {
     m_refs.Acquire();
   }
@@ -431,7 +415,7 @@ public:
   ///@brief Marks end of usage / dependency. If this was the last reference
   /// to the asset and it was successfully loaded (ReadyFlag set), then Unload()
   /// will be called on it.
-  bool Release()
+  bool Release() override
   {
     bool expired;
     m_refs.Release(expired);
@@ -459,11 +443,7 @@ protected:
   using Lock = Counter<Spinlocked>;
 
   // structors
-  explicit Asset(DescriptorCore const& desc, FlagType flags = 0)
-  : m_descriptor(desc),
-    m_flags(flags & ~PrivateMask),
-    m_refs()
-  {}
+  explicit Asset(DescriptorCore const& desc, FlagType flags = 0);
 
   // data
   DescriptorCore m_descriptor;
@@ -589,7 +569,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   return asset;
 }
 
-} // XR
+} // xr
 
 //==============================================================================
 ///@brief Class declaration decorator for concrete Asset types.
@@ -614,8 +594,8 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 //==============================================================================
 ///@brief Definition decorator for your concrete Asset type.
 ///@param className name of your Asset type.
-///@param id four character ID actually given as string literal (including fifth, null
-/// terminator character; must be unique amongst all assets.
+///@param id four character ID actually given as string literal (including fifth,
+/// null terminator character; must be unique amongst all assets.
 ///@param version Serialization version of the asset; should be incremented
 /// every time the _serialized_ format changes.
 ///@param extensions accepted file types that the Asset will be built from.
@@ -637,8 +617,8 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
   }
 
 //==============================================================================
-///@brief Facilitates the declaration of a concrete Asset::Builder which compiles out
-/// when asset building is disabled. Place in .cpp
+///@brief Facilitates the declaration of a concrete Asset::Builder, which compiles
+/// out when asset building is disabled. Place in .cpp
 #ifdef ENABLE_ASSET_BUILDING
 #define XR_ASSET_BUILDER_DECL(assetType)\
   class assetType##Builder: public xr::Asset::Builder\
@@ -653,8 +633,8 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 #endif
 
 //==============================================================================
-///@brief Signature for the Build() function of @a assetType 's builder that
-/// was declared with XR_ASSET_BUILDER_DECL.
+///@brief Signature for the Build() function of @a assetType 's builder that was
+/// declared with XR_ASSET_BUILDER_DECL.
 #define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
   bool assetType##Builder::Build(char const* rawNameExt, Buffer buffer,\
     std::vector<FilePath>& dependencies, std::ostream& data) const

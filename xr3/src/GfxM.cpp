@@ -35,6 +35,7 @@ uint8_t* CopyBuffer(Buffer const& buffer)
   if (buffer.size > 0)
   {
     bufferCopy = Alloc<uint8_t>(buffer.size);
+    XR_ASSERTMSG(Gfx, bufferCopy, ("Failed to allocate %" PRIu32 " bytes", buffer.size));
     std::memcpy(bufferCopy, buffer.data, buffer.size);
   }
   return bufferCopy;
@@ -826,18 +827,15 @@ VertexBufferHandle M::CreateVertexBuffer(VertexFormatHandle hFormat,
 {
   VertexBufferHandle h;
   auto bufferCopy = CopyBuffer(buffer);
-  if (bufferCopy)
+  auto& vbos = sContext->GetResources().GetVbos();
   {
-    auto& vbos = sContext->GetResources().GetVbos();
-    {
-      std::unique_lock<Spinlock> lock(sContext->GetResources().GetLock());
-      h.id = static_cast<uint16_t>(vbos.server.Acquire());
-    };
+    std::unique_lock<Spinlock> lock(sContext->GetResources().GetLock());
+    h.id = static_cast<uint16_t>(vbos.server.Acquire());
+  };
 
-    sContext->GetActiveQueue().WriteCommand(Command::CreateVertexBuffer,
-      CreateVertexBufferMessage{ hFormat, Buffer{ buffer.size, bufferCopy },
-        flags, vbos.data + h.id });
-  }
+  sContext->GetActiveQueue().WriteCommand(Command::CreateVertexBuffer,
+    CreateVertexBufferMessage{ hFormat, Buffer{ buffer.size, bufferCopy },
+      flags, vbos.data + h.id });
   return h;
 }
 
@@ -852,18 +850,15 @@ IndexBufferHandle M::CreateIndexBuffer(Buffer const& buffer, FlagType flags)
 {
   IndexBufferHandle h;
   auto bufferCopy = CopyBuffer(buffer);
-  if (bufferCopy)
+  auto& ibos = sContext->GetResources().GetIbos();
   {
-    auto& ibos = sContext->GetResources().GetIbos();
-    {
-      std::unique_lock<Spinlock> lock(sContext->GetResources().GetLock());
-      h.id = static_cast<uint16_t>(ibos.server.Acquire());
-    };
+    std::unique_lock<Spinlock> lock(sContext->GetResources().GetLock());
+    h.id = static_cast<uint16_t>(ibos.server.Acquire());
+  };
 
-    sContext->GetActiveQueue().WriteCommand(Command::CreateIndexBuffer,
-      CreateIndexBufferMessage{ Buffer { buffer.size, bufferCopy }, flags,
-        ibos.data + h.id });
-  }
+  sContext->GetActiveQueue().WriteCommand(Command::CreateIndexBuffer,
+    CreateIndexBufferMessage{ Buffer { buffer.size, bufferCopy }, flags,
+      ibos.data + h.id });
   return h;
 }
 
@@ -878,18 +873,15 @@ InstanceDataBufferHandle M::CreateInstanceDataBuffer(Buffer const& buffer, uint1
 {
   InstanceDataBufferHandle h;
   auto bufferCopy = CopyBuffer(buffer);
-  if (bufferCopy)
+  auto& vbos = sContext->GetResources().GetVbos();
   {
-    auto& vbos = sContext->GetResources().GetVbos();
-    {
-      std::unique_lock<Spinlock> lock(sContext->GetResources().GetLock());
-      h.id = static_cast<uint16_t>(vbos.server.Acquire());
-    }
-
-    sContext->GetActiveQueue().WriteCommand(Command::CreateInstanceDataBuffer,
-      CreateInstanceDataBufferMessage{ Buffer { buffer.size, bufferCopy }, stride,
-        vbos.data + h.id });
+    std::unique_lock<Spinlock> lock(sContext->GetResources().GetLock());
+    h.id = static_cast<uint16_t>(vbos.server.Acquire());
   }
+
+  sContext->GetActiveQueue().WriteCommand(Command::CreateInstanceDataBuffer,
+    CreateInstanceDataBufferMessage{ Buffer { buffer.size, bufferCopy }, stride,
+      vbos.data + h.id });
   return h;
 }
 
@@ -904,7 +896,7 @@ TextureHandle M::CreateTexture(TextureFormat format, uint16_t width,
   uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffers,
   uint8_t numBuffers)
 {
-  auto buffersCopy = reinterpret_cast<Buffer*>(Alloc<Buffer>(numBuffers));
+  auto buffersCopy = Alloc<Buffer>(numBuffers);
   if (!buffersCopy)
   {
     return TextureHandle();
@@ -989,7 +981,7 @@ FrameBufferHandle M::CreateFrameBuffer(TextureFormat format, uint16_t width,
 FrameBufferHandle M::CreateFrameBuffer(uint8_t textureCount,
   TextureHandle const* hTextures)
 {
-  auto hTexturesCopy = reinterpret_cast<TextureHandle*>(Alloc<TextureHandle>(textureCount));
+  auto hTexturesCopy = Alloc<TextureHandle>(textureCount);
   if (!hTexturesCopy)
   {
     return FrameBufferHandle();
@@ -1016,8 +1008,7 @@ FrameBufferHandle M::CreateFrameBuffer(uint8_t textureCount,
 FrameBufferHandle M::CreateFrameBuffer(uint8_t attachmentCount,
   FrameBufferAttachment const* attachments)
 {
-  auto attachmentsCopy =
-    reinterpret_cast<FrameBufferAttachment*>(Alloc<FrameBufferAttachment>(attachmentCount));
+  auto attachmentsCopy = Alloc<FrameBufferAttachment>(attachmentCount);
   if (!attachmentsCopy)
   {
     return FrameBufferHandle();

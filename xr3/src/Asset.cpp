@@ -6,6 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#include "AssetLoadJob.hpp"
 #include "xr/Asset.hpp"
 #include "xr/FileBuffer.hpp"
 #include "xr/FileWriter.hpp"
@@ -19,7 +20,6 @@
 #endif
 
 #define LTRACE(format) XR_TRACE(Asset::Manager, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(Asset::Manager, condition, format)
 
 namespace xr
 {
@@ -38,104 +38,13 @@ using NumDependenciesType = uint16_t;
 using DependencyPathLenType = uint16_t;
 
 //==============================================================================
-const size_t kChunkSizeBytes = XR_KBYTES(16);
-
-class LoadJob : public Worker::Job
-{
-public:
-  // data
-  Asset::Ptr asset;
-
-  // structors
-  explicit LoadJob(File::Handle hFile, size_t size, Asset::Ptr const& a)
-  : asset(a),
-    m_hFile(hFile),
-    m_data(size)
-  {}
-
-  ~LoadJob()
-  {
-    CloseHandle();
-  }
-
-  // general
-  virtual void Start()
-  {
-    m_nextWrite = m_data.data();
-  }
-
-  virtual bool Process()
-  {
-    const auto progress = m_nextWrite - m_data.data();
-    const size_t nextChunkSize = std::min(kChunkSizeBytes, m_data.size() - progress);
-    const size_t readSize = File::Read(m_hFile, 1, nextChunkSize, m_nextWrite);
-    bool done = readSize != nextChunkSize;
-    if (done)
-    {
-      LTRACE(("Failed to read %d bytes of asset '%s' @ %d of %d bytes",
-        nextChunkSize, asset->GetDescriptor().ToPath().c_str(), progress,
-        m_data.size()));
-      asset->FlagError();
-    }
-    else
-    {
-      m_nextWrite += readSize;
-
-      done = progress + readSize == m_data.size();
-      if (done)
-      {
-        asset->OverrideFlags(Asset::LoadingFlag, Asset::ProcessingFlag);
-      }
-    }
-
-    return done;
-  }
-
-  bool ProcessData()
-  {
-    return asset->ProcessData({ m_data.size(), m_data.data() });
-  }
-
-private:
-  // data
-  File::Handle          m_hFile = nullptr;
-  std::vector<uint8_t>  m_data;
-  uint8_t*              m_nextWrite = nullptr;
-
-  void CloseHandle()
-  {
-    if(m_hFile)
-    {
-      File::Close(m_hFile);
-      m_hFile = nullptr;
-    }
-  }
-};
-
-//==============================================================================
 class AssetManagerImpl // TODO: improve encapsulation of members
 {
 public:
   // structors
-  AssetManagerImpl(FilePath path, Allocator* alloc)
+  AssetManagerImpl(FilePath const& path, Allocator* alloc)
+  : m_path(path)
   {
-    if(path.StartsWith(File::kRawProto))
-    {
-      path = path.c_str() + File::kRawProto.size();
-    }
-
-    path = File::StripRoots(path);
-    if (path.empty())
-    {
-      path = Asset::Manager::kDefaultPath;
-    }
-    path.AppendDirSeparator();
-    m_path = path;
-
-#ifdef ENABLE_ASSET_BUILDING
-    File::MakeDirs(m_path);
-#endif
-
     if (!alloc)
     {
       static Mallocator mallocator;
@@ -207,7 +116,7 @@ public:
     return success;
   }
 
-  void EnqueueJob(LoadJob& lj)
+  void EnqueueJob(AssetLoadJob& lj)
   {
     {
       std::unique_lock<decltype(m_pendingLock)> lock(m_pendingLock);
@@ -254,17 +163,27 @@ public:
     m_worker.Resume();
   }
 
-  void DeleteJob(LoadJob& lj)
+  void DeleteJob(AssetLoadJob& lj)
   {
-    lj.~LoadJob();
+    lj.~AssetLoadJob();
     m_allocator->Deallocate(&lj);
   }
 
   void UnloadUnused()
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
-    while (UnloadUnusedInternal())
-    {}
+    auto i = m_assets.begin();
+    while (i != m_assets.end())
+    {
+      if (i->second->GetRefCount() == 1)
+      {
+        i = m_assets.erase(i);
+      }
+      else
+      {
+        ++i;
+      }
+    }
   }
 
 private:
@@ -278,24 +197,9 @@ private:
   std::map<Asset::DescriptorCore, Asset::Ptr> m_assets;
 
   Spinlock m_pendingLock;
-  Queue<LoadJob*> m_pending;
+  Queue<AssetLoadJob*> m_pending;
 
   // internal
-  bool UnloadUnusedInternal()
-  {
-    bool unloaded = false;
-    for (auto& i : m_assets)
-    {
-      auto& ptr = i.second;
-      if (CheckAllMaskBits(ptr->GetFlags(), Asset::ReadyFlag) && ptr->GetRefCount() == 1)
-      {
-        i.second->Unload();
-        unloaded = true;
-      }
-    }
-    return unloaded;
-  }
-
   void ClearManaged()
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
@@ -347,8 +251,8 @@ void RegisterReflector(detail::AssetReflector const& r)
   }
 }
 
-//==============================================================================
 #ifdef ENABLE_ASSET_BUILDING
+//==============================================================================
 void RegisterBuilder(Asset::Builder const& builder)
 {
   auto iBuilder = s_assetBuilders.find(builder.type);
@@ -356,121 +260,12 @@ void RegisterBuilder(Asset::Builder const& builder)
     ("Builder already registered for type '%.*s'", sizeof(builder.type), &builder.type));
   s_assetBuilders.insert(iBuilder, { builder.type, &builder });
 }
-#endif  // ENABLE_ASSET_BUILDING
 
 //==============================================================================
-void LoadAsset(Asset::VersionType version, Asset::Ptr const& asset, Asset::FlagType flags)
+bool BuildAsset(FilePath const& path, Asset::VersionType version,
+  Asset::DescriptorCore const& desc, Asset::FlagType flags)
 {
-  FilePath path = Asset::Manager::GetAssetPath() / asset->GetDescriptor().ToPath();
-  File::Handle hFile = File::Open(path, "rb");
-  bool done = hFile == nullptr;
-  if (done)
-  {
-    LTRACE(("%s: failed to open.", path.c_str()));
-  }
-
-  size_t size;
-  AssetHeader header;
-  if (!done)  // get size
-  {
-    size = File::GetSize(hFile);
-    done = size < sizeof(AssetHeader) ||
-      File::Read(hFile, sizeof(header), 1, &header) < 1;
-    if (done)
-    {
-      LTRACE(("%s: failed to read header.", path.c_str()));
-    }
-    else
-    {
-      size -= sizeof(header);
-    }
-  }
-
-  if (!done)  // check typeId
-  {
-    auto type = asset->GetDescriptor().type;
-    done = header.typeId != type;
-    if (done)
-    {
-      LTRACE(("%s: type ID mismatch, expected: %.*s, got: %.*s.", path.c_str(),
-        sizeof(type), &type, sizeof(header.typeId), &header.typeId));
-    }
-  }
-
-  if (!done)  // check version
-  {
-    done = header.version != version;
-    if (done)
-    {
-      LTRACE(("%s: version mismatch, expected: %d, got: %d", path.c_str(), version,
-        header.version));
-    }
-  }
-
-  if (!done)  // load dependencies
-  {
-    NumDependenciesType numDependencies;
-    done = File::Read(hFile, sizeof(numDependencies), 1, &numDependencies) < 1;
-    size -= sizeof(numDependencies);
-
-    NumDependenciesType i = 0;
-    DependencyPathLenType len;
-    FilePath pathDep;
-    while (!done && i < numDependencies)
-    {
-      done = File::Read(hFile, sizeof(len), 1, &len) < 1 || len > FilePath::kCapacity ||
-        len > size || File::Read(hFile, len, 1, pathDep.data()) < 1;
-      if (done)
-      {
-        LTRACE(("%s: failed to read dependency name %d of %d.", path.c_str(), i,
-          numDependencies));
-      }
-      else
-      {
-        pathDep.data()[len] = '\0';
-        pathDep.UpdateSize();
-
-        size -= sizeof(DependencyPathLenType) + len;
-
-        auto dependency = Asset::Manager::LoadReflected(pathDep, flags);
-        done = !dependency || CheckAllMaskBits(dependency->GetFlags(), Asset::ErrorFlag);
-        ++i;
-      }
-    }
-  }
-
-  if (!done)  // allocate buffer, create and perform / create job.
-  {
-    if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
-    {
-      LoadJob lj(hFile, size, asset);
-      lj.Start();
-      while (!lj.Process())
-      {}
-
-      if (CheckAllMaskBits(lj.asset->GetFlags(), Asset::ProcessingFlag))
-      {
-        lj.ProcessData();
-      }
-    }
-    else
-    {
-      void* jobBuffer = s_assetMan->GetAllocator()->Allocate(sizeof(LoadJob));
-      auto lj = new (jobBuffer) LoadJob(hFile, size, asset);
-      s_assetMan->EnqueueJob(*lj);
-    }
-  }
-  else
-  {
-    asset->FlagError();
-  }
-}
-
-#ifdef ENABLE_ASSET_BUILDING
-//==============================================================================
-void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr const& asset)
-{
-  bool forceBuild = CheckAllMaskBits(asset->GetFlags(), Asset::ForceBuildFlag);
+  bool forceBuild = CheckAllMaskBits(flags, Asset::ForceBuildFlag);
 
   // Check the name -- are we trying to load a raw or a built asset?
   // Strip ram/rom and asset roots.
@@ -480,7 +275,6 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     rawPath = FilePath(rawPath.c_str() + s_assetMan->GetPath().size());
   }
 
-  auto desc = asset->GetDescriptor();
   FilePath builtPath = desc.ToPath();
   bool rebuild = builtPath != rawPath;
   if (rebuild || forceBuild) // If we're building, we'll need the correct asset path.
@@ -516,8 +310,7 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
         {
           LTRACE(("%s: Hash clash detected trying to build %s, pre-existing type: %.*s.",
             path.c_str(), builtPath.c_str(), sizeof(header.typeId), &header.typeId));
-          asset->FlagError();
-          rebuild = false;  // hash clash -- error;
+          return false;
         }
         else if (header.version == version)
         {
@@ -527,101 +320,243 @@ void BuildAsset(FilePath const& path, Asset::VersionType version, Asset::Ptr con
     }
   }
 
-  if (rebuild || forceBuild) // Perform the building of the asset.
+  if (!(rebuild || forceBuild))
   {
-    auto iFind = s_assetBuilders.find(desc.type);
-    bool done = iFind == s_assetBuilders.end();
-    LTRACEIF(done, ("%s: failed to find builder for type '%.*s'.", path.c_str(),
+    return true;
+  }
+
+  auto iFind = s_assetBuilders.find(desc.type);
+  if (iFind == s_assetBuilders.end())
+  {
+    LTRACE(("%s: failed to find builder for type '%.*s'.", path.c_str(),
       sizeof(desc.type), &desc.type));
+    return false;
+  }
 
-    FileBuffer srcBuf;
-    if (!done)  // read source file
+  FileBuffer srcBuf;
+  if (!srcBuf.Open(purePath))  // read source file
+  {
+    LTRACE(("%s: failed to read source.", path.c_str()));
+    return false;
+  }
+
+  srcBuf.Close();
+
+  builtPath = File::GetRamPath() / builtPath;
+  if (!File::MakeDirs(builtPath))
+  {
+    LTRACE(("%s: failed to create directory structure for '%s'.", path.c_str(),
+      builtPath.c_str()));
+    return false;
+  }
+
+  auto assetGuard = MakeScopeGuard([&builtPath](){
+    if (!File::Delete(builtPath))
     {
-      done = !srcBuf.Open(purePath);
-      LTRACEIF(done, ("%s: failed to read source.", path.c_str()));
+      LTRACE(("Failed to remove half-written asset at '%s'.", builtPath.c_str()));
     }
+  });
+  FileWriter assetWriter; // must be declared after the guard since it'll be cleared up backwards.
+  if (!assetWriter.Open(builtPath, FileWriter::Mode::Truncate, false))
+  {
+    LTRACE(("%s: failed to create file for built asset at '%s'.", path.c_str(),
+      builtPath.c_str()));
+    return false;
+  }
 
-    if (!done)  // make asset directory if need be
+  AssetHeader header{ desc.type, version, 0 };
+  if (!assetWriter.Write(&header, sizeof(header), 1))
+  {
+    LTRACE(("%s: failed to write asset header to '%s'.", path.c_str(),
+      builtPath.c_str()));
+    return false;
+  }
+
+  std::vector<FilePath> dependencies;
+  std::ostringstream assetData;
+  if (!iFind->second->Build(rawPath.GetNameExt(), { srcBuf.GetSize(), srcBuf.GetData() },
+      dependencies, assetData))
+  {
+    LTRACE(("%s: failed to build asset.", path.c_str()));
+    return false;
+  }
+
+  if (!assetWriter.Write(NumDependenciesType(dependencies.size())))
+  {
+    LTRACE(("%s: failed to write number of dependencies to %s.", path.c_str(),
+      builtPath.c_str()));
+    return false;
+  }
+
+  for (auto i0 = dependencies.begin(), i1 = dependencies.end(); i0 != i1; ++i0)
+  {
+    if (!(assetWriter.Write(DependencyPathLenType(i0->size())) &&
+      assetWriter.Write(i0->data(), 1, i0->size())))
     {
-      srcBuf.Close();
-
-      builtPath = File::GetRamPath() / builtPath;
-      done = !File::MakeDirs(builtPath);
-      LTRACEIF(done, ("%s: failed to create directory structure for '%s'.",
-        path.c_str(), builtPath.c_str()));
-    }
-
-    auto assetGuard = MakeScopeGuard([&builtPath](){
-      if (!File::Delete(builtPath))
-      {
-        LTRACE(("Failed to remove half-written asset at '%s'.", builtPath.c_str()));
-      }
-    });
-    FileWriter assetWriter; // must be declared after the guard since it'll be cleared up backwards.
-    if (!done)  // create asset file
-    {
-      done = !assetWriter.Open(builtPath, FileWriter::Mode::Truncate, false);
-      LTRACEIF(done, ("%s: failed to create file for built asset at '%s'.",
-        path.c_str(), builtPath.c_str()));
-    }
-
-    if (!done)  // write header
-    {
-      AssetHeader header{ desc.type, version, 0 };
-      done = !assetWriter.Write(&header, sizeof(header), 1);
-      LTRACEIF(done, ("%s: failed to write asset header to '%s'.", path.c_str(),
+      LTRACE(("%s: failed to write dependencies to %s.", path.c_str(),
         builtPath.c_str()));
+      return false;
     }
+  }
 
-    std::vector<FilePath> dependencies;
-    std::ostringstream assetData;
-    if (!done)  // build asset
-    {
-      done = !iFind->second->Build(rawPath.GetNameExt(), { srcBuf.GetSize(), srcBuf.GetData() },
-        dependencies, assetData);
-      LTRACEIF(done, ("%s: failed to build asset.", path.c_str()));
-    }
+  auto str = assetData.str();
+  if (!assetWriter.Write(str.data(), 1, str.size()))
+  {
+    LTRACE(("%s: failed to write asset data to %s.", path.c_str(),
+      builtPath.c_str()));
+    return false;
+  }
 
-    if (!done)  // write dependencies
-    {
-      done = !assetWriter.Write(NumDependenciesType(dependencies.size()));
-      for (auto i0 = dependencies.begin(), i1 = dependencies.end(); !done && i0 != i1; ++i0)
-      {
-        done = !(assetWriter.Write(DependencyPathLenType(i0->size())) &&
-          assetWriter.Write(i0->data(), 1, i0->size()));
-      }
-      LTRACEIF(done, ("%s: failed to write dependencies to %s.", path.c_str(),
-        builtPath.c_str()));
-    }
+  assetGuard.Release();
+  return true;
+}
+#endif  // ENABLE_ASSET_BUILDING
 
-    if (!done) // write built asset
-    {
-      auto str = assetData.str();
-      done = !assetWriter.Write(str.data(), 1, str.size());
-      LTRACEIF(done, ("%s: failed to write asset data to %s.", path.c_str(),
-        builtPath.c_str()));
-    }
+//==============================================================================
+bool IsAssetLoadable(Asset::FlagType oldFlags, Asset::FlagType newFlags)
+{
+  // TODO: handle ErrorFlag and ForceRebuildFlag
+  return !(CheckAllMaskBits(oldFlags, Asset::LoadingFlag) ||
+    (CheckAnyMaskBits(oldFlags, Asset::ProcessingFlag | Asset::ReadyFlag) &&
+      !CheckAnyMaskBits(newFlags, Asset::ForceReloadFlag)));
+}
 
-    if (done)
+//==============================================================================
+void LoadAsset(Asset::VersionType version, Asset& asset, Asset::FlagType flags)
+{
+  asset.OverrideFlags(Asset::PrivateMask, Asset::LoadingFlag);
+
+  auto errorGuard = MakeScopeGuard([&asset]() {
+    asset.FlagError();
+  });
+
+  FilePath path = Asset::Manager::GetAssetPath() / asset.GetDescriptor().ToPath();
+  File::Handle hFile = File::Open(path, "rb");
+  if (hFile == nullptr)
+  {
+    LTRACE(("%s: failed to open.", path.c_str()));
+    return;
+  }
+
+  AssetHeader header;
+  size_t size = File::GetSize(hFile);
+  if (size < sizeof(AssetHeader) ||
+    File::Read(hFile, sizeof(header), 1, &header) < 1)
+  {
+    LTRACE(("%s: failed to read header.", path.c_str()));
+    return;
+  }
+
+  size -= sizeof(header);
+  auto type = asset.GetDescriptor().type;
+  if (header.typeId != type)
+  {
+    LTRACE(("%s: type ID mismatch, expected: %.*s, got: %.*s.", path.c_str(),
+      sizeof(type), &type, sizeof(header.typeId), &header.typeId));
+    return;
+  }
+
+  if (header.version != version)
+  {
+    LTRACE(("%s: version mismatch, expected: %d, got: %d", path.c_str(), version,
+      header.version));
+    return;
+  }
+
+  NumDependenciesType numDependencies;
+  if (File::Read(hFile, sizeof(numDependencies), 1, &numDependencies) < 1)
+  {
+    LTRACE(("%s: failed to read number of dependencies.", path.c_str()));
+    return;
+  }
+
+  size -= sizeof(numDependencies);
+
+  NumDependenciesType i = 0;
+  DependencyPathLenType len;
+  FilePath pathDep;
+  while (i < numDependencies)
+  {
+    if (File::Read(hFile, sizeof(len), 1, &len) < 1 || len > FilePath::kCapacity ||
+      len > size || File::Read(hFile, len, 1, pathDep.data()) < 1)
     {
-      asset->FlagError();
+      LTRACE(("%s: failed to read dependency name %d of %d.", path.c_str(), i,
+        numDependencies));
+      return;
     }
     else
     {
-      assetGuard.Release();
+      pathDep.data()[len] = '\0';
+      pathDep.UpdateSize();
+
+      size -= sizeof(DependencyPathLenType) + len;
+
+      auto dependency = Asset::Manager::LoadReflected(pathDep, flags);
+      if (!dependency || CheckAllMaskBits(dependency->GetFlags(), Asset::ErrorFlag))
+      {
+        LTRACE(("%s: error loading dependency '%s'.", path.c_str(), pathDep.c_str()));
+        return;
+      }
+      ++i;
     }
   }
+
+  if (CheckAllMaskBits(flags, Asset::LoadSyncFlag))
+  {
+    AssetLoadJob lj(hFile, size, Asset::Ptr(&asset));
+    lj.Start();
+    while (!lj.Process())
+    {
+    }
+
+    if (CheckAllMaskBits(lj.asset->GetFlags(), Asset::ProcessingFlag))
+    {
+      lj.ProcessData();
+    }
+  }
+  else
+  {
+    void* jobBuffer = s_assetMan->GetAllocator()->Allocate(sizeof(AssetLoadJob));
+    auto lj = new (jobBuffer) AssetLoadJob(hFile, size, Asset::Ptr(&asset));
+    s_assetMan->EnqueueJob(*lj);
+  }
+
+  errorGuard.Release();
 }
-#endif
 
 } // nonamespace
+
+//==============================================================================
+Asset::Builder::Builder(TypeId type_)
+: Base(*this),
+  type(type_)
+{}
+
+//==============================================================================
+Asset::Builder::~Builder() = default;
 
 //==============================================================================
 char const* const Asset::Manager::kDefaultPath = "assets";
 
 //==============================================================================
-void Asset::Manager::Init(FilePath const& path, Allocator* alloc)
+void Asset::Manager::Init(FilePath path, Allocator* alloc)
 {
+  if (path.StartsWith(File::kRawProto))
+  {
+    path = path.c_str() + File::kRawProto.size();
+  }
+
+  path = File::StripRoots(path);
+  if (path.empty())
+  {
+    path = Asset::Manager::kDefaultPath;
+  }
+  path.AppendDirSeparator();
+
+#ifdef ENABLE_ASSET_BUILDING
+  File::MakeDirs(path);
+#endif
+
   s_assetMan.reset(new AssetManagerImpl(path, alloc));
 
   detail::AssetReflector::Base::ForEach(RegisterReflector);
@@ -670,7 +605,7 @@ Asset::HashType Asset::Manager::HashPath(FilePath path)
     const size_t size = path.size();
     if (size > 0)
     {
-      hash = Hash::String(path.c_str(), size, true);
+      hash = Hash::String(path.c_str(), size);
     }
     else
     {
@@ -712,9 +647,9 @@ Asset::Ptr Asset::Manager::LoadReflected(FilePath const& path, FlagType flags)
     asset = FindOrReflectorCreate(desc, flags, version);
 
     auto foundFlags = asset->GetFlags();
-    if (IsLoadable(foundFlags, flags))
+    if (IsAssetLoadable(foundFlags, flags))
     {
-      LoadInternal(version, path, asset, flags);
+      LoadInternal(version, path, *asset, flags);
     }
   }
 
@@ -733,9 +668,9 @@ Asset::Ptr Asset::Manager::LoadReflected(DescriptorCore const& desc, FlagType fl
     asset = FindOrReflectorCreate(desc, flags, version);
 
     auto foundFlags = asset->GetFlags();
-    if (IsLoadable(foundFlags, flags))
+    if (IsAssetLoadable(foundFlags, flags))
     {
-      LoadInternal(version, asset, flags);
+      LoadInternal(version, *asset, flags);
     }
   }
 
@@ -776,7 +711,7 @@ Asset::Ptr Asset::Manager::FindOrReflectorCreate(DescriptorCore const& desc,
 
   if (!asset)
   {
-    asset.Reset((*reflector->create)(desc.hash, flags));
+    asset.Reset(reflector->create(desc.hash, flags));
     if (!CheckAllMaskBits(flags, Asset::UnmanagedFlag))
     {
       Asset::Manager::Manage(asset);
@@ -786,48 +721,39 @@ Asset::Ptr Asset::Manager::FindOrReflectorCreate(DescriptorCore const& desc,
 }
 
 //==============================================================================
-bool Asset::Manager::IsLoadable(FlagType oldFlags, FlagType newFlags)
-{
-  return !(CheckAllMaskBits(oldFlags, LoadingFlag) ||
-    (CheckAnyMaskBits(oldFlags, ProcessingFlag | ReadyFlag) &&
-      !CheckAllMaskBits(newFlags, ForceReloadFlag)));
-}
-
-//==============================================================================
 void Asset::Manager::LoadInternal(VersionType version, FilePath const& path,
-  Asset::Ptr const& asset, FlagType flags)
+  Asset& asset, FlagType flags)
 {
+#ifdef ENABLE_ASSET_BUILDING
+  if (!BuildAsset(path, version, asset.GetDescriptor(), flags))
+  {
+    return;
+  }
+#endif  // ENABLE_ASSET_BUILDING
+
 #ifdef XR_DEBUG
   // Store the original path for debugging purposes
-  asset->m_debugPath = path.c_str();
+  asset.m_debugPath = path.c_str();
 #endif
 
-  // Clear private flags and set Loading
-  asset->OverrideFlags(PrivateMask, LoadingFlag);
-
-#ifdef ENABLE_ASSET_BUILDING
-  BuildAsset(path, version, asset);
-
-  // If we're flawless, process job.
-  if (!CheckAllMaskBits(asset->GetFlags(), ErrorFlag))
-#endif  // ENABLE_ASSET_BUILDING
+  if (IsAssetLoadable(asset.GetFlags(), flags))
   {
     LoadAsset(version, asset, flags);
   }
 }
 
 //==============================================================================
-void Asset::Manager::LoadInternal(VersionType version, Ptr const& asset, FlagType flags)
+void Asset::Manager::LoadInternal(VersionType version, Asset& asset, FlagType flags)
 {
 #ifdef XR_DEBUG
   // Clear the debug path -- the descriptor tells you where the asset is.
-  asset->m_debugPath.clear();
+  asset.m_debugPath.clear();
 #endif
 
-  // Clear private flags and set Loading
-  asset->OverrideFlags(PrivateMask, LoadingFlag);
-
-  LoadAsset(version, asset, flags);
+  if (IsAssetLoadable(asset.GetFlags(), flags))
+  {
+    LoadAsset(version, asset, flags);
+  }
 }
 
 //==============================================================================
@@ -883,8 +809,11 @@ Asset* Asset::Reflect(TypeId typeId, HashType hash, FlagType flags)
 {
   auto iFind = s_reflectors.find(typeId);
   XR_ASSERT(Asset, iFind != s_reflectors.end());
-  return (*iFind->second->create)(hash, flags);
+  return iFind->second->create(hash, flags);
 }
+
+//==============================================================================
+Asset::~Asset() = default;
 
 //==============================================================================
 bool Asset::ProcessData(Buffer const& buffer)
@@ -927,6 +856,13 @@ bool Asset::Unload()
   return doUnload;
 }
 
+//==============================================================================
+Asset::Asset(DescriptorCore const& desc, FlagType flags)
+: m_descriptor(desc),
+  m_flags(flags & ~PrivateMask),
+  m_refs()
+{}
+
 namespace detail
 {
 
@@ -944,8 +880,8 @@ AssetReflector const* AssetReflector::GetReflector(uint32_t extensionHash)
 }
 
 //==============================================================================
-xr::detail::AssetReflector::AssetReflector(Asset::TypeId type_,
-  Asset::VersionType version_, CreateFn create_, char const* extensions_)
+AssetReflector::AssetReflector(Asset::TypeId type_, Asset::VersionType version_,
+  CreateFn create_, char const* extensions_)
 : Linked<AssetReflector const>(*this),
   type(type_),
   version(version_),
