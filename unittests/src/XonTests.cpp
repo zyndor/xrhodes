@@ -202,20 +202,24 @@ TEST_F(Xon, ReadValid) // Read xon and construct tree.
   XonEntity& v0 = (*root)[0];
   ASSERT_EQ(v0.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v0.ToValue().GetString(), std::string("value"));
+  ASSERT_EQ(v0.ToValue().GetLength(), 5u);
 
   XonEntity& v1 = (*root)[1];
   ASSERT_EQ(v1.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v1.ToValue().GetString(), std::string("value"));
+  ASSERT_EQ(v1.ToValue().GetLength(), 5u);
   ASSERT_NE(&v1, &root->Get("key"));
 
   XonEntity& v2 = (*root)[2];
   ASSERT_EQ(v2.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v2.ToValue().GetString(), std::string("value2"));
+  ASSERT_EQ(v2.ToValue().GetLength(), 6u);
   ASSERT_EQ(&v2, &root->Get("key"));
 
   XonEntity& v3 = (*root)[3];
   ASSERT_EQ(v3.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v3.ToValue().GetString(), std::string("more values"));
+  ASSERT_EQ(v3.ToValue().GetLength(), 11u);
   ASSERT_EQ(&v3, &root->Get("more_keys"));
 
   XonEntity& v4 = (*root)[4];
@@ -233,15 +237,18 @@ TEST_F(Xon, ReadValid) // Read xon and construct tree.
   XonEntity& v4_0 = v4Object[0];
   ASSERT_EQ(v4_0.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v4_0.ToValue().GetString(), std::string("object_value"));
+  ASSERT_EQ(v4_0.ToValue().GetLength(), 12u);
 
   XonEntity& v4_1 = v4Object[1];
   ASSERT_EQ(v4_1.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v4_1.ToValue().GetString(), std::string("value"));
+  ASSERT_EQ(v4_1.ToValue().GetLength(), 5u);
   ASSERT_EQ(&v4_1, &v4Object.Get("key"));
 
   XonEntity& v4_2 = v4Object[2];
   ASSERT_EQ(v4_2.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v4_2.ToValue().GetString(), std::string("{}ther_va:ue"));
+  ASSERT_EQ(v4_2.ToValue().GetLength(), 12u);
   ASSERT_EQ(&v4_2, &v4Object.Get("{}ther key"));
 
   XonEntity& v4_3 = v4Object[3];
@@ -258,11 +265,13 @@ TEST_F(Xon, ReadValid) // Read xon and construct tree.
   XonEntity& v4_3_1 = v4_3Object[1];
   ASSERT_EQ(v4_3_1.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v4_3_1.ToValue().GetString(), std::string("escaped \"quot\""));
+  ASSERT_EQ(v4_3_1.ToValue().GetLength(), 14u);
   //ASSERT_EQ(v4_3_1.GetString(), std::string("escaped \\\"quot\\\""));
 
   XonEntity& v4_3_2 = v4_3Object[2];
   ASSERT_EQ(v4_3_2.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v4_3_2.ToValue().GetString(), std::string(""));
+  ASSERT_EQ(v4_3_2.ToValue().GetLength(), 0);
 
   XonEntity& v4_4 = v4Object[4];
   ASSERT_EQ(v4_4.GetType(), XonEntity::Type::Object);
@@ -271,18 +280,22 @@ TEST_F(Xon, ReadValid) // Read xon and construct tree.
   XonEntity& v4_5 = v4Object[5];
   ASSERT_EQ(v4_5.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v4_5.ToValue().GetString(), std::string("another_value"));
+  ASSERT_EQ(v4_5.ToValue().GetLength(), 13u);
 
   XonEntity& v4_6 = v4Object[6];
   ASSERT_EQ(v4_6.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v4_6.ToValue().GetString(), std::string("a_value_that's_\"quoted\""));
+  ASSERT_EQ(v4_6.ToValue().GetLength(), 23u);
 
   XonEntity& v5 = (*root)[5];
   ASSERT_EQ(v5.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v5.ToValue().GetString(), nullptr);
+  ASSERT_EQ(v5.ToValue().GetLength(), 0);
 
   XonEntity& v6 = (*root)[6];
   ASSERT_EQ(v6.GetType(), XonEntity::Type::Value);
   ASSERT_EQ(v6.ToValue().GetString(), std::string("null"));
+  ASSERT_EQ(v6.ToValue().GetLength(), 4u);
 }
 
 TEST_F(Xon, ReadInvalid)  // Read a bunch of invalid xon files. All should fail.

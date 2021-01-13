@@ -55,7 +55,7 @@ struct XonTreeBuildState
     if (!s.isQuoted && strncmp(s.start, "null", s.length) == 0)
     {
       s.start = nullptr;
-      s.length = -1;
+      s.length = 0;
     }
     else if(s.isQuoted && s.length > 0)
     {
