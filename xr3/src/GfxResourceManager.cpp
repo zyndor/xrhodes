@@ -149,7 +149,7 @@ void ResourceManager::Release(UniformHandle h)
     free(mUniformData[h.id]);
     mUniformData[h.id] = nullptr;
 
-    std::memset(&ur.inst, 0x00, sizeof(Uniform));
+    ur.inst = Uniform();
 
     mUniforms.server.Release(h.id);
   }
