@@ -148,8 +148,14 @@ bool  operator<(HardString<N> const& hs0, HardString<M> const& hs1);
 inline
 char* strrstr(const char* haystack, const char* needle)
 {
-  size_t needleSize = strlen(needle);
-  char const* p = haystack + strlen(haystack) - needleSize;
+  const size_t needleSize = strlen(needle);
+  const size_t haystackSize = strlen(haystack);
+  if (needleSize > haystackSize)
+  {
+    return nullptr;
+  }
+
+  char const* p = haystack + haystackSize - needleSize;
   while(p >= haystack && strncmp(p, needle, needleSize) != 0)
   {
     --p;
