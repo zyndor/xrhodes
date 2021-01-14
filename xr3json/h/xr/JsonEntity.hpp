@@ -92,7 +92,7 @@ public:
   // structors
   Value();
   Value(const Value& rhs);
-  explicit Value(std::string value);
+  explicit Value(std::string const& value);
   explicit Value(int i);
   explicit Value(double d);
   Value(const char* value, size_t len);
@@ -103,7 +103,7 @@ public:
   void        SetValue(const char* value, size_t len);
   void        SetValue(int i);
   void        SetValue(double d);
-  void        SetValue(std::string str);
+  void        SetValue(std::string const& str);
 
   Value*      Clone() const override;
 

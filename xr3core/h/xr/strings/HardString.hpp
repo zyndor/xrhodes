@@ -9,16 +9,10 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include <string.h>
-#include <ctype.h>
 #include <algorithm>
+#include <cstring>
+#include <ctype.h>
 #include "xr/debug.hpp"
-
-#ifdef _MSC_VER
-// Suppress warnings for known safe uses of strcpy(), strncpy(), sprintf() etc.
-#pragma warning(push)
-#pragma warning(disable:4996)
-#endif
 
 namespace xr
 {
@@ -27,11 +21,6 @@ namespace detail
 {
 class HardStringCore
 {
-protected:// structors
-  HardStringCore(size_t size)
-  : m_size{ size }
-  {}
-
 protected:// data
   size_t m_size = 0;
 };
@@ -148,8 +137,14 @@ bool  operator<(HardString<N> const& hs0, HardString<M> const& hs1);
 inline
 char* strrstr(const char* haystack, const char* needle)
 {
-  size_t needleSize = strlen(needle);
-  char const* p = haystack + strlen(haystack) - needleSize;
+  const size_t needleSize = strlen(needle);
+  const size_t haystackSize = strlen(haystack);
+  if (needleSize > haystackSize)
+  {
+    return nullptr;
+  }
+
+  char const* p = haystack + haystackSize - needleSize;
   while(p >= haystack && strncmp(p, needle, needleSize) != 0)
   {
     --p;
@@ -161,7 +156,6 @@ char* strrstr(const char* haystack, const char* needle)
 template  <size_t N>
 inline
 HardString<N>::HardString()
-: HardStringCore{ 0 }
 {
   m_buffer[0] = '\0';
 }
@@ -177,12 +171,8 @@ HardString<N>::HardString(const char* cs)
 template  <size_t N>
 inline
 HardString<N>::HardString(const char* cs, size_t size)
-: HardStringCore{ size }
 {
-  XR_ASSERT(HardString, cs != nullptr);
-  XR_ASSERT(HardString, size <= capacity());
-  strncpy(m_buffer, cs, size);
-  m_buffer[size] = '\0';
+  assign(cs, size);
 }
 
 //==============================================================================
@@ -340,7 +330,8 @@ HardString<N>&  HardString<N>::assign(const char* cs, size_t size)
 {
   XR_ASSERT(HardString, cs != nullptr);
   XR_ASSERT(HardString, size <= capacity());
-  strncpy(m_buffer, cs, size);
+  size = std::min(size, capacity());
+  std::copy(cs, cs + size, m_buffer);
   m_buffer[size] = '\0';
   m_size = size;
   return *this;
@@ -351,11 +342,12 @@ template  <size_t N>
 HardString<N>&  HardString<N>::append(const char* cs, size_t size)
 {
   XR_ASSERT(HardString, cs != nullptr);
-  auto const newSize = m_size + size;
-  XR_ASSERT(HardString, newSize <= capacity());
-  strncpy(m_buffer + m_size, cs, size);
-  m_buffer[newSize] = '\0';
-  m_size = newSize;
+  XR_ASSERT(HardString, m_size + size <= capacity());
+  size = std::min(size, capacity() - m_size);
+  std::copy(cs, cs + size, m_buffer + m_size);
+  size += m_size;
+  m_buffer[size] = '\0';
+  m_size = size;
   return *this;
 }
 
@@ -390,7 +382,7 @@ template  <size_t N>
 HardString<N>& HardString<N>::operator =(int32_t n)
 {
   char buffer[16];
-  const auto size = sprintf(buffer, "%d", n);
+  const auto size = std::snprintf(buffer, sizeof(buffer), "%d", n);
   XR_ASSERT(HardString, size < sizeof(buffer));
   return assign(buffer, size);
 }
@@ -416,7 +408,7 @@ template  <size_t N>
 HardString<N>&  HardString<N>::operator +=(int32_t n)
 {
   char buffer[16];
-  const auto len = sprintf(buffer, "%d", n);
+  const auto len = std::snprintf(buffer, sizeof(buffer), "%d", n);
   XR_ASSERT(HardString, len < sizeof(buffer));
   return append(buffer, len);
 }
@@ -541,9 +533,5 @@ bool  operator<(HardString<N> const& hs0, HardString<M> const& hs1)
 }
 
 } // xr
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #endif // XR_HARDSTRING_HPP

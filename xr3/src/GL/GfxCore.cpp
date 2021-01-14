@@ -623,9 +623,9 @@ void Core::Init(Context* context, ResourceManager* resources)
   // to a rise in the number of load failures.
   // TODO: Test properly + find a way to determine if anything crucial is unavailable.
   auto numFailed = ogl_LoadFunctions();
-  if (numFailed > 0)
+  if (numFailed > ogl_LOAD_SUCCEEDED)
   {
-    LTRACE(("Failed to load %d functions.", numFailed));
+    LTRACE(("Failed to load %d functions.", numFailed - ogl_LOAD_SUCCEEDED));
   }
 
   // log vendor, renderer, driver version
@@ -711,7 +711,8 @@ void Core::Release(VertexBufferHandle h)
     sContext->mResources->Release(vbo.hFormat);
   }
 
-  std::memset(&vbo, 0x00, sizeof(vbo));
+  vbo = VertexBufferObject();
+
   vbos.server.Release(h.id);
 }
 
@@ -733,7 +734,8 @@ void Core::Release(IndexBufferHandle h)
   XR_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
   XR_GL_CALL(glDeleteBuffers(1, &ibo.name));
 
-  std::memset(&ibo, 0x00, sizeof(ibo));
+  ibo = IndexBufferObject();
+
   ibos.server.Release(h.id);
 }
 
@@ -875,7 +877,7 @@ void Core::Release(TextureHandle h)
   if (texture.refCount == 0)
   {
     XR_GL_CALL(glDeleteTextures(1, &texture.inst.name));
-    std::memset(&texture.inst, 0x00, sizeof(Texture));
+    texture.inst = Texture();
 
     textures.server.Release(h.id);
   }
@@ -987,7 +989,7 @@ void Core::Release(FrameBufferHandle h)
   {
     Core::Release(fbo.hTextures[i]);
   }
-  std::memset(&fbo, 0x00, sizeof(FrameBufferObject));
+  fbo = FrameBufferObject();
 
   XR_GL_CALL(glDeleteFramebuffers(1, &fbo.name));
   fbos.server.Release(h.id);
@@ -1067,7 +1069,7 @@ void Core::Release(ShaderHandle h)
   if (sr.refCount == 0)
   {
     XR_GL_CALL(glDeleteShader(sr.inst.name));
-    std::memset(&sr.inst, 0x00, sizeof(Shader));
+    sr.inst = Shader();
 
     shaders.server.Release(h.id);
   }
