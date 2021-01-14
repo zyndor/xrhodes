@@ -30,8 +30,7 @@ Entity::Entity(Type t)
 }
 
 //==============================================================================
-Entity::~Entity()
-{}
+Entity::~Entity() = default;
 
 //==============================================================================
 Entity* Entity::LinkPrevSibling(Entity* p)
@@ -85,7 +84,7 @@ Value::Value(const Value& rhs)
 }
 
 //==============================================================================
-Value::Value(std::string value)
+Value::Value(std::string const& value)
 : Value(value.c_str(), value.size())
 {}
 
@@ -169,7 +168,7 @@ void Value::SetValue(const char* value)
     size_t len(strlen(value));
 
     m_parValue = new char[len + 1];
-    strncpy(m_parValue, value, len);
+    std::copy(value, value + len, m_parValue);
     m_parValue[len] = '\0';
   }
 }
@@ -187,7 +186,7 @@ void Value::SetValue(const char* value, size_t len)
   else
   {
     m_parValue = new char[len + 1];
-    strncpy(m_parValue, value, len);
+    std::copy(value, value + len, m_parValue);
     m_parValue[len] = '\0';
   }
 }
@@ -209,7 +208,7 @@ void Value::SetValue(double d)
 }
 
 //==============================================================================
-void  Value::SetValue(std::string str)
+void  Value::SetValue(std::string const& str)
 {
   delete[] m_parValue;
 
