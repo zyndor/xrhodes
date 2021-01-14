@@ -1,3 +1,10 @@
+v1.9.2
+- xr::JsonEntity maintenance and GCC v9.3.0 fixes.
+- Fix: all writes by xr::HardString<>'s methods are within the bounds of its buffer.
+- Fix: strrstr() no longer accessing outside of string.
+- Fix: the return value from ogl_LoadFunctions is now handled correctly.
+- Fix: no longer using memset() to clear Gfx objects with non-trivial structors.
+
 v1.9.1
 - Fix: attempting to create an empty vertex / index / instance data buffer no
   longer results in an invalid handle.
