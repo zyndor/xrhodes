@@ -623,9 +623,9 @@ void Core::Init(Context* context, ResourceManager* resources)
   // to a rise in the number of load failures.
   // TODO: Test properly + find a way to determine if anything crucial is unavailable.
   auto numFailed = ogl_LoadFunctions();
-  if (numFailed > 0)
+  if (numFailed > ogl_LOAD_SUCCEEDED)
   {
-    LTRACE(("Failed to load %d functions.", numFailed));
+    LTRACE(("Failed to load %d functions.", numFailed - ogl_LOAD_SUCCEEDED));
   }
 
   // log vendor, renderer, driver version
