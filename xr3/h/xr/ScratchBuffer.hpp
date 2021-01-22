@@ -71,16 +71,24 @@ public:
   static Position3dColor* Start3dColor(uint32_t numVertices);
 
   ///@brief Allocates memory for @a count 16-bit indices from the pool.
-  ///@note A subsequent BakeIndices() or Finish() call invalidates this memory.
+  ///@note Does not transfer ownership.
+  ///@note A subsequent Bake() or Finish() call invalidates this memory.
+  ///@note Overrides any previously specified index buffer.
   static uint16_t* AllocateIndices(uint32_t count);
 
-  ///@brief Uploads the vertex, and if AllocateIndices() was called, the index
-  /// buffer to the GPU, returning the resulting pair of handles, along with
-  /// ownership.
+  ///@brief Provides pre-calculated indices to use for the next draw call.
+  ///@note Does not transfer ownership.
+  ///@note A subsequent Bake() or Finish() call consumes the pointer set.
+  ///@note Overrides any previously specified index buffer.
+  static void UseIndices(uint32_t count, uint16_t const* data);
+
+  ///@brief Uploads the vertex, and if AllocateIndices() or UseIndices() was called,
+  /// the index buffer to the GPU, returning the resulting pair of handles, along
+  /// with ownership.
   ///@note One of the Start methods must have been called beforehand.
   ///@note Invalidates the buffers, i.e. client code must not call Finish().
   ///@note The vertex / index count is whatever was supplied to the Start and
-  /// AllocateIndices methods prior to Bake().
+  /// Allocate- or UseIndices() methods prior to Bake().
   static Handles Bake();
 
   ///@brief Renders and consumes the scratch buffer data.
