@@ -18,8 +18,8 @@
 
 using namespace xr;
 
-const uint64_t kFrameDelayMs = 1000 / 60.f;
-const uint64_t kFrameCappingMs = 100;
+const double kFrameDelayMs = 1000. / 60.;
+const double kFrameCappingMs = 100.;
 
 class Application
 {
@@ -127,7 +127,7 @@ private:
     }
     else
     {
-      std::this_thread::sleep_for(std::chrono::milliseconds(kFrameDelayMs));
+      std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(kFrameDelayMs));
     }
   }
 

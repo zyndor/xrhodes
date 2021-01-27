@@ -21,14 +21,14 @@ namespace xr
 /// (optionally) per second callbacks. The frequency of updates is fixed, and
 /// capping is applied when a frame takes too long.
 ///@note Calls xr::Device::YieldOS(), so the callbacks from subsystems are
-/// processed. For an event
+/// processed.
 class GameLoop
 {
   XR_NONOBJECT_DECL(GameLoop)
 
 public:
   // types
-  ///@brief Update / render data relating to the last second.
+  ///@brief Update / render information relating to the last second.
   struct Second
   {
     float updateCount;
@@ -39,9 +39,9 @@ public:
   /// originates from.
   enum class Action
   {
-    Continue, // Carry on as you were.
-    Skip,  // Skips remaining updates, proceeds to the next render (unless otherwise terminated);
-    Exit,  // The game loop is terminated.
+    Continue, ///< Carry on as you were.
+    Skip,  ///< Skips remaining updates, proceeds to the next render (unless otherwise terminated);
+    Exit,  ///< The game loop is terminated.
   };
 
   ///@brief An update function. Action& is an output parameter signifying
@@ -66,6 +66,11 @@ public:
   ///@param onSecond Callback to call every second. Optional.
   ///@note onSecond is not Clone()d; it will need to stay valid until Run()
   /// returns.
+  static void Run(double frameDelayMs, double frameCapMs,
+    OnUpdate const& onUpdate, OnRender const& onRender,
+    OnSecond const* onSecond = nullptr);
+
+  [[deprecated]]
   static void Run(uint64_t frameDelayMs, uint64_t frameCapMs,
     OnUpdate const& onUpdate, OnRender const& onRender,
     OnSecond const* onSecond = nullptr);

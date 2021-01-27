@@ -19,6 +19,7 @@ namespace
 const auto s_ust0 = sc::steady_clock::now();
 }
 
+//==============================================================================
 uint64_t Timer::GetUTC()
 {
   auto utc = sc::system_clock::now().time_since_epoch();
@@ -26,16 +27,18 @@ uint64_t Timer::GetUTC()
   return ms.count();
 }
 
-uint64_t Timer::GetUST()
+//==============================================================================
+double Timer::GetUST()
 {
   auto ust = sc::steady_clock::now() - s_ust0;
-  return sc::duration_cast<sc::milliseconds>(ust).count();
+  return sc::duration_cast<sc::duration<double, std::milli>>(ust).count();
 }
 
-uint64_t Timer::GetUSTNano()
+//==============================================================================
+double Timer::GetUSTNano()
 {
   auto ust = sc::steady_clock::now() - s_ust0;
-  return sc::duration_cast<sc::nanoseconds>(ust).count();
+  return sc::duration_cast<sc::duration<double, std::nano>>(ust).count();
 }
 
-} // XR
+} // xs
