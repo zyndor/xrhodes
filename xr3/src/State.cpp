@@ -53,7 +53,7 @@ void  State::Manager::Pop()
 }
 
 //==============================================================================
-void  State::Manager::Update(int32_t ms)
+void  State::Manager::Update(double ms)
 {
   if(!m_states.empty())
   {
