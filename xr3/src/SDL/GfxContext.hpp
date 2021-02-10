@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "xr/math/SVector2.hpp"
-#include "SDL.h"
+#include "SDL2/SDL_render.h"
 
 namespace xr
 {

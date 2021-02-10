@@ -401,7 +401,7 @@ Array::Array(const Array& rhs)
   m_elements(rhs.m_elements)
 {
   std::transform(m_elements.begin(), m_elements.end(), m_elements.begin(),
-    std::mem_fun(&Entity::Clone));
+    [](Entity* e) { return e->Clone(); });
 }
 
 //==============================================================================

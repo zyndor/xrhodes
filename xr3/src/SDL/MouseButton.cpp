@@ -8,7 +8,7 @@
 //==============================================================================
 #include "xr/MouseButton.hpp"
 #include "xr/debug.hpp"
-#include "SDL_mouse.h"
+#include "SDL2/SDL_mouse.h"
 #include <algorithm>
 
 namespace xr

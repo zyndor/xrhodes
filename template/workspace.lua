@@ -166,6 +166,16 @@ function do_workspace(workspace_name, start_project_name)
 
 	-- Mac OS
 	if target_env == "macos" then
+		includedirs
+		{
+			"/usr/local/include"
+		}
+
+		libdirs
+		{
+			"/usr/local/lib"
+		}
+
 		staticruntime "On"
 
 		target_desktop = true

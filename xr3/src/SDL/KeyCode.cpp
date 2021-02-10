@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "xr/KeyCode.hpp"
-#include "SDL_scancode.h"
+#include "SDL2/SDL_scancode.h"
 #include <algorithm>
 #include <array>
 

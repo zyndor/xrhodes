@@ -6,7 +6,7 @@ XRhodes is a game development / creative coding framework delivered as a set of 
 
 Its aim is to provide flexible tools, rather than a complete pipeline, while abstracting most platform-specific details away.
 
-XRhodes is written in modern C++, and it currently supports Windows 8+ (32 / 64 bits), Mac OS and Linux (64 bits); support for other platforms are in the pipeline - stay tuned!
+XRhodes is written in C++14, and it currently supports Windows 8+ (32 / 64 bits), Mac OS and Linux (64 bits); support for other platforms are in the pipeline - stay tuned!
 
 It comes with a fair amount of documentation and with unit tests and usage examples.
 
@@ -15,7 +15,7 @@ Main features
 
 * Signals and generic callbacks;
 * Tweening;
-* Lighter-than-JSON-weight text-based serialization format;
+* Lighter-than-JSON-weight text-based serialization format and structured reading;
 * JSON parsing and writing;
 * Vector maths library;
 * Low level graphics API (Current implementation is OpenGL based);
@@ -40,17 +40,32 @@ System Requirements
 
 Graphics: OpenGL3.3 capable GPU.
 
-Build environment:
-* Windows: Visual Studio Community 2015+
-* MacOS: Xcode 4+
-* Linux: GCC v5.4+ & make; get the libsdl2-dev, libpng16-16, zlib and libtinyxml2-dev libraries from your distribution provider.
+
+# Windows
+
+- Visual Studio Community 2017+ and (Vcpkg)[https://github.com/microsoft/vcpkg]
+- $ ./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2 gtest
+- $ ./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2 gtest
+
+# MacOS 10.13+
+
+- Xcode 4+
+- $ brew install libpng sdl2 tinyxml2
+
+# Linux (Tested under Ubuntu 18.04)
+
+- $ sudo apt-get install build-essential mesa-common-dev mesa-utils libpng-dev \
+  libsdl2-dev libtinyxml2-dev
 
 Getting started
 ---------------
 
-Visit the tools/ subfolder for your chosen development platform and run the generate_projects script. Alternatively, you can run premake directly with the premake5.lua script in the root folder.
+Visit the tools/ subfolder for your chosen development platform and run the
+generate_projects script. Alternatively, you can run premake directly with the
+premake5.lua script in the root folder.
 
-Projects are generated in the .projects folder in the root.
+Projects are generated in the .projects folder in the root. Run the build_all
+script from the same folder, or build the projects manually.
 
 Run examples and unit tests.
 
@@ -59,7 +74,8 @@ Creating your own projects
 
 1. Set an 'XR3_PATH' environment variable with the location of XRhodes.
 2. Copy and rename the template/ folder to your desired location.
-3. Edit the config.lua file with your desired settings for project name, files to include in the build, and external includes location.
+3. Edit the config.lua file with your desired settings for project name, files
+  to include in the build, and external includes location.
 4. Run premake with the premake5.lua script.
 
 Happy building!
@@ -67,7 +83,8 @@ Happy building!
 Community
 ---------
 
-The [XRhodes Discord channel](https://discord.gg/kCQ9NQ6) welcomes questions and discussion. This may be a faster option than filing a bug report.
+The [XRhodes Discord channel](https://discord.gg/kCQ9NQ6) welcomes questions and
+discussion. This may be a faster option than filing a bug report.
 
 If you find XRhodes useful...
 -----------------------------

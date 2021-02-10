@@ -9,6 +9,7 @@
 #include "GfxContext.hpp"
 #include "xr/Config.hpp"
 #include "xr/debug.hpp"
+#include "SDL2/SDL_hints.h"
 
 namespace xr
 {

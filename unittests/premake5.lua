@@ -22,7 +22,6 @@ project "unittests"
 
 	includedirs
 	{
-		"../external/libpng",
 		"../external/xm",
 		"../unittests/h",
 		"../xr3core/h",
@@ -33,14 +32,6 @@ project "unittests"
 
 	defines { "DATA_PATH=\""..path.getabsolute("./data").."\"" }
 
-	links
-	{
-		"xr3scene",
-		"xr3",
-		"xr3json",
-		"xr3core",
-	}
-
 	if is_vs() then
 		buildoptions { "/WX-" }
 	else
@@ -48,94 +39,62 @@ project "unittests"
 	end
 
 	-- link options
+	links
+	{
+
+		"tinyxml2",
+		"SDL2",
+
+		"xr3scene",
+		"xr3",
+		"xr3json",
+		"xr3core",
+	}
+
 	if target_env == "windows" then
 		-- Windows
 		links
 		{
 			"libpng16",
 			"zlib",
-			"opengl32",
-
-			"SDL2",
-
-			"tinyxml2",
+			"opengl32"
 		}
 
 		libdirs
 		{
-			"../external/libpng/lib/"..target_env.."/$(PlatformShortName)-Release",
-			"../external/tinyxml2/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
-			"../external/SDL2/lib/"..target_env.."/$(PlatformShortName)/",
-			"../external/gtest/lib/"..target_env.."/$(PlatformShortName)-$(Configuration)",
-			"../external/zlib/lib/"..target_env.."/$(PlatformShortName)-Release",
+			"$(VcpkgCurrentInstalledDir)lib",
+			"$(VcpkgCurrentInstalledDir)lib/manual-link",
 		}
 
 	else
 		if target_env == "macos" then
-			-- OSX
+			-- MacOS
 			links
 			{
-				"SDL2.framework"
+				"OpenGL.framework"
 			}
-
-			libdirs
-			{
-				"../external/libpng/lib/"..target_env.."/",
-				"../external/zlib/lib/"..target_env.."/",
-			}
-
-			for _, p in ipairs(tbl_platforms) do
-				for _, c in ipairs(tbl_configurations) do
-					local pc = "/"..p.."-"..c
-					filter{ "platforms:"..p, c }
-					libdirs
-					{
-						"../external/tinyxml2/lib/"..target_env..pc,
-						"../external/gtest/lib/"..target_env..pc,
-					}
-				end
-			end
-			filter {}
-
-			-- note: unlike the libdirs, these are _two_ folders out. not entirely sure why.
-			local framework_paths = {
-				"-F../../external/SDL2/",
-			}
-
-			buildoptions(framework_paths)
-			linkoptions(framework_paths)
 
 		else
 			-- other *nix
 			links
 			{
-				"tinyxml2",
-				"SDL2",
 				"GL",
-				"pthread"
 			}
-		end
 
+		end
 
 		-- common *nix link options
 		links
 		{
 			"png16",
-			"z"
+			"z",
+			"pthread"
 		}
+
 	end
 
-	-- post-build options
-	if target_env == "windows" then -- copy SDL dlls
-		local external_rel_path = "../../external/"; -- current directory at this point is .projects/windows
-		local artifacts_rel_path = "../../"..bin_location.."/";
-		for _, p in ipairs(tbl_platforms) do
-			for _, c in ipairs(tbl_configurations) do
-				local pc = p.."-"..c
-				filter { "platforms:"..p, c }
-				postbuildcommands{
-					os.translateCommands("{COPY} "..external_rel_path.."SDL2/lib/"..target_env.."/"..p.."/*.dll "..artifacts_rel_path..pc),
-				}
-			end
-		end
+	-- custom build step
+	if target_env == "windows" then
+		local dependencies = { "libpng16", "zlib1" }
+		do_vs_postbuild(dependencies)
 	end

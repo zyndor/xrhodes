@@ -12,7 +12,7 @@
 #include "xr/math/Vector2.hpp"
 #include "xr/ButtonState.hpp"
 #include "xr/HatState.hpp"
-#include "SDL_joystick.h"
+#include "SDL2/SDL_joystick.h"
 #include <vector>
 #include <cstdint>
 

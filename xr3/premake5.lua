@@ -25,8 +25,6 @@ project "xr3"
 		"h/",
 		"../xr3core/h/",
 		"../xr3json/h/",
-		"../external/tinyxml2",
-		"../external/libpng",
 		"../external/stb",
 		"../external/utf8cpp",
 	}
@@ -40,7 +38,6 @@ project "xr3"
 		}
 
 		includedirs {
-			"../external/SDL2/include/",
 			"src/",
 			"src/SDL/",	-- NOTE: for access to GfxContext.hpp; for some reason filter{ "files:src/GL/Gfx.cpp" } didn't work.
 		}
