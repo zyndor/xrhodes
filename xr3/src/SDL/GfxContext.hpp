@@ -69,7 +69,6 @@ public:
 private:
   // data
   SDL_Window& m_window; // no ownership
-  SDL_Renderer* m_ownRenderer;
   SDL_GLContext m_ownContext;
 
   int m_glVersionMajor;

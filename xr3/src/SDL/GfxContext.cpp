@@ -23,7 +23,7 @@ const int kDefaultGlMinorVersion = 3;
 //==============================================================================
 Gfx::Context::Context(SDL_Window& window)
 : m_window(window),
-  m_ownRenderer(nullptr)
+  m_ownContext(nullptr)
 {}
 
 //==============================================================================
@@ -35,14 +35,6 @@ Context::~Context()
 //==============================================================================
 void Context::Init()
 {
-  uint32_t flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
-  if (Config::GetInt("XR_DISPLAY_VSYNC", false))
-  {
-    flags |= SDL_RENDERER_PRESENTVSYNC;
-  }
-
-  m_ownRenderer = SDL_CreateRenderer(&m_window, -1, flags);
-
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
   // Create GL context.
@@ -56,18 +48,10 @@ void Context::Init()
   int width, height;
   SDL_GL_GetDrawableSize(&m_window, &width, &height);
 
-  SDL_RenderSetLogicalSize(m_ownRenderer, width, height);
-
   m_ownContext = SDL_GL_CreateContext(&m_window);
   SDL_GL_MakeCurrent(&m_window, m_ownContext);
 
   // Get display and screen sizes.
-  SDL_RendererInfo  info;
-  SDL_GetRendererInfo(m_ownRenderer, &info);
-
-  XR_ASSERT(Gfx, info.flags & SDL_RENDERER_ACCELERATED);
-  XR_ASSERT(Gfx, info.flags & SDL_RENDERER_TARGETTEXTURE);
-
   SDL_DisplayMode dm;
   SDL_GetCurrentDisplayMode(0, &dm);
 
@@ -84,13 +68,12 @@ void Context::Swap() const
 //==============================================================================
 void Context::Shutdown()
 {
-  if (m_ownRenderer)
+  if (m_ownContext)
   {
     SDL_GL_MakeCurrent(nullptr, SDL_GLContext());
 
     SDL_GL_DeleteContext(m_ownContext);
-    SDL_DestroyRenderer(m_ownRenderer);
-    m_ownRenderer = nullptr;
+    m_ownContext = nullptr;
   }
 }
 
