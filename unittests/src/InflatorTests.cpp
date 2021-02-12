@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/io/Deflator.hpp"
 #include "xr/io/Inflator.hpp"
 #include "xr/io/streamutils.hpp"
@@ -14,7 +14,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-
+#include <sstream>
 using namespace xr;
 
 namespace
@@ -38,7 +38,7 @@ struct TestObject : public Inflatable
   }
 };
 
-TEST(Inflator, Basics)
+XM_TEST(Inflator, Basics)
 {
   std::stringstream stream;
   std::vector<Inflator::IdType> ids = {
@@ -68,33 +68,33 @@ TEST(Inflator, Basics)
     auto id = ids[i];
     if (id != IdGenerator::kInvalidId)
     {
-      ASSERT_EQ(testObjects[i].pOther, &testObjects[id]);
+      XM_ASSERT_EQ(testObjects[i].pOther, &testObjects[id]);
     }
     else
     {
-      ASSERT_EQ(testObjects[i].pOther, nullptr);
+      XM_ASSERT_EQ(testObjects[i].pOther, nullptr);
     }
   }
 }
 
-TEST(Inflator, IdRangeClash)
+XM_TEST(Inflator, IdRangeClash)
 {
   TestObject  obj[2];
   Inflator  inflator;
   inflator.SetNext(inflator.RegisterObject(obj[0]));
 
   // Clashing ID range.
-  ASSERT_THROW(inflator.RegisterObject(obj[1]), std::runtime_error);
+  XM_ASSERT_THROW(inflator.RegisterObject(obj[1]), std::runtime_error);
 }
 
-TEST(Inflator, MappingRegistered)
+XM_TEST(Inflator, MappingRegistered)
 {
   TestObject  obj;
   Inflator inflator;
   inflator.RegisterMapping(1000, obj.pOther);
 
   // attempting to resolve unregistered object.
-  ASSERT_THROW(inflator.ResolveMappings(), std::runtime_error);
+  XM_ASSERT_THROW(inflator.ResolveMappings(), std::runtime_error);
 }
 
 }

@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/strings/StringFormatter.hpp"
 #include "xr/Hash.hpp"
 #include "xr/utils.hpp"
@@ -18,15 +18,9 @@ using namespace xr;
 namespace
 {
 
-class Hash : public ::testing::Test
+class Hash
 {
 public:
-  static void SetUpTestCase()
-  {}
-
-  static void TearDownTestCase()
-  {}
-
   ~Hash()
   {
     xr::Hash::SetSeed(xr::Hash::kSeed);
@@ -60,18 +54,18 @@ char const* strings[] =
   "interact",
 };
 
-TEST_F(Hash, StringCaseInsensitive)
+XM_TEST_F(Hash, StringCaseInsensitive)
 {
   auto hash1 = xr::Hash::String(caseCmpString1);
   auto hash2 = xr::Hash::String(caseCmpString2);
-  ASSERT_EQ(hash1, hash2);
+  XM_ASSERT_EQ(hash1, hash2);
 }
 
-TEST_F(Hash, String32CaseInsensitive)
+XM_TEST_F(Hash, String32CaseInsensitive)
 {
   auto hash1 = xr::Hash::String32(caseCmpString1);
   auto hash2 = xr::Hash::String32(caseCmpString2);
-  ASSERT_EQ(hash1, hash2);
+  XM_ASSERT_EQ(hash1, hash2);
 }
 
 template <typename T>
@@ -148,7 +142,7 @@ void DoStringUniqueness(bool dump)
         auto iFind = hashes.find(hash);
         bool hashClashing = iFind != hashes.end();
         XR_TRACEIF(Hash, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
-        ASSERT_FALSE(hashClashing);
+        XM_ASSERT_FALSE(hashClashing);
         hashes[hash] = arBuffer;
       }
     }
@@ -157,7 +151,7 @@ void DoStringUniqueness(bool dump)
   if(dump) DumpHashes(hashes);
 }
 
-TEST_F(Hash, StringUniqueness)
+XM_TEST_F(Hash, StringUniqueness)
 {
   xr::Hash::SetSeed(xr::Hash::kSeed);
   DoStringUniqueness(false);
@@ -185,7 +179,7 @@ void DoString32Uniqueness(bool dump)
         auto iFind = hashes.find(hash);
         bool hashClashing = iFind != hashes.end();
         XR_TRACEIF(Hash, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
-        ASSERT_FALSE(hashClashing);
+        XM_ASSERT_FALSE(hashClashing);
         hashes[hash] = arBuffer;
       }
     }
@@ -194,7 +188,7 @@ void DoString32Uniqueness(bool dump)
   if (dump) DumpHashes(hashes);
 }
 
-TEST_F(Hash, String32Uniqueness)
+XM_TEST_F(Hash, String32Uniqueness)
 {
   xr::Hash::SetSeed(xr::Hash::kSeed);
   DoString32Uniqueness(false);
@@ -206,7 +200,7 @@ TEST_F(Hash, String32Uniqueness)
   }
 }
 
-//TEST_F(Hash, ShortString32Uniqueness)
+//XM_TEST_F(Hash, ShortString32Uniqueness)
 //{
 //  char const kAlphabet[] = "abcdefghijklmnopqrstuvwxyz";// 0123456789";
 //  const auto kAlphaSize = XR_ARRAY_SIZE(kAlphabet) - 1;
@@ -229,9 +223,9 @@ TEST_F(Hash, String32Uniqueness)
 //      auto hash = Hash::String32(buffer, k);
 //      auto iFind = hashes.find(hash);
 //      bool assertion = iFind == hashes.end();
-//      ASSERT_TRUE(assertion, assertion ? nullptr : MakeAssertMsg(buffer, iFind->second.c_str(), hash).c_str());
+//      XM_ASSERT_TRUE(assertion, assertion ? nullptr : MakeAssertMsg(buffer, iFind->second.c_str(), hash).c_str());
 //      hashes.insert(iFind, { hash, std::string(buffer, k) });
-//      //ASSERT_TRUE(assertion, assertion ? nullptr : MakeAssertMsg(buffer, buffer, hash).c_str());
+//      //XM_ASSERT_TRUE(assertion, assertion ? nullptr : MakeAssertMsg(buffer, buffer, hash).c_str());
 //      //hashes.insert(hash);
 //      //
 //      //Format(buffer, hash, logBuffer);

@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/xon/XonRead.hpp"
 #include "xr/xon/XonBuildTree.hpp"
 #include "xr/utils.hpp"
@@ -28,23 +28,23 @@ struct Context
 };
 }
 
-TEST(XonRead, Int)
+XM_TEST(XonRead, Int)
 {
   Context ctx{ "{ 176454, -734581 }" };
 
   auto& entity = (*ctx.mRoot)[0];
-  ASSERT_THROW(XonRead::Number<int8_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<uint8_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<int16_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<uint16_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<int8_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<uint8_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<int16_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<uint16_t>(entity), std::invalid_argument);
 
-  ASSERT_EQ(XonRead::Number<int32_t>(entity), 176454);
-  ASSERT_EQ(XonRead::Number<uint32_t>(entity), 176454);
-  ASSERT_EQ(XonRead::Number<float>(entity), 176454.f);
-  ASSERT_EQ(XonRead::Number<double>(entity), 176454.);
+  XM_ASSERT_EQ(XonRead::Number<int32_t>(entity), 176454);
+  XM_ASSERT_EQ(XonRead::Number<uint32_t>(entity), 176454);
+  XM_ASSERT_EQ(XonRead::Number<float>(entity), 176454.f);
+  XM_ASSERT_EQ(XonRead::Number<double>(entity), 176454.);
 
-  ASSERT_STREQ(XonRead::CString(entity), "176454");
-  ASSERT_EQ(XonRead::String(entity), "176454");
+  XM_ASSERT_STREQ(XonRead::CString(entity), "176454");
+  XM_ASSERT_EQ(XonRead::String(entity), "176454");
 
   {
     const std::vector<int32_t> expected = {
@@ -52,11 +52,11 @@ TEST(XonRead, Int)
       XonRead::Number<int32_t>((*ctx.mRoot)[1])
     };
     auto result = XonRead::Array<int32_t, XonRead::Number<int32_t> >(*ctx.mRoot);
-    ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
+    XM_ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
   }
 
   auto readDoubleArray = XonRead::Array<double, XonRead::Number<double> >;
-  ASSERT_THROW(auto doubles = readDoubleArray(entity), XonEntity::Exception);
+  XM_ASSERT_THROW(auto doubles = readDoubleArray(entity), XonEntity::Exception);
 
   {
     const std::vector<double> expected = {
@@ -64,28 +64,28 @@ TEST(XonRead, Int)
       XonRead::Number<double>((*ctx.mRoot)[1])
     };
     auto result = XonRead::Array<double, XonRead::Number<double> >(*ctx.mRoot);
-    ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
+    XM_ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
   }
 }
 
-TEST(XonRead, Float)
+XM_TEST(XonRead, Float)
 {
   Context ctx{ "{ 1603.7587457924586234863561111111, -2.0 }" };
 
   auto& entity = (*ctx.mRoot)[0];
-  ASSERT_THROW(XonRead::Number<int16_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<uint16_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<int32_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<uint32_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<int16_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<uint16_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<int32_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<uint32_t>(entity), std::invalid_argument);
 
-  ASSERT_EQ(XonRead::Number<float>(entity), 1603.7587457924586234863561111111f);
-  ASSERT_EQ(XonRead::Number<double>(entity), 1603.7587457924586234863561111111);
+  XM_ASSERT_EQ(XonRead::Number<float>(entity), 1603.7587457924586234863561111111f);
+  XM_ASSERT_EQ(XonRead::Number<double>(entity), 1603.7587457924586234863561111111);
 
-  ASSERT_STREQ(XonRead::CString(entity), "1603.7587457924586234863561111111");
-  ASSERT_EQ(XonRead::String(entity), "1603.7587457924586234863561111111");
+  XM_ASSERT_STREQ(XonRead::CString(entity), "1603.7587457924586234863561111111");
+  XM_ASSERT_EQ(XonRead::String(entity), "1603.7587457924586234863561111111");
 
   auto readDoubleArray = XonRead::Array<double, XonRead::Number<double> >;
-  ASSERT_THROW(auto doubles = readDoubleArray(entity), XonEntity::Exception);
+  XM_ASSERT_THROW(auto doubles = readDoubleArray(entity), XonEntity::Exception);
 
   {
     const std::vector<double> expected = {
@@ -93,33 +93,33 @@ TEST(XonRead, Float)
       XonRead::Number<double>((*ctx.mRoot)[1])
     };
     auto result = XonRead::Array<double, XonRead::Number<double> >(*ctx.mRoot);
-    ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
+    XM_ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
   }
 }
 
-TEST(XonRead, String)
+XM_TEST(XonRead, String)
 {
   Context ctx{ "{ salutations, universe }" };
 
   auto& entity = (*ctx.mRoot)[0];
-  ASSERT_THROW(XonRead::Number<int32_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<uint32_t>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<float>(entity), std::invalid_argument);
-  ASSERT_THROW(XonRead::Number<double>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<int32_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<uint32_t>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<float>(entity), std::invalid_argument);
+  XM_ASSERT_THROW(XonRead::Number<double>(entity), std::invalid_argument);
 
-  ASSERT_STREQ(XonRead::CString(entity), "salutations");
-  ASSERT_EQ(XonRead::String(entity), "salutations");
+  XM_ASSERT_STREQ(XonRead::CString(entity), "salutations");
+  XM_ASSERT_EQ(XonRead::String(entity), "salutations");
 
   auto readDoubleArray = XonRead::Array<double, XonRead::Number<double> >;
-  ASSERT_THROW(auto doubles = readDoubleArray(entity), XonEntity::Exception);
-  ASSERT_THROW(auto doubles = readDoubleArray(*ctx.mRoot), std::invalid_argument);
+  XM_ASSERT_THROW(auto doubles = readDoubleArray(entity), XonEntity::Exception);
+  XM_ASSERT_THROW(auto doubles = readDoubleArray(*ctx.mRoot), std::invalid_argument);
 
   std::vector<std::string> expected{
     XonRead::CString(entity),
     XonRead::CString((*ctx.mRoot)[1])
   };
   auto result = XonRead::Array<const char*, XonRead::CString>(*ctx.mRoot);
-  ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
+  XM_ASSERT_TRUE(std::equal(result.begin(), result.end(), expected.begin()));
 }
 
 namespace
@@ -166,7 +166,7 @@ auto kOrderReader = std::move(XonReader<Order>()
 
 }
 
-TEST(XonRead, Reader)
+XM_TEST(XonRead, Reader)
 {
   Context ctx{ "{ items: { { id: 274634674, quantity: 5428, fudge: 0.5 },"
     "{ id: 653764, quantity: 361, fudge: 0.25 } },"
@@ -178,18 +178,18 @@ TEST(XonRead, Reader)
   Order order;
   kOrderReader.Process(*ctx.mRoot, order);
 
-  ASSERT_EQ(order.items.size(), 2u);
-  ASSERT_EQ(order.items[0].id, 274634674);
-  ASSERT_EQ(order.items[0].quantity, 5428);
-  ASSERT_EQ(order.items[0].fudgeFactor, .5f);
-  ASSERT_EQ(order.items[1].id, 653764);
-  ASSERT_EQ(order.items[1].quantity, 361);
-  ASSERT_EQ(order.items[1].fudgeFactor, .25f);
+  XM_ASSERT_EQ(order.items.size(), 2u);
+  XM_ASSERT_EQ(order.items[0].id, 274634674);
+  XM_ASSERT_EQ(order.items[0].quantity, 5428);
+  XM_ASSERT_EQ(order.items[0].fudgeFactor, .5f);
+  XM_ASSERT_EQ(order.items[1].id, 653764);
+  XM_ASSERT_EQ(order.items[1].quantity, 361);
+  XM_ASSERT_EQ(order.items[1].fudgeFactor, .25f);
 
-  ASSERT_EQ(order.recipientName, "Johan Fucek");
-  ASSERT_EQ(order.countryCode, 58);
-  ASSERT_EQ(order.houseNo, 126);
-  ASSERT_EQ(order.street, "Gallbladderstrasse");
-  ASSERT_EQ(order.zipCode, "1828-B");
-  ASSERT_EQ(order.fudgeFactor, 9000.f);
+  XM_ASSERT_EQ(order.recipientName, "Johan Fucek");
+  XM_ASSERT_EQ(order.countryCode, 58);
+  XM_ASSERT_EQ(order.houseNo, 126);
+  XM_ASSERT_EQ(order.street, "Gallbladderstrasse");
+  XM_ASSERT_EQ(order.zipCode, "1828-B");
+  XM_ASSERT_EQ(order.fudgeFactor, 9000.f);
 }

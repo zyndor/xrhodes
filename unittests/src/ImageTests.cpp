@@ -8,7 +8,7 @@
 //==============================================================================
 #include "FileLifeCycleManager.hpp"
 
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/Image.hpp"
 #include <cstring>
 
@@ -17,7 +17,7 @@ using namespace xr;
 namespace
 {
 
-class Image : public ::testing::Test
+class Image
 {
 private:
   FileLifeCycleManager  flcm;
@@ -25,32 +25,32 @@ private:
 
 static void Compare(xr::Image const& img, xr::Image const& check)
 {
-  ASSERT_EQ(check.GetWidth(), img.GetWidth());
-  ASSERT_EQ(check.GetHeight(), img.GetHeight());
-  ASSERT_EQ(check.GetBytesPerPixel(), img.GetBytesPerPixel());
-  ASSERT_NE(check.GetPixelData(), img.GetPixelData());
-  ASSERT_TRUE(std::memcmp(check.GetPixelData(), img.GetPixelData(), img.GetPixelDataSize()) == 0);
+  XM_ASSERT_EQ(check.GetWidth(), img.GetWidth());
+  XM_ASSERT_EQ(check.GetHeight(), img.GetHeight());
+  XM_ASSERT_EQ(check.GetBytesPerPixel(), img.GetBytesPerPixel());
+  XM_ASSERT_NE(check.GetPixelData(), img.GetPixelData());
+  XM_ASSERT_TRUE(std::memcmp(check.GetPixelData(), img.GetPixelData(), img.GetPixelDataSize()) == 0);
 }
 
-TEST_F(Image, Basic)
+XM_TEST_F(Image, Basic)
 {
   xr::Image img;
-  ASSERT_EQ(img.GetWidth(), 0);
-  ASSERT_EQ(img.GetHeight(), 0);
-  ASSERT_EQ(img.GetBytesPerPixel(), 0);
-  ASSERT_EQ(img.GetPixelDataSize(), 0);
-  ASSERT_EQ(img.GetPixelData(), nullptr);
+  XM_ASSERT_EQ(img.GetWidth(), 0);
+  XM_ASSERT_EQ(img.GetHeight(), 0);
+  XM_ASSERT_EQ(img.GetBytesPerPixel(), 0);
+  XM_ASSERT_EQ(img.GetPixelDataSize(), 0);
+  XM_ASSERT_EQ(img.GetPixelData(), nullptr);
 
   uint32_t width = 256;
   uint32_t height = 256;
   uint32_t bpp = 3;
   img.SetSize(width, height, bpp);
-  ASSERT_EQ(img.GetWidth(), width);
-  ASSERT_EQ(img.GetHeight(), height);
-  ASSERT_EQ(img.GetBytesPerPixel(), bpp);
-  ASSERT_EQ(img.GetPitch(), width * bpp);
-  ASSERT_EQ(img.GetPixelDataSize(), width * height * bpp);
-  ASSERT_NE(img.GetPixelData(), nullptr);
+  XM_ASSERT_EQ(img.GetWidth(), width);
+  XM_ASSERT_EQ(img.GetHeight(), height);
+  XM_ASSERT_EQ(img.GetBytesPerPixel(), bpp);
+  XM_ASSERT_EQ(img.GetPitch(), width * bpp);
+  XM_ASSERT_EQ(img.GetPixelDataSize(), width * height * bpp);
+  XM_ASSERT_NE(img.GetPixelData(), nullptr);
 
   auto p = img.GetPixelData();
   for (uint32_t i = 0; i < height; ++i)
@@ -67,15 +67,15 @@ TEST_F(Image, Basic)
   }
 
   // Png round trip
-  ASSERT_TRUE(img.Save("imgTest.png", true));
+  XM_ASSERT_TRUE(img.Save("imgTest.png", true));
 
   xr::Image check;
-  ASSERT_TRUE(check.Load("imgTest.png"));
+  XM_ASSERT_TRUE(check.Load("imgTest.png"));
   Compare(img, check);
 
   // Tga round trip
-  ASSERT_TRUE(img.Save("imgTest.tga", true));
-  ASSERT_TRUE(check.Load("imgTest.tga"));
+  XM_ASSERT_TRUE(img.Save("imgTest.tga", true));
+  XM_ASSERT_TRUE(check.Load("imgTest.tga"));
   Compare(img, check);
 }
 

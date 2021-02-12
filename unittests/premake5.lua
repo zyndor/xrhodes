@@ -13,6 +13,7 @@ project "unittests"
 
 	files
 	{
+		"../external/xm/*.cpp",
 		"h/**.hpp",
 		"src/**.cpp",
 		"data/**",
@@ -21,8 +22,8 @@ project "unittests"
 
 	includedirs
 	{
-		"../external/gtest/include",
 		"../external/libpng",
+		"../external/xm",
 		"../unittests/h",
 		"../xr3core/h",
 		"../xr3json/h",
@@ -34,8 +35,6 @@ project "unittests"
 
 	links
 	{
-		"gtest_main",
-		"gtest",
 		"xr3scene",
 		"xr3",
 		"xr3json",
@@ -119,11 +118,6 @@ project "unittests"
 
 
 		-- common *nix link options
-		libdirs
-		{
-			"../external/gtest/lib/"..target_env.."/",
-		}
-
 		links
 		{
 			"png16",

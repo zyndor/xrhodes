@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include <memory>
 
@@ -76,14 +76,14 @@ struct EventCounterHolder : EventCounter
   }
 };
 
-TEST(SignalBroadcaster, Basics)
+XM_TEST(SignalBroadcaster, Basics)
 {
   SignalBroadcaster<int> onAdded;
   SignalBroadcaster<int> onMultiplied;
 
   Int a;
-  ASSERT_TRUE(onAdded.Connect(MakeCallback(a, &Int::OnAdd))); // successful add
-  ASSERT_FALSE(onAdded.Connect(MakeCallback(a, &Int::OnAdd)));  // already added - unsuccessful
+  XM_ASSERT_TRUE(onAdded.Connect(MakeCallback(a, &Int::OnAdd))); // successful add
+  XM_ASSERT_FALSE(onAdded.Connect(MakeCallback(a, &Int::OnAdd)));  // already added - unsuccessful
   onMultiplied.Connect(MakeCallback(a, &Int::OnMultiply));
 
   Int b;
@@ -95,20 +95,20 @@ TEST(SignalBroadcaster, Basics)
   onAdded.Connect(FunctionPtrCallback<void, int>(OnAdd, &c.value));
 
   onAdded.Broadcast(10);
-  ASSERT_EQ(a, 10);
-  ASSERT_EQ(b, 12);
+  XM_ASSERT_EQ(a, 10);
+  XM_ASSERT_EQ(b, 12);
 
   onMultiplied.Broadcast(2);
-  ASSERT_EQ(a, 20);
-  ASSERT_EQ(b, 12);
+  XM_ASSERT_EQ(a, 20);
+  XM_ASSERT_EQ(b, 12);
 
   onAdded.Disconnect(MakeCallback(a, &Int::OnAdd));
   onAdded.Broadcast(4);
-  ASSERT_EQ(a, 20);
-  ASSERT_EQ(b, 16);
+  XM_ASSERT_EQ(a, 20);
+  XM_ASSERT_EQ(b, 16);
 }
 
-TEST(SignalBroadcaster, PostponedAdd)
+XM_TEST(SignalBroadcaster, PostponedAdd)
 {
   SignalBroadcaster<> onEvent;
   EventCounterHolder addTester;
@@ -117,17 +117,17 @@ TEST(SignalBroadcaster, PostponedAdd)
   onEvent.Connect(MakeCallback(addTester, &EventCounterHolder::OnAdd));
 
   onEvent.Broadcast();
-  ASSERT_EQ(addTester.eventsReceived, 1);  // did receive event
-  ASSERT_TRUE(*addTester.result);  // succesful add
-  ASSERT_EQ(addTester.counter.eventsReceived, 0);  // did not receive event - added postponed
+  XM_ASSERT_EQ(addTester.eventsReceived, 1);  // did receive event
+  XM_ASSERT_TRUE(*addTester.result);  // succesful add
+  XM_ASSERT_EQ(addTester.counter.eventsReceived, 0);  // did not receive event - added postponed
 
   onEvent.Broadcast();
-  ASSERT_EQ(addTester.eventsReceived, 2);  // did receive event
-  ASSERT_TRUE(!*addTester.result);  // unsuccessful add - alreday added
-  ASSERT_EQ(addTester.counter.eventsReceived, 1);  // did receive event
+  XM_ASSERT_EQ(addTester.eventsReceived, 2);  // did receive event
+  XM_ASSERT_TRUE(!*addTester.result);  // unsuccessful add - alreday added
+  XM_ASSERT_EQ(addTester.counter.eventsReceived, 1);  // did receive event
 }
 
-TEST(SignalBroadcaster, PostponedRemove)
+XM_TEST(SignalBroadcaster, PostponedRemove)
 {
   SignalBroadcaster<> onEvent;
   EventCounterHolder removeTester;
@@ -137,14 +137,14 @@ TEST(SignalBroadcaster, PostponedRemove)
   onEvent.Connect(MakeCallback(removeTester.counter, &EventCounter::OnEvent));
 
   onEvent.Broadcast();
-  ASSERT_EQ(removeTester.eventsReceived, 1);  // did receive event
-  ASSERT_TRUE(*removeTester.result);  // succesful remove
-  ASSERT_EQ(removeTester.counter.eventsReceived, 1);  // did receive event - removed postponed
+  XM_ASSERT_EQ(removeTester.eventsReceived, 1);  // did receive event
+  XM_ASSERT_TRUE(*removeTester.result);  // succesful remove
+  XM_ASSERT_EQ(removeTester.counter.eventsReceived, 1);  // did receive event - removed postponed
 
   onEvent.Broadcast();
-  ASSERT_EQ(removeTester.eventsReceived, 2);  // did receive event
-  ASSERT_TRUE(!*removeTester.result);  // unsuccessful remove - alreday removed
-  ASSERT_EQ(removeTester.counter.eventsReceived, 1);  // did not receive event
+  XM_ASSERT_EQ(removeTester.eventsReceived, 2);  // did receive event
+  XM_ASSERT_TRUE(!*removeTester.result);  // unsuccessful remove - alreday removed
+  XM_ASSERT_EQ(removeTester.counter.eventsReceived, 1);  // did not receive event
 }
 
 }
