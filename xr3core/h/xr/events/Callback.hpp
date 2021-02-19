@@ -170,7 +170,7 @@ struct FunctionPtrCallback : Callback<Return, Args...>
   using SelfType = FunctionPtrCallback<Return, Args...>;
   using Function = Return(*)(Args..., void*);
 
-  FunctionPtrCallback(Function fn, void* userData)
+  FunctionPtrCallback(Function fn, void* userData = nullptr)
   : BaseType{ userData },
     m_function{ fn }
   {}
@@ -206,7 +206,7 @@ struct FunctionPtrCallback<void, Args...> : Callback<void, Args...>
   using SelfType = FunctionPtrCallback<void, Args...>;
   using Function = void(*)(Args..., void*);
 
-  FunctionPtrCallback(Function fn, void* userData)
+  FunctionPtrCallback(Function fn, void* userData = nullptr)
   : BaseType{ userData },
     m_function{ fn }
   {}
@@ -251,19 +251,6 @@ template <class T, typename Return, typename... Args>
 MemberCallback<T, Return, Args...> MakeCallback(T const& object, Return(T::*fn)(Args...) const)
 {
   return MemberCallback<T, Return, Args...>(object, fn);
-}
-
-//==============================================================================
-///@brief Convenience function to create a FunctionPtrCallback from a free standing
-/// function.
-template <typename Return, typename... Args>
-FunctionPtrCallback<Return, Args...> MakeCallback(Return(*fn)(Args...))
-{
-  auto adaptor = [](Args... args, void* userData) {
-    auto fn = static_cast<Return(*)(Args...)>(userData);
-    return fn(args...);
-  };
-  return FunctionPtrCallback<Return, Args...>(adaptor, fn);
 }
 
 } //xr

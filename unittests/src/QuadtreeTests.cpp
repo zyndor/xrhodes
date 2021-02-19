@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/Quadtree.hpp"
 
 using namespace xr;
@@ -34,7 +34,7 @@ void BinaryTester(void* system, void* user)
   ++static_cast<QuadtreeTester*>(user)->mCounter;
 }
 
-TEST(Quadtree, Unary)
+XM_TEST(Quadtree, Unary)
 {
   Quadtree<>  qt(Vector2::Zero(), 1024.f, 1024.f, 512.f);
 
@@ -47,27 +47,27 @@ TEST(Quadtree, Unary)
 
   // Process all -- one hit
   qt.ProcessAll(UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
 
   // Process with bounds of ro1 -- one hit
   ro1.mCounter = 0;
   qt.Process(box, UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
 
   // Process with bounds of ro2 -- no hit
   ro1.mCounter = 0;
   ro2.Export(box);
   qt.Process(box, UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 0);
+  XM_ASSERT_EQ(ro1.mCounter, 0);
 
   // Process with point at origin (since it's sitting between leaves, all must be checked) -- one hit
   qt.Process(Vector2::Zero(), UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
 
   // Process with point at ro1 position -- one hit
   ro1.mCounter = 0;
   qt.Process(ro1.GetPosition(), UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
 
   qt.Remove(&ro1);
 
@@ -75,10 +75,10 @@ TEST(Quadtree, Unary)
   ro1.Export(box);
   ro1.mCounter = 0;
   qt.Process(box, UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 0u);
+  XM_ASSERT_EQ(ro1.mCounter, 0u);
 }
 
-TEST(Quadtree, Binary)
+XM_TEST(Quadtree, Binary)
 {
   Quadtree<>  qt(Vector2::Zero(), 1024.f, 1024.f, 512.f);
 
@@ -91,35 +91,35 @@ TEST(Quadtree, Binary)
 
   // Process all -- one hit
   qt.ProcessAll(BinaryTester, &ro2);
-  ASSERT_EQ(ro1.mCounter, 1u);
-  ASSERT_EQ(ro2.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro2.mCounter, 1u);
 
   // Process with bounds of ro1 -- one hit
   ro1.mCounter = 0;
   ro2.mCounter = 0;
   qt.Process(box, BinaryTester, &ro2);
-  ASSERT_EQ(ro1.mCounter, 1u);
-  ASSERT_EQ(ro2.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro2.mCounter, 1u);
 
   // Process with bounds of ro2 -- no hit
   ro1.mCounter = 0;
   ro2.mCounter = 0;
   ro2.Export(box);
   qt.Process(box, BinaryTester, &ro2);
-  ASSERT_EQ(ro1.mCounter, 0);
-  ASSERT_EQ(ro2.mCounter, 0);
+  XM_ASSERT_EQ(ro1.mCounter, 0);
+  XM_ASSERT_EQ(ro2.mCounter, 0);
 
   // Process with point at origin (since it's sitting between leaves, all must be checked)  -- one hit
   qt.Process(Vector2::Zero(), BinaryTester, &ro2);
-  ASSERT_EQ(ro1.mCounter, 1u);
-  ASSERT_EQ(ro2.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro2.mCounter, 1u);
 
   // Process with point at ro1 position -- one hit
   ro1.mCounter = 0;
   ro2.mCounter = 0;
   qt.Process(ro1.GetPosition(), BinaryTester, &ro2);
-  ASSERT_EQ(ro1.mCounter, 1u);
-  ASSERT_EQ(ro2.mCounter, 1u);
+  XM_ASSERT_EQ(ro1.mCounter, 1u);
+  XM_ASSERT_EQ(ro2.mCounter, 1u);
 
   qt.Remove(&ro1);
 
@@ -128,11 +128,11 @@ TEST(Quadtree, Binary)
   ro1.mCounter = 0;
   ro2.mCounter = 0;
   qt.Process(box, BinaryTester, &ro2);
-  ASSERT_EQ(ro1.mCounter, 0u);
-  ASSERT_EQ(ro2.mCounter, 0u);
+  XM_ASSERT_EQ(ro1.mCounter, 0u);
+  XM_ASSERT_EQ(ro2.mCounter, 0u);
 }
 
-TEST(Quadtree, Translate)
+XM_TEST(Quadtree, Translate)
 {
   Quadtree<>  qt(Vector2::Zero(), 1024.f, 1024.f, 512.f);
 
@@ -145,7 +145,7 @@ TEST(Quadtree, Translate)
   qt.Add(box, &ro1);
 
   qt.Process(pos, UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 1u);  // hit with own position
+  XM_ASSERT_EQ(ro1.mCounter, 1u);  // hit with own position
 
   qt.Clear();
 
@@ -157,10 +157,10 @@ TEST(Quadtree, Translate)
 
   ro1.mCounter = 0;
   qt.Process(pos, UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 0); // not hit after translating quadtree and offsetting checking pos by the same amount
+  XM_ASSERT_EQ(ro1.mCounter, 0); // not hit after translating quadtree and offsetting checking pos by the same amount
 }
 
-TEST(Quadtree, Scale)
+XM_TEST(Quadtree, Scale)
 {
   Quadtree<>  qt(Vector2::Zero(), 1024.f, 1024.f, QuadtreeCore::CalculateMin(1024.f, 1024.f, 2));
 
@@ -173,7 +173,7 @@ TEST(Quadtree, Scale)
   qt.Add(box, &ro1);
 
   qt.Process(pos, UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 1u);  // hit with own position
+  XM_ASSERT_EQ(ro1.mCounter, 1u);  // hit with own position
 
   qt.Clear();
 
@@ -184,7 +184,7 @@ TEST(Quadtree, Scale)
 
   ro1.mCounter = 0;
   qt.Process(pos, UnaryTester);
-  ASSERT_EQ(ro1.mCounter, 0); // not hit after scaling quadtree and checking pos by the same amount.
+  XM_ASSERT_EQ(ro1.mCounter, 0); // not hit after scaling quadtree and checking pos by the same amount.
 }
 
 }

@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/types/typeutils.hpp"
 
 using namespace xr;
@@ -30,17 +30,17 @@ struct FooT
   T* data;
 };
 
-TEST(TypeId, Basics)
+XM_TEST(TypeId, Basics)
 {
-  ASSERT_TRUE(TypeId<FooBase>() == TypeId<FooBase>());
-  ASSERT_TRUE(TypeId<Foo>() != TypeId<FooBase>());
-  ASSERT_TRUE(TypeId<MyFoo>() == TypeId<Foo>());
+  XM_ASSERT_TRUE(TypeId<FooBase>() == TypeId<FooBase>());
+  XM_ASSERT_TRUE(TypeId<Foo>() != TypeId<FooBase>());
+  XM_ASSERT_TRUE(TypeId<MyFoo>() == TypeId<Foo>());
 
-  ASSERT_TRUE(TypeId<FooT<int>>() != TypeId<FooT<char>>());
-  ASSERT_TRUE(TypeId<Foo>() != TypeId<FooT<int>>());
-  ASSERT_TRUE(TypeId<FooBase>() != TypeId<FooT<int>>());
-  ASSERT_TRUE(TypeId<Foo>() != TypeId<FooT<char>>());
-  ASSERT_TRUE(TypeId<FooBase>() != TypeId<FooT<char>>());
+  XM_ASSERT_TRUE(TypeId<FooT<int>>() != TypeId<FooT<char>>());
+  XM_ASSERT_TRUE(TypeId<Foo>() != TypeId<FooT<int>>());
+  XM_ASSERT_TRUE(TypeId<FooBase>() != TypeId<FooT<int>>());
+  XM_ASSERT_TRUE(TypeId<Foo>() != TypeId<FooT<char>>());
+  XM_ASSERT_TRUE(TypeId<FooBase>() != TypeId<FooT<char>>());
 }
 
 }

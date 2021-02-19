@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/events/SignalNotifier.hpp"
 #include "xr/types/fundamentals.hpp"
 #include <list>
@@ -40,7 +40,7 @@ struct Tester : InstCounted<Tester>
   }
 };
 
-TEST(SignalNotifier, Basics)
+XM_TEST(SignalNotifier, Basics)
 {
   std::list<Tester> testers;
 
@@ -52,46 +52,46 @@ TEST(SignalNotifier, Basics)
 
   // Successful registration.
   bool notified = false;
-  ASSERT_TRUE(notifier.Connect(FunctionPtrCallback<bool>(OnEvent, &notified)));
+  XM_ASSERT_TRUE(notifier.Connect(FunctionPtrCallback<bool>(OnEvent, &notified)));
 
   for (auto& t : testers)
   {
-    ASSERT_TRUE(notifier.Connect(MakeCallback(t, &Tester::OnEvent)));
+    XM_ASSERT_TRUE(notifier.Connect(MakeCallback(t, &Tester::OnEvent)));
   }
 
   // Unsuccessful registration -- already registered.
-  ASSERT_FALSE(notifier.Connect(FunctionPtrCallback<bool>(OnEvent, &notified)));
+  XM_ASSERT_FALSE(notifier.Connect(FunctionPtrCallback<bool>(OnEvent, &notified)));
 
   for (auto& t : testers)
   {
-    ASSERT_FALSE(notifier.Connect(MakeCallback(t, &Tester::OnEvent)));
+    XM_ASSERT_FALSE(notifier.Connect(MakeCallback(t, &Tester::OnEvent)));
   }
 
   // Check notification. All testers should be notified up to and including #2.
   // #2 should only handle the notification.
-  ASSERT_TRUE(notifier.Notify());
-  ASSERT_TRUE(notified);
+  XM_ASSERT_TRUE(notifier.Notify());
+  XM_ASSERT_TRUE(notified);
 
   for (auto const& t : testers)
   {
-    ASSERT_EQ(t.handled, (t.id == 2));
-    ASSERT_EQ(t.notified, (t.id <= 2));
+    XM_ASSERT_EQ(t.handled, (t.id == 2));
+    XM_ASSERT_EQ(t.notified, (t.id <= 2));
   }
 
   // Successful removal.
-  ASSERT_TRUE(notifier.Disconnect(FunctionPtrCallback<bool>(OnEvent, &notified)));
+  XM_ASSERT_TRUE(notifier.Disconnect(FunctionPtrCallback<bool>(OnEvent, &notified)));
 
   for (auto& t : testers)
   {
-    ASSERT_TRUE(notifier.Disconnect(MakeCallback(t, &Tester::OnEvent)));
+    XM_ASSERT_TRUE(notifier.Disconnect(MakeCallback(t, &Tester::OnEvent)));
   }
 
   // Unsuccessful removal -- already removed.
-  ASSERT_FALSE(notifier.Disconnect(FunctionPtrCallback<bool>(OnEvent, &notified)));
+  XM_ASSERT_FALSE(notifier.Disconnect(FunctionPtrCallback<bool>(OnEvent, &notified)));
 
   for (auto& t : testers)
   {
-    ASSERT_FALSE(notifier.Disconnect(MakeCallback(t, &Tester::OnEvent)));
+    XM_ASSERT_FALSE(notifier.Disconnect(MakeCallback(t, &Tester::OnEvent)));
   }
 }
 

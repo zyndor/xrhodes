@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/memory/Counted.hpp"
 
 using namespace xr;
@@ -41,44 +41,44 @@ using MockCounted = Counted<MockCountable>;
 
 MockCountable o;
 
-TEST(Counted, CtorResetDtor)
+XM_TEST(Counted, CtorResetDtor)
 {
   {
     MockCounted c(&o, NoopDeleter());
-    ASSERT_EQ(o.count, 1);
-    ASSERT_NE(c.Get(), nullptr);
+    XM_ASSERT_EQ(o.count, 1);
+    XM_ASSERT_NE(c.Get(), nullptr);
 
     c.Reset(&o);
-    ASSERT_EQ(o.count, 1);
+    XM_ASSERT_EQ(o.count, 1);
 
     c.Reset(nullptr);
-    ASSERT_EQ(o.count, 0);
-    ASSERT_EQ(c.Get(), nullptr);
+    XM_ASSERT_EQ(o.count, 0);
+    XM_ASSERT_EQ(c.Get(), nullptr);
 
     c.Reset(&o);
   }
 
-  ASSERT_EQ(o.count, 0);
+  XM_ASSERT_EQ(o.count, 0);
 }
 
-TEST(Counted, Copy)
+XM_TEST(Counted, Copy)
 {
   MockCounted c(&o, NoopDeleter());
   MockCounted c2(c);
 
-  ASSERT_EQ(o.count, 2);
-  ASSERT_NE(c.Get(), nullptr);
-  ASSERT_NE(c2.Get(), nullptr);
+  XM_ASSERT_EQ(o.count, 2);
+  XM_ASSERT_NE(c.Get(), nullptr);
+  XM_ASSERT_NE(c2.Get(), nullptr);
 }
 
-TEST(Counted, Move)
+XM_TEST(Counted, Move)
 {
   MockCounted c(&o, NoopDeleter());
   MockCounted c2(std::move(c));
 
-  ASSERT_EQ(o.count, 1);
-  ASSERT_EQ(c.Get(), nullptr);
-  ASSERT_NE(c2.Get(), nullptr);
+  XM_ASSERT_EQ(o.count, 1);
+  XM_ASSERT_EQ(c.Get(), nullptr);
+  XM_ASSERT_NE(c2.Get(), nullptr);
 }
 
 }

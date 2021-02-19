@@ -12,8 +12,8 @@
 #include "xr/Device.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/strings/stringutils.hpp"
-#include "SDL_events.h"
-#include "SDL.h"
+#include "SDL2/SDL_events.h"
+#include "SDL2/SDL.h"
 
 namespace xr
 {

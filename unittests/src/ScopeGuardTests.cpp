@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/memory/ScopeGuard.hpp"
 #include <list>
 
@@ -15,7 +15,7 @@ using namespace xr;
 namespace
 {
 
-TEST(ScopeGuard, Guard)
+XM_TEST(ScopeGuard, Guard)
 {
   std::list<int>  ints{ 0, 1, 2 };
 
@@ -27,17 +27,17 @@ TEST(ScopeGuard, Guard)
       ints.pop_back();
     });
 
-    throw std::logic_error("Test logic error.");
+    throw std::logic_error("XM_TEST logic error.");
   }
   catch (...)
   {
   }
 
   bool cool = ints == decltype(ints){ 0, 1, 2 };
-  ASSERT_TRUE(cool);
+  XM_ASSERT_TRUE(cool);
 }
 
-TEST(ScopeGuard, Release)
+XM_TEST(ScopeGuard, Release)
 {
   std::list<int>  ints{ 0, 1, 2 };
 
@@ -50,17 +50,17 @@ TEST(ScopeGuard, Release)
     });
 
     intsPushGuard.Release();
-    throw std::logic_error("Test logic error.");
+    throw std::logic_error("XM_TEST logic error.");
   }
   catch (...)
   {
   }
 
   bool cool = ints == decltype(ints){ 0, 1, 2, 3 };
-  ASSERT_TRUE(cool);
+  XM_ASSERT_TRUE(cool);
 }
 
-TEST(ScopeGuard, Transfer)
+XM_TEST(ScopeGuard, Transfer)
 {
   std::list<int>  ints{ 0, 1, 2 };
 
@@ -75,14 +75,14 @@ TEST(ScopeGuard, Transfer)
     auto otherGuard = intsPushGuard;
 
     intsPushGuard.Release();
-    throw std::logic_error("Test logic error.");
+    throw std::logic_error("XM_TEST logic error.");
   }
   catch (...)
   {
   }
 
   bool cool = ints == decltype(ints){ 0, 1, 2 };
-  ASSERT_TRUE(cool);
+  XM_ASSERT_TRUE(cool);
 }
 
 }

@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/Entity.hpp"
 #include "xr/utils.hpp"
 
@@ -15,50 +15,40 @@ using namespace xr;
 namespace
 {
 
-class Entity: public ::testing::Test
-{
-public:
-  static void SetUpTestCase()
-  {}
-
-  static void TearDownTestCase()
-  {}
-};
-
-TEST_F(Entity, AddRemoveDetach)
+XM_TEST(Entity, AddRemoveDetach)
 {
   xr::Entity eRoot(Name("root"), nullptr);
-  ASSERT_EQ(eRoot.GetChildren().size(), 0);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 0);
 
   auto eA = new xr::Entity(Name("A"), &eRoot);
-  ASSERT_EQ(eA->GetParent(), &eRoot);
-  ASSERT_EQ(eRoot.GetChildren().size(), 1);
-  ASSERT_EQ(eA->GetChildren().size(), 0);
+  XM_ASSERT_EQ(eA->GetParent(), &eRoot);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 1);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 0);
 
   auto eB = new xr::Entity(Name("B"), eA);
-  ASSERT_EQ(eB->GetParent(), eA);
-  ASSERT_EQ(eB->GetChildren().size(), 0);
+  XM_ASSERT_EQ(eB->GetParent(), eA);
+  XM_ASSERT_EQ(eB->GetChildren().size(), 0);
 
   auto eC = new xr::Entity(Name("C"), eA);
-  ASSERT_EQ(eC->GetParent(), eA);
-  ASSERT_EQ(eC->GetChildren().size(), 0);
-  ASSERT_EQ(eA->GetChildren().size(), 2);
+  XM_ASSERT_EQ(eC->GetParent(), eA);
+  XM_ASSERT_EQ(eC->GetChildren().size(), 0);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 2);
 
   eRoot.AddChild(*eC);
-  ASSERT_EQ(eC->GetParent(), &eRoot);
-  ASSERT_EQ(eRoot.GetChildren().size(), 2);
-  ASSERT_EQ(eA->GetChildren().size(), 1);
+  XM_ASSERT_EQ(eC->GetParent(), &eRoot);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 2);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 1);
 
   eA->RemoveChild(*eC);
-  ASSERT_EQ(eA->GetChildren().size(), 1);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 1);
 
   eC->DetachFromParent();
-  ASSERT_EQ(eC->GetParent(), nullptr);
-  ASSERT_EQ(eRoot.GetChildren().size(), 1);
+  XM_ASSERT_EQ(eC->GetParent(), nullptr);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 1);
   delete eC;
 }
 
-TEST_F(Entity, FindChild)
+XM_TEST(Entity, FindChild)
 {
   xr::Entity eRoot(Name("root"), nullptr);
   auto eA = new xr::Entity(Name("A"), &eRoot);
@@ -66,20 +56,20 @@ TEST_F(Entity, FindChild)
   auto eC = new xr::Entity(Name("C"), eA);
   auto eC2 = new xr::Entity(Name("C"), eB);
 
-  ASSERT_EQ(eRoot.FindChild(Name("C")), nullptr);
-  ASSERT_EQ(eRoot.FindChild("A.C"), eC);
-  ASSERT_EQ(eRoot.FindChild("A.B.C"), eC2);
-  ASSERT_EQ(eRoot.FindChild(Name("A.C")), nullptr);
-  ASSERT_EQ(eRoot.FindChild(Name("A.B.C")), nullptr);
+  XM_ASSERT_EQ(eRoot.FindChild(Name("C")), nullptr);
+  XM_ASSERT_EQ(eRoot.FindChild("A.C"), eC);
+  XM_ASSERT_EQ(eRoot.FindChild("A.B.C"), eC2);
+  XM_ASSERT_EQ(eRoot.FindChild(Name("A.C")), nullptr);
+  XM_ASSERT_EQ(eRoot.FindChild(Name("A.B.C")), nullptr);
 
   eC->AddChild(*eC2);
-  ASSERT_EQ(eRoot.FindChild("A.B.C"), nullptr);
-  ASSERT_EQ(eRoot.FindChild("A.C.C"), eC2);
+  XM_ASSERT_EQ(eRoot.FindChild("A.B.C"), nullptr);
+  XM_ASSERT_EQ(eRoot.FindChild("A.C.C"), eC2);
 
   eA->AddChild(*eC2);
 
   eC->DetachFromParent();
-  ASSERT_EQ(eRoot.FindChild("A.B.C"), nullptr);
+  XM_ASSERT_EQ(eRoot.FindChild("A.B.C"), nullptr);
   delete eC;
 }
 
@@ -93,24 +83,24 @@ bool IsEqual(Matrix const& m0, Matrix const& m1)
   return abs(diff) < 1e-4;
 }
 
-TEST_F(Entity, Transforms)
+XM_TEST(Entity, Transforms)
 {
   xr::Entity eRoot(Name("root"), nullptr);
   eRoot.SetTranslation(Vector3::UnitX());
   eRoot.SetRotation(Quaternion::FromAxisAngle(Vector3::UnitZ(), M_PI * .5f));
-  ASSERT_TRUE(IsEqual(Matrix(eRoot.GetRotation(), eRoot.GetTranslation()),
+  XM_ASSERT_TRUE(IsEqual(Matrix(eRoot.GetRotation(), eRoot.GetTranslation()),
     eRoot.GetLocalTransform()));
 
   xr::Entity eChild(Name("child"), &eRoot);
   eChild.SetTranslation(Vector3::UnitY());
-  ASSERT_TRUE(IsEqual(Matrix(eChild.GetTranslation()), eChild.GetLocalTransform()));
+  XM_ASSERT_TRUE(IsEqual(Matrix(eChild.GetTranslation()), eChild.GetLocalTransform()));
 
-  ASSERT_TRUE(IsEqual(Matrix::Identity(),
+  XM_ASSERT_TRUE(IsEqual(Matrix::Identity(),
     eChild.GetWorldTransform(false)));
 
   Matrix expectTransform(eRoot.GetRotation(), Vector3::UnitX() * 2.0f);
-  ASSERT_TRUE(IsEqual(expectTransform, eChild.GetWorldTransform(true)));
-  ASSERT_TRUE(IsEqual(expectTransform, eChild.GetWorldTransform(false)));
+  XM_ASSERT_TRUE(IsEqual(expectTransform, eChild.GetWorldTransform(true)));
+  XM_ASSERT_TRUE(IsEqual(expectTransform, eChild.GetWorldTransform(false)));
 }
 
 class XR_COMPONENT_DECL(TestComponent)
@@ -126,17 +116,17 @@ public:
   }
 };
 
-TEST_F(Entity, AddFindComponment)
+XM_TEST(Entity, AddFindComponment)
 {
   xr::Entity e(nullptr);
   auto c = e.AddComponent<TestComponent>();
-  ASSERT_EQ(c->GetOwner(), &e); // Owner correctly set.
-  ASSERT_EQ(c, e.FindComponent<TestComponent>());
+  XM_ASSERT_EQ(c->GetOwner(), &e); // Owner correctly set.
+  XM_ASSERT_EQ(c, e.FindComponent<TestComponent>());
 
   const auto eConst = &e;
-  ASSERT_EQ(c, eConst->FindComponent<TestComponent>());
+  XM_ASSERT_EQ(c, eConst->FindComponent<TestComponent>());
 
-  ASSERT_EQ(e.AddComponent<TestComponent>(), nullptr);  // Already have this type - do nothing.
+  XM_ASSERT_EQ(e.AddComponent<TestComponent>(), nullptr);  // Already have this type - do nothing.
 }
 
 template <typename T, size_t N>
@@ -144,11 +134,11 @@ void AssertEqualData(T(&d0)[N], T(&d1)[N])
 {
   for(size_t i = 0; i < N; ++i)
   {
-    ASSERT_EQ(d0[i], d1[i]);
+    XM_ASSERT_EQ(d0[i], d1[i]);
   }
 }
 
-TEST_F(Entity, Clone)
+XM_TEST(Entity, Clone)
 {
   xr::Entity e(Name("test"), nullptr);
   e.SetScale(Vector3(1., 2., 3.));
@@ -159,21 +149,21 @@ TEST_F(Entity, Clone)
   c->mFoo = 17;
 
   auto e2 = e.Clone(&e);
-  ASSERT_NE(e2, &e);
-  ASSERT_EQ(e2->GetName(), e.GetName());
+  XM_ASSERT_NE(e2, &e);
+  XM_ASSERT_EQ(e2->GetName(), e.GetName());
   AssertEqualData(e2->GetTranslation().data, e.GetTranslation().data);
   AssertEqualData(e2->GetRotation().data, e.GetRotation().data);
   AssertEqualData(e2->GetScale().data, e.GetScale().data);
 
-  ASSERT_EQ(e.GetChildren().size(), 1);
-  ASSERT_EQ(e.GetFirstChild(), e2);
+  XM_ASSERT_EQ(e.GetChildren().size(), 1);
+  XM_ASSERT_EQ(e.GetFirstChild(), e2);
 
-  ASSERT_TRUE(e2->GetChildren().empty());
-  ASSERT_EQ(e2->GetParent(), &e);
+  XM_ASSERT_TRUE(e2->GetChildren().empty());
+  XM_ASSERT_EQ(e2->GetParent(), &e);
 
   auto c2 = e2->FindComponent<TestComponent>();
-  ASSERT_NE(c, c2);
-  ASSERT_EQ(c->mFoo, c2->mFoo);
+  XM_ASSERT_NE(c, c2);
+  XM_ASSERT_EQ(c->mFoo, c2->mFoo);
 }
 
 }

@@ -52,6 +52,12 @@ public:
     return static_cast<uint16_t*>(buffer);
   }
 
+  void UseIndices(uint32_t count, uint16_t const* data)
+  {
+    mNumIndices = count;
+    mIndices = Buffer::FromArray(count, data);
+  }
+
   ScratchBuffer::Handles Bake()
   {
     XR_ASSERTMSG(ScratchBuffer, mVertices.data, ("No vertices allocated for drawing."));
@@ -74,7 +80,6 @@ public:
     if (handles.mIbo.IsValid())
     {
       Gfx::Draw(handles.mVbo, handles.mIbo, primitive, 0, mNumIndices);
-
       Gfx::Release(handles.mIbo);
     }
     else
@@ -173,6 +178,12 @@ uint16_t* ScratchBuffer::AllocateIndices(uint32_t numIndices)
 }
 
 //==============================================================================
+void ScratchBuffer::UseIndices(uint32_t count, uint16_t const* data)
+{
+  sImpl->UseIndices(count, data);
+}
+
+//==============================================================================
 ScratchBuffer::Handles ScratchBuffer::Bake()
 {
   return sImpl->Bake();
@@ -189,4 +200,4 @@ void ScratchBuffer::Flush()
 {
 }
 
-} // XR
+} // xr

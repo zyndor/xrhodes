@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/Animator.hpp"
 #include "xr/math/mathutils.hpp"
 
@@ -46,7 +46,7 @@ FunctionPtrCallback<void> MakeOnStop(int& stops)
   return FunctionPtrCallback<void>(kOnStop, &stops);
 }
 
-TEST(Animator, Animate)
+XM_TEST(Animator, Animate)
 {
   Animator animator(kAnimatorSize);
 
@@ -54,10 +54,10 @@ TEST(Animator, Animate)
   animator.Animate(kDuration, f, 1.f, Lerp, MakeSetter(f));
 
   animator.Update(kDuration * .5f);
-  ASSERT_EQ(f, .5f);
+  XM_ASSERT_EQ(f, .5f);
 }
 
-TEST(Animator, OnStop)
+XM_TEST(Animator, OnStop)
 {
   Animator animator(kAnimatorSize);
 
@@ -67,11 +67,11 @@ TEST(Animator, OnStop)
   animator.Animate(kDuration, f, 1.f, Lerp, MakeSetter(f), &onStop);
 
   animator.Update(kDuration);
-  ASSERT_EQ(f, 1.f);
-  ASSERT_EQ(stops, 1);
+  XM_ASSERT_EQ(f, 1.f);
+  XM_ASSERT_EQ(stops, 1);
 }
 
-TEST(Animator, StopNoComplete)
+XM_TEST(Animator, StopNoComplete)
 {
   Animator animator(kAnimatorSize);
 
@@ -84,11 +84,11 @@ TEST(Animator, StopNoComplete)
   animator.Stop(handle, false);
   animator.Update(kDuration * .5f);
 
-  ASSERT_EQ(f, .5f);
-  ASSERT_EQ(stops, 0);
+  XM_ASSERT_EQ(f, .5f);
+  XM_ASSERT_EQ(stops, 0);
 }
 
-TEST(Animator, StopComplete)
+XM_TEST(Animator, StopComplete)
 {
   Animator animator(kAnimatorSize);
 
@@ -101,11 +101,11 @@ TEST(Animator, StopComplete)
   animator.Stop(handle, true);
   animator.Update(kDuration * .25f);
 
-  ASSERT_EQ(f, 1.0f);
-  ASSERT_EQ(stops, 1);
+  XM_ASSERT_EQ(f, 1.0f);
+  XM_ASSERT_EQ(stops, 1);
 }
 
-TEST(Animator, ClearNoComplete)
+XM_TEST(Animator, ClearNoComplete)
 {
   Animator animator(kAnimatorSize);
 
@@ -122,13 +122,13 @@ TEST(Animator, ClearNoComplete)
   animator.Animate(kDuration, h, 10.f, Lerp, MakeSetter(h), &onStop);
   animator.Update(kDuration * .25f);
 
-  ASSERT_EQ(f, .5f);
-  ASSERT_EQ(g, .5f);
-  ASSERT_EQ(h, 2.5f);
-  ASSERT_EQ(stops, 0);
+  XM_ASSERT_EQ(f, .5f);
+  XM_ASSERT_EQ(g, .5f);
+  XM_ASSERT_EQ(h, 2.5f);
+  XM_ASSERT_EQ(stops, 0);
 }
 
-TEST(Animator, ClearComplete)
+XM_TEST(Animator, ClearComplete)
 {
   Animator animator(kAnimatorSize);
 
@@ -145,10 +145,10 @@ TEST(Animator, ClearComplete)
   animator.Animate(kDuration, h, 10.f, Lerp, MakeSetter(h), &onStop);
   animator.Update(kDuration * .25f);
 
-  ASSERT_EQ(f, 1.f);
-  ASSERT_EQ(g, 0.f);
-  ASSERT_EQ(h, 2.5f);
-  ASSERT_EQ(stops, 2);
+  XM_ASSERT_EQ(f, 1.f);
+  XM_ASSERT_EQ(g, 0.f);
+  XM_ASSERT_EQ(h, 2.5f);
+  XM_ASSERT_EQ(stops, 2);
 }
 
 }

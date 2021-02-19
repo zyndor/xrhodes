@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/threading/Worker.hpp"
 #include "xr/memory/ScopeGuard.hpp"
 #include <list>
@@ -58,7 +58,7 @@ private:
   mutable std::mutex mutex; // we're operating on the same instance, might be executing and cancelling at the same time.
 };
 
-TEST(Worker, SuspendResume)
+XM_TEST(Worker, SuspendResume)
 {
   auto worker = std::make_unique<Worker>();
   auto guard = MakeScopeGuard([&] {
@@ -73,7 +73,7 @@ TEST(Worker, SuspendResume)
   worker->Enqueue(j);
   BusyWait(j.durationMs * 2);
   // don't start while suspended
-  ASSERT_EQ(j.GetExecutedCount(), 0);
+  XM_ASSERT_EQ(j.GetExecutedCount(), 0);
 
   worker->Resume();
   BusyWait(j.durationMs * 8);
@@ -82,22 +82,22 @@ TEST(Worker, SuspendResume)
 
   const int testExec = j.GetExecutedCount();
   // suspend before finishing
-  ASSERT_LT(testExec, j.chunks);
+  XM_ASSERT_LT(testExec, j.chunks);
 
   BusyWait(j.durationMs * 8);
 
   // don't progress while suspended
-  ASSERT_EQ(j.GetExecutedCount(), testExec);
+  XM_ASSERT_EQ(j.GetExecutedCount(), testExec);
   worker->Resume();
 
   guard.Release();
   worker->Finalize();
 
   // have it finished by now.
-  ASSERT_EQ(j.GetExecutedCount(), j.chunks);
+  XM_ASSERT_EQ(j.GetExecutedCount(), j.chunks);
 }
 
-TEST(Worker, CancelPendingJobs)
+XM_TEST(Worker, CancelPendingJobs)
 {
   auto worker = std::make_unique<Worker>();
   auto workerGuard = MakeScopeGuard([&worker]()
@@ -116,16 +116,16 @@ TEST(Worker, CancelPendingJobs)
   worker->CancelPendingJobs();
 
   // We don't know how many it will manage to get through, but it can't be all of them.
-  ASSERT_GT(j.cancelled, 0);
+  XM_ASSERT_GT(j.cancelled, 0);
 
   const int testExec = j.GetExecutedCount();
   const auto executedPlusCancelled = testExec + j.cancelled;
   XR_TRACEIF(Worker, executedPlusCancelled != kNumIterations,
     ("%d enqueued, %d executed, %d cancelled does not add up.", kNumIterations, testExec, j.cancelled));
-  ASSERT_EQ(executedPlusCancelled, kNumIterations);
+  XM_ASSERT_EQ(executedPlusCancelled, kNumIterations);
 }
 
-TEST(Worker, EnqueueBeforeFinalize)
+XM_TEST(Worker, EnqueueBeforeFinalize)
 {
   auto worker = std::make_unique<Worker>();
 
@@ -138,12 +138,12 @@ TEST(Worker, EnqueueBeforeFinalize)
     worker->Enqueue(j);
   }
   worker->Finalize();
-  ASSERT_EQ(j.GetExecutedCount(), kNumIterations);
+  XM_ASSERT_EQ(j.GetExecutedCount(), kNumIterations);
 
   worker.reset();
 }
 
-TEST(Worker, EnqueueAfterFinalize)
+XM_TEST(Worker, EnqueueAfterFinalize)
 {
   auto worker = std::make_unique<Worker>();
 
@@ -151,11 +151,11 @@ TEST(Worker, EnqueueAfterFinalize)
   j.durationMs = 250;
   worker->Enqueue(j);
   worker->Finalize();
-  ASSERT_EQ(j.GetExecutedCount(), 1);
+  XM_ASSERT_EQ(j.GetExecutedCount(), 1);
 
   worker->Enqueue(j);
-  ASSERT_EQ(j.cancelled, 1);
-  ASSERT_EQ(j.GetExecutedCount(), 1);
+  XM_ASSERT_EQ(j.cancelled, 1);
+  XM_ASSERT_EQ(j.GetExecutedCount(), 1);
   worker->Finalize();
   worker.reset();
 }
@@ -186,7 +186,7 @@ struct SpawnerJob : Worker::Job
   }
 };
 
-TEST(Worker, EnqueueMultithreaded)
+XM_TEST(Worker, EnqueueMultithreaded)
 {
   auto worker = std::make_unique<Worker>();
 
@@ -204,7 +204,7 @@ TEST(Worker, EnqueueMultithreaded)
   worker->Finalize();
   worker.reset();
 
-  ASSERT_EQ(hits, j.depth + 1);
+  XM_ASSERT_EQ(hits, j.depth + 1);
 }
 
 }

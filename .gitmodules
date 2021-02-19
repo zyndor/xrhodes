@@ -1,0 +1,3 @@
+[submodule "external/xm"]
+	path = external/xm
+	url = https://github.com/zyndor/xm

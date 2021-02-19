@@ -184,9 +184,15 @@ public:
     return m_value;
   }
 
+  size_t GetLength() const
+  {
+    return m_length;
+  }
+
 private:
   // data
   char* m_value = nullptr;
+  size_t m_length = 0;
 };
 
 } //XR

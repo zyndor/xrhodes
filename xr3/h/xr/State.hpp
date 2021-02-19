@@ -23,14 +23,12 @@ namespace xr
 ///     Update(), Render() while active
 ///   Exit() when a new state was requested,
 /// Shutdown() when removed from the stack.
-//==============================================================================
 class State
 {
 public:
   // types
   //==============================================================================
   ///@brief Maintains a stack of states and manages their life cycles.
-  //==============================================================================
   class  Manager
   {
   public:
@@ -43,7 +41,7 @@ public:
     void  Change(State& s);  // no ownership transfer
     void  Pop();
 
-    void  Update(int32_t tDelta);
+    void  Update(double ms);
     void  Render();
 
     void  Clear();
@@ -63,7 +61,6 @@ public:
   //==============================================================================
   ///@brief Signifies the result of a State Update() encapsulating State::Manager
   /// operation and a next State to go to.
-  //==============================================================================
   struct  Result
   {
     // types
@@ -77,12 +74,12 @@ public:
 
     // structors
     Result()
-    :  operation(NONE),
+    : operation(NONE),
       state(nullptr)
     {}
 
     Result(Operation op, State* p = nullptr)
-    :  operation(op),
+    : operation(op),
       state(p)
     {}
 
@@ -98,7 +95,7 @@ public:
   // general
   virtual void  Init()  {}
   virtual void  Enter() =0;
-  virtual void  Update(int32_t ms, Result& result) =0;
+  virtual void  Update(double ms, Result& result) =0;
   virtual void  Render() =0;
   virtual void  Exit() =0;
   virtual void  Shutdown() {}

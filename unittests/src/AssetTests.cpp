@@ -8,7 +8,7 @@
 //==============================================================================
 #include "FileLifeCycleManager.hpp"
 
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/Asset.hpp"
 #include "xr/Hash.hpp"
 #include "xr/memory/BufferReader.hpp"
@@ -20,26 +20,10 @@ using namespace xr;
 
 namespace
 {
-template <typename T>
-static void AssertEq(T const& a, T const& b)
-{
-  ASSERT_EQ(a, b);
-}
 
-static void AssertStrEq(char const* a, char const* b)
-{
-  ASSERT_STREQ(a, b);
-}
-
-class Asset : public ::testing::Test
+class Asset
 {
 public:
-  static void SetUpTestCase()
-  {}
-
-  static void TearDownTestCase()
-  {}
-
   Asset()
   {
     xr::Asset::Manager::Init(".assets");
@@ -61,7 +45,7 @@ struct TestAsset : xr::Asset
 
   virtual bool OnLoaded(Buffer buffer) override
   {
-    AssertEq(buffer.size, sizeof(histogram));
+    XM_ASSERT_EQ(buffer.size, sizeof(histogram));
     for (int i = 0; i < XR_ARRAY_SIZE(histogram); ++i)
     {
       int x = reinterpret_cast<int const*>(buffer.data)[i];
@@ -85,7 +69,7 @@ XR_ASSET_BUILDER_DECL(TestAsset)
 #ifdef ENABLE_ASSET_BUILDING
 XR_ASSET_BUILDER_BUILD_SIG(TestAsset)
 {
-  AssertStrEq(rawNameExt, "testasset.testBasic");
+  XM_ASSERT_STREQ(rawNameExt, "testasset.testBasic");
 
   int histogram[256] = {};
 
@@ -110,7 +94,7 @@ void EnsureTestAssetExists(FilePath const& path)
 
     FileWriter fw;
     FilePath rawPath(File::kRawProto + File::GetRomPath() / path);
-    ASSERT_TRUE(fw.Open(rawPath, xr::FileWriter::Mode::Truncate, false));
+    XM_ASSERT_TRUE(fw.Open(rawPath, xr::FileWriter::Mode::Truncate, false));
     for (int i = 0; i < 2560000; ++i)
     {
       auto val = distro(gen);
@@ -119,50 +103,50 @@ void EnsureTestAssetExists(FilePath const& path)
   }
 }
 
-TEST_F(Asset, Basics)
+XM_TEST_F(Asset, Basics)
 {
   FilePath path("assets/testasset.testBasic");
   EnsureTestAssetExists(path);
 
   auto testAss = xr::Asset::Manager::Load<TestAsset>(path);
 
-  ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::LoadingFlag)); // load in progress
-  ASSERT_EQ(xr::Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
+  XM_ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::LoadingFlag)); // load in progress
+  XM_ASSERT_EQ(xr::Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
 
   while (!(testAss->GetFlags() & (xr::Asset::ReadyFlag | xr::Asset::ErrorFlag)))
   {
     xr::Asset::Manager::Update();
   }
-  ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ErrorFlag));  // loaded successfully
+  XM_ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ErrorFlag));  // loaded successfully
 
-  ASSERT_EQ(testAss->GetRefCount(), 2); // two references: one in manager, one local
+  XM_ASSERT_EQ(testAss->GetRefCount(), 2); // two references: one in manager, one local
   xr::Asset::Manager::UnloadUnused();
 
-  ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ReadyFlag)); // still loaded
+  XM_ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ReadyFlag)); // still loaded
   auto desc = testAss->GetDescriptor();
 
   testAss.Reset(nullptr);
 
   xr::Asset::Manager::UnloadUnused();
-  ASSERT_FALSE(xr::Asset::Manager::Find(desc));  // removed
+  XM_ASSERT_FALSE(xr::Asset::Manager::Find(desc));  // removed
 }
 
-TEST_F(Asset, LoadReflected)
+XM_TEST_F(Asset, LoadReflected)
 {
   FilePath path("assets/testasset.testBasic");
   EnsureTestAssetExists(path);
 
   auto testAss = xr::Asset::Manager::LoadReflected(path);
 
-  ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::LoadingFlag)); // load in progress
-  ASSERT_TRUE(testAss->Cast<TestAsset>()); // determined correct type
-  ASSERT_EQ(xr::Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
+  XM_ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::LoadingFlag)); // load in progress
+  XM_ASSERT_TRUE(testAss->Cast<TestAsset>()); // determined correct type
+  XM_ASSERT_EQ(xr::Asset::Manager::Find<TestAsset>(path), testAss);  // manager has reference and is same
 
   while (!(testAss->GetFlags() & (xr::Asset::ReadyFlag | xr::Asset::ErrorFlag)))
   {
     xr::Asset::Manager::Update();
   }
-  ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ErrorFlag));  // loaded successfully
+  XM_ASSERT_FALSE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ErrorFlag));  // loaded successfully
 }
 
 struct DependantTestAsset : public xr::Asset
@@ -216,7 +200,7 @@ XR_ASSET_BUILDER_BUILD_SIG(DependantTestAsset)
   return true;
 }
 
-TEST_F(Asset, Dependencies)
+XM_TEST_F(Asset, Dependencies)
 {
   // Load 4 assets of the following dependency structure:
   // test -> test1, test2; test1 -> test3; test2 -> test3; test3
@@ -225,9 +209,9 @@ TEST_F(Asset, Dependencies)
   FilePath path("assets/test.testDeps");
 
   // none of the dependencies exist
-  ASSERT_EQ(xr::Asset::Manager::Find<DependantTestAsset>("assets/test1.testDeps"), xr::Asset::Ptr());
-  ASSERT_EQ(xr::Asset::Manager::Find<DependantTestAsset>("assets/test2.testDeps"), xr::Asset::Ptr());
-  ASSERT_EQ(xr::Asset::Manager::Find<DependantTestAsset>("assets/test3.testDeps"), xr::Asset::Ptr());
+  XM_ASSERT_EQ(xr::Asset::Manager::Find<DependantTestAsset>("assets/test1.testDeps"), xr::Asset::Ptr());
+  XM_ASSERT_EQ(xr::Asset::Manager::Find<DependantTestAsset>("assets/test2.testDeps"), xr::Asset::Ptr());
+  XM_ASSERT_EQ(xr::Asset::Manager::Find<DependantTestAsset>("assets/test3.testDeps"), xr::Asset::Ptr());
 
   auto testAss = xr::Asset::Manager::Load<DependantTestAsset>(path, 0);
 
@@ -237,28 +221,28 @@ TEST_F(Asset, Dependencies)
   auto dep1 = xr::Asset::Manager::Find<DependantTestAsset>("assets/test1.testDeps");
   auto dep2 = xr::Asset::Manager::Find<DependantTestAsset>("assets/test2.testDeps");
   auto dep3 = xr::Asset::Manager::Find<DependantTestAsset>("assets/test3.testDeps");
-  ASSERT_NE(dep1, xr::Asset::Ptr());
-  ASSERT_NE(dep2, xr::Asset::Ptr());
-  ASSERT_NE(dep3, xr::Asset::Ptr());
+  XM_ASSERT_NE(dep1, xr::Asset::Ptr());
+  XM_ASSERT_NE(dep2, xr::Asset::Ptr());
+  XM_ASSERT_NE(dep3, xr::Asset::Ptr());
 
   while (!(testAss->GetFlags() & (xr::Asset::ReadyFlag | xr::Asset::ErrorFlag)))
   {
     xr::Asset::Manager::Update();
   }
 
-  ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ReadyFlag));
-  ASSERT_TRUE(CheckAllMaskBits(dep1->GetFlags(), xr::Asset::ReadyFlag));
-  ASSERT_TRUE(CheckAllMaskBits(dep2->GetFlags(), xr::Asset::ReadyFlag));
-  ASSERT_TRUE(CheckAllMaskBits(dep3->GetFlags(), xr::Asset::ReadyFlag));
+  XM_ASSERT_TRUE(CheckAllMaskBits(testAss->GetFlags(), xr::Asset::ReadyFlag));
+  XM_ASSERT_TRUE(CheckAllMaskBits(dep1->GetFlags(), xr::Asset::ReadyFlag));
+  XM_ASSERT_TRUE(CheckAllMaskBits(dep2->GetFlags(), xr::Asset::ReadyFlag));
+  XM_ASSERT_TRUE(CheckAllMaskBits(dep3->GetFlags(), xr::Asset::ReadyFlag));
 
   // Dependencies are loaded in the correct order - first the ones without any dependencies,
   // then the ones that depend upon them etc.
   // We can't inspect their loading directly, however we know that the order that their
   // OnLoaded() is called is the order they're popped off the loading queue.
-  ASSERT_EQ(DependantTestAsset::s_order[0], dep3->GetDescriptor());
-  ASSERT_EQ(DependantTestAsset::s_order[1], dep1->GetDescriptor());
-  ASSERT_EQ(DependantTestAsset::s_order[2], dep2->GetDescriptor());
-  ASSERT_EQ(DependantTestAsset::s_order[3], testAss->GetDescriptor());
+  XM_ASSERT_EQ(DependantTestAsset::s_order[0], dep3->GetDescriptor());
+  XM_ASSERT_EQ(DependantTestAsset::s_order[1], dep1->GetDescriptor());
+  XM_ASSERT_EQ(DependantTestAsset::s_order[2], dep2->GetDescriptor());
+  XM_ASSERT_EQ(DependantTestAsset::s_order[3], testAss->GetDescriptor());
 }
 #endif
 }

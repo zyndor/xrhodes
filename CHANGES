@@ -1,3 +1,16 @@
+v1.10.0
+- Removed precompiled external dependencies from the repo.
+- Replaced gtest with xm for unit testing.
+- Removed the overload of MakeCallback<>() that returns a FunctionPtrCallback<>.
+- Updated stb_truetype.h to v1.24.
+- xr::GfxContext fixes.
+- Added xr::BinaryHeap<> and its tests.
+- Added xr::ScratchBuffer::UseIndices().
+- Changed the precision for milliseconds that xr::State and State::Manager take, to double.
+- Changed xr;:Timer::GetUST{,Nano}() to double precision, and updated GameLoop.
+- Added xr::XonValue::GetLength().
+- Added facilities for structured reading, plus a XON implementation.
+
 v1.9.2
 - xr::JsonEntity maintenance and GCC v9.3.0 fixes.
 - Fix: all writes by xr::HardString<>'s methods are within the bounds of its buffer.

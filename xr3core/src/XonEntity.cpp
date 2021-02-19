@@ -228,7 +228,8 @@ XonValue::XonValue()
 //==============================================================================
 XonValue::XonValue(const char* value, size_t length)
 : XonEntity(Type::Value),
-  m_value(value != nullptr ? new char[length + 1] : nullptr)
+  m_value(value != nullptr ? new char[length + 1] : nullptr),
+  m_length(length)
 {
   if (value)
   {

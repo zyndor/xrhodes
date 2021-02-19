@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/io/streamutils.hpp"
 #include "xr/memory/memdebug.hpp"
 #include "xr/utils.hpp"
@@ -133,7 +133,7 @@ namespace
   };
 }
 
-TEST(StreamUtils, ReadPiecewise)
+XM_TEST(StreamUtils, ReadPiecewise)
 {
   A a;
   a.Init();
@@ -149,10 +149,10 @@ TEST(StreamUtils, ReadPiecewise)
   XR_TRACE(StreamUtils, (LogMemory(&a, sizeof(A)).c_str()));
   XR_TRACE(StreamUtils, (LogMemory(&a2, sizeof(A)).c_str()));
   XR_TRACE(StreamUtils, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
-  ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
+  XM_ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
 }
 
-TEST(StreamUtils, ReadWhole)
+XM_TEST(StreamUtils, ReadWhole)
 {
   A a;
   a.Init();
@@ -168,7 +168,7 @@ TEST(StreamUtils, ReadWhole)
   XR_TRACE(StreamUtils, (LogMemory(&a, sizeof(A)).c_str()));
   XR_TRACE(StreamUtils, (LogMemory(&a2, sizeof(A)).c_str()));
   XR_TRACE(StreamUtils, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
-  ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
+  XM_ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
 }
 
 // NOTE: mixing piecewise and whole reads will not work due to struct alignment.

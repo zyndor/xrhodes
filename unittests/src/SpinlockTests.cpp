@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "gtest/gtest.h"
+#include "xm.hpp"
 #include "xr/threading/Spinlock.hpp"
 #include "xr/debug.hpp"
 #include <vector>
@@ -43,10 +43,10 @@ struct Data
 
   void Assert(int n)
   {
-    ASSERT_EQ(accessCounter, n * data.size());
+    XM_ASSERT_EQ(accessCounter, n * data.size());
     for (size_t i = 0; i < data.size(); ++i)
     {
-      ASSERT_EQ(data[i], n);
+      XM_ASSERT_EQ(data[i], n);
     }
   }
 
@@ -76,7 +76,7 @@ struct Data
   }
 };
 
-TEST(Spinlock, WholeThread)
+XM_TEST(Spinlock, WholeThread)
 {
   int numAccesses = 256000;
   Data data(2);
@@ -96,7 +96,7 @@ TEST(Spinlock, WholeThread)
   data.Assert(numAccesses);
 }
 
-TEST(Spinlock, PerAccess)
+XM_TEST(Spinlock, PerAccess)
 {
   int numAccesses = 1000;
   Data data(2);

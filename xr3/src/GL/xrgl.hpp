@@ -11,7 +11,7 @@
 //==============================================================================
 #include "xr/debug.hpp"
 #include "gl_core_4_5.h"
-#include "SDL_opengl.h"
+#include "SDL2/SDL_opengl.h"
 
 namespace xr
 {

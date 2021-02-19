@@ -26,11 +26,11 @@ public:
 
   ///@return Uninterrupted system time in milliseconds. Unaffected by clock
   /// adjustments.
-  static uint64_t GetUST();
+  static double GetUST();
 
   ///@return Uninterrupted system time in nanoseconds. Unaffected by clock
   /// adjustments.
-  static uint64_t GetUSTNano();
+  static double GetUSTNano();
 };
 
 } // xr

@@ -7,8 +7,7 @@
 //
 //==============================================================================
 #include "InputImpl.hpp"
-#include "SDL_touch.h"
-#include "SDL.h"
+#include "SDL2/SDL_touch.h"
 
 namespace xr
 {

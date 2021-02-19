@@ -92,7 +92,7 @@ public:
     Gfx::Clear(Gfx::F_CLEAR_COLOR | Gfx::F_CLEAR_DEPTH, Color(0.f, .25f, .5f));
 
     // Update the value of the uniform.
-    float time[4] = { Timer::GetUST() * .005f };
+    float time[4] = { float(Timer::GetUST()) * .005f };
     Gfx::SetUniform(m_uTime, time);
 
     // Set our program.
