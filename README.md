@@ -43,40 +43,40 @@ Graphics: OpenGL3.3 capable GPU.
 
 # Windows
 
-- Visual Studio Community 2017+ and (Vcpkg)[https://github.com/microsoft/vcpkg]
-- $ ./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2 gtest
-- $ ./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2 gtest
+- Visual Studio Community 2017+ and [Vcpkg](https://github.com/microsoft/vcpkg)
+- $ `./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2 gtest`
+- $ `./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2 gtest`
 
 # MacOS 10.13+
 
 - Xcode 4+
-- $ brew install libpng sdl2 tinyxml2
+- `$ brew install libpng sdl2 tinyxml2`
 
 # Linux (Tested under Ubuntu 18.04)
 
-- $ sudo apt-get install build-essential mesa-common-dev mesa-utils libpng-dev \
-  libsdl2-dev libtinyxml2-dev
+- `$ sudo apt-get install build-essential mesa-common-dev mesa-utils libpng-dev \
+  libsdl2-dev libtinyxml2-dev`
 
 Getting started
 ---------------
 
-Visit the tools/ subfolder for your chosen development platform and run the
+Visit the `tools/` subfolder for your chosen development platform and run the
 generate_projects script. Alternatively, you can run premake directly with the
-premake5.lua script in the root folder.
+`premake5.lua` script in the root folder.
 
-Projects are generated in the .projects folder in the root. Run the build_all
-script from the same folder, or build the projects manually.
+Projects are generated in the `.projects` folder in the root. Run the `build_all`
+script from the same tools subfolder, or build the projects manually.
 
 Run examples and unit tests.
 
 Creating your own projects
 --------------------------
 
-1. Set an 'XR3_PATH' environment variable with the location of XRhodes.
-2. Copy and rename the template/ folder to your desired location.
-3. Edit the config.lua file with your desired settings for project name, files
+1. Set an `XR3_PATH` environment variable with the location of XRhodes.
+2. Copy and rename the `template/` folder to your desired location.
+3. Edit the `config.lua` file with your desired settings for project name, files
   to include in the build, and external includes location.
-4. Run premake with the premake5.lua script.
+4. Run premake with the `premake5.lua` script.
 
 Happy building!
 
