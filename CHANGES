@@ -1,3 +1,7 @@
+v1.10.1
+- Fix: templates' generate_project.bat also builds vs2017 projects so VS' Vcpkg macros are available.
+- Fix: do_vs_postbuild() moved to workspace.lua to make it available for xr3-based projects.
+
 v1.10.0
 - Removed precompiled external dependencies from the repo.
 - Replaced gtest with xm for unit testing.
