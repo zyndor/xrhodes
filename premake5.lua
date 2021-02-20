@@ -10,22 +10,6 @@ include("template/workspace.lua")
 
 do_workspace("xr3", "examples")
 
-function do_vs_postbuild(dependencies)
-  local artifacts_rel_path = "../../"..bin_location.."/"; -- we're currently in .projects/${platform}/
-  for _, p in ipairs(tbl_platforms) do
-    for _, c in ipairs(tbl_configurations) do
-      filter { "platforms:"..p, c }
-      local pc = p.."-"..c
-      for _, iDep in ipairs(dependencies) do
-        postbuildcommands{
-          os.translateCommands("{COPY} $(VcpkgCurrentInstalledDir)"..
-            "bin/"..iDep..".dll "..artifacts_rel_path..pc)
-        }
-      end
-    end
-  end
-end
-
 --
 -- create a project that just reruns the premake script.
 --

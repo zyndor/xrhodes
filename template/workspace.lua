@@ -195,3 +195,22 @@ function do_workspace(workspace_name, start_project_name)
 	end
 
 end
+
+--
+-- Copies dependencies on Windows
+--
+function do_vs_postbuild(dependencies)
+  local artifacts_rel_path = "../../"..bin_location.."/"; -- we're currently in .projects/${platform}/
+  for _, p in ipairs(tbl_platforms) do
+    for _, c in ipairs(tbl_configurations) do
+      filter { "platforms:"..p, c }
+      local pc = p.."-"..c
+      for _, iDep in ipairs(dependencies) do
+        postbuildcommands{
+          os.translateCommands("{COPY} $(VcpkgCurrentInstalledDir)"..
+            "bin/"..iDep..".dll "..artifacts_rel_path..pc)
+        }
+      end
+    end
+  end
+end
