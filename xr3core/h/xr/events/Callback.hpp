@@ -11,6 +11,7 @@
 //==============================================================================
 #include "xr/types/typeutils.hpp"
 #include <type_traits>
+#include <tuple>
 
 namespace xr
 {
@@ -236,7 +237,7 @@ protected:
 };
 
 //==============================================================================
-///@brief Convenience function to create a MemberCallback for an object and
+///@brief Convenience function to create a MemberCallback from an object and
 /// a method of its type.
 template <class T, typename Return, typename... Args>
 MemberCallback<T, Return, Args...> MakeCallback(T& object, Return(T::*fn)(Args...))
@@ -245,12 +246,51 @@ MemberCallback<T, Return, Args...> MakeCallback(T& object, Return(T::*fn)(Args..
 }
 
 //==============================================================================
-///@brief Convenience function to create a MemberCallback for a const object and
+///@brief Convenience function to create a MemberCallback from a const object and
 /// a const method of its type.
 template <class T, typename Return, typename... Args>
 MemberCallback<T, Return, Args...> MakeCallback(T const& object, Return(T::*fn)(Args...) const)
 {
   return MemberCallback<T, Return, Args...>(object, fn);
+}
+
+namespace detail
+{
+
+template <typename Return, typename Tuple>
+struct MakeCallbackImpl;
+
+template <typename Return, typename... Args>
+struct MakeCallbackImpl<Return, std::tuple<Args...>>
+{
+  using Callback = FunctionPtrCallback<Return, Args...>;
+};
+
+template <typename First, typename... Rest>
+struct RemoveLast
+{
+  using Type = decltype(std::tuple_cat(
+    std::declval<std::tuple<First>>(),
+    std::declval<typename RemoveLast<Rest...>::Type>()
+  ));
+};
+
+template <typename First>
+struct RemoveLast<First>
+{
+  using Type = std::tuple<>;
+};
+
+}
+
+//==============================================================================
+///@brief Convenience function for creating a FunctionPtrCallback from a free standing
+/// function.
+template <typename Return, typename... Args>
+auto MakeCallback(Return(*fn)(Args...), void* data = nullptr)
+{
+  return typename detail::MakeCallbackImpl<
+    Return, typename detail::RemoveLast<Args...>::Type>::Callback(fn, data);
 }
 
 } //xr

@@ -205,7 +205,7 @@ void DoTexturesTest()
   Image cap;
   cap.SetSize(Gfx::GetLogicalWidth(), Gfx::GetLogicalHeight(), 3);
 
-  FunctionPtrCallback<void, void*> mcb(OnReadFrameBufferComplete);
+  auto mcb = MakeCallback(OnReadFrameBufferComplete);
   Gfx::ReadFrameBuffer(0, 0, cap.GetWidth(), cap.GetHeight(), Gfx::TextureFormat::RGB8,
     0, cap.GetPixelData(), &mcb);
 
