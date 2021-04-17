@@ -23,31 +23,31 @@ namespace xr
 
 //==============================================================================
 ///@brief The reciprocal of kByteMax.
-extern const float kRecByteMax;
+constexpr float kRecByteMax = 1.0f / 0xff;
 
 ///@brief kPi.
-extern const float kPi;
+constexpr float kPi = float(M_PI);
 
 ///@brief Half of kPi.
-extern const float kPiHalf;
+constexpr float kPiHalf = kPi * .5f;
 
 ///@brief Double of kPi.
-extern const float kPi2;
+constexpr float kPi2 = kPi * 2.0f;
 
 ///@brief Square of kPiHalf.
-extern const float kPiHalfSqr;
+constexpr float kPiHalfSqr = kPiHalf * kPiHalf;
 
 ///@brief An angleInDegrees * kDegreesToRadians is the angle in radians.
-extern const float kDegreesToRadians;
+constexpr float kDegreesToRadians = kPi / 180.0f;
 
 ///@brief An angleInRadians * kRadiansToDegrees is the angle in degrees.
-extern const float kRadiansToDegrees;
+constexpr float kRadiansToDegrees = 1.0f / kDegreesToRadians;
 
 ///@brief Arbitrary small value for floating point difference calculations.
-extern const float kEpsilon;
+constexpr float kEpsilon = .00001f;
 
 ///@brief The reciprocal of RAND_MAX.
-extern const float kRecRandMax;
+constexpr float kRecRandMax = 1.0f / float(RAND_MAX);
 
 //==============================================================================
 ///@return +1 if true, -1 if false.
