@@ -65,6 +65,7 @@ XM_TEST(Animator, OnStop)
   int stops = 0;
   auto onStop = MakeOnStop(stops);
   animator.Animate(kDuration, f, 1.f, Lerp, MakeSetter(f), &onStop);
+  XM_ASSERT_EQ(stops, 0);
 
   animator.Update(kDuration);
   XM_ASSERT_EQ(f, 1.f);
@@ -81,11 +82,13 @@ XM_TEST(Animator, StopNoComplete)
   auto handle = animator.Animate(kDuration, f, 1.f, Lerp, MakeSetter(f), &onStop);
 
   animator.Update(kDuration * .5f);
+  XM_ASSERT_EQ(stops, 0);
+
   animator.Stop(handle, false);
   animator.Update(kDuration * .5f);
 
   XM_ASSERT_EQ(f, .5f);
-  XM_ASSERT_EQ(stops, 0);
+  XM_ASSERT_EQ(stops, 1);
 }
 
 XM_TEST(Animator, StopComplete)
@@ -98,6 +101,8 @@ XM_TEST(Animator, StopComplete)
   auto handle = animator.Animate(kDuration, f, 1.f, Lerp, MakeSetter(f), &onStop);
 
   animator.Update(kDuration * .5f);
+  XM_ASSERT_EQ(stops, 0);
+
   animator.Stop(handle, true);
   animator.Update(kDuration * .25f);
 
@@ -117,6 +122,8 @@ XM_TEST(Animator, ClearNoComplete)
   animator.Animate(kDuration, g, 0.f, Lerp, MakeSetterByRef(g), &onStop);
 
   animator.Update(kDuration * .5f);
+  XM_ASSERT_EQ(stops, 0);
+
   animator.Clear(false);
   float h = 0.f;
   animator.Animate(kDuration, h, 10.f, Lerp, MakeSetter(h), &onStop);
@@ -140,6 +147,8 @@ XM_TEST(Animator, ClearComplete)
   animator.Animate(kDuration, g, 0.f, Lerp, MakeSetterByRef(g), &onStop);
 
   animator.Update(kDuration * .5f);
+  XM_ASSERT_EQ(stops, 0);
+
   animator.Clear(true);
   float h = 0.f;
   animator.Animate(kDuration, h, 10.f, Lerp, MakeSetter(h), &onStop);

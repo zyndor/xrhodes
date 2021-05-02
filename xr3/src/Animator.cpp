@@ -27,11 +27,7 @@ void Animator::ValueBase::Update(float tDelta)
   UpdateValue(progress);
   if (progress >= 1.f)
   {
-    if (mOnStop)
-    {
-      mOnStop->Call();
-      mOnStop.reset();
-    }
+    Stop();
   }
 }
 
@@ -39,6 +35,16 @@ void Animator::ValueBase::Update(float tDelta)
 void Animator::ValueBase::Complete()
 {
   Update((1.0f - mProgress) * mInvDuration);
+}
+
+//==============================================================================
+void Animator::ValueBase::Stop()
+{
+  if (mOnStop)
+  {
+    mOnStop->Call();
+    mOnStop.reset();
+  }
 }
 
 //==============================================================================
@@ -66,6 +72,10 @@ bool Animator::Stop(Handle handle, bool complete)
       if (complete)
       {
         value->Complete();
+      }
+      else
+      {
+        value->Stop();
       }
 
       value->~ValueBase();

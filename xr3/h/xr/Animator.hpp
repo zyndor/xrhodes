@@ -76,7 +76,7 @@ public:
     Callback<void, T const&> const& setter, OnStop const* onStop = nullptr);
 
   ///@brief Attempts to stop an animation with the given @a handle. If @a complete
-  /// is true, the value will be set to its target and the onStop callback will
+  /// is true, the value will be set to its target. The OnStop callback will
   /// be called (if one was provided for the animation).
   ///@return Whether an animation with the given @a handle could be found.
   bool Stop(Handle handle, bool complete);
@@ -98,7 +98,6 @@ private:
     const Handle mHandle;
     const float mInvDuration;
     float mProgress;
-    std::unique_ptr<OnStop> mOnStop;
 
     ValueBase(Handle handle, float duration, OnStop const* onStop)
     : mHandle(handle),
@@ -121,8 +120,11 @@ private:
 
     void Update(float tDelta);
     void Complete();
+    void Stop();
 
   protected:
+    std::unique_ptr<OnStop> mOnStop;
+
     virtual void UpdateValue(float alpha) =0;
   };
 
