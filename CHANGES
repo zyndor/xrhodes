@@ -1,3 +1,9 @@
+v1.10.3
+- Added scripts to facilitate releases, to tools/bash.
+- xr::Animator::Stop() will call the OnStop() callback regardless completion was requested or not.
+- xr::Queue<> maintenance.
+- constexpr'ing up math constants.
+
 v1.10.2
 - Added an overload of xr::MakeCallback that returns a FunctionPtrCallback<>.
 

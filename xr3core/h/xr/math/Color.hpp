@@ -41,9 +41,9 @@ public:
   // static
   static Color  s_default;
 
-  static float ByteToNormalized(uint8_t value)
+  static constexpr float ByteToNormalized(uint8_t value)
   {
-    return value * (1.0f / 0xff);
+    return value * kRecByteMax;
   }
 
   // data
@@ -57,26 +57,26 @@ public:
   };
 
   // structors
-  Color()
+  constexpr Color()
   : r(.0f), g(.0f), b(.0f), a(.0f)
   {}
 
-  Color(float r_, float g_, float b_, float a_)
+  constexpr Color(float r_, float g_, float b_, float a_)
   : r(r_),
     g(g_),
     b(b_),
     a(a_)
   {}
 
-  Color(float r_, float g_, float b_)
+  constexpr Color(float r_, float g_, float b_)
   : Color(r_, g_, b_, 1.0f)
   {}
 
-  explicit Color(const float data[kNumComponents])
+  explicit constexpr Color(const float data[kNumComponents])
   : Color(data[R], data[G], data[B], data[A])
   {}
 
-  explicit Color(uint32_t abgr)
+  explicit constexpr Color(uint32_t abgr)
   : Color(ByteToNormalized(abgr & 0xff),
       ByteToNormalized((abgr >> kGreenShift) & 0xff),
       ByteToNormalized((abgr >> kBlueShift) & 0xff),

@@ -16,28 +16,28 @@
 
 namespace xr
 {
-namespace QueueImpl
+namespace detail
 {
 
 //==============================================================================
-struct  NodeCore
+struct  QueueNodeCore
 {
   // structors
-  explicit NodeCore(NodeCore *p);
+  explicit QueueNodeCore(QueueNodeCore *p);
 
   // general use
-  void  Hook(NodeCore *p);
+  void  Hook(QueueNodeCore *p);
 
   // data
-  NodeCore  *next;
+  QueueNodeCore  *next;
 };
 
 //==============================================================================
 template  <typename Type>
-struct  Node: public NodeCore
+struct  QueueNode: public QueueNodeCore
 {
   // structors
-  explicit Node(Type d);
+  explicit QueueNode(Type d);
 
   // data
   Type  data;
@@ -45,11 +45,11 @@ struct  Node: public NodeCore
 
 //==============================================================================
 template <typename Type>
-struct  Iterator: public std::forward_iterator_tag
+struct  QueueIterator: public std::forward_iterator_tag
 {
   // types
-  typedef Node<Type>                NodeType;
-  typedef Iterator<Type>            SelfType;
+  typedef QueueNode<Type>           NodeType;
+  typedef QueueIterator<Type>       SelfType;
 
   typedef Type                      value_type;
   typedef Type*                     pointer;
@@ -59,9 +59,9 @@ struct  Iterator: public std::forward_iterator_tag
   typedef std::forward_iterator_tag iterator_category;
 
   // structors
-  Iterator();
-  explicit Iterator(NodeType* p);
-  ~Iterator();
+  QueueIterator();
+  explicit QueueIterator(NodeType* p);
+  ~QueueIterator();
 
   // operators
   reference  operator *() const;
@@ -79,12 +79,12 @@ struct  Iterator: public std::forward_iterator_tag
 
 //==============================================================================
 template <typename Type>
-struct  ConstIterator: public std::forward_iterator_tag
+struct  QueueConstIterator: public std::forward_iterator_tag
 {
   // types
-  typedef const Node<Type>          NodeType;
-  typedef Iterator<Type>            IteratorType;
-  typedef ConstIterator<Type>       SelfType;
+  typedef const QueueNode<Type>     NodeType;
+  typedef QueueIterator<Type>       IteratorType;
+  typedef QueueConstIterator<Type>  SelfType;
 
   typedef Type                      value_type;
   typedef const Type*               pointer;
@@ -94,10 +94,10 @@ struct  ConstIterator: public std::forward_iterator_tag
   typedef std::forward_iterator_tag iterator_category;
 
   // structors
-  ConstIterator();
-  explicit ConstIterator(NodeType* p);
-  ConstIterator(const IteratorType& rhs);
-  ~ConstIterator();
+  QueueConstIterator();
+  explicit QueueConstIterator(NodeType* p);
+  QueueConstIterator(const IteratorType& rhs);
+  ~QueueConstIterator();
 
   // operators
   reference  operator *() const;
@@ -129,8 +129,8 @@ public:
   // types
   typedef Type  value_type;
 
-  typedef QueueImpl::Iterator<value_type>       iterator;
-  typedef QueueImpl::ConstIterator<value_type>  const_iterator;
+  typedef detail::QueueIterator<value_type>       iterator;
+  typedef detail::QueueConstIterator<value_type>  const_iterator;
 
   typedef AllocType                             allocator;
 
@@ -143,13 +143,14 @@ public:
   typedef typename allocator::const_pointer     const_pointer;
 
   typedef Queue<value_type, AllocType>          SelfType;
-  typedef QueueImpl::Node<value_type>           NodeType;
+  typedef detail::QueueNode<value_type>         NodeType;
 
   typedef typename AllocType::template rebind<NodeType>::other NodeAllocType;
 
   // structors
   Queue(allocator a = allocator());
-  Queue(const SelfType& rhs);
+  Queue(SelfType const& rhs);
+  Queue(SelfType&& rhs);
   ~Queue();
 
   // general use
@@ -207,8 +208,12 @@ public:
   ///@brief Attempts to find and remove @a d from this Queue.
   void  remove(value_type d);
 
+  ///@brief Efficient swapping of two queues.
+  void  swap(Queue& other);
+
   // operator overloads
-  SelfType&  operator=(const SelfType& rhs);
+  SelfType&  operator=(SelfType const& rhs);
+  SelfType&  operator=(SelfType&& rhs);
 
 protected:
   // internal use
@@ -224,17 +229,17 @@ protected:
 //==============================================================================
 // inline
 //==============================================================================
-namespace QueueImpl
+namespace detail
 {
 //==============================================================================
 inline
-NodeCore::NodeCore(NodeCore *p)
+QueueNodeCore::QueueNodeCore(QueueNodeCore *p)
 : next(p)
 {}
 
 //==============================================================================
 inline
-void  NodeCore::Hook(NodeCore *p)
+void  QueueNodeCore::Hook(QueueNodeCore *p)
 {
   next = p;
 }
@@ -242,33 +247,32 @@ void  NodeCore::Hook(NodeCore *p)
 //==============================================================================
 template<typename T>
 inline
-Node<T>::Node(T d)
-: NodeCore(nullptr),
+QueueNode<T>::QueueNode(T d)
+: QueueNodeCore(nullptr),
   data(d)
 {}
 
 //==============================================================================
 template <typename T>
-Iterator<T>::Iterator()
+QueueIterator<T>::QueueIterator()
 : node(nullptr)
 {}
 
 //==============================================================================
 template <typename T>
-Iterator<T>::Iterator(NodeType* p)
+QueueIterator<T>::QueueIterator(NodeType* p)
 : node(p)
 {}
 
 //==============================================================================
 template <typename Type>
-Iterator<Type>::~Iterator()
+QueueIterator<Type>::~QueueIterator()
 {}
 
 //==============================================================================
 template <typename T>
 inline
-typename Iterator<T>::reference
-  Iterator<T>::operator *() const
+typename QueueIterator<T>::reference  QueueIterator<T>::operator*() const
 {
   return node->data;
 }
@@ -276,8 +280,7 @@ typename Iterator<T>::reference
 //==============================================================================
 template <typename T>
 inline
-typename Iterator<T>::pointer
-  Iterator<T>::operator ->() const
+typename QueueIterator<T>::pointer  QueueIterator<T>::operator->() const
 {
   return &node->data;
 }
@@ -285,7 +288,7 @@ typename Iterator<T>::pointer
 //==============================================================================
 template <typename T>
 inline
-Iterator<T>&  Iterator<T>::operator ++()
+QueueIterator<T>&  QueueIterator<T>::operator++()
 {
   node = static_cast<NodeType*> (node->next);
   return *this;
@@ -294,7 +297,7 @@ Iterator<T>&  Iterator<T>::operator ++()
 //==============================================================================
 template <typename T>
 inline
-Iterator<T>& Iterator<T>::operator ++(int)
+QueueIterator<T>& QueueIterator<T>::operator++(int)
 {
   SelfType  tmp(*this);
   ++(*this);
@@ -304,7 +307,7 @@ Iterator<T>& Iterator<T>::operator ++(int)
 //==============================================================================
 template <typename T>
 inline
-bool  Iterator<T>::operator ==(const SelfType& rhs) const
+bool  QueueIterator<T>::operator==(const SelfType& rhs) const
 {
   return node == rhs.node;
 }
@@ -312,39 +315,38 @@ bool  Iterator<T>::operator ==(const SelfType& rhs) const
 //==============================================================================
 template <typename T>
 inline
-bool  Iterator<T>::operator !=(const SelfType& rhs) const
+bool  QueueIterator<T>::operator!=(const SelfType& rhs) const
 {
   return !(*this == rhs);
 }
 
 //==============================================================================
 template <typename T>
-ConstIterator<T>::ConstIterator()
+QueueConstIterator<T>::QueueConstIterator()
 : node(nullptr)
 {}
 
 //==============================================================================
 template <typename T>
-ConstIterator<T>::ConstIterator(NodeType* p)
+QueueConstIterator<T>::QueueConstIterator(NodeType* p)
 : node(p)
 {}
 
 //==============================================================================
 template <typename T>
-ConstIterator<T>::ConstIterator(const IteratorType& rhs)
+QueueConstIterator<T>::QueueConstIterator(const IteratorType& rhs)
 : node(rhs.node)
 {}
 
 //==============================================================================
 template <typename Type>
-ConstIterator<Type>::~ConstIterator()
+QueueConstIterator<Type>::~QueueConstIterator()
 {}
 
 //==============================================================================
 template <typename T>
 inline
-typename ConstIterator<T>::reference
-  ConstIterator<T>::operator *() const
+typename QueueConstIterator<T>::reference QueueConstIterator<T>::operator*() const
 {
   return node->data;
 }
@@ -352,8 +354,7 @@ typename ConstIterator<T>::reference
 //==============================================================================
 template <typename T>
 inline
-typename ConstIterator<T>::pointer
-  ConstIterator<T>::operator ->() const
+typename QueueConstIterator<T>::pointer QueueConstIterator<T>::operator->() const
 {
   return &node->data;
 }
@@ -361,7 +362,7 @@ typename ConstIterator<T>::pointer
 //==============================================================================
 template <typename T>
 inline
-ConstIterator<T>&  ConstIterator<T>::operator ++()
+QueueConstIterator<T>&  QueueConstIterator<T>::operator++()
 {
   node = static_cast<NodeType*> (node->next);
   return *this;
@@ -370,7 +371,7 @@ ConstIterator<T>&  ConstIterator<T>::operator ++()
 //==============================================================================
 template <typename T>
 inline
-ConstIterator<T>&  ConstIterator<T>::operator ++(int)
+QueueConstIterator<T>&  QueueConstIterator<T>::operator++(int)
 {
   SelfType  tmp(*this);
   ++(*this);
@@ -380,7 +381,7 @@ ConstIterator<T>&  ConstIterator<T>::operator ++(int)
 //==============================================================================
 template <typename T>
 inline
-bool  ConstIterator<T>::operator ==(const SelfType& rhs) const
+bool  QueueConstIterator<T>::operator==(const SelfType& rhs) const
 {
   return node == rhs.node;
 }
@@ -388,12 +389,12 @@ bool  ConstIterator<T>::operator ==(const SelfType& rhs) const
 //==============================================================================
 template <typename T>
 inline
-bool  ConstIterator<T>::operator !=(const SelfType& rhs) const
+bool  QueueConstIterator<T>::operator!=(const SelfType& rhs) const
 {
   return !(*this == rhs);
 }
 
-} // QueueImpl
+}
 
 //==============================================================================
 template  <typename Type, class AllocType>
@@ -416,6 +417,17 @@ Queue<Type, AllocType>::Queue(const SelfType& rhs)
     push_back(*i0);
     ++i0;
   }
+}
+
+//==============================================================================
+template  <typename Type, class AllocType>
+Queue<Type, AllocType>::Queue(SelfType&& rhs)
+: m_allocator(std::move(rhs.m_allocator)),
+  m_head(rhs.m_head),
+  m_tail(rhs.m_tail)
+{
+  rhs.m_head = nullptr;
+  rhs.m_tail = nullptr;
 }
 
 //==============================================================================
@@ -609,11 +621,34 @@ void  Queue<Type, AllocType>::remove(value_type d)
 }
 
 //==============================================================================
+template<typename Type, class AllocType>
+inline
+void Queue<Type, AllocType>::swap(Queue& other)
+{
+  std::swap(m_allocator, other.m_allocator);
+  std::swap(m_head, other.m_head);
+  std::swap(m_tail, other.m_tail);
+}
+
+//==============================================================================
 template  <typename Type, class AllocType>
 inline
 typename Queue<Type, AllocType>::SelfType&  Queue<Type, AllocType>::operator=(const Queue& rhs)
 {
   SelfType  temp(rhs);
+
+  std::swap(m_head, temp.m_head); // faster than swap(temp)
+  m_tail = temp.m_tail;
+
+  return *this;
+}
+
+//==============================================================================
+template  <typename Type, class AllocType>
+inline
+typename Queue<Type, AllocType>::SelfType&  Queue<Type, AllocType>::operator=(Queue&& rhs)
+{
+  SelfType  temp(std::move(rhs));
 
   std::swap(m_head, temp.m_head); // faster than swap(temp)
   m_tail = temp.m_tail;
