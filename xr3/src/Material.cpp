@@ -8,6 +8,7 @@
 //==============================================================================
 #include "xr/Material.hpp"
 #include "xr/memory/BufferReader.hpp"
+#include "xr/utility/Hash.hpp"
 #ifdef ENABLE_ASSET_BUILDING
 #include "xr/FileWriter.hpp"
 #include "xr/xon/XonBuildTree.hpp"

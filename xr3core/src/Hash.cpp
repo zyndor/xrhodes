@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/Hash.hpp"
+#include "xr/utility/Hash.hpp"
 #include "xr/debug.hpp"
 #include <algorithm>
 #include <map>

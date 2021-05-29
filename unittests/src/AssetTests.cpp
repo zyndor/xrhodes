@@ -10,7 +10,6 @@
 
 #include "xm.hpp"
 #include "xr/Asset.hpp"
-#include "xr/Hash.hpp"
 #include "xr/memory/BufferReader.hpp"
 #include "xr/FileWriter.hpp"
 

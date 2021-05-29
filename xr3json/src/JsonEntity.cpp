@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "xr/JsonEntity.hpp"
-#include "xr/Hash.hpp"
+#include "xr/utility/Hash.hpp"
 #include "xr/functions/functors.hpp"
 #include "xr/debug.hpp"
 #include <cstring>

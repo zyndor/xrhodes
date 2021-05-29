@@ -14,7 +14,6 @@
 #include "xr/math/SVector2.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/memory/Pool.hpp"
-#include "xr/Hash.hpp"
 #include "gl_core_4_5.h"
 #include "GfxContext.hpp"
 

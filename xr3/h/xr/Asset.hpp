@@ -10,7 +10,6 @@
 //
 //==============================================================================
 #include "xr/File.hpp"
-#include "xr/Hash.hpp"
 #include "xr/memory/Counted.hpp"
 #include "xr/threading/Counter.hpp"
 #include "xr/memory/Buffer.hpp"

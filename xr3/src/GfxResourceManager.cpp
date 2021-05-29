@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "GfxResourceManager.hpp"
-#include "xr/Hash.hpp"
+#include "xr/utility/Hash.hpp"
 
 namespace xr
 {

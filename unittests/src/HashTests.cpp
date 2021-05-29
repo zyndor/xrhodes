@@ -8,7 +8,7 @@
 //==============================================================================
 #include "xm.hpp"
 #include "xr/strings/StringFormatter.hpp"
-#include "xr/Hash.hpp"
+#include "xr/utility/Hash.hpp"
 #include "xr/utils.hpp"
 #include <map>
 #include <set>

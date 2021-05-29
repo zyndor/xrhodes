@@ -23,7 +23,6 @@
 
 #include "xr/threading/Semaphore.hpp"
 #include "xr/memory/ScopeGuard.hpp"
-#include "xr/Hash.hpp"
 
 #include <numeric>
 

@@ -8,6 +8,7 @@
 //==============================================================================
 #include "xr/ShaderComponent.hpp"
 #include "xr/memory/BufferReader.hpp"
+#include "xr/utility/Hash.hpp"
 #ifdef ENABLE_ASSET_BUILDING
 #include "ParseAssetOptions.hpp"
 #include "xr/io/streamutils.hpp"

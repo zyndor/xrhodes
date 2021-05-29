@@ -12,7 +12,7 @@
 #include "GfxResourceManager.hpp"
 #include "xr/Config.hpp"
 #include "xr/memory/memory.hpp"
-#include "xr/Hash.hpp"
+#include "xr/utility/Hash.hpp"
 #include "xr/debug.hpp"
 #include <cinttypes>
 

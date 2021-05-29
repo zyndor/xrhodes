@@ -8,6 +8,7 @@
 //==============================================================================
 #include "xr/SpriteSheet.hpp"
 #include "xr/memory/BufferReader.hpp"
+#include "xr/utility/Hash.hpp"
 #ifdef ENABLE_ASSET_BUILDING
 #include "xr/utils.hpp"
 #include "xr/strings/FilePath.hpp"

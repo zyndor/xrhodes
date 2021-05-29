@@ -7,7 +7,7 @@
 //
 //==============================================================================
 #include "xr/Name.hpp"
-#include "xr/Hash.hpp"
+#include "xr/utility/Hash.hpp"
 #include "xr/debug.hpp"
 #include <string.h>
 
@@ -45,7 +45,7 @@ Name::Name(const char* name)
 
 //==============================================================================
 Name::Name(const char* name, size_t length)
-  : m_value(Hash::String32(name, length))
+: m_value(Hash::String32(name, length))
 #if defined(XR_DEBUG)
   ,
   m_debugValue(name, length)

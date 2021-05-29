@@ -12,7 +12,7 @@
 #include "xr/FileWriter.hpp"
 #include "xr/threading/Worker.hpp"
 #include "xr/memory/ScopeGuard.hpp"
-#include "xr/Hash.hpp"
+#include "xr/utility/Hash.hpp"
 #include <map>
 
 #ifdef ENABLE_ASSET_BUILDING
