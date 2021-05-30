@@ -48,15 +48,15 @@ template <typename Type>
 struct  QueueIterator: public std::forward_iterator_tag
 {
   // types
-  typedef QueueNode<Type>           NodeType;
-  typedef QueueIterator<Type>       SelfType;
+  using NodeType = QueueNode<Type>;
+  using SelfType = QueueIterator<Type>;
 
-  typedef Type                      value_type;
-  typedef Type*                     pointer;
-  typedef Type&                     reference;
+  using value_type = Type;
+  using pointer = Type*;
+  using reference = Type&;
 
-  typedef ptrdiff_t                 difference_type;
-  typedef std::forward_iterator_tag iterator_category;
+  using difference_type = ptrdiff_t;
+  using iterator_category = std::forward_iterator_tag;
 
   // structors
   QueueIterator();
@@ -74,7 +74,7 @@ struct  QueueIterator: public std::forward_iterator_tag
   bool  operator !=(const SelfType& rhs) const;
 
   // data
-  NodeType  *node;
+  NodeType* node;
 };
 
 //==============================================================================
@@ -82,16 +82,16 @@ template <typename Type>
 struct  QueueConstIterator: public std::forward_iterator_tag
 {
   // types
-  typedef const QueueNode<Type>     NodeType;
-  typedef QueueIterator<Type>       IteratorType;
-  typedef QueueConstIterator<Type>  SelfType;
+  using NodeType = const QueueNode<Type>;
+  using IteratorType = QueueIterator<Type>;
+  using SelfType = QueueConstIterator<Type>;
 
-  typedef Type                      value_type;
-  typedef const Type*               pointer;
-  typedef const Type&               reference;
+  using value_type = Type;
+  using pointer = const Type*;
+  using reference = const Type&;
 
-  typedef ptrdiff_t                 difference_type;
-  typedef std::forward_iterator_tag iterator_category;
+  using difference_type = ptrdiff_t;
+  using iterator_category = std::forward_iterator_tag;
 
   // structors
   QueueConstIterator();
@@ -110,7 +110,7 @@ struct  QueueConstIterator: public std::forward_iterator_tag
   bool  operator !=(const SelfType& rhs) const;
 
   // data
-  NodeType  *node;
+  NodeType* node;
 };
 
 } // QueueImpl
@@ -127,25 +127,23 @@ class  Queue
 {
 public:
   // types
-  typedef Type  value_type;
+  using value_type = Type;
 
-  typedef detail::QueueIterator<value_type>       iterator;
-  typedef detail::QueueConstIterator<value_type>  const_iterator;
+  using iterator = detail::QueueIterator<value_type>;
+  using const_iterator = detail::QueueConstIterator<value_type>;
 
-  typedef AllocType                             allocator;
+  using allocator = AllocType;
 
-  typedef size_t                                size_type;
-  typedef ptrdiff_t                             difference_type;
+  using size_type = size_t;
+  using difference_type = ptrdiff_t;
 
-  typedef typename allocator::reference         reference;
-  typedef typename allocator::const_reference   const_reference;
-  typedef typename allocator::pointer           pointer;
-  typedef typename allocator::const_pointer     const_pointer;
+  using allocator_traits = std::allocator_traits<allocator>;
 
-  typedef Queue<value_type, AllocType>          SelfType;
-  typedef detail::QueueNode<value_type>         NodeType;
+  using SelfType = Queue<value_type, AllocType>;
+  using NodeType = detail::QueueNode<value_type>;
 
-  typedef typename AllocType::template rebind<NodeType>::other NodeAllocType;
+  using NodeAllocType = typename allocator_traits::template rebind_alloc<NodeType>;
+  using NodeAllocTraits = std::allocator_traits<NodeAllocType>;
 
   // structors
   Queue(allocator a = allocator());
@@ -217,13 +215,13 @@ public:
 
 protected:
   // internal use
-  void  _adopt(SelfType& rhs);
+  void  Adopt(SelfType& rhs);
 
   // data
   NodeAllocType  m_allocator;
 
-  NodeType  *m_head;
-  NodeType  *m_tail;
+  NodeType* m_head;
+  NodeType* m_tail;
 };
 
 //==============================================================================
@@ -461,7 +459,7 @@ inline
 size_t  Queue<Type, AllocType>::size() const
 {
   size_t  count = 0;
-  const NodeType  *p = m_head;
+  const NodeType* p = m_head;
   while (p != nullptr)
   {
     p = static_cast<const NodeType*> (p->next);
@@ -525,8 +523,8 @@ template  <typename Type, class AllocType>
 inline
 void  Queue<Type, AllocType>::push_back(value_type d)
 {
-  NodeType  *node = m_allocator.allocate(1);
-  m_allocator.construct(node, NodeType(d));
+  NodeType* node = NodeAllocTraits::allocate(m_allocator, 1);
+  NodeAllocTraits::construct(m_allocator, node, NodeType(d));
 
   if (empty())
   {
@@ -546,22 +544,22 @@ inline
 void  Queue<Type, AllocType>::pop_front()
 {
   XR_ASSERT(Queue, !empty());
-  NodeType  *deletee = m_head;
+  NodeType* deletee = m_head;
   m_head = static_cast<NodeType*>(m_head->next);
-  m_allocator.destroy(deletee);
-  m_allocator.deallocate(deletee, 1);
+  NodeAllocTraits::destroy(m_allocator, deletee);
+  NodeAllocTraits::deallocate(m_allocator, deletee, 1);
 }
 
 //==============================================================================
 template  <typename Type, class AllocType>
 void  Queue<Type, AllocType>::clear()
 {
-  NodeType  *head = m_head;
+  NodeType* head = m_head;
   while (head != nullptr)
   {
-    NodeType  *temp(static_cast<NodeType*>(head->next));
-    m_allocator.destroy(head);
-    m_allocator.deallocate(head, 1);
+    NodeType* temp(static_cast<NodeType*>(head->next));
+    NodeAllocTraits::destroy(m_allocator, head);
+    NodeAllocTraits::deallocate(m_allocator, head, 1);
     head = temp;
   }
   m_head = head;
@@ -575,19 +573,19 @@ void  Queue<Type, AllocType>::adopt(SelfType& rhs)
   SelfType  temp(m_allocator);
   std::swap(rhs, temp);
 
-  _adopt(temp);
+  Adopt(temp);
 }
 
 //==============================================================================
 template  <typename Type, class AllocType>
 void  Queue<Type, AllocType>::adopt(SelfType& rhs, iterator end)
 {
-  const NodeType * const   last = end.node;
+  const NodeType* const last = end.node;
 
   if (!(rhs.empty() || rhs.m_head == end.node))
   {
     SelfType  temp(m_allocator);
-    NodeType  *node = rhs.m_head;
+    NodeType* node = rhs.m_head;
     temp.m_head = node;
 
     do
@@ -598,7 +596,7 @@ void  Queue<Type, AllocType>::adopt(SelfType& rhs, iterator end)
     while (node != last);
 
     rhs.m_head = node;
-    _adopt(temp);
+    Adopt(temp);
 
     m_tail->next = nullptr;
   }
@@ -658,7 +656,7 @@ typename Queue<Type, AllocType>::SelfType&  Queue<Type, AllocType>::operator=(Qu
 
 //==============================================================================
 template  <typename Type, class AllocType>
-void  Queue<Type, AllocType>::_adopt(SelfType& rhs)
+void  Queue<Type, AllocType>::Adopt(SelfType& rhs)
 {
   XR_ASSERT(Queue, &rhs != this);
 
