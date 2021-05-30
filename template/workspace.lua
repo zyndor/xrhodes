@@ -136,9 +136,15 @@ function do_workspace(workspace_name, start_project_name)
 	
 	filter{}
 
-	if is_vs() == false then
+	if is_vs() then
 		buildoptions {
-			"-std=c++14",
+			"/std:c++17",
+			"/WX",
+			--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.
+		}
+	else
+		buildoptions {
+			"-std=c++17",
 			"-Wall",
 			"-Werror",
 			"-fvisibility-ms-compat",
@@ -151,15 +157,14 @@ function do_workspace(workspace_name, start_project_name)
 	if target_env == "windows" then
 		if is_vs() then
 			flags { "MultiProcessorCompile" }
-			
-			buildoptions {
-				"/WX",
-				--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.
-			}
 		end
 
 		system("windows")
 		systemversion "8.1"
+		defines {
+			"WIN32_LEAN_AND_MEAN",
+			"NOMINMAX",
+		}
 
 		target_desktop = true
 	end
