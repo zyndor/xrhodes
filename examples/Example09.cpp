@@ -125,7 +125,6 @@ public:
     verts->pos = Vector3(mRect.x + mRect.w, mRect.y, 0.f);
     verts->uv0 = Vector2(1.f, 1.f);
     ScratchBuffer::Finish(Primitive::TriangleStrip);
-    ScratchBuffer::Flush();
   }
 };
 

@@ -117,10 +117,6 @@ public:
       sprite.CopyPositionsTo(vertices);
       sprite.CopyUVsTo(vertices);
       ScratchBuffer::Finish(Primitive::TriangleStrip);
-
-      // Reuse scratch buffer. NOTE: Flush is automatically called when Gfx is
-      // Flush()ed or Presented().
-      ScratchBuffer::Flush();
     }
 
     Gfx::Present();
