@@ -17,7 +17,7 @@ namespace xr
 //==============================================================================
 ///@brief Immutable string type which stores the size of the string, and offers
 /// range based for support which ignores terminating null.
-struct Stick
+struct [[deprecated("Use std::string_view.")]] Stick
 {
   // types
   using SizeType = uint32_t;
