@@ -28,7 +28,7 @@ namespace xr
 ///@return A pointer to the root object of the XON document, or nullptr if the
 /// parse has failed.
 ///@note Transfers ownership of the XonObject (and its children).
-XonObject* XonBuildTree(char const* string, size_t length,
+[[nodiscard]] XonObject* XonBuildTree(char const* string, size_t length,
   XonParser::State* outState = nullptr);
 
 } // xr

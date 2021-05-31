@@ -78,7 +78,7 @@ public:
   /// apply) and return a handle to it. See the class docs about the application
   /// of RAM and ROM paths.
   ///@return Handle to the file opened, nullptr if couldn't be opened.
-  static Handle Open(FilePath const& path, const char* mode);
+  [[nodiscard]] static Handle Open(FilePath const& path, const char* mode);
 
   ///@return The size of the given file, in bytes.
   static size_t GetSize(Handle hFile);

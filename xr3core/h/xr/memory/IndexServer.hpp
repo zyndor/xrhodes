@@ -30,7 +30,7 @@ public:
   // general
   ///@return A valid index. (This will either be unused or has been Release()d.
   ///@note Throws std::bad_alloc if the capacity of the server has been exceeded.
-  size_t  Acquire();
+  [[nodiscard]] size_t  Acquire();
 
   ///@brief Returns the given index to the pool.
   ///@note Throws std::logic_error if the index has already been released.

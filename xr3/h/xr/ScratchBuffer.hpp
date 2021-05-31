@@ -38,43 +38,43 @@ public:
 
   using Position2d= Vertex::Format<Vertex::Pos<Vector2>>;
   ///@brief Starts a scratch with a vertex format composed of 2d position only.
-  static Position2d* Start2d(uint32_t numVertices);
+  [[nodiscard]] static Position2d* Start2d(uint32_t numVertices);
 
   using Position3d= Vertex::Format<Vertex::Pos<Vector3>>;
   ///@brief Starts a scratch with a vertex format composed of 3d position only.
-  static Position3d* Start3d(uint32_t numVertices);
+  [[nodiscard]] static Position3d* Start3d(uint32_t numVertices);
 
   using Position2dUv= Vertex::Format<Position2d, Vertex::UV0<Vector2>>;
   ///@brief Starts a scratch with a vertex format composed of 2d position and UVs.
-  static Position2dUv* Start2dUv(uint32_t numVertices);
+  [[nodiscard]] static Position2dUv* Start2dUv(uint32_t numVertices);
 
   using Position3dUv= Vertex::Format<Position3d, Vertex::UV0<Vector2>>;
   ///@brief Starts a scratch with a vertex format composed of 3d position and UVs.
-  static Position3dUv* Start3dUv(uint32_t numVertices);
+  [[nodiscard]] static Position3dUv* Start3dUv(uint32_t numVertices);
 
   using Position2dUvColor= Vertex::Format<Vertex::Color0<Color>, Position2dUv>;
   ///@brief Starts a scratch with a vertex format composed of 2d position, UVs
   /// and color.
-  static Position2dUvColor* Start2dUvColor(uint32_t numVertices);
+  [[nodiscard]] static Position2dUvColor* Start2dUvColor(uint32_t numVertices);
 
   using Position3dUvColor= Vertex::Format<Vertex::Color0<Color>, Position3dUv>;
   ///@brief Starts a scratch with a vertex format composed of 3d position, UVs
   /// and color.
-  static Position3dUvColor* Start3dUvColor(uint32_t numVertices);
+  [[nodiscard]] static Position3dUvColor* Start3dUvColor(uint32_t numVertices);
 
   using Position2dColor= Vertex::Format<Vertex::Color0<Color>, Position2d>;
   ///@brief Starts a scratch with a vertex format composed of 2d position and color.
-  static Position2dColor* Start2dColor(uint32_t numVertices);
+  [[nodiscard]] static Position2dColor* Start2dColor(uint32_t numVertices);
 
   using Position3dColor= Vertex::Format<Vertex::Color0<Color>, Position3d>;
   ///@brief Starts a scratch with a vertex format composed of 3d position and color.
-  static Position3dColor* Start3dColor(uint32_t numVertices);
+  [[nodiscard]] static Position3dColor* Start3dColor(uint32_t numVertices);
 
   ///@brief Allocates memory for @a count 16-bit indices from the pool.
   ///@note Does not transfer ownership.
   ///@note A subsequent Bake() or Finish() call invalidates this memory.
   ///@note Overrides any previously specified index buffer.
-  static uint16_t* AllocateIndices(uint32_t count);
+  [[nodiscard]] static uint16_t* AllocateIndices(uint32_t count);
 
   ///@brief Provides pre-calculated indices to use for the next draw call.
   ///@note Does not transfer ownership.
@@ -89,7 +89,7 @@ public:
   ///@note Invalidates the buffers, i.e. client code must not call Finish().
   ///@note The vertex / index count is whatever was supplied to the Start and
   /// Allocate- or UseIndices() methods prior to Bake().
-  static Handles Bake();
+  [[nodiscard]] static Handles Bake();
 
   ///@brief Renders and consumes the scratch buffer data.
   static void Finish(Primitive primitive);

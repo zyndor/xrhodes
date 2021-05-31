@@ -577,7 +577,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 \
   static TypeId const kTypeId;\
   static VersionType const kVersion;\
-  static className* Create(HashType hash, FlagType flags) {\
+  [[nodiscard]] static className* Create(HashType hash, FlagType flags) {\
     return new className(DescriptorCore(kTypeId, hash), flags);\
   }\
 \

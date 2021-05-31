@@ -61,7 +61,7 @@ public:
   Entity*             LinkNextSibling(Entity* p);  // returns previous value
 
   // virtual
-  virtual Entity*     Clone() const =0;
+  [[nodiscard]] virtual Entity* Clone() const =0;
 
   virtual size_t      GetNumChildren() const =0;  // objects. arrays and values return 0
   virtual size_t      GetNumElements() const =0;  // arrays. objects and values return 0
@@ -105,7 +105,7 @@ public:
   void        SetValue(double d);
   void        SetValue(std::string const& str);
 
-  Value*      Clone() const override;
+  [[nodiscard]] Value*  Clone() const override;
 
   size_t      GetNumChildren() const override;  // objects. arrays and values return 0
   size_t      GetNumElements() const override;  // arrays. objects and values return 0
@@ -145,7 +145,7 @@ public:
   ~Object();
 
   // general
-  Object*     Clone() const override;
+  [[nodiscard]] Object* Clone() const override;
 
   size_t      GetNumChildren() const override;  // objects. arrays and values return 0
   size_t      GetNumElements() const override;  // arrays. objects and values return 0
@@ -214,7 +214,7 @@ public:
   ~Array();
 
   // general
-  Array*      Clone() const override;
+  [[nodiscard]] Array*  Clone() const override;
 
   size_t      GetNumChildren() const override;  // objects. arrays and values return 0
   size_t      GetNumElements() const override;  // arrays. objects and values return 0

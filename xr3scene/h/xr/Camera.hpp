@@ -28,7 +28,7 @@ public:
   Camera();
 
   // general
-  Camera* Clone() const override;
+  [[nodiscard]] Camera* Clone() const override;
 
   ///@brief Sets up perspective projection.
   ///@param verticalFov Vertical field of view in radians.

@@ -50,7 +50,8 @@ public:
 
   ///@brief Transfers ownership of the buffer.
   ///@note GetSize() beforehand; the size will be 0 afterwards.
-  uint8_t*  DisownData();
+  ///@note Destroy using delete[] once done.
+  [[nodiscard]] uint8_t*  DisownData();
 
   ///@brief Closes the File::Handle, if it was open.
   void  Close();

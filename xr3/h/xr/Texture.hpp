@@ -69,7 +69,7 @@ public:
   ///@brief Creates a Texture from the given @a handle. Only If the handle was
   /// valid, and is for a 2D texture, the ownership of it is transferred, to the
   /// Texture. The resulting Texture will be unmanaged.
-  static Texture::Ptr FromHandle(Gfx::TextureHandle handle);
+  [[nodiscard]] static Texture::Ptr FromHandle(Gfx::TextureHandle handle);
 
   // general
   ///@return The number of texels the texture has horizontally at the highest

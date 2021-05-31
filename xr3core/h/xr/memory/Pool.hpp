@@ -55,7 +55,7 @@ public:
   ///@brief Returns ownership of the buffer and resets the Pool.
   ///@note  No further allocations will be possible through the Pool until a
   /// new buffer is set with SetBuffer().
-  Byte* RegainBuffer();
+  [[nodiscard]] Byte* RegainBuffer();
 
   ///@brief Sets a buffer for the Pool. @a isAuto signifies ownership transfer
   /// of @a buffer to the pool. This memory will be delete[]d on destruction
@@ -68,7 +68,7 @@ public:
 
   ///@return  A @a size bytes chunk of memory, or 0 if there was not enough
   /// memory left in the pool.
-  void* Allocate(size_t numBytes);
+  [[nodiscard]] void* Allocate(size_t numBytes);
 
   ///@brief Returns the allocation pointer to the beginning of the frame,
   /// making its memory available to be allocated again.

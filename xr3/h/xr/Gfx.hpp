@@ -328,7 +328,7 @@ struct HandleCore : HandleCoreCore
   bool operator<(T const& rhs) const { return id < rhs.id; }
 };
 
-#define GFX_HANDLE_DECL(name) struct name: HandleCore<name> \
+#define GFX_HANDLE_DECL(name) struct [[nodiscard]] name: HandleCore<name> \
   { \
     name(uint16_t id_ = HandleCoreCore::INVALID_ID) \
     : HandleCore<name>(id_) \

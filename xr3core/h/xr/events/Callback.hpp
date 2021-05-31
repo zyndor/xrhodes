@@ -32,7 +32,7 @@ struct CallbackBase
   {}
 
   // virtual
-  virtual CallbackBase* Clone() const =0;
+  [[nodiscard]] virtual CallbackBase* Clone() const =0;
 
   // operators
   bool operator==(CallbackBase const& other) const
@@ -76,7 +76,7 @@ struct Callback: CallbackBase
   virtual ~Callback()
   {}
 
-  virtual SelfType* Clone() const =0;
+  [[nodiscard]] virtual SelfType* Clone() const =0;
   virtual Return Call(Args...) const =0;
 };
 
@@ -98,7 +98,7 @@ struct MemberCallback : Callback<Return, Args...>
     m_function{ fn }
   {}
 
-  SelfType* Clone() const override
+  [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(CallbackBase::GetObject<T>(), m_function);
   }
@@ -136,7 +136,7 @@ struct MemberCallback<T, void, Args...> : Callback<void, Args...>
     m_function{ fn }
   {}
 
-  SelfType* Clone() const override
+  [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(CallbackBase::GetObject<T>(), m_function);
   }
@@ -176,7 +176,7 @@ struct FunctionPtrCallback : Callback<Return, Args...>
     m_function{ fn }
   {}
 
-  SelfType* Clone() const override
+  [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(m_function, const_cast<void*>(CallbackBase::m_data));
   }
@@ -212,7 +212,7 @@ struct FunctionPtrCallback<void, Args...> : Callback<void, Args...>
     m_function{ fn }
   {}
 
-  SelfType* Clone() const override
+  [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(m_function, const_cast<void*>(CallbackBase::m_data));
   }

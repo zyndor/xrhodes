@@ -36,7 +36,7 @@ XM_TEST(IndexServer, Basics)
   XM_ASSERT_EQ(serv.GetNumAcquired(), 4); // increasing with each allocation.
 
   // until the capacity has depleted - should fail with an exception
-  XM_ASSERT_THROW(serv.Acquire(), std::bad_alloc);
+  XM_ASSERT_THROW(void(serv.Acquire()), std::bad_alloc);
 
   serv.Release(0);
   XM_ASSERT_EQ(serv.GetNumActive(), 4); // never decreasing
