@@ -19,7 +19,7 @@ namespace xr
 ///@brief StringProxy offers capability to reference a const char buffer
 /// without having to allocate memory and copy contents, until absolutely
 /// needed -- when the StringProxy object itself is copied.
-class StringProxy
+class [[deprecated("Use std::string_view.")]] StringProxy
 {
 public:
   // structors
@@ -76,13 +76,14 @@ public:
 
   StringProxy& operator=(StringProxy const& rhs)
   {
-    StringProxy temp(rhs);  // perform copy
-
-    Destroy();
-    m_data = temp.m_data;
-    m_isOwned = temp.m_isOwned;
-    temp.m_isOwned = false;
-
+    if (rhs.m_data != m_data)
+    {
+      Destroy();
+      if (rhs.m_data)
+      {
+        CopyInternal(rhs.m_data);
+      }
+    }
     return *this;
   }
 

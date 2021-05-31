@@ -39,7 +39,7 @@ AssertAction DefaultAssertHandler(char const* channel, char const* message)
 
 const size_t kMessageLength = 1024;
 
-std::set<StringProxy> s_disabledChannels;
+std::set<std::string_view> s_disabledChannels;
 
 TraceHandler s_traceHandler = DefaultTraceHandler;
 AssertHandler s_assertHandler = DefaultAssertHandler;
