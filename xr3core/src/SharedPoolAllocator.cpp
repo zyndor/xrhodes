@@ -12,12 +12,12 @@ namespace xr
 {
 
 //==============================================================================
-SharedPoolAllocatorCore::SharedPoolAllocatorCore(Pool* pool) throw()
+SharedPoolAllocatorCore::SharedPoolAllocatorCore(Pool* pool) noexcept
 : m_pool(pool)
 {}
 
 //==============================================================================
-SharedPoolAllocatorCore::~SharedPoolAllocatorCore() throw()
+SharedPoolAllocatorCore::~SharedPoolAllocatorCore() noexcept
 {}
 
 } // xr
