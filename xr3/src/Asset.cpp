@@ -47,8 +47,8 @@ public:
   {
     if (!alloc)
     {
-      static Mallocator mallocator;
-      alloc = &mallocator;
+      static GlobalNewAllocator allocator;
+      alloc = &allocator;
     }
 
     m_allocator = alloc;

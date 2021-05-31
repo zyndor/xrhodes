@@ -12,6 +12,7 @@
 #include "xr/debug.hpp"
 #include <stdint.h>
 #include <stdlib.h>
+#include <new>
 
 namespace xr
 {
@@ -55,6 +56,21 @@ public:
   virtual void Deallocate(void* buffer)
   {
     free(buffer);
+  }
+};
+
+//==============================================================================
+class GlobalNewAllocator : public Allocator
+{
+public:
+  void* Allocate(size_t numBytes) override
+  {
+    return ::operator new(numBytes, std::nothrow);
+  }
+
+  void Deallocate(void* buffer) override
+  {
+    ::operator delete(buffer);
   }
 };
 
