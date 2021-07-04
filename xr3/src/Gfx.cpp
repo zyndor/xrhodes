@@ -36,7 +36,7 @@ void(*sReleaseVertexBuffer)(VertexBufferHandle h) = nullptr;
 IndexBufferHandle(*sCreateIndexBuffer)(Buffer const& buffer, FlagType flags) = nullptr;
 void(*sReleaseIndexBuffer)(IndexBufferHandle h) = nullptr;
 
-InstanceDataBufferHandle(*sCreateInstanceDataBuffer)(Buffer const& buffer, uint16_t stride) = nullptr;
+InstanceDataBufferHandle(*sCreateInstanceDataBuffer)(Buffer const& buffer, InstanceDataStrideType stride) = nullptr;
 void(*sReleaseInstanceDataBuffer)(InstanceDataBufferHandle h) = nullptr;
 
 TextureHandle(*sCreateTexture)(TextureFormat format, uint16_t width,
@@ -348,7 +348,8 @@ void Release(IndexBufferHandle h)
 }
 
 //==============================================================================
-InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
+InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer,
+  InstanceDataStrideType stride)
 {
   return sCreateInstanceDataBuffer(buffer, stride);
 }

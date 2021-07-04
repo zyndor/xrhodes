@@ -30,7 +30,7 @@ class Context;
 ///@brief Upper limit on number of texture stages.
 enum : uint8_t { kMaxTextureStages = 8 };
 
-///@brief Upper limit on number of instance data buffers.
+///@brief Upper limit on number of instance data buffers (vec4 each).
 enum : uint8_t { kMaxInstanceData = 4 };
 
 //=============================================================================
@@ -239,6 +239,11 @@ private:
   uint16_t m_offset[uint8_t(Attribute::kCount)];
   uint16_t m_stride = 0;
 };
+
+//=============================================================================
+///@brief The type used for passing and encoding (in buffer flags), instance data
+/// stride, in bytes.
+using InstanceDataStrideType = uint8_t;
 
 //=============================================================================
 enum class TextureFormat
@@ -477,7 +482,7 @@ void Release(VertexBufferHandle h);
 
 ///@brief Creates an instance data buffer.
 InstanceDataBufferHandle  CreateInstanceDataBuffer(Buffer const& buffer,
-  uint16_t stride);
+  InstanceDataStrideType stride);
 
 ///@brief Signifies the end of ownership of an instance data buffer, destroying
 /// it if no other owners were left.

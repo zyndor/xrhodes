@@ -76,7 +76,7 @@ void S::Release(IndexBufferHandle h)
 }
 
 //=============================================================================
-InstanceDataBufferHandle S::CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
+InstanceDataBufferHandle S::CreateInstanceDataBuffer(Buffer const& buffer, InstanceDataStrideType stride)
 {
   auto& vbos = sResources->GetVbos();
   InstanceDataBufferHandle h{ static_cast<uint16_t>(vbos.server.Acquire()) };

@@ -32,21 +32,21 @@ struct Resource
 //=============================================================================
 struct VertexBufferObject : Resource
 {
-  static uint32_t EncodeInstanceDataStride(uint16_t stride)
+  static uint32_t EncodeInstanceDataStride(InstanceDataStrideType stride)
   {
     return F_BUFFER_INSTANCE_DATA |
-      (stride << (XR_BITSIZEOF(FlagType) - (1 + XR_BITSIZEOF(stride))));
+      (stride << (XR_BITSIZEOF(FlagType) - (1 + XR_BITSIZEOF(InstanceDataStrideType))));
   }
 
   VertexFormatHandle hFormat;
   FlagType flags = F_BUFFER_NONE;
   InternalEnum  target;
 
-  uint16_t DecodeInstanceDataStride() const
+  InstanceDataStrideType DecodeInstanceDataStride() const
   {
     XR_ASSERT(Gfx, CheckAllMaskBits(flags, F_BUFFER_INSTANCE_DATA));
-    return (flags & ~F_BUFFER_INSTANCE_DATA) >>
-      (XR_BITSIZEOF(FlagType) - (1 + XR_BITSIZEOF(uint16_t)));
+    return InstanceDataStrideType((flags & ~F_BUFFER_INSTANCE_DATA) >>
+      (XR_BITSIZEOF(FlagType) - (1 + XR_BITSIZEOF(InstanceDataStrideType))));
   }
 };
 

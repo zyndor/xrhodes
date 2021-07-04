@@ -738,10 +738,11 @@ void Core::Release(IndexBufferHandle h)
   ibos.server.Release(h.id);
 }
 
-void Core::CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride,
+void Core::CreateInstanceDataBuffer(Buffer const& buffer, InstanceDataStrideType stride,
   VertexBufferObject& idbo)
 {
   XR_ASSERT(Gfx, buffer.data);
+  XR_ASSERT(Gfx, stride <= kMaxInstanceData * sizeof(float) * 4);
   XR_ASSERTMSG(Gfx, (stride & 0xf) == 0,
     ("16x bytes required for stride, got: %d", stride));
 

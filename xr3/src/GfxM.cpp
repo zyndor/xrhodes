@@ -235,7 +235,7 @@ struct CreateIndexBufferMessage
 struct CreateInstanceDataBufferMessage
 {
   Buffer buffer;  // ownership
-  uint16_t stride;
+  InstanceDataStrideType stride;
   VertexBufferObject* idbo;
 };
 
@@ -869,7 +869,7 @@ void M::Release(IndexBufferHandle h)
 }
 
 //==============================================================================
-InstanceDataBufferHandle M::CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
+InstanceDataBufferHandle M::CreateInstanceDataBuffer(Buffer const& buffer, InstanceDataStrideType stride)
 {
   InstanceDataBufferHandle h;
   auto bufferCopy = CopyBuffer(buffer);

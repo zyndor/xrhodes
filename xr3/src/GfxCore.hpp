@@ -37,7 +37,8 @@ public:
     IndexBufferObject& ibo);
   static void Release(IndexBufferHandle h);
 
-  static void CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride, VertexBufferObject& idbo);
+  static void CreateInstanceDataBuffer(Buffer const& buffer, InstanceDataStrideType stride,
+    VertexBufferObject& idbo);
   static void Release(InstanceDataBufferHandle h);
 
   static void CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& texture);

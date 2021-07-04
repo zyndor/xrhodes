@@ -38,7 +38,7 @@ public: // static
   static void Release(IndexBufferHandle h);
 
   static InstanceDataBufferHandle CreateInstanceDataBuffer(Buffer const& buffer,
-    uint16_t stride);
+    InstanceDataStrideType stride);
   static void Release(InstanceDataBufferHandle h);
 
   static TextureHandle CreateTexture(TextureFormat format, uint16_t width,
