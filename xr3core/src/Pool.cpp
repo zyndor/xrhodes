@@ -20,7 +20,7 @@ void* Pool::Allocate(size_t size, void* userData)
 }
 
 //==============================================================================
-void  Pool::Deallocate(void* buffer, void* userData)
+void  Pool::Deallocate(void* /*buffer*/, void* /*userData*/)
 {
   // sweet nothings
 }
@@ -41,7 +41,6 @@ Pool::Pool(size_t size)
   m_next(m_buffer),
   m_end(m_buffer)
 {
-  XR_ASSERT(Pool, size >= 0);
   m_end += size;
 }
 
@@ -53,7 +52,6 @@ Pool::Pool(size_t size, bool isAuto, Byte* parBuffer)
   m_next(nullptr),
   m_end(nullptr)
 {
-  XR_ASSERT(Pool, size >= 0);
   SetBuffer(size, isAuto, parBuffer);
 }
 
@@ -85,7 +83,6 @@ void  Pool::SetBuffer(size_t size, bool isAuto, Byte* parBuffer)
     delete[] m_buffer;
   }
 
-  XR_ASSERT(Pool, size >= 0);
   if (parBuffer == nullptr && size > 0)
   {
     XR_ASSERT(Pool, isAuto);
@@ -103,7 +100,6 @@ void  Pool::SetBuffer(size_t size, bool isAuto, Byte* parBuffer)
 //==============================================================================
 void* Pool::Allocate(size_t numBytes)
 {
-  XR_ASSERT(Pool, numBytes >= 0);
   XR_ASSERT(Pool, m_buffer != nullptr);
 
   Byte  *next(m_next + numBytes);
