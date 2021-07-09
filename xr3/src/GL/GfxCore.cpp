@@ -33,10 +33,10 @@ namespace
 #define UINT_PTR_CAST(x) reinterpret_cast<void*>(static_cast<uintptr_t>(x))
 
 //=============================================================================
-const GLint kInvalidLoc = -1;
+constexpr GLint kInvalidLoc = -1;
 
 //=============================================================================
-const GLenum kAttachmentTypes[] =
+constexpr GLenum kAttachmentTypes[] =
 {
   GL_COLOR_ATTACHMENT0,
   GL_DEPTH_ATTACHMENT,
@@ -45,13 +45,13 @@ const GLenum kAttachmentTypes[] =
 };
 
 //=============================================================================
-const GLenum kShaderTypes[] = {
+constexpr GLenum kShaderTypes[] = {
   GL_VERTEX_SHADER,
   GL_FRAGMENT_SHADER,
 };
 
 //=============================================================================
-const GLenum kPrimitiveTypes[] =
+constexpr GLenum kPrimitiveTypes[] =
 {
   GL_POINTS,
   GL_LINES,
@@ -260,7 +260,7 @@ void BindFrameBuffer(FrameBufferObject const& fbo)
   XR_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, fbo.name));
 }
 
-void UpdateProgramUniforms(Program& program, size_t numUniforms, void const* const* uniformData)
+void UpdateProgramUniforms(Program& program, void const* const* uniformData, [[maybe_unused]] size_t numUniforms)
 {
   if (auto uniforms = program.uniforms)
   {
@@ -276,7 +276,7 @@ void UpdateProgramUniforms(Program& program, size_t numUniforms, void const* con
       uniforms->ReadHandle(type, arraySize, ignoreLoc, hUniform);
       uniforms->Read(loc);
 
-      XR_ASSERT(Gfx, numUniforms > hUniform.id);
+      XR_ASSERT(Gfx, hUniform.id < numUniforms);
       void const* value = uniformData[hUniform.id];
       switch (type)
       {
@@ -473,7 +473,7 @@ char const* GetGLSLTypeName(GLenum type)
 }
 #endif
 
-void InitExtensions(int minorMajorVersion)
+void InitExtensions(int /*minorMajorVersion*/)
 {
   auto bufferCmp = [](Buffer const& lhs, Buffer const& rhs) {
     return strncmp((char const*)lhs.data, (char const*)rhs.data,
@@ -492,7 +492,7 @@ void InitExtensions(int minorMajorVersion)
         ext += 3;
       }
       size_t span = strcspn(ext, " ");
-      extensions.insert({ span, (uint8_t const*)ext });
+      extensions.insert({ span, reinterpret_cast<uint8_t const*>(ext) });
 
       ext += span;
       if (*ext == ' ')
@@ -513,12 +513,12 @@ void InitExtensions(int minorMajorVersion)
 
     for (GLint index = 0; index < numExtensions; ++index)
     {
-      char const* ext = (char const*)glGetStringi(GL_EXTENSIONS, index);
-      if (strncmp(ext, "GL_", 3) == 0)
+      char const* extStr = reinterpret_cast<char const*>(glGetStringi(GL_EXTENSIONS, index));
+      if (strncmp(extStr, "GL_", 3) == 0)
       {
-        ext += 3;
+        extStr += 3;
       }
-      extensions.insert({ strlen(ext), (uint8_t const*)ext });
+      extensions.insert({ strlen(extStr), reinterpret_cast<uint8_t const*>(extStr) });
     }
   }
 
@@ -920,7 +920,7 @@ bool Core::CreateFrameBuffer(uint8_t textureCount, FrameBufferAttachment const* 
 
   fbo.numTextures = textureCount;
   GLenum colorAttachments[XR_ARRAY_SIZE(FrameBufferObject::hTextures)];
-  int numColorAttachments = 0;
+  uint8_t numColorAttachments = 0;
   auto& textures = sContext->mResources->GetTextures();
   for (uint8_t i = 0; i < textureCount; ++i)
   {
@@ -1136,7 +1136,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
     ResetProgramAttribBindings(program);
 
     program.numActiveAttribs = 0;
-    for (int i = 0; i < uint8_t(Attribute::kCount); ++i)
+    for (uint8_t i = 0; i < uint8_t(Attribute::kCount); ++i)
     {
       XR_GL_CALL(GLint loc = glGetAttribLocation(program.name, Const::kAttributeName[i]));
       if (loc != kInvalidLoc)
@@ -1161,7 +1161,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
         ++used;
       }
     }
-    program.instanceDataLoc[used] = kInvalidLoc;
+    program.instanceDataLoc[used] = InternalHandle(kInvalidLoc);
 
     // process uniforms
     auto& uniforms = sContext->mResources->GetUniforms();
@@ -1540,7 +1540,7 @@ void Core::Draw(VertexBufferHandle vbh, Primitive pt, uint32_t offset, uint32_t 
   ResetProgramAttribBindings(program);
   auto& uniforms = sContext->mResources->GetUniforms();
   auto uniformData = sContext->mResources->GetUniformData();
-  UpdateProgramUniforms(program, uniforms.server.GetNumActive(), uniformData);
+  UpdateProgramUniforms(program, uniformData, uniforms.server.GetNumActive());
 
   auto& vbos = sContext->mResources->GetVbos();
   VertexBufferObject const& vbo = vbos[vbh.id];
@@ -1571,7 +1571,7 @@ void Core::Draw(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive pt,
 
   auto& uniforms = sContext->mResources->GetUniforms();
   auto uniformData = sContext->mResources->GetUniformData();
-  UpdateProgramUniforms(program, uniforms.server.GetNumActive(), uniformData);
+  UpdateProgramUniforms(program, uniformData, uniforms.server.GetNumActive());
 
   auto& vbos = sContext->mResources->GetVbos();
   VertexBufferObject const& vbo = vbos[vbh.id];
@@ -1601,7 +1601,7 @@ void Core::Flush()
   XR_GL_CALL(glFlush());
 }
 
-void Core::Present(bool resetState)
+void Core::Present(bool /*resetState*/)
 {
   Flush();
   sContext->mContext->Swap();

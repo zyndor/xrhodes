@@ -249,8 +249,8 @@ struct CreateTextureMessage
 struct CreateFrameBufferWithPrivateTextureMessage
 {
   TextureFormat format;
-  uint32_t width;
-  uint32_t height;
+  uint16_t width;
+  uint16_t height;
   FlagType flags;
   FrameBufferObject* fbo;
 };
@@ -506,12 +506,12 @@ private: // internal
     CreateTextureMessage m;
     m.buffers = nullptr;
     m.numBuffers = 0;
-    Guard<CreateTextureMessage> guard(&m, [](CreateTextureMessage* m){
-      for (auto i = m->buffers, iEnd = i + m->numBuffers; i != iEnd; ++i)
+    Guard<CreateTextureMessage> guard(&m, [](CreateTextureMessage* mm){
+      for (auto i = mm->buffers, iEnd = i + mm->numBuffers; i != iEnd; ++i)
       {
         ReleaseBuffer(&i->data);
       }
-      free(m->buffers);
+      free(mm->buffers);
     });
 
     if (reader.Read(m))
@@ -612,8 +612,8 @@ private: // internal
   void SetScissor(BufferReader& reader)
   {
     Rect* rect = nullptr;
-    Guard<Rect*> guard(&rect, [](Rect** rect) {
-      free(*rect);
+    Guard<Rect*> guard(&rect, [](Rect** rect_) {
+      free(*rect_);
     });
     if (reader.Read(rect))
     {
@@ -721,8 +721,8 @@ private: // internal
   {
     ReadFrameBufferMessage m;
     m.onComplete = nullptr;
-    Guard<ReadFrameBufferMessage> guard(&m, [](ReadFrameBufferMessage* m) {
-      delete m->onComplete;
+    Guard<ReadFrameBufferMessage> guard(&m, [](ReadFrameBufferMessage* mm) {
+      delete mm->onComplete;
     });
 
     if (reader.Read(m))

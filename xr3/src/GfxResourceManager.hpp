@@ -26,7 +26,7 @@ using VertexFormatRef = Ref<VertexFormat>;
 //=============================================================================
 struct Resource
 {
-  InternalHandle name = -1;
+  InternalHandle name = InternalHandle(-1);
 };
 
 //=============================================================================

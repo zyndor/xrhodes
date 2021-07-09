@@ -340,15 +340,15 @@ struct HandleCore : HandleCoreCore
     {}  \
   };
 
-GFX_HANDLE_DECL(VertexFormatHandle);
-GFX_HANDLE_DECL(VertexBufferHandle);
-GFX_HANDLE_DECL(IndexBufferHandle);
-GFX_HANDLE_DECL(InstanceDataBufferHandle);
-GFX_HANDLE_DECL(TextureHandle);
-GFX_HANDLE_DECL(FrameBufferHandle);
-GFX_HANDLE_DECL(ShaderHandle);
-GFX_HANDLE_DECL(ProgramHandle);
-GFX_HANDLE_DECL(UniformHandle);
+GFX_HANDLE_DECL(VertexFormatHandle)
+GFX_HANDLE_DECL(VertexBufferHandle)
+GFX_HANDLE_DECL(IndexBufferHandle)
+GFX_HANDLE_DECL(InstanceDataBufferHandle)
+GFX_HANDLE_DECL(TextureHandle)
+GFX_HANDLE_DECL(FrameBufferHandle)
+GFX_HANDLE_DECL(ShaderHandle)
+GFX_HANDLE_DECL(ProgramHandle)
+GFX_HANDLE_DECL(UniformHandle)
 #undef GFX_HANDLE_DECL
 
 //=============================================================================
