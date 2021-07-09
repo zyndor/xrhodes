@@ -18,6 +18,12 @@ namespace xr
 char const Entity::kSeparator = '.';
 
 //==============================================================================
+bool Entity::ComponentSortPredicate(Component const * c, size_t typeId)
+{
+  return c->GetTypeId() < typeId;
+}
+
+//==============================================================================
 Entity::Entity(Entity* parent)
 : Entity(Name(), parent)
 {}
@@ -478,18 +484,14 @@ Component const* Entity::FindComponent(size_t typeId) const
 Entity::Components::iterator  Entity::FindComponentIterator(size_t typeId)
 {
   return std::lower_bound(m_components.begin(), m_components.end(), typeId,
-    [](Component* c, size_t typeId) {
-      return c->GetTypeId() < typeId;
-    });
+    ComponentSortPredicate);
 }
 
 //==============================================================================
 Entity::Components::const_iterator Entity::FindComponentIterator(size_t typeId) const
 {
   return std::lower_bound(m_components.begin(), m_components.end(), typeId,
-    [](Component* c, size_t typeId) {
-      return c->GetTypeId() < typeId;
-    });
+    ComponentSortPredicate);
 }
 
-} // XR
+}
