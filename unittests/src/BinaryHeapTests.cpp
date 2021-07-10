@@ -14,10 +14,10 @@ namespace
 {
 
 template <template <typename> class Comp>
-void TestHeap(xr::BinaryHeap<char, Comp>& heap)
+void TestHeap(xr::BinaryHeap<char, Comp<char>>& heap)
 {
   XM_ASSERT_TRUE(heap.IsEmpty());
-  XM_ASSERT_EQ(heap.Count(), 0);
+  XM_ASSERT_EQ(heap.Count(), size_t(0));
 
   size_t count = 0;
   for (char i : "Hello world and thanks for all the fish!<3(>3")
@@ -36,7 +36,7 @@ void TestHeap(xr::BinaryHeap<char, Comp>& heap)
 
 XM_TEST(BinaryHeap, MaxHeap)
 {
-  xr::BinaryHeap<char, std::less> heap;
+  xr::BinaryHeap<char, std::less<char>> heap;
   TestHeap(heap);
 
   size_t count = heap.Count();
@@ -57,7 +57,7 @@ XM_TEST(BinaryHeap, MaxHeap)
 
 XM_TEST(BinaryHeap, MinHeap)
 {
-  xr::BinaryHeap<char, std::greater> heap;
+  xr::BinaryHeap<char, std::greater<char>> heap;
   TestHeap(heap);
 
   size_t count = heap.Count();

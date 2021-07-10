@@ -14,6 +14,16 @@ namespace detail
 {
 
 //==============================================================================
+BinaryHeapCore::BinaryHeapCore(void* data, size_t capacity, size_t count)
+: mData{ data },
+  mCapacity{ capacity },
+  mCount{ count }
+{}
+
+//==============================================================================
+BinaryHeapCore::~BinaryHeapCore() = default;
+
+//==============================================================================
 size_t BinaryHeapCore::Capacity() const
 {
   return mCapacity;
