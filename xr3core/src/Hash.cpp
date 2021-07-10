@@ -63,10 +63,10 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
   const uint32_t m = 0x5bd1e995;
   const int r = 24;
 
-  uint32_t h1 = static_cast<uint32_t>(seed ^ len);
-  uint32_t h2 = static_cast<uint32_t>(seed >> 32);
+  auto h1 = static_cast<uint32_t>(seed ^ len);
+  auto h2 = static_cast<uint32_t>(seed >> 32);
 
-  const uint32_t * data = (const uint32_t *)key;
+  auto data = reinterpret_cast<const uint32_t *>(key);
 
   while(len >= 8)
   {
@@ -94,10 +94,15 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
 
   switch(len)
   {
-  case 3: h2 ^= uint32_t(byteOp(((unsigned char*)data)[2])) << 16;
-  case 2: h2 ^= uint32_t(byteOp(((unsigned char*)data)[1])) << 8;
-  case 1: h2 ^= uint32_t(byteOp(((unsigned char*)data)[0]));
-      h2 *= m;
+  case 3:
+    h2 ^= uint32_t(byteOp((reinterpret_cast<unsigned char const*>(data))[2])) << 16;
+    [[fallthrough]];
+  case 2:
+    h2 ^= uint32_t(byteOp((reinterpret_cast<unsigned char const*>(data))[1])) << 8;
+    [[fallthrough]];
+  case 1:
+    h2 ^= uint32_t(byteOp((reinterpret_cast<unsigned char const*>(data))[0]));
+    h2 *= m;
   };
 
   h1 ^= h2 >> 18; h1 *= m;
