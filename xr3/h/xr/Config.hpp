@@ -35,6 +35,6 @@ public:
   static int GetInt(char const* varName, int defaultValue);
 };
 
-};
+}
 
 #endif //XR_CONFIG_HPP
