@@ -44,21 +44,18 @@ public:
   Linked(T& obj);
   ~Linked();
 
-protected:
-  // data
-  T* data;
-
 private:
   // static
-  static Linked<T>* s_head;
+  static Linked<T>* sHead;
 
   // data
-  Linked<T>* m_prev;
-  Linked<T>* m_next;
+  T* mData;
+  Linked<T>* mPrev;
+  Linked<T>* mNext;
 };
 
 template <typename T>
-Linked<T>* Linked<T>::s_head = nullptr;
+Linked<T>* Linked<T>::sHead = nullptr;
 
 //==============================================================================
 // inline
@@ -66,11 +63,11 @@ Linked<T>* Linked<T>::s_head = nullptr;
 template <typename T>
 void Linked<T>::ForEach(std::function<void(T&)> fn)
 {
-  Linked<T>* p = s_head;
+  Linked<T>* p = sHead;
   while (p)
   {
-    auto pp = p->m_prev;
-    fn(*p->data);
+    auto pp = p->mPrev;
+    fn(*p->mData);
     p = pp;
   }
 }
@@ -80,11 +77,11 @@ template <typename T>
 template <typename... Args>
 void Linked<T>::ForEach(std::function<void(T&, Args...)> fn, Args... args)
 {
-  Linked<T>* p = s_head;
+  Linked<T>* p = sHead;
   while (p)
   {
-    auto pp = p->m_prev;
-    fn(*p->data, args...);
+    auto pp = p->mPrev;
+    fn(*p->mData, args...);
     p = pp;
   }
 }
@@ -94,11 +91,11 @@ template <typename T>
 template <typename... Args>
 void Linked<T>::ForEach(void(T::*method)(Args...), Args... args)
 {
-  Linked<T>* p = s_head;
+  Linked<T>* p = sHead;
   while (p)
   {
-    auto pp = p->m_prev;
-    (p->data->*method)(args...);
+    auto pp = p->mPrev;
+    (p->mData->*method)(args...);
     p = pp;
   }
 }
@@ -106,35 +103,35 @@ void Linked<T>::ForEach(void(T::*method)(Args...), Args... args)
 //==============================================================================
 template<typename T>
 Linked<T>::Linked(T & obj)
-: data(&obj),
-  m_prev(s_head),
-  m_next(nullptr)
+: mData(&obj),
+  mPrev(sHead),
+  mNext(nullptr)
 {
-  if (s_head)
+  if (sHead)
   {
-    s_head->m_next = this;
+    sHead->mNext = this;
   }
 
-  s_head = this;
+  sHead = this;
 }
 
 //==============================================================================
 template<typename T>
 Linked<T>::~Linked()
 {
-  if (this == s_head)
+  if (this == sHead)
   {
-    s_head = m_prev;
+    sHead = mPrev;
   }
 
-  if (m_prev)
+  if (mPrev)
   {
-    m_prev->m_next = m_next;
+    mPrev->mNext = mNext;
   }
 
-  if (m_next)
+  if (mNext)
   {
-    m_next->m_prev = m_prev;
+    mNext->mPrev = mPrev;
   }
 }
 
