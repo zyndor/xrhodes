@@ -25,7 +25,7 @@ protected:// data
   size_t m_size = 0;
 };
 
-};
+}
 
 //==============================================================================
 ///@brief Fixed capacity string class that doesn't allocate memory through its
@@ -45,6 +45,8 @@ public:
   HardString(const char* cs);
   HardString(const char* cs, size_t size);
   explicit HardString(int32_t n);
+
+  HardString(HardString<N> const& other) = default;
 
   // general
   bool            empty() const;
