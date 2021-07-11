@@ -129,13 +129,10 @@ XM_TEST(Entity, AddFindComponment)
   XM_ASSERT_EQ(e.AddComponent<TestComponent>(), nullptr);  // Already have this type - do nothing.
 }
 
-template <typename T, size_t N>
-void AssertEqualData(T(&d0)[N], T(&d1)[N])
+template <typename T>
+void AssertEqualData(T const& d0, T const& d1)
 {
-  for(size_t i = 0; i < N; ++i)
-  {
-    XM_ASSERT_EQ(d0[i], d1[i]);
-  }
+  XM_ASSERT_TRUE(std::equal(d0.begin(), d0.end(), d1.begin(), d1.end()));
 }
 
 XM_TEST(Entity, Clone)
@@ -151,9 +148,9 @@ XM_TEST(Entity, Clone)
   auto e2 = e.Clone(&e);
   XM_ASSERT_NE(e2, &e);
   XM_ASSERT_EQ(e2->GetName(), e.GetName());
-  AssertEqualData(e2->GetTranslation().data, e.GetTranslation().data);
-  AssertEqualData(e2->GetRotation().data, e.GetRotation().data);
-  AssertEqualData(e2->GetScale().data, e.GetScale().data);
+  AssertEqualData(e2->GetTranslation(), e.GetTranslation());
+  AssertEqualData(e2->GetRotation(), e.GetRotation());
+  AssertEqualData(e2->GetScale(), e.GetScale());
 
   XM_ASSERT_EQ(e.GetChildren().size(), 1);
   XM_ASSERT_EQ(e.GetFirstChild(), e2);

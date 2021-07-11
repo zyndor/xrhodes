@@ -258,7 +258,7 @@ public:
 
       auto lightDirInvShadowMapSize = Vector4::From(viewer.worldTransform.GetColumn(Vector3::Z),
         1.f / m_shadowMap->GetWidth());
-      Gfx::SetUniform(m_uLightDirection_InvShadowMapSize, lightDirInvShadowMapSize.data);
+      Gfx::SetUniform(m_uLightDirection_InvShadowMapSize, lightDirInvShadowMapSize.begin());
     }
   }
 

@@ -41,7 +41,7 @@ public:
     // Create uniforms required for IBL - maximum level of detail and rotation of environment.
     m_uMaxLod = Gfx::CreateUniform("uMaxLod", Gfx::UniformType::Vec4);
     Vector4 maxLod(6.f);
-    Gfx::SetUniform(m_uMaxLod, maxLod.data);
+    Gfx::SetUniform(m_uMaxLod, maxLod.begin());
 
     m_uEnvRotation = Gfx::CreateUniform("uEnvRotation", Gfx::UniformType::Vec4);
 
@@ -151,7 +151,7 @@ public:
     auto rotation = m_rotation;
     rotation.Conjugate();
     rotation *= q;
-    Gfx::SetUniform(m_uEnvRotation, rotation.data);
+    Gfx::SetUniform(m_uEnvRotation, rotation.begin());
 
     {
       XR_TRANSFORMS_SCOPED_MODEL(Matrix(m_rotation, Vector3::UnitZ() * -20.f));

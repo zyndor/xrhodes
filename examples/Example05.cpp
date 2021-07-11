@@ -110,7 +110,7 @@ public:
     else
     {
       Vector4 time(Timer::GetUST());
-      Gfx::SetUniform(m_uTime, time.data);
+      Gfx::SetUniform(m_uTime, time.begin());
 
       m_dragControl.Update();
 

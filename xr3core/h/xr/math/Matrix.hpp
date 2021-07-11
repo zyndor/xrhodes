@@ -60,36 +60,21 @@ public:
   }
 
   // data
-  union
-  {
-    // As individual components
-    struct
-    {
-      float  xx, xy, xz, // local x axis
-              yx, yy, yz, // local y axis
-              zx, zy, zz; // local z axis
-    };
-    // Linear transformation component as a 1D array
-    float  linear[kNumLinearComponents];
-    // Linear transformation component as a 2D array
-    float  linear2d[Vector3::kNumComponents][Vector3::kNumComponents];
-  };
+  float  linear[kNumLinearComponents];
   Vector3 t;
 
   // structors
   explicit Matrix(Vector3 const& t_ = Vector3::Zero())
-  : xx(1.0f), xy(.0f), xz(.0f),
-    yx(.0f), yy(1.0f), yz(.0f),
-    zx(.0f), zy(.0f), zz(1.0f),
-    t(t_)
+  : linear{ 1.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 1.f },
+    t{ t_ }
   {}
 
   explicit Matrix(const float linearXform[kNumLinearComponents],
     Vector3 const& t_ = Vector3::Zero())
-  : xx(linearXform[XX]), xy(linearXform[XY]), xz(linearXform[XZ]),
-    yx(linearXform[YX]), yy(linearXform[YY]), yz(linearXform[YZ]),
-    zx(linearXform[ZX]), zy(linearXform[ZY]), zz(linearXform[ZZ]),
-    t(t_)
+  : linear{ linearXform[XX], linearXform[XY], linearXform[XZ],
+      linearXform[YX], linearXform[YY], linearXform[YZ],
+      linearXform[ZX], linearXform[ZY], linearXform[ZZ] },
+    t{ t_ }
   {}
 
   Matrix(Matrix const& rhs, Vector3 const& t_)
@@ -97,6 +82,33 @@ public:
   {}
 
   // general
+  constexpr float& xx() { return linear[XX]; }
+  constexpr float xx() const { return linear[XX]; }
+
+  constexpr float& xy() { return linear[XY]; }
+  constexpr float xy() const { return linear[XY]; }
+
+  constexpr float& xz() { return linear[XZ]; }
+  constexpr float xz() const { return linear[XZ]; }
+
+  constexpr float& yx() { return linear[YX]; }
+  constexpr float yx() const { return linear[YX]; }
+
+  constexpr float& yy() { return linear[YY]; }
+  constexpr float yy() const { return linear[YY]; }
+
+  constexpr float& yz() { return linear[YZ]; }
+  constexpr float yz() const { return linear[YZ]; }
+
+  constexpr float& zx() { return linear[ZX]; }
+  constexpr float zx() const { return linear[ZX]; }
+
+  constexpr float& zy() { return linear[ZY]; }
+  constexpr float zy() const { return linear[ZY]; }
+
+  constexpr float& zz() { return linear[ZZ]; }
+  constexpr float zz() const { return linear[ZZ]; }
+
   ///@return Column @a i of the linear transformation part.
   Vector3 GetColumn(size_t i) const
   {
@@ -120,20 +132,20 @@ public:
   /// matrix not involved in creating the rotation shall be set to 0.
   void SetRotationX(float theta, bool resetLinear)
   {
-    xx = 1.f;
+    linear[XX] = 1.f;
     const float c = std::cos(theta);
-    yy = c;
-    zz = c;
+    linear[YY] = c;
+    linear[ZZ] = c;
     const float s = std::sin(theta);
-    zy = s;
-    yz = -s;
+    linear[ZY] = s;
+    linear[YZ] = -s;
 
     if (resetLinear)
     {
-      xy = 0.f;
-      xz = 0.f;
-      yx = 0.f;
-      zx = 0.f;
+      linear[XY] = 0.f;
+      linear[XZ] = 0.f;
+      linear[YX] = 0.f;
+      linear[ZX] = 0.f;
     }
   }
 
@@ -143,20 +155,20 @@ public:
   /// matrix not involved in creating the rotation shall be set to 0.
   void SetRotationY(float theta, bool resetLinear)
   {
-    yy = 1.f;
+    linear[YY] = 1.f;
     const float c = std::cos(theta);
-    zz = c;
-    xx = c;
+    linear[ZZ] = c;
+    linear[XX] = c;
     const float s = std::sin(theta);
-    zx = -s;
-    xz = s;
+    linear[XZ] = s;
+    linear[ZX] = -s;
 
     if (resetLinear)
     {
-      xy = 0.f;
-      yx = 0.f;
-      yz = 0.f;
-      zy = 0.f;
+      linear[XY] = 0.f;
+      linear[YX] = 0.f;
+      linear[YZ] = 0.f;
+      linear[ZY] = 0.f;
     }
   }
 
@@ -166,83 +178,83 @@ public:
   /// matrix not involved in creating the rotation shall be set to 0.
   void SetRotationZ(float theta, bool resetLinear)
   {
-    zz = 1.f;
+    linear[ZZ] = 1.f;
     const float c = std::cos(theta);
-    xx = c;
-    yy = c;
+    linear[XX] = c;
+    linear[YY] = c;
     const float s = std::sin(theta);
-    xy = -s;
-    yx = s;
+    linear[YX] = s;
+    linear[XY] = -s;
 
     if (resetLinear)
     {
-      xz = 0.f;
-      yz = 0.f;
-      zx = 0.f;
-      zy = 0.f;
+      linear[XZ] = 0.f;
+      linear[YZ] = 0.f;
+      linear[ZX] = 0.f;
+      linear[ZY] = 0.f;
     }
   }
 
   ///@brief Scales the x component of the linear transformation by the scalar @a s.
   void  ScaleX(float s)
   {
-    xx *= s;
-    xy *= s;
-    xz *= s;
+    linear[XX] *= s;
+    linear[XY] *= s;
+    linear[XZ] *= s;
   }
 
   ///@brief Scales the y component of the linear transformation by the scalar @a s.
   void  ScaleY(float s)
   {
-    yx *= s;
-    yy *= s;
-    yz *= s;
+    linear[YX] *= s;
+    linear[YY] *= s;
+    linear[YZ] *= s;
   }
 
   ///@brief Scales the z component of the linear transformation by the scalar @a s.
   void  ScaleZ(float s)
   {
-    zx *= s;
-    zy *= s;
-    zz *= s;
+    linear[ZX] *= s;
+    linear[ZY] *= s;
+    linear[ZZ] *= s;
   }
 
   ///@brief Scales the linear transformation part of this Matrix by the scalar @a s.
   void  ScaleLinear(float s)
   {
-    xx *= s;
-    xy *= s;
-    xz *= s;
-    yx *= s;
-    yy *= s;
-    yz *= s;
-    zx *= s;
-    zy *= s;
-    zz *= s;
+    linear[XX] *= s;
+    linear[XY] *= s;
+    linear[XZ] *= s;
+    linear[YX] *= s;
+    linear[YY] *= s;
+    linear[YZ] *= s;
+    linear[ZX] *= s;
+    linear[ZY] *= s;
+    linear[ZZ] *= s;
   }
 
   ///@return The scaling along the X axis.
   float GetXScaling() const
   {
-    return Vector3(linear2d[Vector3::X]).Magnitude();
+    return Vector3(linear + XX).Magnitude();
   }
 
   ///@return The scaling along the Y axis.
   float GetYScaling() const
   {
-    return Vector3(linear2d[Vector3::Y]).Magnitude();
+    return Vector3(linear + YX).Magnitude();
   }
 
   ///@return The scaling along the Z axis.
   float GetZScaling() const
   {
-    return Vector3(linear2d[Vector3::Z]).Magnitude();
+    return Vector3(linear + ZX).Magnitude();
   }
 
   ///@brief Copies the linear transformation part from the given array.
   void  CopyLinear(const float source[kNumLinearComponents])
   {
-    memcpy(linear, source, sizeof(linear));
+    std::copy(source, source + kNumLinearComponents, linear);
   }
 
   ///@brief Copies the linear transformation part of the given matrix.
@@ -292,9 +304,9 @@ public:
   ///@brief Rotates the vector by this matrix.
   Vector3  RotateVec(Vector3 const& v) const
   {
-    return Vector3(v.x * xx + v.y * yx + v.z * zx,
-      v.x * xy + v.y * yy + v.z * zy,
-      v.x * xz + v.y * yz + v.z * zz);
+    return Vector3(v.x * linear[XX] + v.y * linear[YX] + v.z * linear[ZX],
+      v.x * linear[XY] + v.y * linear[YY] + v.z * linear[ZY],
+      v.x * linear[XZ] + v.y * linear[YZ] + v.z * linear[ZZ]);
   }
 
   ///@brief Transforms the vector by this matrix.
@@ -323,9 +335,9 @@ public:
     vx.Normalise();
     Vector3  vy(vz.Cross(vx));  // local y axis
     vy.Normalise();
-    memcpy(linear + XX, vx.data, sizeof(vx));
-    memcpy(linear + YX, vy.data, sizeof(vy));
-    memcpy(linear + ZX, vz.data, sizeof(vz));
+    std::copy(vx.begin(), vx.end(), linear + XX);
+    std::copy(vy.begin(), vy.end(), linear + YX);
+    std::copy(vz.begin(), vz.end(), linear + ZX);
   }
 
   ///@brief Calculates a transformation looking from the translation part
@@ -407,7 +419,7 @@ public:
 {\
   xr::Matrix const& m = (matrix);\
   XR_TRACE(chnl, ("%s { %.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f\n\t%.3f, %.3f, %.3f } }",\
-    #matrix, m.xx, m.xy, m.xz, m.yx, m.yy, m.yz, m.zx, m.zy, m.zz));\
+    #matrix, m.xx(), m.xy(), m.xz(), m.yx(), m.yy(), m.yz(), m.zx(), m.zy(), m.zz()));\
 }\
 
 

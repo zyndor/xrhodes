@@ -351,10 +351,10 @@ public:
 
     // Set Bokeh uniform values
     Vector4 nearInvDepth(zNearMain, 1.f / (zFarMain - zNearMain));
-    Gfx::SetUniform(m_uNear_InvDepth, nearInvDepth.data);
+    Gfx::SetUniform(m_uNear_InvDepth, nearInvDepth.begin());
 
     Vector4 focalLengthAmountInvAspectRatio(0.333, 1.0);
-    Gfx::SetUniform(m_uFocalLength_Amount, focalLengthAmountInvAspectRatio.data);
+    Gfx::SetUniform(m_uFocalLength_Amount, focalLengthAmountInvAspectRatio.begin());
     Gfx::Flush();
 
     m_rotation = Quaternion::Identity();

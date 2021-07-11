@@ -28,14 +28,7 @@ public:
   }
 
   // data
-  union
-  {
-    struct
-    {
-      int16_t x, y;
-    };
-    int16_t data[2];
-  };
+  int16_t x, y;
 
   // structors
   constexpr SVector2()
@@ -47,9 +40,9 @@ public:
     y{ y_ }
   {}
 
-  explicit constexpr SVector2(int16_t const data_[2])
-  : x{ data_[0] },
-    y{ data_[1] }
+  explicit constexpr SVector2(int16_t const data[2])
+  : x{ data[0] },
+    y{ data[1] }
   {}
 
   // general
@@ -66,6 +59,27 @@ public:
   float Dot(const SVector2& rhs) const
   {
     return static_cast<float>(x * rhs.x + y * rhs.y);
+  }
+
+  // range based for support
+  int16_t* begin()
+  {
+    return &x;
+  }
+
+  int16_t* end()
+  {
+    return &x + 2;
+  }
+
+  int16_t const* begin() const
+  {
+    return &x;
+  }
+
+  int16_t const* end() const
+  {
+    return &x + 2;
   }
 
   // operators

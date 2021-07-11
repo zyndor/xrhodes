@@ -68,14 +68,7 @@ public:
   }
 
   // data
-  union
-  {
-    struct
-    {
-      float  x, y, z;
-    };
-    float  data[kNumComponents];
-  };
+  float  x, y, z;
 
   // structors
   constexpr Vector3()
@@ -175,7 +168,7 @@ public:
   ///@return The result of performing @a fn with each component and @a value.
   float ComponentWise(float(*fn)(float, float), float value) const
   {
-    for (auto f : data)
+    for (auto f : *this)
     {
       value = fn(value, f);
     }
@@ -186,10 +179,31 @@ public:
   /// the result to the component.
   void ComponentWise(float(*fn)(float))
   {
-    for (auto& f : data)
+    for (auto& f : *this)
     {
       f = fn(f);
     }
+  }
+
+  // range based for support
+  float* begin()
+  {
+    return &x;
+  }
+
+  float* end()
+  {
+    return &x + kNumComponents;
+  }
+
+  float const* begin() const
+  {
+    return &x;
+  }
+
+  float const* end() const
+  {
+    return &x + kNumComponents;
   }
 
   // operators
