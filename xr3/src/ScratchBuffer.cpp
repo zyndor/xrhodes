@@ -61,7 +61,7 @@ public:
   ScratchBuffer::Handles Bake()
   {
     XR_ASSERTMSG(ScratchBuffer, mVertices.data, ("No vertices allocated for drawing."));
-    ScratchBuffer::Handles result = { Gfx::CreateVertexBuffer(mFormat, mVertices) };
+    ScratchBuffer::Handles result{ Gfx::CreateVertexBuffer(mFormat, mVertices) };
     mVertices = { 0, nullptr };
     mFormat.Invalidate();
     if (mIndices.data)
@@ -95,10 +95,10 @@ private:
 
   Gfx::VertexFormatHandle mFormat;  // no ownership
   uint32_t mNumVertices = 0;
-  Buffer mVertices = { 0, nullptr };
+  Buffer mVertices{ 0, nullptr };
 
   uint32_t mNumIndices = 0;
-  Buffer mIndices = { 0, nullptr };
+  Buffer mIndices{ 0, nullptr };
 };
 
 ScratchBufferImpl*  sImpl = nullptr;
@@ -118,7 +118,7 @@ void ScratchBuffer::Init(size_t poolSize)
 }
 
 //==============================================================================
-void* ScratchBuffer::Allocate(size_t numBytes)
+void* ScratchBuffer::Allocate(size_t /*numBytes*/)
 {
   return nullptr;
 }

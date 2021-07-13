@@ -25,8 +25,8 @@ class ScratchBuffer
 public:
   struct Handles
   {
-    Gfx::VertexBufferHandle mVbo;
-    Gfx::IndexBufferHandle mIbo;
+    Gfx::VertexBufferHandle mVbo{};
+    Gfx::IndexBufferHandle mIbo{};
   };
 
   ///@brief Initializes the ScratchBuffer with @a poolSize bytes of memory and
