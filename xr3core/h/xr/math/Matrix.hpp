@@ -46,7 +46,7 @@ public:
 
   // static
   inline
-  static Matrix Identity()
+  constexpr static Matrix Identity()
   {
     return Matrix();
   }
@@ -64,12 +64,12 @@ public:
   Vector3 t;
 
   // structors
-  explicit Matrix(Vector3 const& t_ = Vector3::Zero())
+  constexpr explicit Matrix(Vector3 const& t_ = Vector3::Zero())
   : linear{ 1.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 1.f },
     t{ t_ }
   {}
 
-  explicit Matrix(const float linearXform[kNumLinearComponents],
+  constexpr explicit Matrix(const float linearXform[kNumLinearComponents],
     Vector3 const& t_ = Vector3::Zero())
   : linear{ linearXform[XX], linearXform[XY], linearXform[XZ],
       linearXform[YX], linearXform[YY], linearXform[YZ],
@@ -77,7 +77,7 @@ public:
     t{ t_ }
   {}
 
-  Matrix(Matrix const& rhs, Vector3 const& t_)
+  constexpr Matrix(Matrix const& rhs, Vector3 const& t_)
   : Matrix(rhs.linear, t_)
   {}
 
@@ -196,7 +196,7 @@ public:
   }
 
   ///@brief Scales the x component of the linear transformation by the scalar @a s.
-  void  ScaleX(float s)
+  constexpr void  ScaleX(float s)
   {
     linear[XX] *= s;
     linear[XY] *= s;
@@ -204,7 +204,7 @@ public:
   }
 
   ///@brief Scales the y component of the linear transformation by the scalar @a s.
-  void  ScaleY(float s)
+  constexpr void  ScaleY(float s)
   {
     linear[YX] *= s;
     linear[YY] *= s;
@@ -212,7 +212,7 @@ public:
   }
 
   ///@brief Scales the z component of the linear transformation by the scalar @a s.
-  void  ScaleZ(float s)
+  constexpr void  ScaleZ(float s)
   {
     linear[ZX] *= s;
     linear[ZY] *= s;
@@ -220,7 +220,7 @@ public:
   }
 
   ///@brief Scales the linear transformation part of this Matrix by the scalar @a s.
-  void  ScaleLinear(float s)
+  constexpr void  ScaleLinear(float s)
   {
     linear[XX] *= s;
     linear[XY] *= s;
