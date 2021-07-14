@@ -225,12 +225,12 @@ public:
     return m_zFar;
   }
 
-  ViewRayCaster GetViewRayCaster() const
+  ViewRayCaster GetViewRayCaster(float aspectRatio) const
   {
     Matrix viewer;
     GetViewerTransform(viewer);
 
-    return ViewRayCaster{ viewer, m_zNear, m_tanHalfVerticalFov };
+    return ViewRayCaster{ viewer, aspectRatio, m_zNear, m_tanHalfVerticalFov };
   }
 
 private:
@@ -372,7 +372,7 @@ void Transforms::Init()
 
   Updater().SetModel(Matrix::Identity()).
     SetViewerTransform(Matrix::Identity()).
-    SetPerspectiveProjection(M_PI * .25f, .1f, 100.0f);
+    SetPerspectiveProjection(kPi * .25f, .1f, 100.0f);
 }
 
 //==============================================================================
@@ -420,7 +420,13 @@ float Transforms::GetZFarClippingPlane()
 //==============================================================================
 ViewRayCaster Transforms::GetViewRayCaster()
 {
-  return s_impl->GetViewRayCaster();
+  return s_impl->GetViewRayCaster(Gfx::GetLogicalAspectRatio());
+}
+
+//==============================================================================
+ViewRayCaster Transforms::GetViewRayCaster(float aspectRatio)
+{
+  return s_impl->GetViewRayCaster(aspectRatio);
 }
 
 } // XR

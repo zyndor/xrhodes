@@ -150,8 +150,11 @@ public:
   ///@note As the name implies, it's only meaningful using a perspective projection.
   static float GetPerspectiveMultiple();
 
-  ///@brief Creates a ViewRayCaster with the current view and projection
-  /// settings.
+  ///@brief Creates a ViewRayCaster with the current view and projection settings,
+  /// and the given @a aspectRatio.
+  static ViewRayCaster GetViewRayCaster(float aspectRatio);
+
+  [[deprecated("Logical aspect ratio of the entire screen is used; provide aspect ratio of your viewport.")]]
   static ViewRayCaster GetViewRayCaster();
 };
 
