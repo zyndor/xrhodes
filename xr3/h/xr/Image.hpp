@@ -76,9 +76,9 @@ public:
   ///@return The result of the operation.
   bool Save(FilePath path, bool overwrite) const;
 
-  ///@brief Attemts to parse loaded image information into a file.
+  ///@brief Attemts to parse image information from a buffer.
   ///@note Currently PNG and TGA are the only supported formates.
-  bool Parse(uint8_t const* buffer, size_t size);
+  bool Parse(uint8_t const* data, size_t size);
 
   ///@brief Copies @a img, overwriting this image.
   void Copy(const Image& img);
@@ -102,8 +102,8 @@ private:
   std::vector<uint8_t> m_bytes;
 
   // internal
-  bool ParsePng(uint8_t const* buffer, size_t size);
-  bool ParseTga(uint8_t const* buffer, size_t size);
+  bool ParsePng(uint8_t const* data, size_t size);
+  bool ParseTga(uint8_t const* data, size_t size);
 
   bool WritePng(FileWriter& w) const;
   bool WriteTga(FileWriter& w) const;
