@@ -44,7 +44,7 @@ void Camera::SetPerspective(float verticalFovRadians, float aspectRatio,
   float zNear, float zFar)
 {
   XR_ASSERT(Camera, verticalFovRadians > .0f);
-  XR_ASSERT(Camera, verticalFovRadians < M_PI);
+  XR_ASSERT(Camera, verticalFovRadians < kPi);
   XR_ASSERT(Camera, aspectRatio > .0f);
   XR_ASSERT(Camera, zNear < zFar);
   m_isPerspective = true;
