@@ -189,7 +189,7 @@ Signal<void, Device::ScreenChangeData const&>& Device::ScreenChangeSignal()
 }
 
 //==============================================================================
-void  Device::YieldOS(int32_t ms)
+void  Device::YieldOS(int32_t /*ms*/)
 {
   XR_ASSERT(Device, !s_deviceImpl.isYielding);
   s_deviceImpl.isYielding = true;
