@@ -14,8 +14,16 @@
 #include "xr/math/SVector2.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/memory/Pool.hpp"
-#include "gl_core_4_5.h"
 #include "GfxContext.hpp"
+
+#if defined XR_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+#include "gl_core_4_5.cpp"
+#if defined XR_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif
 
 #include <set>
 #include <unordered_map>
@@ -476,13 +484,12 @@ char const* GetGLSLTypeName(GLenum type)
 void InitExtensions(int /*minorMajorVersion*/)
 {
   auto bufferCmp = [](Buffer const& lhs, Buffer const& rhs) {
-    return strncmp((char const*)lhs.data, (char const*)rhs.data,
-      std::max(lhs.size, rhs.size)) < 0;
+    return strncmp(lhs.As<char>(), rhs.As<char>(), std::max(lhs.size, rhs.size)) < 0;
   };
   std::set<Buffer, decltype(bufferCmp)> extensions(bufferCmp);
 
   // get extensions
-  char const* ext = (char const*)glGetString(GL_EXTENSIONS);
+  char const* ext = reinterpret_cast<char const*>(glGetString(GL_EXTENSIONS));
   XR_GL_IGNORE_ERROR;
   if (ext)
   {
@@ -526,7 +533,7 @@ void InitExtensions(int /*minorMajorVersion*/)
   for (auto& i : s_extensions)
   {
     i.supported = extensions.end() !=
-      extensions.find({ strlen(i.name), (uint8_t const*)i.name });
+      extensions.find({ strlen(i.name), reinterpret_cast<uint8_t const*>(i.name) });
   }
 }
 
