@@ -93,11 +93,11 @@ public:
   /// created with the given data.
   ///@note Must be called from the render thread.
   bool Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
-    Gfx::FlagType createFlags, uint32_t numBuffers, Buffer const* buffers);
+    Gfx::FlagType createFlags, uint8_t numBuffers, Buffer const* buffers);
 
   ///@brief Binds texture to its target, for the given texture @a stage.
   ///@note Must be called from the render thread.
-  void Bind(uint32_t stage) const;
+  void Bind(uint8_t stage) const;
 
 private:
   // data

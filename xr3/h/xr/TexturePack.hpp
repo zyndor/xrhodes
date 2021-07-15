@@ -20,6 +20,7 @@ namespace xr
 
 //==============================================================================
 ///@brief A texture atlas based on TexturePacker's Generic XML format.
+///@note DEPRECATED. Please use SpriteSheet instead.
 class TexturePack: public Asset, public IMaterialisable
 {
 public:

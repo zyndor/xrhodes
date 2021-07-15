@@ -17,7 +17,6 @@
 #endif
 
 #define LTRACE(format) XR_TRACE(ShaderComponent, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(ShaderComponent, condition, format)
 
 namespace xr
 {
@@ -55,7 +54,7 @@ public:
   }
 
   bool Build(char const* rawNameExt, Buffer buffer,
-    std::vector<FilePath>& dependencies, std::ostream& data) const override
+    std::vector<FilePath>& /*dependencies*/, std::ostream& data) const override
   {
     const auto definesBlock = [rawNameExt](){
       std::ostringstream stream;
@@ -148,34 +147,28 @@ bool ShaderComponent::OnLoaded(Buffer buffer)
   BufferReader reader(buffer);
 
   Gfx::ShaderType type;
-  bool success = reader.Read(type);
-  if (success)
-  {
-    auto sourceLen = reader.GetRemainingSize();
-    auto source = reader.ReadBytes(sourceLen);
-    success = source != nullptr;
-    if (success)
-    {
-#ifdef ENABLE_ASSET_BUILDING
-      if (!CheckAllMaskBits(GetFlags(), DryRunFlag))
-      {
-#endif
-      success = SetSourceInternal(type, { sourceLen, source });
-#ifdef ENABLE_ASSET_BUILDING
-      }
-#endif
-    }
-    else
-    {
-      LTRACE(("%s: failed to read source.", m_debugPath.c_str()));
-    }
-  }
-  else
+  if (!reader.Read(type))
   {
     LTRACE(("%s: failed to read type.", m_debugPath.c_str()));
+    return false;
   }
 
-  return success;
+  auto sourceLen = reader.GetRemainingSize();
+  auto source = reader.ReadBytes(sourceLen);
+  if (!source)
+  {
+    LTRACE(("%s: failed to read source.", m_debugPath.c_str()));
+    return false;
+  }
+
+#ifdef ENABLE_ASSET_BUILDING
+  if (CheckAllMaskBits(GetFlags(), DryRunFlag))
+  {
+    return true;
+  }
+#endif
+
+  return SetSourceInternal(type, { sourceLen, source });
 }
 
 //==============================================================================
@@ -191,23 +184,21 @@ void xr::ShaderComponent::OnUnload()
 bool ShaderComponent::SetSourceInternal(Gfx::ShaderType type, Buffer buffer)
 {
   auto handle = Gfx::CreateShader(type, buffer);
-  bool success = handle.IsValid();
-  if (success)
-  {
-    m_handle = handle;
-    m_type = type;
-
-    if (CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
-    {
-      m_data.assign(buffer.data, buffer.data + buffer.size);
-    }
-  }
-  else
+  if (!handle.IsValid())
   {
     LTRACE(("%s: Shader compilation has failed; see errors above.", m_debugPath.c_str()));
+    return false;
   }
 
-  return success;
+  m_handle = handle;
+  m_type = type;
+
+  if (CheckAllMaskBits(GetFlags(), KeepSourceDataFlag))
+  {
+    m_data.assign(buffer.data, buffer.data + buffer.size);
+  }
+
+  return true;
 }
 
 }

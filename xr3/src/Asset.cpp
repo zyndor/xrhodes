@@ -76,19 +76,21 @@ public:
   bool Manage(Asset::Ptr const& a)
   {
     auto const& desc = a->GetDescriptor();
-    bool success = desc.IsValid();
-    if (success)
+    if (!desc.IsValid())
     {
-      std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
-      auto iFind = m_assets.find(desc);
-      success = iFind == m_assets.end();
-      if (success)
-      {
-        m_assets.insert(iFind, { desc, a });
-        a->OverrideFlags(Asset::UnmanagedFlag, 0);
-      }
+      return false;
     }
-    return success;
+
+    std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
+    auto iFind = m_assets.find(desc);
+    if (iFind != m_assets.end())
+    {
+      return false;
+    }
+
+    m_assets.insert(iFind, { desc, a });
+    a->OverrideFlags(Asset::UnmanagedFlag, 0);
+    return true;
   }
 
   Asset::Ptr FindManaged(Asset::DescriptorCore const& desc)
@@ -107,13 +109,14 @@ public:
   {
     std::unique_lock<decltype(m_assetsLock)> lock(m_assetsLock);
     auto iFind = m_assets.find(a.GetDescriptor());
-    bool success = iFind != m_assets.end();
-    if (success)
+    if (iFind == m_assets.end())
     {
-      iFind->second->OverrideFlags(0, Asset::UnmanagedFlag);
-      m_assets.erase(iFind);
+      return false;
     }
-    return success;
+
+    iFind->second->OverrideFlags(0, Asset::UnmanagedFlag);
+    m_assets.erase(iFind);
+    return true;
   }
 
   void EnqueueJob(AssetLoadJob& lj)

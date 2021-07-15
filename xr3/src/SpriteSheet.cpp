@@ -18,7 +18,6 @@
 #endif
 
 #define LTRACE(format) XR_TRACE(SpriteSheet, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(SpriteSheet, condition, format)
 
 namespace xr
 {
@@ -77,203 +76,183 @@ XR_ASSET_BUILDER_BUILD_SIG(SpriteSheet)
   // load xml
   tinyxml2::XMLDocument doc;
   auto xmlError = doc.Parse(buffer.As<char const>(), buffer.size);
-  bool success = xmlError == tinyxml2::XML_SUCCESS;
-  LTRACEIF(!success, ("%s: failed to parse xml, code: %d", rawNameExt, xmlError));
+  if (xmlError != tinyxml2::XML_SUCCESS)
+  {
+    LTRACE(("%s: failed to parse xml, code: %d", rawNameExt, xmlError));
+    return false;
+  }
 
   tinyxml2::XMLElement* elem = doc.RootElement();
-  if (success)
+  if (!elem)
   {
-    success = elem != nullptr;
-    LTRACEIF(!success, ("%s: no root element found.", rawNameExt));
+    LTRACE(("%s: no root element found.", rawNameExt));
+    return false;
   }
 
   // Image path
-  const char* imagePath = nullptr;
-  if (success)
+  const char* imagePath = elem->Attribute(kTags[TAG_IMAGE_PATH]);
+  if (!imagePath)
   {
-    imagePath = elem->Attribute(kTags[TAG_IMAGE_PATH]);
-    success = imagePath != nullptr;
-    LTRACEIF(!success, ("%s: '%s' is a required attribute.", rawNameExt,
-      kTags[TAG_IMAGE_PATH]));
+    LTRACE(("%s: '%s' is a required attribute.", rawNameExt, kTags[TAG_IMAGE_PATH]));
+    return false;
   }
 
-  if (success)
+  size_t imagePathLen = strlen(imagePath);
+  XR_ASSERT(SpriteSheet, imagePathLen < std::numeric_limits<ImagePathLenType>::max());
+  if (!WriteRangeBinaryStream<ImagePathLenType>(imagePath, imagePath + imagePathLen, data))
   {
-    size_t imagePathLen = strlen(imagePath);
-    XR_ASSERT(SpriteSheet, imagePathLen < std::numeric_limits<ImagePathLenType>::max());
-    success = WriteRangeBinaryStream<ImagePathLenType>(imagePath,
-      imagePath + imagePathLen, data);
-    LTRACEIF(!success, ("%s: failed to write image path.", rawNameExt));
+    LTRACE(("%s: failed to write image path.", rawNameExt));
+    return false;
   }
 
   // Base texture size.
   int texWidth = 0;
-  if (success)
+  if (elem->QueryIntAttribute(kTags[TAG_WIDTH], &texWidth) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
   {
-    success = elem->QueryIntAttribute(kTags[TAG_WIDTH], &texWidth) !=
-      tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
-    LTRACEIF(!success, ("%s: invalid value for %s: %s", rawNameExt,
-      kTags[TAG_WIDTH], elem->Attribute(kTags[TAG_WIDTH])));
+    LTRACE(("%s: invalid value for %s: %s", rawNameExt, kTags[TAG_WIDTH], elem->Attribute(kTags[TAG_WIDTH])));
+    return false;
   }
 
   int texHeight = 0;
-  if (success)
+  if (elem->QueryIntAttribute(kTags[TAG_HEIGHT], &texHeight) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
   {
-    success = elem->QueryIntAttribute(kTags[TAG_HEIGHT], &texHeight) !=
-      tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
-    LTRACEIF(!success, ("%s: invalid value for %s: %s", rawNameExt,
-      kTags[TAG_HEIGHT], elem->Attribute(kTags[TAG_HEIGHT])));
+    LTRACE(("%s: invalid value for %s: %s", rawNameExt, kTags[TAG_HEIGHT], elem->Attribute(kTags[TAG_HEIGHT])));
+    return false;
   }
 
   // Number of Sprites.
   NumSpritesType numSprites = 0;
-  if (success)
+  auto counter = elem->FirstChildElement(kTags[TAG_SPRITE]);
+  while (counter)
   {
-    auto counter = elem->FirstChildElement(kTags[TAG_SPRITE]);
-    while (counter)
-    {
-      ++numSprites;
-      counter = counter->NextSiblingElement(kTags[TAG_SPRITE]);
-    }
+    ++numSprites;
+    counter = counter->NextSiblingElement(kTags[TAG_SPRITE]);
+  }
 
-    success = WriteBinaryStream(numSprites, data);
-    LTRACEIF(!success, ("%s: failed to write sprite count.", rawNameExt));
+  if (!WriteBinaryStream(numSprites, data))
+  {
+    LTRACE(("%s: failed to write sprite count.", rawNameExt));
+    return false;
   }
 
   // Sprite data
-  if (success)
+  SpriteSheet::SpriteVector sprites;
+  sprites.reserve(numSprites);
+
+  elem = elem->FirstChildElement(kTags[TAG_SPRITE]);
+
+  int x, y; // position of top left corner on sprite sheet
+  int w, h; // actual size on sprite sheet. This will inform the halfSize. Needs swapping if the sprite is rotated.
+  while (elem)
   {
-    SpriteSheet::SpriteVector sprites;
-    sprites.reserve(numSprites);
+    // Amount of translation padding left of and above sprite, or bottom and left, if sprite is rotated.
+    int xOffs = 0;
+    int yOffs = 0;
+    // Original width / height, if trimmed. Accounts for rotation. Includes all padding.
+    // For un-trimmed sprites, wOrig and hOrig are their w / h. If the sprite is rotated, we need to swap those.
+    int wOrig = 0;
+    int hOrig = 0;
 
-    elem = elem->FirstChildElement(kTags[TAG_SPRITE]);
+    // Get sprite attributes.
+    const char* spriteName = elem->Attribute(kTags[TAG_NAME]);
 
-    HardString<256> buffer;
-    int x, y; // position of top left corner on sprite sheet
-    int w, h; // actual size on sprite sheet. This will inform the halfSize. Needs swapping if the sprite is rotated.
-    while (success && elem)
+    if (!(spriteName &&
+      elem->QueryIntAttribute(kTags[TAG_W], &w) == tinyxml2::XML_SUCCESS &&
+      elem->QueryIntAttribute(kTags[TAG_H], &h) == tinyxml2::XML_SUCCESS &&
+      elem->QueryIntAttribute(kTags[TAG_X], &x) == tinyxml2::XML_SUCCESS &&
+      elem->QueryIntAttribute(kTags[TAG_Y], &y) == tinyxml2::XML_SUCCESS &&
+      elem->QueryIntAttribute(kTags[TAG_ORIGINAL_W], &wOrig) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+      elem->QueryIntAttribute(kTags[TAG_ORIGINAL_H], &hOrig) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+      elem->QueryIntAttribute(kTags[TAG_OFFSET_X], &xOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
+      elem->QueryIntAttribute(kTags[TAG_OFFSET_Y], &yOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE))
     {
-      // Amount of translation padding left of and above sprite, or bottom and left, if sprite is rotated.
-      int xOffs = 0;
-      int yOffs = 0;
-      // Original width / height, if trimmed. Accounts for rotation. Includes all padding.
-      // For un-trimmed sprites, wOrig and hOrig are their w / h. If the sprite is rotated, we need to swap those.
-      int wOrig = 0;
-      int hOrig = 0;
-
-      // Get sprite attributes.
-      const char* spriteName = elem->Attribute(kTags[TAG_NAME]);
-
-      success = spriteName != nullptr &&
-        elem->QueryIntAttribute(kTags[TAG_W], &w) == tinyxml2::XML_SUCCESS &&
-        elem->QueryIntAttribute(kTags[TAG_H], &h) == tinyxml2::XML_SUCCESS &&
-        elem->QueryIntAttribute(kTags[TAG_X], &x) == tinyxml2::XML_SUCCESS &&
-        elem->QueryIntAttribute(kTags[TAG_Y], &y) == tinyxml2::XML_SUCCESS &&
-        elem->QueryIntAttribute(kTags[TAG_ORIGINAL_W], &wOrig) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
-        elem->QueryIntAttribute(kTags[TAG_ORIGINAL_H], &hOrig) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
-        elem->QueryIntAttribute(kTags[TAG_OFFSET_X], &xOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE &&
-        elem->QueryIntAttribute(kTags[TAG_OFFSET_Y], &yOffs) != tinyxml2::XML_WRONG_ATTRIBUTE_TYPE;
-      LTRACEIF(!success, ("%s: definition of sprite %d missing a required element.",
-        rawNameExt, numSprites));
-
-      if (success)
-      {
-        auto spriteNameLen = strlen(spriteName);
-        success = spriteNameLen <= buffer.capacity();
-        XR_TRACEIF(TexturePath, !success,
-          ("%s: sprite name '%s' too long (%z too many characters)", rawNameExt,
-            spriteNameLen - buffer.capacity()));
-      }
-
-      if (success)
-      {
-        // Get name (of original image), strip extension.
-        buffer = spriteName;
-        char* pPeriod(buffer.rfind('.'));
-        if (pPeriod)
-        {
-          *pPeriod = '\0';
-          buffer.UpdateSize();
-        }
-
-        SpriteNameHashType hash = Hash::String32(buffer.c_str());
-        auto iSprite = std::lower_bound(sprites.begin(), sprites.end(), hash, SpriteSheet::Entry::Compare);
-        if (iSprite == sprites.end() || iSprite->mKey != hash)
-        {
-          iSprite = sprites.insert(iSprite, SpriteSheet::Entry{ hash, Sprite{} });
-        }
-
-        // Calculate UVs - convert from bitmap-space to texture-space (bottom-left based).
-        // TODO: consider support for non-openGL renderers where texture-space might be top-left based.
-        auto texHeightLessY = texHeight - y;
-        AABB  uvs =
-        {
-          float(x) / texWidth,
-          float(texHeightLessY) / texHeight,
-          float(x + w) / texWidth,
-          float(texHeightLessY - h) / texHeight,
-        };
-
-        // Get UV rotation attribute.
-        const char* rotationAttrib = elem->Attribute(kTags[TAG_ROTATED]);
-        const bool  isRotated = rotationAttrib != nullptr && strlen(rotationAttrib) > 0 &&
-          rotationAttrib[0] == 'y';
-
-        // Calculate UVs and vertex positions.
-        Sprite& sprite = iSprite->mSprite;
-        if (isRotated)
-        {
-          sprite.SetUVsRotatedProportional(uvs, texHeight, texWidth);
-        }
-        else
-        {
-          sprite.SetUVsProportional(uvs, texWidth, texHeight);
-        }
-
-        // Calculate offset for padding.
-        // If wOffs / hOffs isn't set, then use sprite width / height, depending on whether it's rotated.
-        if (wOrig == 0)
-        {
-          wOrig = isRotated ? h : w;
-        }
-
-        if (hOrig == 0)
-        {
-          hOrig = isRotated ? w : h;
-        }
-
-        // NOTE: y conversion (negation) applies since we're moving from bitmap space to model space.
-        // TODO: consider support for non-openGL renderers where model-space might have negative Y.
-        Vector2 offset;
-        if (isRotated)
-        {
-          std::swap(w, h);
-        }
-        offset.x = xOffs - (wOrig - w) * .5f;
-        offset.y = (hOrig - h) * .5f - yOffs;
-        sprite.AddOffset(offset.x, offset.y, true);
-
-        // Calculate halfSize.
-        sprite.SetHalfSize(wOrig * .5f, hOrig * .5f, false);
-
-        elem = elem->NextSiblingElement(kTags[TAG_SPRITE]);
-        ++numSprites;
-      }
+      LTRACE(("%s: definition of sprite %d missing a required element.", rawNameExt,
+        numSprites));
+      return false;
     }
 
-    if (success)
+    // Get name (of original image), strip extension.
+    auto spriteNameLen = strlen(spriteName);
+    if (auto period = strrchr(spriteName, '.'))
     {
-      for (auto& s : sprites)
-      {
-        // Write sprite
-        success = WriteBinaryStream(s, data);
-        LTRACEIF(!success, ("%s: failed to write sprite %d.", rawNameExt,
-          &s - sprites.data()));
-      }
+      spriteNameLen = period - spriteName;
+    }
+
+    SpriteNameHashType hash = Hash::String32(spriteName, spriteNameLen);
+    auto iSprite = std::lower_bound(sprites.begin(), sprites.end(), hash, SpriteSheet::Entry::Compare);
+    if (iSprite == sprites.end() || iSprite->mKey != hash)
+    {
+      iSprite = sprites.insert(iSprite, SpriteSheet::Entry{ hash, Sprite{} });
+    }
+
+    // Calculate UVs - convert from bitmap-space to texture-space (bottom-left based).
+    // TODO: consider support for non-openGL renderers where texture-space might be top-left based.
+    auto texHeightLessY = texHeight - y;
+    AABB  uvs =
+    {
+      float(x) / texWidth,
+      float(texHeightLessY) / texHeight,
+      float(x + w) / texWidth,
+      float(texHeightLessY - h) / texHeight,
+    };
+
+    // Get UV rotation attribute.
+    const char* rotationAttrib = elem->Attribute(kTags[TAG_ROTATED]);
+    const bool  isRotated = rotationAttrib != nullptr && strlen(rotationAttrib) > 0 &&
+      rotationAttrib[0] == 'y';
+
+    // Calculate UVs and vertex positions.
+    Sprite& sprite = iSprite->mSprite;
+    if (isRotated)
+    {
+      sprite.SetUVsRotatedProportional(uvs, texHeight, texWidth);
+    }
+    else
+    {
+      sprite.SetUVsProportional(uvs, texWidth, texHeight);
+    }
+
+    // Calculate offset for padding.
+    // If wOffs / hOffs isn't set, then use sprite width / height, depending on whether it's rotated.
+    if (wOrig == 0)
+    {
+      wOrig = isRotated ? h : w;
+    }
+
+    if (hOrig == 0)
+    {
+      hOrig = isRotated ? w : h;
+    }
+
+    // NOTE: y conversion (negation) applies since we're moving from bitmap space to model space.
+    // TODO: consider support for non-openGL renderers where model-space might have negative Y.
+    Vector2 offset;
+    if (isRotated)
+    {
+      std::swap(w, h);
+    }
+    offset.x = xOffs - (wOrig - w) * .5f;
+    offset.y = (hOrig - h) * .5f - yOffs;
+    sprite.AddOffset(offset.x, offset.y, true);
+
+    // Calculate halfSize.
+    sprite.SetHalfSize(wOrig * .5f, hOrig * .5f, false);
+
+    elem = elem->NextSiblingElement(kTags[TAG_SPRITE]);
+    ++numSprites;
+  }
+
+  for (auto& s : sprites)
+  {
+    // Write sprite
+    if (!WriteBinaryStream(s, data))
+    {
+      LTRACE(("%s: failed to write sprite %d.", rawNameExt, &s - sprites.data()));
+      return false;
     }
   }
 
-  return success;
+  return true;
 }
 
 } // nonamespace
@@ -313,7 +292,8 @@ bool SpriteSheet::OnLoaded(Buffer buffer)
   {
     if (!reader.Read(*i))
     {
-      LTRACE(("%s: failed to read sprite %d.", m_debugPath.c_str(), i));
+      LTRACE(("%s: failed to read sprite %d.", m_debugPath.c_str(),
+        std::distance(mSprites.begin(), i)));
       return false;
     }
     ++i;

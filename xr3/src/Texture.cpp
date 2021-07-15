@@ -21,7 +21,6 @@
 #endif
 
 #define LTRACE(format) XR_TRACE(Texture, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(Texture, condition, format)
 
 namespace xr
 {
@@ -63,16 +62,15 @@ bool SerializeTexture(TextureHeader const& header, Buffer const* buffers,
 #ifdef ENABLE_ASSET_BUILDING
 XR_ASSET_BUILDER_DECL(Texture)
 
-using FormatHandler = bool(*)(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data);
+using FormatHandler = bool(*)(const char* rawNameExt, Buffer buffer, std::ostream& data);
 
-const std::unordered_map<std::string, Gfx::FlagType> kFlags{
-  { "wrap", Gfx::F_TEXTURE_WRAP },
-  { "filterPoint", Gfx::F_TEXTURE_FILTER_POINT },
-  { "srgb", Gfx::F_TEXTURE_SRGB },
-  { "mipmapNearest", Gfx::F_TEXTURE_MIPMAP_NEAREST },
-  { "mipmap", Gfx::F_TEXTURE_MIPMAP },
-  { "cube", Gfx::F_TEXTURE_CUBE },
+const std::unordered_map<std::string, uint16_t> kFlags{
+  { "wrap", uint16_t(Gfx::F_TEXTURE_WRAP) },
+  { "filterPoint", uint16_t(Gfx::F_TEXTURE_FILTER_POINT) },
+  { "srgb", uint16_t(Gfx::F_TEXTURE_SRGB) },
+  { "mipmapNearest", uint16_t(Gfx::F_TEXTURE_MIPMAP_NEAREST) },
+  { "mipmap", uint16_t(Gfx::F_TEXTURE_MIPMAP) },
+  { "cube", uint16_t(Gfx::F_TEXTURE_CUBE) },
 };
 
 const std::unordered_map<std::string, size_t> kCubeFaces{
@@ -103,8 +101,7 @@ Gfx::FlagType ParseTextureOptions(char const* nameExt)
   return createFlags;
 }
 
-bool  ProcessImage(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data)
+bool  ProcessImage(const char* rawNameExt, Buffer buffer, std::ostream& data)
 {
   Gfx::FlagType createFlags = ParseTextureOptions(rawNameExt);
 
@@ -138,6 +135,9 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
   case 4:
     format = Gfx::TextureFormat::RGBA8;
     break;
+  default:
+    LTRACE(("%s: invalid bpp: %d.", rawNameExt, img.GetBytesPerPixel()));
+    return false;
   }
 
   TextureHeader header { format, static_cast<TextureSize>(img.GetWidth()),
@@ -151,8 +151,7 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
   return true;
 }
 
-bool ProcessKtx(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data)
+bool ProcessKtx(const char* rawNameExt, Buffer buffer, std::ostream& data)
 {
   Gfx::FlagType createFlags = ParseTextureOptions(rawNameExt);
 
@@ -181,7 +180,7 @@ bool ProcessKtx(const char* rawNameExt, Buffer buffer,
   return true;
 }
 
-uint32_t GetFlag(XonValue const& xonValue, const char* rawNameExt)
+uint16_t GetFlag(XonValue const& xonValue, const char* rawNameExt)
 {
   auto strValue = xonValue.GetString();
   auto iFind = kFlags.find(strValue);
@@ -217,8 +216,7 @@ uint32_t GetFlag(XonValue const& xonValue, const char* rawNameExt)
     flags: { wrap, nearest, mipmap }
   }
 */
-bool  ProcessTex(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data)
+bool  ProcessTex(const char* rawNameExt, Buffer buffer, std::ostream& data)
 {
   XonParser::State xonState;
   std::unique_ptr<XonObject> xonRoot(XonBuildTree(buffer.As<char const>(),
@@ -452,6 +450,9 @@ bool  ProcessTex(const char* rawNameExt, Buffer buffer,
   case 4:
     format = Gfx::TextureFormat::RGBA8;
     break;
+  default:
+    LTRACE(("%s: invalid bpp: %d.", rawNameExt, images[0].GetBytesPerPixel()));
+    return false;
   }
 
   TextureHeader header {
@@ -479,7 +480,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Texture)
   }(rawNameExt);
   auto iFind = kFormatHandlers.find(extension.c_str());
   XR_ASSERT(Texture, iFind != kFormatHandlers.end());
-  return iFind->second(rawNameExt, buffer, dependencies, data);
+  return iFind->second(rawNameExt, buffer, data);
 }
 #endif
 
@@ -560,7 +561,7 @@ bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
 
 //==============================================================================
 bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
-  Gfx::FlagType createFlags, uint32_t numBuffers, Buffer const* buffers)
+  Gfx::FlagType createFlags, uint8_t numBuffers, Buffer const* buffers)
 {
   OnUnload();
 
@@ -600,7 +601,7 @@ bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
 }
 
 //==============================================================================
-void Texture::Bind(uint32_t stage) const
+void Texture::Bind(uint8_t stage) const
 {
   Gfx::SetTexture(m_handle, stage);
 }
@@ -619,7 +620,8 @@ bool Texture::OnLoaded(Buffer buffer)
 
   if (header.numBuffers > kMaxBuffers)
   {
-    LTRACE(("%s: too many buffers."));
+    LTRACE(("%s: %d too many buffers. These are ignored.", header.numBuffers - kMaxBuffers));
+    header.numBuffers = kMaxBuffers;
   }
 
   std::vector<Buffer> pixelBuffers(header.numBuffers);
@@ -636,14 +638,14 @@ bool Texture::OnLoaded(Buffer buffer)
     b.size = size;
   }
 
-  uint32_t flags  = GetFlags();
+  Asset::FlagType flags = GetFlags();
 
 #ifdef ENABLE_ASSET_BUILDING
   if (!CheckAllMaskBits(flags, DryRunFlag))
   {
 #endif
   m_handle = Gfx::CreateTexture(header.format, header.width, header.height,
-    0, header.createFlags, pixelBuffers.data(), header.numBuffers);
+    0, header.createFlags, pixelBuffers.data(), uint8_t(header.numBuffers));
   if (!m_handle.IsValid())
   {
     LTRACE(("%s: failed to create texture.", m_debugPath.c_str()));

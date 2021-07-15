@@ -19,7 +19,6 @@
 #endif
 
 #define LTRACE(format) XR_TRACE(Material, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(Material, condition, format)
 
 namespace xr
 {
@@ -103,242 +102,231 @@ public:
   bool Build(char const* rawNameExt, Buffer buffer,
     std::vector<FilePath>& dependencies, std::ostream& data) const override
   {
-    XonParser::State state;
-    std::unique_ptr<XonObject> root(XonBuildTree(buffer.As<char const>(), buffer.size, &state));
-    bool success = root != nullptr;
-    LTRACEIF(!success,
-      ("%s: failed to parse XON somewhere around row %d, column %d.", rawNameExt,
-        state.row, state.column));
-    if (success)  // process state flags
+    XonParser::State parserState;
+    std::unique_ptr<XonObject> root(XonBuildTree(buffer.As<char const>(), buffer.size, &parserState));
+    if (!root)
     {
-      Gfx::FlagType stateFlags = Gfx::F_STATE_NONE;
-      if(auto state = root->TryGet("state"))
+      LTRACE(("%s: failed to parse XON somewhere around row %d, column %d.", rawNameExt,
+        parserState.row, parserState.column));
+      return false;
+    }
+
+    Gfx::FlagType stateFlags = Gfx::F_STATE_NONE;
+    if(auto state = root->TryGet("state"))
+    {
+      switch (state->GetType())
       {
-        switch (state->GetType())
+      case XonEntity::Type::Value:
         {
-        case XonEntity::Type::Value:
+          auto stateValue = state->ToValue().GetString();
+          if (!InterpretState(stateValue, stateFlags))
           {
-            auto stateValue = state->ToValue().GetString();
-            if (!InterpretState(stateValue, stateFlags))
-            {
-              LTRACE(("%s: Unsupported state: %s", rawNameExt, stateValue));
-            }
-          }
-          break;
-
-        case XonEntity::Type::Object:
-          {
-            auto& stateObject = state->ToObject();
-            for (size_t i = 0; i < stateObject.GetNumElements(); ++i)
-            {
-              auto& elem = stateObject[i];
-              if (elem.GetType() == XonEntity::Type::Value &&
-                !InterpretState(elem.ToValue().GetString(), stateFlags))
-              {
-                LTRACE(("%s: Unsupported state: %s.", rawNameExt, elem.ToValue().GetString()));
-              }
-            }
-          }
-          break;
-        }
-      }
-
-      if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_DEPTH_TEST))
-      {
-        // depth compare function -- doesn't have to exist, but if it does, it
-        // needs to be the correct format
-        try {
-          auto& xon = root->Get("depthFunc").ToValue();
-          Gfx::Comparison::Value depthFunc;
-          success = InterpretComparison(xon.GetString(), depthFunc);
-          if (success)
-          {
-            stateFlags |= Gfx::DepthFuncToState(depthFunc);
-          }
-          else
-          {
-            LTRACE(("%s: Unsupported depth function: %s.", rawNameExt,
-             xon.GetString()));
+            LTRACE(("%s: Unsupported state: %s", rawNameExt, stateValue));
           }
         }
-        catch (XonEntity::Exception const& e)
+        break;
+
+      case XonEntity::Type::Object:
         {
-          if (e.type == XonEntity::Exception::Type::InvalidType)
+          auto& stateObject = state->ToObject();
+          for (size_t i = 0; i < stateObject.GetNumElements(); ++i)
           {
-            success = false;
-            LTRACE(("%s: invalid depth function definition, error: %s", rawNameExt, e.what()));
-          }
-        }
-      }
-      else if (root->TryGet("depthFunc"))
-      {
-        LTRACE(("%s: ignoring depth function defined when depth testing is off.",
-          rawNameExt));
-      }
-
-      if (success && CheckAllMaskBits(stateFlags, Gfx::F_STATE_ALPHA_BLEND))
-      {
-        // blendFactors -- doesn't have to exist, but if it does, it has to be an
-        // object with specific value elements.
-        try {
-          auto& blendFactors = root->Get("blendFactors").ToObject();
-          XonEntity* xon[4] = {
-            blendFactors.TryGet(kBlendFactorKeys[0]),
-            blendFactors.TryGet(kBlendFactorKeys[1]),
-            blendFactors.TryGet(kBlendFactorKeys[2]),
-            blendFactors.TryGet(kBlendFactorKeys[3]),
-          };
-
-          Gfx::BlendFactor::Value values[4];
-          // Interpret color blend factors. These must exist.
-          for (int i = 0; success && i < 2; ++i)
-          {
-            success = xon[i] && InterpretBlendFactor(xon[i]->ToValue().GetString(), values[i]);
-            if (success)
+            auto& elem = stateObject[i];
+            if (elem.GetType() == XonEntity::Type::Value &&
+              !InterpretState(elem.ToValue().GetString(), stateFlags))
             {
-              values[i + 2] = values[i];  // default alpha blend factors to corresponding rgb blend factors.
-            }
-            else
-            {
-              LTRACE(("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i].c_str()));
+              LTRACE(("%s: Unsupported state: %s.", rawNameExt, elem.ToValue().GetString()));
             }
           }
-
-          // Interpret alpha blend factors. These are optional, but must be valid if specified.
-          for (int i = 2; success && i < 4; ++i)
-          {
-            if (xon[i])
-            {
-              if (auto stringValue = xon[i]->ToValue().GetString())
-              {
-                success = InterpretBlendFactor(stringValue, values[i]);
-                LTRACEIF(!success, ("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i].c_str()));
-              }
-            }
-          }
-
-          if (success)
-          {
-            stateFlags |= Gfx::BlendFactorToState(values[0], values[2], values[1], values[3]);
-          }
         }
-        catch (XonEntity::Exception const& e)
-        {
-          if (e.type == XonEntity::Exception::Type::InvalidType)
-          {
-            success = false;
-            LTRACE(("%s: invalid blend factors definition, error: %s", rawNameExt, e.what()));
-          }
-        }
-      }
-      else if(root->TryGet("blendFactors"))
-      {
-        LTRACE(("%s: ignoring blend factors defined for opaque material.",
-          rawNameExt));
-      }
-
-      if (success)
-      {
-        success = WriteBinaryStream(stateFlags, data);
-        LTRACEIF(!success, ("%s: failed to write state.", rawNameExt));
+        break;
       }
     }
 
-    if (success)  // process texture stages
+    if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_DEPTH_TEST))
     {
-      std::vector<SerializedTextureStage>  stages;
-
+      // depth compare function -- doesn't have to exist, but if it does, it
+      // needs to be the correct format
       try {
-        auto& textures = root->Get("textures");
-
-        FilePath path;
-        if (textures.GetType() == XonEntity::Type::Value)
+        auto& xon = root->Get("depthFunc").ToValue();
+        Gfx::Comparison::Value depthFunc;
+        if (InterpretComparison(xon.GetString(), depthFunc))
         {
-          // single texture for stage 0
-          path = textures.ToValue().GetString();
-          dependencies.push_back(path);
-
-          Asset::HashType hash = Asset::Manager::HashPath(path);
-          stages.push_back({ 0, hash });
+          stateFlags |= Gfx::DepthFuncToState(depthFunc);
         }
-        else // object
+        else
         {
-          auto& texturesObject = textures.ToObject();
-          stages.reserve(std::min(texturesObject.GetNumElements(),
-            static_cast<size_t>(Material::kMaxTextureStages)));
+          LTRACE(("%s: Unsupported depth function: %s.", rawNameExt, xon.GetString()));
+          return false;
+        }
+      }
+      catch (XonEntity::Exception const& e)
+      {
+        if (e.type == XonEntity::Exception::Type::InvalidType)
+        {
+          LTRACE(("%s: invalid depth function definition, error: %s", rawNameExt, e.what()));
+          return false;
+        }
+      }
+    }
+    else if (root->TryGet("depthFunc"))
+    {
+      LTRACE(("%s: ignoring depth function defined when depth testing is off.",
+        rawNameExt));
+    }
 
-          std::vector<std::string> kBlendFactorKeys;
-          static_cast<XonObject&>(textures).GetKeys(kBlendFactorKeys);
-          for (auto &key: kBlendFactorKeys)
+    if (CheckAllMaskBits(stateFlags, Gfx::F_STATE_ALPHA_BLEND))
+    {
+      // blendFactors -- doesn't have to exist, but if it does, it has to be an
+      // object with specific value elements.
+      try {
+        auto& blendFactors = root->Get("blendFactors").ToObject();
+        XonEntity* xon[4] = {
+          blendFactors.TryGet(kBlendFactorKeys[0]),
+          blendFactors.TryGet(kBlendFactorKeys[1]),
+          blendFactors.TryGet(kBlendFactorKeys[2]),
+          blendFactors.TryGet(kBlendFactorKeys[3]),
+        };
+
+        Gfx::BlendFactor::Value values[4];
+        // Interpret color blend factors. These must exist.
+        for (int i = 0; i < 2; ++i)
+        {
+          if (xon[i] && InterpretBlendFactor(xon[i]->ToValue().GetString(), values[i]))
           {
-            uint32_t stage; // avoid interpretation as character.
-            if (StringTo(key.c_str(), stage) &&
-              stage < Material::kMaxTextureStages)
-            {
-              try {
-                auto& texture = texturesObject.Get(key);
-                if(texture.GetType() == XonEntity::Type::Value)
-                {
-                  path = texture.ToValue().GetString();
-                  dependencies.push_back(path);
+            values[i + 2] = values[i];  // default alpha blend factors to corresponding rgb blend factors.
+          }
+          else
+          {
+            LTRACE(("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i].c_str()));
+            return false;
+          }
+        }
 
-                  Asset::HashType hash = Asset::Manager::HashPath(path);
-                  stages.push_back({ uint8_t(stage), hash });
-                }
-                else
-                {
-                  LTRACE(("%s: ignoring texture %d: path not a value.",
-                    rawNameExt, stage));
-                }
-              }
-              catch(XonEntity::Exception const&)
-              {
-                LTRACE(("FATAL: %s: key '%s' declared but not found.",
-                  rawNameExt, key.c_str()));
-                abort();
-              }
-            }
-            else
+        // Interpret alpha blend factors. These are optional, but must be valid if specified.
+        for (int i = 2; i < 4; ++i)
+        {
+          if (xon[i])
+          {
+            if (auto stringValue = xon[i]->ToValue().GetString(); !InterpretBlendFactor(stringValue, values[i]))
             {
-              LTRACE(("%s: ignoring texture stage '%s' as invalid.", rawNameExt,
-                key.c_str()));
+              LTRACE(("%s: failed to interpret %s blend factor.", rawNameExt, kBlendFactorKeys[i].c_str()));
+              return false;
             }
           }
         }
-      }
-      catch (XonEntity::Exception const&)
-      {} // ignore missing textures.
 
-      if (success)  // write out texture stages
-      {
-        success = WriteRangeBinaryStream<uint8_t>(stages.begin(), stages.end(),
-          data);
-        LTRACEIF(!success, ("%s: failed to write texture stages.", rawNameExt));
+        stateFlags |= Gfx::BlendFactorToState(values[0], values[2], values[1], values[3]);
       }
+      catch (XonEntity::Exception const& e)
+      {
+        if (e.type == XonEntity::Exception::Type::InvalidType)
+        {
+          LTRACE(("%s: invalid blend factors definition, error: %s", rawNameExt, e.what()));
+          return false;
+        }
+      }
+    }
+    else if(root->TryGet("blendFactors"))
+    {
+      LTRACE(("%s: ignoring blend factors defined for opaque material.", rawNameExt));
+    }
+
+    if (!WriteBinaryStream(stateFlags, data))
+    {
+      LTRACE(("%s: failed to write state.", rawNameExt));
+      return false;
+    }
+
+    // process texture stages
+    std::vector<SerializedTextureStage>  stages;
+    try {
+      auto& textures = root->Get("textures");
+
+      FilePath path;
+      if (textures.GetType() == XonEntity::Type::Value)
+      {
+        // single texture for stage 0
+        path = textures.ToValue().GetString();
+        dependencies.push_back(path);
+
+        Asset::HashType hash = Asset::Manager::HashPath(path);
+        stages.push_back({ 0, hash });
+      }
+      else // object
+      {
+        auto& texturesObject = textures.ToObject();
+        stages.reserve(std::min(texturesObject.GetNumElements(),
+          static_cast<size_t>(Material::kMaxTextureStages)));
+
+        std::vector<std::string> blendFactorKeys;
+        static_cast<XonObject&>(textures).GetKeys(blendFactorKeys);
+        for (auto &key: blendFactorKeys)
+        {
+          uint32_t stage; // avoid interpretation as character.
+          if (StringTo(key.c_str(), stage) &&
+            stage < Material::kMaxTextureStages)
+          {
+            try {
+              auto& texture = texturesObject.Get(key);
+              if(texture.GetType() == XonEntity::Type::Value)
+              {
+                path = texture.ToValue().GetString();
+                dependencies.push_back(path);
+
+                Asset::HashType hash = Asset::Manager::HashPath(path);
+                stages.push_back({ uint8_t(stage), hash });
+              }
+              else
+              {
+                LTRACE(("%s: ignoring texture %d: path not a value.", rawNameExt, stage));
+              }
+            }
+            catch(XonEntity::Exception const&)
+            {
+              LTRACE(("FATAL: %s: key '%s' declared but not found.", rawNameExt, key.c_str()));
+              abort();
+            }
+          }
+          else
+          {
+            LTRACE(("%s: ignoring texture stage '%s' as invalid.", rawNameExt, key.c_str()));
+          }
+        }
+      }
+    }
+    catch (XonEntity::Exception const&)
+    {} // ignore missing textures.
+
+    if (!WriteRangeBinaryStream<uint8_t>(stages.begin(), stages.end(), data))  // write out texture stages
+    {
+      LTRACE(("%s: failed to write texture stages.", rawNameExt));
+      return false;
     }
 
     // TODO: tints?
 
-    if (success)
-    {
-      // shader
-      try {
-        auto& shader = root->Get("shader").ToValue();
+    // shader
+    try {
+      auto& shader = root->Get("shader").ToValue();
 
-        FilePath path = shader.GetString();
-        dependencies.push_back(path);
+      FilePath path = shader.GetString();
+      dependencies.push_back(path);
 
-        auto hash = Asset::Manager::HashPath(path);
-        success = WriteBinaryStream(hash, data);
-        LTRACEIF(!success, ("%s: failed to write shader hash."));
-      }
-      catch (XonEntity::Exception const&)
+      auto hash = Asset::Manager::HashPath(path);
+      if (!WriteBinaryStream(hash, data))
       {
-        success = false;
-        LTRACE(("%s: missing or invalid %s definition.", rawNameExt, "shader"));
+        LTRACE(("%s: failed to write shader hash."));
+        return false;
       }
     }
-    return success;
+    catch (XonEntity::Exception const&)
+    {
+      LTRACE(("%s: missing or invalid %s definition.", rawNameExt, "shader"));
+      return false;
+    }
+
+    return true;
   }
 
 protected:
@@ -407,7 +395,7 @@ void  Material::SetTexture(int stage, Texture::Ptr const& texture)
 void Material::Apply() const
 {
   Gfx::SetState(m_stateFlags);
-  for (int i = 0; i < kMaxTextureStages; ++i)
+  for (uint8_t i = 0; i < kMaxTextureStages; ++i)
   {
     auto const& texture = m_textureStages[i];
     if (texture)
@@ -429,53 +417,53 @@ bool Material::OnLoaded(Buffer buffer)
   auto flags = GetFlags();
 
   BufferReader  reader(buffer);
-  bool success = reader.Read(m_stateFlags);
-  LTRACEIF(!success, ("%s: failed to read state flags.", m_debugPath.c_str()));
-
-  uint8_t numTextures = 0;
-  SerializedTextureStage const* textures = nullptr;
-  if (success)
+  if (!reader.Read(m_stateFlags))
   {
-    textures = reader.ReadElementsWithSize<SerializedTextureStage>(numTextures);
-    success = textures != nullptr;
-    LTRACEIF(!success, ("%s: failed to read texture stages.", m_debugPath.c_str()));
+    LTRACE(("%s: failed to read state flags.", m_debugPath.c_str()));
+    return false;
   }
 
-  DescriptorCore desc(Texture::kTypeId);
-  for (decltype(numTextures) i = 0; success && i < numTextures; ++i)
+  uint8_t numTextures = 0;
+  SerializedTextureStage const* textures =
+    reader.ReadElementsWithSize<SerializedTextureStage>(numTextures);
+  if (!textures)
   {
-    desc.hash = textures[i].hash;
-    auto ptr = Manager::Load(static_cast<Descriptor<Texture>&>(desc), flags);
-    success = ptr.Get() != nullptr;
-    if (success)
+    LTRACE(("%s: failed to read texture stages.", m_debugPath.c_str()));
+    return false;
+  }
+
+  for (decltype(numTextures) i = 0; i < numTextures; ++i)
+  {
+    auto ptr = Manager::Load(Descriptor<Texture>(textures[i].hash), flags);
+    if (ptr.Get() != nullptr)
     {
       m_textureStages[textures[i].stage] = ptr;
     }
     else
     {
       LTRACE(("%s: failed to retrieve texture %llx.", m_debugPath.c_str()));
+      return false;
     }
   }
 
-  if (success)  // read shader hash
+  HashType hash;
+  if (!reader.Read(hash))  // read shader hash
   {
-    desc.type = Shader::kTypeId;
-    success = reader.Read(desc.hash);
-    LTRACEIF(!success, ("%s: failed to read shader hash.", m_debugPath.c_str()));
-  }
-
-  if (success)  // get shader
-  {
-    auto ptr = Manager::Load(static_cast<Descriptor<Shader>&>(desc), flags);
-    m_shader = ptr;
-    success = ptr.Get() != nullptr;
-    LTRACEIF(!success, ("%s: failed to retrieve shader %llx.", m_debugPath.c_str(),
-      desc.hash));
+    LTRACE(("%s: failed to read shader hash.", m_debugPath.c_str()));
+    return false;
   }
 
   // TODO tints
 
-  return success;
+  auto ptr = Manager::Load(Descriptor<Shader>(hash), flags);
+  m_shader = ptr;
+  if (!ptr.Get())
+  {
+    LTRACE(("%s: failed to retrieve shader %llx.", m_debugPath.c_str(), hash));
+    return false;
+  }
+
+  return true;
 }
 
 //==============================================================================
