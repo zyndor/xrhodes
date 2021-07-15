@@ -31,7 +31,7 @@ struct AssetHeader
 {
   Asset::TypeId typeId;
   Asset::VersionType version;
-  uint16_t reserved;
+  uint16_t reserved{};
 };
 
 using NumDependenciesType = uint16_t;
@@ -721,7 +721,7 @@ Asset::Ptr Asset::Manager::FindOrReflectorCreate(DescriptorCore const& desc,
 }
 
 //==============================================================================
-void Asset::Manager::LoadInternal(VersionType version, FilePath const& path,
+void Asset::Manager::LoadInternal(VersionType version, [[maybe_unused]] FilePath const& path,
   Asset& asset, FlagType flags)
 {
 #ifdef ENABLE_ASSET_BUILDING

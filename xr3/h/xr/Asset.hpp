@@ -636,6 +636,6 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 /// declared with XR_ASSET_BUILDER_DECL.
 #define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
   bool assetType##Builder::Build(char const* rawNameExt, Buffer buffer,\
-    std::vector<FilePath>& dependencies, std::ostream& data) const
+    [[maybe_unused]] std::vector<FilePath>& dependencies, std::ostream& data) const
 
 #endif //XR_ASSET_HPP
