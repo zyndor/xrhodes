@@ -92,8 +92,8 @@ public:
     Record::Vector& records)
   {
     return std::lower_bound(records.begin(), records.end(), path,
-      [](Record::Ptr const& rp, FilePath const& path) {
-        return path < rp->path;
+      [](Record::Ptr const& rp, FilePath const& p) {
+        return p < rp->path;
       });
   }
 

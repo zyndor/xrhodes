@@ -19,16 +19,16 @@ IndexMesh::IndexMesh()
 {}
 
 //==============================================================================
-IndexMesh::IndexMesh(uint32_t numVertices, Gfx::VertexBufferHandle hVb,
-  uint32_t numIndices, Gfx::IndexBufferHandle hIb)
-: Mesh(numVertices, hVb),
-  numIndices(numIndices),
+IndexMesh::IndexMesh(uint32_t numVertices_, Gfx::VertexBufferHandle hVb,
+  uint32_t numIndices_, Gfx::IndexBufferHandle hIb)
+: Mesh(numVertices_, hVb),
+  numIndices(numIndices_),
   hIndexBuffer(hIb)
 {}
 
 //==============================================================================
-IndexMesh::IndexMesh(uint32_t numVertices, Gfx::VertexBufferHandle hVb)
-: IndexMesh(numVertices, hVb, 0, Gfx::IndexBufferHandle())
+IndexMesh::IndexMesh(uint32_t numVertices_, Gfx::VertexBufferHandle hVb)
+: IndexMesh(numVertices_, hVb, 0, Gfx::IndexBufferHandle())
 {}
 
 //==============================================================================

@@ -74,10 +74,10 @@ void TweenVar<T>::OnFrameCallback( void* data )
 //==============================================================================
 template  <typename T>
 void TweenVar<T>::Tween( float duration, Tweener::Function function,
-  Type target, Type& value, Tweener::Callback onFrame_,
+  Type target, Type& value_, Tweener::Callback onFrame_,
   Tweener::Callback onFinished_, void* callbackData_, Tweener& t )
 {
-  fValue = static_cast<Type>(value);
+  fValue = static_cast<Type>(value_);
   TweenVarCore::Tween(&value, onFrame_, onFinished_, callbackData_, t);
   t.Add(duration, function, float(target), fValue,
     OnFrameCallback, onFinished_ ? OnFinishedCallback : nullptr, this);
