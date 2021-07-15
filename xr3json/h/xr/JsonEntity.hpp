@@ -52,7 +52,7 @@ public:
   Object*             ToObject();
 
   Entity*             GetChild(const char* key) const;
-  Entity*             GetElement(int id) const;
+  Entity*             GetElement(size_t index) const;
 
   Entity*             GetPrevSibling() const;
   Entity*             GetNextSibling() const;
@@ -70,7 +70,7 @@ public:
   virtual const char* GetValue() const =0;  // values. objects and arrays return nullptrs
 
   virtual Entity*     GetChild(const char* key, Type acceptType) const =0;  // retrieve child from object
-  virtual Entity*     GetElement(int id, Type acceptType) const =0;  // retrieve child from array
+  virtual Entity*     GetElement(size_t index, Type acceptType) const =0;  // retrieve child from array
 
 private:
   // data
@@ -114,7 +114,7 @@ public:
   const char* GetValue() const override;  // values. objects and arrays return nullptr
 
   Entity*     GetChild(const char* key, Type acceptType) const override;  // retrieve child from object
-  Entity*     GetElement(int id, Type acceptType) const override;  // retrieve child from array
+  Entity*     GetElement(size_t index, Type acceptType) const override;  // retrieve child from array
 
 protected:
   // data
@@ -166,7 +166,7 @@ public:
   Entity*             GetLastChild();
 
   Entity*     GetChild(const char* key, Type acceptType) const override;  // retrieve child from object
-  Entity*     GetElement(int id, Type acceptType) const override;  // retrieve child from array
+  Entity*     GetElement(size_t index, Type acceptType) const override;  // retrieve child from array
 
 protected:
   // types
@@ -225,7 +225,7 @@ public:
   void        AddElement(Entity* entity);
 
   Entity*     GetChild(const char* key, Type acceptType) const override;  // retrieve child from object
-  Entity*     GetElement(int id, Type acceptType) const override;  // retrieve child from array
+  Entity*     GetElement(size_t index, Type acceptType) const override;  // retrieve child from array
 
 protected:
   // types
@@ -283,9 +283,9 @@ Entity* Entity::GetChild(const char* key) const
 
 //==============================================================================
 inline
-Entity* Entity::GetElement(int id) const
+Entity* Entity::GetElement(size_t index) const
 {
-  return GetElement(id, ANY);
+  return GetElement(index, ANY);
 }
 
 //==============================================================================

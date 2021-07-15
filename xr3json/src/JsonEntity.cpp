@@ -143,13 +143,13 @@ const char* Value::GetValue() const
 }
 
 //==============================================================================
-Entity* Value::GetChild(const char* key, Type acceptType) const
+Entity* Value::GetChild(const char* /*key*/, Type /*acceptType*/) const
 {
   return nullptr;
 }
 
 //==============================================================================
-Entity* Value::GetElement(int id, Type acceptType) const
+Entity* Value::GetElement(size_t /*index*/, Type /*acceptType*/) const
 {
   return nullptr;
 }
@@ -176,7 +176,6 @@ void Value::SetValue(const char* value)
 //==============================================================================
 void Value::SetValue(const char* value, size_t len)
 {
-  XR_ASSERT(Json::Value, len >= 0);
   delete[] m_parValue;
 
   if (value == nullptr)
@@ -286,18 +285,16 @@ Entity* Object::GetChild(const char* key, Type acceptType) const
   XR_ASSERT(Json::Object, key != nullptr);
   const uint64_t  hash = Hash::String(key);
   Child::Map::const_iterator iFind(m_children.find(hash));
-  Entity* result = nullptr;
-  if (iFind != m_children.end())
+  if (iFind != m_children.end() && (acceptType == ANY ||
+    iFind->second.entity->GetType() == acceptType))
   {
-    XR_ASSERT(Json::Object, acceptType == ANY ||
-      iFind->second.entity->GetType() == acceptType);
-    result = iFind->second.entity;
+    return iFind->second.entity;
   }
-  return result;
+  return nullptr;
 }
 
 //==============================================================================
-Entity* Object::GetElement(int id, Type acceptType) const
+Entity* Object::GetElement(size_t /*index*/, Type /*acceptType*/) const
 {
   return nullptr;
 }
@@ -445,7 +442,7 @@ void Array::AddElement(Entity* entity)
 {
   XR_ASSERT(Json::Array, entity != nullptr);
   Entity* prev(nullptr);
-  if (m_elements.size() > 0)
+  if (!m_elements.empty())
   {
     prev = *m_elements.rbegin();
   }
@@ -455,19 +452,20 @@ void Array::AddElement(Entity* entity)
 }
 
 //==============================================================================
-Entity* Array::GetChild(const char* key, Type acceptType) const
+Entity* Array::GetChild(const char* /*key*/, Type /*acceptType*/) const
 {
   return nullptr;
 }
 
 //==============================================================================
-Entity* Array::GetElement(int id, Type acceptType) const
+Entity* Array::GetElement(size_t index, Type acceptType) const
 {
-  XR_ASSERT(Json::Array, id >= 0);
-  XR_ASSERT(Json::Array, id < static_cast<int>(m_elements.size()));
-  XR_ASSERT(Json::Array, acceptType == ANY ||
-    m_elements[id]->GetType() == acceptType);
-  return m_elements[id];
+  if (index < m_elements.size() && (acceptType == ANY ||
+    m_elements[index]->GetType() == acceptType))
+  {
+    return m_elements[index];
+  }
+  return nullptr;
 }
 
 } // JSON

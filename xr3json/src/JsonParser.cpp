@@ -41,7 +41,6 @@ Parser::~Parser ()
 bool  Parser::Parse(const char* string, size_t size, const EntityCallback& handler)
 {
   XR_ASSERT(Json::Parser, string != nullptr);
-  XR_ASSERT(Json::Parser, size >= 0);
   m_state.SetBuffer(string, size);
   m_depth = 0;
   m_handler.reset(static_cast<EntityCallback*>(handler.Clone()));
