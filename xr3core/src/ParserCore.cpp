@@ -30,7 +30,6 @@ ParserCore::~ParserCore()
 void  ParserCore::SetBuffer(const char* buffer, size_t size)
 {
   XR_ASSERT(ParserCore, buffer != nullptr);
-  XR_ASSERT(ParserCore, size >= 0);
   if (size == 0)
   {
     size = strlen(buffer);
