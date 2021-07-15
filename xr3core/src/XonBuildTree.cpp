@@ -21,7 +21,7 @@ struct XonTreeBuildState
   struct Frame
   {
     XonObject*            object;
-    XonParser::String     keyCache;
+    XonParser::String     keyCache{};
 
     void AddElement(XonEntity& v)
     {
@@ -85,7 +85,7 @@ struct XonTreeBuildState
         {
           stack.back().AddElement(*object);
         }
-        stack.push_back({ object });
+        stack.push_back(Frame{ object });
       }
       break;
 
