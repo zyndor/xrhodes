@@ -11,6 +11,6 @@
 namespace xr
 {
 
-const IdGenerator::IdType IdGenerator::kInvalidId = -1;
+const IdGenerator::IdType IdGenerator::kInvalidId = IdType(-1);
 
 }
