@@ -177,7 +177,7 @@ void SetIndexPattern(const uint16_t* indices, uint32_t indexCount, uint16_t offs
   XR_ASSERT(meshutil, indices != nullptr);
   XR_ASSERT(meshutil, outIndices != nullptr);
 
-  uint32_t vertexOffset = 0;
+  uint16_t vertexOffset = 0;
   for (decltype(numSets) i = 0; i < numSets; ++i)
   {
     for (decltype(indexCount) j = 0; j < indexCount; ++j)
