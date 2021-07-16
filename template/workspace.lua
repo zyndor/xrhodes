@@ -139,14 +139,42 @@ function do_workspace(workspace_name, start_project_name)
 	if is_vs() then
 		buildoptions {
 			"/std:c++17",
-			"/WX",
+			"/permissive-",
+			"/W4",
+			"/we4244", -- conversion from 'type1' to 'type2', possible loss of data
+			"/we4263", -- 'function': member function does not override any base class virtual member function.
+			"/we4265", -- virtual methods and no virtual dtor.
+			"/we4289", -- nonstandard extension used: 'variable': loop control variable declared in the for-loop is used outside the for-loop scope
+			"/we4296", -- 'operator': expression is always 'boolean_value'
+			"/we4545", -- expression before comma evaluates to function call, missing argument list;
+			"/we4546", -- function call before comma missing argument list;
+			"/we4547", -- operator: operator before comma has no effect, expected operator with side-effect;
+			"/we4549", -- operator: operator before comma missing argument list;
+			"/we4555", -- expression has no effect; expected: expression with side-effect;
+			"/w14619", -- pragma warning: there is no warning number 'number';
+			"/we4640", -- Enable warning on thread un-safe static member initialization
+			"/we4826", -- Coversion from 'type1' to 'type2' is sign-extended. This may cause unexpected runtime behavior;
+			"/we4905", -- wide string literal cast to 'LPSTR'
+			"/we4906", -- string literal cast to 'LPWSTR'
+			"/we4928", -- illegal copy-initialization; more than one user-defined conversion has been implicitly applied
 			--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.
 		}
 	else
 		buildoptions {
 			"-std=c++17",
+			"-pedantic",
 			"-Wall",
+			"-Wdouble-promotion",
+			"-Wduplicated-branches",  -- GCC only
+			"-Wduplicated-cond",  -- GCC only
 			"-Werror",
+			"-Wextra",
+			"-Wlogical-op",  -- GCC only
+			"-Wmisleading-indentation",  -- GCC only
+			"-Wmissing-declarations",
+			"-Wnon-virtual-dtor",
+			"-Wold-style-cast",
+			"-Wshadow",
 			"-fvisibility-ms-compat",
 		}
 	end
