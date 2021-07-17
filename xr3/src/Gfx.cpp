@@ -39,15 +39,14 @@ void(*sReleaseIndexBuffer)(IndexBufferHandle h) = nullptr;
 InstanceDataBufferHandle(*sCreateInstanceDataBuffer)(Buffer const& buffer, InstanceDataStrideType stride) = nullptr;
 void(*sReleaseInstanceDataBuffer)(InstanceDataBufferHandle h) = nullptr;
 
-TextureHandle(*sCreateTexture)(TextureFormat format, uint16_t width,
-  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,
-  uint8_t numBuffers) = nullptr;
+TextureHandle(*sCreateTexture)(TextureFormat format, Px width, Px height,
+  Px depth, FlagType flags, Buffer const* buffer, uint8_t numBuffers) = nullptr;
 
 TextureInfo(*sGetTextureInfo)(TextureHandle h) = nullptr;
 void(*sReleaseTexture)(TextureHandle h) = nullptr;
 
-FrameBufferHandle(*sCreateFrameBufferWithPrivateTexture)(TextureFormat format, uint16_t width, uint16_t height,
-  FlagType flags) = nullptr;
+FrameBufferHandle(*sCreateFrameBufferWithPrivateTexture)(TextureFormat format,
+  Px width, Px height, FlagType flags) = nullptr;
 FrameBufferHandle(*sCreateFrameBufferFromTextures)(uint8_t textureCount, TextureHandle const* hTextures) = nullptr;
 FrameBufferHandle(*sCreateFrameBufferFromAttachments)(uint8_t textureCount,
   FrameBufferAttachment const* attachments) = nullptr;
@@ -79,7 +78,7 @@ void(*sDrawIndexed)(VertexBufferHandle vbh, IndexBufferHandle ibh, Primitive pt,
 void(*sFlush)() = nullptr;
 void(*sPresent)(bool resetState) = nullptr;
 
-void(*sReadFrameBuffer)(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+void(*sReadFrameBuffer)(Px x, Px y, Px width, Px height,
   TextureFormat format, uint8_t colorAttachment, void* mem,
   ReadFrameBufferCompleteCallback* onComplete) = nullptr;
 
@@ -97,7 +96,7 @@ uint32_t VertexFormat::CalculateHash() const
 }
 
 //==============================================================================
-uint8_t TextureInfo::CalculateMipLevels(uint16_t width, uint16_t height, FlagType flags)
+uint8_t TextureInfo::CalculateMipLevels(Px width, Px height, FlagType flags)
 {
   return CheckAllMaskBits(flags, F_TEXTURE_MIPMAP) ?
     static_cast<uint8_t>(std::log2(std::min(width, height))) : 1;
@@ -243,13 +242,13 @@ void  Init(Context* ctx)
 }
 
 //=============================================================================
-int GetLogicalWidth()
+Px GetLogicalWidth()
 {
   return sContext->GetLogicalWidth();
 }
 
 //=============================================================================
-int GetLogicalHeight()
+Px GetLogicalHeight()
 {
   return sContext->GetLogicalHeight();
 }
@@ -261,13 +260,13 @@ float GetLogicalAspectRatio()
 }
 
 //=============================================================================
-int GetPhysicalWidth()
+Px GetPhysicalWidth()
 {
   return sContext->GetPhysicalWidth();
 }
 
 //=============================================================================
-int GetPhysicalHeight()
+Px GetPhysicalHeight()
 {
   return sContext->GetPhysicalHeight();
 }
@@ -361,16 +360,15 @@ void Release(InstanceDataBufferHandle h)
 }
 
 //==============================================================================
-TextureHandle CreateTexture(TextureFormat format, uint16_t width,
-  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,
-  uint8_t numBuffers)
+TextureHandle CreateTexture(TextureFormat format, Px width, Px height,
+  Px depth, FlagType flags, Buffer const* buffer, uint8_t numBuffers)
 {
   return sCreateTexture(format, width, height, depth, flags, buffer, numBuffers);
 }
 
 //=============================================================================
-TextureHandle CreateTexture(TextureFormat format, uint16_t width, uint16_t height,
-  uint16_t depth, FlagType flags)
+TextureHandle CreateTexture(TextureFormat format, Px width, Px height,
+  Px depth, FlagType flags)
 {
   //TODO: XR_ASSERTMSG(Gfx, !kTextureFormats[static_cast<int>(format)].compressed,
   //  ("Cannot create compressed texture without buffer."));
@@ -394,7 +392,7 @@ void Release(TextureHandle h)
 }
 
 //==============================================================================
-FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint16_t width, uint16_t height,
+FrameBufferHandle CreateFrameBuffer(TextureFormat format, Px width, Px height,
   FlagType flags)
 {
   return sCreateFrameBufferWithPrivateTexture(format, width, height, flags);
@@ -570,7 +568,7 @@ void Present(bool resetState)
 }
 
 //==============================================================================
-void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+void ReadFrameBuffer(Px x, Px y, Px width, Px height,
   TextureFormat format, void* mem, ReadFrameBufferCompleteCallback* onComplete)
 {
   if (onComplete)
@@ -582,7 +580,7 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 }
 
 //==============================================================================
-void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+void ReadFrameBuffer(Px x, Px y, Px width, Px height,
   TextureFormat format, uint8_t colorAttachment, void* mem,
   ReadFrameBufferCompleteCallback* onComplete)
 {

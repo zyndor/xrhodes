@@ -92,8 +92,8 @@ void S::Release(InstanceDataBufferHandle h)
 }
 
 //=============================================================================
-TextureHandle S::CreateTexture(TextureFormat format, uint16_t width,
-  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffers,
+TextureHandle S::CreateTexture(TextureFormat format, Px width,
+  Px height, Px depth, FlagType flags, Buffer const* buffers,
   uint8_t numBuffers)
 {
   auto& textures = sResources->GetTextures();
@@ -120,8 +120,8 @@ void S::Release(TextureHandle h)
 }
 
 //=============================================================================
-FrameBufferHandle S::CreateFrameBuffer(TextureFormat format, uint16_t width,
-  uint16_t height, FlagType flags)
+FrameBufferHandle S::CreateFrameBuffer(TextureFormat format, Px width,
+  Px height, FlagType flags)
 {
   auto& fbos = sResources->GetFbos();
   FrameBufferHandle h{ static_cast<uint16_t>(fbos.server.Acquire()) };
@@ -310,7 +310,7 @@ void S::Present(bool resetState)
 }
 
 //=============================================================================
-void S::ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+void S::ReadFrameBuffer(Px x, Px y, Px width, Px height,
   TextureFormat format, uint8_t colorAttachment, void* mem,
   ReadFrameBufferCompleteCallback* onComplete)
 {

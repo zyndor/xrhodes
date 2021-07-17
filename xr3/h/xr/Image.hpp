@@ -9,6 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#include "Px.hpp"
 #include <vector>
 #include <cstdint>
 #include <cstddef>
@@ -33,10 +34,10 @@ public:
 
   // general
   ///@return  The width of the image in pixels.
-  uint32_t GetWidth() const;
+  Px GetWidth() const;
 
   ///@return  The height of the image in pixels.
-  uint32_t GetHeight() const;
+  Px GetHeight() const;
 
   ///@return  Number of bytes per pixel.
   uint8_t GetBytesPerPixel() const;
@@ -58,10 +59,10 @@ public:
 
   ///@brief Sets the size and bit depth of the image, allocating a large
   /// enough buffer to store an image of the given parameters.
-  void SetSize(uint32_t width, uint32_t height, uint8_t bytesPerPixel);
+  void SetSize(Px width, Px height, uint8_t bytesPerPixel);
 
   ///@brief Sets pixel data directly.
-  void SetPixelData(uint8_t const* data, uint32_t width, uint32_t height,
+  void SetPixelData(uint8_t const* data, Px width, Px height,
     uint8_t bytesPerPixel);
 
   ///@brief Loads image from file at @a path. Currently TGA and PNG
@@ -96,8 +97,8 @@ public:
 
 private:
   // data
-  uint32_t m_width;
-  uint32_t m_height;
+  Px m_width;
+  Px m_height;
   uint8_t m_bytesPerPixel;
   std::vector<uint8_t> m_bytes;
 

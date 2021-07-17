@@ -249,8 +249,8 @@ struct CreateTextureMessage
 struct CreateFrameBufferWithPrivateTextureMessage
 {
   TextureFormat format;
-  uint16_t width;
-  uint16_t height;
+  Px width;
+  Px height;
   FlagType flags;
   FrameBufferObject* fbo;
 };
@@ -335,10 +335,10 @@ struct DrawIndexedMessage
 
 struct ReadFrameBufferMessage
 {
-  uint16_t x; // TODO: either uint32_t or change texture dimensions to uint16_t
-  uint16_t y;
-  uint16_t width;
-  uint16_t height;
+  Px x;
+  Px y;
+  Px width;
+  Px height;
   TextureFormat format;
   uint8_t iColorAttachment;
   void* buffer;
@@ -892,8 +892,8 @@ void M::Release(InstanceDataBufferHandle h)
 }
 
 //==============================================================================
-TextureHandle M::CreateTexture(TextureFormat format, uint16_t width,
-  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffers,
+TextureHandle M::CreateTexture(TextureFormat format, Px width,
+  Px height, Px depth, FlagType flags, Buffer const* buffers,
   uint8_t numBuffers)
 {
   auto buffersCopy = Alloc<Buffer>(numBuffers);
@@ -961,8 +961,8 @@ void M::Release(TextureHandle h)
 }
 
 //==============================================================================
-FrameBufferHandle M::CreateFrameBuffer(TextureFormat format, uint16_t width,
-  uint16_t height, FlagType flags)
+FrameBufferHandle M::CreateFrameBuffer(TextureFormat format, Px width,
+  Px height, FlagType flags)
 {
   FrameBufferHandle h;
   auto& fbos = sContext->GetResources().GetFbos();
@@ -1214,7 +1214,7 @@ void M::Present(bool resetState)
 }
 
 //==============================================================================
-void M::ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+void M::ReadFrameBuffer(Px x, Px y, Px width, Px height,
   TextureFormat format, uint8_t colorAttachment, void* mem,
   ReadFrameBufferCompleteCallback* onComplete)
 {

@@ -40,14 +40,14 @@ public: // static
     InstanceDataStrideType stride);
   static void Release(InstanceDataBufferHandle h);
 
-  static TextureHandle CreateTexture(TextureFormat format, uint16_t width,
-    uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffers,
+  static TextureHandle CreateTexture(TextureFormat format, Px width,
+    Px height, Px depth, FlagType flags, Buffer const* buffers,
     uint8_t numBuffers);
   static TextureInfo GetTextureInfo(TextureHandle h);
   static void Release(TextureHandle h);
 
-  static FrameBufferHandle CreateFrameBuffer(TextureFormat format, uint16_t width,
-    uint16_t height, FlagType flags);
+  static FrameBufferHandle CreateFrameBuffer(TextureFormat format, Px width,
+    Px height, FlagType flags);
   static FrameBufferHandle CreateFrameBuffer(uint8_t textureCount,
     TextureHandle const* hTextures);
   static FrameBufferHandle CreateFrameBuffer(uint8_t textureCount,
@@ -81,8 +81,8 @@ public: // static
   static void Flush();
   static void Present(bool resetState);
 
-  static void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-    TextureFormat format, uint8_t colorAttachment, void* mem,
+  static void ReadFrameBuffer(Px x, Px y, Px width,
+    Px height, TextureFormat format, uint8_t colorAttachment, void* mem,
     ReadFrameBufferCompleteCallback* onComplete);
 
   static Signal<void>& FlushSignal();

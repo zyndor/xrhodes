@@ -12,6 +12,7 @@
 #include "xr/memory/Buffer.hpp"
 #include "xr/memory/ScopeGuard.hpp"
 #include "xr/debug.hpp"
+#include "xr/types/intutils.hpp"
 #include "png.h"
 #include <cstring>
 
@@ -61,13 +62,13 @@ Image::~Image ()
 {}
 
 //==============================================================================
-uint32_t  Image::GetWidth() const
+uint16_t  Image::GetWidth() const
 {
   return m_width;
 }
 
 //==============================================================================
-uint32_t  Image::GetHeight() const
+uint16_t  Image::GetHeight() const
 {
   return m_height;
 }
@@ -109,7 +110,7 @@ size_t Image::GetPixelDataSize() const
 }
 
 //==============================================================================
-void Image::SetSize(uint32_t width, uint32_t height, uint8_t bytesPerPixel)
+void Image::SetSize(uint16_t width, uint16_t height, uint8_t bytesPerPixel)
 {
   m_width = width;
   m_height = height;
@@ -118,7 +119,7 @@ void Image::SetSize(uint32_t width, uint32_t height, uint8_t bytesPerPixel)
 }
 
 //==============================================================================
-void Image::SetPixelData(uint8_t const* data, uint32_t width, uint32_t height,
+void Image::SetPixelData(uint8_t const* data, uint16_t width, uint16_t height,
   uint8_t bytesPerPixel)
 {
   SetSize(width, height, bytesPerPixel);
@@ -284,6 +285,12 @@ bool Image::ParsePng(uint8_t const* data, size_t size)
 
   png_uint_32 pngWidth = png_get_image_width(pngPtr, infoPtr);
   png_uint_32 pngHeight = png_get_image_height(pngPtr, infoPtr);
+  if (!(Representable<Px>(pngWidth) && Representable<Px>(pngHeight)))
+  {
+    XR_TRACE(Image, ("Image size %u x %u excessive; 16 bits max.", pngWidth, pngHeight));
+    return false;
+  }
+
   png_uint_32 pngBitsPerChannel = png_get_bit_depth(pngPtr, infoPtr);
   png_uint_32 pngChannels = png_get_channels(pngPtr, infoPtr);
   png_byte  colorType = png_get_color_type(pngPtr, infoPtr);
@@ -318,8 +325,8 @@ bool Image::ParsePng(uint8_t const* data, size_t size)
 
   rowPtrs.resize(pngHeight);
 
-  m_width = pngWidth;
-  m_height = pngHeight;
+  m_width = Px(pngWidth);
+  m_height = Px(pngHeight);
   const uint32_t bytesPerPixel = pngChannels * pngBitsPerChannel / 8;
   if (bytesPerPixel > 0xff)
   {

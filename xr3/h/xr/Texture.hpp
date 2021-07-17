@@ -74,11 +74,11 @@ public:
   // general
   ///@return The number of texels the texture has horizontally at the highest
   /// mipmap level.
-  uint16_t GetWidth() const;
+  Px GetWidth() const;
 
   ///@return The number of texels the texture has vertically at the highest
   /// mipmap level.
-  uint16_t GetHeight() const;
+  Px GetHeight() const;
 
   ///@return Whether the texture has an alpha channel.
   bool HasAlpha() const;
@@ -86,13 +86,13 @@ public:
   ///@brief Creates / updates a handle with one that's for a texture
   /// created with the given data.
   ///@note Must be called from the render thread.
-  bool Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
+  bool Upload(Gfx::TextureFormat format, Px width, Px height,
     Buffer buffer);
 
   ///@brief Creates / updates a handle with one that's for a texture
   /// created with the given data.
   ///@note Must be called from the render thread.
-  bool Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
+  bool Upload(Gfx::TextureFormat format, Px width, Px height,
     Gfx::FlagType createFlags, uint8_t numBuffers, Buffer const* buffers);
 
   ///@brief Binds texture to its target, for the given texture @a stage.
@@ -101,8 +101,8 @@ public:
 
 private:
   // data
-  uint16_t m_width = 0;
-  uint16_t m_height = 0;
+  Px m_width = 0;
+  Px m_height = 0;
   bool m_hasAlpha = false;
 
   Gfx::TextureHandle  m_handle;
@@ -115,14 +115,14 @@ private:
 
 //==============================================================================
 inline
-uint16_t Texture::GetWidth() const
+Px Texture::GetWidth() const
 {
 	return m_width;
 }
 
 //==============================================================================
 inline
-uint16_t Texture::GetHeight() const
+Px Texture::GetHeight() const
 {
 	return m_height;
 }

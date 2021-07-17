@@ -43,7 +43,7 @@ public:
   static FormatSpec GetFormatSpec(Format f);
 
   // structors
-  TextureCache(uint32_t size, Format format, uint32_t blockWidth, uint32_t rowHeight);
+  TextureCache(Px size, Format format, Px blockWidth, Px rowHeight);
 
   // general
   ///@return The format of the TextureCache.
@@ -52,7 +52,7 @@ public:
   ///@return The number of pixels horizontally and vertically.
   ///@note Pixels may be multiple bytes, which only factors in horizontally;
   /// see GetPitch().
-  uint32_t GetSize() const { return m_size; }
+  Px GetSize() const { return m_size; }
 
   ///@return The number of bytes in one pixel row.
   uint32_t GetPitch() const { return m_pitch; }
@@ -61,7 +61,7 @@ public:
   /// was made, @a uvsOut will have the uvs for the given section.
   ///@note Buffer is not contiguous; it is (widthPixels * m_format.stride) by
   /// heightPixels, its pitch being GetPitch() bytes.
-  uint8_t* Allocate(uint32_t widthPixels, uint32_t heightPixels, AABB& uvsOut);
+  uint8_t* Allocate(Px widthPixels, Px heightPixels, AABB& uvsOut);
 
   ///@brief Creates a texture with the contents of the buffer.
   ///@return The handle to and the ownership of, the texture.
@@ -125,9 +125,9 @@ private:
   // data
   FormatSpec m_format;
 
-  uint16_t m_size;
-  uint32_t m_blockWidth;
-  uint32_t m_rowHeight;
+  Px m_size;
+  Px m_blockWidth;
+  Px m_rowHeight;
 
   uint32_t m_pitch; // bytes in a row.
   uint32_t m_rowStride; // m_pitch * m_rowHeight

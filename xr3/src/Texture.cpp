@@ -32,14 +32,13 @@ XR_ASSET_DEF(Texture, "xtex", 4, "png;tga;ktx;tex")
 namespace {
 
 using Size = uint32_t;  // serialized size
-using TextureSize = decltype(Gfx::TextureInfo::width);
 static_assert(std::is_same<decltype(Gfx::TextureInfo::width), decltype(Gfx::TextureInfo::height)>::value, "");
 
 struct TextureHeader
 {
   Gfx::TextureFormat format;
-  TextureSize width;
-  TextureSize height;
+  Px width;
+  Px height;
   Gfx::FlagType createFlags;
   Size numBuffers;  // 8 bits used
 };
@@ -113,15 +112,6 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer, std::ostream& data)
     return false;
   }
 
-  const uint32_t kMaxWidth = std::numeric_limits<TextureSize>::max();
-  const uint32_t kMaxHeight = std::numeric_limits<TextureSize>::max();
-  if (!(img.GetWidth() <= kMaxWidth && img.GetHeight() <= kMaxHeight))
-  {
-    LTRACE(("%s: image dimension excessive: %u x %u; 16bits maximum.",
-      rawNameExt, img.GetWidth(), img.GetHeight()));
-    return false;
-  }
-
   // TOOD: support compressed textures.
   Gfx::TextureFormat  format;
   switch (img.GetBytesPerPixel())
@@ -140,8 +130,7 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer, std::ostream& data)
     return false;
   }
 
-  TextureHeader header { format, static_cast<TextureSize>(img.GetWidth()),
-    static_cast<TextureSize>(img.GetHeight()), createFlags, 1 };
+  TextureHeader header { format, img.GetWidth(), img.GetHeight(), createFlags, 1 };
   Buffer pixelBuffer { img.GetPixelDataSize(), img.GetPixelData() };
   if (!SerializeTexture(header, &pixelBuffer, data))
   {
@@ -421,17 +410,6 @@ bool  ProcessTex(const char* rawNameExt, Buffer buffer, std::ostream& data)
         }
       }
     }
-    else // first image -- dimensions must be <= 64K
-    {
-      const auto kMaxWidth = std::numeric_limits<TextureSize>::max();
-      const auto kMaxHeight = std::numeric_limits<TextureSize>::max();
-      if (image.GetWidth() > kMaxWidth || image.GetHeight() > kMaxHeight)
-      {
-        LTRACE(("%s: image dimension excessive: %u x %u; 16bits maximum.",
-          rawNameExt, image.GetWidth(), image.GetHeight()));
-        return false;
-      }
-    }
 
     // insert buffers transposed.
     auto iT = (i % numMipLevels) * numFaces + i / numMipLevels;
@@ -457,8 +435,8 @@ bool  ProcessTex(const char* rawNameExt, Buffer buffer, std::ostream& data)
 
   TextureHeader header {
     format,
-    static_cast<TextureSize>(images[0].GetWidth()),
-    static_cast<TextureSize>(images[0].GetHeight()),
+    static_cast<Px>(images[0].GetWidth()),
+    static_cast<Px>(images[0].GetHeight()),
     flags,
     static_cast<uint32_t>(imageBuffers.size())
   };
@@ -553,14 +531,14 @@ Texture::Ptr Texture::FromHandle(Gfx::TextureHandle handle)
 }
 
 //==============================================================================
-bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
+bool Texture::Upload(Gfx::TextureFormat format, Px width, Px height,
   Buffer buffer)
 {
   return Upload(format, width, height, Gfx::F_TEXTURE_NONE, 1, &buffer);
 }
 
 //==============================================================================
-bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
+bool Texture::Upload(Gfx::TextureFormat format, Px width, Px height,
   Gfx::FlagType createFlags, uint8_t numBuffers, Buffer const* buffers)
 {
   OnUnload();

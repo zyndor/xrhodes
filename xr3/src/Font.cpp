@@ -18,8 +18,8 @@
 #include "xr/strings/stringutils.hpp"
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
+#include "xr/types/intutils.hpp"
 #include "stb_truetype.h"
-#include <limits>
 #include <iostream>
 #include <list>
 #include <regex>
@@ -39,7 +39,7 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(Font, "xfnt", 3, "fnt")
+XR_ASSET_DEF(Font, "xfnt", 4, "fnt")
 
 /*
   {
@@ -89,13 +89,13 @@ struct Range
   uint32_t end;
 };
 
-const int32_t kMinFontSize = 32;
-const int32_t kDefaultFontSize = 128;
+const Px kMinFontSize = 32;
+const Px kDefaultFontSize = 128;
 
-const int32_t kDefaultSdfSize = 0;
+const Px kDefaultSdfSize = 0;
 
-const int32_t kMinCacheSize = 256;
-const int32_t kDefaultCacheSize = 1024;
+const Px kMinCacheSize = 256;
+const Px kDefaultCacheSize = 1024;
 
 const float kUnitsToPixel = 1.0f / 64.0f;
 
@@ -274,9 +274,9 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   }
 
   int32_t fontIndex = 0;
-  int32_t fontSize = kDefaultFontSize; // includes padding for SDF, see below.
-  int32_t sdfSize = kDefaultSdfSize;
-  int32_t cacheSize = kDefaultCacheSize;
+  Px fontSize = kDefaultFontSize; // includes padding for SDF, see below.
+  Px sdfSize = kDefaultSdfSize;
+  Px cacheSize = kDefaultCacheSize;
   if (auto xon = root->TryGet("fontIndex"))
   {
     try
@@ -335,7 +335,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       }
       else
       {
-        const int maxSdfSize = (fontSize / 2) - 1;
+        const Px maxSdfSize = (fontSize / 2) - 1;
         if (sdfSize > maxSdfSize)
         {
           LTRACE(("%s: clamped %s (%d) to maximum (%d).", "sdfSize", rawNameExt,
@@ -481,11 +481,17 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   const int32_t ascentPixels = int(std::ceil(ascent * pixelScale));
 
   const int32_t glyphPadding = 1; // We pad the glyph bitmap to simplify comparing neighbour pixels, where we'd need to special case at the edges - reading off by one.
-  const int32_t totalPadding = glyphPadding + sdfSize;
+  const int32_t totalPadding = (glyphPadding + sdfSize) * 2;
   const int32_t maxWidth = int32_t(std::ceil((x1 - x0) * pixelScale));
   const int32_t maxHeight = int32_t(std::ceil((y1 - y0) * pixelScale));
-  const int32_t glyphWidthPadded = maxWidth + totalPadding * 2;
-  const int32_t glyphHeightPadded = maxHeight + totalPadding * 2;
+  const int32_t glyphWidthPadded = maxWidth + totalPadding;
+  const int32_t glyphHeightPadded = maxHeight + totalPadding;
+  if (!(Representable<Px>(glyphWidthPadded) && Representable<Px>(glyphHeightPadded)))
+  {
+    LTRACE(("%s: glyph has excessive padded dimensions (%u % %u); 16 bits max (each).", rawNameExt,
+      glyphWidthPadded, glyphHeightPadded));
+    return false;
+  }
 #ifdef ENABLE_GLYPH_DEBUG
   printf("max: %d x %d\n", glyphWidthPadded, glyphHeightPadded);
 #endif
@@ -546,6 +552,18 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
         int32_t w = x1 - x0;
         int32_t h = y1 - y0;
 
+        if (!Representable<Px>(w))
+        {
+          XR_TRACE(Font, ("%s: glyph %u bitmap has excessive width: %u; must fit on 16 bits.", rawNameExt, i0, w));
+          return false;
+        }
+
+        if (!Representable<Px>(h))
+        {
+          XR_TRACE(Font, ("%s: glyph %u bitmap has excessive height: %u; must fit on 16 bits.", rawNameExt, i0, h));
+          return false;
+        }
+
         if (sdf)
         {
           // Blit the glyph at its absolute position (sdf padding and ascent applies).
@@ -565,13 +583,26 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
           // Calculate SDF metrics & generate SDF around glyph.
           auto sx0 = std::max(xPixelOffs - sdfSize, 0);
           auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
-          auto sx1 = std::min(xPixelOffs + w + sdfSize, fontSize);
-          auto sy1 = std::min(yPixelOffs + h + sdfSize, fontSize);
+          auto sx1 = std::min<int32_t>(xPixelOffs + w + sdfSize, fontSize);
+          auto sy1 = std::min<int32_t>(yPixelOffs + h + sdfSize, fontSize);
           w = sx1 - sx0;
           h = sy1 - sy0;
+          if (!Representable<Px>(w))
+          {
+            XR_TRACE(Font, ("%s: glyph %u SDF has excessive width: %u; must fit on 16 bits.", rawNameExt, i0, w));
+            return false;
+          }
+
+          if (!Representable<Px>(h))
+          {
+            XR_TRACE(Font, ("%s: glyph %u SDF has excessive height: %u; must fit on 16 bits.", rawNameExt, i0, h));
+            return false;
+          }
+
           bufferOffset = sx0 + sy0 * glyphWidthPadded;
-          sdf->Generate(glyphBitmapPadded + bufferOffset, glyphWidthPadded, w, h);
-          sdf->ConvertToBitmap(w, h, glyphBitmap.data());
+          sdf->Generate(glyphBitmapPadded + bufferOffset, Px(glyphWidthPadded),
+            Px(w), Px(h));
+          sdf->ConvertToBitmap(Px(w), Px(h), glyphBitmap.data());
         }
         else
         {
@@ -580,9 +611,14 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
             pixelScale, iGlyph);
         }
 
-        glyph.fieldWidth = w;
-        glyph.fieldHeight = h;
-        XR_ASSERT(Font, glyphBytesWritten < std::numeric_limits<decltype(glyph.dataOffset)>::max());
+        glyph.fieldWidth = Px(w);
+        glyph.fieldHeight = Px(h);
+
+        if (!Representable<uint32_t>(glyphBytesWritten))
+        {
+          LTRACE(("%s: number of bytes written exceeds 32 bits %llu.", rawNameExt, glyphBytesWritten));
+          return false;
+        }
         glyph.dataOffset = static_cast<uint32_t>(glyphBytesWritten);
 
         auto p = glyphBitmap.data();
@@ -637,8 +673,7 @@ bool Font::OnLoaded(Buffer buffer)
     m_lineHeight > .0f &&
     reader.Read(m_ascent) &&
     m_ascent > .0f &&
-    reader.Read(m_cacheSideSizePixels) &&
-    m_cacheSideSizePixels > 0))
+    reader.Read(m_cacheSideSizePixels)))
   {
     LTRACE(("%s: failed to read font metrics.", m_debugPath.c_str()));
     return false;
@@ -652,7 +687,7 @@ bool Font::OnLoaded(Buffer buffer)
     return false;
   }
 
-  uint32_t maxHeight = 0;
+  Px maxHeight = 0;
   Glyph g;
   uint32_t i = 0;
   while (i < numGlyphs)
@@ -712,8 +747,8 @@ bool Font::OnLoaded(Buffer buffer)
   uint32_t flags = GetFlags() | UnmanagedFlag;  // shouldn't need explicit unmanage.
   m_texture.Reset(Texture::Create(0, flags));
 
-  m_textureCache = new TextureCache(m_cacheSideSizePixels,
-    TextureCache::Format::U8, 8, maxHeight);
+  m_textureCache = new TextureCache(m_cacheSideSizePixels, TextureCache::Format::U8,
+    8, maxHeight);
   m_cachedGlyphs.reserve(128);
 
   m_cacheDirty = true; // We do want a texture update even if no glyphs were cached.

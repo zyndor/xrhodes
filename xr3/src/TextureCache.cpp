@@ -24,8 +24,8 @@ TextureCache::FormatSpec TextureCache::GetFormatSpec(Format f)
 }
 
 //==============================================================================
-TextureCache::TextureCache(uint32_t size, Format format, uint32_t blockWidth,
-  uint32_t rowHeight)
+TextureCache::TextureCache(Px size, Format format, Px blockWidth,
+  Px rowHeight)
 : m_format(GetFormatSpec(format)),
   m_size(size),
   m_blockWidth(blockWidth),
@@ -56,7 +56,7 @@ TextureCache::TextureCache(uint32_t size, Format format, uint32_t blockWidth,
 }
 
 //==============================================================================
-uint8_t* TextureCache::Allocate(uint32_t widthPixels, uint32_t heightPixels,
+uint8_t* TextureCache::Allocate(Px widthPixels, Px heightPixels,
   AABB& uvs)
 {
   XR_ASSERTMSG(TextureCache, widthPixels <= m_size,
@@ -161,7 +161,7 @@ uint8_t* TextureCache::Allocate(uint32_t widthPixels, uint32_t heightPixels,
 //==============================================================================
 Gfx::TextureHandle TextureCache::UpdateTexture(uint32_t flags)
 {
-  Buffer buffer = { m_buffer.size(), m_buffer.data() };
+  Buffer buffer{ m_buffer.size(), m_buffer.data() };
   return Gfx::CreateTexture(m_format.textureFormat, m_size, m_size, 0, flags, &buffer);
 }
 

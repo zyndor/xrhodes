@@ -23,8 +23,8 @@ struct Ktx
   Gfx::TextureFormat  mFormat;
   uint16_t mFaceCount;
   uint16_t mMipLevelCount;
-  uint16_t mWidthPx;  // of top level
-  uint16_t mHeightPx; // of top level
+  Px mWidthPx;  // of top level
+  Px mHeightPx; // of top level
   // N.B. ignoring depth
   std::vector<uint8_t>  mData;
   std::vector<Buffer> mImages;  // references mData, size is mFaceCount * mMipLevelCount, index as mImage[mipLevel * mMipLevelCount + face];

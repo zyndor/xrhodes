@@ -10,6 +10,7 @@
 //
 //==============================================================================
 #include "xr/Primitive.hpp"
+#include "xr/Px.hpp"
 #include "xr/events/Callback.hpp"
 #include "xr/events/Signal.hpp"
 #include "xr/memory/Buffer.hpp"
@@ -270,12 +271,12 @@ enum class TextureFormat
 //=============================================================================
 struct TextureInfo
 {
-  static uint8_t CalculateMipLevels(uint16_t width, uint16_t height, FlagType flags);
+  static uint8_t CalculateMipLevels(Px width, Px height, FlagType flags);
 
   TextureFormat format;
-  uint16_t width;
-  uint16_t height;
-  uint16_t depth;
+  Px width;
+  Px height;
+  Px depth;
   uint8_t mipLevels;
   FlagType flags;
 };
@@ -424,19 +425,19 @@ constexpr FlagType StencilToState(uint8_t ref, uint8_t mask,
 void Init(Context* context);
 
 ///@return Logical width of rendering area in pixels.
-int  GetLogicalWidth();
+Px GetLogicalWidth();
 
 ///@return Logical height of rendering area in pixels.
-int  GetLogicalHeight();
+Px GetLogicalHeight();
 
 ///@return The ratio of the width to the height of the logical size.
 float GetLogicalAspectRatio();
 
 ///@return Physical size of rendering area in pixels.
-int GetPhysicalWidth();
+Px GetPhysicalWidth();
 
 ///@return Physical size of rendering area in pixels.
-int GetPhysicalHeight();
+Px GetPhysicalHeight();
 
 ///@return The ratio of the width to the height of the physical size.
 float GetPhysicalAspectRatio();
@@ -502,16 +503,15 @@ void Release(IndexBufferHandle h);
 /// 2D, 6 for cubemaps, in +x, -x, +y ... order).
 ///@note The texel data isn't kept around by Gfx.
 ///@brief The texture will not be active yet; use SetTexture().
-TextureHandle CreateTexture(TextureFormat format, uint16_t width,
-  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffer,
-  uint8_t numBuffers = 1);
+TextureHandle CreateTexture(TextureFormat format, Px width, Px height,
+  Px depth, FlagType flags, Buffer const* buffer, uint8_t numBuffers = 1);
 
 ///@brief Creates a texture width the given parameters and no texel data. Such
 /// a texture may be suitable for a render target (framebuffer attachment).
 ///@note @a format may only be one of the non-compressed ones.
 ///@brief The texture will not be active yet; use SetTexture().
-TextureHandle CreateTexture(TextureFormat format, uint16_t width,
-  uint16_t height, uint16_t depth, FlagType flags);
+TextureHandle CreateTexture(TextureFormat format, Px width, Px height,
+  Px depth, FlagType flags);
 
 ///@return Description of the texture that @a h is for.
 TextureInfo GetTextureInfo(TextureHandle h);
@@ -675,9 +675,8 @@ using ReadFrameBufferCompleteCallback = Callback<void, void*>;
 ///@note In multithreaded mode, client code must guarantee at least two flushes
 /// before attempting to access the result; it's recommended to use the
 /// completion callback instead.
-void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-  TextureFormat format, void* mem,
-  ReadFrameBufferCompleteCallback* onComplete = nullptr);
+void ReadFrameBuffer(Px x, Px y, Px width, Px height,
+  TextureFormat format, void* mem, ReadFrameBufferCompleteCallback* onComplete = nullptr);
 
 ///@brief Reads the contents of the given @a colourAttachment of the currently
 /// set framebuffer.<br />
@@ -691,7 +690,7 @@ void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
 ///@note In multithreaded mode, client code must guarantee at least two flushes
 /// before attempting to access the result; it's recommended to use the
 /// completion callback instead.
-void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+void ReadFrameBuffer(Px x, Px y, Px width, Px height,
   TextureFormat format, uint8_t colorAttachment, void* mem,
   ReadFrameBufferCompleteCallback* onComplete = nullptr);
 

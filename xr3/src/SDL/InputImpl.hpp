@@ -13,6 +13,7 @@
 #include "xr/Input.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/types/Singleton.hpp"
+#include "xr/types/intutils.hpp"
 #include "SDL2/SDL_events.h"
 #include <cstring>
 
@@ -63,16 +64,17 @@ struct  InputImpl: Singleton<InputImpl>
   // general
   void OnKeyEvent(SDL_KeyboardEvent const& e)
   {
-    Input::KeyData xe{ TranslateKeyCodeNative(e.keysym.scancode),
-      e.state == SDL_PRESSED };
+    Input::KeyData xe{ TranslateKeyCodeNative(e.keysym.scancode), e.state == SDL_PRESSED };
     ButtonState::SetAbsolute(xe.isPressed, keyStates[xe.key]);
     onKey.Broadcast(xe);
   }
 
   void OnMouseAction(SDL_MouseButtonEvent const& e)
   {
+    XR_ASSERT(Input, Representable<decltype(Input::MouseActionData::x)>(e.x));
+    XR_ASSERT(Input, Representable<decltype(Input::MouseActionData::y)>(e.y));
     Input::MouseActionData xe{ e.which, MouseButton::TranslateNative(e.button),
-      e.x, e.y, e.state == SDL_PRESSED };
+      int16_t(e.x), int16_t(e.y), e.state == SDL_PRESSED };
     ButtonState::SetAbsolute(xe.isPressed, mouseButtonStates[xe.button]);
     mousePosition.x = xe.x;
     mousePosition.y = xe.y;
@@ -81,7 +83,9 @@ struct  InputImpl: Singleton<InputImpl>
 
   void OnMouseMotion(SDL_MouseMotionEvent const& e)
   {
-    Input::MouseMotionData xe{ e.which, e.x, e.y };
+    XR_ASSERT(Input, Representable<decltype(Input::MouseMotionData::x)>(e.x));
+    XR_ASSERT(Input, Representable<decltype(Input::MouseMotionData::y)>(e.y));
+    Input::MouseMotionData xe{ e.which, int16_t(e.x), int16_t(e.y) };
     mousePosition.x = xe.x;
     mousePosition.y = xe.y;
     onMouseMotion.Broadcast(xe);
@@ -124,8 +128,7 @@ struct  InputImpl: Singleton<InputImpl>
     }
     else
     {
-      XR_TRACE(Input, ("Controller %d ignored; a maximum of %d supported", id,
-        kMaxControllers));
+      XR_TRACE(Input, ("Controller %d ignored; a maximum of %d supported", id, kMaxControllers));
     }
   }
 

@@ -48,8 +48,8 @@ public:
   {
     uint32_t  device;
     MouseButton::Type button;
-    int32_t   x;
-    int32_t   y;
+    int16_t   x;
+    int16_t   y;
     bool      isPressed;
   };
 
@@ -57,8 +57,8 @@ public:
   struct  MouseMotionData
   {
     uint32_t  device;
-    int32_t   x;
-    int32_t   y;
+    int16_t   x;
+    int16_t   y;
   };
 
   ///@brief Information about a touch press / release event.
@@ -66,8 +66,8 @@ public:
   {
     uint32_t  device;
     uint32_t  touch;
-    int       x;
-    int       y;
+    int16_t   x;
+    int16_t   y;
     bool      isPressed;
   };
 
@@ -76,8 +76,8 @@ public:
   {
     uint32_t  device;
     uint32_t  touch;
-    int       x;
-    int       y;
+    int16_t   x;
+    int16_t   y;
   };
 
   ///@brief Information about a game controller being added or removed.

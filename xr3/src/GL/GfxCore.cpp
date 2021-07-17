@@ -898,7 +898,7 @@ void Core::Release(TextureHandle h)
   }
 }
 
-bool Core::CreateFrameBuffer(TextureFormat format, uint16_t width, uint16_t height,
+bool Core::CreateFrameBuffer(TextureFormat format, Px width, Px height,
   FlagType flags, FrameBufferObject& fbo)
 {
   TextureHandle h = Gfx::CreateTexture(format, width, height, 0, flags);
@@ -1614,8 +1614,8 @@ void Core::Present(bool /*resetState*/)
   sContext->mContext->Swap();
 }
 
-void  Core::ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
-  TextureFormat format, uint8_t colorAttachment, void* mem,
+void  Core::ReadFrameBuffer(Px x, Px y, Px width,
+  Px height, TextureFormat format, uint8_t colorAttachment, void* mem,
   ReadFrameBufferCompleteCallback* onComplete)
 {
   auto hFbo = sContext->mActiveFrameBuffer;
