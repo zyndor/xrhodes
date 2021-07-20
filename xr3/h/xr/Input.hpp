@@ -83,7 +83,7 @@ public:
   ///@brief Information about a game controller being added or removed.
   struct JoyDeviceData
   {
-    uint32_t device;
+    uint32_t device;  //< uint32_t(-1) if there was an error.
     const char* name;
   };
 

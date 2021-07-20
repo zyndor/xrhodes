@@ -140,13 +140,16 @@ struct  InputImpl: Singleton<InputImpl>
       auto& controller = controllers[id];
       InstPtr ii = { controller.Open(id), &controller };
 
-      // Register instance id since subsequent events will reference this.
-      auto iFind = std::lower_bound(mControllerInstMap, mLastInstIndex, ii);
-      if (iFind == mLastInstIndex || iFind->instance != ii.instance)
+      if (ii.instance != uint32_t(-1))
       {
-        std::memmove(iFind + 1, iFind, (mLastInstIndex - iFind) * sizeof(InstPtr));
-        *iFind = ii;
-        ++mLastInstIndex;
+        // Register instance id since subsequent events will reference this.
+        auto iFind = std::lower_bound(mControllerInstMap, mLastInstIndex, ii);
+        if (iFind == mLastInstIndex || iFind->instance != ii.instance)
+        {
+          std::memmove(iFind + 1, iFind, (mLastInstIndex - iFind) * sizeof(InstPtr));
+          *iFind = ii;
+          ++mLastInstIndex;
+        }
       }
 
       Input::JoyDeviceData xe = { static_cast<uint32_t>(id), controllers[id].GetName() };
