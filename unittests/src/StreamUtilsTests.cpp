@@ -41,7 +41,7 @@ namespace
 
     void Init()
     {
-      for (int i = 0; i < XR_ARRAY_SIZE(chars); ++i)
+      for (int8_t i = 0; i < XR_ARRAY_SIZE(chars); ++i)
       {
         chars[i] = i;
       }

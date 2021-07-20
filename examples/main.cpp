@@ -135,9 +135,9 @@ private:
   {
     HardString<32> stats;
     stats += " (";
-    stats += sec.updateCount;
+    stats += int32_t(sec.updateCount);
     stats += " / ";
-    stats += sec.renderCount;
+    stats += int32_t(sec.renderCount);
     stats += ")";
     Device::SetMainWindowTitle((GetTitle() + stats.c_str()).c_str());
   }

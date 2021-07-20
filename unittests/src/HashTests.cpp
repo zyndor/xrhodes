@@ -136,8 +136,8 @@ void DoStringUniqueness(bool dump)
     {
       for (int z = 0; z < XR_ARRAY_SIZE(strings); ++z)
       {
-        auto len = sprintf(arBuffer, "ins_%c_%s%d_anims", i + 'a', strings[z], j);
-        auto hash = xr::Hash::String(arBuffer, len, false);
+        size_t len = sprintf(arBuffer, "ins_%c_%s%d_anims", i + 'a', strings[z], j);
+        auto hash = xr::Hash::String(arBuffer, len);
 
         auto iFind = hashes.find(hash);
         bool hashClashing = iFind != hashes.end();

@@ -159,7 +159,7 @@ public:
     Texture::RegisterSamplerUniform("uShadowMap", 1);
 
     // Create render target for shadow pass. We only need a depth buffer.
-    int32_t shadowMapSize = 1024;
+    Px  shadowMapSize = 1024;
     auto hShadowMap = Gfx::CreateTexture(Gfx::TextureFormat::D32,
         shadowMapSize, shadowMapSize, 0, Gfx::F_TEXTURE_FILTER_POINT);
 
@@ -174,10 +174,10 @@ public:
       Rect{ 0, 0, shadowMapSize, shadowMapSize },
       Gfx::F_CLEAR_DEPTH,
       1.,
-      Color(0.),  // no color target; ignored
+      Color{},  // no color target; ignored
       Asset::Manager::Load<Material>("example08-depth.mtl")
     };
-    ProjectionHelper::CalculateOrthographic(orthoSize, 0., orthoSize * 2.,
+    ProjectionHelper::CalculateOrthographic(orthoSize, 0.f, orthoSize * 2.f,
       m_renderPasses[RenderPass::DEPTH].viewer.projection.data);
     m_assetQueue.Add(m_renderPasses[RenderPass::DEPTH].material);
 
@@ -235,7 +235,7 @@ public:
         Quaternion::FromPitchYawRoll(motion.x, motion.y, 0.);
 
       // Change the color of the light over time.
-      Color lightColor(.75f, .66f + sinf(Timer::GetUST() * .0002f) * .333, .5f);
+      Color lightColor(.75f, .66f + sinf(float(Timer::GetUST() * .0002)) * .333f, .5f);
       Gfx::SetUniform(m_uLightColor, &lightColor);
 
       // Update the light space transform
@@ -297,7 +297,7 @@ public:
     Gfx::SetViewport(m_renderPasses[RenderPass::MAIN].viewport);
     Gfx::Clear(Gfx::F_CLEAR_DEPTH);
     Transforms::Updater().
-      SetOrthographicProjection(-100. * Gfx::GetLogicalAspectRatio(), 100. * Gfx::GetLogicalAspectRatio(), -100., 100., -100., 100.).
+      SetOrthographicProjection(-100.f * Gfx::GetLogicalAspectRatio(), 100.f * Gfx::GetLogicalAspectRatio(), -100.f, 100.f, -100.f, 100.f).
       SetViewerTransform(Matrix::Identity());
 
     XR_TRANSFORMS_SCOPED_MODEL(Matrix(Vector3(-80., -60., .0)));

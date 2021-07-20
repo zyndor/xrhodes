@@ -79,7 +79,7 @@ int DragController::NextAccumulator() const
   return (m_iActiveAccumulator + 1) & 1;
 }
 
-void DragController::OnMouseAction(const xr::Input::MouseActionData & e)
+void DragController::OnMouseAction(xr::Input::MouseActionData const& e)
 {
   if (e.button == MouseButton::Left)
   {
@@ -89,12 +89,12 @@ void DragController::OnMouseAction(const xr::Input::MouseActionData & e)
   }
 }
 
-void DragController::OnMouseMotion(const xr::Input::MouseMotionData & e)
+void DragController::OnMouseMotion(xr::Input::MouseMotionData const& e)
 {
   if (m_isButtonDown)
   {
     m_accumulators[m_iActiveAccumulator] +=
-      Vector2(e.x - m_lastMousePosition.x, e.y - m_lastMousePosition.y);
+      Vector2(float(e.x - m_lastMousePosition.x), float(e.y - m_lastMousePosition.y));
     m_lastMousePosition.x = e.x;
     m_lastMousePosition.y = e.y;
   }

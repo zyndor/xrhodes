@@ -109,7 +109,7 @@ public:
     }
     else
     {
-      Vector4 time(Timer::GetUST());
+      Vector4 time{ float(Timer::GetUST()) };
       Gfx::SetUniform(m_uTime, time.begin());
 
       m_dragControl.Update();
@@ -181,7 +181,7 @@ public:
 
     {
       Matrix m(m_rotation, Vector3::UnitZ() * -50.f);
-      m.ScaleLinear((1.5 + std::sin(Timer::GetUST() * .0001f) * .5) / 15.f);
+      m.ScaleLinear((1.5f + std::sin(float(Timer::GetUST() * .0001)) * .5f) / 15.f);
       XR_TRANSFORMS_SCOPED_MODEL(m);
 
       m_text3dMaterial->Apply();
@@ -193,8 +193,8 @@ public:
     }
 
     // Switch to orthographics projection, render 2D text.
-    Transforms::Updater().SetOrthographicProjection(0.f, Gfx::GetLogicalWidth(),
-      -Gfx::GetLogicalHeight(), 0.f, -100.f, 100.f);
+    Transforms::Updater().SetOrthographicProjection(0.f, float(Gfx::GetLogicalWidth()),
+      float(-Gfx::GetLogicalHeight()), 0.f, -100.f, 100.f);
 
     {
       XR_TRANSFORMS_SCOPED_MODEL(Matrix::Identity());

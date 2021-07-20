@@ -157,7 +157,7 @@ public:
         Quaternion::FromPitchYawRoll(motion.x, motion.y, 0.);
 
       // Change the color of the light over time.
-      Color lightColor(.75f, .66f + sinf(Timer::GetUST() * .0002f) * .333, .5f);
+      Color lightColor(.75f, .66f + sinf(float(Timer::GetUST() * .0002)) * .333f, .5f);
       Gfx::SetUniform(m_uLightColor, &lightColor);
     }
   }

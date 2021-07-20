@@ -41,9 +41,9 @@ XM_TEST_F(Image, Basic)
   XM_ASSERT_EQ(img.GetPixelDataSize(), 0);
   XM_ASSERT_EQ(img.GetPixelData(), nullptr);
 
-  uint32_t width = 256;
-  uint32_t height = 256;
-  uint32_t bpp = 3;
+  Px width = 256;
+  Px height = 256;
+  uint8_t bpp = 3;
   img.SetSize(width, height, bpp);
   XM_ASSERT_EQ(img.GetWidth(), width);
   XM_ASSERT_EQ(img.GetHeight(), height);
@@ -53,13 +53,13 @@ XM_TEST_F(Image, Basic)
   XM_ASSERT_NE(img.GetPixelData(), nullptr);
 
   auto p = img.GetPixelData();
-  for (uint32_t i = 0; i < height; ++i)
+  for (Px i = 0; i < height; ++i)
   {
-    for (uint32_t j = 0; j < width; ++j)
+    for (Px j = 0; j < width; ++j)
     {
-      *p = i;
+      *p = uint8_t(i);
       ++p;
-      *p = j;
+      *p = uint8_t(j);
       ++p;
       *p = 0x7f;
       ++p;
