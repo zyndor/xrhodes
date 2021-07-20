@@ -124,12 +124,18 @@ public:
 
   ///@brief Initializes the input subsystem. Requires Device::Init() to
   /// have been called for correct functioning.
-  static void     Init();
+  static void Init();
+
+  ///@brief Enables / disables mouse capture. Mouse capturing allows notifications
+  /// of mouse movement outside the window (i.e. negative coordinates or those greater
+  /// than the window size) after a button press inside of it, and until button
+  /// release. This is disabled by default.
+  static void SetMouseCapture(bool state);
 
   ///@brief Polls the system for input changes to return from the Get*
   /// functions.
   ///@note Device::YieldOS() will need to be called beforehand.
-  static void     Update();
+  static void Update();
 
   ///@brief Gets the state of the given key @a k.
   static ButtonState::Type  GetKeyState(KeyCode k);
