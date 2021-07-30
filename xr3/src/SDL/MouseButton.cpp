@@ -42,4 +42,4 @@ Type TranslateNative(int mb)
 }
 
 } // MouseButton
-} // XR
+} // xr

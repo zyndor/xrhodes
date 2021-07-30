@@ -86,6 +86,6 @@ int32_t  Indexer2d::GetSize() const
   return m_size;
 }
 
-}  // end namespace XR
+}  // xr
 
 #endif  //XR_INDEXER2D_HPP

@@ -593,4 +593,4 @@ bool Image::WriteTga(FileWriter& w) const
   return success;
 }
 
-} // XR
+} // xr

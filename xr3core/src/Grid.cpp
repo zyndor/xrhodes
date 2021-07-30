@@ -55,4 +55,4 @@ int  Grid::ToGrid(float world) const
   return static_cast<int>(floorf(world * m_sizeRec));
 }
 
-}  // end namespace XR
+}  // xr

@@ -76,4 +76,4 @@ void  Indexer2d::ToCoordinates(int32_t i, int32_t& x, int32_t& y) const
   x = i - (y * m_width);
 }
 
-}  // end namespace XR
+}  // xr

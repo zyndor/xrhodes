@@ -101,6 +101,6 @@ public:
   static void Shutdown();
 };
 
-} // XR
+} // xr
 
 #endif // XR_DEVICE_HPP

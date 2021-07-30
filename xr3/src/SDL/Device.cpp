@@ -379,4 +379,4 @@ void Device::Shutdown()
   SDL_Quit();
 }
 
-} // XR
+} // xr

@@ -110,6 +110,6 @@ private:
   bool WriteTga(FileWriter& w) const;
 };
 
-} // XR
+} // xr
 
 #endif // XR_IMAGE_HPP

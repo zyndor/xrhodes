@@ -198,4 +198,4 @@ void Input::Shutdown()
   delete InputImpl::Instance();
 }
 
-} // XR
+} // xr

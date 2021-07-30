@@ -158,7 +158,7 @@ public:
   static ViewRayCaster GetViewRayCaster();
 };
 
-} // XR
+} // xr
 
 //==============================================================================
 #define XR_TRANSFORMS_SCOPED_MODEL_NAME_(l) xrScopedModel ## l

@@ -343,4 +343,4 @@ void TexturePack::OnUnload()
   m_sprites.clear();
 }
 
-} // XR
+} // xr

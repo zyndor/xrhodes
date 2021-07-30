@@ -129,6 +129,6 @@ public:
   static bool MakeDirs(FilePath const& path);
 };
 
-} // XR
+} // xr
 
 #endif  //XR_FILE_HPP

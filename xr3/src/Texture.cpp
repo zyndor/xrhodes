@@ -658,4 +658,4 @@ void Texture::OnUnload()
   std::vector<uint8_t>().swap(m_data);
 }
 
-} // XR
+} // xr

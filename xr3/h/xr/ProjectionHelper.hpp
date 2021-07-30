@@ -53,6 +53,6 @@ public:
     float* outTanVerticalFovHalf = nullptr);
 };
 
-} // XR
+} // xr
 
 #endif// XR_PROJECTIONHELPER_HPP

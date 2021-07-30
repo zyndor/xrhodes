@@ -58,6 +58,6 @@ void  Circle(float radius, Material::Ptr const& material = nullptr);
 void  FillCircle(float radius, Material::Ptr const& material = nullptr);
 
 } // DebugDraw
-} // XR
+} // xr
 
 #endif // XR_DEBUGDRAW_HPP

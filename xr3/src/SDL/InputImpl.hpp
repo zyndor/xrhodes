@@ -239,6 +239,6 @@ private:
   bool      mMouseCapture{ false };
 };
 
-} // XR
+} // xr
 
 #endif // XR_INPUTIMPL_HPP

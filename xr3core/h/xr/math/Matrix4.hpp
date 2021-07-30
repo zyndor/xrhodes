@@ -242,6 +242,6 @@ Vector4 operator*(Matrix4 const& m, Vector4 const& v)
     Vector4(m.data[3], m.data[7], m.data[11], m.data[15]).Dot(v));
 }
 
-} // XR
+} // xr
 
 #endif //XR_MATRIX4_HPP

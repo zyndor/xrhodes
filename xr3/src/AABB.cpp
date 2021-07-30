@@ -134,4 +134,4 @@ bool  AABB::HitTest(float x0, float y0, float dx, float dy, float& t) const
   }
 }
 
-}  // XR
+}  // xr

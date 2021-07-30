@@ -133,7 +133,7 @@ private:
 };
 
 } // detail
-} // XR
+} // xr
 
 
 #endif  //XR_DEBUG_HPP

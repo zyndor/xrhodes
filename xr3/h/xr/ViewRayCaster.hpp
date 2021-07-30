@@ -81,6 +81,6 @@ public:
   }
 };
 
-} // XR
+} // xr
 
 #endif //XR_VIEWRAYCASTER_HPP

@@ -93,6 +93,6 @@ T const* FileBuffer::CastData() const
   return reinterpret_cast<T const*>(m_data);
 }
 
-} // XR
+} // xr
 
 #endif  //XR_FILEBUFFER_HPP

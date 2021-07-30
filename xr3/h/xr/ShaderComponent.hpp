@@ -62,6 +62,6 @@ protected:
   bool SetSourceInternal(Gfx::ShaderType type, Buffer buffer);
 };
 
-} // XR
+} // xr
 
 #endif //XR_SHADER_HPP

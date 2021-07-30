@@ -88,4 +88,4 @@ FileBuffer& FileBuffer::operator=(FileBuffer&& rhs)
   return *this;
 }
 
-} // XR
+} // xr

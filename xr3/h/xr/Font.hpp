@@ -179,6 +179,6 @@ uint8_t const* Font::GetGlyphBitmapData() const
   return m_glyphBitmaps.data();
 }
 
-} // XR
+} // xr
 
 #endif  //XR_FONT_HPP

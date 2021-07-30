@@ -429,4 +429,4 @@ ViewRayCaster Transforms::GetViewRayCaster(float aspectRatio)
   return s_impl->GetViewRayCaster(aspectRatio);
 }
 
-} // XR
+} // xr

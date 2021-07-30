@@ -244,4 +244,4 @@ KeyCode TranslateKeyCodeNative(uint32_t kc)
   return (iFind != std::end(kKeyMappings) && iFind->native == kc) ? iFind->xr : K_UNKNOWN;
 }
 
-} // XR
+} // xr

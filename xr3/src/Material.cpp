@@ -490,4 +490,4 @@ Shader::Ptr Material::GetShader() const
   return m_shader;
 }
 
-} // XR
+} // xr

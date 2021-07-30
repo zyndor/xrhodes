@@ -436,4 +436,4 @@ IndexMesh BoxText::CreateMesh(const char* text, size_t numBytes, bool updateGlyp
     static_cast<uint32_t>(indices.size()), indices.data());
 }
 
-} // XR
+} // xr
