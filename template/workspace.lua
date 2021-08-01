@@ -90,14 +90,14 @@ function do_workspace(workspace_name, start_project_name)
 
 	-- optimization
 	filter("not Release")
-	optimize "Off"
-	symbols "On"
-	runtime "Debug"
-	
+		optimize "Off"
+		symbols "On"
+		runtime "Debug"
+
 	filter{ "Release" }
-	optimize "Full"
-	runtime "Release"
-	
+		optimize "Full"
+		runtime "Release"
+
 	filter{}
 
 	-- paths
@@ -130,10 +130,10 @@ function do_workspace(workspace_name, start_project_name)
 	}
 
 	filter{ "Debug" }
-	defines {
-		"XR_DEBUG"
-	}
-	
+		defines {
+			"XR_DEBUG"
+		}
+
 	filter{}
 
 	if is_vs() then
@@ -181,6 +181,7 @@ function do_workspace(workspace_name, start_project_name)
 
 	-- target-specific setup
 	filter {}
+
 	-- Windows
 	if target_env == "windows" then
 		if is_vs() then
@@ -233,17 +234,18 @@ end
 -- Copies dependencies on Windows
 --
 function do_vs_postbuild(dependencies)
-  local artifacts_rel_path = "../../"..bin_location.."/"; -- we're currently in .projects/${platform}/
-  for _, p in ipairs(tbl_platforms) do
-    for _, c in ipairs(tbl_configurations) do
-      filter { "platforms:"..p, c }
-      local pc = p.."-"..c
-      for _, iDep in ipairs(dependencies) do
-        postbuildcommands{
-          os.translateCommands("{COPY} $(VcpkgCurrentInstalledDir)"..
-            "bin/"..iDep..".dll "..artifacts_rel_path..pc)
-        }
-      end
-    end
-  end
+	local artifacts_rel_path = "../../"..bin_location.."/"; -- we're currently in .projects/${platform}/
+	for _, p in ipairs(tbl_platforms) do
+		for _, c in ipairs(tbl_configurations) do
+			filter { "platforms:"..p, c }
+				local pc = p.."-"..c
+				for _, iDep in ipairs(dependencies) do
+					postbuildcommands{
+						os.translateCommands("{COPY} $(VcpkgCurrentInstalledDir)"..
+							"bin/"..iDep..".dll "..artifacts_rel_path..pc)
+					}
+				end
+			filter {}
+		end
+	end
 end
