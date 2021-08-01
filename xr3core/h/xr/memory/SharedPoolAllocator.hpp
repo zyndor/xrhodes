@@ -103,11 +103,11 @@ public:
 
 //==============================================================================
 template <class Type, class OtherType>
-bool operator==(const SharedPoolAllocator<Type>&,
+constexpr bool operator==(const SharedPoolAllocator<Type>&,
   const SharedPoolAllocator<OtherType>&) noexcept;
 
 template <class Type, class OtherType>
-bool operator!=(const SharedPoolAllocator<Type>&,
+constexpr bool operator!=(const SharedPoolAllocator<Type>&,
   const SharedPoolAllocator<OtherType>&) noexcept;
 
 //==============================================================================
@@ -161,7 +161,7 @@ template  <typename Type>
 inline
 typename SharedPoolAllocator<Type>::pointer
   SharedPoolAllocator<Type>::allocate(size_type n,
-    SharedPoolAllocator<void>::const_pointer hint)
+    SharedPoolAllocator<void>::const_pointer /*hint*/)
 {
   return static_cast<pointer>(m_pool->Allocate(n * sizeof(value_type)));
 }
@@ -169,7 +169,7 @@ typename SharedPoolAllocator<Type>::pointer
 //==============================================================================
 template  <typename Type>
 inline
-void SharedPoolAllocator<Type>::deallocate(pointer p, size_type n)
+void SharedPoolAllocator<Type>::deallocate(pointer /*p*/, size_type /*n*/)
 {
   // do the nothing
 }
@@ -201,18 +201,18 @@ void SharedPoolAllocator<Type>::destroy(pointer p)
 
 //==============================================================================
 template <class Type, class OtherType>
-bool operator==(const SharedPoolAllocator<Type>&,
+constexpr bool operator==(const SharedPoolAllocator<Type>&,
   const SharedPoolAllocator<OtherType>&) noexcept
 {
-  return true;
+  return true;  // de-allocation is no-op, so sure, go ahead.
 }
 
 //==============================================================================
 template <class Type, class OtherType>
-bool operator!=(const SharedPoolAllocator<Type>&,
-  const SharedPoolAllocator<OtherType>&) noexcept
+constexpr bool operator!=(const SharedPoolAllocator<Type>& lhs,
+  const SharedPoolAllocator<OtherType>& rhs) noexcept
 {
-  return true;
+  return !(lhs == rhs);
 }
 
 } // xr
