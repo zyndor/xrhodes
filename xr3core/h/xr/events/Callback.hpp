@@ -24,24 +24,23 @@ namespace xr
 struct CallbackBase
 {
   // structors
-  explicit CallbackBase(void* data)
+  explicit CallbackBase(void* data) noexcept
   : m_data{ data }
   {}
 
-  virtual ~CallbackBase()
-  {}
+  virtual ~CallbackBase() noexcept = default;
 
   // virtual
   [[nodiscard]] virtual CallbackBase* Clone() const =0;
 
   // operators
-  bool operator==(CallbackBase const& other) const
+  bool operator==(CallbackBase const& other) const noexcept
   {
     return m_data == other.m_data && GetTypeId() == other.GetTypeId() &&
       EqualsInternal(other);
   }
 
-  bool operator!=(CallbackBase const& other) const
+  bool operator!=(CallbackBase const& other) const noexcept
   {
     return !operator==(other);
   }
@@ -51,11 +50,12 @@ protected:
   void* m_data; // no ownership
 
   // virtual
-  virtual size_t GetTypeId() const = 0;
-  virtual bool EqualsInternal(CallbackBase const& other) const =0;
+  virtual size_t GetTypeId() const noexcept = 0;
+  virtual bool EqualsInternal(CallbackBase const& other) const noexcept =0;
 
+  // internal
   template <typename T>
-  T& GetObject() const
+  T& GetObject() const noexcept
   {
     return *static_cast<T*>(const_cast<void*>(m_data));
   }
@@ -67,15 +67,15 @@ protected:
 template <typename Return, typename... Args>
 struct Callback: CallbackBase
 {
+  // types
   using SelfType = Callback<Return, Args...>;
 
-  explicit Callback(void* data)
+  // structors
+  explicit Callback(void* data) noexcept
   : CallbackBase{ data }
   {}
 
-  virtual ~Callback()
-  {}
-
+  // virtual
   [[nodiscard]] virtual SelfType* Clone() const =0;
   virtual Return Call(Args...) const =0;
 };
@@ -87,17 +87,20 @@ struct Callback: CallbackBase
 template <class T, typename Return, typename... Args>
 struct MemberCallback : Callback<Return, Args...>
 {
+  // types
   using BaseType = Callback<Return, Args...>;
   using SelfType = MemberCallback<T, Return, Args...>;
   using Function = typename std::conditional<std::is_const<T>::value,
     Return(T::*)(Args...) const,
     Return(T::*)(Args...)>::type;
 
-  MemberCallback(T& object, Function fn)
+  // structors
+  MemberCallback(T& object, Function fn) noexcept
   : BaseType{ &object },
     m_function{ fn }
   {}
 
+  // general
   [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(CallbackBase::GetObject<T>(), m_function);
@@ -109,14 +112,16 @@ struct MemberCallback : Callback<Return, Args...>
   }
 
 protected:
+  // data
   Function m_function;
 
-  size_t GetTypeId() const override
+  // internal
+  size_t GetTypeId() const noexcept override
   {
     return TypeId<SelfType>();
   };
 
-  bool EqualsInternal(CallbackBase const& other) const override
+  bool EqualsInternal(CallbackBase const& other) const noexcept override
   {
     return m_function == static_cast<SelfType const&>(other).m_function;
   }
@@ -125,17 +130,20 @@ protected:
 template <class T, typename... Args>
 struct MemberCallback<T, void, Args...> : Callback<void, Args...>
 {
+  // types
   using BaseType = Callback<void, Args...>;
   using SelfType = MemberCallback<T, void, Args...>;
   using Function = typename std::conditional<std::is_const<T>::value,
     void(T::*)(Args...) const,
     void(T::*)(Args...)>::type;
 
-  MemberCallback(T& object, Function fn)
+  // structors
+  MemberCallback(T& object, Function fn) noexcept
   : BaseType{ &object },
     m_function{ fn }
   {}
 
+  // general
   [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(CallbackBase::GetObject<T>(), m_function);
@@ -147,14 +155,16 @@ struct MemberCallback<T, void, Args...> : Callback<void, Args...>
   }
 
 protected:
+  // data
   Function m_function;
 
-  size_t GetTypeId() const override
+  // internal
+  size_t GetTypeId() const noexcept override
   {
     return TypeId<SelfType>();
   };
 
-  bool EqualsInternal(CallbackBase const& other) const override
+  bool EqualsInternal(CallbackBase const& other) const noexcept override
   {
     return m_function == static_cast<SelfType const&>(other).m_function;
   }
@@ -167,15 +177,18 @@ protected:
 template <typename Return, typename... Args>
 struct FunctionPtrCallback : Callback<Return, Args...>
 {
+  // types
   using BaseType = Callback<Return, Args...>;
   using SelfType = FunctionPtrCallback<Return, Args...>;
   using Function = Return(*)(Args..., void*);
 
-  FunctionPtrCallback(Function fn, void* userData = nullptr)
+  // structors
+  FunctionPtrCallback(Function fn, void* userData = nullptr) noexcept
   : BaseType{ userData },
     m_function{ fn }
   {}
 
+  // general
   [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(m_function, const_cast<void*>(CallbackBase::m_data));
@@ -187,14 +200,16 @@ struct FunctionPtrCallback : Callback<Return, Args...>
   }
 
 protected:
+  // data
   Function m_function;
 
-  size_t GetTypeId() const override
+  // internal
+  size_t GetTypeId() const noexcept override
   {
     return TypeId<SelfType>();
   };
 
-  bool EqualsInternal(CallbackBase const& other) const override
+  bool EqualsInternal(CallbackBase const& other) const noexcept override
   {
     return m_function == static_cast<SelfType const&>(other).m_function;
   }
@@ -203,15 +218,18 @@ protected:
 template <typename... Args>
 struct FunctionPtrCallback<void, Args...> : Callback<void, Args...>
 {
+  // types
   using BaseType = Callback<void, Args...>;
   using SelfType = FunctionPtrCallback<void, Args...>;
   using Function = void(*)(Args..., void*);
 
-  FunctionPtrCallback(Function fn, void* userData = nullptr)
+  // structors
+  FunctionPtrCallback(Function fn, void* userData = nullptr) noexcept
   : BaseType{ userData },
     m_function{ fn }
   {}
 
+  // general
   [[nodiscard]] SelfType* Clone() const override
   {
     return new SelfType(m_function, const_cast<void*>(CallbackBase::m_data));
@@ -223,14 +241,16 @@ struct FunctionPtrCallback<void, Args...> : Callback<void, Args...>
   }
 
 protected:
+  // data
   Function m_function;
 
-  size_t GetTypeId() const override
+  // internal
+  size_t GetTypeId() const noexcept override
   {
     return TypeId<SelfType>();
   };
 
-  bool EqualsInternal(CallbackBase const& other) const override
+  bool EqualsInternal(CallbackBase const& other) const noexcept override
   {
     return m_function == static_cast<SelfType const&>(other).m_function;
   }
@@ -240,7 +260,7 @@ protected:
 ///@brief Convenience function to create a MemberCallback from an object and
 /// a method of its type.
 template <class T, typename Return, typename... Args>
-MemberCallback<T, Return, Args...> MakeCallback(T& object, Return(T::*fn)(Args...))
+MemberCallback<T, Return, Args...> MakeCallback(T& object, Return(T::*fn)(Args...)) noexcept
 {
   return MemberCallback<T, Return, Args...>(object, fn);
 }
@@ -249,7 +269,7 @@ MemberCallback<T, Return, Args...> MakeCallback(T& object, Return(T::*fn)(Args..
 ///@brief Convenience function to create a MemberCallback from a const object and
 /// a const method of its type.
 template <class T, typename Return, typename... Args>
-MemberCallback<T, Return, Args...> MakeCallback(T const& object, Return(T::*fn)(Args...) const)
+MemberCallback<T, Return, Args...> MakeCallback(T const& object, Return(T::*fn)(Args...) const) noexcept
 {
   return MemberCallback<T, Return, Args...>(object, fn);
 }
@@ -287,7 +307,7 @@ struct RemoveLast<First>
 ///@brief Convenience function for creating a FunctionPtrCallback from a free standing
 /// function.
 template <typename Return, typename... Args>
-auto MakeCallback(Return(*fn)(Args...), void* data = nullptr)
+auto MakeCallback(Return(*fn)(Args...), void* data = nullptr) noexcept
 {
   return typename detail::MakeCallbackImpl<
     Return, typename detail::RemoveLast<Args...>::Type>::Callback(fn, data);
