@@ -9,6 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#include <type_traits>
 #include <cstddef>
 
 namespace xr
@@ -21,7 +22,7 @@ class Nontype
 {};
 
 //==============================================================================
-///@brief	The type itself.
+///@brief  The type itself.
 template  <typename T>
 struct Identity
 {
@@ -32,14 +33,16 @@ struct Identity
 ///@brief Ternary typedef operator. Based on the value of @a kCheck,
 /// propagates the definition of @a A (if true) or @a B (if false) as @a Type.
 template  <bool kCheck, typename A, typename B>
-struct  TypeSelect
+struct TypeSelect
 {
+  [[deprecated("Use std::conditional<>")]]
   typedef A Type;
 };
 
 template  <typename A, typename B>
-struct  TypeSelect<false, A, B>
+struct TypeSelect<false, A, B>
 {
+  [[deprecated("Use std::conditional<>")]]
   typedef B Type;
 };
 
@@ -47,18 +50,20 @@ struct  TypeSelect<false, A, B>
 ///@brief Tells you whether T is a constant type. If it is, it defines the
 /// corresponding non-const type in UnconstType.
 template  <typename T>
-struct  IsConst
+struct IsConst
 {
-  enum { kResult = false };
+  enum [[deprecated("Use std::conditional<>")]] { kResult = false };
 
+  [[deprecated("Use std::conditional<>")]]
   typedef Nontype UnconstType;
 };
 
 template  <typename T>
-struct  IsConst<const T>
+struct IsConst<const T>
 {
-  enum { kResult = true };
+  enum [[deprecated("Use std::conditional<>")]] { kResult = true };
 
+  [[deprecated("Use std::conditional<>")]]
   typedef T UnconstType;
 };
 
@@ -66,58 +71,64 @@ struct  IsConst<const T>
 ///@brief Tells you whether T is a pointer type. If it is, it defines the
 /// corresponding pointed type in PointedType.
 template  <typename T>
-struct  IsPointer
+struct IsPointer
 {
-  enum { kResult = false };
+  enum [[deprecated("Use std::is_pointer<>")]] { kResult = false };
 
+  [[deprecated("Use std::is_pointer<>")]]
   typedef Nontype  PointedType;
 };
 
 template  <typename T>
-struct  IsPointer<T*>
+struct IsPointer<T*>
 {
-  enum { kResult = true };
+  enum [[deprecated("Use std::is_pointer<>")]] { kResult = true };
 
+  [[deprecated("Use std::is_pointer<>")]]
   typedef T PointedType;
 };
 
 //==============================================================================
 ///@brief Tells you whether T0 is the same type T1.
-template	<typename T0, typename T1>
-struct	IsEqualType
+template  <typename T0, typename T1>
+struct IsEqualType
 {
-	enum { kResult = false };
+  enum [[deprecated("Use std::is_same<>")]] { kResult = false };
 };
 
-template	<typename T0>
-struct	IsEqualType<T0, T0>
+template  <typename T0>
+struct IsEqualType<T0, T0>
 {
-	enum { kResult = true };
-};
-
-//==============================================================================
-template  <typename T>
-struct  UnConst
-{
-  typedef T Type;
-};
-
-template  <typename T>
-struct  UnConst<const T>
-{
-  typedef T Type;
+  enum [[deprecated("Use std::is_same<>")]] { kResult = true };
 };
 
 //==============================================================================
 template  <typename T>
-struct  UnPointer
+struct UnConst
 {
+  [[deprecated("Use std::remove_const<>")]]
   typedef T Type;
 };
 
 template  <typename T>
-struct  UnPointer<T*>
+struct UnConst<const T>
 {
+  [[deprecated("Use std::remove_const<>")]]
+  typedef T Type;
+};
+
+//==============================================================================
+template  <typename T>
+struct UnPointer
+{
+  [[deprecated("Use std::remove_pointer<>")]]
+  typedef T Type;
+};
+
+template  <typename T>
+struct UnPointer<T*>
+{
+  [[deprecated("Use std::remove_pointer<>")]]
   typedef T Type;
 };
 
@@ -127,7 +138,7 @@ namespace detail
 template  <typename T>
 struct TypeId
 {
-  static size_t Get()
+  static size_t Get() noexcept
   {
     return reinterpret_cast<size_t>(&s);
   }
@@ -139,17 +150,18 @@ private:
 template <typename T>
 char TypeId<T>::s; // don't actually care about the value
 
-}	// detail
+} // detail
 
-///@brief Static typeId based on the address of a static variable of a template
-/// class.
+///@brief Provides a static typeId based on the type of T after stripping its pointerness,
+/// referenceness and cv-qualifiers.
 ///@note  TypeId() doesn't persist across executions/platforms.
-///@note	Discards constness and pointerness of T.
-template	<typename T>
-inline
-size_t	TypeId()
+template  <typename T>
+[[nodiscard]] inline
+size_t  TypeId() noexcept
 {
-	return detail::TypeId<typename UnPointer<typename UnConst<T>::Type>::Type>::Get();
+  return detail::TypeId<
+    typename std::remove_pointer<typename std::decay<T>::type>::type
+  >::Get();
 }
 
 }  // xr

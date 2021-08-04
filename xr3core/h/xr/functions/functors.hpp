@@ -193,9 +193,9 @@ struct  Passer: ValueFunctorCore<Callee&>
 template  <class Callee, typename Return = void, typename Arg = void>
 struct  Caller
 {
-  typedef typename TypeSelect<IsConst<Callee>::kResult,
+  typedef typename std::conditional<std::is_const<Callee>::value,
     Return(Callee::*)(Arg)const,
-    Return(Callee::*)(Arg)>::Type Method;
+    Return(Callee::*)(Arg)>::type Method;
 
   Caller(Method method, Arg a)
   : m_method(method),
@@ -220,9 +220,9 @@ struct  Caller
 template  <class Callee, typename Return>
 struct  Caller<Callee, Return, void>
 {
-  typedef typename TypeSelect<IsConst<Callee>::kResult,
+  typedef typename std::conditional<std::is_const<Callee>::value,
     Return(Callee::*)()const,
-    Return(Callee::*)()>::Type Method;
+    Return(Callee::*)()>::type Method;
 
   explicit Caller(Method method)
   : m_method(method)

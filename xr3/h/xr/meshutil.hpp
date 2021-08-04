@@ -11,7 +11,6 @@
 //==============================================================================
 #include "xr/math/Vector3.hpp"
 #include "xr/debug.hpp"
-#include "xr/types/typeutils.hpp"
 #include <cstdint>
 #include <type_traits>
 #include <limits>
@@ -24,7 +23,11 @@ namespace meshutil
 //==============================================================================
 ///@brief moves pointer @a p by @a stride bytes.
 #define XR_ADVANCE_PTR(p, stride) \
-  reinterpret_cast<decltype(p)>(reinterpret_cast<typename TypeSelect<std::is_const<typename std::remove_pointer<decltype(p)>::type>::value, const uint8_t*, uint8_t*>::Type>(p) + stride)
+  reinterpret_cast<decltype(p)>( \
+    reinterpret_cast<typename std::conditional< \
+      std::is_const<typename std::remove_pointer<decltype(p)>::type>::value, \
+        const uint8_t*, uint8_t* \
+      >::type>(p) + stride)
 
 //==============================================================================
 ///@brief Calculates the origin of a mesh with the given vertex positions.
