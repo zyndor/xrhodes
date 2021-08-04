@@ -8,7 +8,6 @@
 //==============================================================================
 #include "xr/JsonEntity.hpp"
 #include "xr/utility/Hash.hpp"
-#include "xr/functions/functors.hpp"
 #include "xr/debug.hpp"
 #include <cstring>
 #include <algorithm>
@@ -404,7 +403,7 @@ Array::Array(const Array& rhs)
 //==============================================================================
 Array::~Array()
 {
-  std::for_each(m_elements.begin(), m_elements.end(), Deleter<Entity>);
+  std::for_each(m_elements.begin(), m_elements.end(), std::default_delete<Entity>());
 }
 
 //==============================================================================

@@ -7,7 +7,6 @@
 //
 //==============================================================================
 #include "xr/Quadtree.hpp"
-#include "xr/functions/functors.hpp"
 
 namespace xr
 {
