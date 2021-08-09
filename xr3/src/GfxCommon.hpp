@@ -51,15 +51,15 @@ struct Ref
 
 //==============================================================================
 // TODO: ServicedArrayCore or dynamic allocation
-template <typename T, size_t n, size_t exempt = 0>
+template <typename T, uint32_t n, uint32_t exempt = 0>
 class ServicedArray
 {
   XR_NONCOPY_DECL(ServicedArray)
 
 public:
-  static const size_t kSize = n;
+  static const uint32_t kSize = n;
 
-  static size_t size()
+  static uint32_t size()
   {
     return kSize;
   }
@@ -71,13 +71,13 @@ public:
   : server(kSize - exempt)
   {}
 
-  T& operator[](size_t i)
+  T& operator[](uint32_t i)
   {
     XR_ASSERT(ServicedArray, i < server.GetNumActive() || n - 1 - i < exempt);
     return data[i];
   }
 
-  T const& operator[](size_t i) const
+  T const& operator[](uint32_t i) const
   {
     XR_ASSERT(ServicedArray, i < server.GetNumActive() || n - 1 - i < exempt);
     return data[i];

@@ -14,72 +14,82 @@ namespace xr
 {
 
 //==============================================================================
-IndexServer::IndexServer(size_t capacity)
-: m_ids(),
-  m_iReleased(0)
+IndexServer::IndexServer(Index capacity) noexcept
+: mIds{ capacity == 0 ? nullptr :
+    static_cast<Index*>(operator new(capacity * sizeof(Index), std::nothrow)) },
+  mCapacity{ capacity }
+{}
+
+//==============================================================================
+IndexServer::~IndexServer() noexcept
 {
-  m_ids.reserve(capacity);
+  operator delete(mIds);
 }
 
 //==============================================================================
-size_t IndexServer::Acquire()
+IndexServer::Index  IndexServer::Acquire() noexcept
 {
-  size_t i = m_ids.size();
-  if (m_iReleased < i)
+  uint32_t i = mLast;
+  if (mReleased < i)
   {
     // grab the first known released id.
-    i = m_ids[m_iReleased];
+    i = mIds[mReleased];
   }
-  else if (i < m_ids.capacity())
+  else if (i < mCapacity)
   {
     // if we still have the capacity, create a new handle.
-    m_ids.push_back(i);
+    mIds[mReleased] = i;
+    ++mLast;
   }
   else
   {
     // we're out of indices
-    throw std::bad_alloc();
+    return kInvalidIndex;
   }
 
   // if we were successful, we'll now shift the tracker up.
-  ++m_iReleased;
+  ++mReleased;
 
   return i;
 }
 
 //==============================================================================
-void IndexServer::Release(size_t i)
+bool IndexServer::Release(Index i) noexcept
 {
-  auto iBegin = std::begin(m_ids);
-  auto iEnd = iBegin + m_iReleased;
-  auto iFind = std::find(iBegin, iEnd, i);
-  if (iFind != iEnd)
+  auto iBegin = mIds;
+  auto iEnd = iBegin + mReleased;
+  auto iFind = std::find(iBegin, iEnd, i);  // TODO: assume LIFO, do reverse find?
+  if (iFind == iEnd)
   {
-    // Swap index with most recently activated one. Note that this makes our
-    // registry of released indices like a stack - new releases always go
-    // on the top.
-    std::swap(*iFind, *(m_ids.begin() + (m_iReleased - 1)));
-    // Bump dealloc marker down, invalidating the last element (which is the one we've just released).
-    --m_iReleased;
+    return false;
   }
-  else
-  {
-    std::ostringstream str;
-    str << "Invalid deallocation of id " << i << ".";
-    throw std::logic_error(str.str());
-  }
+
+  // Swap index with most recently activated one. Note that this makes our
+  // registry of released indices like a stack - new releases always go
+  // on the top.
+  std::swap(*iFind, *(mIds + (mReleased - 1)));
+  // Bump dealloc marker down, invalidating the last element (which is the one we've just released).
+  --mReleased;
+
+  return true;
 }
 
 //==============================================================================
-size_t IndexServer::GetNumActive() const
+IndexServer::Index IndexServer::GetNumActive() const noexcept
 {
-  return m_ids.size();
+  return mLast;
 }
 
 //==============================================================================
-size_t IndexServer::GetNumAcquired() const
+IndexServer::Index IndexServer::GetNumAcquired() const noexcept
 {
-  return m_iReleased;
+  return mReleased;
+}
+
+//==============================================================================
+IndexServer::Index IndexServer::GetCapacity() const noexcept
+{
+  return mCapacity;
 }
 
 } // xr
