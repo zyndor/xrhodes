@@ -20,6 +20,6 @@ cd ..\..\.artifacts\windows\
 
 for /f "" %%i in ('"dir /s /b unittests.exe"') do (
 	echo %%i
-	call %%i --gtest_filter=%FILTER%
+	call %%i %FILTER%
 )
 popd
