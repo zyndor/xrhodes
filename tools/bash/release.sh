@@ -2,8 +2,22 @@
 
 git checkout master
 
-# first line of CHANGES is latest version - save it.
+# check first line of CHANGES for latest version; save it.
 version=$(head -1 $(dirname $0)/../../CHANGES)
+
+# check version agains regex.
+echo $version | grep -E "^v(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){2}$" > /dev/null
+if (( $? != 0 )); then
+  echo Invalid version "$version".
+  exit 1;
+fi
+
+# ensure it isn't a version that we have already released.
+git tag | grep $version > /dev/null
+if (( $? == 0 )); then
+  echo Version "$version" was already released. Have you run update-changes.sh?
+  exit 1;
+fi
 
 # create temporary file with random name to store commit message
 msg_file=$(echo $RANDOM).$(echo $$).tmp
