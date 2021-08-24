@@ -22,6 +22,8 @@
 namespace xr
 {
 
+XR_WARNINGS_IGNORE_DEPRECATION
+
 //==============================================================================
 XR_ASSET_DEF(TexturePack, "xtpk", 3, "xtp")
 

@@ -8,6 +8,8 @@
 //==============================================================================
 #include "xr/TweenVar.hpp"
 
+XR_WARNINGS_IGNORE_DEPRECATION
+
 namespace xr
 {
 

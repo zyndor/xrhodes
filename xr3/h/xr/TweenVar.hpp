@@ -15,9 +15,10 @@
 namespace xr
 {
 
+XR_WARNINGS_PUSH
+XR_WARNINGS_IGNORE_DEPRECATION
 //==============================================================================
-///@note DEPRECATED, use xr::Animator.
-struct TweenVarCore
+struct [[deprecated("Use xr::Animator.")]] TweenVarCore
 {
   // static
   static void OnFrameCallback(void* data);
@@ -39,9 +40,8 @@ struct TweenVarCore
 };
 
 //==============================================================================
-///@note DEPRECATED, use xr::Animator.
 template  <typename T>
-struct TweenVar: protected  TweenVarCore
+struct [[deprecated("Use xr::Animator.")]] TweenVar: protected  TweenVarCore
 {
   // types
   typedef T Type;
@@ -82,6 +82,8 @@ void TweenVar<T>::Tween( float duration, Tweener::Function function,
   t.Add(duration, function, float(target), fValue,
     OnFrameCallback, onFinished_ ? OnFinishedCallback : nullptr, this);
 }
+
+XR_WARNINGS_POP
 
 } // xr
 

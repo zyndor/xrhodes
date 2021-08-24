@@ -13,6 +13,7 @@
 #include "xr/memory/ScopeGuard.hpp"
 #include "xr/debug.hpp"
 #include "xr/types/intutils.hpp"
+#include "xr/warnings.hpp"
 #include "png.h"
 #include <cstring>
 
@@ -21,12 +22,8 @@
 // of the rules, as we're not creating C++ objects (with non-trivial destructors)
 // between setjmp() and longjmp(), nor are we trying to use any of the variables
 // in the scope after the longjmp().
-#if defined XR_COMPILER_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4611)  // setjmp - C++ object interaction not portable.
-#elif defined XR_COMPILER_GCC
-#pragma GCC diagnostic ignored "-Wclobbered"
-#endif
+XR_MSVC_WARNING(disable: 4611)
+XR_GCC_WARNING(ignored "-Wclobbered")
 
 namespace xr
 {

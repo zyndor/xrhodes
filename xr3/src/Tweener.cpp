@@ -10,6 +10,8 @@
 #include "xr/Tweener.hpp"
 #include "xr/debug.hpp"
 
+XR_WARNINGS_IGNORE_DEPRECATION
+
 namespace xr
 {
 

@@ -7,13 +7,15 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/platform.hpp"
+#include "xr/warnings.hpp"
 
-#if defined XR_COMPILER_GCC
-#pragma GCC diagnostic ignored "-Wdouble-promotion"
-#pragma GCC diagnostic ignored "-Wmissing-declarations"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#endif
+XR_CLANG_WARNING(ignored "-Wdouble-promotion")
+XR_CLANG_WARNING(ignored "-Wmissing-declarations")
+XR_CLANG_WARNING(ignored "-Wold-style-cast")
+
+XR_GCC_WARNING(ignored "-Wdouble-promotion")
+XR_GCC_WARNING(ignored "-Wmissing-declarations")
+XR_GCC_WARNING(ignored "-Wold-style-cast")
 
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"

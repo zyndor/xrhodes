@@ -12,15 +12,17 @@
 #include <list>
 #include "xr/math/mathutils.hpp"
 #include "xr/types/fundamentals.hpp"
+#include "xr/warnings.hpp"
 
 namespace xr
 {
 
+XR_WARNINGS_PUSH
+XR_WARNINGS_IGNORE_DEPRECATION
 //==============================================================================
 ///@brief Interpolates Float values over a duration to their given target,
 /// using a function.
-///@note DEPRECATED, use xr::Animator.
-class  Tweener
+class [[deprecated("Use xr::Animator.")]] Tweener
 {
   XR_NONCOPY_DECL(Tweener)
 
@@ -79,6 +81,8 @@ private:
   // data
   ParamList  m_params;
 };
+
+XR_WARNINGS_POP
 
 }  // xr
 

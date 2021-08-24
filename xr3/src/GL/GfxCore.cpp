@@ -8,22 +8,20 @@
 //==============================================================================
 #include "GfxResourceManager.hpp"
 #include "GfxCore.hpp"
+#include "GfxContext.hpp"
 #include "xrgl.hpp"
 #include "xr/math/Matrix.hpp"
 #include "xr/Device.hpp"
 #include "xr/math/SVector2.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/memory/Pool.hpp"
-#include "GfxContext.hpp"
+#include "xr/warnings.hpp"
 
-#if defined XR_COMPILER_GCC
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#endif
+XR_WARNINGS_PUSH
+XR_CLANG_WARNING(ignored "-Wold-style-cast")
+XR_GCC_WARNING(ignored "-Wold-style-cast")
 #include "gl_core_4_5.cpp"
-#if defined XR_COMPILER_GCC
-#pragma GCC diagnostic pop
-#endif
+XR_WARNINGS_POP
 
 #include <set>
 #include <unordered_map>

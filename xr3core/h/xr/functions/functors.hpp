@@ -20,9 +20,8 @@ namespace xr
 {
 
 //==============================================================================
-///@note DEPRECATED
 template  <typename T>
-class  ValueFunctorCore
+class [[deprecated]] ValueFunctorCore
 {
 protected:
   // types

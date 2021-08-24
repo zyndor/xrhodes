@@ -11,6 +11,7 @@
 //==============================================================================
 #include "Asset.hpp"
 #include "Gfx.hpp"
+#include "xr/warnings.hpp"
 
 namespace xr
 {
@@ -44,10 +45,8 @@ public:
   XR_ASSET_DECL(Texture)
 
   // types
-#ifdef XR_COMPILER_GCC
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+  XR_WARNINGS_PUSH
+  XR_WARNINGS_IGNORE_DEPRECATION
   enum [[deprecated("Use filename flags or .tex")]] Flags : FlagType
   {
     WrapFlag = FirstUserFlag,
@@ -55,9 +54,7 @@ public:
     MipMapsFlag = FirstUserFlag << 2,
     SrgbFlag = FirstUserFlag << 3,
   };
-#ifdef XR_COMPILER_GCC
-#pragma GCC diagnostic pop
-#endif
+  XR_WARNINGS_POP
 
   // static
   ///@brief Convenience function to register a sampler uniform with the given

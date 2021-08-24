@@ -18,10 +18,11 @@
 namespace xr
 {
 
+XR_WARNINGS_PUSH
+XR_WARNINGS_IGNORE_DEPRECATION
 //==============================================================================
 ///@brief A texture atlas based on TexturePacker's Generic XML format.
-///@note DEPRECATED. Please use SpriteSheet instead.
-class TexturePack: public Asset, public IMaterialisable
+class [[deprecated("Use xr::SpriteSheet instead.")]] TexturePack : public Asset, public IMaterialisable
 {
 public:
   XR_ASSET_DECL(TexturePack)
@@ -94,6 +95,8 @@ const Sprite* TexturePack::Get( uint32_t hash ) const
   SpriteMap::const_iterator  iFind(m_sprites.find(hash));
   return iFind != m_sprites.end() ? &iFind->second : nullptr;
 }
+
+XR_WARNINGS_POP
 
 } // xr
 
