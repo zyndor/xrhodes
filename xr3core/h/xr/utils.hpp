@@ -11,13 +11,10 @@
 //==============================================================================
 
 #include "xr/debug.hpp"
+#include "xr/stringify.hpp"
 #include <sstream>
 #include <algorithm>
 #include <cstdint>
-
-//==============================================================================
-///@brief Converts the expression @a into a string literal.
-#define XR_STRINGIFY(a) #a
 
 //==============================================================================
 ///@brief Ensures usage of [local] variable @a a in order to supress compiler
