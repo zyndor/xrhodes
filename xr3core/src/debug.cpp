@@ -8,9 +8,9 @@
 //==============================================================================
 #include "xr/debug.hpp"
 #include "xr/platform.hpp"
-#include "xr/strings/StringProxy.hpp"
 #include <set>
 #include <cstdarg>
+#include <string_view>
 
 namespace xr
 {
