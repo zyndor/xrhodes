@@ -115,7 +115,7 @@ bool TweenVarPool<T>::Remove( Type& v, bool finish )
   {
     if (m_varPool[i].value == &v)
     {
-      success = m_varPool[i].tweener->Remove(m_varPool[i].fValue, true);
+      success = m_varPool[i].tweener->Remove(m_varPool[i].fValue, finish);
       break;
     }
   }
