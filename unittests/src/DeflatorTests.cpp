@@ -32,19 +32,19 @@ XM_TEST(Deflator, Basics)
   A a[4];
   Deflator  deflator;
 
-  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // first ID from deflator is 0.
-  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
-  XM_ASSERT_EQ(deflator.RegisterObject(a[1]), 1); // next object gets the next ID.
-  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
+  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0u); // first ID from deflator is 0.
+  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0u); // same object always gets the same ID.
+  XM_ASSERT_EQ(deflator.RegisterObject(a[1]), 1u); // next object gets the next ID.
+  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0u); // same object always gets the same ID.
 
   deflator.SetNext(10);
-  XM_ASSERT_EQ(deflator.RegisterObject(a[2]), 10); // next object gets next ID.
-  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0); // same object always gets the same ID.
+  XM_ASSERT_EQ(deflator.RegisterObject(a[2]), 10u); // next object gets next ID.
+  XM_ASSERT_EQ(deflator.RegisterObject(a[0]), 0u); // same object always gets the same ID.
 
   // ID is still valid and same as when registered
-  XM_ASSERT_EQ(deflator.GetId(&a[0]), 0);
-  XM_ASSERT_EQ(deflator.GetId(&a[1]), 1);
-  XM_ASSERT_EQ(deflator.GetId(&a[2]), 10);
+  XM_ASSERT_EQ(deflator.GetId(&a[0]), 0u);
+  XM_ASSERT_EQ(deflator.GetId(&a[1]), 1u);
+  XM_ASSERT_EQ(deflator.GetId(&a[2]), 10u);
   XM_ASSERT_EQ(deflator.GetId(&a[3]), IdGenerator::kInvalidId); // unregistered object - gets an invalid ID.
   XM_ASSERT_EQ(deflator.GetId(nullptr), IdGenerator::kInvalidId); // nullptrs always get an an invalid ID.
 }
