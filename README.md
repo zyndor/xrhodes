@@ -6,7 +6,7 @@ XRhodes is a game development / creative coding framework delivered as a set of 
 
 Its aim is to provide flexible tools, rather than a complete pipeline, while abstracting most platform-specific details away.
 
-XRhodes is written in C++14, and it currently supports Windows 8+ (32 / 64 bits), Mac OS and Linux (64 bits); support for other platforms are in the pipeline - stay tuned!
+XRhodes is written in C++, and it currently supports Windows 8+ (32 / 64 bits) and Linux (64 bits). A MacOS configuration is provided, however no longer supported.
 
 It comes with a fair amount of documentation and with unit tests and usage examples.
 
@@ -20,7 +20,7 @@ Main features
 * Vector maths library;
 * Low level graphics API (Current implementation is OpenGL based);
 * Asset management system with support for dependencies, offline building and asynchronous loading;
-* Texture pack support;
+* Spritesheet support;
 * Signed Distance Field fonts support with UTF-8 text;
 * Mouse, touch, keyboard and game controller support;
 * Entity / component system;
@@ -40,22 +40,21 @@ System Requirements
 
 Graphics: OpenGL3.3 capable GPU.
 
-
 # Windows
 
 - Visual Studio Community 2017+ and (Vcpkg)[https://github.com/microsoft/vcpkg]
 - $ ./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2 gtest
 - $ ./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2 gtest
 
-# MacOS 10.13+
-
-- Xcode 4+
-- $ brew install libpng sdl2 tinyxml2
-
 # Linux (Tested under Ubuntu 18.04)
 
 - $ sudo apt-get install build-essential mesa-common-dev mesa-utils libpng-dev \
   libsdl2-dev libtinyxml2-dev
+
+# MacOS 10.13+
+
+- Xcode 11+
+- $ brew install libpng sdl2 tinyxml2
 
 Getting started
 ---------------
