@@ -30,7 +30,7 @@ project "examples"
 
 	defines { "DATA_PATH=\""..path.getabsolute("./data").."\"" }
 
-	if is_vs() then
+	if is_msvc() then
 		buildoptions { "/WX-" }
 	else
 		buildoptions { "-Wno-error" }

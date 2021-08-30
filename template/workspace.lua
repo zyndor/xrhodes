@@ -22,6 +22,14 @@ function is_vs()
 	return _ACTION ~= nil and _ACTION:find("vs") == 1
 end
 
+function is_clang()
+	return _ACTION ~= nil and (_ACTION:find("xcode") == 1 or _ACTION:find("clang"))
+end
+
+function is_msvc()
+	return is_vs() and not _ACTION:find("clang")
+end
+
 --
 -- Performs the creation of a workspace with the given name, and making the
 -- given project its default project (Visual Studio only).
@@ -123,12 +131,6 @@ function do_workspace(workspace_name, start_project_name)
 		end
 	end
 
-	-- defines
-	defines {
-		"_CRT_SECURE_NO_WARNINGS",
-		"_SCL_SECURE_NO_WARNINGS",
-	}
-
 	filter{ "Debug" }
 		defines {
 			"XR_DEBUG"
@@ -136,7 +138,13 @@ function do_workspace(workspace_name, start_project_name)
 
 	filter{}
 
-	if is_vs() then
+	if is_msvc() then
+		-- defines
+		defines {
+			"_CRT_SECURE_NO_WARNINGS",
+			"_SCL_SECURE_NO_WARNINGS",
+		}
+
 		buildoptions {
 			"/std:c++17",
 			"/permissive-",
@@ -165,18 +173,23 @@ function do_workspace(workspace_name, start_project_name)
 			"-pedantic",
 			"-Wall",
 			"-Wdouble-promotion",
-			"-Wduplicated-branches",  -- GCC only
-			"-Wduplicated-cond",  -- GCC only
 			"-Werror",
 			"-Wextra",
-			"-Wlogical-op",  -- GCC only
-			"-Wmisleading-indentation",  -- GCC only
 			"-Wmissing-declarations",
 			"-Wnon-virtual-dtor",
 			"-Wold-style-cast",
 			"-Wshadow",
 			"-fvisibility-ms-compat",
 		}
+
+		if not is_clang() then -- probably GCC
+			buildoptions {
+				"-Wduplicated-branches",
+				"-Wduplicated-cond",
+				"-Wlogical-op",
+				"-Wmisleading-indentation",
+			}
+		end
 	end
 
 	-- target-specific setup
