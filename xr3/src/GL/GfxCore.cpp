@@ -1130,7 +1130,7 @@ bool Core::CreateProgram(ShaderHandle hVertex, ShaderHandle hFragment, Program& 
       maxLen = maxLenn;
     }
     ++maxLen; // null terminator
-    char* nameBuffer = (char*)alloca(maxLen);
+    char* nameBuffer = static_cast<char*>(alloca(maxLen));
 
     // process attribs
     GLenum type;
@@ -1295,7 +1295,7 @@ void Core::Clear(FlagType flags, Color const& color, float depth, uint8_t stenci
     {
       XR_GL_CALL(glDepthMask(GL_TRUE));
     }
-    XR_GL_CALL(glClearDepth(depth));
+    XR_GL_CALL(glClearDepth(GLdouble(depth)));
     flagls |= GL_DEPTH_BUFFER_BIT;
   }
 
