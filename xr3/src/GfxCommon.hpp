@@ -88,23 +88,25 @@ public:
 class ConstBuffer
 {
 public:
+  static constexpr std::align_val_t kAlignment{ 16u };
+
   static ConstBuffer* Create(uint32_t size)
   {
-    size_t alignedSize = XR_ALIGN16(size);
-    void* mem = malloc(alignedSize);
-    return new (mem) ConstBuffer(size);
+    XR_ASSERT(ConstBuffer, size >= sizeof(ConstBuffer));
+    void* mem = ::operator new(size - sizeof(ConstBuffer), kAlignment);
+    return new (mem) ConstBuffer(XR_DEBUG_ONLY(size));
   }
 
   static void Destroy(ConstBuffer* cb)
   {
     cb->~ConstBuffer();
-    free(cb);
+    ::operator delete(cb, kAlignment);
   }
 
   bool AtEnd() const
   {
     XR_ASSERT(ConstBuffer, m_pos < m_size);
-    return m_buffer[m_pos] == uint8_t(UniformType::kCount);
+    return *GetPtr() == uint8_t(UniformType::kCount);
   }
 
   void Reset(uint32_t pos = 0)
@@ -135,9 +137,8 @@ public:
   template <typename T>
   void Read(T& val)
   {
-    union { uint8_t* c; T* val; } p;
-    p.c = ReadBytes(sizeof(T));
-    val = *p.val;
+    static_assert(std::is_trivially_copy_assignable_v<T>);
+    std::memcpy(&val, ReadBytes(sizeof(T)), sizeof(T));
   }
 
   uint8_t* ReadBytes(uint32_t size)
@@ -191,21 +192,30 @@ public:
   }
 
 private:
-  ConstBuffer(uint32_t size)
-  : m_pos(0),
-    m_size(size - sizeof(m_pos) - sizeof(m_size))
+  ConstBuffer(XR_DEBUG_ONLY(uint32_t size)):
+    m_pos(0)
+#if defined XR_DEBUG
+    ,
+    m_size(size)
+#endif
   {}
+    
+  ~ConstBuffer() = default;
 
   uint8_t* GetPtr()
   {
-    return m_buffer + m_pos;
+    return reinterpret_cast<uint8_t*>(this + 1) + m_pos;
+  }
+
+  uint8_t const* GetPtr() const
+  {
+    return reinterpret_cast<uint8_t const*>(this + 1) + m_pos;
   }
 
   uint32_t m_pos;
-  uint32_t m_size;
-  uint8_t  m_buffer[16 - (sizeof(decltype(m_pos)) + sizeof(decltype(m_size)))]; // buffer includes padding to 16 bytes - actual size will vary. Refer to Create().
+
+  XR_DEBUG_ONLY(uint32_t m_size;)
 };
-static_assert(sizeof(ConstBuffer) == 16, "sizeof(ConstBuffer) must be 16 bytes.");
 
 } // Gfx
 }
