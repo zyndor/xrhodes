@@ -32,7 +32,7 @@ namespace
 
 struct SerializedTextureStage
 {
-  uint8_t stage;
+  uint8_t id;
   Asset::HashType hash;
 };
 
@@ -424,24 +424,29 @@ bool Material::OnLoaded(Buffer buffer)
   }
 
   uint8_t numTextures = 0;
-  SerializedTextureStage const* textures =
-    reader.ReadElementsWithSize<SerializedTextureStage>(numTextures);
-  if (!textures)
+  if (!reader.Read(numTextures))
   {
-    LTRACE(("%s: failed to read texture stages.", m_debugPath.c_str()));
+    LTRACE(("%s: failed to read number of texture stages.", m_debugPath.c_str()));
     return false;
   }
 
-  for (decltype(numTextures) i = 0; i < numTextures; ++i)
+  SerializedTextureStage stage;
+  for (uint8_t i = 0; i < numTextures; ++i)
   {
-    auto ptr = Manager::Load(Descriptor<Texture>(textures[i].hash), flags);
-    if (ptr.Get() != nullptr)
+    if (reader.Read(stage))
     {
-      m_textureStages[textures[i].stage] = ptr;
+      auto ptr = Manager::Load(Descriptor<Texture>(stage.hash), flags);
+      if (!ptr.Get())
+      {
+        LTRACE(("%s: failed to retrieve texture %llx.", m_debugPath.c_str(), stage.hash));
+        return false;
+      }
+
+      m_textureStages[stage.id] = ptr;
     }
     else
     {
-      LTRACE(("%s: failed to retrieve texture %llx.", m_debugPath.c_str()));
+      LTRACE(("%s: failed to read texture stage %d.", m_debugPath.c_str(), i));
       return false;
     }
   }
