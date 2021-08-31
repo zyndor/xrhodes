@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <map>
 #include <string>
+#include <cstring>
 #include <ctype.h>
-#include <string.h>
 
 namespace xr
 {
@@ -68,15 +68,16 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
 
   auto data = reinterpret_cast<const uint32_t *>(key);
 
+  uint32_t k1, k2;
   while(len >= 8)
   {
-    uint32_t k1 = *data++;
+    std::memcpy(&k1, data++, sizeof(k1));
     k1 = PREPROCESS_BYTES(k1, byteOp);
     k1 *= m; k1 ^= k1 >> r; k1 *= m;
     h1 *= m; h1 ^= k1;
     len -= 4;
 
-    uint32_t k2 = *data++;
+    std::memcpy(&k2, data++, sizeof(k2));
     k2 = PREPROCESS_BYTES(k2, byteOp);
     k2 *= m; k2 ^= k2 >> r; k2 *= m;
     h2 *= m; h2 ^= k2;
@@ -85,7 +86,7 @@ uint64_t MurmurHash64B(void const* key, size_t len, uint64_t seed)
 
   if(len >= 4)
   {
-    uint32_t k1 = *data++;
+    std::memcpy(&k1, data++, sizeof(k1));
     k1 = PREPROCESS_BYTES(k1, byteOp);
     k1 *= m; k1 ^= k1 >> r; k1 *= m;
     h1 *= m; h1 ^= k1;
