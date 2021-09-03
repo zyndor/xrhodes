@@ -41,9 +41,9 @@ namespace
 
     void Init()
     {
-      for (int8_t i = 0; i < XR_ARRAY_SIZE(chars); ++i)
+      for (uint32_t i = 0; i < XR_ARRAY_SIZE(chars); ++i)
       {
-        chars[i] = i;
+        chars[i] = char(i);
       }
 
       ints[0] = std::numeric_limits<int>::min();
@@ -68,15 +68,17 @@ namespace
       size_t bytesWritten = 0;
       WriteRangeBinaryStream(chars, chars + XR_ARRAY_SIZE(chars), os, &bytesWritten);
 
-      for (int i = 0; i < XR_ARRAY_SIZE(ints); ++i)
+      for (size_t i = 0; i < XR_ARRAY_SIZE(ints); ++i)
       {
         WriteBinaryStream(ints[i], os, &bytesWritten);
       }
-      for (int i = 0; i < XR_ARRAY_SIZE(floats); ++i)
+
+      for (size_t i = 0; i < XR_ARRAY_SIZE(floats); ++i)
       {
         WriteBinaryStream(floats[i], os, &bytesWritten);
       }
-      for (int i = 0; i < XR_ARRAY_SIZE(bs); ++i)
+
+      for (size_t i = 0; i < XR_ARRAY_SIZE(bs); ++i)
       {
         WriteBinaryStream(bs[i], os, &bytesWritten);
       }
@@ -91,8 +93,8 @@ namespace
     template <typename T>
     struct OutputIterator
     {
-      OutputIterator(T& value)
-        : m_p(&value)
+      OutputIterator(T& value):
+        m_p(&value)
       {}
 
       T& operator*()
@@ -110,15 +112,17 @@ namespace
       size_t bytesRead = 0;
       ReadRangeBinaryStream(is, OutputIterator<char>(chars[0]), &bytesRead);
 
-      for (int i = 0; i < XR_ARRAY_SIZE(ints); ++i)
+      for (size_t i = 0; i < XR_ARRAY_SIZE(ints); ++i)
       {
         ReadBinaryStream(is, ints[i], &bytesRead);
       }
-      for (int i = 0; i < XR_ARRAY_SIZE(floats); ++i)
+
+      for (size_t i = 0; i < XR_ARRAY_SIZE(floats); ++i)
       {
         ReadBinaryStream(is, floats[i], &bytesRead);
       }
-      for (int i = 0; i < XR_ARRAY_SIZE(bs); ++i)
+
+      for (size_t i = 0; i < XR_ARRAY_SIZE(bs); ++i)
       {
         ReadBinaryStream(is, bs[i], &bytesRead);
       }
@@ -146,9 +150,12 @@ XM_TEST(StreamUtils, ReadPiecewise)
   A a2;
   a2.ReadPiecewise(io);
 
-  XR_TRACE(StreamUtils, (LogMemory(&a, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtils, (LogMemory(&a2, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtils, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
+  auto str1 = LogMemory(&a, sizeof(A));
+  auto str2 = LogMemory(&a2, sizeof(A));
+  auto diff = DiffMemory(&a, &a2, sizeof(A));
+  XR_TRACE(StreamUtils, ("%s", str1.c_str()));
+  XR_TRACE(StreamUtils, ("%s", str2.c_str()));
+  XR_TRACE(StreamUtils, ("%s", diff.c_str()));
   XM_ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
 }
 
@@ -165,9 +172,12 @@ XM_TEST(StreamUtils, ReadWhole)
   A a2;
   a2.ReadWhole(io);
 
-  XR_TRACE(StreamUtils, (LogMemory(&a, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtils, (LogMemory(&a2, sizeof(A)).c_str()));
-  XR_TRACE(StreamUtils, (DiffMemory(&a, &a2, sizeof(A)).c_str()));
+  auto str1 = LogMemory(&a, sizeof(A));
+  auto str2 = LogMemory(&a2, sizeof(A));
+  auto diff = DiffMemory(&a, &a2, sizeof(A));
+  XR_TRACE(StreamUtils, ("%s", str1.c_str()));
+  XR_TRACE(StreamUtils, ("%s", str2.c_str()));
+  XR_TRACE(StreamUtils, ("%s", diff.c_str()));
   XM_ASSERT_EQ(memcmp(&a, &a2, sizeof(A)), 0);
 }
 

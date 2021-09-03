@@ -126,18 +126,19 @@ void DumpHashes(std::map<T, std::string> const& hashes)
   XR_TRACE(Hash, (arBuffer));
 }
 
+template <typename T, T(*HashFn)(char const*, size_t)>
 void DoStringUniqueness(bool dump)
 {
-  std::map<uint64_t, std::string> hashes;
+  std::map<T, std::string> hashes;
   char arBuffer[256];
-  for (int i = 0; i < 26; ++i)
+  for (uint32_t i = 0; i < 26; ++i)
   {
-    for (int j = 0; j < 10; ++j)
+    for (uint32_t j = 0; j < 10; ++j)
     {
-      for (int z = 0; z < XR_ARRAY_SIZE(strings); ++z)
+      for (uint32_t z = 0; z < XR_ARRAY_SIZE(strings); ++z)
       {
         size_t len = sprintf(arBuffer, "ins_%c_%s%d_anims", i + 'a', strings[z], j);
-        auto hash = xr::Hash::String(arBuffer, len);
+        T hash = HashFn(arBuffer, len);
 
         auto iFind = hashes.find(hash);
         bool hashClashing = iFind != hashes.end();
@@ -148,55 +149,35 @@ void DoStringUniqueness(bool dump)
     }
   }
 
-  if(dump) DumpHashes(hashes);
+  if(dump)
+  {
+    DumpHashes(hashes);
+  }
 }
 
 XM_TEST_F(Hash, StringUniqueness)
 {
   xr::Hash::SetSeed(xr::Hash::kSeed);
-  DoStringUniqueness(false);
+  DoStringUniqueness<uint64_t, xr::Hash::String>(false);
 
-  for (int i = 0; i < 32; ++i)
+  for (int i = 0; i <= 32; ++i)
   {
-    xr::Hash::SetSeed((1 << i) - 1);
-    DoStringUniqueness(false);
+    auto seed = uint64_t((1ull << i) - 1);
+    xr::Hash::SetSeed(seed);
+    DoStringUniqueness<uint64_t, xr::Hash::String>(false);
   }
-}
-
-void DoString32Uniqueness(bool dump)
-{
-  std::map<uint32_t, std::string> hashes;
-  char arBuffer[256];
-  for (int i = 0; i < 26; ++i)
-  {
-    for (int j = 0; j < 10; ++j)
-    {
-      for (int z = 0; z < XR_ARRAY_SIZE(strings); ++z)
-      {
-        auto len = sprintf(arBuffer, "ins_%c_%s%d_anims", i + 'a', strings[z], j);
-        auto hash = xr::Hash::String32(arBuffer, len);
-
-        auto iFind = hashes.find(hash);
-        bool hashClashing = iFind != hashes.end();
-        XR_TRACEIF(Hash, hashClashing, ("%s", MakeAssertMsg(arBuffer, iFind->second.c_str(), hash).c_str()));
-        XM_ASSERT_FALSE(hashClashing);
-        hashes[hash] = arBuffer;
-      }
-    }
-  }
-
-  if (dump) DumpHashes(hashes);
 }
 
 XM_TEST_F(Hash, String32Uniqueness)
 {
   xr::Hash::SetSeed(xr::Hash::kSeed);
-  DoString32Uniqueness(false);
+  DoStringUniqueness<uint32_t, xr::Hash::String32>(false);
 
   for (int i = 0; i <= 32; ++i)
   {
-    xr::Hash::SetSeed((1 << i) - 1);
-    DoString32Uniqueness(false);
+    auto seed = uint64_t((1ull << i) - 1);
+    xr::Hash::SetSeed(seed);
+    DoStringUniqueness<uint32_t, xr::Hash::String32>(false);
   }
 }
 
