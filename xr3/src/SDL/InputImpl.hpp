@@ -14,7 +14,13 @@
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/types/Singleton.hpp"
 #include "xr/types/intutils.hpp"
+#include "xr/warnings.hpp"
+
+XR_WARNINGS_PUSH
+XR_CLANG_WARNING(ignored "-Wold-style-cast")
 #include "SDL2/SDL_events.h"
+XR_WARNINGS_POP
+
 #include <cstring>
 
 namespace xr

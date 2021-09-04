@@ -12,7 +12,13 @@
 #include "xr/Device.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/strings/stringutils.hpp"
+#include "xr/warnings.hpp"
+
+XR_WARNINGS_PUSH
+XR_CLANG_WARNING(ignored "-Wold-style-cast")
 #include "SDL2/SDL_events.h"
+XR_WARNINGS_POP
+
 #include "SDL2/SDL.h"
 
 namespace xr
