@@ -78,7 +78,7 @@ function do_workspace(workspace_name, start_project_name)
 	elseif target_env == "linux" then
 		table.insert(tbl_platforms, "x64")
 	elseif target_env == "macos" then
-		table.insert(tbl_platforms, "Universal64")
+		table.insert(tbl_platforms, "x86_64")
 	end
 	platforms(tbl_platforms)
 
