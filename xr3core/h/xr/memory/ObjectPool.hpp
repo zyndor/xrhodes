@@ -96,7 +96,7 @@ private:
 
   ///@brief Acquires raw memory from the ObjectPool.
   ///@return Pointer to the chunk, or nullptr if we've run out of handles.
-  static void* Acquire(size_t count) noexcept
+  static void* Acquire([[maybe_unused]] size_t count) noexcept
   {
     XR_ASSERT(ObjectPool, count == sizeof(T));
     ThreadingScope lock(sThreading);
