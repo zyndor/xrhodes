@@ -5,7 +5,7 @@ git checkout master
 # check first line of CHANGES for latest version; save it.
 version=$(head -1 $(dirname $0)/../../CHANGES)
 
-# check version agains regex.
+# check version against regex.
 echo $version | grep -E "^v(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){2}$" > /dev/null
 if (( $? != 0 )); then
   echo Invalid version "$version".
@@ -27,7 +27,8 @@ echo $version >> $msg_file
 echo >> $msg_file
 
 # write changes since last release, to message
-git qlog RELEASE..HEAD^ | cut -c -2,11- | sed "s/\*/-/g" >> $msg_file
+last_changelog=$(git log --oneline --no-decorate --format=format:%H -1 "../../CHANGES")
+git log --oneline --no-decorate --reverse RELEASE..$last_changelog | cut -c 9- | sed "s/\*/- /g" >> $msg_file
 
 # hop over to RELEASE and create a commit with message from file
 git checkout RELEASE
