@@ -43,18 +43,18 @@ Graphics: OpenGL3.3 capable GPU.
 # Windows
 
 - Visual Studio Community 2017+ and (Vcpkg)[https://github.com/microsoft/vcpkg]
-- $ ./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2 gtest
-- $ ./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2 gtest
+- $ `./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2 gtest`
+- $ `./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2 gtest`
 
 # Linux (Tested under Ubuntu 18.04)
 
-- $ sudo apt-get install build-essential mesa-common-dev mesa-utils libpng-dev \
-  libsdl2-dev libtinyxml2-dev
+- $ `sudo apt-get install build-essential mesa-common-dev mesa-utils libpng-dev \
+  libsdl2-dev libtinyxml2-dev`
 
 # MacOS 10.13+
 
 - Xcode 11+
-- $ brew install libpng sdl2 tinyxml2
+- $ `brew install libpng sdl2 tinyxml2`
 
 Getting started
 ---------------
