@@ -1,3 +1,95 @@
+v1.11.0
+- Moved Hash.hpp and TweakBench.hpp into a new utility/ folder.
+- Replaced xr::SharedPoolAllocator's dynamic exception specification with noexcept for C++17.
+- Updated xr::Queue<> for C++17.
+- Added xr::GlobalNewAllocator and made it the default allocator used in AssetManagerImpl.
+- Removed xr::ScratchBuffer::Flush() calls from examples.
+- Command maintenance.
+- Added the .assets/ folder to .gitignore.
+- Upped the standard to C++17.
+- APIs that return ownership are marked [[nodiscard]].
+- Deprecated xr::Stick in favour of std::string_view.
+- Deprecated xr::StringProxy in favour of std::string_view.
+- Gfx instance data stride improvements.
+- Made FileOp()'s destructor virtual and protected.
+- Marked up debug-only parameters in the trace/assert implementation with [[maybe_unused]].
+- Fixed unused parameter and missing member initialisation warnings in xr::Asset.
+- xr::Linked<> cleanup.
+- xr::BinaryHeap<> fixes / improvements.
+- xr::HardString<> warnings fixes.
+- Removed redundant asserts and names of unused parameters, from xr::Pool.
+- Removed redundant assert from xr::ParserCore.
+- xr3json fixes and improvements.
+- Removed anonymous structs from math/vector.
+- Fix: fallthrough and old-style cast warnings in murmurhash implementation.
+- Explicitly sized integers in xr::Indexer2d.
+- Fix: missing member initializers warnings in XonParser & XonBuildTree.
+- Made more xr::Matrix methods constexpr.
+- Fixed name shadowing in xr::FilePath::Up().
+- Fix: various name shadowing warnings.
+- xr::Image improvements.
+- xr::Collage fixes and improvements.
+- Removed extra semicolon from Config.hpp.
+- Fix: unused parameter warning in the SDL implementation of xr::Device.
+- Fix: various warnings in Gfx.
+- Fix: old-style-cast warnings in GfxCore (and suppressed them in the glLoadGen-generated source)..
+- xr::Transforms fixes + improvements.
+- xr::ScratchBuffer warnings fixes and cleanup.
+- xr::Asset::Manager and various asset types fixes and improvements.
+- Suppressed GCC warnings in stb_truetype.cpp.
+- Fixed warnings in xr::BoxText.
+- Marked asset-building-only parameters to xr::ParseAssetOptions() as [[maybe_unused]].
+- Moved repeated code in xr::Entity into a ComponentSortPredicate() function.
+- Fixed implicit double promotion in xr::Camera.
+- Caught DragController up with the changes in v1.10.0.
+- Fix: implicit conversion in xr::IdGenerator.
+- Fix: implicit conversion in meshutil.hpp
+- Fix: unreferenced formal parameter in xr::Bezier.
+- xr::Config fixes and improvements.
+- Made the destructor of IMaterialisable virtual, since it has virtual methods.
+- Added intutils.
+- Created the Px typedef (uint16_t), and made all image / texture / framebuffer size use it.
+- Added support for mouse capturing.
+- The SDL Input implementation no longer registers a GameController that has failed to Open().
+- Fix: various warnings in tests and examples.
+- UIID rewrite and conversion warning fix.
+- Updated xm.
+- Enabled additional diagnostics.
+- Cleanup: mentions of the XR namespace in comments have changed to use the correct (lower) case.
+- Added xr::Linkable<> and made xr::Linked<> based on it.
+- Added support for libDirs & links in config.
+- Fix: removed names of unreferenced parameters in xr::SharedPoolAllocator.
+- typeutils.hpp maintenance.
+- functors.hpp has been deprecated & marked for removal.
+- Callback maintenance.
+- Added copy and move constructor to xr::Signal(Core).
+- xr::IndexServer rewrite.
+- Fix: run_tests_all.bat passes filters on correctly.
+- Added xr::ObjectPool<> (and -Client).
+- Added xr::Iterator<>.
+- Release script fixes and improvements.
+- Fixed xr::TweenVarPool::Remove(), which was ignoring the finish parameter.
+- Fixed missing #include from debug.cpp in Clang builds.
+- Added warnings.hpp with syntactic sugar for diagnostics control.
+- Streamlined diagnostics control using warnings.hpp macros.
+- Fixed the implicit double promotion in GL Gfx::Core::Clear() (Clang).
+- Fixed the signed / unsigned mismatch in DeflatorTests.
+- Build config fixes and improvements.
+- Fixed the illegal naming of internal macros in debug.hpp.
+- Readme update to reflect the fact that MacOS support is discontinued.
+- Fix: UB in xr::TextureBuilder (pointer from temporary).
+- BufferReader maintenance.
+- Fix: unaligned read in xr::Material::OnLoaded().
+- Gfx::ConstBuffer fixes / improvements.
+- Fix: unaligned reads in murmurhash implementation.
+- Fixed the use of out-of-scope stack memory in xr::meshutil::CalculateTrianglesNormals.
+- Fixed UB- and Address Sanitizer finds in tests.
+- Updated xm.
+- Fixed unused parameter into xr::ObjectPool::Acquire().
+- Suppressed old style cast Clang warnings emanating from SDL_events.h.
+- Changed the MacOS build to Intel-only.
+- Fix: release scripts no longer rely on custom local command.
+
 v1.10.3
 - Added scripts to facilitate releases, to tools/bash.
 - xr::Animator::Stop() will call the OnStop() callback regardless completion was requested or not.
