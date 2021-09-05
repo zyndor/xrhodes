@@ -99,4 +99,4 @@ void ProjectionHelper::CalculatePerspective(float verticalFOV, float aspectRatio
   *++writep = 0.0f;
 }
 
-} // XR
+} // xr

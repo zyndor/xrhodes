@@ -102,6 +102,6 @@ Vector3 Ray::GetEnd() const
   return GetPoint(length);
 }
 
-} // XR
+} // xr
 
 #endif // XR_RAY_HPP

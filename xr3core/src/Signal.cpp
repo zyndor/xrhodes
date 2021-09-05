@@ -14,6 +14,40 @@ namespace xr
 {
 
 //==============================================================================
+SignalCore::CallbackVector SignalCore::CopyCallbacks(CallbackVector const& from)
+{
+  CallbackVector to;
+  to.reserve(from.size());
+
+  for (auto& cb : from)
+  {
+    to.push_back(CallbackPtr{ cb->Clone() });
+  }
+
+  return to;
+}
+
+//==============================================================================
+SignalCore::SignalCore(SignalCore const& other)
+: m_isDispatching{ other.m_isDispatching },
+  m_callbacks{ CopyCallbacks(other.m_callbacks) },
+  m_toConnect{ CopyCallbacks(other.m_toConnect) },
+  m_toDisconnect{ other.m_toDisconnect }
+{
+  FinishDispatching();
+}
+
+//==============================================================================
+SignalCore::SignalCore(SignalCore&& other)
+: m_isDispatching{ other.m_isDispatching },
+  m_callbacks{ std::move(other.m_callbacks) },
+  m_toConnect{ std::move(other.m_toConnect) },
+  m_toDisconnect{ std::move(other.m_toDisconnect) }
+{
+  FinishDispatching();
+}
+
+//==============================================================================
 bool SignalCore::ConnectImpl(CallbackBase const& cb)
 {
   bool result = !Find(cb, nullptr);

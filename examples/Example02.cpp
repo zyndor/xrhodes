@@ -114,7 +114,7 @@ public:
     auto rotation =
       Quaternion::FromAxisAngle(Vector3::UnitX(), -m_motion.y) *
       Quaternion::FromAxisAngle(Vector3::UnitY(), -m_motion.x);
-    Gfx::SetUniform(m_uRotation, rotation.data);
+    Gfx::SetUniform(m_uRotation, rotation.begin());
   }
 
   virtual void Render() override

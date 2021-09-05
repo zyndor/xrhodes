@@ -72,26 +72,30 @@ uint8_t* Collage::Allocate(uint16_t width, uint16_t height, xr::AABB& outUVs)
   XR_ASSERT(Collage, stride > 0);
 
   // find block with closest matching dimensions
-  if (mBlocks.empty())
+  if (mBlocks.empty() || width * height == 0)
   {
     return nullptr;
   }
 
+  // attempting to create a width x height pixels block.
   Block* block = [this, width, height]() {
+    // TODO: use a binary heap instead
     std::vector<Block*> candidates;
-    for (auto i = mBlocks.begin(), iEnd = mBlocks.end(); i != iEnd; ++i)
+    for (auto& i: mBlocks)
     {
-      if (width <= i->mWidth && height <= i->mHeight) // if it fits
+      if (width <= i.width && height <= i.height) // if it fits
       {
-        auto iInsert = std::upper_bound(candidates.begin(), candidates.end(), &*i,
+        // order candidates by which one is closer in size to requested block.
+        // TODO: those that are too small (negative diff) should be discarded).
+        auto iInsert = std::upper_bound(candidates.begin(), candidates.end(), &i,
           [width, height](Block const* bNew, Block const* bOld) {
-          int32_t wDiffOld = int32_t(bOld->mWidth) - width;
-          int32_t hDiffOld = int32_t(bOld->mHeight) - height;
-          int32_t wDiffNew = int32_t(bNew->mWidth) - width;
-          int32_t hDiffNew = int32_t(bNew->mHeight) - height;
-          return wDiffOld + hDiffOld < wDiffNew + hDiffNew;
-        });
-        candidates.insert(iInsert, &*i);  // I sits
+            int32_t wDiffOld = int32_t(bOld->width) - width;
+            int32_t hDiffOld = int32_t(bOld->height) - height;
+            int32_t wDiffNew = int32_t(bNew->width) - width;
+            int32_t hDiffNew = int32_t(bNew->height) - height;
+            return wDiffOld + hDiffOld < wDiffNew + hDiffNew;
+          });
+        candidates.insert(iInsert, &i);  // I sits
       }
     }
     return candidates.empty() ? nullptr : candidates.front();
@@ -103,45 +107,45 @@ uint8_t* Collage::Allocate(uint16_t width, uint16_t height, xr::AABB& outUVs)
   }
 
   XR_TRACE(Collage, ("Found candidate: x: %d, y: %d, width %d, height %d",
-    block->mX, block->mY, block->mWidth, block->mHeight));
+    block->x, block->y, block->width, block->height));
 
   // reshape blocks. trim everything to the left and above.
   for (auto& b : mBlocks)
   {
-    if (b.mX < block->mX && b.mX + b.mWidth > b.mX && b.mY + b.mHeight <= block->mY)
+    if (b.x < block->x && b.x + b.width > block->x && b.y + b.height <= block->y)
     {
       XR_TRACE(Collage, ("Trimming block at %d, %d: %d, %d -> %d, %d",
-        b.mX, b.mY, b.mWidth, b.mHeight, block->mX - b.mX, b.mHeight));
-      b.mWidth = block->mX - b.mX;
+        b.x, b.y, b.width, b.height, block->x - b.x, b.height));
+      b.width = block->x - b.x;
     }
 
-    if (b.mY < block->mY && b.mY + b.mHeight > b.mY && b.mX + b.mWidth <= block->mX)
+    if (b.y < block->y && b.y + b.height > block->y && b.x + b.width <= block->x)
     {
       XR_TRACE(Collage, ("Trimming block at %d, %d: %d, %d -> %d, %d",
-        b.mX, b.mY, b.mWidth, b.mHeight, b.mWidth, block->mY - b.mY));
-      b.mHeight = block->mY - b.mY;
+        b.x, b.y, b.width, b.height, b.width, block->y - b.y));
+      b.height = block->y - b.y;
     }
   }
 
   // create new blocks to the left and right, if remaining size is above threshold.
   auto atlasWidth = mData.GetWidth();
-  uint16_t x = block->mX + width;
+  uint16_t x = block->x + width;
   if (atlasWidth - x > mMinBlockSize)
   {
     XR_TRACE(Collage, ("Creating block at %d, %d: %d, %d",
-      x, block->mY, atlasWidth - x, block->mHeight));
-    mBlocks.push_back(Block{ x, block->mY,
-      static_cast<uint16_t>(atlasWidth - x), block->mHeight });
+      x, block->y, atlasWidth - x, block->height));
+    mBlocks.push_back(Block{ x, block->y,
+      static_cast<uint16_t>(atlasWidth - x), block->height });
   }
 
   auto atlasHeight = mData.GetHeight();
-  uint16_t y = block->mY + height;
+  uint16_t y = block->y + height;
   if (atlasHeight - y > mMinBlockSize)
   {
     XR_TRACE(Collage, ("Creating block at %d, %d: %d, %d",
-      block->mX, y, block->mWidth, atlasHeight - y));
-    mBlocks.push_back(Block{ block->mX, y,
-      block->mWidth, static_cast<uint16_t>(atlasHeight - y) });
+      block->x, y, block->width, atlasHeight - y));
+    mBlocks.push_back(Block{ block->x, y,
+      block->width, static_cast<uint16_t>(atlasHeight - y) });
   }
 
   auto blockSave = *block;
@@ -151,28 +155,28 @@ uint8_t* Collage::Allocate(uint16_t width, uint16_t height, xr::AABB& outUVs)
 
   // sort blocks
   std::sort(mBlocks.begin(), mBlocks.end(), [](Block const& b0, Block const& b1) {
-    return b0.mWidth * b0.mHeight < b1.mWidth * b1.mHeight;
+    return b0.width * b0.height < b1.width * b1.height;
   });
 
   auto iRemove = std::remove_if(mBlocks.begin(), mBlocks.end(),
-    [this](Block const& block) {
-    auto index = &block - mBlocks.data();
-    auto iter = mBlocks.begin();
-    std::advance(iter, index + 1);
-    return std::find_if(iter, mBlocks.end(), [&block](Block const& other) {
-      return block.mX >= other.mX && block.mY >= other.mY &&
-        block.mWidth <= other.mWidth && block.mHeight <= other.mHeight;
-    }) != mBlocks.end();
-  });
+    [this](Block const& b) {
+      auto index = &b - mBlocks.data();
+      auto iter = mBlocks.begin();
+      std::advance(iter, index + 1);
+      return std::find_if(iter, mBlocks.end(), [&b](Block const& other) {
+        return b.x >= other.x && b.y >= other.y &&
+          b.width <= other.width && b.height <= other.height;
+      }) != mBlocks.end();
+    });
   mBlocks.erase(iRemove, mBlocks.end());
 
   // determine uv results
-  outUVs.left = blockSave.mX / float(atlasWidth);
-  outUVs.bottom = blockSave.mY / float(atlasHeight);
-  outUVs.right = (blockSave.mX + width) / float(atlasWidth);
-  outUVs.top = (blockSave.mY + height) / float(atlasHeight);
+  outUVs.left = blockSave.x / float(atlasWidth);
+  outUVs.bottom = blockSave.y / float(atlasHeight);
+  outUVs.right = (blockSave.x + width) / float(atlasWidth);
+  outUVs.top = (blockSave.y + height) / float(atlasHeight);
 
-  uint8_t* writep = mData.GetPixelData() + (blockSave.mY * atlasWidth + blockSave.mX) * stride;
+  uint8_t* writep = mData.GetPixelData() + (blockSave.y * atlasWidth + blockSave.x) * stride;
   return writep;
 }
 

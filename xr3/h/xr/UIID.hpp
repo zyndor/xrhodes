@@ -16,14 +16,58 @@
 namespace xr
 {
 
-typedef std::vector<uint8_t>  UIID;
+//==============================================================================
+///@brief 16-byte Unique Instance Identifier.
+//==============================================================================
+struct UIID
+{
+  // types
+  using value_type = uint8_t;
+  using iterator = value_type*;
+  using const_iterator = value_type const*;
 
+  // static
+  static constexpr uint32_t kSize = 16;
+
+  ///@brief Generates a UIID.
+  static UIID Generate();
+
+  // general
+  [[deprecated]]
+  size_t capacity() { return kSize; }
+
+  [[deprecated]]
+  size_t size() { return kSize; }
+
+  value_type* data() { return mData; }
+
+  const_iterator begin() const { return mData; }
+  const_iterator end() const { return mData + kSize; }
+
+  iterator begin() { return mData; }
+  iterator end() { return mData + kSize; }
+
+  // operator overloads
+  value_type operator[](size_t idx) const { return mData[idx]; }
+  value_type& operator[](size_t idx) { return mData[idx]; }
+
+private:
+  // data
+  value_type mData[kSize];
+
+  // structors
+  UIID() = default;
+};
+
+[[deprecated("Use UIID::kSize")]]
 extern const size_t kUIIDSize;
 
-//==============================================================================
-// Generates a 16-byte Unique Instance Identifier.
-//==============================================================================
-UIID  GenerateUIID();
+[[deprecated("Use UIID::Generate()")]]
+inline
+UIID  GenerateUIID()
+{
+  return UIID::Generate();
+}
 
 } // xr
 

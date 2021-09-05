@@ -235,7 +235,7 @@ struct CreateIndexBufferMessage
 struct CreateInstanceDataBufferMessage
 {
   Buffer buffer;  // ownership
-  uint16_t stride;
+  InstanceDataStrideType stride;
   VertexBufferObject* idbo;
 };
 
@@ -249,8 +249,8 @@ struct CreateTextureMessage
 struct CreateFrameBufferWithPrivateTextureMessage
 {
   TextureFormat format;
-  uint32_t width;
-  uint32_t height;
+  Px width;
+  Px height;
   FlagType flags;
   FrameBufferObject* fbo;
 };
@@ -335,10 +335,10 @@ struct DrawIndexedMessage
 
 struct ReadFrameBufferMessage
 {
-  uint16_t x; // TODO: either uint32_t or change texture dimensions to uint16_t
-  uint16_t y;
-  uint16_t width;
-  uint16_t height;
+  Px x;
+  Px y;
+  Px width;
+  Px height;
   TextureFormat format;
   uint8_t iColorAttachment;
   void* buffer;
@@ -506,12 +506,12 @@ private: // internal
     CreateTextureMessage m;
     m.buffers = nullptr;
     m.numBuffers = 0;
-    Guard<CreateTextureMessage> guard(&m, [](CreateTextureMessage* m){
-      for (auto i = m->buffers, iEnd = i + m->numBuffers; i != iEnd; ++i)
+    Guard<CreateTextureMessage> guard(&m, [](CreateTextureMessage* mm){
+      for (auto i = mm->buffers, iEnd = i + mm->numBuffers; i != iEnd; ++i)
       {
         ReleaseBuffer(&i->data);
       }
-      free(m->buffers);
+      free(mm->buffers);
     });
 
     if (reader.Read(m))
@@ -612,8 +612,8 @@ private: // internal
   void SetScissor(BufferReader& reader)
   {
     Rect* rect = nullptr;
-    Guard<Rect*> guard(&rect, [](Rect** rect) {
-      free(*rect);
+    Guard<Rect*> guard(&rect, [](Rect** rect_) {
+      free(*rect_);
     });
     if (reader.Read(rect))
     {
@@ -721,8 +721,8 @@ private: // internal
   {
     ReadFrameBufferMessage m;
     m.onComplete = nullptr;
-    Guard<ReadFrameBufferMessage> guard(&m, [](ReadFrameBufferMessage* m) {
-      delete m->onComplete;
+    Guard<ReadFrameBufferMessage> guard(&m, [](ReadFrameBufferMessage* mm) {
+      delete mm->onComplete;
     });
 
     if (reader.Read(m))
@@ -869,7 +869,7 @@ void M::Release(IndexBufferHandle h)
 }
 
 //==============================================================================
-InstanceDataBufferHandle M::CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride)
+InstanceDataBufferHandle M::CreateInstanceDataBuffer(Buffer const& buffer, InstanceDataStrideType stride)
 {
   InstanceDataBufferHandle h;
   auto bufferCopy = CopyBuffer(buffer);
@@ -892,8 +892,8 @@ void M::Release(InstanceDataBufferHandle h)
 }
 
 //==============================================================================
-TextureHandle M::CreateTexture(TextureFormat format, uint16_t width,
-  uint16_t height, uint16_t depth, FlagType flags, Buffer const* buffers,
+TextureHandle M::CreateTexture(TextureFormat format, Px width,
+  Px height, Px depth, FlagType flags, Buffer const* buffers,
   uint8_t numBuffers)
 {
   auto buffersCopy = Alloc<Buffer>(numBuffers);
@@ -961,8 +961,8 @@ void M::Release(TextureHandle h)
 }
 
 //==============================================================================
-FrameBufferHandle M::CreateFrameBuffer(TextureFormat format, uint16_t width,
-  uint16_t height, FlagType flags)
+FrameBufferHandle M::CreateFrameBuffer(TextureFormat format, Px width,
+  Px height, FlagType flags)
 {
   FrameBufferHandle h;
   auto& fbos = sContext->GetResources().GetFbos();
@@ -1214,7 +1214,7 @@ void M::Present(bool resetState)
 }
 
 //==============================================================================
-void M::ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+void M::ReadFrameBuffer(Px x, Px y, Px width, Px height,
   TextureFormat format, uint8_t colorAttachment, void* mem,
   ReadFrameBufferCompleteCallback* onComplete)
 {

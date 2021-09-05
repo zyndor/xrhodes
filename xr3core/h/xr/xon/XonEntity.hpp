@@ -195,6 +195,6 @@ private:
   size_t m_length = 0;
 };
 
-} //XR
+} // xr
 
 #endif //XR_XONENTITY_HPP

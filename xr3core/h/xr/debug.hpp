@@ -46,9 +46,9 @@
 #define XR_TRACEIF(channel, cond, msg) XR_DEBUG_ONLY(if((cond) && xr::detail::DebugChannel::IsEnabled(#channel)){ xr::detail::DebugChannel(#channel).Trace msg; })
 
 //==============================================================================
-#define XR__ASSERT_STATE_INIT static char xrDebugIsAssertActive = 1;
-#define XR__ASSERT_STATE_CHECK(c) (xrDebugIsAssertActive == 1 && xr::detail::DebugChannel::IsEnabled(c))
-#define XR__ASSERT_STATE_DISABLE xrDebugIsAssertActive = 0
+#define XR_DETAIL_ASSERT_STATE_INIT static char xrDebugIsAssertActive = 1;
+#define XR_DETAIL_ASSERT_STATE_CHECK(c) (xrDebugIsAssertActive == 1 && xr::detail::DebugChannel::IsEnabled(c))
+#define XR_DETAIL_ASSERT_STATE_DISABLE xrDebugIsAssertActive = 0
 
 //==============================================================================
 #if defined(XR_DEBUG)
@@ -67,11 +67,11 @@
 /// passes the given channel and formattable message to the assert handler.
 ///@note msg must be a parenthesised, C-style message format + parameters.
 #define XR_ASSERTMSG(channel, cond, msg)\
-  XR_DEBUG_ONLY({ XR__ASSERT_STATE_INIT if (!(cond) && XR__ASSERT_STATE_CHECK(#channel)){\
+  XR_DEBUG_ONLY({ XR_DETAIL_ASSERT_STATE_INIT if (!(cond) && XR_DETAIL_ASSERT_STATE_CHECK(#channel)){\
       switch(xr::detail::DebugChannel(#channel).Assert msg) {\
         case xr::AssertAction::Break: XR_TRAP break;\
         case xr::AssertAction::Continue: break;\
-        case xr::AssertAction::Ignore: XR__ASSERT_STATE_DISABLE; break;\
+        case xr::AssertAction::Ignore: XR_DETAIL_ASSERT_STATE_DISABLE; break;\
         case xr::AssertAction::IgnoreChannel: xr::detail::DebugChannel::SetEnabled(#channel, false); break;\
     }}})
 
@@ -133,7 +133,7 @@ private:
 };
 
 } // detail
-} // XR
+} // xr
 
 
 #endif  //XR_DEBUG_HPP

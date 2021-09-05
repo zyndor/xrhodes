@@ -20,8 +20,8 @@ namespace xr
 class SharedPoolAllocatorCore
 {
 public:
-  explicit SharedPoolAllocatorCore(Pool* pool) throw();
-  ~SharedPoolAllocatorCore() throw();
+  explicit SharedPoolAllocatorCore(Pool* pool) noexcept;
+  ~SharedPoolAllocatorCore() noexcept;
 
 protected:
   Pool *m_pool;
@@ -75,13 +75,13 @@ public:
   };
 
   // structors
-  explicit SharedPoolAllocator(Pool &mp) throw();
-  SharedPoolAllocator(const SharedPoolAllocator &rhs) throw();
+  explicit SharedPoolAllocator(Pool &mp) noexcept;
+  SharedPoolAllocator(const SharedPoolAllocator &rhs) noexcept;
 
   template <typename OtherType>
-  SharedPoolAllocator(const SharedPoolAllocator<OtherType> &rhs) throw();
+  SharedPoolAllocator(const SharedPoolAllocator<OtherType> &rhs) noexcept;
 
-  ~SharedPoolAllocator() throw();
+  ~SharedPoolAllocator() noexcept;
 
   // general use
   pointer address(reference x) const;
@@ -92,7 +92,7 @@ public:
 
   void deallocate(pointer p, size_type n);
 
-  size_type max_size() const throw();
+  size_type max_size() const noexcept;
 
   void construct(pointer p, const value_type& val);
   void destroy(pointer p);
@@ -103,25 +103,25 @@ public:
 
 //==============================================================================
 template <class Type, class OtherType>
-bool operator==(const SharedPoolAllocator<Type>&,
-  const SharedPoolAllocator<OtherType>&) throw();
+constexpr bool operator==(const SharedPoolAllocator<Type>&,
+  const SharedPoolAllocator<OtherType>&) noexcept;
 
 template <class Type, class OtherType>
-bool operator!=(const SharedPoolAllocator<Type>&,
-  const SharedPoolAllocator<OtherType>&) throw();
+constexpr bool operator!=(const SharedPoolAllocator<Type>&,
+  const SharedPoolAllocator<OtherType>&) noexcept;
 
 //==============================================================================
 // implementation
 //==============================================================================
 template  <typename Type>
-SharedPoolAllocator<Type>::SharedPoolAllocator(Pool& mp) throw()
+SharedPoolAllocator<Type>::SharedPoolAllocator(Pool& mp) noexcept
 : SharedPoolAllocatorCore(&mp)
 {}
 
 //==============================================================================
 template  <typename Type>
 SharedPoolAllocator<Type>::
-  SharedPoolAllocator(const SharedPoolAllocator& rhs) throw()
+  SharedPoolAllocator(const SharedPoolAllocator& rhs) noexcept
 : SharedPoolAllocatorCore(rhs.m_pool)
 {}
 
@@ -129,13 +129,13 @@ SharedPoolAllocator<Type>::
 template  <typename Type>
 template  <typename OtherType>
 SharedPoolAllocator<Type>::
-  SharedPoolAllocator(const SharedPoolAllocator<OtherType>& rhs) throw()
+  SharedPoolAllocator(const SharedPoolAllocator<OtherType>& rhs) noexcept
 : SharedPoolAllocatorCore(rhs.m_pool)
 {}
 
 //==============================================================================
 template  <typename Type>
-SharedPoolAllocator<Type>::~SharedPoolAllocator() throw()
+SharedPoolAllocator<Type>::~SharedPoolAllocator() noexcept
 {}
 
 //==============================================================================
@@ -161,7 +161,7 @@ template  <typename Type>
 inline
 typename SharedPoolAllocator<Type>::pointer
   SharedPoolAllocator<Type>::allocate(size_type n,
-    SharedPoolAllocator<void>::const_pointer hint)
+    SharedPoolAllocator<void>::const_pointer /*hint*/)
 {
   return static_cast<pointer>(m_pool->Allocate(n * sizeof(value_type)));
 }
@@ -169,7 +169,7 @@ typename SharedPoolAllocator<Type>::pointer
 //==============================================================================
 template  <typename Type>
 inline
-void SharedPoolAllocator<Type>::deallocate(pointer p, size_type n)
+void SharedPoolAllocator<Type>::deallocate(pointer /*p*/, size_type /*n*/)
 {
   // do the nothing
 }
@@ -178,7 +178,7 @@ void SharedPoolAllocator<Type>::deallocate(pointer p, size_type n)
 template  <typename Type>
 inline
 typename SharedPoolAllocator<Type>::size_type
-  SharedPoolAllocator<Type>::max_size() const throw()
+  SharedPoolAllocator<Type>::max_size() const noexcept
 {
   return m_pool->CalculateFree();
 }
@@ -201,18 +201,18 @@ void SharedPoolAllocator<Type>::destroy(pointer p)
 
 //==============================================================================
 template <class Type, class OtherType>
-bool operator==(const SharedPoolAllocator<Type>&,
-  const SharedPoolAllocator<OtherType>&) throw()
+constexpr bool operator==(const SharedPoolAllocator<Type>&,
+  const SharedPoolAllocator<OtherType>&) noexcept
 {
-  return true;
+  return true;  // de-allocation is no-op, so sure, go ahead.
 }
 
 //==============================================================================
 template <class Type, class OtherType>
-bool operator!=(const SharedPoolAllocator<Type>&,
-  const SharedPoolAllocator<OtherType>&) throw()
+constexpr bool operator!=(const SharedPoolAllocator<Type>& lhs,
+  const SharedPoolAllocator<OtherType>& rhs) noexcept
 {
-  return true;
+  return !(lhs == rhs);
 }
 
 } // xr

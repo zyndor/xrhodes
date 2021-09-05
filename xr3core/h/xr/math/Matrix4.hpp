@@ -191,17 +191,17 @@ public:
   ///@note Refer to Matrix's documentation for its ordering.
   void Import(Matrix const& m)
   {
-    data[0] = m.xx;
-    data[1] = m.xy;
-    data[2] = m.xz;
+    data[0] = m.xx();
+    data[1] = m.xy();
+    data[2] = m.xz();
     data[3] = .0f;
-    data[4] = m.yx;
-    data[5] = m.yy;
-    data[6] = m.yz;
+    data[4] = m.yx();
+    data[5] = m.yy();
+    data[6] = m.yz();
     data[7] = .0f;
-    data[8] = m.zx;
-    data[9] = m.zy;
-    data[10] = m.zz;
+    data[8] = m.zx();
+    data[9] = m.zy();
+    data[10] = m.zz();
     data[11] = .0f;
     data[12] = m.t.x;
     data[13] = m.t.y;
@@ -214,15 +214,15 @@ public:
   ///@note Refer to Matrix's documentation for its ordering.
   void Export(Matrix& m) const
   {
-    m.xx = data[0];
-    m.xy = data[1];
-    m.xz = data[2];
-    m.yx = data[4];
-    m.yy = data[5];
-    m.yz = data[6];
-    m.zx = data[8];
-    m.zy = data[9];
-    m.zz = data[10];
+    m.xx() = data[0];
+    m.xy() = data[1];
+    m.xz() = data[2];
+    m.yx() = data[4];
+    m.yy() = data[5];
+    m.yz() = data[6];
+    m.zx() = data[8];
+    m.zy() = data[9];
+    m.zz() = data[10];
     m.t.x = data[12];
     m.t.y = data[13];
     m.t.z = data[14];
@@ -242,6 +242,6 @@ Vector4 operator*(Matrix4 const& m, Vector4 const& v)
     Vector4(m.data[3], m.data[7], m.data[11], m.data[15]).Dot(v));
 }
 
-} // XR
+} // xr
 
 #endif //XR_MATRIX4_HPP

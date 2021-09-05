@@ -57,6 +57,6 @@ public:
   }
 };
 
-} // XR
+} // xr
 
 #endif  //XR_RECT_HPP

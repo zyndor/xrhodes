@@ -17,10 +17,9 @@ namespace xr
 const size_t kUIIDSize = 16;
 
 //==============================================================================
-UIID  GenerateUIID()
+UIID  UIID::Generate()
 {
   UIID  uiid;
-  uiid.resize(kUIIDSize);
 
   UIID::iterator  iWrite(uiid.begin());
   UIID::iterator  iEnd(uiid.end());
@@ -46,7 +45,8 @@ UIID  GenerateUIID()
     //memcpy(iWrite, &pp, sizeof(&iWrite));
     std::reverse(iWrite, iWrite + sizeof(&iWrite));
 
-    UIID::value_type  sum = std::accumulate(iWrite, iWrite + sizeof(&iWrite), 0);
+    auto  sum = std::accumulate(iWrite, iWrite + sizeof(&iWrite), UIID::value_type(0),
+      std::plus<UIID::value_type>());
     std::transform(iWrite, iWrite + sizeof(&iWrite), iWrite,
       [sum](UIID::value_type& v){ return v += sum; });
 
@@ -56,11 +56,11 @@ UIID  GenerateUIID()
   // scramble digits
   UIID  temp(uiid);
   size_t  idx = 5;
-  for(size_t i = 0; i < kUIIDSize; ++i)
+  for(size_t i = 0; i < kSize; ++i)
   {
     uiid[i] = temp[idx];
     idx += 11;
-    idx %= kUIIDSize;
+    idx %= kSize;
   }
 
   return uiid;

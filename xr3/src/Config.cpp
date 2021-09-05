@@ -22,16 +22,14 @@ std::string Config::Get(char const* varName)
 }
 
 //==============================================================================
-int Config::GetInt(char const* varName, int defaultValue)
+int32_t Config::GetInt(char const* varName, int32_t defaultValue)
 {
-  std::string  value(Get(varName));
-  if (!value.empty())
+  XR_ASSERT(Config, varName != nullptr);
+  auto value = GetStringSafe(std::getenv(varName));
+  if (value[0] && !StringTo(value, defaultValue))
   {
-    if (!StringTo(value.c_str(), defaultValue))
-    {
-      XR_TRACE(Config, ("Failed to convert the value '%s' of '%s' to integer; using %d",
-        value.c_str(), varName, defaultValue));
-    }
+    XR_TRACE(Config, ("Failed to convert the value '%s' of '%s' to integer; using %d",
+      value, varName, defaultValue));
   }
   return defaultValue;
 }

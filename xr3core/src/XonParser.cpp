@@ -66,7 +66,7 @@ bool XonParser::ParseObject(ParserCore& pc)
     else while (result) // some value or key.
     {
       // Parse object (and children) or string.
-      String str = { nullptr, 0 };
+      String str{ nullptr, 0 };
       auto er = ParseElement(pc, str);
       if (!er.isValid)
       {

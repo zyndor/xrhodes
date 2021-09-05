@@ -8,9 +8,9 @@
 //==============================================================================
 #include "xr/debug.hpp"
 #include "xr/platform.hpp"
-#include "xr/strings/StringProxy.hpp"
 #include <set>
 #include <cstdarg>
+#include <string_view>
 
 namespace xr
 {
@@ -39,7 +39,7 @@ AssertAction DefaultAssertHandler(char const* channel, char const* message)
 
 const size_t kMessageLength = 1024;
 
-std::set<StringProxy> s_disabledChannels;
+std::set<std::string_view> s_disabledChannels;
 
 TraceHandler s_traceHandler = DefaultTraceHandler;
 AssertHandler s_assertHandler = DefaultAssertHandler;
@@ -48,7 +48,7 @@ AssertHandler s_assertHandler = DefaultAssertHandler;
 #endif
 
 //==============================================================================
-void SetTraceHandler(TraceHandler handler)
+void SetTraceHandler([[maybe_unused]] TraceHandler handler)
 {
 #if defined(XR_DEBUG)
   s_traceHandler = handler ? handler : DefaultTraceHandler;
@@ -56,7 +56,7 @@ void SetTraceHandler(TraceHandler handler)
 }
 
 //==============================================================================
-void SetAssertHandler(AssertHandler handler)
+void SetAssertHandler([[maybe_unused]] AssertHandler handler)
 {
 #if defined(XR_DEBUG)
   s_assertHandler = handler ? handler : DefaultAssertHandler;
@@ -67,7 +67,7 @@ namespace detail
 {
 
 //==============================================================================
-void DebugChannel::SetEnabled(char const* name, bool state)
+void DebugChannel::SetEnabled([[maybe_unused]] char const* name, [[maybe_unused]] bool state)
 {
 #if defined(XR_DEBUG)
   if (state)
@@ -82,7 +82,7 @@ void DebugChannel::SetEnabled(char const* name, bool state)
 }
 
 //==============================================================================
-bool DebugChannel::IsEnabled(char const* name)
+bool DebugChannel::IsEnabled([[maybe_unused]] char const* name)
 {
 #if defined(XR_DEBUG)
   return s_disabledChannels.find(name) == s_disabledChannels.end();
@@ -92,13 +92,13 @@ bool DebugChannel::IsEnabled(char const* name)
 }
 
 //==============================================================================
-DebugChannel::DebugChannel(char const* name)
+DebugChannel::DebugChannel([[maybe_unused]] char const* name)
 #if defined(XR_DEBUG)
 : m_name(name)
 #endif
 {}
 
-void DebugChannel::Trace(char const* format, ...)
+void DebugChannel::Trace([[maybe_unused]] char const* format, ...)
 {
 #if defined(XR_DEBUG)
   va_list vl;
@@ -113,7 +113,7 @@ void DebugChannel::Trace(char const* format, ...)
 }
 
 //==============================================================================
-AssertAction DebugChannel::Assert(char const* format, ...)
+AssertAction DebugChannel::Assert([[maybe_unused]] char const* format, ...)
 {
 #if defined(XR_DEBUG)
   va_list vl;

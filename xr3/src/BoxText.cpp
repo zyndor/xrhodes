@@ -115,7 +115,7 @@ void BoxText::Measure(char const* text, size_t numBytes, Measurement& m) const
   const Vector2 boxSize = m_boxSize / m_scale;
   if (lineHeight > boxSize.y) // can't fit a single line
   {
-    m = { Vector2::Zero(), 0 };
+    m = Measurement{ Vector2::Zero(), 0, {} };
     return;
   }
 
@@ -130,10 +130,10 @@ void BoxText::Measure(char const* text, size_t numBytes, Measurement& m) const
   char const* wordEnd = nullptr;
   char const* nextLineStart = nullptr;
 
-  Measurement tm = { Vector2::Zero(), 0 };
+  Measurement tm{ Vector2::Zero(), 0, {} };
   tm.lines.reserve(size_t(std::floor(boxSize.y / (lineHeight + vSpacing))));
 
-  Measurement::Line line = { nullptr };
+  Measurement::Line line{ nullptr, nullptr, 0.f };
 
   auto endText = utf8::find_invalid(text, text + numBytes);
   while (text != endText)
@@ -298,7 +298,7 @@ namespace
 using Aligner = void(*)(float, float&);
 
 const Aligner kHorizontalAligners[] = {
-  [](float width, float& x) {},
+  [](float /*width*/, float& /*x*/) {},
   [](float width, float& x) { x += width * .5f; },
   [](float width, float& x) { x += width; },
 };
@@ -436,4 +436,4 @@ IndexMesh BoxText::CreateMesh(const char* text, size_t numBytes, bool updateGlyp
     static_cast<uint32_t>(indices.size()), indices.data());
 }
 
-} // XR
+} // xr

@@ -54,11 +54,9 @@ public:
   xr::Vector2 const& GetTotalMotion() const;
 
 private:
-  static const int64_t kMaxPressDurationMs;
-
   bool m_isButtonDown = false; // is the button pressed and held?
-  uint64_t m_tLastFrameMs = 0;  // timestamp of last frame
-  int64_t m_pressTimerMs = 0; // amount of time button was pressed.
+  double m_tLastFrameMs = 0.;  // timestamp of last frame
+  double m_pressTimerMs = 0; // amount of time button was pressed.
 
   xr::SVector2 m_lastMousePosition; // last position of mouse in screen space
   xr::Vector2 m_accumulators[2];

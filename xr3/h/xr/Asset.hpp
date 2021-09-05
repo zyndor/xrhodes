@@ -10,7 +10,6 @@
 //
 //==============================================================================
 #include "xr/File.hpp"
-#include "xr/Hash.hpp"
 #include "xr/memory/Counted.hpp"
 #include "xr/threading/Counter.hpp"
 #include "xr/memory/Buffer.hpp"
@@ -578,7 +577,7 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 \
   static TypeId const kTypeId;\
   static VersionType const kVersion;\
-  static className* Create(HashType hash, FlagType flags) {\
+  [[nodiscard]] static className* Create(HashType hash, FlagType flags) {\
     return new className(DescriptorCore(kTypeId, hash), flags);\
   }\
 \
@@ -637,6 +636,6 @@ Counted<T> Asset::Manager::FindOrCreateInternal(DescriptorCore const& desc, Flag
 /// declared with XR_ASSET_BUILDER_DECL.
 #define XR_ASSET_BUILDER_BUILD_SIG(assetType)\
   bool assetType##Builder::Build(char const* rawNameExt, Buffer buffer,\
-    std::vector<FilePath>& dependencies, std::ostream& data) const
+    [[maybe_unused]] std::vector<FilePath>& dependencies, std::ostream& data) const
 
 #endif //XR_ASSET_HPP

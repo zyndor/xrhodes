@@ -36,7 +36,7 @@ public:
   Material::Ptr Materialise(Gfx::FlagType state, Shader::Ptr const& shader);
 
 protected:
-  ~IMaterialisable() {}
+  virtual ~IMaterialisable() {}
 };
 
 }

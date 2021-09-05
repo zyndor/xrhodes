@@ -213,7 +213,7 @@ struct  BezierImpl
 template <typename T>
 struct  BezierImpl<T, 1>
 {
-  static T Calculate(const T* parSamples, float blendFactor)
+  static T Calculate(const T* parSamples, float /*blendFactor*/)
   {
     return parSamples[0];
   }

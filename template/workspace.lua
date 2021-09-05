@@ -22,6 +22,14 @@ function is_vs()
 	return _ACTION ~= nil and _ACTION:find("vs") == 1
 end
 
+function is_clang()
+	return _ACTION ~= nil and (_ACTION:find("xcode") == 1 or _ACTION:find("clang"))
+end
+
+function is_msvc()
+	return is_vs() and not _ACTION:find("clang")
+end
+
 --
 -- Performs the creation of a workspace with the given name, and making the
 -- given project its default project (Visual Studio only).
@@ -70,7 +78,7 @@ function do_workspace(workspace_name, start_project_name)
 	elseif target_env == "linux" then
 		table.insert(tbl_platforms, "x64")
 	elseif target_env == "macos" then
-		table.insert(tbl_platforms, "Universal64")
+		table.insert(tbl_platforms, "x86_64")
 	end
 	platforms(tbl_platforms)
 
@@ -90,14 +98,14 @@ function do_workspace(workspace_name, start_project_name)
 
 	-- optimization
 	filter("not Release")
-	optimize "Off"
-	symbols "On"
-	runtime "Debug"
-	
+		optimize "Off"
+		symbols "On"
+		runtime "Debug"
+
 	filter{ "Release" }
-	optimize "Full"
-	runtime "Release"
-	
+		optimize "Full"
+		runtime "Release"
+
 	filter{}
 
 	-- paths
@@ -123,43 +131,82 @@ function do_workspace(workspace_name, start_project_name)
 		end
 	end
 
-	-- defines
-	defines {
-		"_CRT_SECURE_NO_WARNINGS",
-		"_SCL_SECURE_NO_WARNINGS",
-	}
-
 	filter{ "Debug" }
-	defines {
-		"XR_DEBUG"
-	}
-	
+		defines {
+			"XR_DEBUG"
+		}
+
 	filter{}
 
-	if is_vs() == false then
+	if is_msvc() then
+		-- defines
+		defines {
+			"_CRT_SECURE_NO_WARNINGS",
+			"_SCL_SECURE_NO_WARNINGS",
+		}
+
 		buildoptions {
-			"-std=c++14",
+			"/std:c++17",
+			"/permissive-",
+			"/W4",
+			"/we4244", -- conversion from 'type1' to 'type2', possible loss of data
+			"/we4263", -- 'function': member function does not override any base class virtual member function.
+			"/we4265", -- virtual methods and no virtual dtor.
+			"/we4289", -- nonstandard extension used: 'variable': loop control variable declared in the for-loop is used outside the for-loop scope
+			"/we4296", -- 'operator': expression is always 'boolean_value'
+			"/we4545", -- expression before comma evaluates to function call, missing argument list;
+			"/we4546", -- function call before comma missing argument list;
+			"/we4547", -- operator: operator before comma has no effect, expected operator with side-effect;
+			"/we4549", -- operator: operator before comma missing argument list;
+			"/we4555", -- expression has no effect; expected: expression with side-effect;
+			"/w14619", -- pragma warning: there is no warning number 'number';
+			"/we4640", -- Enable warning on thread un-safe static member initialization
+			"/we4826", -- Coversion from 'type1' to 'type2' is sign-extended. This may cause unexpected runtime behavior;
+			"/we4905", -- wide string literal cast to 'LPSTR'
+			"/we4906", -- string literal cast to 'LPWSTR'
+			"/we4928", -- illegal copy-initialization; more than one user-defined conversion has been implicitly applied
+			--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.
+		}
+	else
+		buildoptions {
+			"-std=c++17",
+			"-pedantic",
 			"-Wall",
+			"-Wdouble-promotion",
 			"-Werror",
+			"-Wextra",
+			"-Wmissing-declarations",
+			"-Wnon-virtual-dtor",
+			"-Wold-style-cast",
+			"-Wshadow",
 			"-fvisibility-ms-compat",
 		}
+
+		if not is_clang() then -- probably GCC
+			buildoptions {
+				"-Wduplicated-branches",
+				"-Wduplicated-cond",
+				"-Wlogical-op",
+				"-Wmisleading-indentation",
+			}
+		end
 	end
 
 	-- target-specific setup
 	filter {}
+
 	-- Windows
 	if target_env == "windows" then
 		if is_vs() then
 			flags { "MultiProcessorCompile" }
-			
-			buildoptions {
-				"/WX",
-				--"/Wall", -- Stricter checks would be great; Visual Studio going crazy with warnings, less so. Most of them are not related or are related to safe casts etc.
-			}
 		end
 
 		system("windows")
 		systemversion "8.1"
+		defines {
+			"WIN32_LEAN_AND_MEAN",
+			"NOMINMAX",
+		}
 
 		target_desktop = true
 	end
@@ -200,17 +247,18 @@ end
 -- Copies dependencies on Windows
 --
 function do_vs_postbuild(dependencies)
-  local artifacts_rel_path = "../../"..bin_location.."/"; -- we're currently in .projects/${platform}/
-  for _, p in ipairs(tbl_platforms) do
-    for _, c in ipairs(tbl_configurations) do
-      filter { "platforms:"..p, c }
-      local pc = p.."-"..c
-      for _, iDep in ipairs(dependencies) do
-        postbuildcommands{
-          os.translateCommands("{COPY} $(VcpkgCurrentInstalledDir)"..
-            "bin/"..iDep..".dll "..artifacts_rel_path..pc)
-        }
-      end
-    end
-  end
+	local artifacts_rel_path = "../../"..bin_location.."/"; -- we're currently in .projects/${platform}/
+	for _, p in ipairs(tbl_platforms) do
+		for _, c in ipairs(tbl_configurations) do
+			filter { "platforms:"..p, c }
+				local pc = p.."-"..c
+				for _, iDep in ipairs(dependencies) do
+					postbuildcommands{
+						os.translateCommands("{COPY} $(VcpkgCurrentInstalledDir)"..
+							"bin/"..iDep..".dll "..artifacts_rel_path..pc)
+					}
+				end
+			filter {}
+		end
+	end
 end

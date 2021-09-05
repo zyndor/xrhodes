@@ -19,7 +19,8 @@ const std::regex kDefineRegex("(\\$[^$\\.\\s]+)");
 }
 #endif
 
-bool ParseAssetOptions(const char* str, std::function<bool(char const*)> onOption)
+bool ParseAssetOptions([[maybe_unused]] const char* str,
+  [[maybe_unused]] std::function<bool(char const*)> onOption)
 {
 #ifdef ENABLE_ASSET_BUILDING
   std::cregex_iterator iDefines(str, str + strlen(str), kDefineRegex);

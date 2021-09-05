@@ -16,9 +16,11 @@
 namespace xr
 {
 
+XR_WARNINGS_PUSH
+XR_WARNINGS_IGNORE_DEPRECATION
+
 //==============================================================================
-///@note DEPRECATED, use xr::Animator.
-class TweenVarPoolCore
+class [[deprecated("Use xr::Animator")]] TweenVarPoolCore
 {
 public:
   // types
@@ -37,9 +39,8 @@ public:
 };
 
 //==============================================================================
-///@note DEPRECATED, use xr::Animator.
 template  <typename T>
-class TweenVarPool: protected TweenVarPoolCore
+class [[deprecated("Use xr::Animator")]] TweenVarPool: protected TweenVarPoolCore
 {
 public:
   // types
@@ -50,7 +51,6 @@ public:
   ~TweenVarPool();
 
   // general
-  [[deprecated("Use xr::Animator")]]
   void  Add(float duration, Tweener::Function function, Type target,
     Type& value, Tweener::Callback onFrame, Tweener::Callback onFinished,
     void* callbackData, Tweener& tweener);
@@ -115,7 +115,7 @@ bool TweenVarPool<T>::Remove( Type& v, bool finish )
   {
     if (m_varPool[i].value == &v)
     {
-      success = m_varPool[i].tweener->Remove(m_varPool[i].fValue, true);
+      success = m_varPool[i].tweener->Remove(m_varPool[i].fValue, finish);
       break;
     }
   }
@@ -158,6 +158,8 @@ void TweenVarPool<T>::OnFinishedCallback( void* data )
 
   variable->Clear();
 }
+
+XR_WARNINGS_POP
 
 } // xr
 

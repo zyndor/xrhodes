@@ -47,7 +47,7 @@ public:
   {
     const char* start;
     size_t      length;
-    bool        isQuoted;
+    bool        isQuoted{ false };
   };
 
   ///@brief Event handling callback.

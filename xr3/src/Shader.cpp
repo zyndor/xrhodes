@@ -16,7 +16,6 @@
 #endif
 
 #define LTRACE(format) XR_TRACE(Shader, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(Shader, condition, format)
 
 namespace xr
 {
@@ -39,18 +38,17 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
   */
   // Get a string with all the options.
   auto options = [rawNameExt]() {
-    std::set<std::string> options;
-    ParseAssetOptions(rawNameExt, [rawNameExt, &options](char const* option) {
-      if (!options.insert(option).second)
+    std::set<std::string> lOptions;
+    ParseAssetOptions(rawNameExt, [rawNameExt, &lOptions](char const* option) {
+      if (!lOptions.insert(option).second)
       {
-        LTRACE(("%s: ignored repeated instance of option '%s'.",
-          rawNameExt, option));
+        LTRACE(("%s: ignored repeated instance of option '%s'.", rawNameExt, option));
       }
       return true;
     });
 
     std::ostringstream strOptions;
-    for (auto& o : options)
+    for (auto& o : lOptions)
     {
       strOptions << Asset::kOptionDelimiter << o;
     }
@@ -60,62 +58,62 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 
   XonParser::State state;
   std::unique_ptr<XonObject>  root(XonBuildTree(buffer.As<char const>(), buffer.size, &state));
-  bool success = root != nullptr;
-  LTRACEIF(!success,
-    ("%s: failed to parse XON somewhere around row %d, column %d.",
+  if (!root)
+  {
+    LTRACE(("%s: failed to parse XON somewhere around row %d, column %d.",
       rawNameExt, state.row, state.column));
-
-  if (success)
-  {
-    try
-    {
-      // Read path to vertex shader; add to dependencies and write hash.
-      FilePath vertexEntry = root->Get("vsh").ToValue().GetString();
-      if (vertexEntry.GetExt() == nullptr)
-      {
-        vertexEntry += ".vsh";
-      }
-      vertexEntry += options.c_str();
-      dependencies.push_back(vertexEntry);
-
-      Asset::HashType hash = Asset::Manager::HashPath(vertexEntry);
-      success = WriteBinaryStream(hash, data);
-      LTRACEIF(!success, ("%s: failed to write vertex shader hash.",
-        rawNameExt));
-    }
-    catch (XonEntity::Exception const&)
-    {
-      success = false;
-      LTRACE(("%s: missing vertex shader definition.", rawNameExt));
-    }
+    return false;
   }
 
-  if (success)
+  try
   {
-    try
+    // Read path to vertex shader; add to dependencies and write hash.
+    FilePath vertexEntry = root->Get("vsh").ToValue().GetString();
+    if (vertexEntry.GetExt() == nullptr)
     {
-      // Read path to fragment shader; add to dependencies and write hash.
-      FilePath fragmentEntry = root->Get("fsh").ToValue().GetString();
-      if (fragmentEntry.GetExt() == nullptr)
-      {
-        fragmentEntry += ".fsh";
-      }
-      fragmentEntry += options.c_str();
-      dependencies.push_back(fragmentEntry);
-
-      Asset::HashType hash = Asset::Manager::HashPath(fragmentEntry);
-      success = WriteBinaryStream(hash, data);
-      LTRACEIF(!success, ("%s: failed to write fragment shader hash.",
-        rawNameExt));
+      vertexEntry += ".vsh";
     }
-    catch (XonEntity::Exception const&)
+    vertexEntry += options.c_str();
+    dependencies.push_back(vertexEntry);
+
+    Asset::HashType hash = Asset::Manager::HashPath(vertexEntry);
+    if (!WriteBinaryStream(hash, data))
     {
-      success = false;
-      LTRACE(("%s: missing fragment shader definition.", rawNameExt));
+      LTRACE(("%s: failed to write vertex shader hash.", rawNameExt));
+      return false;
     }
   }
+  catch (XonEntity::Exception const&)
+  {
+    LTRACE(("%s: missing vertex shader definition.", rawNameExt));
+    return false;
+  }
 
-  return success;
+  try
+  {
+    // Read path to fragment shader; add to dependencies and write hash.
+    FilePath fragmentEntry = root->Get("fsh").ToValue().GetString();
+    if (fragmentEntry.GetExt() == nullptr)
+    {
+      fragmentEntry += ".fsh";
+    }
+    fragmentEntry += options.c_str();
+    dependencies.push_back(fragmentEntry);
+
+    Asset::HashType hash = Asset::Manager::HashPath(fragmentEntry);
+    if (!WriteBinaryStream(hash, data))
+    {
+      LTRACE(("%s: failed to write fragment shader hash.", rawNameExt));
+      return false;
+    }
+  }
+  catch (XonEntity::Exception const&)
+  {
+    LTRACE(("%s: missing fragment shader definition.", rawNameExt));
+    return false;
+  }
+
+  return true;
 }
 #endif
 
@@ -124,53 +122,11 @@ XR_ASSET_BUILDER_BUILD_SIG(Shader)
 //==============================================================================
 bool Shader::SetComponents(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fragment)
 {
-  // NOTE: since this method is called from OnLoaded(), we can't include the
-  // ProcessingFlag in the below check. Nor did I want to create a separate
-  // SetComponentsInternal(), leaving only an assert here.
   XR_DEBUG_ONLY(auto flags = GetFlags());
   XR_ASSERT(ShaderComponent, CheckAllMaskBits(flags, ErrorFlag) ||
-    !CheckAnyMaskBits(flags, LoadingFlag));
+    !CheckAnyMaskBits(flags, LoadingFlag | ProcessingFlag));
 
-  auto hVertex = vertex->GetHandle();
-  auto hFragment = fragment->GetHandle();
-  bool success = hVertex.IsValid();
-  LTRACEIF(!success, ("%s: %s shader component is invalid.", m_debugPath.c_str(),
-    "vertex"));
-
-  if (success)
-  {
-    success = vertex->GetType() == Gfx::ShaderType::Vertex;
-    LTRACEIF(!success, ("%s: %s input has invalid type.", m_debugPath.c_str(), "vertex"));
-  }
-
-  if (success)
-  {
-    success = hFragment.IsValid();
-    LTRACEIF(!success, ("%s: %s shader component is invalid.", m_debugPath.c_str(),
-      "fragment"));
-  }
-
-  if (success)
-  {
-    success = fragment->GetType() == Gfx::ShaderType::Fragment;
-    LTRACEIF(!success, ("%s: %s input has invalid type.", m_debugPath.c_str(), "fragment"));
-  }
-
-  if (success)
-  {
-    Gfx::Release(m_handle);
-    m_handle = Gfx::CreateProgram(hVertex, hFragment);
-
-    success = m_handle.IsValid();
-    LTRACEIF(!success, ("%s: failed to create shader program.", m_debugPath.c_str()));
-  }
-
-  if (success)
-  {
-    m_vertexShader = vertex;
-    m_fragmentShader = fragment;
-  }
-
+  bool success = SetComponentsInternal(vertex, fragment);
   OverrideFlags(PrivateMask, success ? ReadyFlag : (ProcessingFlag | ErrorFlag));
 
   return success;
@@ -183,45 +139,39 @@ bool Shader::OnLoaded(Buffer buffer)
   BufferReader reader(buffer);
 
   HashType hash;
-  bool success = reader.Read(hash);
-  LTRACEIF(!success, ("%s: failed to read %s shader hash.",
-    m_debugPath.c_str(), "vertex"));
-
-  ShaderComponent::Ptr cVertex;
-  if (success)  // Read vertex shader
+  if (!reader.Read(hash))
   {
-    cVertex = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
-    success = cVertex != nullptr;
-    LTRACEIF(!success, ("%s: failed to load %s shader component.",
-      m_debugPath.c_str(), "vertex"));
+    LTRACE(("%s: failed to read %s shader hash.", m_debugPath.c_str(), "vertex"));
+    return false;
   }
 
-  if (success)
+  auto cVertex = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
+  if (!cVertex)
   {
-    success = reader.Read(hash);
-    LTRACEIF(!success, ("%s: failed to read %s shader hash.",
-      m_debugPath.c_str(), "fragment"));
+    LTRACE(("%s: failed to load %s shader component.", m_debugPath.c_str(), "vertex"));
+    return false;
   }
 
-  ShaderComponent::Ptr cFragment;
-  if (success)  // read fragment shader
+  if (!reader.Read(hash))
   {
-    cFragment = Manager::Load(Descriptor<ShaderComponent>(hash), flags);  // we'll check for failure later.
-    success = cFragment != nullptr;
-    LTRACEIF(!success, ("%s: failed to load %s shader component.", m_debugPath.c_str(),
-      "fragment"));
+    LTRACE(("%s: failed to read %s shader hash.", m_debugPath.c_str(), "fragment"));
+    return false;
   }
 
-  if (
+  auto cFragment = Manager::Load(Descriptor<ShaderComponent>(hash), flags);
+  if (!cFragment)
+  {
+    LTRACE(("%s: failed to load %s shader component.", m_debugPath.c_str(), "fragment"));
+    return false;
+  }
+
 #ifdef ENABLE_ASSET_BUILDING
-    !CheckAllMaskBits(flags, DryRunFlag) &&
-#endif
-    success)
+  if (CheckAllMaskBits(flags, DryRunFlag))
   {
-    success = SetComponents(cVertex, cFragment);
+    return true;
   }
-
-  return success;
+#endif
+  return SetComponentsInternal(cVertex, cFragment);
 }
 
 //==============================================================================
@@ -232,6 +182,50 @@ void Shader::OnUnload()
 
   m_vertexShader.Reset(nullptr);
   m_fragmentShader.Reset(nullptr);
+}
+
+//==============================================================================
+bool Shader::SetComponentsInternal(ShaderComponent::Ptr vertex, ShaderComponent::Ptr fragment)
+{
+  auto hVertex = vertex->GetHandle();
+  auto hFragment = fragment->GetHandle();
+  if (!hVertex.IsValid())
+  {
+    LTRACE(("%s: %s shader component is invalid.", m_debugPath.c_str(), "vertex"));
+    return false;
+  }
+
+  if (vertex->GetType() != Gfx::ShaderType::Vertex)
+  {
+    LTRACE(("%s: %s input has invalid type.", m_debugPath.c_str(), "vertex"));
+    return false;
+  }
+
+  if (!hFragment.IsValid())
+  {
+    LTRACE(("%s: %s shader component is invalid.", m_debugPath.c_str(), "fragment"));
+    return false;
+  }
+
+  if (fragment->GetType() != Gfx::ShaderType::Fragment)
+  {
+    LTRACE(("%s: %s input has invalid type.", m_debugPath.c_str(), "fragment"));
+    return false;
+  }
+
+  Gfx::Release(m_handle);
+  m_handle = Gfx::CreateProgram(hVertex, hFragment);
+
+  if (!m_handle.IsValid())
+  {
+    LTRACE(("%s: failed to create shader program.", m_debugPath.c_str()));
+    return false;
+  }
+
+  m_vertexShader = vertex;
+  m_fragmentShader = fragment;
+
+  return true;
 }
 
 }

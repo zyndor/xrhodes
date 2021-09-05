@@ -9,6 +9,8 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
+#pragma message ("This header has scheduled for removal with all of its functionality deprecated.")
+
 #include "xr/types/typeutils.hpp"
 #include <algorithm>
 #include <functional>
@@ -19,7 +21,7 @@ namespace xr
 
 //==============================================================================
 template  <typename T>
-class  ValueFunctorCore
+class [[deprecated]] ValueFunctorCore
 {
 protected:
   // types
@@ -44,7 +46,7 @@ protected:
 ///@brief Sends data down the std::ostream @a stream that you have specified
 /// on construction.
 template  <typename T>
-struct  OStreamer: protected ValueFunctorCore<std::ostream*>
+struct [[deprecated]] OStreamer: protected ValueFunctorCore<std::ostream*>
 {
   typedef ValueFunctorCore<std::ostream*> BaseType;
 
@@ -65,7 +67,7 @@ protected:
 //==============================================================================
 ///@brief Assigns its base value to everything you pass to it.
 template  <typename T>
-struct  Assigner: protected ValueFunctorCore<T>
+struct [[deprecated]] Assigner: protected ValueFunctorCore<T>
 {
   typedef ValueFunctorCore<T> BaseType;
 
@@ -84,7 +86,7 @@ struct  Assigner: protected ValueFunctorCore<T>
 ///@brief Stores the smallest of all values passed to it. Uses operator< for
 /// comparison.
 template  <typename T>
-class Minimizer:  protected ValueFunctorCore<T>
+class [[deprecated]] Minimizer:  protected ValueFunctorCore<T>
 {
 public:
   typedef ValueFunctorCore<T> BaseType;
@@ -114,7 +116,7 @@ public:
 ///@brief Stores the largest of all values passed to it. Uses operator> for
 /// comparison.
 template  <typename T>
-class Maximizer:  protected ValueFunctorCore<T>
+class [[deprecated]] Maximizer:  protected ValueFunctorCore<T>
 {
 public:
   typedef ValueFunctorCore<T> BaseType;
@@ -143,6 +145,7 @@ public:
 //==============================================================================
 ///@brief Deletes pointers to objects of type @a T.
 template  <typename Type>
+[[deprecated("use std::default_delete")]]
 inline
 void  Deleter(Type* p)
 {
@@ -153,6 +156,7 @@ void  Deleter(Type* p)
 ///@brief Deletes pointers to objects of type @a T, then sets
 /// the pointer to 0.
 template  <typename Type>
+[[deprecated]]
 inline
 void  Annihilator(Type*& p)
 {
@@ -165,7 +169,7 @@ void  Annihilator(Type*& p)
 /// type @a CalleeType that is of signature
 /// @a ReturnType(@a CalleeType::*)(@a ArgType) [const].
 template  <class Callee, typename Return, typename Arg = void>
-struct  Passer: ValueFunctorCore<Callee&>
+struct [[deprecated]] Passer: ValueFunctorCore<Callee&>
 {
   typedef ValueFunctorCore<Callee&> BaseType;
 
@@ -191,11 +195,11 @@ struct  Passer: ValueFunctorCore<Callee&>
 /// @a ReturnType(@a T::*)(@a ArgType) [const] on @a T objects that are
 /// passed to it.
 template  <class Callee, typename Return = void, typename Arg = void>
-struct  Caller
+struct [[deprecated]] Caller
 {
-  typedef typename TypeSelect<IsConst<Callee>::kResult,
+  typedef typename std::conditional<std::is_const<Callee>::value,
     Return(Callee::*)(Arg)const,
-    Return(Callee::*)(Arg)>::Type Method;
+    Return(Callee::*)(Arg)>::type Method;
 
   Caller(Method method, Arg a)
   : m_method(method),
@@ -218,11 +222,11 @@ struct  Caller
 
 //==============================================================================
 template  <class Callee, typename Return>
-struct  Caller<Callee, Return, void>
+struct [[deprecated]] Caller<Callee, Return, void>
 {
-  typedef typename TypeSelect<IsConst<Callee>::kResult,
+  typedef typename std::conditional<std::is_const<Callee>::value,
     Return(Callee::*)()const,
-    Return(Callee::*)()>::Type Method;
+    Return(Callee::*)()>::type Method;
 
   explicit Caller(Method method)
   : m_method(method)
@@ -243,7 +247,7 @@ struct  Caller<Callee, Return, void>
 
 //==============================================================================
 template  <typename Operation, typename Arg1, typename Return = void>
-struct  Bind1st
+struct [[deprecated]] Bind1st
 {
   Bind1st(Operation op_, Arg1 arg1_)
   : op(op_),
@@ -262,7 +266,7 @@ struct  Bind1st
 
 //==============================================================================
 template  <typename Operation, typename Arg2, typename Return = void>
-struct  Bind2nd
+struct [[deprecated]] Bind2nd
 {
   Bind2nd(Operation op_, Arg2 arg2_)
   : op(op_),

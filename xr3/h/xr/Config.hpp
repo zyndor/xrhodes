@@ -32,9 +32,9 @@ public:
   /// as an integer.
   ///@return The integer value of the configuration option; @a defaultValue
   /// if undefined or not castable to an integer.
-  static int GetInt(char const* varName, int defaultValue);
+  static int32_t GetInt(char const* varName, int32_t defaultValue);
 };
 
-};
+}
 
 #endif //XR_CONFIG_HPP

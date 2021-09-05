@@ -11,6 +11,7 @@
 //==============================================================================
 #include "Asset.hpp"
 #include "Gfx.hpp"
+#include "xr/warnings.hpp"
 
 namespace xr
 {
@@ -44,10 +45,8 @@ public:
   XR_ASSET_DECL(Texture)
 
   // types
-#ifdef XR_COMPILER_GCC
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
+  XR_WARNINGS_PUSH
+  XR_WARNINGS_IGNORE_DEPRECATION
   enum [[deprecated("Use filename flags or .tex")]] Flags : FlagType
   {
     WrapFlag = FirstUserFlag,
@@ -55,9 +54,7 @@ public:
     MipMapsFlag = FirstUserFlag << 2,
     SrgbFlag = FirstUserFlag << 3,
   };
-#ifdef XR_COMPILER_GCC
-#pragma GCC diagnostic pop
-#endif
+  XR_WARNINGS_POP
 
   // static
   ///@brief Convenience function to register a sampler uniform with the given
@@ -69,16 +66,16 @@ public:
   ///@brief Creates a Texture from the given @a handle. Only If the handle was
   /// valid, and is for a 2D texture, the ownership of it is transferred, to the
   /// Texture. The resulting Texture will be unmanaged.
-  static Texture::Ptr FromHandle(Gfx::TextureHandle handle);
+  [[nodiscard]] static Texture::Ptr FromHandle(Gfx::TextureHandle handle);
 
   // general
   ///@return The number of texels the texture has horizontally at the highest
   /// mipmap level.
-  uint16_t GetWidth() const;
+  Px GetWidth() const;
 
   ///@return The number of texels the texture has vertically at the highest
   /// mipmap level.
-  uint16_t GetHeight() const;
+  Px GetHeight() const;
 
   ///@return Whether the texture has an alpha channel.
   bool HasAlpha() const;
@@ -86,23 +83,23 @@ public:
   ///@brief Creates / updates a handle with one that's for a texture
   /// created with the given data.
   ///@note Must be called from the render thread.
-  bool Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
+  bool Upload(Gfx::TextureFormat format, Px width, Px height,
     Buffer buffer);
 
   ///@brief Creates / updates a handle with one that's for a texture
   /// created with the given data.
   ///@note Must be called from the render thread.
-  bool Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
-    Gfx::FlagType createFlags, uint32_t numBuffers, Buffer const* buffers);
+  bool Upload(Gfx::TextureFormat format, Px width, Px height,
+    Gfx::FlagType createFlags, uint8_t numBuffers, Buffer const* buffers);
 
   ///@brief Binds texture to its target, for the given texture @a stage.
   ///@note Must be called from the render thread.
-  void Bind(uint32_t stage) const;
+  void Bind(uint8_t stage) const;
 
 private:
   // data
-  uint16_t m_width = 0;
-  uint16_t m_height = 0;
+  Px m_width = 0;
+  Px m_height = 0;
   bool m_hasAlpha = false;
 
   Gfx::TextureHandle  m_handle;
@@ -115,14 +112,14 @@ private:
 
 //==============================================================================
 inline
-uint16_t Texture::GetWidth() const
+Px Texture::GetWidth() const
 {
 	return m_width;
 }
 
 //==============================================================================
 inline
-uint16_t Texture::GetHeight() const
+Px Texture::GetHeight() const
 {
 	return m_height;
 }

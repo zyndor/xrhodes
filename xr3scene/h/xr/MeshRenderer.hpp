@@ -30,7 +30,7 @@ public:
   ~MeshRenderer();
 
   // general
-  virtual MeshRenderer*  Clone() const;
+  [[nodiscard]] virtual MeshRenderer*  Clone() const;
 
   Mesh* GetMesh() const;  // no ownership transfer
   void  SetMesh(Mesh* pMesh);  // no ownership transfer

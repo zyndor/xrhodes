@@ -37,13 +37,14 @@ public:
     IndexBufferObject& ibo);
   static void Release(IndexBufferHandle h);
 
-  static void CreateInstanceDataBuffer(Buffer const& buffer, uint16_t stride, VertexBufferObject& idbo);
+  static void CreateInstanceDataBuffer(Buffer const& buffer, InstanceDataStrideType stride,
+    VertexBufferObject& idbo);
   static void Release(InstanceDataBufferHandle h);
 
   static void CreateTexture(Buffer const* buffers, uint8_t numBuffers, TextureRef& texture);
   static void Release(TextureHandle h);
 
-  static bool CreateFrameBuffer(TextureFormat format, uint16_t width, uint16_t height,
+  static bool CreateFrameBuffer(TextureFormat format, Px width, Px height,
     FlagType flags, FrameBufferObject& fbo);
   static bool CreateFrameBuffer(uint8_t textureCount, TextureHandle const* hTextures,
     bool ownTextures, FrameBufferObject& fbo);
@@ -74,7 +75,7 @@ public:
   static void Flush();
   static void Present(bool resetState);
 
-  static void ReadFrameBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+  static void ReadFrameBuffer(Px x, Px y, Px width, Px height,
     TextureFormat format, uint8_t colorAttachment, void* mem,
     ReadFrameBufferCompleteCallback* onComplete);
 

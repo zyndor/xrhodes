@@ -156,42 +156,35 @@ public:
   ///@brief Creates a quaternion which describes the same rotation as the matrix @a m.
   static Quaternion FromMatrix(Matrix const& m)
   {
-    float trace = m.xx + m.yy + m.zz;
+    float trace = m.xx() + m.yy() + m.zz();
     if (trace > 0.f)
     {
       const float s = .5f / std::sqrt(trace + 1.f);
-      return Quaternion((m.zy - m.yz) * s, (m.xz - m.zx) * s,
-        (m.yx - m.xy) * s, .25f / s);
+      return Quaternion((m.zy() - m.yz()) * s, (m.xz() - m.zx()) * s,
+        (m.yx() - m.xy()) * s, .25f / s);
     }
-    else if (m.xx > m.yy && m.xx > m.zz)
+    else if (m.xx() > m.yy() && m.xx() > m.zz())
     {
-      const float s = .5f / std::sqrt(1.f + m.xx - m.yy - m.zz);
-      return Quaternion(.25f / s, (m.xy + m.yx) * s, (m.xz + m.zx) * s,
-        (m.zy - m.yz) * s);
+      const float s = .5f / std::sqrt(1.f + m.xx() - m.yy() - m.zz());
+      return Quaternion(.25f / s, (m.xy() + m.yx()) * s, (m.xz() + m.zx()) * s,
+        (m.zy() - m.yz()) * s);
     }
-    else if (m.yy > m.zz)
+    else if (m.yy() > m.zz())
     {
-      const float s = .5f / std::sqrt(1.f + m.yy - m.xx - m.zz);
-      return Quaternion((m.xy + m.yx) * s, .25f / s, (m.yz + m.zy) * s,
-        (m.xz - m.zx) * s);
+      const float s = .5f / std::sqrt(1.f + m.yy() - m.xx() - m.zz());
+      return Quaternion((m.xy() + m.yx()) * s, .25f / s, (m.yz() + m.zy()) * s,
+        (m.xz() - m.zx()) * s);
     }
     else
     {
-      const float s = .5f / std::sqrt(1.f + m.zz - m.xx - m.yy);
-      return Quaternion((m.xz + m.zx) * s, (m.yz + m.zy) * s, .25f / s,
-        (m.yx - m.xy) * s);
+      const float s = .5f / std::sqrt(1.f + m.zz() - m.xx() - m.yy());
+      return Quaternion((m.xz() + m.zx()) * s, (m.yz() + m.zy()) * s, .25f / s,
+        (m.yx() - m.xy()) * s);
     }
   }
 
   // data
-  union
-  {
-    struct
-    {
-      float i, j, k, w;
-    };
-    float data[kNumQuaternionInds];
-  };
+  float i, j, k, w;
 
   // structors
   constexpr Quaternion()
@@ -320,6 +313,27 @@ public:
       atan2f(2.f * (k * j + i * w), 1.f - 2.f * (iSqr + jSqr)),
       atan2f(2.f * (i * j + k * w), 1.f - 2.f * (jSqr + kSqr)));
     return v;
+  }
+
+  // range based for support
+  float* begin()
+  {
+    return &i;
+  }
+
+  float* end()
+  {
+    return &i + kNumQuaternionInds;
+  }
+
+  float const* begin() const
+  {
+    return &i;
+  }
+
+  float const* end() const
+  {
+    return &i + kNumQuaternionInds;
   }
 
   // operator overloads

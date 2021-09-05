@@ -18,8 +18,8 @@ Mesh::Mesh()
 {}
 
 //==============================================================================
-Mesh::Mesh(uint32_t numVertices, Gfx::VertexBufferHandle hVb)
-: numVertices(numVertices),
+Mesh::Mesh(uint32_t numVertices_, Gfx::VertexBufferHandle hVb)
+: numVertices(numVertices_),
   hVertexBuffer(hVb)
 {}
 

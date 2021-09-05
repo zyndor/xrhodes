@@ -9,133 +9,36 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include <functional>
+#include "xr/types/Linkable.hpp"
 
 namespace xr
 {
 
 //==============================================================================
-///@brief Intrusive doubly linked list template, which allows processing every
-/// one of its elements in one go. Each new instance adds itself to the end of
-/// its Linked<> list upon construction, and unlinks itself upon destruction.
-/// The primary intended use of Linked<> is to tie together objects that may be
-/// defined in different translation units, typically as globals (file statics).
+///@brief Linkable type whose each new instance adds itself to the end of its list
+/// upon construction, and unlinks itself upon destruction.
+///@par The primary intended use of Linked<> is to tie together objects that may
+/// be defined in different translation units, typically as globals (file statics).
 /// As such, no assumption should be made about the order of these objects in
 /// the list.
-/// The use of the Curiously Recurring Template Pattern is recommended, i.e.
-/// derive YourClass from Linked<YourClass>.
 template <typename T>
-class Linked
+class Linked: private Linkable<T>
 {
 public:
-  // static
-  ///@brief Calls @a fn with each item in the Linked<> list for this type.
-  static void ForEach(std::function<void(T&)> fn);
-
-  template <typename... Args>
-  static void ForEach(std::function<void(T&, Args...)> fn, Args... args);
-
-  ///@brief Calls T:: @a method with each item in the Linked<> list for this
-  /// type, and thegiven @a args arguments.
-  template <typename... Args>
-  static void ForEach(void(T::*method)(Args...), Args... args);
+  // using
+  using Linkable<T>::ForEach;
 
   // structors
   Linked(T& obj);
-  ~Linked();
-
-protected:
-  // data
-  T* data;
-
-private:
-  // static
-  static Linked<T>* s_head;
-
-  // data
-  Linked<T>* m_prev;
-  Linked<T>* m_next;
+  ~Linked() = default;
 };
 
-template <typename T>
-Linked<T>* Linked<T>::s_head = nullptr;
-
-//==============================================================================
-// inline
-//==============================================================================
-template <typename T>
-void Linked<T>::ForEach(std::function<void(T&)> fn)
-{
-  Linked<T>* p = s_head;
-  while (p)
-  {
-    auto pp = p->m_prev;
-    fn(*p->data);
-    p = pp;
-  }
-}
-
-//==============================================================================
-template <typename T>
-template <typename... Args>
-void Linked<T>::ForEach(std::function<void(T&, Args...)> fn, Args... args)
-{
-  Linked<T>* p = s_head;
-  while (p)
-  {
-    auto pp = p->m_prev;
-    fn(*p->data, args...);
-    p = pp;
-  }
-}
-
-//==============================================================================
-template <typename T>
-template <typename... Args>
-void Linked<T>::ForEach(void(T::*method)(Args...), Args... args)
-{
-  Linked<T>* p = s_head;
-  while (p)
-  {
-    auto pp = p->m_prev;
-    (p->data->*method)(args...);
-    p = pp;
-  }
-}
-
 //==============================================================================
 template<typename T>
-Linked<T>::Linked(T & obj)
-: data(&obj),
-  m_prev(s_head),
-  m_next(nullptr)
+Linked<T>::Linked(T& obj)
+: Linkable<T>(obj)
 {
-  if (s_head)
-  {
-    s_head->m_next = this;
-  }
-
-  s_head = this;
-}
-
-//==============================================================================
-template<typename T>
-Linked<T>::~Linked()
-{
-  if (this == s_head)
-  {
-    s_head = m_prev;
-  }
-
-  if (m_prev)
-  {
-    m_prev->m_next = m_next;
-  }
-
-  if (m_next)
-  {
-    m_next->m_prev = m_prev;
-  }
+  Linkable<T>::Link();
 }
 
 }

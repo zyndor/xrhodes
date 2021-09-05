@@ -113,19 +113,18 @@ public:
   virtual void RenderInternal() const override
   {
     auto verts = ScratchBuffer::Start3dUv(4);
-    verts->pos = Vector3(mRect.x, mRect.y - mRect.h, 0.f);
+    verts->pos = Vector3(float(mRect.x), float(mRect.y - mRect.h), 0.f);
     verts->uv0 = Vector2(0.f, 0.f);
     ++verts;
-    verts->pos = Vector3(mRect.x + mRect.w, mRect.y - mRect.h, 0.f);
+    verts->pos = Vector3(float(mRect.x + mRect.w), float(mRect.y - mRect.h), 0.f);
     verts->uv0 = Vector2(1.f, 0.f);
     ++verts;
-    verts->pos = Vector3(mRect.x, mRect.y, 0.f);
+    verts->pos = Vector3(float(mRect.x), float(mRect.y), 0.f);
     verts->uv0 = Vector2(0.f, 1.f);
     ++verts;
-    verts->pos = Vector3(mRect.x + mRect.w, mRect.y, 0.f);
+    verts->pos = Vector3(float(mRect.x + mRect.w), float(mRect.y), 0.f);
     verts->uv0 = Vector2(1.f, 1.f);
     ScratchBuffer::Finish(Primitive::TriangleStrip);
-    ScratchBuffer::Flush();
   }
 };
 
@@ -254,9 +253,9 @@ public:
     Texture::RegisterSamplerUniform("uTexture0", 0);
     Texture::RegisterSamplerUniform("uShadowMap", 1);
 
-    int32_t shadowMapSize = 1024;
+    Px shadowMapSize = 1024;
     auto hShadowMap = Gfx::CreateTexture(Gfx::TextureFormat::D32,
-        shadowMapSize, shadowMapSize, 0, Gfx::F_TEXTURE_FILTER_POINT);
+      shadowMapSize, shadowMapSize, 0, Gfx::F_TEXTURE_FILTER_POINT);
 
     float orthoSize = 12.5f;
     m_renderPasses[RenderPass::DEPTH] = { // depth pre-pass
@@ -268,9 +267,9 @@ public:
       Rect{ 0, 0, shadowMapSize, shadowMapSize },
       Gfx::F_CLEAR_DEPTH,
       1.,
-      Color(0.),  // no color target; ignored
+      Color(),  // no color target; ignored
     };
-    ProjectionHelper::CalculateOrthographic(orthoSize, 0., orthoSize * 2.,
+    ProjectionHelper::CalculateOrthographic(orthoSize, 0.f, orthoSize * 2.f,
       m_renderPasses[RenderPass::DEPTH].viewer.projection.data);
 
     auto material = Asset::Manager::Load<Material>("example08-depth.mtl");
@@ -331,8 +330,8 @@ public:
       1.,
       Color(0., 0.125, 0.25),
     };
-    ProjectionHelper::CalculateOrthographic(Gfx::GetLogicalWidth(),
-      Gfx::GetLogicalHeight(), -10.f, 10.f,
+    ProjectionHelper::CalculateOrthographic(float(Gfx::GetLogicalWidth()),
+      float(Gfx::GetLogicalHeight()), -10.f, 10.f,
       m_renderPasses[RenderPass::POST].viewer.projection.data);
 
     // Create post-processing material and transfer ownership of offscreen texture
@@ -352,10 +351,10 @@ public:
 
     // Set Bokeh uniform values
     Vector4 nearInvDepth(zNearMain, 1.f / (zFarMain - zNearMain));
-    Gfx::SetUniform(m_uNear_InvDepth, nearInvDepth.data);
+    Gfx::SetUniform(m_uNear_InvDepth, nearInvDepth.begin());
 
     Vector4 focalLengthAmountInvAspectRatio(0.333, 1.0);
-    Gfx::SetUniform(m_uFocalLength_Amount, focalLengthAmountInvAspectRatio.data);
+    Gfx::SetUniform(m_uFocalLength_Amount, focalLengthAmountInvAspectRatio.begin());
     Gfx::Flush();
 
     m_rotation = Quaternion::Identity();
@@ -397,7 +396,7 @@ public:
         }
       }
 
-      Color lightColor(.75f, .66f + sinf(Timer::GetUST() * .0002f) * .333, .5f);
+      Color lightColor(.75f, .66f + std::sin(float(Timer::GetUST() * .0002)) * .333f, .5f);
       Gfx::SetUniform(m_uLightColor, &lightColor);
 
       auto const& viewer = m_renderPasses[RenderPass::DEPTH].viewer;

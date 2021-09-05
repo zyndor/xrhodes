@@ -9,13 +9,26 @@
 #include "xr/Image.hpp"
 #include "xr/FileBuffer.hpp"
 #include "xr/FileWriter.hpp"
+#include "xr/memory/Buffer.hpp"
 #include "xr/memory/ScopeGuard.hpp"
 #include "xr/debug.hpp"
+#include "xr/types/intutils.hpp"
+#include "xr/warnings.hpp"
 #include "png.h"
 #include <cstring>
 
+// setjmp - a libPNG requirement - is causing trouble when extra warnings are enabled,
+// so we're going to have to silence them here. Note that we're on the good side
+// of the rules, as we're not creating C++ objects (with non-trivial destructors)
+// between setjmp() and longjmp(), nor are we trying to use any of the variables
+// in the scope after the longjmp().
+XR_MSVC_WARNING(disable: 4611)
+XR_GCC_WARNING(ignored "-Wclobbered")
+
 namespace xr
 {
+
+static_assert(std::is_pod<Buffer>::value);
 
 //==============================================================================
 Image::Image ()
@@ -46,13 +59,13 @@ Image::~Image ()
 {}
 
 //==============================================================================
-uint32_t  Image::GetWidth() const
+uint16_t  Image::GetWidth() const
 {
   return m_width;
 }
 
 //==============================================================================
-uint32_t  Image::GetHeight() const
+uint16_t  Image::GetHeight() const
 {
   return m_height;
 }
@@ -94,7 +107,7 @@ size_t Image::GetPixelDataSize() const
 }
 
 //==============================================================================
-void Image::SetSize(uint32_t width, uint32_t height, uint8_t bytesPerPixel)
+void Image::SetSize(uint16_t width, uint16_t height, uint8_t bytesPerPixel)
 {
   m_width = width;
   m_height = height;
@@ -103,7 +116,7 @@ void Image::SetSize(uint32_t width, uint32_t height, uint8_t bytesPerPixel)
 }
 
 //==============================================================================
-void Image::SetPixelData(uint8_t const* data, uint32_t width, uint32_t height,
+void Image::SetPixelData(uint8_t const* data, uint16_t width, uint16_t height,
   uint8_t bytesPerPixel)
 {
   SetSize(width, height, bytesPerPixel);
@@ -209,17 +222,30 @@ Image& Image::operator=(Image&& other)
 }
 
 //==============================================================================
-static size_t const kPngSigBytes = 8;
+namespace
+{
+
+size_t const kPngSigBytes = 8;
 
 void PngReadFn(png_structp pngPtr, png_bytep data, png_size_t size)
 {
-  png_voidp a = png_get_io_ptr(pngPtr);
-  uint8_t const*& buffer = *reinterpret_cast<uint8_t const**>(a);
-  memcpy(data, buffer, size);
-  buffer += size;
+  png_voidp userData{ png_get_io_ptr(pngPtr) };
+  Buffer& buffer = *reinterpret_cast<Buffer*>(userData);
+  if (buffer.size >= size)
+  {
+    memcpy(data, buffer.data, size);
+    buffer.data += size;
+    buffer.size -= size;
+  }
+  else
+  {
+    png_chunk_error(pngPtr, "Unexpected end of buffer.");
+  }
 }
 
-bool Image::ParsePng(uint8_t const* buffer, size_t size)
+}
+
+bool Image::ParsePng(uint8_t const* data, size_t size)
 {
   png_structp  pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr,
     nullptr, nullptr);
@@ -247,13 +273,21 @@ bool Image::ParsePng(uint8_t const* buffer, size_t size)
     return false;
   }
 
-  buffer += kPngSigBytes;
+  data += kPngSigBytes;
+  size -= kPngSigBytes;
+  Buffer buffer{ size, data };
   png_set_read_fn(pngPtr, &buffer, PngReadFn);
   png_set_sig_bytes(pngPtr, kPngSigBytes);
   png_read_info(pngPtr, infoPtr);
 
   png_uint_32 pngWidth = png_get_image_width(pngPtr, infoPtr);
   png_uint_32 pngHeight = png_get_image_height(pngPtr, infoPtr);
+  if (!(Representable<Px>(pngWidth) && Representable<Px>(pngHeight)))
+  {
+    XR_TRACE(Image, ("Image size %u x %u excessive; 16 bits max.", pngWidth, pngHeight));
+    return false;
+  }
+
   png_uint_32 pngBitsPerChannel = png_get_bit_depth(pngPtr, infoPtr);
   png_uint_32 pngChannels = png_get_channels(pngPtr, infoPtr);
   png_byte  colorType = png_get_color_type(pngPtr, infoPtr);
@@ -288,11 +322,18 @@ bool Image::ParsePng(uint8_t const* buffer, size_t size)
 
   rowPtrs.resize(pngHeight);
 
-  m_width = pngWidth;
-  m_height = pngHeight;
-  m_bytesPerPixel = pngChannels * pngBitsPerChannel / 8;
+  m_width = Px(pngWidth);
+  m_height = Px(pngHeight);
+  const uint32_t bytesPerPixel = pngChannels * pngBitsPerChannel / 8;
+  if (bytesPerPixel > 0xff)
+  {
+    XR_TRACE(Image, ("Invalid bytes-per-pixel value: %d.", bytesPerPixel));
+    return false;
+  }
 
-  const size_t  stride(pngWidth * m_bytesPerPixel);
+  m_bytesPerPixel = uint8_t(bytesPerPixel);
+
+  const size_t  stride(pngWidth * bytesPerPixel);
   m_bytes.resize(pngHeight * stride);
 
   for (size_t i = 0; i < pngHeight; ++i)
@@ -307,6 +348,9 @@ bool Image::ParsePng(uint8_t const* buffer, size_t size)
 }
 
 //==============================================================================
+namespace
+{
+
 struct TgaHeader
 {
   uint8_t idLength;
@@ -321,11 +365,18 @@ struct TgaHeader
   uint8_t descriptorByte;
 };
 
-bool Image::ParseTga(uint8_t const * buffer, size_t size)
+uint16_t ReadBigEndianShort(uint8_t const (&bytes)[2])
+{
+  return bytes[0] | (bytes[1] << 8);
+}
+
+}
+
+bool Image::ParseTga(uint8_t const* data, size_t size)
 {
   static_assert(sizeof(TgaHeader) == 18, "Update struct packing / alignment configuration or make sure that TgaHeader is read corretly.");
 
-  TgaHeader const* header = reinterpret_cast<TgaHeader const*>(buffer);
+  TgaHeader const* header = reinterpret_cast<TgaHeader const*>(data);
   if (header->colorMapType != 0)
   {
     XR_TRACE(Image, ("Colourmapped TGA image -- not supported."));
@@ -345,33 +396,41 @@ bool Image::ParseTga(uint8_t const * buffer, size_t size)
   }
 
   // m_width and m_height are 2 m_bytes
-  const uint16_t imageWidth = header->m_width[0] | (header->m_width[1] << 8);
-  const uint16_t imageHeight = header->m_height[0] | (header->m_height[1] << 8);
+  const uint16_t imageWidth = ReadBigEndianShort(header->m_width);
+  const uint16_t imageHeight = ReadBigEndianShort(header->m_height);
   const uint8_t imageBpp = header->pixelBitDepth / 8;
 
   size_t stride = imageWidth * imageBpp;
   size_t imageDataSize = imageHeight * stride;
 
-  buffer += header->idLength + sizeof(TgaHeader);
+  const auto skipHeaderAndId = header->idLength + sizeof(TgaHeader);
+  if (skipHeaderAndId > size)
+  {
+    XR_TRACE(Image, ("Unexpected end of TGA buffer."));
+    return false;
+  }
+
+  data += skipHeaderAndId;
+  size -= skipHeaderAndId;
   m_bytes.resize(imageDataSize);
 
   // flip writer based on origin
-  const uint16_t yOrigin = header->yOrigin[0] | (header->yOrigin[1] << 8);
+  const uint16_t yOrigin = ReadBigEndianShort(header->yOrigin);
   ptrdiff_t step = stride;
-  buffer += yOrigin * stride;
+  data += yOrigin * stride;
   if(yOrigin > 0)
   {
     step = -step;
-    buffer -= stride;
+    data -= stride;
   }
 
   // copy rows to our buffer
   uint8_t* write = m_bytes.data();
   for(uint16_t i = 0; i < imageHeight; ++i)
   {
-    memcpy(write, buffer, stride);
+    memcpy(write, data, stride);
     write += stride;
-    buffer += step;
+    data += step;
   }
 
   // convert from BGR(A) to RGB(A).
@@ -392,14 +451,19 @@ bool Image::ParseTga(uint8_t const * buffer, size_t size)
 }
 
 //==============================================================================
-static void PngWriteFn(png_structp pngPtr, png_bytep data, png_size_t size)
+namespace
 {
-  png_voidp  a(png_get_io_ptr(pngPtr));
-  static_cast<FileWriter*>(a)->Write(data, size, 1);
+
+void PngWriteFn(png_structp pngPtr, png_bytep data, png_size_t size)
+{
+  png_voidp userData{ png_get_io_ptr(pngPtr) };
+  static_cast<FileWriter*>(userData)->Write(data, size, 1);
 }
 
-static void PngFlushFn(png_structp pngPtr)
+void PngFlushFn(png_structp /*pngPtr*/)
 {}
+
+}
 
 bool Image::WritePng(FileWriter& w) const
 {
@@ -429,7 +493,7 @@ bool Image::WritePng(FileWriter& w) const
     return false;
   }
 
-  png_set_write_fn(pngPtr, (void*)&w, PngWriteFn, PngFlushFn);
+  png_set_write_fn(pngPtr, &w, PngWriteFn, PngFlushFn);
 
   int  colorType(0);
   switch (m_bytesPerPixel)
@@ -526,4 +590,4 @@ bool Image::WriteTga(FileWriter& w) const
   return success;
 }
 
-} // XR
+} // xr

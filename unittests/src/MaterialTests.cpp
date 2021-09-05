@@ -23,7 +23,6 @@
 
 #include "xr/threading/Semaphore.hpp"
 #include "xr/memory/ScopeGuard.hpp"
-#include "xr/Hash.hpp"
 
 #include <numeric>
 
@@ -60,17 +59,17 @@ struct ImageDiff
     uint8_t const* lastDiff = nullptr;
     while (p0 != pEnd)
     {
-      uint8_t out;
+      uint8_t o;
       if (*p0 > *p1)
       {
-        out = *p0 - *p1;
+        o = *p0 - *p1;
       }
       else
       {
-        out = *p1 - *p0;
+        o = *p1 - *p0;
       }
 
-      if (out > 0)
+      if (o > 0)
       {
         ++countDiffBytes;
         if (p0 - lastDiff >= lhs.GetBytesPerPixel())
@@ -79,17 +78,17 @@ struct ImageDiff
           lastDiff = p0;
         }
 
-        if (out > diffMax)
+        if (o > diffMax)
         {
-          diffMax = out;
+          diffMax = o;
         }
 
-        diffAccum += out;
+        diffAccum += o;
       }
 
-      ++histogram[out];
+      ++histogram[o];
 
-      *pout = out;
+      *pout = o;
       ++p0;
       ++p1;
       ++pout;

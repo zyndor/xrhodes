@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/math/SVector2.hpp"
+#include "xr/Px.hpp"
 #include "SDL2/SDL_render.h"
 
 namespace xr
@@ -32,32 +32,32 @@ public:
   // general
   void Init();
 
-  int GetGlVersionMajor() const
+  int32_t GetGlVersionMajor() const
   {
     return m_glVersionMajor;
   }
 
-  int GetGlVersionMinor() const
+  int32_t GetGlVersionMinor() const
   {
     return m_glVersionMinor;
   }
 
-  int GetLogicalWidth() const
+  Px GetLogicalWidth() const
   {
     return m_logicalSize.x;
   }
 
-  int GetLogicalHeight() const
+  Px GetLogicalHeight() const
   {
     return m_logicalSize.y;
   }
 
-  int GetPhysicalWidth() const
+  Px GetPhysicalWidth() const
   {
     return m_physicalSize.x;
   }
 
-  int GetPhysicalHeight() const
+  Px GetPhysicalHeight() const
   {
     return m_physicalSize.y;
   }
@@ -67,14 +67,20 @@ public:
   void Shutdown();
 
 private:
+  // types
+  struct Size
+  {
+    Px x, y;
+  };
+
   // data
   SDL_Window& m_window; // no ownership
   SDL_GLContext m_ownContext;
 
-  int m_glVersionMajor;
-  int m_glVersionMinor;
-  SVector2 m_physicalSize;
-  SVector2 m_logicalSize;
+  int32_t m_glVersionMajor;
+  int32_t m_glVersionMinor;
+  Size m_physicalSize;
+  Size m_logicalSize;
 };
 
 } // Gfx

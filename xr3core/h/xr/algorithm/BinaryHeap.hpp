@@ -20,13 +20,13 @@ class BinaryHeapCore
 {
 protected:
   // data
-  void* mData = nullptr;
-  size_t mCapacity = 0;
-  size_t mCount = 0;
+  void* mData{};
+  size_t mCapacity{};
+  size_t mCount{};
 
   // structors
-  BinaryHeapCore() = default;
-  ~BinaryHeapCore() = default;
+  BinaryHeapCore(void* data, size_t capacity, size_t count);
+  ~BinaryHeapCore();
 
   // internal
   ///@return The number of items the storage allocated by the heap is sufficient
@@ -45,20 +45,22 @@ protected:
 //==============================================================================
 ///@brief Implements a binary heap with O(log N) insertion and removal, and O(1)
 /// retrieval of the top priority element.
-template <typename T, template <typename> class CompT>
+template <typename T, class Comp = std::less<T>>
 class BinaryHeap: protected detail::BinaryHeapCore
 {
 public:
   // types
-  using Comp = CompT<T>;
-
   using BinaryHeapCore::Capacity;
   using BinaryHeapCore::Count;
   using BinaryHeapCore::IsEmpty;
 
   // structors
-  BinaryHeap() = default;
-  BinaryHeap(size_t capacity);
+  explicit BinaryHeap(size_t capacity = 0);
+
+  BinaryHeap(BinaryHeap const& other) = delete;
+
+  BinaryHeap(BinaryHeap&& other) noexcept;
+  BinaryHeap& operator=(BinaryHeap other) noexcept;
 
   ~BinaryHeap();
 
@@ -90,41 +92,61 @@ public:
 
 private:
   // internal
-  void ReserveInner(size_t capacity);
-  void DestroyInner(T* data);
+  void ReserveInternal(size_t capacity);
+  void DestroyInternal(T* data);
 
   void Swim(size_t i);
   void Sink(size_t i);
 };
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-BinaryHeap<T, CompT>::BinaryHeap(size_t capacity)
-: BinaryHeap()
+template<typename T, class Comp>
+BinaryHeap<T, Comp>::BinaryHeap(size_t capacity)
+: BinaryHeapCore{ nullptr, capacity, 0 }
 {
   Reserve(capacity);
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-BinaryHeap<T, CompT>::~BinaryHeap()
+template<typename T, class Comp>
+BinaryHeap<T, Comp>::BinaryHeap(BinaryHeap&& other) noexcept
+: BinaryHeapCore{ other.mData, other.mCapacity, other.mCount }
+{
+  other.mData = nullptr;
+  other.mCapacity = 0;
+  other.mCount = 0;
+}
+
+//==============================================================================
+template<typename T, class Comp>
+BinaryHeap<T, Comp>& BinaryHeap<T, Comp>::operator=(BinaryHeap other) noexcept
+{
+  std::swap(mData, other.mData);
+  mCapacity = other.mCapacity;
+  mCount = other.mCount;
+  return *this;
+}
+
+//==============================================================================
+template<typename T, class Comp>
+BinaryHeap<T, Comp>::~BinaryHeap()
 {
   Destroy();
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::Reserve(size_t capacity)
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::Reserve(size_t capacity)
 {
   if (capacity > mCapacity)
   {
-    ReserveInner(capacity);
+    ReserveInternal(capacity);
   }
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::Push(T item)
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::Push(T item)
 {
   size_t i = mCount + 1;
   if (i > mCapacity)
@@ -138,17 +160,17 @@ void BinaryHeap<T, CompT>::Push(T item)
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
+template<typename T, class Comp>
 inline
-T BinaryHeap<T, CompT>::Peek() const
+T BinaryHeap<T, Comp>::Peek() const
 {
   XR_ASSERT(BinaryHeap, mCount > 0);
   return static_cast<T*>(mData)[1];
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-T BinaryHeap<T, CompT>::Pop()
+template<typename T, class Comp>
+T BinaryHeap<T, Comp>::Pop()
 {
   auto data = static_cast<T*>(mData);
   T result = data[1];
@@ -160,47 +182,47 @@ T BinaryHeap<T, CompT>::Pop()
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::Shrink()
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::Shrink()
 {
   if (mCapacity > mCount)
   {
-    ReserveInner(mCount);
+    ReserveInternal(mCount);
   }
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::Destroy()
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::Destroy()
 {
-  DestroyInner(nullptr);
+  DestroyInternal(nullptr);
   mCapacity = 0;
   mCount = 0;
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::ReserveInner(size_t capacity)
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::ReserveInternal(size_t capacity)
 {
   auto data = new T[capacity + 1];
   auto iCopy = static_cast<T*>(mData) + 1;
   std::copy(iCopy, iCopy + mCount, data + 1);
 
-  DestroyInner(data);
+  DestroyInternal(data);
   mCapacity = capacity;
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::DestroyInner(T* newData)
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::DestroyInternal(T* newData)
 {
   delete[] static_cast<T*>(mData);
   mData = newData;
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::Swim(size_t i)
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::Swim(size_t i)
 {
   auto data = static_cast<T*>(mData);
   size_t iNext = i / 2;
@@ -213,8 +235,8 @@ void BinaryHeap<T, CompT>::Swim(size_t i)
 }
 
 //==============================================================================
-template<typename T, template <typename> class CompT>
-void BinaryHeap<T, CompT>::Sink(size_t i)
+template<typename T, class Comp>
+void BinaryHeap<T, Comp>::Sink(size_t i)
 {
   auto data = static_cast<T*>(mData);
   size_t iNext = i * 2;

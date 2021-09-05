@@ -59,18 +59,7 @@ public:
   }
 
   // data
-  union
-  {
-    struct
-    {
-      float  x, y, z, w;
-    };
-    float  data[kNumComponents];
-    Vector2 vec2;
-    Vector2 vec22[2];
-    Vector3 vec3;
-    Quaternion quaternion;
-  };
+  float  x, y, z, w;
 
   // structors
   constexpr Vector4(float x_ = 0.f, float y_ = 0.f, float z_ = 0.f, float w_ = 0.f)
@@ -80,16 +69,15 @@ public:
     w{ w_ }
   {}
 
-  Vector4(float const* data_, size_t numElements = 4)
+  Vector4(float const* data, size_t numElements = 4)
   {
-    if (numElements > kNumComponents)
+    auto write = begin();
+    auto endWrite = write + ((numElements > kNumComponents) ? size_t(kNumComponents) : numElements);
+    while (write != endWrite)
     {
-      numElements = kNumComponents;
-    }
-
-    for (size_t i = 0; i < numElements; ++i)
-    {
-      data[i] = data_[i];
+      *write = *data;
+      ++write;
+      ++data;
     }
   }
 
@@ -134,7 +122,7 @@ public:
   ///@return The result of performing @a fn with each component and @a value.
   float ComponentWise(float(*fn)(float, float), float value) const
   {
-    for (auto f : data)
+    for (auto f : *this)
     {
       value = fn(value, f);
     }
@@ -145,17 +133,38 @@ public:
   /// the result to the component.
   void ComponentWise(float(*fn)(float))
   {
-    for (auto& f : data)
+    for (auto& f : *this)
     {
       f = fn(f);
     }
   }
 
+  // range based for support
+  float* begin()
+  {
+    return &x;
+  }
+
+  float* end()
+  {
+    return &x + kNumComponents;
+  }
+
+  float const* begin() const
+  {
+    return &x;
+  }
+
+  float const* end() const
+  {
+    return &x + kNumComponents;
+  }
+
   // operators
   Vector4& operator+=(Vector4 const& v)
   {
-    auto readp = v.data;
-    for (auto& i: data)
+    auto readp = v.begin();
+    for (auto& i: *this)
     {
       i += *readp;
       ++readp;
@@ -171,8 +180,8 @@ public:
 
   Vector4& operator-=(Vector4 const& v)
   {
-    auto readp = v.data;
-    for (auto& i : data)
+    auto readp = v.begin();
+    for (auto& i : *this)
     {
       i -= *readp;
       ++readp;
@@ -188,7 +197,7 @@ public:
 
   Vector4& operator*=(float s)
   {
-    for (auto& i : data)
+    for (auto& i : *this)
     {
       i *= s;
     }
@@ -205,7 +214,7 @@ public:
   {
     XR_ASSERT(Vector4, s * s > 0.f);
     s = 1.f / s;
-    for (auto& i : data)
+    for (auto& i : *this)
     {
       i *= s;
     }

@@ -30,7 +30,6 @@ Reader::~Reader()
 Entity* Reader::Read(const char* string, size_t size)
 {
   XR_ASSERT(Json::Reader, string != nullptr);
-  XR_ASSERT(Json::Reader, size >= 0);
   m_key.string = nullptr;
   m_key.length = 0;
   m_entities.clear();

@@ -248,6 +248,6 @@ float BoxText::GetVerticalSpacing() const
   return m_verticalSpacing;
 }
 
-} // XR
+} // xr
 
 #endif // XR_BOXTEXT_HPP

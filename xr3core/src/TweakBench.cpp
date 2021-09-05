@@ -6,7 +6,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "xr/TweakBench.hpp"
+#include "xr/utility/TweakBench.hpp"
 
 namespace xr
 {

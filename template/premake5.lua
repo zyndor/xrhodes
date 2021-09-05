@@ -59,7 +59,6 @@ files(config.files)
 includedirs
 {
 	xr3_path.."external/libpng",
-	xr3_path.."unittests/h",
 	xr3_path.."xr3core/h",
 	xr3_path.."xr3json/h",
 	xr3_path.."xr3/h",
@@ -69,13 +68,15 @@ if config.includeDirs ~= nil then
 	includedirs(config.includeDirs)
 end
 
-defines { "DATA_PATH=\""..path.getabsolute("./data").."\"" }
-
 -- link options
 libdirs
 {
 	xr3_path..".artifacts/"..target_env.."/$(PlatformShortName)-$(Configuration)",
 }
+
+if config.libDirs ~= nil then
+	libdirs(config.libDirs)
+end
 
 links
 {
@@ -87,6 +88,10 @@ links
 	"xr3json",
 	"xr3core",
 }
+
+if config.libs ~= nil then
+	links(config.libs)
+end
 
 if target_env == "windows" then
 	-- Windows
@@ -115,7 +120,7 @@ else
 		-- other *nix
 		links
 		{
-			"GL"	
+			"GL"
 		}
 
 	end

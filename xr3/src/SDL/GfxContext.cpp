@@ -9,6 +9,7 @@
 #include "GfxContext.hpp"
 #include "xr/Config.hpp"
 #include "xr/debug.hpp"
+#include "xr/types/intutils.hpp"
 #include "SDL2/SDL_hints.h"
 
 namespace xr
@@ -56,8 +57,13 @@ void Context::Init()
   SDL_DisplayMode dm;
   SDL_GetCurrentDisplayMode(0, &dm);
 
-  m_physicalSize = SVector2(dm.w, dm.h);
-  m_logicalSize = SVector2(width, height);
+  XR_ASSERT(GfxContext, Representable<Px>(dm.w));
+  XR_ASSERT(GfxContext, Representable<Px>(dm.h));
+  m_physicalSize = { Px(dm.w), Px(dm.h) };
+
+  XR_ASSERT(GfxContext, Representable<Px>(width));
+  XR_ASSERT(GfxContext, Representable<Px>(height));
+  m_logicalSize = { Px(width), Px(height) };
 }
 
 //==============================================================================

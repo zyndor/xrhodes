@@ -37,6 +37,12 @@ project "xr3"
 			"src/SDL/*.cpp",
 		}
 
+		removefiles {
+			-- We want strict warnings. This is third party code. Premake's per-file filter
+			-- doesn't work. We'll have to #include this cpp with some warnings suppressed.
+			"src/GL/gl_*.cpp"
+		}
+
 		includedirs {
 			"src/",
 			"src/SDL/",	-- NOTE: for access to GfxContext.hpp; for some reason filter{ "files:src/GL/Gfx.cpp" } didn't work.

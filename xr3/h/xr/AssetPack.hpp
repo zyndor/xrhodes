@@ -11,6 +11,7 @@
 //==============================================================================
 #include "Asset.hpp"
 #include "xr/memory/Queue.hpp"
+#include "xr/utility/Hash.hpp"
 #include <unordered_map>
 
 namespace xr

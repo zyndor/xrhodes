@@ -327,4 +327,4 @@ Mesh Sprite::CreateMesh() const
 }
 
 
-} // XR
+} // xr

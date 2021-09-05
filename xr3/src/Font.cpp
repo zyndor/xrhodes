@@ -18,8 +18,8 @@
 #include "xr/strings/stringutils.hpp"
 #include "xr/utils.hpp"
 #include "xr/debug.hpp"
+#include "xr/types/intutils.hpp"
 #include "stb_truetype.h"
-#include <limits>
 #include <iostream>
 #include <list>
 #include <regex>
@@ -39,7 +39,7 @@ namespace xr
 {
 
 //==============================================================================
-XR_ASSET_DEF(Font, "xfnt", 3, "fnt")
+XR_ASSET_DEF(Font, "xfnt", 4, "fnt")
 
 /*
   {
@@ -89,13 +89,13 @@ struct Range
   uint32_t end;
 };
 
-const int32_t kMinFontSize = 32;
-const int32_t kDefaultFontSize = 128;
+const Px kMinFontSize = 32;
+const Px kDefaultFontSize = 128;
 
-const int32_t kDefaultSdfSize = 0;
+const Px kDefaultSdfSize = 0;
 
-const int32_t kMinCacheSize = 256;
-const int32_t kDefaultCacheSize = 1024;
+const Px kMinCacheSize = 256;
+const Px kDefaultCacheSize = 1024;
 
 const float kUnitsToPixel = 1.0f / 64.0f;
 
@@ -211,8 +211,8 @@ void MergeRange(Range range, std::vector<Range>& ranges)
 void SplitRanges(uint32_t value, std::vector<Range>& ranges)
 {
   auto i0 = std::upper_bound(ranges.begin(), ranges.end(), value,
-    [](uint32_t value, Range const& range) {
-      return value < range.end;
+    [](uint32_t v, Range const& range) {
+      return v < range.end;
     });
   if (i0 != ranges.end())
   {
@@ -241,44 +241,43 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
 {
   XonParser::State state;
   std::unique_ptr<XonObject> root(XonBuildTree(buffer.As<char const>(), buffer.size, &state));
-  bool success = root != nullptr;
-  LTRACEIF(!success,
-    ("%s: failed to parse XON somewhere around row %d, column %d.",
-      rawNameExt, state.row, state.column));
+  if (!root)
+  {
+    LTRACE(("%s: failed to parse XON somewhere around row %d, column %d.",
+        rawNameExt, state.row, state.column));
+    return false;
+  }
 
   // Get font file path, read file.
   FileBuffer ttfData;
-  if(success)
+  try
   {
-    try
+    auto& fontPath = root->Get("font").ToValue();
+    if (!ttfData.Open(fontPath.GetString()))
     {
-      auto& fontPath = root->Get("font").ToValue();
-      success = ttfData.Open(fontPath.GetString());
-      LTRACEIF(!success, ("%s: failed to load '%s'.", rawNameExt, fontPath.GetString()));
+      LTRACE(("%s: failed to load '%s'.", rawNameExt, fontPath.GetString()));
+      return false;
     }
-    catch(XonEntity::Exception&)
-    {
-      success = false;
-      LTRACE(("%s: missing definition for '%s'", rawNameExt, "font"));
-    }
+  }
+  catch(XonEntity::Exception&)
+  {
+    LTRACE(("%s: missing definition for '%s'", rawNameExt, "font"));
+    return false;
   }
 
   // Handle some optional attributes.
-  int32_t numFonts = 0;
-  if (success)
+  int32_t numFonts = stbtt_GetNumberOfFonts(ttfData.GetData());
+  if (numFonts < 1)
   {
-    numFonts = stbtt_GetNumberOfFonts(ttfData.GetData());
-    success = numFonts > 0;
-    LTRACEIF(!success, ("%s: failed to get number of fonts (%d).", rawNameExt,
-      numFonts));
+    LTRACE(("%s: failed to get number of fonts (%d).", rawNameExt, numFonts));
+    return false;
   }
 
   int32_t fontIndex = 0;
-  int32_t fontSize = kDefaultFontSize; // includes padding for SDF, see below.
-  int32_t sdfSize = kDefaultSdfSize;
-  int32_t cacheSize = kDefaultCacheSize;
-  XonEntity* xon = nullptr;
-  if (success && (xon = root->TryGet("fontIndex")))
+  Px fontSize = kDefaultFontSize; // includes padding for SDF, see below.
+  Px sdfSize = kDefaultSdfSize;
+  Px cacheSize = kDefaultCacheSize;
+  if (auto xon = root->TryGet("fontIndex"))
   {
     try
     {
@@ -294,12 +293,12 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     catch (XonEntity::Exception const& e)
     {
       XR_ASSERT(Font, e.type == XonEntity::Exception::Type::InvalidType);
-      success = false;
       LTRACE(("%s: %s has invalid type.", rawNameExt, "fontIndex"));
+      return false;
     }
   }
 
-  if (success && (xon = root->TryGet("fontSize")))
+  if (auto xon = root->TryGet("fontSize"))
   {
     try
     {
@@ -319,12 +318,12 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     catch (XonEntity::Exception const& e)
     {
       XR_ASSERT(Font, e.type == XonEntity::Exception::Type::InvalidType);
-      success = false;
       LTRACE(("%s: %s has invalid type.", rawNameExt, "fontSize"));
+      return false;
     }
   }
 
-  if (success && (xon = root->TryGet("sdfSize")))
+  if (auto xon = root->TryGet("sdfSize"))
   {
     try
     {
@@ -336,7 +335,7 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       }
       else
       {
-        const int maxSdfSize = (fontSize / 2) - 1;
+        const Px maxSdfSize = (fontSize / 2) - 1;
         if (sdfSize > maxSdfSize)
         {
           LTRACE(("%s: clamped %s (%d) to maximum (%d).", "sdfSize", rawNameExt,
@@ -350,13 +349,13 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
       if (e.type == XonEntity::Exception::Type::InvalidType)
       {
         XR_ASSERT(Font, e.type == XonEntity::Exception::Type::InvalidType);
-        success = false;
         LTRACE(("%s: %s has invalid type.", rawNameExt, "sdfSize"));
+        return false;
       }
     }
   }
 
-  if (success && (xon = root->TryGet("cacheSize")))
+  if (auto xon = root->TryGet("cacheSize"))
   {
     try
     {
@@ -376,18 +375,18 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
     catch (XonEntity::Exception const& e)
     {
       XR_ASSERT(Font, e.type == XonEntity::Exception::Type::InvalidType);
-      success = false;
       LTRACE(("%s: %s has invalid type.", rawNameExt, "cacheSize"));
+      return false;
     }
   }
 
   // Init font data.
+  int offset = stbtt_GetFontOffsetForIndex(ttfData.GetData(), fontIndex);
   stbtt_fontinfo stbFont;
-  if (success)
+  if (stbtt_InitFont(&stbFont, ttfData.GetData(), offset) == 0)
   {
-    int offset = stbtt_GetFontOffsetForIndex(ttfData.GetData(), fontIndex);
-    success = stbtt_InitFont(&stbFont, ttfData.GetData(), offset) != 0;
-    LTRACEIF(!success, ("%s: failed to initialise font.", rawNameExt));
+    LTRACE(("%s: failed to initialise font (offset %d).", rawNameExt, offset));
+    return false;
   }
 
   // Calculate and write some font metrics. These come in 1/64 sub-pixel units.
@@ -396,247 +395,271 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
   float sdfSizeUnits;
   int32_t x0, x1, y0, y1;
   float pixelScale; // reciprocal of total line height, i.e. ascent - descent + lineGap.
-  if (success)
+
+  stbtt_GetFontVMetrics(&stbFont, &ascent, &descent, &lineGap);
+  const int32_t lineHeightUnits = ascent - descent + lineGap;
+
+  stbtt_GetFontBoundingBox(&stbFont, &x0, &y0, &x1, &y1);
+  const int32_t heightUnits = y1 - y0;
+  sdfSizeUnits = (sdfSize / float(fontSize)) * heightUnits;
+
+  pixelScale = stbtt_ScaleForPixelHeight(&stbFont, float(fontSize - sdfSize * 2));
+
+  if (!(WriteBinaryStream(lineHeightUnits * kUnitsToPixel, data) &&
+    WriteBinaryStream(ascent * kUnitsToPixel, data) &&
+    WriteBinaryStream(cacheSize, data)))
   {
-    stbtt_GetFontVMetrics(&stbFont, &ascent, &descent, &lineGap);
-    const int32_t lineHeightUnits = ascent - descent + lineGap;
-
-    stbtt_GetFontBoundingBox(&stbFont, &x0, &y0, &x1, &y1);
-    const int32_t heightUnits = y1 - y0;
-    sdfSizeUnits = (sdfSize / float(fontSize)) * heightUnits;
-
-    pixelScale = stbtt_ScaleForPixelHeight(&stbFont, float(fontSize - sdfSize * 2));
-
-    success = WriteBinaryStream(lineHeightUnits * kUnitsToPixel, data) &&
-      WriteBinaryStream(ascent * kUnitsToPixel, data) &&
-      WriteBinaryStream(cacheSize, data);
-    LTRACEIF(!success, ("%s: failed to write font metrics.", rawNameExt));
+    LTRACE(("%s: failed to write font metrics.", rawNameExt));
+    return false;
   }
 
   // Process code point ranges.
   std::vector<Range> ranges;
   ranges.reserve(8);
-  if (success)
+  try
   {
-    try
+    auto& codePoints = root->Get("codePoints").ToObject();
+    Range range;
+    for (size_t i0 = 0, i1 = codePoints.GetNumElements(); i0 < i1; ++i0)
     {
-      auto& codePoints = root->Get("codePoints").ToObject();
-      Range range;
-      for (size_t i0 = 0, i1 = codePoints.GetNumElements(); i0 < i1; ++i0)
+      try
       {
-        try
+        char const* rangeDef = codePoints[i0].ToValue().GetString();
+        if (!ParseRange(rangeDef, range))
         {
-          char const* rangeDef = codePoints[i0].ToValue().GetString();
-          if (!ParseRange(rangeDef, range))
-          {
-            LTRACE(("%s: '%s' is not a valid code point range.", rawNameExt,
-              rangeDef));
-          }
-          else
-          {
-            MergeRange(range, ranges);
-          }
+          LTRACE(("%s: '%s' is not a valid code point range.", rawNameExt,
+            rangeDef));
         }
-        catch (XonEntity::Exception const&)
+        else
         {
-          LTRACE(("%s: ignoring code point entry %d: should be a value.", rawNameExt, i0));
+          MergeRange(range, ranges);
         }
       }
+      catch (XonEntity::Exception const&)
+      {
+        LTRACE(("%s: ignoring code point entry %d: should be a value.", rawNameExt, i0));
+      }
     }
-    catch (XonEntity::Exception const&)
-    {
-      success = false;
-      LTRACE(("%s: missing definition for '%s'", rawNameExt, "codePoints"));
-    }
+  }
+  catch (XonEntity::Exception const&)
+  {
+    LTRACE(("%s: missing definition for '%s'", rawNameExt, "codePoints"));
+    return false;
   }
 
   // Calculate and write number of glyphs
   uint32_t numGlyphs = 0;
-  if(success)
+  std::vector<uint32_t> invalid;
+  invalid.reserve(8);
+  for (auto& r: ranges)
   {
-    std::vector<uint32_t> invalid;
-    invalid.reserve(8);
-    for (auto& r: ranges)
+    numGlyphs += r.end - r.start;
+    for (auto i0 = r.start; i0 != r.end; ++i0)
     {
-      numGlyphs += r.end - r.start;
-      for (auto i0 = r.start; i0 != r.end; ++i0)
+      if (stbtt_FindGlyphIndex(&stbFont, i0) <= 0)  // TODO: cache index?
       {
-        if (stbtt_FindGlyphIndex(&stbFont, i0) <= 0)  // TODO: cache index?
-        {
-          LTRACE(("%s: no glyph found for code point 0x%x.", rawNameExt, i0));
-          --numGlyphs;
-          invalid.push_back(i0);
-        }
+        LTRACE(("%s: no glyph found for code point 0x%x.", rawNameExt, i0));
+        --numGlyphs;
+        invalid.push_back(i0);
       }
     }
+  }
 
-    for (auto i: invalid)
-    {
-      SplitRanges(i, ranges);
-    }
+  for (auto i: invalid)
+  {
+    SplitRanges(i, ranges);
+  }
 
-    if (!WriteBinaryStream(numGlyphs, data))
-    {
-      success = false;
-      LTRACE(("%s: failed to write number of glyphs.", rawNameExt));
-    }
+  if (!WriteBinaryStream(numGlyphs, data))
+  {
+    LTRACE(("%s: failed to write number of glyphs.", rawNameExt));
+    return false;
   }
 
   // Now calculate SDF from TTF. The reason we're not using stbtt's SDF
   // functionality is that we want to control (and minimize) the allocations.
-  if(success)
-  {
-    const int32_t ascentPixels = int(std::ceil(ascent * pixelScale));
+  const int32_t ascentPixels = int(std::ceil(ascent * pixelScale));
 
-    const int32_t glyphPadding = 1; // We pad the glyph bitmap to simplify comparing neighbour pixels, where we'd need to special case at the edges - reading off by one.
-    const int32_t totalPadding = glyphPadding + sdfSize;
-    const int32_t maxWidth = int32_t(std::ceil((x1 - x0) * pixelScale));
-    const int32_t maxHeight = int32_t(std::ceil((y1 - y0) * pixelScale));
-    const int32_t glyphWidthPadded = maxWidth + totalPadding * 2;
-    const int32_t glyphHeightPadded = maxHeight + totalPadding * 2;
+  const int32_t glyphPadding = 1; // We pad the glyph bitmap to simplify comparing neighbour pixels, where we'd need to special case at the edges - reading off by one.
+  const int32_t totalPadding = (glyphPadding + sdfSize) * 2;
+  const int32_t maxWidth = int32_t(std::ceil((x1 - x0) * pixelScale));
+  const int32_t maxHeight = int32_t(std::ceil((y1 - y0) * pixelScale));
+  const int32_t glyphWidthPadded = maxWidth + totalPadding;
+  const int32_t glyphHeightPadded = maxHeight + totalPadding;
+  if (!(Representable<Px>(glyphWidthPadded) && Representable<Px>(glyphHeightPadded)))
+  {
+    LTRACE(("%s: glyph has excessive padded dimensions (%u % %u); 16 bits max (each).", rawNameExt,
+      glyphWidthPadded, glyphHeightPadded));
+    return false;
+  }
 #ifdef ENABLE_GLYPH_DEBUG
-    printf("max: %d x %d\n", glyphWidthPadded, glyphHeightPadded);
+  printf("max: %d x %d\n", glyphWidthPadded, glyphHeightPadded);
 #endif
 
-    std::vector<uint8_t> glyphBitmap(glyphWidthPadded * glyphHeightPadded);
-    uint8_t* glyphBitmapPadded = glyphBitmap.data() + glyphWidthPadded + glyphPadding;
+  std::vector<uint8_t> glyphBitmap(glyphWidthPadded * glyphHeightPadded);
+  uint8_t* glyphBitmapPadded = glyphBitmap.data() + glyphWidthPadded + glyphPadding;
 
-    std::unique_ptr<SdfBuilder> sdf;
-    if (sdfSize > 0)
-    {
-      sdf.reset(new SdfBuilder(fontSize, sdfSize));
-    }
+  std::unique_ptr<SdfBuilder> sdf;
+  if (sdfSize > 0)
+  {
+    sdf.reset(new SdfBuilder(fontSize, sdfSize));
+  }
 
-    Font::Glyph glyph;
-    std::ostringstream glyphBitmaps;
-    size_t glyphBytesWritten = 0;
-    for (auto& r: ranges)
+  Font::Glyph glyph;
+  std::ostringstream glyphBitmaps;
+  size_t glyphBytesWritten = 0;
+  for (auto& r: ranges)
+  {
+    for(auto i0 = r.start, i1 = r.end; i0 != i1; ++i0)
     {
-      for(auto i0 = r.start, i1 = r.end; i0 != i1; ++i0)
+      auto const iGlyph = stbtt_FindGlyphIndex(&stbFont, i0);
+      XR_ASSERT(Font, iGlyph > 0);
+
+      glyph.codePoint = i0;
+
+      // Get glyph metrics.
+      int32_t advance;
+      int32_t xBearing;
+      stbtt_GetGlyphHMetrics(&stbFont, iGlyph, &advance, &xBearing);
+      glyph.advance = advance * kUnitsToPixel;
+      glyph.xBearing = (xBearing - sdfSizeUnits) * kUnitsToPixel;
+
+      // Get glyph box in font units.
+      // Y increases upwards and the origin is the baseline / ascent.
+      // Y0 is bottom, Y1 is top.
+      stbtt_GetGlyphBox(&stbFont, iGlyph, &x0, &y0, &x1, &y1);
+
+      glyph.width = (x1 - x0 + 2.0f * sdfSizeUnits) * kUnitsToPixel;
+      glyph.height = (y1 - y0 + 2.0f * sdfSizeUnits) * kUnitsToPixel;
+      glyph.yBearing = (y0 - sdfSizeUnits) * kUnitsToPixel;
+
+      if (IsSpaceUtf8(i0)) // if whitespace, don't waste memory.
       {
-        auto const iGlyph = stbtt_FindGlyphIndex(&stbFont, i0);
-        XR_ASSERT(Font, iGlyph > 0);
+        glyph.fieldHeight = 0;
+        glyph.fieldWidth = 0;
+        glyph.dataOffset = uint32_t(-1);
+      }
+      else
+      {
+        // Copy glyph bitmap data to an area padded for SDF.
+        std::fill(glyphBitmap.begin(), glyphBitmap.end(), uint8_t(0x00));
 
-        glyph.codePoint = i0;
+        // Get glyph bitmap box coordinates.
+        // Y increases downwards and the origin is the baseline / ascent.
+        // Y0 is top (ascent + y0 for absolute coords), Y1 is bottom.
+        stbtt_GetGlyphBitmapBox(&stbFont, iGlyph, pixelScale, pixelScale,
+          &x0, &y0, &x1, &y1);
+        int32_t w = x1 - x0;
+        int32_t h = y1 - y0;
 
-        // Get glyph metrics.
-        int32_t advance;
-        int32_t xBearing;
-        stbtt_GetGlyphHMetrics(&stbFont, iGlyph, &advance, &xBearing);
-        glyph.advance = advance * kUnitsToPixel;
-        glyph.xBearing = (xBearing - sdfSizeUnits) * kUnitsToPixel;
-
-        // Get glyph box in font units.
-        // Y increases upwards and the origin is the baseline / ascent.
-        // Y0 is bottom, Y1 is top.
-        stbtt_GetGlyphBox(&stbFont, iGlyph, &x0, &y0, &x1, &y1);
-
-        glyph.width = (x1 - x0 + 2.0f * sdfSizeUnits) * kUnitsToPixel;
-        glyph.height = (y1 - y0 + 2.0f * sdfSizeUnits) * kUnitsToPixel;
-        glyph.yBearing = (y0 - sdfSizeUnits) * kUnitsToPixel;
-
-        if (IsSpaceUtf8(i0)) // if whitespace, don't waste memory.
+        if (!Representable<Px>(w))
         {
-          glyph.fieldHeight = 0;
-          glyph.fieldWidth = 0;
-          glyph.dataOffset = -1;
+          XR_TRACE(Font, ("%s: glyph %u bitmap has excessive width: %u; must fit on 16 bits.", rawNameExt, i0, w));
+          return false;
+        }
+
+        if (!Representable<Px>(h))
+        {
+          XR_TRACE(Font, ("%s: glyph %u bitmap has excessive height: %u; must fit on 16 bits.", rawNameExt, i0, h));
+          return false;
+        }
+
+        if (sdf)
+        {
+          // Blit the glyph at its absolute position (sdf padding and ascent applies).
+          auto xBearingPixels = int32_t(std::ceil(glyph.xBearing * pixelScale));
+          auto xPixelOffs = std::max(0, sdfSize + xBearingPixels);
+          auto yPixelOffs = std::max(0, sdfSize + ascentPixels + y0);
+          auto bufferOffset = xPixelOffs + yPixelOffs * glyphWidthPadded;
+
+          stbtt_MakeGlyphBitmap(&stbFont, glyphBitmapPadded + bufferOffset,
+            w, h, glyphWidthPadded, pixelScale, pixelScale, iGlyph);
+
+#ifdef ENABLE_GLYPH_DEBUG
+          printf("%04x: ", i0);
+          VisualizeBuffer(glyphBitmapPadded + bufferOffset, w, h, glyphWidthPadded);
+#endif
+
+          // Calculate SDF metrics & generate SDF around glyph.
+          auto sx0 = std::max(xPixelOffs - sdfSize, 0);
+          auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
+          auto sx1 = std::min<int32_t>(xPixelOffs + w + sdfSize, fontSize);
+          auto sy1 = std::min<int32_t>(yPixelOffs + h + sdfSize, fontSize);
+          w = sx1 - sx0;
+          h = sy1 - sy0;
+          if (!Representable<Px>(w))
+          {
+            XR_TRACE(Font, ("%s: glyph %u SDF has excessive width: %u; must fit on 16 bits.", rawNameExt, i0, w));
+            return false;
+          }
+
+          if (!Representable<Px>(h))
+          {
+            XR_TRACE(Font, ("%s: glyph %u SDF has excessive height: %u; must fit on 16 bits.", rawNameExt, i0, h));
+            return false;
+          }
+
+          bufferOffset = sx0 + sy0 * glyphWidthPadded;
+          sdf->Generate(glyphBitmapPadded + bufferOffset, Px(glyphWidthPadded),
+            Px(w), Px(h));
+          sdf->ConvertToBitmap(Px(w), Px(h), glyphBitmap.data());
         }
         else
         {
-          // Copy glyph bitmap data to an area padded for SDF.
-          std::fill(glyphBitmap.begin(), glyphBitmap.end(), 0x00);
-
-          // Get glyph bitmap box coordinates.
-          // Y increases downwards and the origin is the baseline / ascent.
-          // Y0 is top (ascent + y0 for absolute coords), Y1 is bottom.
-          stbtt_GetGlyphBitmapBox(&stbFont, iGlyph, pixelScale, pixelScale,
-            &x0, &y0, &x1, &y1);
-          int32_t w = x1 - x0;
-          int32_t h = y1 - y0;
-
-          if (sdf)
-          {
-            // Blit the glyph at its absolute position (sdf padding and ascent applies).
-            auto xBearingPixels = int32_t(std::ceil(glyph.xBearing * pixelScale));
-            auto xPixelOffs = std::max(0, sdfSize + xBearingPixels);
-            auto yPixelOffs = std::max(0, sdfSize + ascentPixels + y0);
-            auto bufferOffset = xPixelOffs + yPixelOffs * glyphWidthPadded;
-
-            stbtt_MakeGlyphBitmap(&stbFont, glyphBitmapPadded + bufferOffset,
-              w, h, glyphWidthPadded, pixelScale, pixelScale, iGlyph);
-
-#ifdef ENABLE_GLYPH_DEBUG
-            printf("%04x: ", i0);
-            VisualizeBuffer(glyphBitmapPadded + bufferOffset, w, h, glyphWidthPadded);
-#endif
-
-            // Calculate SDF metrics & generate SDF around glyph.
-            auto sx0 = std::max(xPixelOffs - sdfSize, 0);
-            auto sy0 = std::max(yPixelOffs - sdfSize, 0);  // ascentPixels + y0; never really < 0.
-            auto sx1 = std::min(xPixelOffs + w + sdfSize, fontSize);
-            auto sy1 = std::min(yPixelOffs + h + sdfSize, fontSize);
-            w = sx1 - sx0;
-            h = sy1 - sy0;
-            bufferOffset = sx0 + sy0 * glyphWidthPadded;
-            sdf->Generate(glyphBitmapPadded + bufferOffset, glyphWidthPadded, w, h);
-            sdf->ConvertToBitmap(w, h, glyphBitmap.data());
-          }
-          else
-          {
-            // Blit the glyph at its absolute position (ascent applies).
-            stbtt_MakeGlyphBitmap(&stbFont, glyphBitmap.data(), w, h, w, pixelScale,
-              pixelScale, iGlyph);
-          }
-
-          glyph.fieldWidth = w;
-          glyph.fieldHeight = h;
-          XR_ASSERT(Font, glyphBytesWritten < std::numeric_limits<decltype(glyph.dataOffset)>::max());
-          glyph.dataOffset = static_cast<uint32_t>(glyphBytesWritten);
-
-          auto p = glyphBitmap.data();
-#ifdef ENABLE_GLYPH_DEBUG
-          printf("%s%04x: ", sdf ? "SDF " : "", i0);
-          VisualizeBuffer(p, w, h, w);
-#endif
-
-          // write glyph bitmap data to other stream.
-          success = WriteRangeBinaryStream<uint32_t>(p, p + (w * h), glyphBitmaps,
-            &glyphBytesWritten);
-
-          if (!success)
-          {
-            LTRACE(("%s: failed to write glyph bitmap data for 0x%x.", rawNameExt,
-              i0));
-            break;
-          }
+          // Blit the glyph at its absolute position (ascent applies).
+          stbtt_MakeGlyphBitmap(&stbFont, glyphBitmap.data(), w, h, w, pixelScale,
+            pixelScale, iGlyph);
         }
 
-        // write glyph.
-        if(!WriteBinaryStream(glyph, data))
+        glyph.fieldWidth = Px(w);
+        glyph.fieldHeight = Px(h);
+
+        if (!Representable<uint32_t>(glyphBytesWritten))
         {
-          success = false;
-          LTRACE(("%s: failed to write glyph data for 0x%x.", rawNameExt, i0));
-          break;
+          LTRACE(("%s: number of bytes written exceeds 32 bits %llu.", rawNameExt, glyphBytesWritten));
+          return false;
+        }
+        glyph.dataOffset = static_cast<uint32_t>(glyphBytesWritten);
+
+        auto p = glyphBitmap.data();
+#ifdef ENABLE_GLYPH_DEBUG
+        printf("%s%04x: ", sdf ? "SDF " : "", i0);
+        VisualizeBuffer(p, w, h, w);
+#endif
+
+        // write glyph bitmap data to other stream.
+        if (!WriteRangeBinaryStream<uint32_t>(p, p + (w * h), glyphBitmaps,
+          &glyphBytesWritten))
+        {
+          LTRACE(("%s: failed to write glyph bitmap data for 0x%x.", rawNameExt, i0));
+          return false;
         }
       }
-    }
 
-    if(success && !WriteBinaryStream(static_cast<uint32_t>(glyphBytesWritten), data))
-    {
-      success = false;
-      LTRACE(("%s: failed to write glyp bitmap blob size.", rawNameExt));
-    }
-
-    if(success)
-    {
-      auto blob = glyphBitmaps.str();
-      auto p = reinterpret_cast<uint8_t const*>(blob.data());
-      success = WriteRangeBinaryStream<uint32_t>(p, p + blob.size(), data);
-      LTRACEIF(!success, ("%s: failed to write glyph bitmap blob.", rawNameExt));
+      // write glyph.
+      if(!WriteBinaryStream(glyph, data))
+      {
+        LTRACE(("%s: failed to write glyph data for 0x%x.", rawNameExt, i0));
+        return false;
+      }
     }
   }
 
-  return success;
+  if(!WriteBinaryStream(static_cast<uint32_t>(glyphBytesWritten), data))
+  {
+    LTRACE(("%s: failed to write glyp bitmap blob size.", rawNameExt));
+    return false;
+  }
+
+  auto blob = glyphBitmaps.str();
+  auto p = reinterpret_cast<uint8_t const*>(blob.data());
+  if (!WriteRangeBinaryStream<uint32_t>(p, p + blob.size(), data))
+  {
+    LTRACE(("%s: failed to write glyph bitmap blob.", rawNameExt));
+    return false;
+  }
+
+  return true;
 }
 
 #endif  // ENABLE_ASSET_BUILDING
@@ -646,102 +669,91 @@ XR_ASSET_BUILDER_BUILD_SIG(Font)
 bool Font::OnLoaded(Buffer buffer)
 {
   BufferReader reader(buffer);
-  bool success = reader.Read(m_lineHeight) &&
+  if (!(reader.Read(m_lineHeight) &&
     m_lineHeight > .0f &&
     reader.Read(m_ascent) &&
     m_ascent > .0f &&
-    reader.Read(m_cacheSideSizePixels) &&
-    m_cacheSideSizePixels > 0;
-  LTRACEIF(!success, ("%s: failed to read font metrics.", m_debugPath.c_str()));
+    reader.Read(m_cacheSideSizePixels)))
+  {
+    LTRACE(("%s: failed to read font metrics.", m_debugPath.c_str()));
+    return false;
+  }
 
   // num glyphs
   uint32_t numGlyphs = 0;
-  if(success)
+  if(!reader.Read(numGlyphs))
   {
-    success = reader.Read(numGlyphs);
-    LTRACEIF(!success, ("%s: failed to read glyph count.", m_debugPath.c_str()));
+    LTRACE(("%s: failed to read glyph count.", m_debugPath.c_str()));
+    return false;
   }
 
-  uint32_t maxHeight = 0;
-  if (success)
+  Px maxHeight = 0;
+  Glyph g;
+  uint32_t i = 0;
+  while (i < numGlyphs)
   {
-    Glyph g;
-    uint32_t i = 0;
-    while (i < numGlyphs)
+    if (reader.Read(g))
     {
-      success = reader.Read(g);
-      if (success)
+      auto h = g.fieldHeight;
+      if (h > maxHeight)
       {
-        auto h = g.fieldHeight;
-        if (h > maxHeight)
-        {
-          maxHeight = h;
-        }
-        m_glyphs[g.codePoint] = g;
-        ++i;
+        maxHeight = h;
       }
-      else
-      {
-        LTRACE(("%s: failed to read glyph %d.", m_debugPath.c_str(), i));
-        break;
-      }
+      m_glyphs[g.codePoint] = g;
+      ++i;
+    }
+    else
+    {
+      LTRACE(("%s: failed to read glyph %d.", m_debugPath.c_str(), i));
+      return false;
     }
   }
 
   uint32_t glyphBitmapsSize;
-  if(success)
+  if(!reader.Read(glyphBitmapsSize))
   {
-    success = reader.Read(glyphBitmapsSize);
-    LTRACEIF(!success, ("%s: failed to read bitmap size.", m_debugPath.c_str()));
+    LTRACE(("%s: failed to read bitmap size.", m_debugPath.c_str()));
+    return false;
   }
 
   uint32_t readSize;
-  if (success)
+  if (!(reader.Read(readSize) && readSize <= reader.GetRemainingSize()))
   {
-    success = reader.Read(readSize) && readSize <= reader.GetRemainingSize();
-    LTRACEIF(!success,
-      ("%s: unexpected end of buffer before bitmap blob (%d bytes missing).",
+    LTRACE(("%s: unexpected end of buffer before bitmap blob (%d bytes missing).",
       m_debugPath.c_str(), readSize - reader.GetRemainingSize()));
+    return false;
   }
 
-  if(success)
-  {
-    m_glyphBitmaps.resize(glyphBitmapsSize);
+  m_glyphBitmaps.resize(glyphBitmapsSize);
 
-    auto writep = m_glyphBitmaps.data();
-    auto writeEnd = m_glyphBitmaps.data() + m_glyphBitmaps.size();
-    while (writep != writeEnd)
+  auto writep = m_glyphBitmaps.data();
+  auto writeEnd = m_glyphBitmaps.data() + m_glyphBitmaps.size();
+  while (writep != writeEnd)
+  {
+    auto readp = reader.ReadBytesWithSize(readSize);
+    if (readp != nullptr)
     {
-      auto readp = reader.ReadBytesWithSize(readSize);
-      success = readp != nullptr;
-      if (success)
-      {
-        memcpy(writep, readp, readSize);
-        writep += readSize;
-      }
-      else
-      {
-        XR_TRACE(Font,
-          ("%s: failed to read %z bytes of bitmap data (read %z so far).",
-            m_debugPath.c_str(), readSize, writep - m_glyphBitmaps.data()));
-        break;
-      }
+      memcpy(writep, readp, readSize);
+      writep += readSize;
+    }
+    else
+    {
+      LTRACE(("%s: failed to read %z bytes of bitmap data (read %z so far).",
+        m_debugPath.c_str(), readSize, writep - m_glyphBitmaps.data()));
+      return false;
     }
   }
 
-  if (success)
-  {
-    uint32_t flags = GetFlags() | UnmanagedFlag;  // shouldn't need explicit unmanage.
-    m_texture.Reset(Texture::Create(0, flags));
+  uint32_t flags = GetFlags() | UnmanagedFlag;  // shouldn't need explicit unmanage.
+  m_texture.Reset(Texture::Create(0, flags));
 
-    m_textureCache = new TextureCache(m_cacheSideSizePixels,
-      TextureCache::Format::U8, 8, maxHeight);
-    m_cachedGlyphs.reserve(128);
+  m_textureCache = new TextureCache(m_cacheSideSizePixels, TextureCache::Format::U8,
+    8, maxHeight);
+  m_cachedGlyphs.reserve(128);
 
-    m_cacheDirty = true; // We do want a texture update even if no glyphs were cached.
-  }
+  m_cacheDirty = true; // We do want a texture update even if no glyphs were cached.
 
-  return success;
+  return true;
 }
 
 //==============================================================================

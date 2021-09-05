@@ -29,7 +29,7 @@ void CalculateTrianglesNormals(uint32_t numVertices, Vector3 const * positions, 
     const auto& c = *positions - a;
     positions = XR_ADVANCE_PTR(positions, stride);
 
-    const Vector3& normal = b.Cross(c).Normalise();
+    const Vector3 normal = b.Cross(c).Normalise();
     *normals = normal;
     normals = XR_ADVANCE_PTR(normals, stride);
     *normals = normal;

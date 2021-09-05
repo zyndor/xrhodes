@@ -24,10 +24,10 @@ struct TestObject : public Inflatable
 {
   TestObject const* pOther = nullptr;
 
-  virtual void Serialize(Deflator const & deflator, std::ostream & stream) override
+  virtual void Serialize(Deflator const& /*deflator*/, std::ostream& /*stream*/) override
   {}
 
-  virtual void Restore(std::istream & stream, Inflator & inflator) override
+  virtual void Restore(std::istream& stream, Inflator & inflator) override
   {
     Inflator::IdType  idOther;
     if (ReadBinaryStream(stream, idOther))

@@ -54,8 +54,8 @@ public:
     float advance;
     float xBearing;
     float yBearing;
-    uint32_t fieldWidth;
-    uint32_t fieldHeight;
+    Px fieldWidth;
+    Px fieldHeight;
     uint32_t dataOffset;  // -1 means invalid; it should be accompanied by field width / height of 0.
 
     bool operator<(Glyph const& rhs) const
@@ -132,7 +132,7 @@ protected:
   GlyphMap  m_glyphs;
   std::vector<uint8_t>  m_glyphBitmaps;
 
-  int m_cacheSideSizePixels;
+  Px m_cacheSideSizePixels;
 
   // internal
   virtual bool OnLoaded(Buffer buffer) override;
@@ -179,6 +179,6 @@ uint8_t const* Font::GetGlyphBitmapData() const
   return m_glyphBitmaps.data();
 }
 
-} // XR
+} // xr
 
 #endif  //XR_FONT_HPP

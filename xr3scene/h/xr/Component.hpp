@@ -46,7 +46,7 @@ public:
   ///@brief Creates a copy of the component which will then be returned.
   ///@note For derived classes, the m_owner of the clone should be (left as)
   /// nullptr.
-  virtual Component*  Clone() const =0;
+  [[nodiscard]] virtual Component*  Clone() const =0;
 
   // general
   ///@return The Entity that owns the component.
@@ -87,7 +87,7 @@ Entity* Component::GetOwner() const
 }
 
 //==============================================================================
-///@brief Declares @a name as a derivative of XR::Entity::ComponentT<name> thereby
+///@brief Declares @a name as a derivative of xr::Entity::ComponentT<name> thereby
 /// further facilitating the automation of a GetTypeId() implementation required
 /// for Component subtypes.
 ///@usage class or struct XR_COMPONENT_DECL(MyComponent) { /* declarations */ };

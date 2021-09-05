@@ -101,6 +101,6 @@ public:
   virtual void  Shutdown() {}
 };
 
-} // XR
+} // xr
 
 #endif // XR_STATE_HPP

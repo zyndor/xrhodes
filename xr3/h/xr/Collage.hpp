@@ -40,7 +40,7 @@ public:
   /// larger image into it. Only if the operation has succeeded, the UVs relating
   /// to the resulting sub-image are written to @a outUVs.
   ///@return The success of the operation.
-  ///@note The stride of the source data must match that of the builder.
+  ///@note The stride of the source data must match that of the Collage.
   bool  Paste(uint16_t width, uint16_t height, uint16_t pitch, uint8_t const* data,
     xr::AABB& outUVs);
 
@@ -49,14 +49,15 @@ public:
   /// has succeeded, the UVs relating to the resulting sub-image are written to
   /// @a outUVs.
   ///@return The success of the operation.
-  ///@note The stride of the source data must match that of the builder.
+  ///@note The stride of the source data must match that of the Collage.
   ///@note The pitch of the source data must match the width.
   bool  Paste(uint16_t width, uint16_t height, uint8_t const* data, xr::AABB& outUVs);
 
   ///@brief Performs allocation of @a width x @a height (x stride) pixels of space
-  /// on the atlas. Only if the operation has succeeded, the UVs relating to the
-  /// resulting sub-image are written to @a outUVs.
-  ///@return Pointer to the start of the block. Nullptr signifies failure.
+  /// on the atlas. Only if the operation has succeeded (a non-null pointer was returned),
+  /// the UVs relating to the resulting sub-image are written to @a outUVs.
+  ///@return Pointer to the start of the block. Nullptr is returned in case of failure
+  /// or if any of @a width or @a height is 0.
   uint8_t* Allocate(uint16_t width, uint16_t height, xr::AABB& outUVs);
 
   ///@return The image
@@ -70,10 +71,10 @@ private:
   // types
   struct Block
   {
-    uint16_t  mX;
-    uint16_t  mY;
-    uint16_t  mWidth; // pixels; multiply by stride for bytes
-    uint16_t  mHeight;
+    uint16_t  x;
+    uint16_t  y;
+    uint16_t  width; // pixels; multiply by stride for bytes
+    uint16_t  height;
   };
 
   // data

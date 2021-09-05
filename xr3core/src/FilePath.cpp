@@ -90,9 +90,8 @@ char* FilePath::GetExt()
 //==============================================================================
 void FilePath::Up()
 {
-  char* p = m_buffer + (m_size - 1);
   bool sizeDirty = false;
-  if (*p == kDirSeparator)
+  if (char* p = m_buffer + (m_size - 1); *p == kDirSeparator)
   {
     *p = '\0';
     sizeDirty = true;

@@ -11,6 +11,7 @@
 //==============================================================================
 #include "xr/debug.hpp"
 #include "xr/math/mathutils.hpp"
+#include "xr/Px.hpp"
 #include <vector>
 #include <cstdint>
 
@@ -24,35 +25,37 @@ class SdfBuilder
 public:
   struct Point
   {
-    uint32_t x;
-    uint32_t y;
+    Px x;
+    Px y;
   };
 
-  SdfBuilder(uint32_t bitmapSize, uint32_t fieldSize)
-  : m_rowSize(bitmapSize + 2),
-    m_points(m_rowSize * m_rowSize),
+  SdfBuilder(Px bitmapSize, Px fieldSize)
+  : m_bitmapSize(bitmapSize + 2),  // pad by 1 pixel each side
+    m_bitmapSizeUnpadded(bitmapSize),
+    m_points(m_bitmapSize * m_bitmapSize),
     m_distances(m_points.size(), .0f),
     m_fieldSize(static_cast<float>(fieldSize))
   {}
 
-  void Generate(uint8_t const* srcPixels, uint32_t srcRowSize, uint32_t w, uint32_t h)
+  void Generate(uint8_t const* srcPixels, Px srcPitch, Px w, Px h)
   {
-    const uint32_t rowSize = m_rowSize;
-    XR_ASSERT(SdfBuilder, w <= rowSize - 2);
-    XR_ASSERT(SdfBuilder, h <= rowSize - 2);
+    const auto rowSizePadded = m_bitmapSize;
+    XR_ASSERT(SdfBuilder, w <= m_bitmapSizeUnpadded);
+    XR_ASSERT(SdfBuilder, h <= m_bitmapSizeUnpadded);
+
     // Clear buffers.
-    std::fill(m_points.begin(), m_points.end(), Point{ uint32_t(-1), uint32_t(-1) });
+    std::fill(m_points.begin(), m_points.end(), Point{ Px(-1), Px(-1) });
     std::fill(m_distances.begin(), m_distances.end(), std::numeric_limits<float>::max());
 
-    const size_t idxBegin = rowSize + 1; // index of first useful pixel.
+    const size_t idxBegin = rowSizePadded + 1; // index of first useful pixel.
     Point* p = m_points.data() + idxBegin;
     float* d = m_distances.data() + idxBegin;
 
     // Find border points - points whose value is different from that of its
     // neighbours. Set their distance to 0.
     auto iSrc = srcPixels;
-    const auto rowDiff = rowSize - w;
-    const auto srcRowDiff = srcRowSize - w;
+    const auto rowDiff = rowSizePadded - w;
+    const auto srcRowDiff = srcPitch - w;
     for (decltype(h) y = 0; y < h; ++y)
     {
       auto p0 = p;
@@ -61,10 +64,10 @@ public:
       {
         auto value = *iSrc;
         if (*(iSrc - 1) != value || *(iSrc + 1) != value ||
-          *(iSrc + srcRowSize) != value || *(iSrc - srcRowSize) != value)
+          *(iSrc + srcPitch) != value || *(iSrc - srcPitch) != value)
         {
           *d = .0f;
-          *p = { uint32_t(p - p0), y };
+          *p = { Px(p - p0), y };
         }
         ++d;
         ++p;
@@ -87,7 +90,7 @@ public:
     {
       for (decltype(w) x = 0; x < w; ++x)
       {
-        int offset = -(static_cast<int32_t>(rowSize) + 1); // top left
+        ptrdiff_t offset = -(static_cast<int32_t>(rowSizePadded) + 1); // top left
         if (*(d + offset) + d2 < *d)
         {
           auto b = *(p + offset);
@@ -97,7 +100,7 @@ public:
           *p = b;
         }
 
-        offset = -static_cast<int32_t>(rowSize); // above
+        offset = -static_cast<int32_t>(rowSizePadded); // above
         if (*(d + offset) + d1 < *d)
         {
           auto b = *(p + offset);
@@ -107,7 +110,7 @@ public:
           *p = b;
         }
 
-        offset = -static_cast<int32_t>(rowSize - 1); // top right
+        offset = -static_cast<int32_t>(rowSizePadded - 1); // top right
         if (*(d + offset) + d2 < *d)
         {
           auto b = *(p + offset);
@@ -135,51 +138,51 @@ public:
     }
 
     // Second pass, check bottom and right, starting from bottom right corner.
-    auto wLess1 = w - 1;
-    auto hLess1 = h - 1;
-    auto idxEnd = idxBegin + wLess1 + hLess1 * rowSize;
+    const Px wLess1 = w - 1;
+    const Px hLess1 = h - 1;
+    auto idxEnd = idxBegin + wLess1 + hLess1 * rowSizePadded;
     p = m_points.data() + idxEnd;
     d = m_distances.data() + idxEnd;
-    for (decltype(hLess1) y = hLess1;; --y)
+    for (Px y = hLess1;; --y)
     {
-      for (decltype(wLess1) x = wLess1;; --x)
+      for (Px x = wLess1;; --x)
       {
         int offset = 1; // right
         if (*(d + offset) + d1 < *d)
         {
-          auto b = *(p + offset);
-          int dx = x - b.x;
-          int dy = y - b.y;
+          const auto b = *(p + offset);
+          const int dx = x - b.x;
+          const int dy = y - b.y;
           *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = static_cast<int32_t>(rowSize - 1);  // bottom left
+        offset = static_cast<int32_t>(rowSizePadded - 1);  // bottom left
         if (*(d + offset) + d2 < *d)
         {
-          auto b = *(p + offset);
-          int dx = x - b.x;
-          int dy = y - b.y;
+          const auto b = *(p + offset);
+          const int dx = x - b.x;
+          const int dy = y - b.y;
           *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = static_cast<int32_t>(rowSize);  // below
+        offset = static_cast<int32_t>(rowSizePadded);  // below
         if (*(d + offset) + d1 < *d)
         {
-          auto b = *(p + offset);
-          int dx = x - b.x;
-          int dy = y - b.y;
+          const auto b = *(p + offset);
+          const int dx = x - b.x;
+          const int dy = y - b.y;
           *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
 
-        offset = static_cast<int32_t>(rowSize + 1);  // bottom right
+        offset = static_cast<int32_t>(rowSizePadded + 1);  // bottom right
         if (*(d + offset) + d2 < *d)
         {
-          auto b = *(p + offset);
-          int dx = x - b.x;
-          int dy = y - b.y;
+          const auto b = *(p + offset);
+          const int dx = x - b.x;
+          const int dy = y - b.y;
           *d = std::sqrt(float(dx * dx + dy * dy));
           *p = b;
         }
@@ -217,7 +220,7 @@ public:
           *d = -*d;
         }
 
-        float dist = Clamp(*d, -scale, scale) * (128.0f / scale);
+        const float dist = Clamp(*d, -scale, scale) * (128.0f / scale);
         *d = Clamp(dist, -127.0f, 128.0f);
         ++d;
         ++iSrc;
@@ -227,23 +230,24 @@ public:
     }
   }
 
-  void ConvertToBitmap(uint32_t w, uint32_t h, uint8_t* buffer)
+  void ConvertToBitmap(Px w, Px h, uint8_t* buffer)
   {
-    XR_ASSERT(SdfBuilder, w <= m_rowSize - 2);
-    XR_ASSERT(SdfBuilder, h <= m_rowSize - 2);
-    float* d = m_distances.data() + m_rowSize + 1;
-    for (decltype(h) y = 0; y < h; ++y)
+    XR_ASSERT(SdfBuilder, w <= m_bitmapSizeUnpadded);
+    XR_ASSERT(SdfBuilder, h <= m_bitmapSizeUnpadded);
+    float* d = m_distances.data() + m_bitmapSize + 1;
+    for (Px y = 0; y < h; ++y)
     {
-      for (decltype(w) x = 0; x < w; ++x)
+      for (Px x = 0; x < w; ++x)
       {
-        float value = d[x + m_rowSize * y] + 127.0f;
+        float value = d[x + m_bitmapSize * y] + 127.0f;
         buffer[x + w * y] = uint8_t(value);
       }
     }
   }
 
 private:
-  uint32_t m_rowSize;
+  Px m_bitmapSize;
+  Px m_bitmapSizeUnpadded;
   std::vector<Point> m_points;
   std::vector<float> m_distances;
   float m_fieldSize;

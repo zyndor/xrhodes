@@ -73,6 +73,6 @@ float  Grid::GetSizeRec() const
   return m_sizeRec;
 }
 
-}  // end namespace XR
+}  // xr
 
 #endif  //XR_GRID_HPP

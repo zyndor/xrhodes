@@ -26,16 +26,16 @@ public:
   {}
 
   // general
-  ///@brief Attempts to read the next sizeof(T) bytes into the provided object
-  /// @a val.
+  ///@brief Attempts to read the next sizeof(T) bytes into the provided object @a val.
   ///@return The success of the operation, i.e. were there enough bytes?
   template <typename T>
   bool  Read(T& val)
   {
+    static_assert(std::is_trivially_copy_assignable_v<T>);
     bool result = sizeof(T) <= m_buffer.size;
     if (result)
     {
-      memcpy(reinterpret_cast<uint8_t*>(&val), m_buffer.data, sizeof(T));
+      std::memcpy(reinterpret_cast<uint8_t*>(&val), m_buffer.data, sizeof(T));
       m_buffer.data += sizeof(T);
       m_buffer.size -= sizeof(T);
     }
@@ -72,10 +72,8 @@ public:
     return p;
   }
 
-  ///@brief Attempts to read one SizeType into @a numElements followed by
-  /// that many sizeof(T) byte chunks, a pointer to which is then returned.
-  /// If either attempt fails, a nullptr is returned.
   template <typename T, typename SizeType>
+  [[deprecated("Leads to UB on ARM due to misaligned reads")]]
   T const* ReadElementsWithSize(SizeType& numElements)
   {
     T const* p = nullptr;

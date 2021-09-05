@@ -12,6 +12,8 @@
 namespace xr
 {
 
+XR_WARNINGS_IGNORE_DEPRECATION
+
 TweenVarPoolCore::TweenVarPoolCore( int numVars )
 : m_numVars(numVars),
   m_varPool(nullptr)

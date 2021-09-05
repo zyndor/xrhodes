@@ -47,14 +47,7 @@ public:
   }
 
   // data
-  union
-  {
-    struct
-    {
-      float  r, g, b, a;
-    };
-    float data[kNumComponents];
-  };
+  float  r, g, b, a;
 
   // structors
   constexpr Color()
@@ -122,7 +115,28 @@ public:
     return Color(r, g, b);
   }
 
-  // overloads
+  // range based for support
+  float* begin()
+  {
+    return &r;
+  }
+
+  float* end()
+  {
+    return &r + kNumComponents;
+  }
+
+  float const* begin() const
+  {
+    return &r;
+  }
+
+  float const* end() const
+  {
+    return &r + kNumComponents;
+  }
+
+  // operator overloads
   Color&  operator +=(const Color& rhs)
   {
     r += rhs.r;
@@ -191,7 +205,7 @@ public:
 //==============================================================================
 
 
-} // XR
+} // xr
 
 //==============================================================================
 #define XR_ABGR_ALPHA(a) ((a) << xr::kAlphaShift)

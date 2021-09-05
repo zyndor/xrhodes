@@ -20,19 +20,26 @@ void Input::Init()
 }
 
 //==============================================================================
+void Input::SetMouseCapture(bool state)
+{
+  InputImpl::Instance()->SetMouseCapture(state);
+}
+
+//==============================================================================
 void Input::Update()
 {
-  for (auto& k: InputImpl::Instance()->keyStates)
+  auto input = InputImpl::Instance();
+  for (auto& k: input->keyStates)
   {
     ButtonState::Poll(k);
   }
 
-  for (auto& m: InputImpl::Instance()->mouseButtonStates)
+  for (auto& m: input->mouseButtonStates)
   {
     ButtonState::Poll(m);
   }
 
-  for (auto& c: InputImpl::Instance()->controllers)
+  for (auto& c: input->controllers)
   {
     c.Update();
   }
@@ -191,4 +198,4 @@ void Input::Shutdown()
   delete InputImpl::Instance();
 }
 
-} // XR
+} // xr

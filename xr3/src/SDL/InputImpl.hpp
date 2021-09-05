@@ -13,7 +13,14 @@
 #include "xr/Input.hpp"
 #include "xr/events/SignalBroadcaster.hpp"
 #include "xr/types/Singleton.hpp"
+#include "xr/types/intutils.hpp"
+#include "xr/warnings.hpp"
+
+XR_WARNINGS_PUSH
+XR_CLANG_WARNING(ignored "-Wold-style-cast")
 #include "SDL2/SDL_events.h"
+XR_WARNINGS_POP
+
 #include <cstring>
 
 namespace xr
@@ -61,27 +68,56 @@ struct  InputImpl: Singleton<InputImpl>
   }
 
   // general
+  void SetMouseCapture(bool state)
+  {
+    mMouseCapture = state;
+
+    if (!state)
+    {
+      uint16_t tmp = 0x0;
+      for (auto i = mouseButtonStates, iEnd = i + MouseButton::kFirstWheel; i != iEnd; ++i)
+      {
+        tmp |= !!(*i & ButtonState::kAbsoluteStateBit) << std::distance(mouseButtonStates, i);
+      }
+
+      if (tmp != 0)
+      {
+        SDL_CaptureMouse(SDL_FALSE);
+      }
+    }
+  }
+
   void OnKeyEvent(SDL_KeyboardEvent const& e)
   {
-    Input::KeyData xe{ TranslateKeyCodeNative(e.keysym.scancode),
-      e.state == SDL_PRESSED };
+    Input::KeyData xe{ TranslateKeyCodeNative(e.keysym.scancode), e.state == SDL_PRESSED };
     ButtonState::SetAbsolute(xe.isPressed, keyStates[xe.key]);
     onKey.Broadcast(xe);
   }
 
   void OnMouseAction(SDL_MouseButtonEvent const& e)
   {
+    XR_ASSERT(Input, Representable<decltype(Input::MouseActionData::x)>(e.x));
+    XR_ASSERT(Input, Representable<decltype(Input::MouseActionData::y)>(e.y));
     Input::MouseActionData xe{ e.which, MouseButton::TranslateNative(e.button),
-      e.x, e.y, e.state == SDL_PRESSED };
+      int16_t(e.x), int16_t(e.y), e.state == SDL_PRESSED };
+
+    if (mMouseCapture)
+    {
+      SDL_CaptureMouse(static_cast<SDL_bool>(xe.isPressed));
+    }
+
     ButtonState::SetAbsolute(xe.isPressed, mouseButtonStates[xe.button]);
     mousePosition.x = xe.x;
     mousePosition.y = xe.y;
+
     onMouseAction.Broadcast(xe);
   }
 
   void OnMouseMotion(SDL_MouseMotionEvent const& e)
   {
-    Input::MouseMotionData xe{ e.which, e.x, e.y };
+    XR_ASSERT(Input, Representable<decltype(Input::MouseMotionData::x)>(e.x));
+    XR_ASSERT(Input, Representable<decltype(Input::MouseMotionData::y)>(e.y));
+    Input::MouseMotionData xe{ e.which, int16_t(e.x), int16_t(e.y) };
     mousePosition.x = xe.x;
     mousePosition.y = xe.y;
     onMouseMotion.Broadcast(xe);
@@ -110,13 +146,16 @@ struct  InputImpl: Singleton<InputImpl>
       auto& controller = controllers[id];
       InstPtr ii = { controller.Open(id), &controller };
 
-      // Register instance id since subsequent events will reference this.
-      auto iFind = std::lower_bound(m_controllerInstMap, m_lastInstIndex, ii);
-      if (iFind == m_lastInstIndex || iFind->instance != ii.instance)
+      if (ii.instance != uint32_t(-1))
       {
-        std::memmove(iFind + 1, iFind, (m_lastInstIndex - iFind) * sizeof(InstPtr));
-        *iFind = ii;
-        ++m_lastInstIndex;
+        // Register instance id since subsequent events will reference this.
+        auto iFind = std::lower_bound(mControllerInstMap, mLastInstIndex, ii);
+        if (iFind == mLastInstIndex || iFind->instance != ii.instance)
+        {
+          std::memmove(iFind + 1, iFind, (mLastInstIndex - iFind) * sizeof(InstPtr));
+          *iFind = ii;
+          ++mLastInstIndex;
+        }
       }
 
       Input::JoyDeviceData xe = { static_cast<uint32_t>(id), controllers[id].GetName() };
@@ -124,16 +163,15 @@ struct  InputImpl: Singleton<InputImpl>
     }
     else
     {
-      XR_TRACE(Input, ("Controller %d ignored; a maximum of %d supported", id,
-        kMaxControllers));
+      XR_TRACE(Input, ("Controller %d ignored; a maximum of %d supported", id, kMaxControllers));
     }
   }
 
   GameController* GetController(uint32_t id)
   {
     InstPtr result = { id, nullptr };
-    auto iFind = std::lower_bound(m_controllerInstMap, m_lastInstIndex, result);
-    if (iFind != m_lastInstIndex && iFind->instance == id)
+    auto iFind = std::lower_bound(mControllerInstMap, mLastInstIndex, result);
+    if (iFind != mLastInstIndex && iFind->instance == id)
     {
       result.controller = iFind->controller;
     }
@@ -179,12 +217,12 @@ struct  InputImpl: Singleton<InputImpl>
     Input::JoyDeviceData xe = { static_cast<uint32_t>(id), controllers[id].GetName() };
     onJoyRemoved.Broadcast(xe);
 
-    auto iFind = std::lower_bound(m_controllerInstMap, m_lastInstIndex, InstPtr{
+    auto iFind = std::lower_bound(mControllerInstMap, mLastInstIndex, InstPtr{
       static_cast<uint32_t>(id), nullptr });
-    XR_ASSERT(Input, iFind != m_lastInstIndex);
+    XR_ASSERT(Input, iFind != mLastInstIndex);
     iFind->controller->Close();
-    std::memmove(iFind, iFind + 1, sizeof(InstPtr) * (m_lastInstIndex - iFind - 1));
-    --m_lastInstIndex;
+    std::memmove(iFind, iFind + 1, sizeof(InstPtr) * (mLastInstIndex - iFind - 1));
+    --mLastInstIndex;
   }
 
 private:
@@ -201,10 +239,12 @@ private:
   };
 
   // data
-  InstPtr m_controllerInstMap[kMaxControllers];
-  InstPtr* m_lastInstIndex = m_controllerInstMap;
+  InstPtr   mControllerInstMap[kMaxControllers];
+  InstPtr*  mLastInstIndex = mControllerInstMap;
+
+  bool      mMouseCapture{ false };
 };
 
-} // XR
+} // xr
 
 #endif // XR_INPUTIMPL_HPP

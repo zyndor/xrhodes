@@ -10,7 +10,6 @@
 
 #include "xm.hpp"
 #include "xr/Asset.hpp"
-#include "xr/Hash.hpp"
 #include "xr/memory/BufferReader.hpp"
 #include "xr/FileWriter.hpp"
 
@@ -156,7 +155,7 @@ struct DependantTestAsset : public xr::Asset
   static std::vector<Asset::DescriptorCore> s_order;
 
   // Inherited via Asset
-  virtual bool OnLoaded(Buffer buffer) override
+  virtual bool OnLoaded(Buffer /*buffer*/) override
   {
     s_order.push_back(GetDescriptor());
     return true;
@@ -175,6 +174,9 @@ std::vector<xr::Asset::DescriptorCore> DependantTestAsset::s_order;
 
 XR_ASSET_BUILDER_BUILD_SIG(DependantTestAsset)
 {
+  (void)rawNameExt;
+  (void)data;
+
   auto start = buffer.data;
   bool eol = !buffer.data || (*buffer.data == '\r' || *buffer.data == '\n') || buffer.size == 0;
   FilePath path;

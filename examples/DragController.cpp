@@ -10,12 +10,17 @@
 
 using namespace xr;
 
-const int64_t DragController::kMaxPressDurationMs = 2000;
+namespace
+{
+
+constexpr double kMaxPressDurationMs = 2000.;
+
+}
 
 void DragController::Reset()
 {
   m_tLastFrameMs = Timer::GetUST();
-  m_pressTimerMs = 0;
+  m_pressTimerMs = 0.;
   for (auto& i : m_accumulators)
   {
     i = Vector2{};
@@ -43,9 +48,9 @@ bool DragController::DisconnectMouse()
 void DragController::Update()
 {
   auto now = Timer::GetUST();
-  auto timer = m_pressTimerMs + BoolToSign<int64_t>(m_isButtonDown) *
-    static_cast<int64_t>(now - m_tLastFrameMs);
-  m_pressTimerMs = std::min(std::max(static_cast<decltype(timer)>(0), timer), kMaxPressDurationMs);
+  auto timer = m_pressTimerMs + BoolToSign<double>(m_isButtonDown) *
+    (now - m_tLastFrameMs);
+  m_pressTimerMs = std::min(std::max(0., timer), kMaxPressDurationMs);
   m_tLastFrameMs = now;
 
   m_motion += m_accumulators[m_iActiveAccumulator];
@@ -56,7 +61,7 @@ void DragController::Update()
 
 float DragController::GetPressTimerPercent() const
 {
-  return m_pressTimerMs / static_cast<float>(kMaxPressDurationMs);
+  return static_cast<float>(m_pressTimerMs / kMaxPressDurationMs);
 }
 
 xr::Vector2 const& DragController::GetFrameMotion() const
@@ -74,7 +79,7 @@ int DragController::NextAccumulator() const
   return (m_iActiveAccumulator + 1) & 1;
 }
 
-void DragController::OnMouseAction(const xr::Input::MouseActionData & e)
+void DragController::OnMouseAction(xr::Input::MouseActionData const& e)
 {
   if (e.button == MouseButton::Left)
   {
@@ -84,12 +89,12 @@ void DragController::OnMouseAction(const xr::Input::MouseActionData & e)
   }
 }
 
-void DragController::OnMouseMotion(const xr::Input::MouseMotionData & e)
+void DragController::OnMouseMotion(xr::Input::MouseMotionData const& e)
 {
   if (m_isButtonDown)
   {
     m_accumulators[m_iActiveAccumulator] +=
-      Vector2(e.x - m_lastMousePosition.x, e.y - m_lastMousePosition.y);
+      Vector2(float(e.x - m_lastMousePosition.x), float(e.y - m_lastMousePosition.y));
     m_lastMousePosition.x = e.x;
     m_lastMousePosition.y = e.y;
   }

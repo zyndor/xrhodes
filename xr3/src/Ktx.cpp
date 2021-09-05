@@ -4,8 +4,11 @@
 #include "xr/File.hpp"
 #include "xr/memory/BufferReader.hpp"
 #include "xr/memory/memory.hpp"
+#include "xr/types/intutils.hpp"
 #include <unordered_map>
 #include <stdint.h>
+
+#define LTRACE(format) XR_TRACE(Ktx, format)
 
 namespace xr
 {
@@ -43,43 +46,54 @@ bool Ktx::Parse(size_t bufferSize, uint8_t const* buffer)
   BufferReader reader(Buffer{ bufferSize, buffer });
   if (!reader.Read(header))
   {
-    XR_TRACE(Ktx, ("Invalid header."));
+    LTRACE(("Invalid header."));
     return false;
   }
 
   auto iFormat = kFormats.find(header.glInternalFormat);
   if (iFormat == kFormats.end())
   {
-    XR_TRACE(Ktx, ("Unsupported format: %x", header.glInternalFormat));
+    LTRACE(("Unsupported format: %x", header.glInternalFormat));
     return false;
   }
   mFormat = iFormat->second;
 
-  header.widthPx = std::max(header.widthPx, 1u);
-  header.heightPx = std::max(header.heightPx, 1u);
-  if (header.widthPx > std::numeric_limits<uint16_t>::max() ||
-    header.heightPx > std::numeric_limits<uint16_t>::max())
+  if (!(Representable<Px>(header.widthPx) &&
+    Representable<Px>(header.heightPx)))
   {
-    XR_TRACE(Ktx, ("Texture size excessive: %u x %u; 16bits maximum.",
-      header.widthPx, header.heightPx));
+    LTRACE(("Texture size excessive: %u x %u; 16 bits maximum.", header.widthPx, header.heightPx));
     return false;
   }
 
-  mWidthPx = header.widthPx;
-  mHeightPx = header.heightPx;
+  header.widthPx = std::max(header.widthPx, 1u);
+  mWidthPx = Px(header.widthPx);
 
-  header.mipLevelCount = std::max(header.mipLevelCount, 1u);
+  header.heightPx = std::max(header.heightPx, 1u);
+  mHeightPx = Px(header.heightPx);
+
   header.arraySize = std::max(header.arraySize, 1u);
 
-  mFaceCount = header.faceCount;
-  mMipLevelCount = header.mipLevelCount;
+  if (!Representable<decltype(mFaceCount)>(header.faceCount))
+  {
+    LTRACE(("Array size excessive: %u; 16 bits maximum", header.arraySize));
+    return false;
+  }
+  mFaceCount = decltype(mFaceCount)(header.faceCount);
+
+  if (!Representable<decltype(mMipLevelCount)>(header.mipLevelCount))
+  {
+    LTRACE(("Mip level count excessive: %u; 16 bits maximum", header.arraySize));
+    return false;
+  }
+
+  header.mipLevelCount = std::max(header.mipLevelCount, 1u);
+  mMipLevelCount = decltype(mMipLevelCount)(header.mipLevelCount);
 
   // Calculate image buffer size.
   auto imageBufferSize = reader.GetRemainingSize();
   if (imageBufferSize < header.dictSizeBytes)
   {
-    XR_TRACE(Ktx, ("Image buffer underflow by %d bytes.", header.dictSizeBytes -
-      imageBufferSize));
+    LTRACE(("Image buffer underflow by %d bytes.", header.dictSizeBytes - imageBufferSize));
     return false;
   }
 

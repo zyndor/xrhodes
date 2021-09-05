@@ -21,7 +21,6 @@
 #endif
 
 #define LTRACE(format) XR_TRACE(Texture, format)
-#define LTRACEIF(condition, format) XR_TRACEIF(Texture, condition, format)
 
 namespace xr
 {
@@ -33,14 +32,13 @@ XR_ASSET_DEF(Texture, "xtex", 4, "png;tga;ktx;tex")
 namespace {
 
 using Size = uint32_t;  // serialized size
-using TextureSize = decltype(Gfx::TextureInfo::width);
 static_assert(std::is_same<decltype(Gfx::TextureInfo::width), decltype(Gfx::TextureInfo::height)>::value, "");
 
 struct TextureHeader
 {
   Gfx::TextureFormat format;
-  TextureSize width;
-  TextureSize height;
+  Px width;
+  Px height;
   Gfx::FlagType createFlags;
   Size numBuffers;  // 8 bits used
 };
@@ -63,16 +61,15 @@ bool SerializeTexture(TextureHeader const& header, Buffer const* buffers,
 #ifdef ENABLE_ASSET_BUILDING
 XR_ASSET_BUILDER_DECL(Texture)
 
-using FormatHandler = bool(*)(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data);
+using FormatHandler = bool(*)(const char* rawNameExt, Buffer buffer, std::ostream& data);
 
-const std::unordered_map<std::string, Gfx::FlagType> kFlags{
-  { "wrap", Gfx::F_TEXTURE_WRAP },
-  { "filterPoint", Gfx::F_TEXTURE_FILTER_POINT },
-  { "srgb", Gfx::F_TEXTURE_SRGB },
-  { "mipmapNearest", Gfx::F_TEXTURE_MIPMAP_NEAREST },
-  { "mipmap", Gfx::F_TEXTURE_MIPMAP },
-  { "cube", Gfx::F_TEXTURE_CUBE },
+const std::unordered_map<std::string, uint16_t> kFlags{
+  { "wrap", uint16_t(Gfx::F_TEXTURE_WRAP) },
+  { "filterPoint", uint16_t(Gfx::F_TEXTURE_FILTER_POINT) },
+  { "srgb", uint16_t(Gfx::F_TEXTURE_SRGB) },
+  { "mipmapNearest", uint16_t(Gfx::F_TEXTURE_MIPMAP_NEAREST) },
+  { "mipmap", uint16_t(Gfx::F_TEXTURE_MIPMAP) },
+  { "cube", uint16_t(Gfx::F_TEXTURE_CUBE) },
 };
 
 const std::unordered_map<std::string, size_t> kCubeFaces{
@@ -103,8 +100,7 @@ Gfx::FlagType ParseTextureOptions(char const* nameExt)
   return createFlags;
 }
 
-bool  ProcessImage(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data)
+bool  ProcessImage(const char* rawNameExt, Buffer buffer, std::ostream& data)
 {
   Gfx::FlagType createFlags = ParseTextureOptions(rawNameExt);
 
@@ -113,15 +109,6 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
   if (!img.Parse(buffer.data, buffer.size))
   {
     LTRACE(("%s: failed to parse image data.", rawNameExt));
-    return false;
-  }
-
-  const uint32_t kMaxWidth = std::numeric_limits<TextureSize>::max();
-  const uint32_t kMaxHeight = std::numeric_limits<TextureSize>::max();
-  if (!(img.GetWidth() <= kMaxWidth && img.GetHeight() <= kMaxHeight))
-  {
-    LTRACE(("%s: image dimension excessive: %u x %u; 16bits maximum.",
-      rawNameExt, img.GetWidth(), img.GetHeight()));
     return false;
   }
 
@@ -138,10 +125,12 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
   case 4:
     format = Gfx::TextureFormat::RGBA8;
     break;
+  default:
+    LTRACE(("%s: invalid bpp: %d.", rawNameExt, img.GetBytesPerPixel()));
+    return false;
   }
 
-  TextureHeader header { format, static_cast<TextureSize>(img.GetWidth()),
-    static_cast<TextureSize>(img.GetHeight()), createFlags, 1 };
+  TextureHeader header { format, img.GetWidth(), img.GetHeight(), createFlags, 1 };
   Buffer pixelBuffer { img.GetPixelDataSize(), img.GetPixelData() };
   if (!SerializeTexture(header, &pixelBuffer, data))
   {
@@ -151,8 +140,7 @@ bool  ProcessImage(const char* rawNameExt, Buffer buffer,
   return true;
 }
 
-bool ProcessKtx(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data)
+bool ProcessKtx(const char* rawNameExt, Buffer buffer, std::ostream& data)
 {
   Gfx::FlagType createFlags = ParseTextureOptions(rawNameExt);
 
@@ -181,7 +169,7 @@ bool ProcessKtx(const char* rawNameExt, Buffer buffer,
   return true;
 }
 
-uint32_t GetFlag(XonValue const& xonValue, const char* rawNameExt)
+uint16_t GetFlag(XonValue const& xonValue, const char* rawNameExt)
 {
   auto strValue = xonValue.GetString();
   auto iFind = kFlags.find(strValue);
@@ -217,8 +205,7 @@ uint32_t GetFlag(XonValue const& xonValue, const char* rawNameExt)
     flags: { wrap, nearest, mipmap }
   }
 */
-bool  ProcessTex(const char* rawNameExt, Buffer buffer,
-  std::vector<FilePath>& dependencies, std::ostream& data)
+bool  ProcessTex(const char* rawNameExt, Buffer buffer, std::ostream& data)
 {
   XonParser::State xonState;
   std::unique_ptr<XonObject> xonRoot(XonBuildTree(buffer.As<char const>(),
@@ -423,17 +410,6 @@ bool  ProcessTex(const char* rawNameExt, Buffer buffer,
         }
       }
     }
-    else // first image -- dimensions must be <= 64K
-    {
-      const auto kMaxWidth = std::numeric_limits<TextureSize>::max();
-      const auto kMaxHeight = std::numeric_limits<TextureSize>::max();
-      if (image.GetWidth() > kMaxWidth || image.GetHeight() > kMaxHeight)
-      {
-        LTRACE(("%s: image dimension excessive: %u x %u; 16bits maximum.",
-          rawNameExt, image.GetWidth(), image.GetHeight()));
-        return false;
-      }
-    }
 
     // insert buffers transposed.
     auto iT = (i % numMipLevels) * numFaces + i / numMipLevels;
@@ -452,12 +428,15 @@ bool  ProcessTex(const char* rawNameExt, Buffer buffer,
   case 4:
     format = Gfx::TextureFormat::RGBA8;
     break;
+  default:
+    LTRACE(("%s: invalid bpp: %d.", rawNameExt, images[0].GetBytesPerPixel()));
+    return false;
   }
 
   TextureHeader header {
     format,
-    static_cast<TextureSize>(images[0].GetWidth()),
-    static_cast<TextureSize>(images[0].GetHeight()),
+    static_cast<Px>(images[0].GetWidth()),
+    static_cast<Px>(images[0].GetHeight()),
     flags,
     static_cast<uint32_t>(imageBuffers.size())
   };
@@ -473,13 +452,13 @@ const std::unordered_map<std::string, FormatHandler> kFormatHandlers{
 
 XR_ASSET_BUILDER_BUILD_SIG(Texture)
 {
-  std::string extension = [](char const* nameExt) {
-    auto ext = FilePath(nameExt).GetExt();
+  std::string extension = [](FilePath const& nameExt) {
+    auto ext = nameExt.GetExt();
     return std::string(ext, strcspn(ext, Asset::kOptionDelimiter));
-  }(rawNameExt);
+  }(FilePath(rawNameExt));
   auto iFind = kFormatHandlers.find(extension.c_str());
   XR_ASSERT(Texture, iFind != kFormatHandlers.end());
-  return iFind->second(rawNameExt, buffer, dependencies, data);
+  return iFind->second(rawNameExt, buffer, data);
 }
 #endif
 
@@ -552,15 +531,15 @@ Texture::Ptr Texture::FromHandle(Gfx::TextureHandle handle)
 }
 
 //==============================================================================
-bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
+bool Texture::Upload(Gfx::TextureFormat format, Px width, Px height,
   Buffer buffer)
 {
   return Upload(format, width, height, Gfx::F_TEXTURE_NONE, 1, &buffer);
 }
 
 //==============================================================================
-bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
-  Gfx::FlagType createFlags, uint32_t numBuffers, Buffer const* buffers)
+bool Texture::Upload(Gfx::TextureFormat format, Px width, Px height,
+  Gfx::FlagType createFlags, uint8_t numBuffers, Buffer const* buffers)
 {
   OnUnload();
 
@@ -600,7 +579,7 @@ bool Texture::Upload(Gfx::TextureFormat format, uint16_t width, uint16_t height,
 }
 
 //==============================================================================
-void Texture::Bind(uint32_t stage) const
+void Texture::Bind(uint8_t stage) const
 {
   Gfx::SetTexture(m_handle, stage);
 }
@@ -619,7 +598,8 @@ bool Texture::OnLoaded(Buffer buffer)
 
   if (header.numBuffers > kMaxBuffers)
   {
-    LTRACE(("%s: too many buffers."));
+    LTRACE(("%s: %d too many buffers. These are ignored.", header.numBuffers - kMaxBuffers));
+    header.numBuffers = kMaxBuffers;
   }
 
   std::vector<Buffer> pixelBuffers(header.numBuffers);
@@ -636,14 +616,14 @@ bool Texture::OnLoaded(Buffer buffer)
     b.size = size;
   }
 
-  uint32_t flags  = GetFlags();
+  Asset::FlagType flags = GetFlags();
 
 #ifdef ENABLE_ASSET_BUILDING
   if (!CheckAllMaskBits(flags, DryRunFlag))
   {
 #endif
   m_handle = Gfx::CreateTexture(header.format, header.width, header.height,
-    0, header.createFlags, pixelBuffers.data(), header.numBuffers);
+    0, header.createFlags, pixelBuffers.data(), uint8_t(header.numBuffers));
   if (!m_handle.IsValid())
   {
     LTRACE(("%s: failed to create texture.", m_debugPath.c_str()));
@@ -678,4 +658,4 @@ void Texture::OnUnload()
   std::vector<uint8_t>().swap(m_data);
 }
 
-} // XR
+} // xr

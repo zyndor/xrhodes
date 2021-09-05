@@ -37,6 +37,8 @@ public:
   /// "Zone.Locators.PlayerStart"
   static const char kSeparator;
 
+  static bool ComponentSortPredicate(Component const* c, size_t typeId);
+
   // structors
   explicit Entity(Entity* pParent);
   explicit Entity(Name n, Entity* pParent);

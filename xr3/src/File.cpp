@@ -108,8 +108,10 @@ struct FileOp
     return success;
   }
 
+protected:
+  virtual ~FileOp() = default;
+
 private:
-  // NO virtual ~FileOp(), because not ever deleted, let alone via a pointer to base.
   virtual bool Process(char const* path) = 0;
   virtual bool RomApplicable() const { return false; }
 };

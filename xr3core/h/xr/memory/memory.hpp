@@ -12,6 +12,7 @@
 #include "xr/debug.hpp"
 #include <stdint.h>
 #include <stdlib.h>
+#include <new>
 
 namespace xr
 {
@@ -25,7 +26,7 @@ class Allocator
 {
 public:
   // static
-  static void* Allocate(size_t size, void* userData)
+  [[nodiscard]] static void* Allocate(size_t size, void* userData)
   {
     return static_cast<Allocator*>(userData)->Allocate(size);
   }
@@ -39,7 +40,7 @@ public:
   virtual ~Allocator() {}
 
   // virtual
-  virtual void* Allocate(size_t numBytes) =0;
+  [[nodiscard]] virtual void* Allocate(size_t numBytes) =0;
   virtual void Deallocate(void* buffer) =0;
 };
 
@@ -47,14 +48,29 @@ public:
 class Mallocator : public Allocator
 {
 public:
-  virtual void* Allocate(size_t numBytes)
+  [[nodiscard]] void* Allocate(size_t numBytes) override
   {
     return malloc(numBytes);
   }
 
-  virtual void Deallocate(void* buffer)
+  void Deallocate(void* buffer) override
   {
     free(buffer);
+  }
+};
+
+//==============================================================================
+class GlobalNewAllocator : public Allocator
+{
+public:
+  [[nodiscard]] void* Allocate(size_t numBytes) override
+  {
+    return ::operator new(numBytes, std::nothrow);
+  }
+
+  void Deallocate(void* buffer) override
+  {
+    ::operator delete(buffer);
   }
 };
 

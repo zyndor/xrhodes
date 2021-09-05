@@ -2,7 +2,7 @@
 
 if [ -z $1 ]
 then
-  echo "Usage: ./release.sh [version]"
+  echo "Usage: ./update-changes.sh [version]"
   exit 1
 fi
 
@@ -12,7 +12,7 @@ changes=$(dirname $0)/../../CHANGES
 echo $1 > $changes.new
 
 # past recent changes to new changes file
-git qlog RELEASE.. | cut -c -2,11- | sed "s/\*/-/g" >> $changes.new
+git log --oneline --reverse --no-decorate RELEASE.. | cut -c 9- | sed "s/^/- /g" >> $changes.new
 echo >> $changes.new
 
 # past old changes to new changes file
@@ -24,4 +24,4 @@ mv $changes{.new,}
 
 # stage & commit
 git add $changes
-git commit -m "Changelog update for $1"
+git commit -m "Changelog update for $1."

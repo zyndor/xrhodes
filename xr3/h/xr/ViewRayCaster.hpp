@@ -39,9 +39,9 @@ public:
     float hProj = zNear * tanHalfVerticalFov;
     float wProj = hProj * aspectRatio;
 
-    Vector3 zNearHit = Vector3(viewer.linear2d[Vector3::Z]) * -zNear +
-      Vector3(viewer.linear2d[Vector3::X]).Normalise(wProj * nx) +
-      Vector3(viewer.linear2d[Vector3::Y]).Normalise(hProj * ny);
+    Vector3 zNearHit = Vector3(viewer.linear + Matrix::ZX) * -zNear +
+      Vector3(viewer.linear + Matrix::XX).Normalise(wProj * nx) +
+      Vector3(viewer.linear + Matrix::YX).Normalise(hProj * ny);
     zNearHit.Normalise();
 
     return Ray(viewer.t, zNearHit, std::numeric_limits<float>::max());
@@ -81,6 +81,6 @@ public:
   }
 };
 
-} // XR
+} // xr
 
 #endif //XR_VIEWRAYCASTER_HPP

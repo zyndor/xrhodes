@@ -29,7 +29,15 @@ protected:
   using CallbackPtr = std::unique_ptr<CallbackBase>;
   using CallbackVector = std::vector<CallbackPtr>;
 
+  // static
+  static CallbackVector CopyCallbacks(CallbackVector const& from);
+
   // internal
+  SignalCore() = default;
+  SignalCore(SignalCore const& other);
+  SignalCore(SignalCore&& other);
+  SignalCore& operator=(SignalCore other) = delete;
+
   bool ConnectImpl(CallbackBase const& cb);
 
   bool DisconnectImpl(CallbackBase const& cb);
@@ -57,6 +65,11 @@ class Signal : protected SignalCore
 public:
   // types
   using CallbackType = Callback<Return, Args...>;
+
+  // structors
+  Signal() = default;
+  Signal(Signal&& other) = default;
+  Signal(Signal const& other) = default;
 
   // general
   bool Connect(CallbackType const& cb)

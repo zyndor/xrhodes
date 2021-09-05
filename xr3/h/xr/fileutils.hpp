@@ -91,6 +91,6 @@ bool  ReadVector(int hFile, Container& c)
   return success;
 }
 
-} // XR
+} // xr
 
 #endif  //XR_FILEUTILS_HPP

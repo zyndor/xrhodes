@@ -304,6 +304,6 @@ void Sprite::CopyVerticesTo(VertexFormat* verts) const
   }
 }
 
-} // XR
+} // xr
 
 #endif // XR_SPRITE_HPP
