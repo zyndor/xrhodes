@@ -30,6 +30,10 @@ function is_msvc()
 	return is_vs() and not _ACTION:find("clang")
 end
 
+function get_vcpkg_install_dir()
+  return "$(VcpkgRoot)/installed/$(VcpkgTriplet)/"
+end
+
 --
 -- Performs the creation of a workspace with the given name, and making the
 -- given project its default project (Visual Studio only).
@@ -254,8 +258,8 @@ function do_vs_postbuild(dependencies)
 				local pc = p.."-"..c
 				for _, iDep in ipairs(dependencies) do
 					postbuildcommands{
-						os.translateCommands("{COPY} $(VcpkgCurrentInstalledDir)"..
-							"bin/"..iDep..".dll "..artifacts_rel_path..pc)
+						os.translateCommands("{COPY} "..get_vcpkg_install_dir().."bin/"..
+							iDep..".dll "..artifacts_rel_path..pc)
 					}
 				end
 			filter {}
