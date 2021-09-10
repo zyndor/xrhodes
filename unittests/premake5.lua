@@ -62,8 +62,8 @@ project "unittests"
 
 		libdirs
 		{
-			"$(VcpkgCurrentInstalledDir)lib",
-			"$(VcpkgCurrentInstalledDir)lib/manual-link",
+			get_vcpkg_install_dir().."lib",
+			get_vcpkg_install_dir().."lib/manual-link",
 		}
 
 	else
