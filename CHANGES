@@ -1,3 +1,6 @@
+v1.11.1
+- Fix: uses of Vcpkg's removed $(VcpkgCurrentInstalledDir) macro.
+
 v1.11.0
 - Moved Hash.hpp and TweakBench.hpp into a new utility/ folder.
 - Replaced xr::SharedPoolAllocator's dynamic exception specification with noexcept for C++17.
