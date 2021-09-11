@@ -111,10 +111,13 @@ void Device::Init(char const* title)
   int windowHeight = Config::GetInt("XR_DISPLAY_HEIGHT", 600);
 
   uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-  if (Config::GetInt("XR_DISPLAY_FULLSCREEN", false) == 1)
+  const bool fullscreen = Config::GetInt("XR_DISPLAY_FULLSCREEN", false) == 1;
+  if (fullscreen)
   {
-    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    flags |= SDL_WINDOW_FULLSCREEN;
   }
+
+  SDL_ShowCursor(fullscreen ? SDL_DISABLE : SDL_ENABLE);
 
   s_deviceImpl.mainWindow = SDL_CreateWindow(title,
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -123,6 +126,8 @@ void Device::Init(char const* title)
   SDL_GetWindowSize(s_deviceImpl.mainWindow, &windowWidth, &windowHeight);
   s_deviceImpl.windowWidth = windowWidth;
   s_deviceImpl.windowHeight = windowHeight;
+
+  XR_TRACE(Device, ("Created main window - %d x %d.", windowWidth, windowHeight));
 
   s_deviceImpl.gfxContext = new Gfx::Context(*s_deviceImpl.mainWindow);
 
