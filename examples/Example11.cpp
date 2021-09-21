@@ -242,7 +242,7 @@ private:
     // the rotation has been removed from the instance data for this example.
     for (auto& v : vertices)
     {
-      Quaternion::FromAxisAngle(Vector3::UnitX(), kPi * .5f).RotateVec(v.pos);
+      v.pos = Quaternion::FromAxisAngle(Vector3::UnitX(), kPi * .5f).Rotate(v.pos);
     }
 
     std::vector<uint16_t> indices{ 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1,

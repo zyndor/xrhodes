@@ -112,7 +112,7 @@ public:
   void SetViewerTransform(Matrix m)
   {
     m.Invert();
-    m.t = m.RotateVec(-m.t);
+    m.t = m.Rotate(-m.t);
     m_view.Import(m);
     m_dirtyFlags |= VIEW_DIRTY;
   }

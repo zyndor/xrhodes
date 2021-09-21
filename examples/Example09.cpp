@@ -402,7 +402,7 @@ public:
       auto const& viewer = m_renderPasses[RenderPass::DEPTH].viewer;
       Matrix lightWorld(viewer.worldTransform);
       lightWorld.Invert();
-      lightWorld.t = lightWorld.RotateVec(-lightWorld.t);
+      lightWorld.t = lightWorld.Rotate(-lightWorld.t);
 
       Matrix4 lightView;
       lightView.Import(lightWorld);

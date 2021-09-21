@@ -270,7 +270,8 @@ public:
   }
 
   ///@brief Rotates the vector @a v around the origin by this quaternion.
-  void  RotateVec(Vector3& v) const
+  ///@return The vector @a v rotated by this.
+  Vector3 Rotate(Vector3 const& v) const
   {
     const float px = (w * v.x) - (j * v.z) + (k * v.y);
     const float py = (w * v.y) - (k * v.x) + (i * v.z);
@@ -288,17 +289,20 @@ public:
     const float vyj2 = v.y * j * j;
     const float vzk2 = v.z * k * k;
 
-    v.x = vxi2 + wpx - vxpx;
-    v.y = vyj2 + wpy - vxpy;
-    v.z = vzk2 + wpz - vxpz;
+    Vector3 result{ vxi2 + wpx - vxpx, vyj2 + wpy - vxpy, vzk2 + wpz - vxpz };
+    return result;
   }
 
-  ///@brief Rotates the vector @a v around the given pivot by this quaternion.
-  void  RotateVec(Vector3 const& pivot, Vector3& v)
+  [[deprecated("Use Rotate().")]]
+  void  RotateVec(Vector3& v) const
   {
-    v -= pivot;
-    RotateVec(v);
-    v += pivot;
+    v = Rotate(v);
+  }
+
+  [[deprecated("Use Rotate().")]]
+  void  RotateVec(Vector3 const& pivot, Vector3& v) const
+  {
+    v = Rotate(v - pivot) + pivot;
   }
 
   ///@brief Creates a vector containing the euler angles of the rotation that
