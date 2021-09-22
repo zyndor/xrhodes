@@ -232,7 +232,7 @@ public:
 
       auto motion = m_dragControl.GetFrameMotion() * 0.01f;
       m_rotation *= Quaternion::FromAxisAngle(Vector3(.2, .5, 0.f), weight * .002f) *
-        Quaternion::FromPitchYawRoll(motion.x, motion.y, 0.);
+        Quaternion::FromPitchYawRoll(motion.y, motion.x, 0.);
 
       // Change the color of the light over time.
       Color lightColor(.75f, .66f + sinf(float(Timer::GetUST() * .0002)) * .333f, .5f);

@@ -106,7 +106,7 @@ public:
 
       auto motion = m_dragControl.GetFrameMotion() * 0.02f;
       m_rotation *= Quaternion::FromAxisAngle(Vector3(.2, .5, 0.f), weight * .02f) *
-        Quaternion::FromPitchYawRoll(motion.x, motion.y, .0);
+        Quaternion::FromPitchYawRoll(motion.y, motion.x, .0);
     }
   }
 

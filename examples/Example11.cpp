@@ -131,7 +131,7 @@ public:
       weight = Bezier(controlPoints, weight);
 
       auto motion = m_dragControl.GetFrameMotion() * 0.01f;
-      m_rotation *= Quaternion::FromPitchYawRoll(motion.x, motion.y, 0.);
+      m_rotation *= Quaternion::FromPitchYawRoll(motion.y, motion.x, 0.);
     }
   }
 

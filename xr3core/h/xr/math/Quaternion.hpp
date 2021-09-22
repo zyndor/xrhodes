@@ -30,6 +30,7 @@ enum  QuaternionInds
 };
 
 //==============================================================================
+///@brief Represents a rotation in 3D space.
 class Quaternion
 {
 public:
@@ -40,7 +41,7 @@ public:
     return Quaternion(0.f, 0.f, 0.f, 1.f);
   }
 
-  ///@brief Creates a quaternion from a vector of pitch, yaw, roll rotations.
+  ///@brief Creates a quaternion from pitch (x), yaw (y) and roll (z) rotations.
   ///@note The angles are in radians.
   static void FromPitchYawRoll(float pitch, float yaw, float roll, Quaternion& q)
   {
@@ -48,22 +49,22 @@ public:
     yaw *= .5f;
     roll *= .5f;
 
-    const float c1 = std::cos(yaw);
-    const float c2 = std::cos(pitch);
-    const float c3 = std::cos(roll);
-    const float s1 = std::sin(yaw);
-    const float s2 = std::sin(pitch);
-    const float s3 = std::sin(roll);
+    const float cPitch = std::cos(pitch);
+    const float cYaw = std::cos(yaw);
+    const float cRoll = std::cos(roll);
+    const float sPitch = std::sin(pitch);
+    const float sYaw = std::sin(yaw);
+    const float sRoll = std::sin(roll);
 
-    const float c2c3 = c2 * c3;
-    const float s2s3 = s2 * s3;
-    const float s2c3 = s2 * c3;
-    const float c2s3 = c2 * s3;
+    const float cPitch_cRoll = cPitch * cRoll;
+    const float cPitch_sRoll = cPitch * sRoll;
+    const float sPitch_cRoll = sPitch * cRoll;
+    const float sPitch_sRoll = sPitch * sRoll;
 
-    q.i = s1 * c2c3 - c1 * s2s3;
-    q.j = c1 * s2c3 - s1 * c2s3;
-    q.k = c1 * c2s3 - s1 * s2c3;
-    q.w = c1 * c2c3 - s1 * s2s3;
+    q.i = sPitch_cRoll * cYaw - cPitch_sRoll * sYaw;
+    q.j = cPitch_cRoll * sYaw + sPitch_sRoll * cYaw;
+    q.k = cPitch_sRoll * cYaw - sPitch_cRoll * sYaw;
+    q.w = cPitch_cRoll * cYaw + sPitch_sRoll * sYaw;
   }
 
   static void FromPitchYawRoll(Vector3 const& pitchYawRoll, Quaternion& q)
@@ -87,7 +88,7 @@ public:
 
   ///@brief Creates a quaternion that rotates by @a angle radians around the
   /// given @axis.
-  ///@note The angle needs to be in radians.
+  ///@note The angle is in radians.
   static void FromAxisAngle(Vector3 const& axis, float angle, Quaternion& q)
   {
     angle *= .5f;
@@ -114,7 +115,7 @@ public:
     float d = from.Dot(to);
     if (d * d < 1.f)
     {
-      Vector3 c = from.Cross(to);
+      Vector3 c = to.Cross(from);
       q = Quaternion(c.x, c.y, c.z, d + 1.f);
       q.Normalise();
     }
@@ -205,22 +206,29 @@ public:
   // general
   ///@brief Calculates the conjugate of this quaternion.
   ///@note For a unit quaternion, this is also its inverse.
-  void  Conjugate()
+  Quaternion&  Conjugate()
   {
     i = -i;
     j = -j;
     k = -k;
+    return *this;
+  }
+
+  ///@brief Calculates the dot product of this and @a other.
+  constexpr float Dot(Quaternion const& other) const
+  {
+    return i * other.i + j * other.j + k * other.k + w * other.w;
   }
 
   ///@brief Calculates the magnitude of this quaternion.
   float Magnitude() const
   {
-    return std::sqrt(w * w + i * i + j * j + k * k);
+    return std::sqrt(Dot(*this));
   }
 
   ///@brief Normalises this quaternion so that its magnitude is 1.
   ///@note Quaternion must be non zero.
-  void  Normalise()
+  Quaternion& Normalise()
   {
     float mag = Magnitude();
     XR_ASSERT(Quaternion, mag > 0.f);
@@ -230,6 +238,8 @@ public:
     j *= mag;
     k *= mag;
     w *= mag;
+
+    return *this;
   }
 
   ///@return A copy of this quaternion, scaled so that its magnitude is 1.
@@ -246,13 +256,13 @@ public:
   void  GetAxisAngle(float& x, float& y, float& z, float& theta) const
   {
     theta = 2.f * std::acos(w);
-    float w2 = w * w;
-    if (w2 < 1.f)
+    float wSqr = w * w;
+    if (wSqr < 1.f)
     {
-      w2 = 1.f / (1.f - std::sqrt(w2));
-      x = i * w2;
-      y = j * w2;
-      z = k * w2;
+      wSqr = 1.f / (1.f - std::sqrt(wSqr));
+      x = i * wSqr;
+      y = j * wSqr;
+      z = k * wSqr;
     }
     else
     {
@@ -273,24 +283,9 @@ public:
   ///@return The vector @a v rotated by this.
   Vector3 Rotate(Vector3 const& v) const
   {
-    const float px = (w * v.x) - (j * v.z) + (k * v.y);
-    const float py = (w * v.y) - (k * v.x) + (i * v.z);
-    const float pz = (w * v.z) - (i * v.y) + (j * v.x);
-
-    const float wpx = w * px;
-    const float wpy = w * py;
-    const float wpz = w * pz;
-
-    const float vxpx = (j * pz) - (k * py);
-    const float vxpy = (k * px) - (i * pz);
-    const float vxpz = (i * py) - (j * px);
-
-    const float vxi2 = v.x * i * i;
-    const float vyj2 = v.y * j * j;
-    const float vzk2 = v.z * k * k;
-
-    Vector3 result{ vxi2 + wpx - vxpx, vyj2 + wpy - vxpy, vzk2 + wpz - vxpz };
-    return result;
+    auto& q = reinterpret_cast<Vector3 const&>(*this);
+    Vector3 r = v * w + v.Cross(q);
+    return v + 2.f * r.Cross(q);
   }
 
   [[deprecated("Use Rotate().")]]
@@ -305,17 +300,17 @@ public:
     v = Rotate(v - pivot) + pivot;
   }
 
-  ///@brief Creates a vector containing the euler angles of the rotation that
-  /// this quaternion represents.
+  ///@return A vector containing the euler angles of the rotation that this quaternion
+  /// represents, in pitch, yaw, roll order.
   Vector3 ToEuler() const
   {
     const float iSqr = i * i;
     const float jSqr = j * j;
     const float kSqr = k * k;
 
-    Vector3 v(std::asin(-2.f * (i * k - j * w)),
-      atan2f(2.f * (k * j + i * w), 1.f - 2.f * (iSqr + jSqr)),
-      atan2f(2.f * (i * j + k * w), 1.f - 2.f * (jSqr + kSqr)));
+    Vector3 v(atan2(2.f * (w * i + k * j), 1.f - 2.f * (iSqr + kSqr)),
+      asin(2.f * (w * j - i * k)),
+      atan2(2.f * (w * k + i * j), 1.f - 2.f * (jSqr + kSqr)));
     return v;
   }
 
