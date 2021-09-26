@@ -250,10 +250,6 @@ public:
       Matrix4 lightWorldProjection;
       lightView.Transform(viewer.projection, lightWorldProjection);
 
-      lightView.SetIdentity(.5);
-      lightView.SetTranslation(Vector3::One() * .5);
-      lightView.Transform(lightWorldProjection);
-
       Gfx::SetUniform(m_uLightSpaceTransform, lightWorldProjection.data);
 
       auto lightDirInvShadowMapSize = Vector4::From(viewer.worldTransform.GetColumn(Vector3::Z),
