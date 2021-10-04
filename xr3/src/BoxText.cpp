@@ -314,8 +314,8 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
   float maxLineWidth = 0.f;
   float height = m.size.y;
 
-  XR_DEBUG_ONLY(auto posEnd = XR_ADVANCE_PTR(positions, attribStride * m.numGlyphs *
-    Quad::Vertex::kCount);)
+  XR_DEBUG_ONLY(auto posEnd = meshutil::AdvancePointer(positions, attribStride *
+    m.numGlyphs * Quad::Vertex::kCount);)
   if (m.numGlyphs > 0)
   {
     // Calculate the starting position -- offset by ascent (i.e. to baseline).
@@ -363,25 +363,27 @@ void BoxText::Generate(Measurement const& m, uint32_t attribStride,
             const float gw = cg->glyph->width * m_scale;
             const float gh = cg->glyph->height * m_scale;
 
+            namespace mu = meshutil;
+
             *positions = Vector3(gx, gy + gh, 0.f);
             *uvs = Vector2(cg->uvs.left, cg->uvs.top);
-            positions = XR_ADVANCE_PTR(positions, attribStride);
-            uvs = XR_ADVANCE_PTR(uvs, attribStride);
+            positions = mu::AdvancePointer(positions, attribStride);
+            uvs = mu::AdvancePointer(uvs, attribStride);
 
             *positions = Vector3(gx, gy, 0.f);
             *uvs = Vector2(cg->uvs.left, cg->uvs.bottom);
-            positions = XR_ADVANCE_PTR(positions, attribStride);
-            uvs = XR_ADVANCE_PTR(uvs, attribStride);
+            positions = mu::AdvancePointer(positions, attribStride);
+            uvs = mu::AdvancePointer(uvs, attribStride);
 
             *positions = Vector3(gx + gw, gy + gh, 0.f);
             *uvs = Vector2(cg->uvs.right, cg->uvs.top);
-            positions = XR_ADVANCE_PTR(positions, attribStride);
-            uvs = XR_ADVANCE_PTR(uvs, attribStride);
+            positions = mu::AdvancePointer(positions, attribStride);
+            uvs = mu::AdvancePointer(uvs, attribStride);
 
             *positions = Vector3(gx + gw, gy, 0.f);
             *uvs = Vector2(cg->uvs.right, cg->uvs.bottom);
-            positions = XR_ADVANCE_PTR(positions, attribStride);
-            uvs = XR_ADVANCE_PTR(uvs, attribStride);
+            positions = mu::AdvancePointer(positions, attribStride);
+            uvs = mu::AdvancePointer(uvs, attribStride);
           }
 
           cursor.x += cg->glyph->advance * m_scale;
