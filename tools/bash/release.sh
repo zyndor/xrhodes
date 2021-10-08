@@ -28,7 +28,7 @@ echo >> $msg_file
 
 # write changes since last release, to message
 last_changelog=$(git log --oneline --no-decorate --format=format:%H -1 "../../CHANGES")
-git log --oneline --no-decorate --reverse RELEASE..$last_changelog | cut -c 9- | sed "s/\*/- /g" >> $msg_file
+git log --oneline --no-decorate --reverse RELEASE..$last_changelog^ | cut -c 9- | sed "s/^/- /g" >> $msg_file
 
 # hop over to RELEASE and create a commit with message from file
 git checkout RELEASE
