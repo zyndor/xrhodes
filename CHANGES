@@ -1,3 +1,8 @@
+v1.11.2
+- Fixed the fullscreen mode - it now takes into account the requested resolution.
+- Fixed a compile error in xr::ObjectPool<>::Release(). Added unittests.
+- release.sh fixes.
+
 v1.11.1
 - Fix: uses of Vcpkg's removed $(VcpkgCurrentInstalledDir) macro.
 

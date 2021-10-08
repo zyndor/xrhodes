@@ -115,7 +115,7 @@ private:
     size_t handle = bytes - sCore->mBuffer;
     XR_ASSERT(ObjectPool, handle % sizeof(T) == 0);
     XR_ASSERT(ObjectPool, handle / sizeof(T) >= 0);
-    XR_DEBUG_ONLY(std::fill(bytes, bytes + sizeof(T), 0xdd));
+    XR_DEBUG_ONLY(std::fill(bytes, bytes + sizeof(T), std::byte(0xdd)));
     sCore->mHandles.Release(IndexServer::Index(handle / sizeof(T)));
   }
 };
