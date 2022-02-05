@@ -37,8 +37,8 @@ XM_TEST_F(Image, Basic)
   xr::Image img;
   XM_ASSERT_EQ(img.GetWidth(), 0);
   XM_ASSERT_EQ(img.GetHeight(), 0);
-  XM_ASSERT_EQ(img.GetBytesPerPixel(), 0);
-  XM_ASSERT_EQ(img.GetPixelDataSize(), 0);
+  XM_ASSERT_EQ(img.GetBytesPerPixel(), 0u);
+  XM_ASSERT_EQ(img.GetPixelDataSize(), 0u);
   XM_ASSERT_EQ(img.GetPixelData(), nullptr);
 
   Px width = 256;
@@ -48,8 +48,8 @@ XM_TEST_F(Image, Basic)
   XM_ASSERT_EQ(img.GetWidth(), width);
   XM_ASSERT_EQ(img.GetHeight(), height);
   XM_ASSERT_EQ(img.GetBytesPerPixel(), bpp);
-  XM_ASSERT_EQ(img.GetPitch(), width * bpp);
-  XM_ASSERT_EQ(img.GetPixelDataSize(), width * height * bpp);
+  XM_ASSERT_EQ(img.GetPitch(), uint32_t(width * bpp));
+  XM_ASSERT_EQ(img.GetPixelDataSize(), uint32_t(width * height * bpp));
   XM_ASSERT_NE(img.GetPixelData(), nullptr);
 
   auto p = img.GetPixelData();

@@ -183,11 +183,11 @@ XM_TEST_F(Xon, ReadValid) // Read xon and construct tree.
   XM_ASSERT_NE(root, nullptr);
   XM_ASSERT_EQ(readState.cursor, buffer.CastData<char>() + buffer.GetSize());
 
-  XM_ASSERT_EQ(root->GetNumElements(), 7);
+  XM_ASSERT_EQ(root->GetNumElements(), 7u);
 
   std::vector<std::string> keys;
   root->GetKeys(keys);
-  XM_ASSERT_EQ(keys.size(), 2);
+  XM_ASSERT_EQ(keys.size(), 2u);
   // note: lexicographic order -- happens to be the same order they're defined.
   XM_ASSERT_STREQ(keys[0].c_str(), "key");
   XM_ASSERT_STREQ(keys[1].c_str(), "more_keys");
@@ -217,10 +217,10 @@ XM_TEST_F(Xon, ReadValid) // Read xon and construct tree.
 
   XonEntity& v4 = (*root)[4];
   XM_ASSERT_EQ(v4.GetType(), XonEntity::Type::Object);
-  XM_ASSERT_EQ(v4.ToObject().GetNumElements(), 7);
+  XM_ASSERT_EQ(v4.ToObject().GetNumElements(), 7u);
 
   static_cast<XonObject&>(v4).GetKeys(keys);
-  XM_ASSERT_EQ(keys.size(), 3);
+  XM_ASSERT_EQ(keys.size(), 3u);
   // note: lexicographic order.
   XM_ASSERT_STREQ(keys[0].c_str(), "a_nested_object");
   XM_ASSERT_STREQ(keys[1].c_str(), "key");
@@ -246,7 +246,7 @@ XM_TEST_F(Xon, ReadValid) // Read xon and construct tree.
 
   XonEntity& v4_3 = v4Object[3];
   XM_ASSERT_EQ(v4_3.GetType(), XonEntity::Type::Object);
-  XM_ASSERT_EQ(v4_3.ToObject().GetNumElements(), 3);
+  XM_ASSERT_EQ(v4_3.ToObject().GetNumElements(), 3u);
   XM_ASSERT_EQ(&v4_3, &v4Object.Get("a_nested_object"));
 
   XonObject& v4_3Object = v4_3.ToObject();
@@ -264,11 +264,11 @@ XM_TEST_F(Xon, ReadValid) // Read xon and construct tree.
   XonEntity& v4_3_2 = v4_3Object[2];
   XM_ASSERT_EQ(v4_3_2.GetType(), XonEntity::Type::Value);
   XM_ASSERT_EQ(v4_3_2.ToValue().GetString(), std::string(""));
-  XM_ASSERT_EQ(v4_3_2.ToValue().GetLength(), 0);
+  XM_ASSERT_EQ(v4_3_2.ToValue().GetLength(), 0u);
 
   XonEntity& v4_4 = v4Object[4];
   XM_ASSERT_EQ(v4_4.GetType(), XonEntity::Type::Object);
-  XM_ASSERT_EQ(v4_4.ToObject().GetNumElements(), 0);
+  XM_ASSERT_EQ(v4_4.ToObject().GetNumElements(), 0u);
 
   XonEntity& v4_5 = v4Object[5];
   XM_ASSERT_EQ(v4_5.GetType(), XonEntity::Type::Value);
@@ -283,7 +283,7 @@ XM_TEST_F(Xon, ReadValid) // Read xon and construct tree.
   XonEntity& v5 = (*root)[5];
   XM_ASSERT_EQ(v5.GetType(), XonEntity::Type::Value);
   XM_ASSERT_EQ(v5.ToValue().GetString(), nullptr);
-  XM_ASSERT_EQ(v5.ToValue().GetLength(), 0);
+  XM_ASSERT_EQ(v5.ToValue().GetLength(), 0u);
 
   XonEntity& v6 = (*root)[6];
   XM_ASSERT_EQ(v6.GetType(), XonEntity::Type::Value);
@@ -334,7 +334,7 @@ XM_TEST_F(Xon, Errors) // Test for entity errors.
   std::unique_ptr<XonObject> root(XonBuildTree(buffer.CastData<char>(), buffer.GetSize(), &readState));
 
   // index out of bounds
-  TestXonError([&root]() { (*root)[-1]; }, XonEntity::Exception::Type::IndexOutOfBounds);
+  TestXonError([&root]() { (*root)[size_t(-1)]; }, XonEntity::Exception::Type::IndexOutOfBounds);
   TestXonError([&root]() { (*root)[root->GetNumElements()]; }, XonEntity::Exception::Type::IndexOutOfBounds);
 
   // invalid key

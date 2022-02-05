@@ -18,33 +18,33 @@ namespace
 XM_TEST(Entity, AddRemoveDetach)
 {
   xr::Entity eRoot(Name("root"), nullptr);
-  XM_ASSERT_EQ(eRoot.GetChildren().size(), 0);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 0u);
 
   auto eA = new xr::Entity(Name("A"), &eRoot);
   XM_ASSERT_EQ(eA->GetParent(), &eRoot);
-  XM_ASSERT_EQ(eRoot.GetChildren().size(), 1);
-  XM_ASSERT_EQ(eA->GetChildren().size(), 0);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 1u);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 0u);
 
   auto eB = new xr::Entity(Name("B"), eA);
   XM_ASSERT_EQ(eB->GetParent(), eA);
-  XM_ASSERT_EQ(eB->GetChildren().size(), 0);
+  XM_ASSERT_EQ(eB->GetChildren().size(), 0u);
 
   auto eC = new xr::Entity(Name("C"), eA);
   XM_ASSERT_EQ(eC->GetParent(), eA);
-  XM_ASSERT_EQ(eC->GetChildren().size(), 0);
-  XM_ASSERT_EQ(eA->GetChildren().size(), 2);
+  XM_ASSERT_EQ(eC->GetChildren().size(), 0u);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 2u);
 
   eRoot.AddChild(*eC);
   XM_ASSERT_EQ(eC->GetParent(), &eRoot);
-  XM_ASSERT_EQ(eRoot.GetChildren().size(), 2);
-  XM_ASSERT_EQ(eA->GetChildren().size(), 1);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 2u);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 1u);
 
   eA->RemoveChild(*eC);
-  XM_ASSERT_EQ(eA->GetChildren().size(), 1);
+  XM_ASSERT_EQ(eA->GetChildren().size(), 1u);
 
   eC->DetachFromParent();
   XM_ASSERT_EQ(eC->GetParent(), nullptr);
-  XM_ASSERT_EQ(eRoot.GetChildren().size(), 1);
+  XM_ASSERT_EQ(eRoot.GetChildren().size(), 1u);
   delete eC;
 }
 
@@ -152,7 +152,7 @@ XM_TEST(Entity, Clone)
   AssertEqualData(e2->GetRotation(), e.GetRotation());
   AssertEqualData(e2->GetScale(), e.GetScale());
 
-  XM_ASSERT_EQ(e.GetChildren().size(), 1);
+  XM_ASSERT_EQ(e.GetChildren().size(), 1u);
   XM_ASSERT_EQ(e.GetFirstChild(), e2);
 
   XM_ASSERT_TRUE(e2->GetChildren().empty());

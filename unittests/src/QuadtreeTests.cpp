@@ -58,7 +58,7 @@ XM_TEST(Quadtree, Unary)
   ro1.mCounter = 0;
   ro2.Export(box);
   qt.Process(box, UnaryTester);
-  XM_ASSERT_EQ(ro1.mCounter, 0);
+  XM_ASSERT_EQ(ro1.mCounter, 0u);
 
   // Process with point at origin (since it's sitting between leaves, all must be checked) -- one hit
   qt.Process(Vector2::Zero(), UnaryTester);
@@ -106,8 +106,8 @@ XM_TEST(Quadtree, Binary)
   ro2.mCounter = 0;
   ro2.Export(box);
   qt.Process(box, BinaryTester, &ro2);
-  XM_ASSERT_EQ(ro1.mCounter, 0);
-  XM_ASSERT_EQ(ro2.mCounter, 0);
+  XM_ASSERT_EQ(ro1.mCounter, 0u);
+  XM_ASSERT_EQ(ro2.mCounter, 0u);
 
   // Process with point at origin (since it's sitting between leaves, all must be checked)  -- one hit
   qt.Process(Vector2::Zero(), BinaryTester, &ro2);
@@ -157,7 +157,7 @@ XM_TEST(Quadtree, Translate)
 
   ro1.mCounter = 0;
   qt.Process(pos, UnaryTester);
-  XM_ASSERT_EQ(ro1.mCounter, 0); // not hit after translating quadtree and offsetting checking pos by the same amount
+  XM_ASSERT_EQ(ro1.mCounter, 0u); // not hit after translating quadtree and offsetting checking pos by the same amount
 }
 
 XM_TEST(Quadtree, Scale)
@@ -184,7 +184,7 @@ XM_TEST(Quadtree, Scale)
 
   ro1.mCounter = 0;
   qt.Process(pos, UnaryTester);
-  XM_ASSERT_EQ(ro1.mCounter, 0); // not hit after scaling quadtree and checking pos by the same amount.
+  XM_ASSERT_EQ(ro1.mCounter, 0u); // not hit after scaling quadtree and checking pos by the same amount.
 }
 
 }

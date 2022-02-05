@@ -32,7 +32,7 @@ XM_TEST_F(JsonUtils, LoadJson)
 
   XM_ASSERT_EQ(json->GetType(), JSON::OBJECT);
   XM_ASSERT_NE(json->ToObject(), nullptr);
-  XM_ASSERT_EQ(json->GetNumChildren(), 4);
+  XM_ASSERT_EQ(json->GetNumChildren(), 4u);
 
   auto intValue = json->GetChild("intValue");
   XM_ASSERT_NE(intValue, nullptr);
@@ -56,7 +56,7 @@ XM_TEST_F(JsonUtils, LoadJson)
   XM_ASSERT_NE(array, nullptr);
   XM_ASSERT_EQ(array->GetType(), JSON::ARRAY);
   XM_ASSERT_NE(array->ToArray(), nullptr);
-  XM_ASSERT_EQ(array->GetNumElements(), 6);
+  XM_ASSERT_EQ(array->GetNumElements(), 6u);
 
   // false is collapsed into 0
   XM_ASSERT_STREQ(array->GetElement(0)->GetValue(), "0");
@@ -67,14 +67,14 @@ XM_TEST_F(JsonUtils, LoadJson)
   XM_ASSERT_STREQ(object->GetChild("value")->GetValue(), "4");
 
   array = array->GetElement(5);
-  XM_ASSERT_EQ(array->GetNumElements(), 3);
+  XM_ASSERT_EQ(array->GetNumElements(), 3u);
 
   // Max depth exceeded entities are empty.
   object = array->GetElement(2);
   XM_ASSERT_NE(object, nullptr);
   XM_ASSERT_EQ(object->GetType(), JSON::OBJECT);
   XM_ASSERT_NE(object->ToObject(), nullptr);
-  XM_ASSERT_EQ(object->GetNumChildren(), 0);
+  XM_ASSERT_EQ(object->GetNumChildren(), 0u);
 }
 
 }
