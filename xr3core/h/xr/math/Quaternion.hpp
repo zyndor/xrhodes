@@ -9,7 +9,7 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include "Matrix.hpp"
+#include "xr/math/Matrix.hpp"
 #include "xr/math/Vector3.hpp"
 #include "xr/debug.hpp"
 #include <cstring>

@@ -9,9 +9,9 @@
 // License: https://github.com/zyndor/xrhodes#License-bsd-2-clause
 //
 //==============================================================================
-#include <cmath>
-#include <cstdlib>
 #include <algorithm>
+#include <cstdlib>
+#include <cmath>
 
 //==============================================================================
 #if !defined M_PI
