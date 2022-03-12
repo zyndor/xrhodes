@@ -68,7 +68,7 @@ struct  QueueIterator: public std::forward_iterator_tag
   pointer    operator ->() const;
 
   SelfType&  operator ++();
-  SelfType&  operator ++(int);
+  SelfType   operator ++(int);
 
   bool  operator ==(const SelfType& rhs) const;
   bool  operator !=(const SelfType& rhs) const;
@@ -104,7 +104,7 @@ struct  QueueConstIterator: public std::forward_iterator_tag
   pointer    operator ->() const;
 
   SelfType&  operator ++();
-  SelfType&  operator ++(int);
+  SelfType   operator ++(int);
 
   bool  operator ==(const SelfType& rhs) const;
   bool  operator !=(const SelfType& rhs) const;
@@ -113,7 +113,7 @@ struct  QueueConstIterator: public std::forward_iterator_tag
   NodeType* node;
 };
 
-} // QueueImpl
+}
 
 //==============================================================================
 ///@brief Singly linked list based queue which allows traversal, however only
@@ -295,7 +295,7 @@ QueueIterator<T>&  QueueIterator<T>::operator++()
 //==============================================================================
 template <typename T>
 inline
-QueueIterator<T>& QueueIterator<T>::operator++(int)
+QueueIterator<T> QueueIterator<T>::operator++(int)
 {
   SelfType  tmp(*this);
   ++(*this);
@@ -369,7 +369,7 @@ QueueConstIterator<T>&  QueueConstIterator<T>::operator++()
 //==============================================================================
 template <typename T>
 inline
-QueueConstIterator<T>&  QueueConstIterator<T>::operator++(int)
+QueueConstIterator<T>  QueueConstIterator<T>::operator++(int)
 {
   SelfType  tmp(*this);
   ++(*this);
