@@ -22,11 +22,17 @@ class Countable
 public:
   virtual ~Countable() {};
 
+  ///@brief Requests the ownership of this to be extended by one.
   virtual void Acquire() = 0;
 
+  ///@brief Request the ownership of this to be reduced by one. If there are no
+  /// more oewners, this should release the resources acquired by the Countable.
   ///@return True if the reference count has reached zero, false otherwise.
   virtual bool Release() = 0;
 };
+
+namespace detail
+{
 
 //==============================================================================
 ///@brief Smart pointer type with intrusive reference counting.
@@ -34,7 +40,7 @@ class CountedCore
 {
 public:
   // operator overloads
-  operator bool() const
+  explicit operator bool() const
   {
     return m_p != nullptr;
   }
@@ -54,8 +60,10 @@ protected:
   }
 };
 
+} // detail
+
 template <class T>
-class Counted: protected CountedCore
+class Counted: protected detail::CountedCore
 {
 public:
   // using
@@ -103,23 +111,29 @@ public:
   }
 
   // general
+  ///@return A pointer to the Countable held by this.
   T* Get()
   {
     return static_cast<T*>(m_p);
   }
 
+  ///@return A const pointer to the Countable held by this.
   T const* Get() const
   {
     return static_cast<T const*>(m_p);
   }
 
-  T* Release()
+  ///@brief Relinquishes the ownership of the Countable held by this, to the caller,
+  [[nodiscard]] T* Release()
   {
     T* p = static_cast<T*>(m_p);
     m_p = nullptr;
     return p;
   }
 
+  ///@brief Sets the Countable held by this, to @a p.
+  /// Acquire() is called on @a p (if not nullptr), and Release() is called
+  /// on the previously held Countable (if any).
   void Reset(T* p)
   {
     if (p)
@@ -134,31 +148,39 @@ public:
     m_p = p;
   }
 
-  template <typename D>
-  void Reset(T* p, D d)
+  ///@brief Sets the Countable held by this, to @a p, and the deleter to @a d.
+  /// Acquire() is called on @a p (if not nullptr), and Release() is called
+  /// on the previously held Countable (if any).
+  template <class D = std::default_delete<T>>
+  void Reset(T* p, D d = D())
   {
     Reset(p);
 
     m_d = d;
   }
 
-  void Swap(Counted<T>& rhs)
+  ///@brief Swaps pointers and deleters between this and @a other.
+  void Swap(Counted<T>& other)
   {
-    std::swap(m_p, rhs.m_p);
-    m_d.swap(rhs.m_d);
+    std::swap(m_p, other.m_p);
+    m_d.swap(other.m_d);
   }
 
-  template <typename U, typename DU = std::default_delete<U>>
+  ///@brief Performs a static_cast on the managed pointer, replacing the deleter,
+  /// then returns a Counted<> typed to the new type U.
+  template <class U, class DU = std::default_delete<U>>
   Counted<U> StaticCast(DU d = DU())
   {
     return Counted<U>(static_cast<U*>(Get()), d);
   }
 
+  ///@return Const reference to the currently used deleter.
   Deleter const& GetDeleter() const
   {
     return m_d;
   }
 
+  ///@return Reference to the currently used deleter.
   Deleter& GetDeleter()
   {
     return m_d;
@@ -185,8 +207,16 @@ private:
   Deleter m_d;
 };
 
+namespace detail
+{
+
+template <class T, class U>
+using CountedEqEnable = std::enable_if_t<std::is_base_of_v<T, U> || std::is_base_of_v<U, T>>;
+
+}
+
 //==============================================================================
-template <typename T>
+template <class T>
 inline
 bool operator==(Counted<T> const& p0, std::nullptr_t p1)
 {
@@ -194,15 +224,15 @@ bool operator==(Counted<T> const& p0, std::nullptr_t p1)
 }
 
 //==============================================================================
-template <typename T>
+template <class T, class U, detail::CountedEqEnable<T, U>* = nullptr>
 inline
-bool operator==(Counted<T> const& p0, T* p1)
+bool operator==(Counted<T> const& p0, U* p1)
 {
   return p0.Get() == p1;
 }
 
 //==============================================================================
-template <typename T>
+template <class T>
 inline
 bool operator==(std::nullptr_t p0, Counted<T> const& p1)
 {
@@ -210,15 +240,15 @@ bool operator==(std::nullptr_t p0, Counted<T> const& p1)
 }
 
 //==============================================================================
-template <typename T>
+template <class T, class U, detail::CountedEqEnable<T, U>* = nullptr>
 inline
-bool operator==(T* p0, Counted<T> const& p1)
+bool operator==(T* p0, Counted<U> const& p1)
 {
   return operator==(p1, p0);
 }
 
 //==============================================================================
-template <typename T>
+template <class T>
 inline
 bool operator!=(Counted<T> const& p0, std::nullptr_t p1)
 {
@@ -226,15 +256,15 @@ bool operator!=(Counted<T> const& p0, std::nullptr_t p1)
 }
 
 //==============================================================================
-template <typename T>
+template <class T, class U, detail::CountedEqEnable<T, U>* = nullptr>
 inline
-bool operator!=(Counted<T> const& p0, T* p1)
+bool operator!=(Counted<T> const& p0, U* p1)
 {
   return !operator==(p0, p1);
 }
 
 //==============================================================================
-template <typename T>
+template <class T>
 inline
 bool operator!=(std::nullptr_t p0, Counted<T> const& p1)
 {
@@ -242,23 +272,23 @@ bool operator!=(std::nullptr_t p0, Counted<T> const& p1)
 }
 
 //==============================================================================
-template <typename T>
+template <class T, class U, detail::CountedEqEnable<T, U>* = nullptr>
 inline
-bool operator!=(T* p0, Counted<T> const& p1)
+bool operator!=(T* p0, Counted<U> const& p1)
 {
   return !operator==(p1, p0);
 }
 
 //==============================================================================
-template <typename T>
-bool operator==(Counted<T> const& lhs, Counted<T> const& rhs)
+template <class T, class U, detail::CountedEqEnable<T, U>* = nullptr>
+bool operator==(Counted<T> const& lhs, Counted<U> const& rhs)
 {
   return lhs.Get() == rhs.Get();
 }
 
 //==============================================================================
-template <typename T>
-bool operator!=(Counted<T> const& lhs, Counted<T> const& rhs)
+template <class T, class U, detail::CountedEqEnable<T, U>* = nullptr>
+bool operator!=(Counted<T> const& lhs, Counted<U> const& rhs)
 {
   return !operator==(lhs, rhs);
 }
