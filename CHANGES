@@ -1,3 +1,15 @@
+v1.11.3
+- Removed unnecessary code from examples that use shadow maps.
+- Unittests cleanup.
+- Replaced the XR_ADVANCE_PTR() macro with a constexpr function, xr::meshutil::AdvancePointer().
+- xr::Quaternion and xr::Matrix API improvements.
+- xr::Quaternion fixes and improvements.
+- Header cleanup in xr3core math.
+- Fix: xr::detail::QueueIterator<>::operator++(int) returns copy, not dangling reference.
+- XonEntity modernisation / improvements.
+- Added <stdexcept> #includes for GCC10 builds.
+- xr::Counted(Core) fixes / improvements;
+
 v1.11.2
 - Fixed the fullscreen mode - it now takes into account the requested resolution.
 - Fixed a compile error in xr::ObjectPool<>::Release(). Added unittests.
