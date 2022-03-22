@@ -55,24 +55,19 @@ XonEntity::Exception::Exception(Type t, std::string const & message)
 {}
 
 //==============================================================================
-XonEntity::XonEntity(Type t)
-: m_type(t)
-{}
-
-//==============================================================================
-XonEntity::~XonEntity()
-{}
+XonEntity::XonEntity() = default;
+XonEntity::~XonEntity() = default;
 
 //==============================================================================
 bool XonEntity::Is(Type type) const
 {
-  return m_type == type;
+  return GetType() == type;
 }
 
 //==============================================================================
 XonObject& XonEntity::ToObject()
 {
-  if (m_type != Type::Object)
+  if (GetType() != Type::Object)
   {
     ThrowInvalidTypeError("ToObject");
   }
@@ -82,7 +77,7 @@ XonObject& XonEntity::ToObject()
 //==============================================================================
 XonObject const& XonEntity::ToObject() const
 {
-  if (m_type != Type::Object)
+  if (GetType() != Type::Object)
   {
     ThrowInvalidTypeError("ToObject");
   }
@@ -92,7 +87,7 @@ XonObject const& XonEntity::ToObject() const
 //==============================================================================
 XonValue& XonEntity::ToValue()
 {
-  if (m_type != Type::Value)
+  if (GetType() != Type::Value)
   {
     ThrowInvalidTypeError("ToValue");
   }
@@ -102,7 +97,7 @@ XonValue& XonEntity::ToValue()
 //==============================================================================
 XonValue const& XonEntity::ToValue() const
 {
-  if (m_type != Type::Value)
+  if (GetType() != Type::Value)
   {
     ThrowInvalidTypeError("ToValue");
   }
@@ -110,14 +105,13 @@ XonValue const& XonEntity::ToValue() const
 }
 
 //==============================================================================
-XonObject::XonObject()
-: XonEntity(Type::Object)
-{}
+XonObject::XonObject() = default;
+XonObject::~XonObject() = default;
 
 //==============================================================================
-XonObject::~XonObject()
+XonEntity::Type XonObject::GetType() const
 {
-  std::for_each(m_elements.begin(), m_elements.end(), [](XonEntity* p) { delete p; });
+  return Type::Object;
 }
 
 //==============================================================================
@@ -169,35 +163,34 @@ XonEntity const& XonObject::Get(std::string const& name) const
 //==============================================================================
 void XonObject::AddElement(XonEntity& value)
 {
-  m_elements.push_back(&value);
+  m_elements.emplace_back(&value);
 }
 
 //==============================================================================
-void XonObject::AddElement(std::string key, XonEntity& value)
+void XonObject::AddElement(std::string_view key, XonEntity& value)
 {
   AddElement(value);
-  m_keyedElements[key] = &value;
+  m_keyedElements[std::string{ key }] = &value;
 }
 
 //==============================================================================
 void XonObject::GetKeys(std::vector<std::string>& keys) const
 {
-  if(keys.capacity() < m_keyedElements.size())
+  if (keys.capacity() < m_keyedElements.size())
   {
     keys.reserve(m_keyedElements.size());
   }
 
   keys.clear();
-  std::for_each(m_keyedElements.begin(), m_keyedElements.end(),
-    [&keys](decltype(m_keyedElements)::value_type const& v) {
-      keys.push_back(v.first);
-    });
+  GetKeys(std::back_inserter(keys));
 }
 
 //==============================================================================
 bool XonObject::HasElement(XonEntity const& value) const
 {
-  return std::find(m_elements.begin(), m_elements.end(), &value) != m_elements.end();
+  return std::find_if(m_elements.begin(), m_elements.end(), [p = &value](auto& v) {
+    return p == v.get();
+  }) != m_elements.end();
 }
 
 //==============================================================================
@@ -221,32 +214,36 @@ XonEntity const& XonObject::operator[](size_t index) const
 }
 
 //==============================================================================
-XonValue::XonValue()
-: XonEntity(Type::Value)
-{}
+XonValue::XonValue() = default;
 
 //==============================================================================
-XonValue::XonValue(const char* value, size_t length)
-: XonEntity(Type::Value),
-  m_value(value != nullptr ? new char[length + 1] : nullptr),
-  m_length(length)
+XonValue::XonValue(const char* value, size_t length):
+  m_value{ nullptr },
+  m_length{ length }
 {
   if (value)
   {
-    memcpy(m_value, value, length);
+    m_value = new char[length + 1];
+    std::copy(value, value + length, m_value);
     m_value[length] = '\0';
   }
 }
 
 //==============================================================================
-XonValue::XonValue(std::string const& string)
-: XonValue(string.c_str(), string.size())
+XonValue::XonValue(std::string const& string):
+  XonValue{ string.c_str(), string.size() }
 {}
 
 //==============================================================================
 XonValue::~XonValue()
 {
   delete[] m_value;
+}
+
+//==============================================================================
+XonEntity::Type XonValue::GetType() const
+{
+  return Type::Value;
 }
 
 } // xr

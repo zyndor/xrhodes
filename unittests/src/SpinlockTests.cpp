@@ -22,13 +22,13 @@ struct Data
 {
   Spinlock spinner;
 
-  int accessCounter = 0;
+  size_t accessCounter = 0;
   std::vector<int> data;
 
   std::chrono::time_point<std::chrono::system_clock> tStart;
 
   Data(size_t n)
-    : data(n),
+  : data(n),
     tStart(std::chrono::system_clock::now())
   {}
 

@@ -232,7 +232,7 @@ public:
 
       auto motion = m_dragControl.GetFrameMotion() * 0.01f;
       m_rotation *= Quaternion::FromAxisAngle(Vector3(.2, .5, 0.f), weight * .002f) *
-        Quaternion::FromPitchYawRoll(motion.x, motion.y, 0.);
+        Quaternion::FromPitchYawRoll(motion.y, motion.x, 0.);
 
       // Change the color of the light over time.
       Color lightColor(.75f, .66f + sinf(float(Timer::GetUST() * .0002)) * .333f, .5f);
@@ -242,17 +242,13 @@ public:
       auto const& viewer = m_renderPasses[RenderPass::DEPTH].viewer;
       Matrix lightWorld(viewer.worldTransform);
       lightWorld.Invert();
-      lightWorld.t = lightWorld.RotateVec(-lightWorld.t);
+      lightWorld.t = lightWorld.Rotate(-lightWorld.t);
 
       Matrix4 lightView;
       lightView.Import(lightWorld);
 
       Matrix4 lightWorldProjection;
       lightView.Transform(viewer.projection, lightWorldProjection);
-
-      lightView.SetIdentity(.5);
-      lightView.SetTranslation(Vector3::One() * .5);
-      lightView.Transform(lightWorldProjection);
 
       Gfx::SetUniform(m_uLightSpaceTransform, lightWorldProjection.data);
 

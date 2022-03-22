@@ -25,7 +25,7 @@ in vec4 iData1;
 
 vec3 QuaternionRotate(vec4 q, vec3 p)
 {
-  return p + 2.0 * cross(q.xyz, cross(q.xyz, p) + q.w * p);
+  return p + 2.0 * cross(cross(p, q.xyz) + q.w * p, q.xyz);
 }
 
 void main()

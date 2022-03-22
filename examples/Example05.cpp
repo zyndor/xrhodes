@@ -121,7 +121,7 @@ public:
 
       auto motion = m_dragControl.GetFrameMotion() * 0.02f;
       m_rotation *= Quaternion::FromAxisAngle(Vector3(.2, .5, 0.f), weight * .005f) *
-        Quaternion::FromPitchYawRoll(motion.x, motion.y, .0);
+        Quaternion::FromPitchYawRoll(motion.y, motion.x, .0);
 
       if (Input::GetKeyState(K_TAB) == ButtonState::WasPressed)
       {

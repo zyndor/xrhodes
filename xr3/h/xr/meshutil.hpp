@@ -11,9 +11,9 @@
 //==============================================================================
 #include "xr/math/Vector3.hpp"
 #include "xr/debug.hpp"
-#include <cstdint>
 #include <type_traits>
 #include <limits>
+#include <cstdint>
 
 namespace xr
 {
@@ -22,12 +22,15 @@ namespace meshutil
 
 //==============================================================================
 ///@brief moves pointer @a p by @a stride bytes.
-#define XR_ADVANCE_PTR(p, stride) \
-  reinterpret_cast<decltype(p)>( \
-    reinterpret_cast<typename std::conditional< \
-      std::is_const<typename std::remove_pointer<decltype(p)>::type>::value, \
-        const uint8_t*, uint8_t* \
-      >::type>(p) + stride)
+template <typename T>
+constexpr T* AdvancePointer(T* p, size_t stride)
+{
+  using TempType = std::conditional_t<std::is_const_v<T>, const std::byte*, std::byte*>;
+  return reinterpret_cast<T*>(reinterpret_cast<TempType>(p) + stride);
+}
+
+// deprecated
+#define XR_ADVANCE_PTR(p, stride) AdvancePointer(p, stride)
 
 //==============================================================================
 ///@brief Calculates the origin of a mesh with the given vertex positions.
@@ -43,7 +46,7 @@ PosType CalculateCentre(uint32_t numVertices, PosType const* positions, uint32_t
     {
       centre += *positions;
 
-      positions = XR_ADVANCE_PTR(positions, stride);
+      positions = AdvancePointer(positions, stride);
     }
     centre *= 1.0f / numVertices;
   }
@@ -79,7 +82,7 @@ float CalculateRadius(uint32_t numVertices, PosType const* positions, uint32_t s
         radius = d;
       }
 
-      positions = XR_ADVANCE_PTR(positions, stride);
+      positions = AdvancePointer(positions, stride);
     }
     radius = sqrtf(radius);
   }
@@ -129,7 +132,7 @@ void CalculateExtents(uint32_t numVertices, PosType const* positions, uint32_t s
         }
       }
 
-      positions = XR_ADVANCE_PTR(positions, stride);
+      positions = AdvancePointer(positions, stride);
     }
   }
   else

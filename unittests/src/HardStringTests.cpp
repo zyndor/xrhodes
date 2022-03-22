@@ -20,19 +20,19 @@ XM_TEST(HardString, Basics)
 {
   TestString  str;
   XM_ASSERT_EQ(str, "");
-  XM_ASSERT_EQ(str.size(), 0);
+  XM_ASSERT_EQ(str.size(), 0u);
 
   str = "abcd";
   XM_ASSERT_EQ(str, "abcd");
-  XM_ASSERT_EQ(str.size(), 4);
+  XM_ASSERT_EQ(str.size(), 4u);
 
   str = TestString(123);
   XM_ASSERT_EQ(str, "123");
-  XM_ASSERT_EQ(str.size(), 3);
+  XM_ASSERT_EQ(str.size(), 3u);
 
   str += 456;
   XM_ASSERT_EQ(str, "123456");
-  XM_ASSERT_EQ(str.size(), 6);
+  XM_ASSERT_EQ(str.size(), 6u);
 
   {
     auto p = str.find("34");
@@ -50,7 +50,7 @@ XM_TEST(HardString, Basics)
   }
 
   str += 456;
-  XM_ASSERT_EQ(str.size(), 9);
+  XM_ASSERT_EQ(str.size(), 9u);
 
   {
     auto p = str.rfind("45");
@@ -70,13 +70,13 @@ XM_TEST(HardString, Basics)
   {
     auto str2 = str.substr(4, 4);
     XM_ASSERT_EQ(str2, "5645");
-    XM_ASSERT_EQ(str2.size(), 4);
+    XM_ASSERT_EQ(str2.size(), 4u);
   }
 
   // and finally
   str.clear();
   XM_ASSERT_EQ(str, "");
-  XM_ASSERT_EQ(str.size(), 0);
+  XM_ASSERT_EQ(str.size(), 0u);
 }
 
 }

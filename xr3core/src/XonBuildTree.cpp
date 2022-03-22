@@ -28,7 +28,7 @@ struct XonTreeBuildState
       if (keyCache.start)
       {
         XR_ASSERT(XonTreeBuildState, keyCache.length < std::numeric_limits<size_t>::max());
-        object->AddElement(std::string(keyCache.start, keyCache.length), v);
+        object->AddElement(std::string_view{ keyCache.start, keyCache.length }, v);
         keyCache.start = nullptr;  // consume key
       }
       else

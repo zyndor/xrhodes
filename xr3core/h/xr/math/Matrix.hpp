@@ -10,7 +10,7 @@
 //
 //==============================================================================
 #include "xr/math/Vector3.hpp"
-#include "mathutils.hpp"
+#include "xr/math/mathutils.hpp"
 #include "xr/debug.hpp"
 #include <algorithm>
 #include <cstring>
@@ -298,21 +298,33 @@ public:
   void  TransformBy(Matrix const& m)
   {
     RotateBy(m);
-    t = m.TransformVec(t);
+    t = m.Transform(t);
   }
 
   ///@brief Rotates the vector by this matrix.
-  Vector3  RotateVec(Vector3 const& v) const
+  Vector3  Rotate(Vector3 const& v) const
   {
     return Vector3(v.x * linear[XX] + v.y * linear[YX] + v.z * linear[ZX],
       v.x * linear[XY] + v.y * linear[YY] + v.z * linear[ZY],
       v.x * linear[XZ] + v.y * linear[YZ] + v.z * linear[ZZ]);
   }
 
-  ///@brief Transforms the vector by this matrix.
-  Vector3  TransformVec(Vector3 const& v) const
+  [[deprecated("Use Rotate().")]]
+  Vector3 RotateVec(Vector3 const& v) const
   {
-    return RotateVec(v) + t;
+    return Rotate(v);
+  }
+
+  ///@brief Transforms the vector by this matrix.
+  Vector3  Transform(Vector3 const& v) const
+  {
+    return Rotate(v) + t;
+  }
+
+  [[deprecated("Use Transform().")]]
+  Vector3 TransformVec(Vector3 const& v) const
+  {
+    return Transform(v);
   }
 
   ///@brief Calculates a transformation looking from the position @a from to
