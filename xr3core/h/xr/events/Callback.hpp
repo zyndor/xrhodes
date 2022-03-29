@@ -127,49 +127,6 @@ protected:
   }
 };
 
-template <class T, typename... Args>
-struct MemberCallback<T, void, Args...> : Callback<void, Args...>
-{
-  // types
-  using BaseType = Callback<void, Args...>;
-  using SelfType = MemberCallback<T, void, Args...>;
-  using Function = typename std::conditional<std::is_const<T>::value,
-    void(T::*)(Args...) const,
-    void(T::*)(Args...)>::type;
-
-  // structors
-  MemberCallback(T& object, Function fn) noexcept
-  : BaseType{ &object },
-    m_function{ fn }
-  {}
-
-  // general
-  [[nodiscard]] SelfType* Clone() const override
-  {
-    return new SelfType(CallbackBase::GetObject<T>(), m_function);
-  }
-
-  void Call(Args... args) const override
-  {
-    (static_cast<T*>(CallbackBase::m_data)->*m_function)(args...);
-  }
-
-protected:
-  // data
-  Function m_function;
-
-  // internal
-  size_t GetTypeId() const noexcept override
-  {
-    return TypeId<SelfType>();
-  };
-
-  bool EqualsInternal(CallbackBase const& other) const noexcept override
-  {
-    return m_function == static_cast<SelfType const&>(other).m_function;
-  }
-};
-
 //==============================================================================
 ///@brief Concrete generic callback template and specialisations, catering for
 /// free-standing (non-member) functions, having / not having return values,
@@ -197,47 +154,6 @@ struct FunctionPtrCallback : Callback<Return, Args...>
   Return Call(Args... args) const override
   {
     return m_function(args..., CallbackBase::m_data);
-  }
-
-protected:
-  // data
-  Function m_function;
-
-  // internal
-  size_t GetTypeId() const noexcept override
-  {
-    return TypeId<SelfType>();
-  };
-
-  bool EqualsInternal(CallbackBase const& other) const noexcept override
-  {
-    return m_function == static_cast<SelfType const&>(other).m_function;
-  }
-};
-
-template <typename... Args>
-struct FunctionPtrCallback<void, Args...> : Callback<void, Args...>
-{
-  // types
-  using BaseType = Callback<void, Args...>;
-  using SelfType = FunctionPtrCallback<void, Args...>;
-  using Function = void(*)(Args..., void*);
-
-  // structors
-  FunctionPtrCallback(Function fn, void* userData = nullptr) noexcept
-  : BaseType{ userData },
-    m_function{ fn }
-  {}
-
-  // general
-  [[nodiscard]] SelfType* Clone() const override
-  {
-    return new SelfType(m_function, const_cast<void*>(CallbackBase::m_data));
-  }
-
-  void Call(Args... args) const override
-  {
-    m_function(args..., CallbackBase::m_data);
   }
 
 protected:
