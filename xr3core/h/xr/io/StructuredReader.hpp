@@ -80,7 +80,7 @@ template <typename T, class In>
 using Interpreter = T(*)(In const&);
 
 template <typename T>
-using Value = typename std::conditional<sizeof(T) <= sizeof(uintptr_t), T, T&&>::type;
+using Value = std::conditional_t<sizeof(T) <= sizeof(uintptr_t), T, T&&>;
 
 template <typename T, class Out>
 using Member = T Out::*;

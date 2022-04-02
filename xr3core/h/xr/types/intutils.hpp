@@ -18,8 +18,8 @@ namespace xr
 ///@return Whether the given @a value (of integral type U) is representable using
 /// integral type T.
 template <typename T, typename U,
-  typename std::enable_if<std::is_integral<T>::value && std::is_integral<U>::value &&
-    std::is_signed<T>::value == std::is_signed<U>::value>::type* = nullptr>
+  std::enable_if_t<std::is_integral_v<T> && std::is_integral_v<U> &&
+    std::is_signed_v<T> == std::is_signed_v<U>>* = nullptr>
 [[nodiscard]]
 constexpr bool Representable([[maybe_unused]] U value)
 {
@@ -37,8 +37,8 @@ constexpr bool Representable([[maybe_unused]] U value)
 ///@return Whether the given @a value (of integral type U) is representable using
 /// integral type T.
 template <typename T, typename U,
-  typename std::enable_if<std::is_integral<T>::value && std::is_integral<U>::value &&
-    !std::is_signed<T>::value && std::is_signed<U>::value>::type* = nullptr>
+  std::enable_if_t<std::is_integral_v<T> && std::is_integral_v<U> &&
+    !std::is_signed_v<T> && std::is_signed_v<U>>* = nullptr>
 [[nodiscard]]
 constexpr bool Representable(U value)
 {
@@ -56,8 +56,8 @@ constexpr bool Representable(U value)
 ///@return Whether the given @a value (of integral type U) is representable using
 /// integral type T.
 template <typename T, typename U,
-  typename std::enable_if<std::is_integral<T>::value && std::is_integral<U>::value &&
-    std::is_signed<T>::value && !std::is_signed<U>::value>::type* = nullptr>
+  std::enable_if_t<std::is_integral_v<T> && std::is_integral_v<U> &&
+    std::is_signed_v<T> && !std::is_signed_v<U>>* = nullptr>
 [[nodiscard]]
 constexpr bool Representable([[maybe_unused]] U value)
 {

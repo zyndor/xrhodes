@@ -131,7 +131,7 @@ private:
   template <typename T>
   struct ValueT: ValueBase
   {
-    using RawT = typename std::decay<T>::type;
+    using RawT = std::decay_t<T>;
 
     RawT mStart;
     RawT mTarget;

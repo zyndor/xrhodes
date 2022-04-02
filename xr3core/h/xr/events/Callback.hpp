@@ -90,9 +90,9 @@ struct MemberCallback : Callback<Return, Args...>
   // types
   using BaseType = Callback<Return, Args...>;
   using SelfType = MemberCallback<T, Return, Args...>;
-  using Function = typename std::conditional<std::is_const<T>::value,
+  using Function = std::conditional_t<std::is_const_v<T>,
     Return(T::*)(Args...) const,
-    Return(T::*)(Args...)>::type;
+    Return(T::*)(Args...)>;
 
   // structors
   MemberCallback(T& object, Function fn) noexcept
