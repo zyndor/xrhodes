@@ -154,9 +154,7 @@ template  <typename T>
 [[nodiscard]] inline
 size_t  TypeId() noexcept
 {
-  return detail::TypeId<
-    typename std::remove_pointer<typename std::decay<T>::type>::type
-  >::Get();
+  return detail::TypeId<std::remove_pointer_t<std::decay_t<T>>>::Get();
 }
 
 }  // xr

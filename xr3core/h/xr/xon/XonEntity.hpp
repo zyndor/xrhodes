@@ -96,7 +96,7 @@ class XonObject final : public XonEntity
 {
 public:
   // types
-  using Xontainer = std::vector<std::unique_ptr<XonEntity>>;
+  using Xontainer = std::vector<XonEntity*>;
 
   // structors
   XonObject();
@@ -154,12 +154,14 @@ public:
   void GetKeys(std::vector<std::string>& keys) const;
 
   ///@brief Adds the given element @a elem as a child at the next index.
-  void AddElement(XonEntity& elem);  // ownership transfer
+  ///@note Transfers ownership; @a elem should not be stack-allocated.
+  void AddElement(XonEntity& elem);
 
   ///@brief Adds the given element @a elem as a child at the next index, also
   /// keyed to @a key.
   ///@note Overrides a previous mapping of the same key (if any).
-  void AddElement(std::string_view key, XonEntity& elem);  // ownership transfer
+  ///@note Transfers ownership; @a elem should not be stack-allocated.
+  void AddElement(std::string_view key, XonEntity& elem);
 
   [[deprecated]]
   void AddElement(std::string key, XonEntity& elem) { AddElement(std::string_view{ key }, elem); }

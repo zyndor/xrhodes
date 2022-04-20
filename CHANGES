@@ -1,3 +1,9 @@
+v1.11.4
+- Reverted XonObject to holding non-smart pointers, to simplify usage.
+- Removed redundant xr::Callback template specialisation for functions returning void.
+- Simplified use of the metaprogramming library.
+- Removed references to gtest from Windows install instructions.
+
 v1.11.3
 - Removed unnecessary code from examples that use shadow maps.
 - Unittests cleanup.

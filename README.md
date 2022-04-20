@@ -43,8 +43,8 @@ Graphics: OpenGL3.3 capable GPU.
 # Windows
 
 - Visual Studio Community 2017+ and [Vcpkg](https://github.com/microsoft/vcpkg)
-- $ `./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2 gtest`
-- $ `./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2 gtest`
+- $ `./vcpkg install --triplet=x86-windows libpng sdl2 tinyxml2`
+- $ `./vcpkg install --triplet=x64-windows libpng sdl2 tinyxml2`
 
 # Linux (Tested under Ubuntu 18.04)
 

@@ -106,7 +106,15 @@ XonValue const& XonEntity::ToValue() const
 
 //==============================================================================
 XonObject::XonObject() = default;
-XonObject::~XonObject() = default;
+
+//==============================================================================
+XonObject::~XonObject()
+{
+  for (auto p : m_elements)
+  {
+    delete p;
+  }
+}
 
 //==============================================================================
 XonEntity::Type XonObject::GetType() const
@@ -163,7 +171,7 @@ XonEntity const& XonObject::Get(std::string const& name) const
 //==============================================================================
 void XonObject::AddElement(XonEntity& value)
 {
-  m_elements.emplace_back(&value);
+  m_elements.push_back(&value);
 }
 
 //==============================================================================
@@ -189,7 +197,7 @@ void XonObject::GetKeys(std::vector<std::string>& keys) const
 bool XonObject::HasElement(XonEntity const& value) const
 {
   return std::find_if(m_elements.begin(), m_elements.end(), [p = &value](auto& v) {
-    return p == v.get();
+    return p == v;
   }) != m_elements.end();
 }
 
