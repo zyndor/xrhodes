@@ -39,7 +39,7 @@ XM_TEST(XonRead, Int)
   XM_ASSERT_THROW(XonRead::Number<uint16_t>(entity), std::invalid_argument);
 
   XM_ASSERT_EQ(XonRead::Number<int32_t>(entity), 176454);
-  XM_ASSERT_EQ(XonRead::Number<uint32_t>(entity), 176454);
+  XM_ASSERT_EQ(XonRead::Number<uint32_t>(entity), 176454u);
   XM_ASSERT_EQ(XonRead::Number<float>(entity), 176454.f);
   XM_ASSERT_EQ(XonRead::Number<double>(entity), 176454.);
 
@@ -180,15 +180,15 @@ XM_TEST(XonRead, Reader)
 
   XM_ASSERT_EQ(order.items.size(), 2u);
   XM_ASSERT_EQ(order.items[0].id, 274634674);
-  XM_ASSERT_EQ(order.items[0].quantity, 5428);
+  XM_ASSERT_EQ(order.items[0].quantity, 5428u);
   XM_ASSERT_EQ(order.items[0].fudgeFactor, .5f);
   XM_ASSERT_EQ(order.items[1].id, 653764);
-  XM_ASSERT_EQ(order.items[1].quantity, 361);
+  XM_ASSERT_EQ(order.items[1].quantity, 361u);
   XM_ASSERT_EQ(order.items[1].fudgeFactor, .25f);
 
   XM_ASSERT_EQ(order.recipientName, "Johan Fucek");
-  XM_ASSERT_EQ(order.countryCode, 58);
-  XM_ASSERT_EQ(order.houseNo, 126);
+  XM_ASSERT_EQ(order.countryCode, 58u);
+  XM_ASSERT_EQ(order.houseNo, 126u);
   XM_ASSERT_EQ(order.street, "Gallbladderstrasse");
   XM_ASSERT_EQ(order.zipCode, "1828-B");
   XM_ASSERT_EQ(order.fudgeFactor, 9000.f);
