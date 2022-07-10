@@ -113,8 +113,7 @@ public:
   Vector3 GetColumn(size_t i) const
   {
     XR_ASSERT(Matrix, i < Vector3::kNumComponents);
-    return Vector3(linear[i], linear[i + Vector3::kNumComponents],
-      linear[i + 2 * Vector3::kNumComponents]);
+    return Vector3(linear[i], linear[i + YX], linear[i + ZX]);
   }
 
   ///@brief Convenience method to set column @a i of the linear transformation part.
@@ -268,18 +267,24 @@ public:
   /// No translation applied or modified.
   void  RotateBy(Matrix const& m)
   {
-    Matrix  n(*this);
-    CalculateComponentProduct(m, n, Vector3::X, Vector3::X);
-    CalculateComponentProduct(m, n, Vector3::X, Vector3::Y);
-    CalculateComponentProduct(m, n, Vector3::X, Vector3::Z);
-    CalculateComponentProduct(m, n, Vector3::Y, Vector3::X);
-    CalculateComponentProduct(m, n, Vector3::Y, Vector3::Y);
-    CalculateComponentProduct(m, n, Vector3::Y, Vector3::Z);
-    CalculateComponentProduct(m, n, Vector3::Z, Vector3::X);
-    CalculateComponentProduct(m, n, Vector3::Z, Vector3::Y);
-    CalculateComponentProduct(m, n, Vector3::Z, Vector3::Z);
+    const Vector3 lx{ linear };
+    const Vector3 ly{ linear + YX };
+    const Vector3 lz{ linear + ZX };
+    const Vector3 mx{ m.GetColumn(Vector3::X) };
+    const Vector3 my{ m.GetColumn(Vector3::Y) };
+    const Vector3 mz{ m.GetColumn(Vector3::Z) };
+    linear[XX] = lx.Dot(mx);
+    linear[XY] = lx.Dot(my);
+    linear[XZ] = lx.Dot(mz);
+    linear[YX] = ly.Dot(mx);
+    linear[YY] = ly.Dot(my);
+    linear[YZ] = ly.Dot(mz);
+    linear[ZX] = lz.Dot(mx);
+    linear[ZY] = lz.Dot(my);
+    linear[ZZ] = lz.Dot(mz);
   }
 
+  [[deprecated]]
   void  CalculateComponentProduct(Matrix const& m, Matrix const& n, int i, int j)
   {
     XR_ASSERT(Matrix, i >= 0);
@@ -385,15 +390,15 @@ public:
       // Transpose to get adjugate matrix.
       Transpose(adj);
 
+      // Scale by inverse detereminant and write back.
       determinant = 1.0f / determinant;
 
-      // Scale by inverse detereminant and write back.
       auto writep = linear;
-      std::for_each(adj, adj + std::extent<decltype(adj)>::value,
-        [determinant, &writep](float v) {
-          *writep = v * determinant;
-          ++writep;
-        });
+      for (auto v : adj)
+      {
+        *writep = v * determinant;
+        ++writep;
+      }
     }
     return result;
   }

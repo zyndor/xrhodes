@@ -1,3 +1,8 @@
+v1.11.5
+-  Fix: signedness mismatch warnings in XonReadTests.
+-  Fix: Matrix::RotateBy() - this matrix is on the left side of the multiplication.
+-  Updated xm.
+
 v1.11.4
 - Reverted XonObject to holding non-smart pointers, to simplify usage.
 - Removed redundant xr::Callback template specialisation for functions returning void.
